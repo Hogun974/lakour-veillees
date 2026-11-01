@@ -54,3 +54,30 @@ export function verifierVictoire({ villageois = [], morts = [], primes = {} } = 
   if (meute > 0 && meute >= vivants.length - meute) return "meute";
   return "";
 }
+
+// Le récit de fin de partie : chacun, son rôle, son camp, son métier, son sort (la vraie cause, enfin dévoilée) et s'il est
+// parmi les vainqueurs. Les survivants d'abord, puis les morts du dernier tombé au premier.
+// -> [{ id, nom, role, camp, metier, vivant, mort: { tour, phase, cause } | null, gagnant }]
+export function bilanDePartie({ villageois = [], morts = [], causes = {}, vainqueur = "" } = {}) {
+  const parId = new Map(villageois.map(v => [v.id, v]));
+  const gagnants = new Set();
+  if (vainqueur === "village" || vainqueur === "meute") {
+    for (const v of villageois) if (v.camp === vainqueur) gagnants.add(v.id);
+  } else if (parId.has(vainqueur)) {
+    const v = parId.get(vainqueur), lie = parId.get(v.amoureux);
+    gagnants.add(v.id);
+    // Des amoureux de camps différents l'emportent ensemble.
+    if (lie && lie.amoureux === v.id && v.vivant !== false && lie.vivant !== false) gagnants.add(lie.id);
+  }
+  const rang = new Map(morts.map((m, i) => [m.acteurId, i]));
+  const lignes = villageois.map(v => {
+    const m = rang.has(v.id) ? morts[rang.get(v.id)] : null;
+    return {
+      id: v.id, nom: v.nom ?? "", role: v.role?.nom ?? "", camp: v.camp ?? "", metier: v.metier?.nom ?? "", vivant: v.vivant !== false,
+      mort: v.vivant === false ? { tour: m?.tour ?? 0, phase: m?.phase ?? "", cause: causes[v.id] ?? m?.cause ?? "" } : null,
+      gagnant: gagnants.has(v.id)
+    };
+  });
+  const ordre = l => (l.vivant ? -1 : rang.get(l.id) ?? -0.5);
+  return lignes.sort((a, b) => (a.vivant !== b.vivant ? (a.vivant ? -1 : 1) : ordre(b) - ordre(a)) || a.nom.localeCompare(b.nom));
+}

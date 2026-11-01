@@ -529,7 +529,25 @@
       "Loups": "{n} wolf/wolves, {conseil} advised",
       "Trop": "More roles than seats: remove some.",
       "Distribuer": "Deal",
-      "PersonneConnecte": "No player connected."
+      "PersonneConnecte": "No player connected.",
+      "Voix": {
+        "Titre": "Voice",
+        "Desactivee": "Foundry voice chat is disabled in this world: nobody can hear each other.",
+        "Activer": "Enable audio",
+        "ActiverAide": "Switch the world to \"Audio only\" (no video at the Vigils). Voice rooms then follow the game. Each player picks a microphone in Configure Audio/Video › Client.",
+        "Activee": "Audio enabled: everyone can pick a microphone in Configure Audio/Video.",
+        "Muets": "No microphone permission: {noms}.",
+        "Micro": "Give players the microphone",
+        "MicroAide": "Grants \"Broadcast Audio\" to the Player role (by default only trusted players have it).",
+        "MicroDonne": "Players can now broadcast their microphone."
+      }
+    },
+    "Recit": {
+      "Titre": "The tale of the vigil",
+      "Resume": "{n} villagers, {tours} round(s) in the mist. The cards turn over:",
+      "Survivant": "alive on the last morning",
+      "Mort": "died in round {tour}, {cause}",
+      "IA": "AI player"
     }
   }
 }

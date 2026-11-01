@@ -298,6 +298,14 @@
 .chat-message .lakour-loups .carte-role-victoire { border-top: 1px dashed #4a3a33; margin-top: 0.4em; padding-top: 0.4em; }
 .chat-message .lakour-loups .carte-role-secret { margin: 0.5em 0 0; font-size: 0.8em; font-style: italic; color: #a99a84; }
 .chat-message .lakour-loups.annonce { font-family: "Modesto Condensed", Signika, serif; font-size: 1.15em; }
+/* Le récit de fin : une ligne par villageois, les vainqueurs en lumière, les morts estompés. */
+.chat-message .lakour-loups.annonce h3 { margin: 0 0 2px; border: 0; }
+.chat-message .lakour-loups .loups-recit { list-style: none; margin: 4px 0 0; padding: 0; font-family: Signika, sans-serif; font-size: 0.8em; }
+.chat-message .lakour-loups .loups-recit li { padding: 3px 6px; margin-bottom: 2px; border-left: 3px solid #8a7a5c; border-radius: 3px; background: rgba(0, 0, 0, 0.06); }
+.chat-message .lakour-loups .loups-recit li.camp-meute { border-left-color: #a33b2b; }
+.chat-message .lakour-loups .loups-recit li.camp-solitaire { border-left-color: #6b4f9a; }
+.chat-message .lakour-loups .loups-recit li.gagnant { background: rgba(217, 180, 90, 0.22); }
+.chat-message .lakour-loups .loups-recit li.mort { opacity: 0.75; }
 
 /* Pouvoirs de jour, effets de la nuit prochaine, carnet secret, alertes */
 .lakour-loups .loups-pouvoirs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
@@ -384,6 +392,7 @@
 .loups-bandeau-jeu .lb-bouton.principal { background: linear-gradient(#b8732f, #8a4f1f); border-color: var(--loups-lanterne); color: #fff7e6; }
 .loups-bandeau-jeu .lb-bouton:disabled { opacity: 0.45; cursor: default; }
 .loups-bandeau-jeu .lb-bouton.grise { opacity: 0.45; cursor: help; }
+.lakour-loups .loups-prep-voix { flex-wrap: wrap; gap: 6px; }
 .loups-bandeau-jeu .lb-bouton.discret { background: rgba(0, 0, 0, 0.25); border-color: var(--loups-bord); font-weight: normal; }
 .loups-bandeau-jeu .lb-bouton.icone { width: 28px; padding: 0; justify-content: center; }
 .loups-bandeau-jeu .lb-bouton i { font-size: 11px; }

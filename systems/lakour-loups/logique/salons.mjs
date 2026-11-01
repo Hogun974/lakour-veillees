@@ -124,3 +124,11 @@ export function ligneDe(etatPublic, secretsMJ, userId, table = {}) {
 export function lignesDeTous(etatPublic, secretsMJ, table = {}) {
   return Object.fromEntries((table.utilisateurs ?? []).map(u => [u.id, ligneDe(etatPublic, secretsMJ, u.id, table)]));
 }
+
+// La voix de Foundry est-elle prête pour une veillée ? mode : réglage monde « rtcWorldSettings ».mode (0 = désactivé) ;
+// utilisateurs : [{ nom, isGM, diffuse }] (diffuse : droit « Diffuser l'audio »). -> { desactive, muets: [nom], pret }
+export function diagnosticVoix({ mode = 0, utilisateurs = [] } = {}) {
+  const desactive = !Number(mode);
+  const muets = utilisateurs.filter(u => !u.isGM && !u.diffuse).map(u => u.nom);
+  return { desactive, muets, pret: !desactive && !muets.length };
+}

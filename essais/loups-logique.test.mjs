@@ -580,3 +580,18 @@ test("constantes : toutes les clés d'effet du contrat, partagées entre automat
     "voir-role-mort", "vote-double"]);
   assert.deepEqual([...L.EFFETS_NARRATEUR], [], "tous automatisés : le Messager à l'aube, le Juge de paix de jour");
 });
+
+test("récit de fin : survivants d'abord, puis le dernier tombé ; vraie cause ; vainqueurs par camp ou amoureux", () => {
+  const v = (id, camp, vivant = true, extra = {}) => ({ id, nom: id, camp, vivant, role: { nom: `rôle de ${id}` }, metier: { nom: "Forgeron" }, ...extra });
+  const villageois = [v("a", "village", false), v("b", "meute", false), v("c", "village"), v("d", "meute", false), v("e", "village")];
+  const morts = [{ acteurId: "a", tour: 1, cause: "nuit" }, { acteurId: "d", tour: 2, cause: "vote" }, { acteurId: "b", tour: 3, cause: "vote" }];
+  const bilan = L.bilanDePartie({ villageois, morts, causes: { a: "poison" }, vainqueur: "village" });
+  assert.deepEqual(bilan.map(l => l.id), ["c", "e", "b", "d", "a"]);
+  assert.deepEqual(bilan.filter(l => l.gagnant).map(l => l.id), ["c", "e", "a"], "tout le camp gagne, morts compris");
+  assert.equal(bilan.find(l => l.id === "a").mort.cause, "poison", "la vraie cause, enfin dévoilée");
+  assert.equal(bilan.find(l => l.id === "d").mort.tour, 2);
+  assert.equal(bilan[0].role, "rôle de c");
+  const amants = [v("x", "village", true, { amoureux: "y" }), v("y", "meute", true, { amoureux: "x" }), v("z", "village", false)];
+  assert.deepEqual(L.bilanDePartie({ villageois: amants, morts: [{ acteurId: "z", tour: 1 }], vainqueur: "x" }).filter(l => l.gagnant).map(l => l.id), ["x", "y"]);
+  assert.deepEqual(L.bilanDePartie({ villageois: amants, vainqueur: "" }).filter(l => l.gagnant), [], "pas de vainqueur");
+});

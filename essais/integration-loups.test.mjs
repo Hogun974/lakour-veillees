@@ -83,11 +83,15 @@ const secretsEmis = (depuis = 0) => emissions.slice(depuis).filter(e => e.type =
 // ------------------------------------------------------------------ invariants
 // Aucun chuchotement : Foundry livre chaque message de chat, chuchotements compris, à TOUS les navigateurs ; le secret
 // passe par le carnet (socket adressé). Aucun rôle secret dans un message public : un nom de rôle n'y paraît qu'à côté du
-// nom d'un villageois révélé qui l'a.
+// nom d'un villageois révélé qui l'a. Seule exception : le récit de fin, une fois la partie finie (toutes les cartes se retournent).
 function verifierMessage(m) {
   const texte = sansHTML(m.content);
   verifierTexte(texte, "chat");
   assert.ok(!m.whisper?.length, `chuchotement (livré à tous les navigateurs) : ${texte}`);
+  if (/loups-recit/.test(m.content)) {
+    assert.equal(game.lakourLoups.etat().phase, "fin", `récit de fin avant la fin : ${texte}`);
+    return;
+  }
   for (const a of villageois()) {
     const r = roleDe(a);
     if (!r || a.system.revele || !texte.includes(r.name)) continue;

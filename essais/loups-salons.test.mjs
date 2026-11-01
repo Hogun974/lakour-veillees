@@ -257,3 +257,11 @@ for (const [avant, apres, regle] of MUTATIONS) {
     assert.ok(echecs(L).length > 0, `la règle « ${regle} » cassée passe inaperçue`);
   });
 }
+
+test("voix du monde : audio désactivé, joueurs sans droit de micro (le MJ n'en a pas besoin)", () => {
+  const u = (nom, isGM, diffuse) => ({ nom, isGM, diffuse });
+  assert.deepEqual(L0.diagnosticVoix({ mode: 0, utilisateurs: [u("DEUS", true, true), u("Hogun974", false, false)] }),
+    { desactive: true, muets: ["Hogun974"], pret: false });
+  assert.deepEqual(L0.diagnosticVoix({ mode: 1, utilisateurs: [u("DEUS", true, false), u("Ana", false, true)] }), { desactive: false, muets: [], pret: true });
+  assert.equal(L0.diagnosticVoix({ mode: 3, utilisateurs: [] }).pret, true, "audio et vidéo : la voix marche aussi");
+});

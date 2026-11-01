@@ -242,6 +242,16 @@ test("vote : ouvrir, voter (votes forgés et morts refusés), clore, exécuter, 
   assert.equal(api.etat().phase, "fin");
   assert.equal(api.etat().vainqueur, "village");
   assert.ok(journalHooks.some(h => h.nom === "lakourLoups.victoire" && h.args[0] === "village"));
+  // Le récit de fin : chaque villageois, son rôle dévoilé, la vraie cause de sa mort, les vainqueurs marqués.
+  const recit = messages.filter(m => /loups-recit/.test(m.content)).at(-1)?.content ?? "";
+  assert.ok(recit, "le récit de fin est posté");
+  for (const a of game.actors.filter(x => x.type === "villageois")) {
+    assert.ok(recit.includes(a.name), `${a.name} est dans le récit`);
+    assert.ok(recit.includes(a.items.find(i => i.type === "role").name), `le rôle de ${a.name} est dévoilé`);
+  }
+  assert.match(recit, /mort de chagrin/, "la vraie cause");
+  assert.equal(await api.verifierVictoire(), "village");
+  assert.equal(messages.filter(m => /loups-recit/.test(m.content)).length, 1, "un seul récit, même si l'on revérifie");
 });
 
 test("resoudreNuit : Herboriste — un second poison ne verse rien, l'usage est rendu, le remède reste", async () => {

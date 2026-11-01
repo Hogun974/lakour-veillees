@@ -529,7 +529,25 @@
       "Loups": "{n} loup(s), {conseil} conseillé(s)",
       "Trop": "Plus de rôles que de places : retirez-en.",
       "Distribuer": "Distribuer",
-      "PersonneConnecte": "Aucun joueur connecté."
+      "PersonneConnecte": "Aucun joueur connecté.",
+      "Voix": {
+        "Titre": "Voix",
+        "Desactivee": "La voix de Foundry est désactivée dans ce monde : personne ne s'entend.",
+        "Activer": "Activer l'audio",
+        "ActiverAide": "Passe le monde en « Audio seulement » (pas de vidéo aux Veillées). Les salons vocaux suivent ensuite la partie. Chacun choisit son micro dans Configurer l'audio et la vidéo › Client.",
+        "Activee": "Audio activé : chacun peut choisir son micro dans Configurer l'audio et la vidéo.",
+        "Muets": "Sans droit de micro : {noms}.",
+        "Micro": "Donner le micro aux joueurs",
+        "MicroAide": "Accorde « Diffuser l'audio » au rôle Joueur (par défaut, seuls les joueurs de confiance l'ont).",
+        "MicroDonne": "Les joueurs peuvent maintenant diffuser leur micro."
+      }
+    },
+    "Recit": {
+      "Titre": "Le récit de la veillée",
+      "Resume": "{n} villageois, {tours} tour(s) dans la brume. Les cartes se retournent :",
+      "Survivant": "en vie au dernier matin",
+      "Mort": "mort au tour {tour}, {cause}",
+      "IA": "joueur IA"
     }
   }
 }

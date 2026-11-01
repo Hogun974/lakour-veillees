@@ -66,6 +66,19 @@
     {{#if preparation.equilibre}}<p class="loups-prep-equilibre verdict-{{preparation.equilibre.verdict}}"><i class="fa-solid fa-scale-balanced"></i> {{preparation.equilibre.texte}} · {{preparation.equilibre.loupsTexte}}</p>{{/if}}
     {{#if preparation.trop}}<p class="loups-alerte">{{localize "LAKOUR_LOUPS.Preparation.Trop"}}</p>{{/if}}
     {{/if}}
+    {{#unless preparation.voix.pret}}
+    <div class="loups-prep-ligne loups-prep-voix">
+      <span class="loups-etiquette"><i class="fa-solid fa-microphone"></i> {{localize "LAKOUR_LOUPS.Preparation.Voix.Titre"}}</span>
+      {{#if preparation.voix.desactive}}
+      <span>{{localize "LAKOUR_LOUPS.Preparation.Voix.Desactivee"}}</span>
+      <button type="button" class="loups-bouton discret" data-action="voixActiver" data-tooltip="{{localize 'LAKOUR_LOUPS.Preparation.Voix.ActiverAide'}}"><i class="fa-solid fa-microphone"></i> {{localize "LAKOUR_LOUPS.Preparation.Voix.Activer"}}</button>
+      {{/if}}
+      {{#if preparation.voix.muets}}
+      <span>{{localize "LAKOUR_LOUPS.Preparation.Voix.Muets" noms=preparation.voix.muets}}</span>
+      <button type="button" class="loups-bouton discret" data-action="voixMicro" data-tooltip="{{localize 'LAKOUR_LOUPS.Preparation.Voix.MicroAide'}}"><i class="fa-solid fa-user-check"></i> {{localize "LAKOUR_LOUPS.Preparation.Voix.Micro"}}</button>
+      {{/if}}
+    </div>
+    {{/unless}}
     <div class="loups-actions">
       <button type="button" data-action="distribuer" {{#unless preparation.peutDistribuer}}disabled{{/unless}}><i class="fa-solid fa-shuffle"></i> {{localize "LAKOUR_LOUPS.Preparation.Distribuer"}}</button>
     </div>

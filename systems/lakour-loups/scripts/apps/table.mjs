@@ -4,6 +4,7 @@
 // Le MJ y trouve aussi ses commandes : phases, aube, vote, vote de la Chapelle, éliminer, révéler, victoire, chronique.
 // Un joueur ne lit que l'état public : qui a voté (pas pour qui), son propre vote venant de son navigateur (prive.mjs).
 import { ID, PHASES } from "../../logique/constantes.mjs";
+import { diagnosticVoix } from "../../logique/salons.mjs";
 import {
   t, lireEtat, tousLesVillageois, monVillageois, roleDe, metierDe, roleVisible, libellePhase, libelleCamp, libelleCause, libelleVainqueur
 } from "../donnees.mjs";
@@ -40,7 +41,8 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
       distribuer: TableDeJeu.#distribuer, reveiller: TableDeJeu.#reveiller, reveillerTout: TableDeJeu.#reveillerTout,
       executer: TableDeJeu.#executer, emporter: TableDeJeu.#emporter, emporterPersonne: TableDeJeu.#emporterPersonne,
       prepCocher: TableDeJeu.#prepCocher, prepIA: TableDeJeu.#prepIA, prepRetirerIA: TableDeJeu.#prepRetirerIA,
-      prepMode: TableDeJeu.#prepMode, prepRole: TableDeJeu.#prepRole
+      prepMode: TableDeJeu.#prepMode, prepRole: TableDeJeu.#prepRole,
+      voixActiver: TableDeJeu.#voixActiver, voixMicro: TableDeJeu.#voixMicro
     }
   };
 
@@ -166,7 +168,8 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
         equilibre: eq && p.mode === "manuel" ? { ...eq, texte: t(`LAKOUR_LOUPS.Preparation.Equilibre.${eq.verdict}`, { somme: eq.somme >= 0 ? `+${eq.somme}` : String(eq.somme) }),
           loupsTexte: t("LAKOUR_LOUPS.Preparation.Loups", { n: eq.loups, conseil: eq.loupsConseilles }) } : null,
         trop: p.mode === "manuel" && Object.values(p.roles).reduce((a, b) => a + b, 0) > total,
-        peutDistribuer: total >= 1
+        peutDistribuer: total >= 1,
+        voix: voixDuMonde()
       };
     }
 
@@ -245,6 +248,8 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
   static #ouvrirVote() { return tenter(() => api().ouvrirVote({})); }
   static #voteChapelle() { return tenter(() => api().ouvrirVote({ objet: "chapelle" })); }
   static #cloreVote() { return cloreLeVote(); }
+  static async #voixActiver() { await activerVoix(); this.render(); }
+  static async #voixMicro() { await donnerMicro(); this.render(); }
   // Un pouvoir de jour : on choisit la cible (ou on écrit le dernier mot) ici, puis le MJ actif applique.
   static async #pouvoir(event, cible) {
     const pouvoir = cible.dataset.pouvoir;
@@ -370,6 +375,33 @@ export function cloreLeVote() {
     if (e.vote.ouvert || e.vote.resultat?.numero !== r.numero) return ui.notifications.info(t("LAKOUR_LOUPS.Table.VoteAnnule"));
     for (const id of r.elus) await api().eliminer(id, { cause: "vote" });
     await api().verifierVictoire();
+  });
+}
+
+// ---------------- la voix de Foundry (A/V) : prête pour la veillée ? Réparée d'un clic par le MJ.
+const AUDIO_SEUL = 1;
+function voixDuMonde() {
+  const d = diagnosticVoix({
+    mode: game.settings.get("core", "rtcWorldSettings")?.mode ?? 0,
+    utilisateurs: game.users.map(u => ({ nom: u.name, isGM: u.isGM, diffuse: u.can("BROADCAST_AUDIO") }))
+  });
+  return { ...d, muets: d.muets.join(", ") };
+}
+// Mode « Audio seulement » (pas de vidéo aux Veillées) ; Foundry reconnecte la voix chez chacun.
+export function activerVoix() {
+  return tenter(async () => {
+    const monde = foundry.utils.deepClone(game.settings.get("core", "rtcWorldSettings") ?? {});
+    await game.settings.set("core", "rtcWorldSettings", { ...monde, mode: AUDIO_SEUL });
+    ui.notifications.info(t("LAKOUR_LOUPS.Preparation.Voix.Activee"));
+  });
+}
+// Le droit de diffuser son micro, donné au rôle « Joueur » (par défaut, seuls les joueurs de confiance l'ont).
+export function donnerMicro() {
+  return tenter(async () => {
+    const droits = foundry.utils.deepClone(game.settings.get("core", "permissions") ?? {});
+    droits.BROADCAST_AUDIO = [...new Set([...(droits.BROADCAST_AUDIO ?? []), CONST.USER_ROLES.PLAYER])].sort((x, y) => x - y);
+    await game.settings.set("core", "permissions", droits);
+    ui.notifications.info(t("LAKOUR_LOUPS.Preparation.Voix.MicroDonne"));
   });
 }
 

@@ -1,19 +1,20 @@
-<div class="lakour-loups carte-role">
-  <header>
-    {{#if img}}<img src="{{img}}" alt="">{{/if}}
-    <div>
-      <div class="carte-role-qui">{{acteur}}</div>
-      <h3>{{role}}</h3>
-      <div class="carte-role-camp">{{camp}}</div>
-    </div>
-  </header>
-  <div class="carte-role-texte">{{{description}}}</div>
-  {{#if victoire}}<div class="carte-role-victoire"><strong>{{localize "LAKOUR_LOUPS.Role.Victoire"}}</strong>{{{victoire}}}</div>{{/if}}
-  <ul class="carte-role-details">
-    {{#if metier}}<li><strong>{{localize "LAKOUR_LOUPS.Fiche.Metier"}}</strong> {{metier}}</li>{{/if}}
-    {{#if maison}}<li><strong>{{localize "LAKOUR_LOUPS.Fiche.Maison"}}</strong> {{maison}}</li>{{/if}}
-    {{#if meute}}<li><strong>{{localize "LAKOUR_LOUPS.Fiche.Meute"}}</strong> {{meute}}</li>{{/if}}
-    {{#if prime}}<li><strong>{{localize "LAKOUR_LOUPS.Fiche.Prime"}}</strong> {{prime}}</li>{{/if}}
-  </ul>
-  <p class="carte-role-secret">{{localize "LAKOUR_LOUPS.Fiche.Secret"}}</p>
+<div class="lakour-loups carte-role {{#if (eq camp (localize "LAKOUR_LOUPS.Camps.meute"))}}camp-meute{{/if}}{{#if (eq camp (localize "LAKOUR_LOUPS.Camps.village"))}}camp-village{{/if}}{{#if (eq camp (localize "LAKOUR_LOUPS.Camps.solitaire"))}}camp-solitaire{{/if}}">
+  <div class="carte-role-face">
+    <header class="carte-role-bandeau">
+      <span class="carte-role-qui"><i class="fa-solid fa-user"></i> {{acteur}}</span>
+      <span class="carte-role-camp"><i class="fa-solid fa-flag"></i> {{camp}}</span>
+    </header>
+    {{#if img}}<div class="carte-role-illu"><img src="{{img}}" alt="{{role}}"></div>{{/if}}
+    <h3 class="carte-role-nom">{{role}}</h3>
+    <div class="carte-role-orne"><span></span><i class="fa-solid fa-moon"></i><span></span></div>
+    <div class="carte-role-texte">{{{description}}}</div>
+    {{#if victoire}}<div class="carte-role-victoire"><strong><i class="fa-solid fa-trophy"></i> {{localize "LAKOUR_LOUPS.Role.Victoire"}}</strong>{{{victoire}}}</div>{{/if}}
+    <ul class="carte-role-details">
+      {{#if metier}}<li><i class="fa-solid fa-hammer"></i><strong>{{localize "LAKOUR_LOUPS.Fiche.Metier"}}</strong> <span>{{metier}}</span></li>{{/if}}
+      {{#if maison}}<li><i class="fa-solid fa-door-closed"></i><strong>{{localize "LAKOUR_LOUPS.Fiche.Maison"}}</strong> <span>{{maison}}</span></li>{{/if}}
+      {{#if meute}}<li class="meute"><i class="fa-solid fa-paw"></i><strong>{{localize "LAKOUR_LOUPS.Fiche.Meute"}}</strong> <span>{{meute}}</span></li>{{/if}}
+      {{#if prime}}<li class="prime"><i class="fa-solid fa-crosshairs"></i><strong>{{localize "LAKOUR_LOUPS.Fiche.Prime"}}</strong> <span>{{prime}}</span></li>{{/if}}
+    </ul>
+    <p class="carte-role-secret"><i class="fa-solid fa-lock"></i> {{localize "LAKOUR_LOUPS.Fiche.Secret"}}</p>
+  </div>
 </div>

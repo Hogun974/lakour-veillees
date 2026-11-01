@@ -247,31 +247,184 @@
 .lakour-loups .loups-pied { display: flex; justify-content: flex-end; gap: 0.5em; }
 
 /* ------------------------------------------------------------------ fiches */
+/* Villageois, rôle, métier, bâtiment, et la carte de rôle remise au joueur : bois sombre et chandelle à la veillée
+   (thème sombre), parchemin à la lueur de la bougie (thème clair de Foundry, réglage « applications » ou celui de la fiche). */
+.lakour-loups.loups-fiche, .lakour-loups.carte-role {
+  --lf-teinte: var(--loups-lanterne);
+  --lf-tete-haut: rgba(240, 167, 66, 0.13);
+  --lf-tete-bas: rgba(21, 18, 26, 0);
+  --lf-grain: rgba(255, 236, 200, 0.025);
+  --lf-halo: rgba(240, 167, 66, 0.22);
+  --lf-brume: rgba(143, 163, 184, 0.10);
+  --lf-carte: linear-gradient(160deg, #2c2128, #1b161b);
+  --lf-face: #1c161b;
+  --lf-liseret: rgba(255, 236, 200, 0.05);
+  --lf-motif: rgba(240, 167, 66, 0.07);
+  --lf-ombre: rgba(0, 0, 0, 0.45);
+  --lf-pilule: rgba(0, 0, 0, 0.30);
+  --lf-pilule-cle: rgba(255, 236, 200, 0.06);
+  --lf-champ: rgba(0, 0, 0, 0.35);
+  --lf-encart: rgba(43, 33, 37, 0.55);
+  --lf-cadre-1: #3d2c22;
+  --lf-cadre-2: #1b1418;
+  --lf-cadre-bord: #5b4536;
+  --lf-soleil: #e8c46a;
+  --lf-vert: #b9d39a;
+  --lf-rouge: #f0b3a8;
+  --lf-bleu: #a9bdd2;
+  --lf-coeur: #ec98ad;
+}
+body.theme-light .application.lakour-loups.loups-fiche:not(.theme-dark),
+.application.lakour-loups.loups-fiche.theme-light,
+body.theme-light .lakour-loups.carte-role {
+  --loups-nuit: #f1e7d2;
+  --loups-nuit-2: #e7d9bd;
+  --loups-bois: #dfcaa4;
+  --loups-bord: #c2a67c;
+  --loups-parchemin: #2c1d14;
+  --loups-texte: #3b2a1e;
+  --loups-terne: #75604a;
+  --loups-lanterne: #a65d10;
+  --loups-lanterne-doux: rgba(166, 93, 16, 0.16);
+  --loups-rouille: #9a4322;
+  --loups-sang: #9b2b28;
+  --loups-mousse: #4d7631;
+  --loups-brume: #4a6480;
+  --loups-meute: #a3352a;
+  --loups-village: #4a7a2c;
+  --loups-solitaire: #7a4c9e;
+  --lf-tete-haut: rgba(166, 93, 16, 0.14);
+  --lf-tete-bas: rgba(241, 231, 210, 0);
+  --lf-grain: rgba(90, 60, 30, 0.035);
+  --lf-halo: rgba(255, 186, 84, 0.38);
+  --lf-brume: rgba(74, 100, 128, 0.10);
+  --lf-carte: linear-gradient(160deg, #fcf6ea, #efe2c8);
+  --lf-face: #fbf6ea;
+  --lf-liseret: rgba(120, 80, 40, 0.10);
+  --lf-motif: rgba(166, 93, 16, 0.10);
+  --lf-ombre: rgba(80, 50, 20, 0.20);
+  --lf-pilule: rgba(255, 250, 240, 0.75);
+  --lf-pilule-cle: rgba(120, 80, 40, 0.10);
+  --lf-champ: rgba(255, 252, 245, 0.80);
+  --lf-encart: rgba(255, 250, 240, 0.60);
+  --lf-cadre-1: #b98a56;
+  --lf-cadre-2: #7c5532;
+  --lf-cadre-bord: #6b4a2c;
+  --lf-soleil: #8f6a0e;
+  --lf-vert: #3f6a26;
+  --lf-rouge: #8f2622;
+  --lf-bleu: #3d5873;
+  --lf-coeur: #a8385a;
+}
+body.theme-light .application.lakour-loups.loups-fiche:not(.theme-dark) .window-header,
+.application.lakour-loups.loups-fiche.theme-light .window-header {
+  background: linear-gradient(90deg, #d8c29a, #ead9b6 60%, #d8c29a);
+}
+body.theme-light .application.lakour-loups.loups-fiche:not(.theme-dark),
+.application.lakour-loups.loups-fiche.theme-light {
+  box-shadow: 0 0 0 1px rgba(60, 40, 20, 0.5), 0 12px 32px rgba(60, 40, 20, 0.35);
+}
+.lakour-loups.loups-fiche .camp-meute, .lakour-loups.carte-role.camp-meute { --lf-teinte: var(--loups-meute); }
+.lakour-loups.loups-fiche .camp-village, .lakour-loups.carte-role.camp-village { --lf-teinte: var(--loups-village); }
+.lakour-loups.loups-fiche .camp-solitaire, .lakour-loups.carte-role.camp-solitaire { --lf-teinte: var(--loups-solitaire); }
+.lakour-loups.loups-fiche .metier { --lf-teinte: var(--loups-rouille); }
+.lakour-loups.loups-fiche .batiment { --lf-teinte: var(--loups-brume); }
+
 .lakour-loups.loups-fiche .window-content { overflow: hidden; }
 .lakour-loups .loups-fiche-corps { display: flex; flex-direction: column; height: 100%; }
-.lakour-loups .loups-fiche-tete {
-  display: flex; gap: 0.9em; align-items: center; padding: 0.9em 1em;
+.lakour-loups .loups-corps { padding: 0.9em 1em; overflow-y: auto; flex: 1; }
+.lakour-loups.loups-fiche [data-edit="img"] { cursor: pointer; }
+.lakour-loups.loups-fiche input[type="text"], .lakour-loups.loups-fiche input[type="number"], .lakour-loups.loups-fiche select { background: var(--lf-champ); }
+
+/* En-tête : portrait cerclé, halo de chandelle, grain du bois, brume au pied. */
+.lakour-loups.loups-fiche .loups-fiche-tete {
+  position: relative; display: flex; gap: 1.1em; align-items: center; padding: 1em 1.1em 1.15em;
   border-bottom: 1px solid var(--loups-bord);
-  background: linear-gradient(180deg, rgba(240, 167, 66, 0.10), transparent);
+  background:
+    radial-gradient(circle at 64px 50%, var(--lf-halo), transparent 150px),
+    repeating-linear-gradient(90deg, var(--lf-grain) 0 2px, transparent 2px 9px),
+    linear-gradient(180deg, var(--lf-tete-haut), var(--lf-tete-bas));
 }
-.lakour-loups .loups-fiche-tete.mort { background: linear-gradient(180deg, rgba(168, 49, 47, 0.18), transparent); }
-.lakour-loups .loups-fiche-tete.mort .loups-fiche-portrait { filter: grayscale(1); }
-.lakour-loups .loups-fiche-portrait {
-  width: 88px; height: 88px; object-fit: cover; border-radius: 50%; flex: none;
-  border: 2px solid var(--loups-lanterne); background: #000; box-shadow: 0 0 18px rgba(240, 167, 66, 0.25);
+.lakour-loups.loups-fiche .loups-fiche-tete::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 22px; pointer-events: none;
+  background: linear-gradient(180deg, transparent, var(--lf-brume));
 }
-.lakour-loups .loups-fiche-identite { flex: 1; min-width: 0; }
+.lakour-loups.loups-fiche .loups-fiche-tete.mort { --lf-halo: rgba(168, 49, 47, 0.24); }
+.lakour-loups.loups-fiche .loups-fiche-cadre { position: relative; flex: none; }
+.lakour-loups.loups-fiche .loups-fiche-portrait {
+  display: block; width: 104px; height: 104px; object-fit: cover; border-radius: 50%;
+  border: 3px solid var(--lf-teinte); background: #000;
+  box-shadow: 0 0 0 4px var(--loups-nuit), 0 0 0 5px var(--loups-bord), 0 0 26px var(--lf-halo);
+}
+.lakour-loups.loups-fiche .loups-fiche-tete.mort .loups-fiche-portrait { filter: grayscale(1) brightness(0.8); border-color: var(--loups-sang); }
+.lakour-loups.loups-fiche .loups-fiche-sceau {
+  position: absolute; right: 0; bottom: 0; width: 30px; height: 30px; display: grid; place-items: center;
+  border-radius: 50%; background: var(--loups-sang); color: #fff4ec; border: 2px solid var(--loups-nuit); font-size: 0.85em;
+}
+.lakour-loups .loups-fiche-identite { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.35em; }
 .lakour-loups .loups-fiche-nom {
-  font-family: var(--loups-titre); font-size: 2em; color: var(--loups-parchemin);
+  font-family: var(--loups-titre); font-size: 2.1em; line-height: 1.05; color: var(--loups-parchemin);
   width: 100%; height: auto; margin: 0; padding: 0; background: transparent; border: none; border-bottom: 1px solid transparent;
 }
+.lakour-loups.loups-fiche input.loups-fiche-nom { background: transparent; }
 .lakour-loups input.loups-fiche-nom:hover, .lakour-loups input.loups-fiche-nom:focus { border-bottom-color: var(--loups-bord); box-shadow: none; }
-.lakour-loups .loups-corps { padding: 0.9em 1em; overflow-y: auto; flex: 1; }
-.lakour-loups .loups-secret { border-color: #5b3f37; background: linear-gradient(160deg, rgba(74, 47, 34, 0.45), rgba(30, 25, 34, 0.6)); }
-.lakour-loups .loups-objet { display: flex; align-items: center; gap: 0.6em; margin-bottom: 0.5em; }
-.lakour-loups .loups-objet img { width: 44px; height: 44px; border-radius: 6px; border: 1px solid var(--loups-bord); cursor: pointer; }
-.lakour-loups .loups-objet > div { flex: 1; }
-.lakour-loups .loups-icone { width: 2em; height: 2em; padding: 0; background: transparent; border: 1px solid var(--loups-bord); border-radius: 4px; cursor: pointer; }
+.lakour-loups.loups-fiche .loups-fiche-joueur { color: var(--loups-terne); font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.08em; }
+.lakour-loups.loups-fiche .loups-fiche-joueur i { color: var(--loups-rouille); margin-right: 0.2em; }
+
+/* Pilules d'identité : étiquette à gauche, valeur à droite (Rôle · Camp · Métier · Maison). */
+.lakour-loups.loups-fiche .loups-pilules { display: flex; flex-wrap: wrap; gap: 0.35em; }
+.lakour-loups.loups-fiche .loups-pilule {
+  --lf-pilule-teinte: var(--loups-bord);
+  display: inline-flex; align-items: stretch; max-width: 100%; overflow: hidden;
+  border: 1px solid var(--lf-pilule-teinte); border-radius: 999px;
+  background: var(--lf-pilule); color: var(--loups-texte); font-size: 0.82em; line-height: 1.55; text-decoration: none;
+}
+.lakour-loups.loups-fiche .loups-pilule.role { --lf-pilule-teinte: var(--loups-lanterne); }
+.lakour-loups.loups-fiche .loups-pilule.camp { --lf-pilule-teinte: var(--lf-teinte); }
+.lakour-loups.loups-fiche .loups-pilule.metier { --lf-pilule-teinte: var(--loups-rouille); }
+.lakour-loups.loups-fiche a.loups-pilule { cursor: pointer; }
+.lakour-loups.loups-fiche a.loups-pilule:hover, .lakour-loups.loups-fiche a.loups-pilule:focus-visible {
+  box-shadow: 0 0 10px var(--loups-lanterne-doux); border-color: var(--loups-lanterne); text-shadow: none; outline: none;
+}
+.lakour-loups.loups-fiche .loups-pilule-cle {
+  display: inline-flex; align-items: center; gap: 0.3em; padding: 0.1em 0.55em;
+  background: var(--lf-pilule-cle); border-right: 1px solid var(--lf-pilule-teinte);
+  color: var(--loups-terne); font-size: 0.82em; text-transform: uppercase; letter-spacing: 0.07em; white-space: nowrap;
+}
+.lakour-loups.loups-fiche .loups-pilule-cle i { color: var(--lf-pilule-teinte); }
+.lakour-loups.loups-fiche .loups-pilule-val {
+  display: inline-flex; align-items: center; gap: 0.35em; min-width: 0; padding: 0.1em 0.75em 0.1em 0.5em;
+  color: var(--loups-parchemin); font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.lakour-loups.loups-fiche .loups-pilule.camp .loups-pilule-val { color: var(--lf-teinte); }
+.lakour-loups.loups-fiche .loups-pilule.cache .loups-pilule-val, .lakour-loups.loups-fiche .loups-pilule.vide .loups-pilule-val { color: var(--loups-terne); font-weight: normal; }
+.lakour-loups.loups-fiche .loups-pilule-val img { width: 1.35em; height: 1.35em; flex: none; object-fit: cover; border: none; border-radius: 50%; }
+
+/* Insignes d'état : vivant ou mort, rôle révélé, silence, protections (MJ), amoureux (soi-même, MJ). */
+.lakour-loups.loups-fiche .loups-insignes { display: flex; flex-wrap: wrap; gap: 0.3em; }
+.lakour-loups.loups-fiche .loups-insigne {
+  display: inline-flex; align-items: center; gap: 0.3em; padding: 0.05em 0.6em; border-radius: 4px;
+  border: 1px solid var(--loups-bord); background: var(--lf-pilule); color: var(--loups-texte);
+  font-size: 0.74em; text-transform: uppercase; letter-spacing: 0.05em;
+}
+.lakour-loups.loups-fiche .loups-insigne.vivant { border-color: var(--loups-mousse); color: var(--lf-vert); }
+.lakour-loups.loups-fiche .loups-insigne.mort { border-color: var(--loups-sang); color: var(--lf-rouge); }
+.lakour-loups.loups-fiche .loups-insigne.revele { border-color: var(--loups-lanterne); color: var(--loups-lanterne); }
+.lakour-loups.loups-fiche .loups-insigne.silence, .lakour-loups.loups-fiche .loups-insigne.protege { border-color: var(--loups-brume); color: var(--lf-bleu); }
+.lakour-loups.loups-fiche .loups-insigne.amoureux { border-color: var(--lf-coeur); color: var(--lf-coeur); text-transform: none; letter-spacing: 0; font-size: 0.8em; }
+
+/* Encarts du corps. */
+.lakour-loups.loups-fiche .loups-encart { background: var(--lf-encart); border-radius: 10px; }
+.lakour-loups.loups-fiche .loups-encart > h3 {
+  display: flex; align-items: center; gap: 0.3em; font-size: 1.25em;
+  margin: 0 0 0.55em; padding-bottom: 0.25em; border-bottom: 1px solid var(--loups-bord);
+}
+.lakour-loups.loups-fiche .loups-mj { border-style: dashed; }
+.lakour-loups .loups-icone {
+  width: 2em; height: 2em; padding: 0; line-height: 1; cursor: pointer;
+  background: transparent; border: 1px solid var(--loups-bord); border-radius: 4px;
+}
+.lakour-loups.loups-fiche .loups-icone:hover { border-color: var(--loups-sang); color: var(--lf-rouge); }
 .lakour-loups .loups-texte { line-height: 1.45; color: var(--loups-texte); }
 .lakour-loups .loups-texte p:first-child { margin-top: 0; }
 .lakour-loups .loups-texte.victoire { margin-top: 0.5em; padding-top: 0.5em; border-top: 1px dashed var(--loups-bord); }
@@ -281,22 +434,161 @@
 .lakour-loups .loups-champs label.large { grid-column: 1 / -1; }
 .lakour-loups .loups-mj { border-style: dashed; }
 .lakour-loups prose-mirror { min-height: 6em; background: rgba(0, 0, 0, 0.2); border-radius: 6px; color: var(--loups-texte); }
+.lakour-loups.loups-fiche prose-mirror { background: var(--lf-champ); }
 .lakour-loups prose-mirror .editor-content { padding: 0.4em 0.6em; }
 
-/* ------------------------------------------------------------------ messages du chat */
-.chat-message .lakour-loups.carte-role {
-  --loups-lanterne: #f0a742;
-  background: linear-gradient(160deg, #2a2026, #15121a); color: #e2d6bf;
-  border: 1px solid #4a3a33; border-radius: 8px; padding: 0.6em 0.7em;
+/* Atouts : les pouvoirs du rôle et du métier, en cartes. */
+.lakour-loups.loups-fiche .loups-atouts { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 0.7em; }
+.lakour-loups.loups-fiche .loups-atout {
+  position: relative; display: flex; flex-direction: column; gap: 0.45em; min-width: 0;
+  padding: 0.65em 0.75em 0.6em; border-radius: 10px;
+  background: var(--lf-carte); border: 1px solid var(--loups-bord); border-top: 3px solid var(--lf-teinte);
+  box-shadow: inset 0 0 0 3px var(--lf-liseret), 0 3px 10px var(--lf-ombre);
 }
-.chat-message .lakour-loups.carte-role header { display: flex; gap: 0.6em; align-items: center; }
-.chat-message .lakour-loups.carte-role header img { width: 48px; height: 48px; border: 1px solid #f0a742; border-radius: 6px; }
-.chat-message .lakour-loups.carte-role h3 { font-family: "Modesto Condensed", Signika, serif; font-size: 1.5em; color: #eadfc8; margin: 0; border: none; }
-.chat-message .lakour-loups .carte-role-qui, .chat-message .lakour-loups .carte-role-camp { font-size: 0.8em; color: #a99a84; text-transform: uppercase; letter-spacing: 0.06em; }
-.chat-message .lakour-loups .carte-role-camp { color: #f0a742; }
-.chat-message .lakour-loups .carte-role-details { list-style: none; padding: 0; margin: 0.5em 0 0; font-size: 0.9em; }
-.chat-message .lakour-loups .carte-role-victoire { border-top: 1px dashed #4a3a33; margin-top: 0.4em; padding-top: 0.4em; }
-.chat-message .lakour-loups .carte-role-secret { margin: 0.5em 0 0; font-size: 0.8em; font-style: italic; color: #a99a84; }
+.lakour-loups.loups-fiche .loups-atout-tete { display: grid; grid-template-columns: 54px minmax(0, 1fr) auto auto; gap: 0.6em; align-items: center; }
+.lakour-loups.loups-fiche .loups-atout-icone {
+  width: 54px; height: 54px; object-fit: cover; cursor: pointer; background: #000;
+  border: 1px solid var(--lf-teinte); border-radius: 8px;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--lf-teinte) 35%, transparent);
+}
+.lakour-loups.loups-fiche .loups-atout-type { font-size: 0.72em; text-transform: uppercase; letter-spacing: 0.08em; color: var(--loups-terne); }
+.lakour-loups.loups-fiche .loups-atout-type i { color: var(--lf-teinte); }
+.lakour-loups.loups-fiche .loups-atout-nom {
+  display: block; font-family: var(--loups-titre); font-size: 1.45em; line-height: 1.05;
+  color: var(--loups-parchemin); cursor: pointer; text-decoration: none; overflow-wrap: anywhere;
+}
+.lakour-loups.loups-fiche .loups-atout-nom:hover { color: var(--lf-teinte); text-shadow: none; }
+.lakour-loups.loups-fiche .loups-atout-secret { font-size: 0.78em; font-style: italic; color: var(--loups-terne); }
+.lakour-loups.loups-fiche .loups-atout-secret i { color: var(--loups-lanterne); }
+.lakour-loups.loups-fiche .loups-atout-ligne { margin: 0; font-size: 0.88em; color: var(--loups-terne); }
+.lakour-loups.loups-fiche .loups-atout-ligne i { color: var(--loups-rouille); }
+.lakour-loups.loups-fiche .loups-atout-ligne strong { color: var(--loups-parchemin); }
+.lakour-loups.loups-fiche .loups-atout .loups-icone { align-self: start; }
+.lakour-loups.loups-fiche .loups-atout-texte > summary { cursor: pointer; font-size: 0.8em; color: var(--loups-terne); }
+.lakour-loups.loups-fiche .loups-atout-texte > summary::marker { color: var(--lf-teinte); }
+.lakour-loups.loups-fiche .loups-atout-texte[open] > summary { margin-bottom: 0.3em; }
+.lakour-loups.loups-fiche .loups-atout-texte .loups-texte { min-height: 0; margin: 0; }
+.lakour-loups.loups-fiche .loups-atout.vide { justify-content: center; align-items: center; min-height: 90px; border-style: dashed; border-top-width: 1px; box-shadow: none; }
+.lakour-loups.loups-fiche .loups-atout.dos {
+  align-items: center; justify-content: center; min-height: 130px; text-align: center; border-top-color: var(--loups-bord);
+  background:
+    repeating-linear-gradient(45deg, var(--lf-motif) 0 2px, transparent 2px 12px),
+    repeating-linear-gradient(-45deg, var(--lf-motif) 0 2px, transparent 2px 12px),
+    var(--lf-carte);
+}
+.lakour-loups.loups-fiche .loups-dos-embleme {
+  width: 48px; height: 48px; display: grid; place-items: center; border-radius: 50%; font-size: 1.2em;
+  border: 2px solid var(--loups-lanterne); color: var(--loups-lanterne); background: var(--loups-nuit);
+  box-shadow: 0 0 0 4px var(--lf-liseret), 0 0 18px var(--loups-lanterne-doux);
+}
+.lakour-loups.loups-fiche .loups-atout.dos .loups-vide { margin: 0; }
+
+/* Marques (nuit, jour, cibles, effet) et jauge d'usages. */
+.lakour-loups.loups-fiche .loups-marques { display: flex; flex-wrap: wrap; gap: 0.25em; }
+.lakour-loups.loups-fiche .loups-marques:empty { display: none; }
+.lakour-loups.loups-fiche .loups-marque {
+  display: inline-flex; align-items: center; gap: 0.3em; padding: 0.05em 0.5em; border-radius: 4px;
+  border: 1px solid var(--loups-bord); background: var(--lf-pilule); color: var(--loups-texte); font-size: 0.75em;
+}
+.lakour-loups.loups-fiche .loups-marque.nuit { border-color: var(--loups-brume); color: var(--lf-bleu); }
+.lakour-loups.loups-fiche .loups-marque.jour { border-color: var(--lf-soleil); color: var(--lf-soleil); }
+.lakour-loups.loups-fiche .loups-marque.cibles i { color: var(--loups-rouille); }
+.lakour-loups.loups-fiche .loups-marque.effet { border-style: dashed; color: var(--loups-terne); }
+.lakour-loups.loups-fiche .loups-marque.victoire { border-color: var(--loups-solitaire); color: var(--loups-solitaire); }
+.lakour-loups.loups-fiche .loups-jauge { display: flex; flex-direction: column; align-items: flex-end; gap: 0.15em; color: var(--loups-terne); }
+.lakour-loups.loups-fiche .loups-jauge small { font-size: 0.72em; white-space: nowrap; }
+.lakour-loups.loups-fiche .loups-jauge-jetons { display: inline-flex; flex-wrap: wrap; justify-content: flex-end; gap: 3px; max-width: 92px; }
+.lakour-loups.loups-fiche .loups-jeton-usage { width: 11px; height: 11px; border-radius: 50%; border: 1px solid var(--loups-lanterne); background: transparent; }
+.lakour-loups.loups-fiche .loups-jeton-usage.plein {
+  background: radial-gradient(circle at 35% 30%, #ffe2a8, var(--loups-lanterne) 70%);
+  box-shadow: 0 0 6px var(--loups-lanterne-doux);
+}
+
+/* Fiches de rôle, métier, bâtiment : l'illustration dans un cadre de carte à jouer, le sceau du type au pied. */
+.lakour-loups.loups-fiche .loups-blason { align-items: stretch; padding-bottom: 1.5em; }
+.lakour-loups.loups-fiche .loups-carte-illu {
+  position: relative; flex: none; width: 112px; aspect-ratio: 5 / 7; padding: 5px; border-radius: 12px;
+  background: linear-gradient(160deg, var(--lf-cadre-1), var(--lf-cadre-2)); border: 1px solid var(--lf-cadre-bord);
+  box-shadow: 0 6px 16px var(--lf-ombre), 0 0 24px var(--lf-halo);
+}
+.lakour-loups.loups-fiche .loups-carte-image {
+  display: block; width: 100%; height: 100%; object-fit: cover; background: #000;
+  border: 1px solid var(--lf-teinte); border-radius: 8px;
+}
+.lakour-loups.loups-fiche .loups-carte-sceau {
+  position: absolute; left: 50%; bottom: -13px; transform: translateX(-50%);
+  width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; font-size: 0.8em;
+  background: var(--lf-teinte); color: #fff8ea; border: 2px solid var(--loups-nuit);
+}
+.lakour-loups.loups-fiche .loups-blason .loups-fiche-identite { justify-content: center; }
+.lakour-loups.loups-fiche .loups-carte-type { font-size: 0.75em; text-transform: uppercase; letter-spacing: 0.12em; color: var(--lf-teinte); }
+.lakour-loups.loups-fiche .loups-face h3 i { color: var(--loups-lanterne); }
+.lakour-loups.loups-fiche .loups-face.victoire h3 i { color: var(--loups-solitaire); }
+
+/* L'infobulle d'un pouvoir (texte enrichi du rôle ou du métier). L'infobulle de Foundry est toujours sombre. */
+#tooltip.loups-bulle {
+  max-width: 340px; padding: 0.6em 0.8em; text-align: left; font-size: 13px; line-height: 1.4;
+  background: linear-gradient(180deg, #2a1f24, #17131b); color: #e2d6bf;
+  border: 1px solid #6a4e3c; border-radius: 8px; box-shadow: 0 8px 22px rgba(0, 0, 0, 0.6), 0 0 18px rgba(240, 167, 66, 0.12);
+}
+#tooltip.loups-bulle p { margin: 0 0 0.4em; }
+#tooltip.loups-bulle p:last-child { margin-bottom: 0; }
+#tooltip.loups-bulle hr { border: none; border-top: 1px dashed #4a3a33; margin: 0.4em 0; }
+#tooltip.loups-bulle strong { color: #f0a742; }
+
+/* ------------------------------------------------------------------ carte de rôle (carnet secret du joueur) */
+.lakour-loups.carte-role {
+  max-width: 320px; margin: 0.3em auto; padding: 6px; border-radius: 14px;
+  background:
+    repeating-linear-gradient(90deg, var(--lf-grain) 0 2px, transparent 2px 8px),
+    linear-gradient(160deg, var(--lf-cadre-1), var(--lf-cadre-2));
+  border: 1px solid var(--lf-cadre-bord); box-shadow: 0 6px 18px var(--lf-ombre);
+  color: var(--loups-texte); font-family: Signika, sans-serif; font-size: 13px; line-height: 1.4;
+}
+.lakour-loups.carte-role .carte-role-face {
+  position: relative; padding: 0.55em 0.7em 0.6em; border-radius: 9px; border: 1px solid var(--lf-teinte);
+  background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--lf-teinte) 20%, transparent), transparent 65%), var(--lf-face);
+  box-shadow: inset 0 0 0 3px var(--lf-liseret);
+}
+.lakour-loups.carte-role .carte-role-bandeau {
+  display: flex; justify-content: space-between; gap: 0.5em; margin-bottom: 0.45em;
+  font-size: 0.72em; text-transform: uppercase; letter-spacing: 0.08em; color: var(--loups-terne);
+}
+.lakour-loups.carte-role .carte-role-qui { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lakour-loups.carte-role .carte-role-camp { color: var(--lf-teinte); font-weight: bold; white-space: nowrap; }
+.lakour-loups.carte-role .carte-role-illu {
+  aspect-ratio: 4 / 3; overflow: hidden; background: #000;
+  border: 1px solid var(--lf-teinte); border-radius: 8px;
+  box-shadow: 0 0 18px color-mix(in srgb, var(--lf-teinte) 30%, transparent);
+}
+.lakour-loups.carte-role .carte-role-illu img { display: block; width: 100%; height: 100%; object-fit: cover; border: none; }
+.lakour-loups.carte-role .carte-role-nom {
+  margin: 0.3em 0 0; font-family: var(--loups-titre); font-size: 1.9em; line-height: 1; text-align: center;
+  color: var(--loups-parchemin); border: none;
+}
+.lakour-loups.carte-role .carte-role-orne { display: flex; align-items: center; gap: 0.5em; margin: 0.25em 0 0.45em; font-size: 0.75em; color: var(--lf-teinte); }
+.lakour-loups.carte-role .carte-role-orne span { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--lf-teinte), transparent); }
+.lakour-loups.carte-role .carte-role-texte p { margin: 0 0 0.4em; }
+.lakour-loups.carte-role .carte-role-victoire { margin-top: 0.4em; padding-top: 0.4em; border-top: 1px dashed var(--loups-bord); }
+.lakour-loups.carte-role .carte-role-victoire strong { display: block; margin-bottom: 0.15em; color: var(--lf-teinte); }
+.lakour-loups.carte-role .carte-role-details {
+  display: grid; gap: 0.2em; list-style: none; margin: 0.5em 0 0; padding: 0.4em 0 0;
+  border-top: 1px solid var(--loups-bord); font-size: 0.92em;
+}
+.lakour-loups.carte-role .carte-role-details:empty { display: none; }
+.lakour-loups.carte-role .carte-role-details li { display: grid; grid-template-columns: 1.2em auto minmax(0, 1fr); gap: 0.35em; align-items: baseline; }
+.lakour-loups.carte-role .carte-role-details i { color: var(--lf-teinte); text-align: center; }
+.lakour-loups.carte-role .carte-role-details li.meute i { color: var(--loups-meute); }
+.lakour-loups.carte-role .carte-role-details strong { color: var(--loups-terne); font-weight: normal; }
+.lakour-loups.carte-role .carte-role-details span { color: var(--loups-parchemin); font-weight: bold; }
+.lakour-loups.carte-role .carte-role-secret { margin: 0.55em 0 0; text-align: center; font-size: 0.78em; font-style: italic; color: var(--loups-terne); }
+.lakour-loups.carte-role .carte-role-secret i { color: var(--loups-lanterne); }
+/* Les cartes déjà rangées dans un carnet avant cette mise en page (sans face) : en-tête compact. */
+.lakour-loups.carte-role > header { display: flex; gap: 0.6em; align-items: center; padding: 0.4em; }
+.lakour-loups.carte-role > header img { width: 48px; height: 48px; object-fit: cover; border: 1px solid var(--loups-lanterne); border-radius: 6px; }
+.lakour-loups.carte-role > header h3 { margin: 0; font-size: 1.5em; border: none; }
+
+/* ------------------------------------------------------------------ messages du chat */
 .chat-message .lakour-loups.annonce { font-family: "Modesto Condensed", Signika, serif; font-size: 1.15em; }
 /* Le récit de fin : une ligne par villageois, les vainqueurs en lumière, les morts estompés. */
 .chat-message .lakour-loups.annonce h3 { margin: 0 0 2px; border: 0; }

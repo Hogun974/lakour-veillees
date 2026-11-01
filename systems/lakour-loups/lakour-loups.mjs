@@ -23,6 +23,7 @@ import { surReponse } from "./scripts/apps/choix.mjs";
 import { brancherParole } from "./scripts/parole.mjs";
 import { brancherInfobulle } from "./scripts/infobulle.mjs";
 import { brancherSalons, rafraichirSalons } from "./scripts/salons.mjs";
+import { brancherImmersion } from "./scripts/immersion.mjs";
 
 // ------------------------------------------------------------------ rafraîchissement des fenêtres
 let voteEtaitOuvert = false;
@@ -95,6 +96,7 @@ Hooks.once("init", () => {
   brancherParole();
   brancherInfobulle();
   brancherSalons();
+  brancherImmersion();   // brume, lueurs, tremblement (v14), chez chaque client
   foundry.applications.handlebars.loadTemplates([`systems/${ID}/templates/carte-role.hbs`]);
 });
 

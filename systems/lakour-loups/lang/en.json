@@ -185,7 +185,12 @@
       "Etat": "State (narrator)",
       "Notes": "Public notes",
       "Retirer": "Remove",
-      "Compagnon": "AI companion"
+      "Compagnon": "AI companion",
+      "Pouvoirs": "Powers",
+      "LireTexte": "Read the text",
+      "NuitOrdre": "Night · order {ordre}",
+      "Cibles": "Targets: {n}",
+      "Protege": "Protected ×{n}"
     },
     "Role": {
       "Pouvoir": "Power",

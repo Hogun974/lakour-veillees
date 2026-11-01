@@ -1,4 +1,6 @@
 // Fiches du système : villageois (rôle visible seulement du propriétaire et du MJ), rôle, métier, bâtiment.
+// Mise en page façon carte à jouer : en-tête avec portrait et « pilules » (Rôle · Camp · Métier · Maison), état en
+// insignes, pouvoirs en cartes (« atouts ») avec icône, usages restants et texte en infobulle.
 import { ID, CAMPS, EFFETS, VICTOIRES } from "../../logique/constantes.mjs";
 import { t, roleDe, metierDe, libelleCamp, lireEtat, roleVisible } from "../donnees.mjs";
 import { mesSecrets } from "../prive.mjs";
@@ -14,12 +16,47 @@ function choixEffets(actuel) {
   if (actuel && !(actuel in liste)) liste[actuel] = actuel;
   return liste;
 }
+const libelleEffet = e => (!e ? "" : EFFETS.includes(e) ? t(`LAKOUR_LOUPS.Effets.${e}`) : e);
+
+// Usages d'un pouvoir : « 1 / 2 » et une rangée de jetons (pleins = restants), jusqu'à 10.
+function usagesDe(objet) {
+  const { max = 0, restant = 0 } = objet?.system?.usages ?? {};
+  if (!(max > 0)) return { usages: "", jetons: [] };
+  return { usages: `${restant} / ${max}`, jetons: max <= 10 ? Array.from({ length: max }, (_, i) => ({ plein: i < restant })) : [] };
+}
+
+// Le rythme d'un pouvoir : la nuit (l'ordre de réveil chez le MJ seulement), le jour, le nombre de cibles.
+function rythmeDe(objet, gm) {
+  const s = objet?.system ?? {}, liste = [];
+  const marque = (classe, icone, texte) => liste.push({ classe, icone, texte });
+  if (s.nuit?.actif) {
+    marque("nuit", "fa-moon", gm ? t("LAKOUR_LOUPS.Fiche.NuitOrdre", { ordre: s.nuit.ordre }) : t("LAKOUR_LOUPS.Role.Actif"));
+    if (s.nuit.premiereNuitSeulement) marque("nuit", "fa-hourglass-start", t("LAKOUR_LOUPS.Role.PremiereNuit"));
+    if (s.nuit.uneNuitSurDeux) marque("nuit", "fa-circle-half-stroke", t("LAKOUR_LOUPS.Role.UneNuitSurDeux"));
+    if (s.nuit.soiMeme) marque("nuit", "fa-user", t("LAKOUR_LOUPS.Role.SoiMeme"));
+  }
+  if (s.jour?.actif) marque("jour", "fa-sun", t("LAKOUR_LOUPS.Metier.PouvoirDeJour"));
+  const cibles = s.nuit?.actif ? s.nuit.cibles : s.jour?.actif ? s.jour.cibles : 0;
+  if (cibles > 0) marque("cibles", "fa-crosshairs", t("LAKOUR_LOUPS.Fiche.Cibles", { n: cibles }));
+  return liste;
+}
+
+// Une carte de pouvoir (rôle ou métier) : icône, nom, rythme, usages, texte enrichi (et en infobulle).
+async function atout(objet, gm) {
+  const description = await enrichir(objet.system.description, objet);
+  const victoire = objet.system.victoire ? await enrichir(objet.system.victoire, objet) : "";
+  const bulle = victoire ? `${description}<hr><p><strong>${t("LAKOUR_LOUPS.Role.Victoire")}</strong></p>${victoire}` : description;
+  return {
+    id: objet.id, nom: objet.name, img: objet.img, description, victoire, bulle,
+    ...usagesDe(objet), rythme: rythmeDe(objet, gm), effet: gm ? libelleEffet(objet.system.effet) : ""
+  };
+}
 
 // ------------------------------------------------------------------ villageois
 export class FicheVillageois extends HandlebarsApplicationMixin(ActorSheetV2) {
   static DEFAULT_OPTIONS = {
     classes: [ID, "loups-fiche", "loups-fiche-villageois"],
-    position: { width: 600, height: 680 },
+    position: { width: 640, height: 720 },
     window: { resizable: true },
     form: { submitOnChange: true },
     actions: { ouvrirObjet: FicheVillageois.#ouvrirObjet, retirerObjet: FicheVillageois.#retirerObjet }
@@ -29,32 +66,44 @@ export class FicheVillageois extends HandlebarsApplicationMixin(ActorSheetV2) {
 
   async _prepareContext(options) {
     const contexte = await super._prepareContext(options);
-    const a = this.document;
+    const a = this.document, s = a.system;
     const gm = game.user.isGM;
-    const voitRole = lireEtat().phase === "fin" || roleVisible(a);
+    const etat = lireEtat();
+    const voitRole = etat.phase === "fin" || roleVisible(a);
     const role = roleDe(a), metier = metierDe(a);
     // La prime n'est pas dans l'état public : le MJ actif la connaît, le joueur la tient de son carnet secret.
-    const prime = gm ? lireEtat().primes?.[a.id] ?? "" : (a.isOwner && a.system.joueur === game.user.id ? mesSecrets().prime : "");
+    const prime = gm ? etat.primes?.[a.id] ?? "" : (a.isOwner && s.joueur === game.user.id ? mesSecrets().prime : "");
+    const amoureuxNom = (a.isOwner || gm) && s.amoureux ? game.actors.get(s.amoureux)?.name ?? "" : "";
+    // Un joueur ne reçoit jamais le document entier (rôle, camp, amoureux y sont) : seulement les champs publics.
+    const { document: _document, model: _modele, source: _source, ...publics } = contexte;
+    const insigne = (classe, icone, texte, bulle = "") => ({ classe, icone, texte, bulle });
+    const etats = [
+      s.vivant ? insigne("vivant", "fa-heart-pulse", t("LAKOUR_LOUPS.Fiche.Vivant")) : insigne("mort", "fa-cross", t("LAKOUR_LOUPS.Table.Mort")),
+      s.revele && insigne("revele", "fa-eye", t("LAKOUR_LOUPS.Fiche.Revele")),
+      s.silence && insigne("silence", "fa-comment-slash", t("LAKOUR_LOUPS.Table.Silence")),
+      gm && s.protections > 0 && insigne("protege", "fa-shield-halved", t("LAKOUR_LOUPS.Fiche.Protege", { n: s.protections }), t("LAKOUR_LOUPS.Fiche.Protections")),
+      amoureuxNom && insigne("amoureux", "fa-heart", amoureuxNom, t("LAKOUR_LOUPS.Fiche.Amoureux"))
+    ].filter(Boolean);
+    const vueRole = voitRole && role ? await atout(role, gm) : null;
+    const vueMetier = metier ? await atout(metier, gm) : null;
     return {
-      ...contexte,
-      acteur: a, system: a.system, gm, proprietaire: a.isOwner, voitRole,
+      ...(gm ? contexte : publics),
+      acteur: { id: a.id, uuid: a.uuid, name: a.name, img: a.img },
+      system: gm ? s : { joueur: s.joueur, compagnon: s.compagnon, vivant: s.vivant, revele: s.revele, silence: s.silence, maison: s.maison, notes: s.notes },
+      gm, proprietaire: a.isOwner, voitRole,
       editable: this.isEditable,
-      role: voitRole && role ? {
-        id: role.id, nom: role.name, img: role.img, camp: libelleCamp(role.system.camp),
-        description: await enrichir(role.system.description, role),
-        victoire: role.system.victoire ? await enrichir(role.system.victoire, role) : "",
-        usages: role.system.usages.max > 0 ? `${role.system.usages.restant} / ${role.system.usages.max}` : ""
-      } : null,
-      metier: metier ? { id: metier.id, nom: metier.name, img: metier.img, description: await enrichir(metier.system.description, metier),
-        usages: metier.system.usages.max > 0 ? `${metier.system.usages.restant} / ${metier.system.usages.max}` : "" } : null,
-      campLibelle: voitRole ? libelleCamp(a.system.camp) : "",
-      camps: choixCamps(),
-      joueurs: Object.fromEntries([["", t("LAKOUR_LOUPS.Fiche.Personne")], ...game.users.filter(u => !u.isGM).map(u => [u.id, u.name])]),
-      joueurNom: game.users.get(a.system.joueur)?.name ?? t(a.system.compagnon ? "LAKOUR_LOUPS.Fiche.Compagnon" : "LAKOUR_LOUPS.Fiche.Personne"),
-      autres: Object.fromEntries([["", "—"], ...game.actors.filter(x => x.type === "villageois" && x.id !== a.id).map(x => [x.id, x.name])]),
-      amoureuxNom: (a.isOwner || gm) && a.system.amoureux ? game.actors.get(a.system.amoureux)?.name ?? "" : "",
+      role: vueRole ? { ...vueRole, camp: libelleCamp(role.system.camp), campCle: role.system.camp } : null,
+      metier: vueMetier,
+      campLibelle: voitRole ? libelleCamp(s.camp) : "",
+      campCle: voitRole ? s.camp : "",
+      etats,
+      camps: gm ? choixCamps() : {},
+      joueurs: gm ? Object.fromEntries([["", t("LAKOUR_LOUPS.Fiche.Personne")], ...game.users.filter(u => !u.isGM).map(u => [u.id, u.name])]) : {},
+      joueurNom: game.users.get(s.joueur)?.name ?? t(s.compagnon ? "LAKOUR_LOUPS.Fiche.Compagnon" : "LAKOUR_LOUPS.Fiche.Personne"),
+      autres: gm ? Object.fromEntries([["", "—"], ...game.actors.filter(x => x.type === "villageois" && x.id !== a.id).map(x => [x.id, x.name])]) : {},
+      amoureuxNom,
       prime: prime ? game.actors.get(prime)?.name ?? "" : "",
-      notesEnrichies: await enrichir(a.system.notes, a)
+      notesEnrichies: await enrichir(s.notes, a)
     };
   }
 
@@ -84,7 +133,7 @@ export class FicheVillageois extends HandlebarsApplicationMixin(ActorSheetV2) {
 class FicheObjet extends HandlebarsApplicationMixin(ItemSheetV2) {
   static DEFAULT_OPTIONS = {
     classes: [ID, "loups-fiche", "loups-fiche-objet"],
-    position: { width: 560, height: 640 },
+    position: { width: 580, height: 660 },
     window: { resizable: true },
     form: { submitOnChange: true }
   };
@@ -97,9 +146,13 @@ class FicheObjet extends HandlebarsApplicationMixin(ItemSheetV2) {
   async _prepareContext(options) {
     const contexte = await super._prepareContext(options);
     const i = this.document;
+    const gm = game.user.isGM;
     const enrichis = {};
     for (const champ of ["description", "victoire", "regle"]) if (champ in i.system) enrichis[champ] = await enrichir(i.system[champ], i);
-    return { ...contexte, objet: i, system: i.system, editable: this.isEditable, gm: game.user.isGM, enrichis, effets: choixEffets(i.system.effet) };
+    return {
+      ...contexte, objet: i, system: i.system, editable: this.isEditable, gm, enrichis, effets: choixEffets(i.system.effet),
+      ...usagesDe(i), rythme: rythmeDe(i, gm), effetLibelle: gm ? libelleEffet(i.system.effet) : ""
+    };
   }
 }
 

@@ -1,17 +1,29 @@
 <div class="loups-fiche-corps">
-  <header class="loups-fiche-tete">
-    <img class="loups-fiche-portrait" src="{{objet.img}}" alt="" {{#if editable}}data-action="editImage" data-edit="img"{{/if}}>
+  <header class="loups-fiche-tete loups-blason metier">
+    <div class="loups-carte-illu">
+      <img class="loups-carte-image" src="{{objet.img}}" alt="{{objet.name}}" {{#if editable}}data-action="editImage" data-edit="img"{{/if}}>
+      <span class="loups-carte-sceau"><i class="fa-solid fa-hammer"></i></span>
+    </div>
     <div class="loups-fiche-identite">
+      <div class="loups-carte-type">{{localize "TYPES.Item.metier"}}</div>
       {{#if editable}}<input class="loups-fiche-nom" type="text" name="name" value="{{objet.name}}">{{else}}<h1 class="loups-fiche-nom">{{objet.name}}</h1>{{/if}}
-      <div class="loups-pastilles">
-        <span class="loups-pastille"><i class="fa-solid fa-hammer"></i> {{localize "TYPES.Item.metier"}}</span>
-        {{#if system.jour.actif}}<span class="loups-pastille jour"><i class="fa-solid fa-sun"></i> {{localize "LAKOUR_LOUPS.Metier.PouvoirDeJour"}}</span>{{/if}}
+      <div class="loups-pilules">
+        {{#if usages}}
+        <span class="loups-pilule usages" data-tooltip-text="{{localize 'LAKOUR_LOUPS.Role.UsagesRestant'}}">
+          <span class="loups-pilule-cle"><i class="fa-solid fa-hourglass-half"></i> {{localize "LAKOUR_LOUPS.Fiche.Usages"}}</span>
+          <span class="loups-pilule-val"><span class="loups-jauge-jetons">{{#each jetons}}<span class="loups-jeton-usage {{#if plein}}plein{{/if}}"></span>{{/each}}</span> {{usages}}</span>
+        </span>
+        {{/if}}
+      </div>
+      <div class="loups-marques">
+        {{#each rythme}}<span class="loups-marque {{classe}}"><i class="fa-solid {{icone}}"></i> {{texte}}</span>{{/each}}
+        {{#if effetLibelle}}<span class="loups-marque effet" data-tooltip-text="{{localize 'LAKOUR_LOUPS.Role.Effet'}}"><i class="fa-solid fa-gears"></i> {{effetLibelle}}</span>{{/if}}
       </div>
     </div>
   </header>
   <div class="loups-corps">
-    <section class="loups-encart">
-      <h3>{{localize "LAKOUR_LOUPS.Metier.Savoir"}}</h3>
+    <section class="loups-encart loups-face">
+      <h3><i class="fa-solid fa-screwdriver-wrench"></i> {{localize "LAKOUR_LOUPS.Metier.Savoir"}}</h3>
       {{#if editable}}
       <prose-mirror name="system.description" value="{{system.description}}" toggled data-document-uuid="{{objet.uuid}}">{{{enrichis.description}}}</prose-mirror>
       {{else}}<div class="loups-texte">{{{enrichis.description}}}</div>{{/if}}

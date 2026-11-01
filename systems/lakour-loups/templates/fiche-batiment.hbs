@@ -1,22 +1,35 @@
 <div class="loups-fiche-corps">
-  <header class="loups-fiche-tete">
-    <img class="loups-fiche-portrait" src="{{objet.img}}" alt="" {{#if editable}}data-action="editImage" data-edit="img"{{/if}}>
+  <header class="loups-fiche-tete loups-blason batiment">
+    <div class="loups-carte-illu">
+      <img class="loups-carte-image" src="{{objet.img}}" alt="{{objet.name}}" {{#if editable}}data-action="editImage" data-edit="img"{{/if}}>
+      <span class="loups-carte-sceau"><i class="fa-solid fa-landmark"></i></span>
+    </div>
     <div class="loups-fiche-identite">
+      <div class="loups-carte-type">{{localize "TYPES.Item.batiment"}}</div>
       {{#if editable}}<input class="loups-fiche-nom" type="text" name="name" value="{{objet.name}}">{{else}}<h1 class="loups-fiche-nom">{{objet.name}}</h1>{{/if}}
-      <div class="loups-pastilles">
-        <span class="loups-pastille"><i class="fa-solid fa-landmark"></i> {{localize "TYPES.Item.batiment"}}</span>
-        {{#if system.repere}}<span class="loups-pastille"><i class="fa-solid fa-location-dot"></i> {{system.repere}}</span>{{/if}}
+      <div class="loups-pilules">
+        {{#if system.repere}}
+        <span class="loups-pilule repere">
+          <span class="loups-pilule-cle"><i class="fa-solid fa-location-dot"></i> {{localize "LAKOUR_LOUPS.Batiment.Repere"}}</span>
+          <span class="loups-pilule-val">{{system.repere}}</span>
+        </span>
+        {{/if}}
       </div>
+      {{#if effetLibelle}}
+      <div class="loups-marques">
+        <span class="loups-marque effet" data-tooltip-text="{{localize 'LAKOUR_LOUPS.Role.Effet'}}"><i class="fa-solid fa-gears"></i> {{effetLibelle}}</span>
+      </div>
+      {{/if}}
     </div>
   </header>
   <div class="loups-corps">
-    <section class="loups-encart">
-      <h3>{{localize "LAKOUR_LOUPS.Batiment.Lieu"}}</h3>
+    <section class="loups-encart loups-face">
+      <h3><i class="fa-solid fa-tree-city"></i> {{localize "LAKOUR_LOUPS.Batiment.Lieu"}}</h3>
       {{#if editable}}
       <prose-mirror name="system.description" value="{{system.description}}" toggled data-document-uuid="{{objet.uuid}}">{{{enrichis.description}}}</prose-mirror>
       {{else}}<div class="loups-texte">{{{enrichis.description}}}</div>{{/if}}
     </section>
-    <section class="loups-encart">
+    <section class="loups-encart loups-face regle">
       <h3><i class="fa-solid fa-scroll"></i> {{localize "LAKOUR_LOUPS.Batiment.Regle"}}</h3>
       {{#if editable}}
       <prose-mirror name="system.regle" value="{{system.regle}}" toggled data-document-uuid="{{objet.uuid}}">{{{enrichis.regle}}}</prose-mirror>

@@ -185,7 +185,12 @@
       "Etat": "État (narrateur)",
       "Notes": "Notes publiques",
       "Retirer": "Retirer",
-      "Compagnon": "compagnon IA"
+      "Compagnon": "compagnon IA",
+      "Pouvoirs": "Pouvoirs",
+      "LireTexte": "Lire le texte",
+      "NuitOrdre": "Nuit · ordre {ordre}",
+      "Cibles": "Cibles : {n}",
+      "Protege": "Protégé ×{n}"
     },
     "Role": {
       "Pouvoir": "Pouvoir",

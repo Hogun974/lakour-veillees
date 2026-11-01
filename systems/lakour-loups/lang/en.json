@@ -550,6 +550,15 @@
       "Survivant": "alive on the last morning",
       "Mort": "died in round {tour}, {cause}",
       "IA": "AI player"
+    },
+    "Chroniques": {
+      "Titre": "Chronicles of Brumecombe",
+      "Palmares": "Hall of fame",
+      "Intro": "Vigils told here: {n}. AI players are not ranked.",
+      "Vide": "No player has finished a vigil yet.",
+      "Veillee": "Vigil of {date}",
+      "Lien": "Every vigil and the hall of fame: {lien}.",
+      "Colonnes": { "Joueur": "Player", "Veillees": "Vigils", "Victoires": "Wins", "Survies": "Alive on the last morning", "Meute": "In the pack" }
     }
   }
 }

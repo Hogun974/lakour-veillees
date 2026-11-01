@@ -77,7 +77,9 @@ const roleDe = a => a?.items.find(i => i.type === "role") ?? null;
 const metierDe = a => a?.items.find(i => i.type === "metier") ?? null;
 const villageois = () => game.actors.filter(a => a.type === "villageois");
 const vivantsIds = () => new Set(villageois().filter(a => a.system.vivant).map(a => a.id));
-const sansHTML = s => String(s ?? "").replace(/<[^>]*>/g, " ");
+// Ce que lit un joueur : sans balises, et un lien @UUID[…]{nom} réduit à son nom, comme Foundry l'affiche (un lien sans nom
+// garde son uuid brut, que verifierTexte refuse).
+const sansHTML = s => String(s ?? "").replace(/<[^>]*>/g, " ").replace(/@UUID\[[^\]]+\]\{([^}]+)\}/g, "$1");
 const secretsEmis = (depuis = 0) => emissions.slice(depuis).filter(e => e.type === "secret");
 
 // ------------------------------------------------------------------ invariants

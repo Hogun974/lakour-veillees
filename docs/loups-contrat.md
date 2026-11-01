@@ -155,6 +155,8 @@ eliminer(acteurId, { cause, reveler })    -> vivant=false, ajoute aux morts, ré
                                             réglage monde "lakour-loups.revelerALaMort", true) ; tue l'amoureux lié en cascade
 proteger(acteurId) / reduireAuSilence(acteurId) / changerCamp(acteurId, camp) / echangerRoles(a, b)
 verifierVictoire()                        -> "village" | "meute" | acteurId (solitaire) | "" ; écrit vainqueur et phase "fin" si gagné
+                                            ; à la victoire : récit de fin au chat, et la veillée entre aux Chroniques de
+                                            Brumecombe (journal lisible par tous, palmarès ; réglage "chroniques", scripts/chroniques.mjs)
 ouvrirTable()                             -> ouvre la Table de jeu (fenêtre ApplicationV2) chez soi
 ```
 resolveurs.compagnon                     -> fonction fournie par le MJ IA : (demande) -> [acteurId] (choix de nuit, vote) ou

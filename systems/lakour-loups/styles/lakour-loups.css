@@ -300,12 +300,15 @@
 .chat-message .lakour-loups.annonce { font-family: "Modesto Condensed", Signika, serif; font-size: 1.15em; }
 /* Le récit de fin : une ligne par villageois, les vainqueurs en lumière, les morts estompés. */
 .chat-message .lakour-loups.annonce h3 { margin: 0 0 2px; border: 0; }
-.chat-message .lakour-loups .loups-recit { list-style: none; margin: 4px 0 0; padding: 0; font-family: Signika, sans-serif; font-size: 0.8em; }
-.chat-message .lakour-loups .loups-recit li { padding: 3px 6px; margin-bottom: 2px; border-left: 3px solid #8a7a5c; border-radius: 3px; background: rgba(0, 0, 0, 0.06); }
-.chat-message .lakour-loups .loups-recit li.camp-meute { border-left-color: #a33b2b; }
-.chat-message .lakour-loups .loups-recit li.camp-solitaire { border-left-color: #6b4f9a; }
-.chat-message .lakour-loups .loups-recit li.gagnant { background: rgba(217, 180, 90, 0.22); }
-.chat-message .lakour-loups .loups-recit li.mort { opacity: 0.75; }
+.lakour-loups .loups-recit { list-style: none; margin: 4px 0 0; padding: 0; font-family: Signika, sans-serif; font-size: 0.8em; }
+.lakour-loups .loups-recit li { padding: 3px 6px; margin-bottom: 2px; border-left: 3px solid #8a7a5c; border-radius: 3px; background: rgba(0, 0, 0, 0.06); }
+.lakour-loups .loups-recit li.camp-meute { border-left-color: #a33b2b; }
+.lakour-loups .loups-recit li.camp-solitaire { border-left-color: #6b4f9a; }
+.lakour-loups .loups-recit li.gagnant { background: rgba(217, 180, 90, 0.22); }
+.lakour-loups .loups-recit li.mort { opacity: 0.75; }
+.lakour-loups .loups-palmares { width: 100%; border-collapse: collapse; }
+.lakour-loups .loups-palmares th, .lakour-loups .loups-palmares td { padding: 3px 6px; text-align: center; border-bottom: 1px solid rgba(0, 0, 0, 0.15); }
+.lakour-loups .loups-palmares th:first-child, .lakour-loups .loups-palmares td:first-child { text-align: left; }
 
 /* Pouvoirs de jour, effets de la nuit prochaine, carnet secret, alertes */
 .lakour-loups .loups-pouvoirs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }

@@ -92,6 +92,19 @@ export class FauxJeton {
   update(c, o) { return this.parent.updateEmbeddedDocuments("Token", [{ _id: this.id, ...c }], o).then(r => r[0]); }
 }
 
+// Un journal du monde (les Chroniques) : pages texte, drapeaux, propriété.
+export class FauxJournal {
+  constructor(d) {
+    this.id = nouvelId(); this.uuid = `JournalEntry.${this.id}`; this.name = d.name; this.flags = structuredClone(d.flags ?? {});
+    this.ownership = structuredClone(d.ownership ?? {}); this.pages = new Collection();
+    this.ajouter(d.pages ?? []);
+  }
+  ajouter(pages) { for (const p of pages) { const page = { ...structuredClone(p), id: nouvelId() }; this.pages.set(page.id, page); } }
+  getFlag(scope, cle) { return this.flags?.[scope]?.[cle]; }
+  async createEmbeddedDocuments(type, pages) { this.ajouter(pages); return pages; }
+  async deleteEmbeddedDocuments(type, ids) { for (const id of ids) this.pages.delete(id); return ids; }
+}
+
 export class FausseScene {
   constructor({ nom = "Scène", plan = null, module = MODULE_CONTENU, cle = "village-de-brumecombe", obscurite = 0.55, taille = 100 } = {}) {
     this.id = nouvelId(); this.name = nom; this.documentName = "Scene";
@@ -263,7 +276,7 @@ export function installerFoundry({ joueurs = 6, contenu = false } = {}) {
   };
   const items = new Collection();
   globalThis.game = {
-    user: mj, users, actors: new Collection(), items, ready: true, system: { id: "lakour-loups" },
+    user: mj, users, actors: new Collection(), items, journal: new Collection(), ready: true, system: { id: "lakour-loups" },
     i18n: { localize: c => formater(c), format: formater, has: c => typeof chemin(FR, c) === "string" },
     settings: {
       register(id, cle, conf) { reglages.set(`${id}.${cle}`, { valeur: structuredClone(conf.default), conf }); },
@@ -311,6 +324,7 @@ export function installerFoundry({ joueurs = 6, contenu = false } = {}) {
   globalThis.CONST = { DOCUMENT_OWNERSHIP_LEVELS: { NONE: 0, LIMITED: 1, OBSERVER: 2, OWNER: 3 }, TOKEN_DISPOSITIONS: { NEUTRAL: 0 },
     TOKEN_DISPLAY_MODES: { NONE: 0, CONTROL: 10, OWNER_HOVER: 20, HOVER: 30, OWNER: 40, ALWAYS: 50 } };
   globalThis.Actor = { implementation: { create: async d => { const a = new FauxActeur(d); game.actors.set(a.id, a); return a; } } };
+  globalThis.JournalEntry = { implementation: { create: async d => { const j = new FauxJournal(d); game.journal.set(j.id, j); return j; } } };
   globalThis.ChatMessage = { implementation: { create: async m => { messages.push(m); return m; } } };
   globalThis.fromUuid = async uuid => resoudreUuid(uuid);
   globalThis.fromUuidSync = uuid => resoudreUuid(uuid);

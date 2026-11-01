@@ -550,6 +550,15 @@
       "Survivant": "en vie au dernier matin",
       "Mort": "mort au tour {tour}, {cause}",
       "IA": "joueur IA"
+    },
+    "Chroniques": {
+      "Titre": "Chroniques de Brumecombe",
+      "Palmares": "Palmarès",
+      "Intro": "Les veillées racontées ici : {n}. Les joueurs IA n'entrent pas au palmarès.",
+      "Vide": "Aucun joueur n'a encore fini une veillée.",
+      "Veillee": "Veillée du {date}",
+      "Lien": "Toutes les veillées et le palmarès : {lien}.",
+      "Colonnes": { "Joueur": "Joueur", "Veillees": "Veillées", "Victoires": "Victoires", "Survies": "En vie au dernier matin", "Meute": "Dans la meute" }
     }
   }
 }

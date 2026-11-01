@@ -56,6 +56,8 @@ export function enregistrerReglages(quandEtatChange) {
   });
   // Rôles et bâtiments des dernières parties (jamais qui avait quoi), pour varier les compositions (nouvellePartie).
   game.settings.register(ID, "historique", { scope: "world", config: false, type: Array, default: [] });
+  // Les veillées finies, racontées dans le journal des Chroniques (scripts/chroniques.mjs) : les 50 dernières.
+  game.settings.register(ID, "chroniques", { scope: "world", config: false, type: Array, default: [] });
   game.settings.register(ID, "annoncesEnChat", {
     name: "LAKOUR_LOUPS.Reglages.AnnoncesEnChat.Nom", hint: "LAKOUR_LOUPS.Reglages.AnnoncesEnChat.Aide",
     scope: "world", config: true, type: Boolean, default: true

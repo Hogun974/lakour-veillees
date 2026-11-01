@@ -252,6 +252,37 @@ test("vote : ouvrir, voter (votes forgés et morts refusés), clore, exécuter, 
   assert.match(recit, /mort de chagrin/, "la vraie cause");
   assert.equal(await api.verifierVictoire(), "village");
   assert.equal(messages.filter(m => /loups-recit/.test(m.content)).length, 1, "un seul récit, même si l'on revérifie");
+  // Les Chroniques : la veillée entre au journal, lisible par tous, et le récit y renvoie.
+  const chroniques = game.journal.find(j => j.getFlag("lakour-loups", "chroniques"));
+  assert.ok(chroniques, "le journal des Chroniques est créé");
+  assert.equal(chroniques.ownership.default, CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER, "tous peuvent le lire");
+  assert.ok(recit.includes(`@UUID[${chroniques.uuid}]`), "le récit renvoie aux Chroniques");
+  const [palmares, veillee, ...reste] = chroniques.pages.contents.sort((a, b) => a.sort - b.sort);
+  assert.equal(reste.length, 0, "le palmarès et une veillée");
+  assert.match(palmares.text.content, /loups-palmares/);
+  for (const a of game.actors.filter(x => x.type === "villageois")) assert.ok(veillee.text.content.includes(a.name));
+  const sauve = game.settings.get("lakour-loups", "chroniques");
+  assert.equal(sauve.length, 1, "consignée une fois, même si l'on revérifie");
+  assert.equal(sauve[0].lignes.find(l => l.nom === garde.name).joueur, game.users.get(garde.system.joueur).name, "le nom du joueur");
+  assert.ok(sauve[0].lignes.every(l => !("id" in l)), "pas d'identifiants d'acteurs : la partie suivante les efface");
+});
+
+test("Chroniques : une veillée de plus récrit le journal (palmarès, la plus récente d'abord), 50 au plus", async () => {
+  const { consignerVeillee, MAX_CHRONIQUES } = await import("../systems/lakour-loups/scripts/chroniques.mjs");
+  const ligne = (joueur, gagnant) => ({ nom: `V-${joueur}`, joueur, role: "Villageois", camp: "village", metier: "", vivant: true, mort: null, gagnant });
+  const j1 = await consignerVeillee({ quand: Date.UTC(2026, 9, 1), tours: 3, vainqueur: "Le village", lignes: [ligne("Ana", true), ligne("", false)] });
+  const j2 = await consignerVeillee({ quand: Date.UTC(2026, 10, 1), tours: 5, vainqueur: "La meute", lignes: [ligne("Ana", false), ligne("Bo", true)] });
+  assert.equal(j2, j1, "le même journal");
+  assert.equal(game.journal.size, 1);
+  const pages = j2.pages.contents.sort((a, b) => a.sort - b.sort);
+  assert.equal(pages.length, 3);
+  assert.match(pages[1].text.content, /La meute/, "la plus récente d'abord");
+  assert.match(pages[2].text.content, /Le village/);
+  assert.match(pages[0].text.content, /Ana/);
+  assert.doesNotMatch(pages[0].text.content, /joueur IA/, "les joueurs IA hors du palmarès");
+  for (let i = 0; i < MAX_CHRONIQUES; i++) await consignerVeillee({ quand: i, tours: 1, vainqueur: "x", lignes: [] });
+  assert.equal(game.settings.get("lakour-loups", "chroniques").length, MAX_CHRONIQUES);
+  assert.equal(j2.pages.size, MAX_CHRONIQUES + 1, "les anciennes pages ne s'empilent pas");
 });
 
 test("resoudreNuit : Herboriste — un second poison ne verse rien, l'usage est rendu, le remède reste", async () => {

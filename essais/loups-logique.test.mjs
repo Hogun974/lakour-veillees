@@ -595,3 +595,18 @@ test("récit de fin : survivants d'abord, puis le dernier tombé ; vraie cause ;
   assert.deepEqual(L.bilanDePartie({ villageois: amants, morts: [{ acteurId: "z", tour: 1 }], vainqueur: "x" }).filter(l => l.gagnant).map(l => l.id), ["x", "y"]);
   assert.deepEqual(L.bilanDePartie({ villageois: amants, vainqueur: "" }).filter(l => l.gagnant), [], "pas de vainqueur");
 });
+
+test("palmarès : par joueur humain, le plus de victoires puis le meilleur taux ; survies et parties dans la meute", () => {
+  const l = (joueur, gagnant, extra = {}) => ({ joueur, gagnant, vivant: false, camp: "village", ...extra });
+  const chroniques = [
+    { lignes: [l("Ana", true, { vivant: true }), l("Bo", false, { camp: "meute" }), l("", true), l("Cy", true)] },
+    { lignes: [l("Ana", false, { camp: "meute" }), l("Bo", true, { camp: "meute", vivant: true }), l("Cy", true)] },
+    { lignes: [l("Ana", true), l("Bo", false)] }
+  ];
+  const p = L.palmares(chroniques);
+  assert.deepEqual(p.map(x => x.joueur), ["Cy", "Ana", "Bo"], "2 victoires sur 2, puis 2 sur 3, puis 1 sur 3 ; pas de joueur IA");
+  assert.deepEqual(p.find(x => x.joueur === "Ana"), { joueur: "Ana", parties: 3, victoires: 2, survies: 1, meute: 1 });
+  assert.deepEqual(p.find(x => x.joueur === "Bo"), { joueur: "Bo", parties: 3, victoires: 1, survies: 1, meute: 2 });
+  assert.deepEqual(L.palmares([]), []);
+  assert.deepEqual(L.palmares([{ lignes: [l("Dé", false), l("Al", false)] }]).map(x => x.joueur), ["Al", "Dé"], "à égalité : par nom");
+});

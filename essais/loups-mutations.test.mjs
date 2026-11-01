@@ -147,6 +147,11 @@ const VERIFICATIONS = {
     const e = { ...L.ajouterAction(L.etatInitial(), { acteurId: "a", roleCle: "meute", cibles: ["b"] }), primes: { c: "b" } };
     assert.deepEqual(L.etatPublic(e).nuit.actions, []);
     assert.deepEqual(L.etatPublic(e).primes, {});
+  },
+  "palmarès des Chroniques": L => {
+    const l = (joueur, gagnant, vivant = false) => ({ joueur, gagnant, vivant, camp: "village" });
+    const p = L.palmares([{ lignes: [l("A", true), l("B", false, true), l("", true)] }, { lignes: [l("A", false), l("C", true)] }]);
+    assert.deepEqual(p.map(x => [x.joueur, x.parties, x.victoires, x.survies]), [["C", 1, 1, 0], ["A", 2, 1, 0], ["B", 1, 0, 1]]);
   }
 };
 
@@ -203,7 +208,10 @@ const MUTATIONS = [
   ["etat.mjs", "if (v.finit && maintenant > v.finit) return { etat, ok: false, raison: \"temps\" };", "", "minuteur"],
   ["etat.mjs", "if (phase !== \"vote\") etat.vote.ouvert = false;", "", "fermeture du vote"],
   ["etat.mjs", "(double ?? Boolean(etat.voteDoubleDemain))", "Boolean(double)", "cloche"],
-  ["etat.mjs", "for (const cle of [\"asperges\", \"primes\", ", "for (const cle of [\"asperges\", ", "secrets cachés"]
+  ["etat.mjs", "for (const cle of [\"asperges\", \"primes\", ", "for (const cle of [\"asperges\", ", "secrets cachés"],
+  ["victoire.mjs", "if (!l.joueur) continue;", "", "palmarès sans joueurs IA"],
+  ["victoire.mjs", "b.victoires - a.victoires || b.victoires / b.parties - a.victoires / a.parties", "b.victoires - a.victoires", "palmarès : le meilleur taux"],
+  ["victoire.mjs", "if (l.vivant) p.survies++;", "", "palmarès : survies"]
 ];
 
 async function chargerMutant(fichier, avant, apres) {

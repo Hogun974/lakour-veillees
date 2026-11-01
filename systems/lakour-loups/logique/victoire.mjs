@@ -58,6 +58,26 @@ export function verifierVictoire({ villageois = [], morts = [], primes = {} } = 
 // Le récit de fin de partie : chacun, son rôle, son camp, son métier, son sort (la vraie cause, enfin dévoilée) et s'il est
 // parmi les vainqueurs. Les survivants d'abord, puis les morts du dernier tombé au premier.
 // -> [{ id, nom, role, camp, metier, vivant, mort: { tour, phase, cause } | null, gagnant }]
+// Le palmarès des Chroniques : par joueur humain (les joueurs IA n'y figurent pas), ses veillées, ses victoires, ses
+// survies (en vie au dernier matin) et ses parties dans la meute. Le plus de victoires d'abord, puis le meilleur taux.
+// chroniques : [{ lignes: [{ joueur, camp, vivant, gagnant }] }].
+export function palmares(chroniques = []) {
+  const parJoueur = new Map();
+  for (const c of chroniques) {
+    for (const l of c?.lignes ?? []) {
+      if (!l.joueur) continue;
+      const p = parJoueur.get(l.joueur) ?? { joueur: l.joueur, parties: 0, victoires: 0, survies: 0, meute: 0 };
+      p.parties++;
+      if (l.gagnant) p.victoires++;
+      if (l.vivant) p.survies++;
+      if (l.camp === "meute") p.meute++;
+      parJoueur.set(l.joueur, p);
+    }
+  }
+  return [...parJoueur.values()].sort((a, b) => b.victoires - a.victoires || b.victoires / b.parties - a.victoires / a.parties
+    || a.joueur.localeCompare(b.joueur));
+}
+
 export function bilanDePartie({ villageois = [], morts = [], causes = {}, vainqueur = "" } = {}) {
   const parId = new Map(villageois.map(v => [v.id, v]));
   const gagnants = new Set();

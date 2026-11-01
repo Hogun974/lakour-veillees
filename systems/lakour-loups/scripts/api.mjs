@@ -23,6 +23,7 @@ import {
 import { ouvrirChoix, fermerChoix } from "./apps/choix.mjs";
 import { audibilite, audibiliteActeur } from "./salons.mjs";
 import { ouvrirTable } from "./apps/table.mjs";
+import { consignerVeillee, listeDuRecit } from "./chroniques.mjs";
 import {
   planifierMiseEnScene, attendreMiseEnScene, mettreEnScene, configurerPlateau, reglerDelais, sceneDuVillage, voulu, imageNeutre, imageDuJeton
 } from "./plateau.mjs";
@@ -310,18 +311,18 @@ function nomDuPouvoir(pouvoir, acteur) {
   return game.i18n.has(cle) ? t(cle) : pouvoir;
 }
 
+// Le bilan de la partie finie, avec le nom du joueur de chacun ("" : un joueur IA) : le récit au chat et les Chroniques.
+function lignesDeFin(etat) {
+  return L.bilanDePartie({ villageois: villageoisAPlat(), morts: etat.morts, causes: etat.causes, vainqueur: etat.vainqueur })
+    .map(({ id, ...l }) => ({ ...l, joueur: game.users.get(game.actors.get(id)?.system.joueur)?.name ?? "" }));
+}
+
 // Le récit de fin, posté au chat à la victoire : les cartes se retournent (rôle, camp, métier, vraie cause de chaque mort),
-// les vainqueurs marqués d'une coupe. Joueur humain ou joueur IA, pour qu'on sache qui était qui autour de la table.
-function recitDeFin(etat) {
-  const lignes = L.bilanDePartie({ villageois: villageoisAPlat(), morts: etat.morts, causes: etat.causes, vainqueur: etat.vainqueur });
-  const joueur = id => game.users.get(game.actors.get(id)?.system.joueur)?.name ?? t("LAKOUR_LOUPS.Recit.IA");
-  const items = lignes.map(l => {
-    const sort = l.vivant ? t("LAKOUR_LOUPS.Recit.Survivant") : t("LAKOUR_LOUPS.Recit.Mort", { tour: l.mort.tour || "?", cause: libelleCause(l.mort.cause) });
-    const qui = [l.role, libelleCamp(l.camp), l.metier].filter(Boolean).map(echapper).join(" · ");
-    return `<li class="camp-${echapper(l.camp)}${l.gagnant ? " gagnant" : ""}${l.vivant ? "" : " mort"}">${l.gagnant ? "🏆 " : ""}<strong>${echapper(l.nom)}</strong> `
-      + `<small>(${echapper(joueur(l.id))})</small><br>${qui} — <em>${echapper(sort)}</em></li>`;
-  }).join("");
-  return `<h3>${t("LAKOUR_LOUPS.Recit.Titre")}</h3><p>${t("LAKOUR_LOUPS.Recit.Resume", { n: lignes.length, tours: etat.tour })}</p><ul class="loups-recit">${items}</ul>`;
+// les vainqueurs marqués d'une coupe. Joueur humain ou joueur IA, pour qu'on sache qui était qui autour de la table ; puis
+// le lien vers les Chroniques, où la veillée vient d'entrer.
+function recitDeFin(etat, lignes, chroniques = null) {
+  const lien = chroniques ? `<p>${t("LAKOUR_LOUPS.Chroniques.Lien", { lien: `@UUID[${chroniques.uuid}]{${echapper(chroniques.name)}}` })}</p>` : "";
+  return `<h3>${t("LAKOUR_LOUPS.Recit.Titre")}</h3><p>${t("LAKOUR_LOUPS.Recit.Resume", { n: lignes.length, tours: etat.tour })}</p>${listeDuRecit(lignes)}${lien}`;
 }
 
 // Ce que fait un pouvoir de jour : la description de l'objet rôle, métier ou bâtiment, en texte brut (infobulles).
@@ -954,8 +955,12 @@ export const api = {
       const etat = await modifierEtat(x => L.journaliser(L.declarerVainqueur(x, g), libelleVainqueur(g)));
       annoncer("lakourLoups.victoire", [g, etat], [g, L.etatPublic(etat)]);
       await annonceChat(`<strong>${echapper(libelleVainqueur(g))}</strong>`);
-      // La partie est finie : le récit retourne toutes les cartes (le plateau montre déjà chaque rôle sur son jeton).
-      await annonceChat(recitDeFin(etat));
+      // La partie est finie : le récit retourne toutes les cartes (le plateau montre déjà chaque rôle sur son jeton), et
+      // la veillée entre dans les Chroniques de Brumecombe (un échec n'empêche pas le récit).
+      const lignes = lignesDeFin(etat);
+      const chroniques = await consignerVeillee({ quand: Date.now(), tours: etat.tour, vainqueur: libelleVainqueur(g), lignes })
+        .catch(e => { console.warn(`${ID} | chroniques`, e); return null; });
+      await annonceChat(recitDeFin(etat, lignes, chroniques));
     }
     return g;
   },

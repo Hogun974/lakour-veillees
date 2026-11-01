@@ -16,12 +16,12 @@
   </div>
   <div class="lb-boutons">
     {{#each pouvoirs}}
-    <button type="button" class="lb-bouton {{#unless possible}}grise{{/unless}}" data-action="bandeauPouvoir" data-pouvoir="{{pouvoir}}" {{#unless possible}}aria-disabled="true" title="{{raison}}"{{/unless}}><i class="fa-solid {{icone}}"></i> {{libelle}}</button>
+    <button type="button" class="lb-bouton {{#unless possible}}grise{{/unless}}" data-action="bandeauPouvoir" data-pouvoir="{{pouvoir}}" {{#unless possible}}aria-disabled="true" data-raison="{{raison}}"{{/unless}} {{#if aide}}data-tooltip="{{aide}}" data-tooltip-direction="DOWN"{{/if}}><i class="fa-solid {{icone}}"></i> {{libelle}}</button>
     {{/each}}
     {{#each boutons}}
-    <button type="button" class="lb-bouton {{#if principal}}principal{{/if}}" data-action="{{action}}" {{#if principal}}{{#unless @root.pret}}disabled{{/unless}}{{/if}}><i class="fa-solid {{icone}}"></i> {{libelle}}</button>
+    <button type="button" class="lb-bouton {{#if principal}}principal{{/if}}" data-action="{{action}}" data-tooltip="{{aide}}" data-tooltip-direction="DOWN" {{#if principal}}{{#unless @root.pret}}disabled{{/unless}}{{/if}}><i class="fa-solid {{icone}}"></i> {{libelle}}</button>
     {{/each}}
-    {{#if monRole}}<button type="button" class="lb-bouton discret" data-action="bandeauRole" title="{{localize 'LAKOUR_LOUPS.Bandeau.MonRoleAide'}}"><i class="fa-solid fa-mask"></i> {{localize "LAKOUR_LOUPS.Bandeau.MonRole"}}</button>{{/if}}
-    <button type="button" class="lb-bouton discret icone" data-action="bandeauTable" title="{{localize 'LAKOUR_LOUPS.Table.Titre'}}" aria-label="{{localize 'LAKOUR_LOUPS.Table.Titre'}}"><i class="fa-solid fa-fire-flame-curved"></i></button>
+    {{#if monRole}}<button type="button" class="lb-bouton discret" data-action="bandeauRole" data-tooltip="{{localize 'LAKOUR_LOUPS.Bandeau.MonRoleAide'}}" data-tooltip-direction="DOWN"><i class="fa-solid fa-mask"></i> {{localize "LAKOUR_LOUPS.Bandeau.MonRole"}}</button>{{/if}}
+    <button type="button" class="lb-bouton discret icone" data-action="bandeauTable" data-tooltip="{{localize 'LAKOUR_LOUPS.Table.Titre'}}" data-tooltip-direction="DOWN" aria-label="{{localize 'LAKOUR_LOUPS.Table.Titre'}}"><i class="fa-solid fa-fire-flame-curved"></i></button>
   </div>
 </div>

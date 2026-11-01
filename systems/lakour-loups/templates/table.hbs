@@ -150,7 +150,7 @@
         <h3><i class="fa-solid fa-hand-sparkles"></i> {{localize "LAKOUR_LOUPS.Table.Pouvoirs"}}</h3>
         <ul class="loups-pouvoirs">
           {{#each pouvoirs}}
-          <li><button type="button" class="loups-bouton {{#unless possible}}discret{{/unless}}" data-action="pouvoir" data-pouvoir="{{pouvoir}}" {{#unless possible}}title="{{raison}}"{{/unless}}>{{nom}}</button>{{#unless possible}} <small>{{raison}}</small>{{/unless}}</li>
+          <li><button type="button" class="loups-bouton {{#unless possible}}discret{{/unless}}" data-action="pouvoir" data-pouvoir="{{pouvoir}}" {{#if description}}data-tooltip="{{description}}"{{/if}}>{{nom}}</button>{{#unless possible}} <small>{{raison}}</small>{{/unless}}</li>
           {{/each}}
         </ul>
       </section>

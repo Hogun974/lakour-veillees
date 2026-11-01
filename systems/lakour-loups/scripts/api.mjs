@@ -17,7 +17,7 @@ import { reglage } from "./reglages.mjs";
 import { garderSecrets, secretsMJ } from "./secrets.mjs";
 import { noterMonVote } from "./prive.mjs";
 import {
-  t, tousLesVillageois, roleDe, metierDe, villageoisAPlat, lireEtat, lirePublic, monVillageois, clesDesBatiments,
+  t, texteBrut, tousLesVillageois, roleDe, metierDe, villageoisAPlat, lireEtat, lirePublic, monVillageois, clesDesBatiments,
   libellePhase, libelleCamp, libelleCause, libelleVainqueur
 } from "./donnees.mjs";
 import { ouvrirChoix, fermerChoix } from "./apps/choix.mjs";
@@ -308,6 +308,14 @@ function nomDuPouvoir(pouvoir, acteur) {
   if (def?.source === "role") return roleDe(acteur)?.name ?? pouvoir;
   const cle = `LAKOUR_LOUPS.Batiments.${pouvoir}`;
   return game.i18n.has(cle) ? t(cle) : pouvoir;
+}
+
+// Ce que fait un pouvoir de jour : la description de l'objet rôle, métier ou bâtiment, en texte brut (infobulles).
+function descriptionDuPouvoir(pouvoir, acteur) {
+  const source = L.POUVOIRS_JOUR[pouvoir]?.source;
+  const objet = source === "metier" ? metierDe(acteur) : source === "role" ? roleDe(acteur)
+    : (lirePublic().batiments ?? []).map(u => { try { return fromUuidSync(u); } catch { return null; } }).find(d => d?.system?.cle === pouvoir);
+  return texteBrut(objet?.system?.description);
 }
 
 // ------------------------------------------------------------------ nouvelle partie
@@ -935,7 +943,7 @@ export const api = {
   },
 
   // ---------------------------------------------------------------- pouvoirs de jour
-  // Les pouvoirs de jour d'un villageois : [{ pouvoir, nom, source, cibles, texte, possible, raison, candidats: [{ id, nom }] }].
+  // Les pouvoirs de jour d'un villageois : [{ pouvoir, nom, description, source, cibles, texte, possible, raison, candidats: [{ id, nom }] }].
   // Sans acteurId (MJ) : ceux du village, la Chapelle si elle est en jeu.
   pouvoirsDeJour(acteurId = "") {
     const etat = lireEtat();
@@ -949,7 +957,7 @@ export const api = {
       const raison = v.ok || v.raison === "cibles" ? "" : v.raison;
       liste.push({ pouvoir: "chapelle", source: "batiment", cibles: 1, soiMeme: false, texte: false, candidats, possible: !raison, raison });
     }
-    return liste.map(p => ({ ...p, nom: nomDuPouvoir(p.pouvoir, acteur), raisonTexte: p.raison ? libelleRefus(p.raison, L.POUVOIRS_JOUR[p.pouvoir]) : "",
+    return liste.map(p => ({ ...p, nom: nomDuPouvoir(p.pouvoir, acteur), description: descriptionDuPouvoir(p.pouvoir, acteur), raisonTexte: p.raison ? libelleRefus(p.raison, L.POUVOIRS_JOUR[p.pouvoir]) : "",
       candidats: p.candidats.map(id => ({ id, nom: game.actors.get(id)?.name ?? id })) }));
   },
 

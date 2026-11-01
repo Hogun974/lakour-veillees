@@ -521,6 +521,13 @@ const VERIFICATIONS = {
       const montres = M.bandeau.contexteBandeau().pouvoirs;
       assert.deepEqual(montres.filter(p => possedes.includes(p.pouvoir)).map(p => p.pouvoir), possedes, `${a.name} : rôle et métier montrés`);
       for (const p of montres.filter(x => !x.possible)) { assert.ok(p.raison, `${a.name} : raison du grisé`); grises++; }
+      // L'infobulle dit ce que fait le pouvoir : la règle de la carte, sans ouvrir le compendium.
+      for (const p of montres.filter(x => possedes.includes(x.pouvoir))) {
+        const objet = a.items.find(i => i.type === M.api.pouvoirsDeJour(a.id).find(x => x.pouvoir === p.pouvoir).source);
+        objet.system.description = `<p>Une ambiance.</p><p><strong>Règle</strong> de ${objet.name} &amp; co.</p>`;
+        const aide = M.bandeau.contexteBandeau().pouvoirs.find(x => x.pouvoir === p.pouvoir).aide;
+        assert.ok(aide.endsWith(`Une ambiance. Règle de ${objet.name} & co.`), `${a.name} : l'infobulle de ${p.pouvoir} reprend sa description, en texte`);
+      }
       commeMJ();
       delete globalThis.canvas;
     }
@@ -567,6 +574,7 @@ const VERIFICATIONS = {
     assert.match(ctx.consigne, /Vote/);
     assert.ok(ctx.boutons.some(b => b.action === "bandeauVoter") && ctx.boutons.some(b => b.action === "bandeauAbstenir"), "Voter et s'abstenir");
     assert.ok(!ctx.boutons.some(b => b.action === "bandeauCloreVote"), "un joueur ne clôt pas le vote");
+    for (const b of [...ctx.boutons, ...mj.boutons]) assert.ok(b.aide && !b.aide.startsWith("LAKOUR_LOUPS"), `infobulle du bouton ${b.action}`);
     commeMJ();
     await M.api.reduireAuSilence(moi.id);
     commeJoueur("u1");
@@ -677,6 +685,7 @@ const VERIFICATIONS = {
 // ------------------------------------------------------------------ mutations
 // [fichier (relatif au système), avant, après, règle]
 const MUTATIONS = [
+  ["scripts/api.mjs", "description: descriptionDuPouvoir(p.pouvoir, acteur), ", "", "description du pouvoir dans l'infobulle"],
   ["scripts/apps/bandeau.mjs", "bouton(\"bandeauVoter\", t(\"LAKOUR_LOUPS.Bandeau.Voter\"), \"fa-check-to-slot\", { principal: !monChoix });", "", "bouton Voter du bandeau"],
   ["scripts/apps/bandeau.mjs", "if (gm && v.ouvert) bouton(", "if (false) bouton(", "le MJ clôt le vote depuis le bandeau"],
   ["scripts/apps/bandeau.mjs", ".filter(p => p.possible || ([\"role\", \"metier\"].includes(p.source) && ![\"absent\", \"inconnu\", \"mort\"].includes(p.raison)))", ".filter(p => p.possible)", "rôle et métier grisés, pas cachés"],

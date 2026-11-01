@@ -111,7 +111,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
     let pouvoirs = [];
     try {
       pouvoirs = [...(moi ? api().pouvoirsDeJour(moi.id) : []), ...(gm ? api().pouvoirsDeJour("") : [])]
-        .map(p => ({ pouvoir: p.pouvoir, nom: p.nom, possible: p.possible, raison: p.raisonTexte }));
+        .map(p => ({ pouvoir: p.pouvoir, nom: p.nom, description: p.description, possible: p.possible, raison: p.raisonTexte }));
     } catch { /* API pas encore prête */ }
 
     let nuit = null;

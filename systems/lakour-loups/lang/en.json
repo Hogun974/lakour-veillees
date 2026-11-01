@@ -439,6 +439,16 @@
       "Utiliser": "Use: {nom}",
       "Voter": "Vote",
       "TempsRestant": "Time left",
+      "Aide": {
+        "bandeauValider": "Send your choice to the narrator: the players selected by clicking their token.",
+        "bandeauPasser": "Do nothing this time: your turn passes, with no target.",
+        "bandeauListe": "Open the list of allowed players, if you prefer choosing without the map.",
+        "bandeauAbstenir": "You vote against no one (any vote already cast is withdrawn).",
+        "bandeauAnnuler": "Give up this power for now: nothing is used.",
+        "bandeauVoter": "Open the list of the accused to vote (you can also click a token). You may change your mind while the vote is open.",
+        "bandeauOuvrirVote": "Start the village vote: every living player names who they accuse, within the time set in the settings.",
+        "bandeauCloreVote": "Stop the vote and count the votes; executing the chosen is asked next."
+      },
       "Salon": {
         "nuit": "🔇 Night: silence",
         "taniere": "🐺 Den: you speak to the wolves",

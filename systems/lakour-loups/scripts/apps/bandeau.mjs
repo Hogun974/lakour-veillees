@@ -26,8 +26,13 @@ function mesPouvoirs(moi) {
   try {
     return game.lakourLoups.pouvoirsDeJour(moi.id)
       .filter(p => p.possible || (["role", "metier"].includes(p.source) && !["absent", "inconnu", "mort"].includes(p.raison)))
-      .map(p => ({ pouvoir: p.pouvoir, libelle: t("LAKOUR_LOUPS.Bandeau.Utiliser", { nom: p.nom }), icone: ICONES_POUVOIR[p.source] ?? "fa-hand-sparkles",
-        possible: p.possible, raison: p.possible ? "" : p.raisonTexte }));
+      .map(p => {
+        const raison = p.possible ? "" : p.raisonTexte;
+        // L'infobulle dit ce que fait le pouvoir (sans aller chercher le rôle dans le compendium), et pourquoi il est grisé.
+        const aide = [raison && `⛔ ${raison}`, p.description].filter(Boolean).join(" — ");
+        return { pouvoir: p.pouvoir, libelle: t("LAKOUR_LOUPS.Bandeau.Utiliser", { nom: p.nom }), icone: ICONES_POUVOIR[p.source] ?? "fa-hand-sparkles",
+          possible: p.possible, raison, aide };
+      });
   } catch { return []; }
 }
 
@@ -44,7 +49,9 @@ export function contexteBandeau() {
     vainqueur: etat.phase === "fin" ? libelleVainqueur(etat.vainqueur) : "",
     salon: salonAffiche()
   };
-  const bouton = (action, libelle, icone, { principal = false, data = {} } = {}) => ctx.boutons.push({ action, libelle, icone, principal, data: Object.entries(data).map(([k, val]) => ({ k, val })) });
+  // Chaque bouton a son infobulle (LAKOUR_LOUPS.Bandeau.Aide.<action>) : ce qu'il fait.
+  const bouton = (action, libelle, icone, { principal = false, data = {} } = {}) => ctx.boutons.push({ action, libelle, icone, principal,
+    aide: t(`LAKOUR_LOUPS.Bandeau.Aide.${action}`), data: Object.entries(data).map(([k, val]) => ({ k, val })) });
   if (etat.phase === "preparation" && etat.partie && !ctx.annonce) ctx.annonce = t("LAKOUR_LOUPS.Bandeau.NouvellePartie");
 
   // L'état du joueur : mort, ou réduit au silence.
@@ -117,7 +124,7 @@ export class BandeauAction extends HandlebarsApplicationMixin(ApplicationV2) {
       bandeauAbstenir: () => local.abstenir(),
       bandeauAnnuler: () => local.annulerPouvoir(),
       // Grisé (pas le moment, déjà servi) : le clic dit pourquoi, au lieu de ne rien faire.
-      bandeauPouvoir: (event, cible) => cible.getAttribute("aria-disabled") === "true" ? ui.notifications.info(cible.title) : local.commencerPouvoir(cible.dataset.pouvoir),
+      bandeauPouvoir: (event, cible) => cible.getAttribute("aria-disabled") === "true" ? ui.notifications.info(cible.dataset.raison) : local.commencerPouvoir(cible.dataset.pouvoir),
       bandeauRole: () => ouvrirCarnet(),
       bandeauTable: () => ouvrirTable(),
       bandeauVoter: () => fenetreVote().render({ force: true }),

@@ -10,6 +10,13 @@ export const tousLesVillageois = () => game.actors.filter(a => a.type === "villa
 export const roleDe = acteur => acteur?.items.find(i => i.type === "role") ?? null;
 export const metierDe = acteur => acteur?.items.find(i => i.type === "metier") ?? null;
 
+// HTML d'une description -> texte brut sur une ligne (infobulles des boutons).
+const ENTITES = { "&nbsp;": " ", "&amp;": "&", "&lt;": "<", "&gt;": ">", "&quot;": "\"", "&#39;": "'", "&rsquo;": "’" };
+export function texteBrut(html) {
+  return String(html ?? "").replace(/<\/(p|li|h\d)>|<br\s*\/?>/gi, " ").replace(/<[^>]*>/g, "")
+    .replace(/&[a-z#0-9]+;/gi, e => ENTITES[e] ?? e).replace(/\s+/g, " ").trim();
+}
+
 export function aPlat(acteur) {
   const s = acteur.system;
   const role = roleDe(acteur), metier = metierDe(acteur);

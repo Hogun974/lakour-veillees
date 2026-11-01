@@ -439,6 +439,16 @@
       "Utiliser": "Utiliser : {nom}",
       "Voter": "Voter",
       "TempsRestant": "Temps restant",
+      "Aide": {
+        "bandeauValider": "Envoie ton choix au narrateur : les joueurs sélectionnés en cliquant sur leur jeton.",
+        "bandeauPasser": "Ne rien faire cette fois : ton tour passe, sans cible.",
+        "bandeauListe": "Ouvre la liste des joueurs permis, si tu préfères choisir sans la carte.",
+        "bandeauAbstenir": "Tu ne votes contre personne (ton vote déjà donné est retiré).",
+        "bandeauAnnuler": "Renonce à ce pouvoir pour l'instant : rien n'est utilisé.",
+        "bandeauVoter": "Ouvre la liste des accusés pour voter (tu peux aussi cliquer sur un jeton). Tu peux changer d'avis tant que le vote est ouvert.",
+        "bandeauOuvrirVote": "Lance le vote du village : chaque vivant désigne qui il accuse, avec le temps fixé dans les réglages.",
+        "bandeauCloreVote": "Arrête le vote et compte les voix ; l'exécution des élus est demandée ensuite."
+      },
       "Salon": {
         "nuit": "🔇 La nuit, silence",
         "taniere": "🐺 Tanière : tu parles aux loups",

@@ -90,7 +90,7 @@ const VERIFICATIONS = {
 const MUTATIONS = [
   ["scripts/socket.mjs", "      signaler(game.i18n.localize(\"LAKOUR_LOUPS.Signal.Choix\"));\n", "", "choix secret signalé"],
   ["scripts/socket.mjs", "      if (message.destinataire !== game.user.id) return true;\n", "", "au seul destinataire"],
-  ["scripts/signal.mjs", "channel: \"interface\" }, false);", "channel: \"interface\" }, true);", "jamais diffusé"],
+  ["scripts/signal.mjs", "channel: \"interface\" }, false)", "channel: \"interface\" }, true)", "jamais diffusé"],
   ["scripts/signal.mjs", "if (game.user?.isGM || !game.settings.get(ID, \"signalTour\")) return false;", "", "ni MJ ni réglage coupé"],
   ["scripts/signal.mjs", "if (typeof document === \"undefined\" || !document.hidden || clignotement) return;", "if (typeof document === \"undefined\" || clignotement) return;", "onglet visible tranquille"],
   ["scripts/signal.mjs", "const retour = () => { if (!document.hidden) arreterClignotement(); };", "const retour = () => {};", "retour à l'onglet"],

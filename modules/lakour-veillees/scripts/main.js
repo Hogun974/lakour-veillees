@@ -67,8 +67,11 @@ export async function compositions() {
 // droits donnés à chaque joueur restent. Les retouches faites à la main dans ses pages sont perdues.
 async function rafraichirJournal(existant, source) {
   if (existant.getFlag(ID, "version") === VERSION_CONTENU) return false;
-  await existant.deleteEmbeddedDocuments("JournalEntryPage", existant.pages.map(p => p.id));
-  await existant.createEmbeddedDocuments("JournalEntryPage", source.pages.map(p => p.toObject()), { keepId: true });
+  // Les pages que le MJ IA a ajoutées ou réécrites (modifier_scenario) restent telles quelles, avec leur historique.
+  const gardees = new Set(existant.pages.filter(p => p.getFlag("lakour-mj-ia", "ajoutee") || p.getFlag("lakour-mj-ia", "historique")?.length).map(p => p.id));
+  const remplacees = existant.pages.filter(p => !gardees.has(p.id)).map(p => p.id);
+  if (remplacees.length) await existant.deleteEmbeddedDocuments("JournalEntryPage", remplacees);
+  await existant.createEmbeddedDocuments("JournalEntryPage", source.pages.filter(p => !gardees.has(p.id)).map(p => p.toObject()), { keepId: true });
   await existant.update({ "ownership.default": source.ownership.default, [`flags.${ID}.version`]: VERSION_CONTENU });
   return true;
 }
@@ -102,7 +105,20 @@ export async function rafraichirScene(scene, source, journaux) {
   return true;
 }
 
-export async function installer() {
+// Une seule installation à la fois (bouton cliqué deux fois, ou pendant la proposition du « ready ») ; une erreur est montrée
+// au MJ au lieu de laisser l'installation à moitié faite sans rien dire.
+let installationEnCours = null;
+export function installer() {
+  installationEnCours ??= installerContenu()
+    .catch(erreur => {
+      console.error(`${ID} | installation`, erreur);
+      globalThis.ui?.notifications?.error(`Les Veillées : installation interrompue (${erreur.message}). Le détail est dans la console (F12).`, { permanent: true });
+    })
+    .finally(() => { installationEnCours = null; });
+  return installationEnCours;
+}
+
+async function installerContenu() {
   const rapport = [];
   const nomDossier = game.i18n.localize("LAKOURVEIL.Titre");
   const journauxDuMonde = new Map();   // identifiant au compendium -> identifiant dans le monde

@@ -10,7 +10,7 @@ let clignotement = null;   // { minuterie, origine, retour }
 export function signaler(texte) {
   if (game.user?.isGM || !game.settings.get(ID, "signalTour")) return false;
   try {
-    foundry.audio.AudioHelper.play({ src: CONFIG.sounds?.notification ?? "sounds/notify.wav", volume: VOLUME, autoplay: true, loop: false, channel: "interface" }, false);
+    foundry.audio.AudioHelper.play({ src: CONFIG.sounds?.notification ?? "sounds/notify.wav", volume: VOLUME, autoplay: true, loop: false, channel: "interface" }, false)?.catch?.(() => {});
   } catch { /* sans son : le titre suffit */ }
   clignoterTitre(texte);
   return true;

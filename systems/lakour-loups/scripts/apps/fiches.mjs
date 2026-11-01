@@ -120,7 +120,9 @@ export class FicheVillageois extends HandlebarsApplicationMixin(ActorSheetV2) {
   }
 
   static #ouvrirObjet(event, cible) {
-    this.document.items.get(cible.dataset.itemId)?.sheet.render({ force: true });
+    // Le rôle révélé d'un autre se lit dans la carte et l'infobulle : sa fiche n'est ouverte qu'à qui peut la voir.
+    const objet = this.document.items.get(cible.dataset.itemId);
+    if (objet?.testUserPermission(game.user, "OBSERVER")) objet.sheet.render({ force: true });
   }
 
   static async #retirerObjet(event, cible) {

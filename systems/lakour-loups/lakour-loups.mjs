@@ -26,6 +26,8 @@ import { brancherSalons, rafraichirSalons } from "./scripts/salons.mjs";
 import { brancherImmersion } from "./scripts/immersion.mjs";
 
 // ------------------------------------------------------------------ rafraîchissement des fenêtres
+// Une fiche où l'on écrit (notes ouvertes dans l'éditeur, champ actif) n'est pas redessinée : le texte en cours serait perdu.
+const enSaisie = appli => Boolean(appli.element?.querySelector?.("prose-mirror[open]") || appli.element?.contains?.(document.activeElement));
 let voteEtaitOuvert = false;
 function quandEtatChange() {
   if (!game.ready) return;
@@ -50,7 +52,7 @@ function quandEtatChange() {
   // Chez le MJ actif, le vote à minuteur se clôt de lui-même à zéro.
   surveillerFinDuVote(cloreLeVote);
   for (const appli of foundry.applications.instances.values()) {
-    if (appli instanceof FicheVillageois && appli.rendered) appli.render();
+    if (appli instanceof FicheVillageois && appli.rendered && !enSaisie(appli)) appli.render();
   }
   rafraichirPlateauLocal();
 }
@@ -70,7 +72,7 @@ Hooks.on("lakourLoups.prive", () => {
   if (tableDeJeu().rendered) tableDeJeu().render();
   if (fenetreVote().rendered) fenetreVote().render();
   for (const appli of foundry.applications.instances.values()) {
-    if (appli instanceof FicheVillageois && appli.rendered) appli.render();
+    if (appli instanceof FicheVillageois && appli.rendered && !enSaisie(appli)) appli.render();
   }
 });
 

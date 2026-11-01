@@ -17,19 +17,19 @@ import { lirePublic } from "./donnees.mjs";
 export const REGLAGE = "effetsVisuels";
 
 // Le tremblement d'une mort : bref (une demi-seconde), quelques pixels, doux (bruit lissé, retour rapide).
-export const SECOUSSE = Object.freeze({ duration: 500, maxDisplacement: 6, smoothness: 0.55, returnSpeed: 0.2 });
+export const SECOUSSE = Object.freeze({ duration: 500, maxDisplacement: 6, smoothness: 0.55, returnSpeed: 0.2, invalidateMasks: true });
 
 // Les particules : des taches rondes et floues (texture dessinée ici), en mode « ambient » (densité constante dans la vue).
 export const BRUME = Object.freeze({
-  mode: "ambient", count: 60, initial: 0.5, viewPadding: 0.2, lifetime: [9000, 15000], fade: { in: 0.35, out: 0.35 },
+  mode: "ambient", count: 200, initial: 0.5, viewPadding: 0.2, lifetime: [9000, 15000], fade: { in: 0.35, out: 0.35 },
   velocity: { x: [4, 14], y: [-3, 3] }, alpha: [0.05, 0.12], scale: [3, 6], tint: 0xc9d3e6, melange: "NORMAL"
 });
 export const AUBE = Object.freeze({
-  mode: "ambient", count: 40, initial: 0.6, viewPadding: 0.1, lifetime: [2500, 4000], fade: { in: 0.3, out: 0.5 },
+  mode: "ambient", count: 120, initial: 0.6, viewPadding: 0.1, lifetime: [2500, 4000], fade: { in: 0.3, out: 0.5 },
   velocity: { x: [-6, 6], y: [-28, -14] }, alpha: [0.15, 0.3], scale: [0.25, 0.6], tint: 0xffd9a0, melange: "SCREEN"
 });
 export const VICTOIRE = Object.freeze({
-  mode: "ambient", count: 120, initial: 0.6, viewPadding: 0.1, lifetime: [3000, 5000], fade: { in: 0.2, out: 0.5 },
+  mode: "ambient", count: 360, initial: 0.6, viewPadding: 0.1, lifetime: [3000, 5000], fade: { in: 0.2, out: 0.5 },
   velocity: { x: [-10, 10], y: [-55, -25] }, alpha: [0.25, 0.5], scale: [0.2, 0.55], tint: 0xf2c46b, melange: "SCREEN"
 });
 export const COULEURS_VICTOIRE = Object.freeze({ village: 0xf2c46b, meute: 0xd0553f, solitaire: 0xb7a6e8 });
@@ -112,6 +112,7 @@ function lancer({ melange, ...config }, duree = 0) {
 
 // Plus de nouvelles particules : les dernières s'effacent seules, puis le générateur est détruit.
 function eteindre(generateur) {
+  if (!generateur.particlesContainer) return;   // déjà détruit (changement de scène entre-temps)
   try { generateur.stop(); } catch { /* déjà détruit */ }
   passagers.add(generateur);
   setTimeout(() => detruire(generateur), VIE_MAX + 1000);

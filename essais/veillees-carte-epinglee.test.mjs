@@ -48,7 +48,7 @@ const duCompendium = d => ({
 });
 
 function journalDuMonde(d) {
-  const j = { ...structuredClone(d), id: d._id, pages: (d.pages ?? []).map(p => ({ ...structuredClone(p), id: p._id })) };
+  const j = { ...structuredClone(d), id: d._id, pages: (d.pages ?? []).map(p => ({ ...structuredClone(p), id: p._id, getFlag: (m, k) => p.flags?.[m]?.[k] })) };
   j.getFlag = (m, k) => j.flags?.[m]?.[k];
   j.deleteEmbeddedDocuments = async (t, ids) => { j.pages = j.pages.filter(p => !ids.includes(p.id)); };
   j.createEmbeddedDocuments = async (t, pages, o = {}) => {
@@ -236,7 +236,7 @@ const MUTATIONS = [
   ["main.js", "const libre = !game.journal.get(j.id);", "const libre = false;", "identifiant du compendium perdu"],
   ["main.js", "entryId: journaux.get(n.entryId) ?? n.entryId", "entryId: n.entryId", "épingles non raccordées"],
   ["main.js", " || duModule.has(d.id)", "", "sons d'avant 0.5.0 en double"],
-  ["main.js", "source.pages.map(p => p.toObject()), { keepId: true });", "source.pages.map(p => p.toObject()));", "pages rafraîchies sans leur identifiant"],
+  ["main.js", ".map(p => p.toObject()), { keepId: true });", ".map(p => p.toObject()));", "pages rafraîchies sans leur identifiant"],
   ["main.js", "\"ownership.default\": source.ownership.default, ", "", "visibilité non réparée au rafraîchissement"],
   ["main.js", "  if (scene.getFlag(ID, \"version\") === VERSION_CONTENU) return false;\n", "", "carte rafraîchie à chaque installation"]
 ];

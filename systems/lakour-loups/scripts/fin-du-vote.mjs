@@ -1,5 +1,6 @@
 // Le vote à minuteur se clôt de lui-même à zéro, chez le MJ actif (comme les votes du MJ IA) : le dépouillement, puis
 // l'exécution que le MJ confirme (cloreLeVote). Un vote sans minuteur attend toujours que le MJ le close.
+import { ID } from "../logique/constantes.mjs";
 import { echeanceDuVote } from "../logique/votes.mjs";
 import { lireEtat, t } from "./donnees.mjs";
 import { estMJActif } from "./canal.mjs";
@@ -19,7 +20,7 @@ export function surveillerFinDuVote(clore) {
       // Clos, rejoué ou prolongé entre-temps, ou un autre MJ a pris la main : rien.
       if (!estMJActif() || echeanceDuVote(lireEtat().vote)?.cle !== e.cle) return;
       ui.notifications.info(t("LAKOUR_LOUPS.Table.TempsEcoule"));
-      return clore();
+      return Promise.resolve(clore()).catch(e => console.warn(`${ID} | clôture du vote à zéro`, e));
     }, e.dans + MARGE)
   };
 }

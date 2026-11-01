@@ -9,3 +9,7 @@ export * from "./distribution.mjs";
 export * from "./etat.mjs";
 export * from "./composition.mjs";
 export * from "./jour.mjs";
+export * from "./plateau.mjs";
+export * from "./selection.mjs";
+export * from "./parole.mjs";
+export * from "./etapes.mjs";

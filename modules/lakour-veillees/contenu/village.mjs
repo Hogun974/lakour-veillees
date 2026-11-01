@@ -54,12 +54,25 @@ const LUMIERES = [
   ...MAISONS.map(m => ({ x: m.x + 1, y: m.y + 2, rayon: 1, couleur: "#ffb85a" }))
 ];
 
+// Le plateau, lu par le système lakour-loups (logique/plateau.mjs) qui y range les jetons à chaque phase. Coordonnées en
+// cases, au CENTRE du jeton :
+// - seuils : devant la porte de chaque maison, sous la lanterne (la nuit, chacun est chez soi) ;
+// - cercle : le jour et pendant le vote, les vivants se tiennent en cercle autour du Puits (rayon 3,3 à 4 cases selon le
+//   nombre) ; quand le Gibet gênerait une place, le système tourne un peu le cercle (4 à 18 joueurs sans chevauchement) ;
+// - cimetiere : les morts y sont rangés, dans l'ordre des morts.
+export const PLATEAU_VILLAGE = {
+  seuils: Object.fromEntries(MAISONS.map(m => [m.nom, { x: m.x + m.l / 2, y: m.y + m.h + 0.5 }])),
+  cercle: { x: 19, y: 15, rayon: 4, rayonMin: 3.3 },
+  cimetiere: { x: 22, y: 2, l: 6, h: 5 }
+};
+
 export const PLAN_VILLAGE = {
   largeur: L, hauteur: H, lumiere: "nuit",
   pieces: [{ nom: "Brumecombe", x: 0, y: 0, l: L, h: H, sol: "herbe" }, PLACE],
   ouvertures: pourtourOuvert(PLACE),
   lumieres: LUMIERES,
-  elements: [...MAISONS, ...BATIMENTS_CARTE]
+  elements: [...MAISONS, ...BATIMENTS_CARTE],
+  plateau: PLATEAU_VILLAGE
 };
 
 // ======================================================================= Décor dessiné

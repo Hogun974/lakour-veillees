@@ -1,10 +1,11 @@
 // Installation du contenu des Veillées de Brumecombe dans un monde lakour-loups : guides et variantes dans le journal
 // (le guide du narrateur reste caché), scène du village de Brumecombe, plans des cartes pour le placement des jetons,
 // style visuel plat ou relief. Rôles, métiers, bâtiments, tables et villageois non joués restent dans les compendiums :
-// la Table de jeu du système et le MJ IA les y lisent.
+// la Table de jeu du système et le MJ IA les y lisent. Le plateau du système (jetons posés et mis en scène à chaque phase)
+// reçoit d'ici le jeton NEUTRE des Veillées (« villageois », qui cache le rôle) et le style visuel des images.
 const ID = "lakour-veillees";
 const SYSTEME = "lakour-loups";
-const VERSION_CONTENU = "0.1.0";
+const VERSION_CONTENU = "0.3.0";   // 0.3.0 : plan du village avec son plateau (seuils, cercle, cimetière)
 
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 
@@ -144,8 +145,17 @@ Hooks.on("createScene", scene => {
   if (game.user === game.users.activeGM && game.system.id === SYSTEME && styleVisuel() === "3d") styliserScene(scene, "3d");
 });
 
+// Le plateau du système lakour-loups : l'image neutre des jetons (jamais celle d'un rôle caché) et le style visuel.
+const JETON_NEUTRE = `modules/${ID}/assets/jetons/villageois.svg`;
+function configurerPlateau(api = game.lakourLoups) {
+  api?.plateau?.configurer?.({ jetonNeutre: JETON_NEUTRE, styliser: src => cheminSelonStyle(src, styleVisuel()) });
+}
+Hooks.on("lakourLoups.pret", api => { if (game.system.id === SYSTEME) configurerPlateau(api); });
+Hooks.on("lakourStyleVisuel", () => { if (game.system.id === SYSTEME && game.user === game.users.activeGM) game.lakourLoups?.plateau?.planifier?.(); });
+
 Hooks.once("ready", async () => {
   game.modules.get(ID).api = { installer, cheminSelonStyle, compositions };
+  if (game.system.id === SYSTEME) configurerPlateau();
   if (!game.user.isGM || game.user !== game.users.activeGM || game.system.id !== SYSTEME) return;
   if (game.settings.get(ID, "installe") === VERSION_CONTENU) return;
   const ok = await DialogV2.confirm({

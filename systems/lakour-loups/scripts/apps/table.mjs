@@ -13,6 +13,7 @@ import { secretsPerdus } from "../secrets.mjs";
 import { monVote, mesSecrets } from "../prive.mjs";
 import { ouvrirChoixLocal } from "./choix.mjs";
 import { ouvrirCarnet } from "./carnet.mjs";
+import * as MJ from "../actions-mj.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -34,9 +35,19 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
       voter: TableDeJeu.#voter, abstenir: TableDeJeu.#abstenir, fiche: TableDeJeu.#fiche, batiment: TableDeJeu.#batiment,
       phase: TableDeJeu.#phase, aube: TableDeJeu.#aube, ouvrirVote: TableDeJeu.#ouvrirVote, cloreVote: TableDeJeu.#cloreVote,
       voteChapelle: TableDeJeu.#voteChapelle, pouvoir: TableDeJeu.#pouvoir, carnet: () => ouvrirCarnet(),
-      eliminer: TableDeJeu.#eliminer, reveler: TableDeJeu.#reveler, victoire: TableDeJeu.#victoire
+      eliminer: TableDeJeu.#eliminer, reveler: TableDeJeu.#reveler, victoire: TableDeJeu.#victoire, rejouer: TableDeJeu.#rejouer,
+      miseEnScene: () => tenter(() => api().plateau.mettreEnScene({ activer: true })),
+      distribuer: TableDeJeu.#distribuer, reveiller: TableDeJeu.#reveiller, reveillerTout: TableDeJeu.#reveillerTout,
+      executer: TableDeJeu.#executer, emporter: TableDeJeu.#emporter, emporterPersonne: TableDeJeu.#emporterPersonne,
+      prepCocher: TableDeJeu.#prepCocher, prepIA: TableDeJeu.#prepIA, prepRetirerIA: TableDeJeu.#prepRetirerIA,
+      prepMode: TableDeJeu.#prepMode, prepRole: TableDeJeu.#prepRole
     }
   };
+
+  // Le MJ humain : sa préparation de partie (locale à sa Table) et les étapes qu'il a écartées.
+  preparation = MJ.nouvellePreparation();
+  ignorer = new Set();
+  #contenu = null;
 
   static PARTS = { table: { template: `systems/${ID}/templates/table.hbs`, scrollable: [".loups-colonne"] } };
 
@@ -108,7 +119,8 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
       nuit = {
         ordre: tenterSync(() => api().ordreDeNuit(), []).map(e => ({
           roleCle: e.roleCle, noms: e.acteurIds.map(nomDe).join(", "),
-          fait: etat.nuit.actions.some(x => x.roleCle === e.roleCle)
+          fait: etat.nuit.actions.some(x => x.roleCle === e.roleCle),
+          enCours: (api().reveilsEnCours?.() ?? []).includes(e.roleCle)
         })),
         actions: etat.nuit.actions.map(x => ({
           qui: nomDe(x.acteurId), roleCle: x.roleCle, effet: x.effet ?? "",
@@ -121,8 +133,45 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
       ? [...etat.historique.map(h => ({ ...h, secret: false })), ...etat.journalSecret.map(h => ({ ...h, secret: true }))].slice(-30).reverse()
       : [];
 
+    // L'étape suivante (MJ humain) : une ligne, et le bouton à presser encadré de pointillés (_onRender).
+    let etape = null;
+    if (gm && mjActif) {
+      try {
+        const e = api().etapeSuivante({ ignorer: [...this.ignorer] });
+        const donnees = { ...e.donnees, nom: e.donnees.meute ? t("LAKOUR_LOUPS.Etapes.LaMeute") : e.donnees.nom ?? "" };
+        etape = { ...e, texte: t(`LAKOUR_LOUPS.Etapes.${e.cle}`, donnees),
+          detail: e.detail ? t(`LAKOUR_LOUPS.Etapes.Detail.${e.detail.cle}`, e.detail.donnees) : "" };
+      } catch { etape = null; }
+    }
+    this._etape = etape;
+
+    // Préparer la partie (MJ, avant la première nuit ou après la fin).
+    let preparation = null;
+    if (gm && (!etat.partie || ["preparation", "fin"].includes(etat.phase))) {
+      this.#contenu ??= await api().contenu().catch(() => null);
+      const p = this.preparation;
+      const coches = new Set(MJ.joueursCoches(p));
+      const ia = MJ.compagnonsDuVillage();
+      const total = coches.size + ia.length;
+      const contenu = this.#contenu;
+      const roles = MJ.rolesManuels(p, total);
+      const eq = contenu ? MJ.equilibreDesRoles(roles, contenu.equilibre) : null;
+      preparation = {
+        joueurs: MJ.joueursConnectes().map(u => ({ id: u.id, nom: u.name, coche: coches.has(u.id) })),
+        ia: { disponible: MJ.iaDisponible(), n: ia.length, noms: ia.map(a => a.name).join(", ") },
+        total, auto: p.mode === "auto", manuel: p.mode === "manuel",
+        niveaux: (contenu?.niveaux ?? ["debutants", "classique", "chaos"]).map(n => ({ cle: n, libelle: t(`LAKOUR_LOUPS.Preparation.Niveaux.${n}`), choisi: n === p.niveau })),
+        roles: (contenu?.roles ?? []).map(r => ({ ...r, n: p.roles[r.cle] ?? 0, campLibelle: libelleCamp(r.camp) })),
+        choisis: Object.values(p.roles).reduce((a, b) => a + b, 0),
+        equilibre: eq && p.mode === "manuel" ? { ...eq, texte: t(`LAKOUR_LOUPS.Preparation.Equilibre.${eq.verdict}`, { somme: eq.somme >= 0 ? `+${eq.somme}` : String(eq.somme) }),
+          loupsTexte: t("LAKOUR_LOUPS.Preparation.Loups", { n: eq.loups, conseil: eq.loupsConseilles }) } : null,
+        trop: p.mode === "manuel" && Object.values(p.roles).reduce((a, b) => a + b, 0) > total,
+        peutDistribuer: total >= 1
+      };
+    }
+
     return {
-      gm, phase: etat.phase, phaseLibelle: libellePhase(etat.phase), tour: etat.tour,
+      gm, phase: etat.phase, phaseLibelle: libellePhase(etat.phase), tour: etat.tour, fini: fin,
       composition: etat.composition, vainqueur: libelleVainqueur(etat.vainqueur),
       estNuit: etat.phase === "nuit" || etat.phase === "aube",
       phases: PHASES.map(p => ({ cle: p, libelle: libellePhase(p), active: p === etat.phase })),
@@ -136,14 +185,30 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
         exprimes: v.exprimes.length, votants: vivants.length,
         peutVoter: Boolean(v.ouvert && moi?.system.vivant), minuteur: Boolean(v.finit),
         resultat: resultat ? { lignes, egalite: resultat.egalite, personne: !resultat.elus?.length,
-          elus: (resultat.elus ?? []).map(nomDe).join(", ") } : null
+          elus: (resultat.elus ?? []).map(nomDe).join(", "),
+          condamnes: resultat.objet === "execution" && resultat.numero === v.numero
+            ? (resultat.elus ?? []).filter(id => game.actors.get(id)?.system.vivant).map(id => ({ id, nom: nomDe(id) })) : [] } : null
       },
-      historique: chronique
+      historique: chronique,
+      etape, preparation,
+      emporteur: etape?.cle === "emporter" ? { id: etape.donnees.id, nom: etape.donnees.nom } : null,
+      reveils: gm ? api().reveilsEnCours?.() ?? [] : []
     };
   }
 
   async _onRender(context, options) {
     await super._onRender(context, options);
+    const e = this._etape;
+    if (e?.action) {
+      const d = e.donnees ?? {};
+      const filtre = e.action === "phase" ? `[data-phase="${d.phase}"]` : e.action === "reveiller" ? `[data-role="${d.role}"]`
+        : ["executer", "emporter"].includes(e.action) ? `[data-id="${d.id}"]` : "";
+      this.element.querySelector(`button[data-action="${e.action}"]${filtre}`)?.classList.add("loups-etape");
+    }
+    this.element.querySelector("select[name=prepNiveau]")?.addEventListener("change", ev => {
+      this.preparation.niveau = ev.currentTarget.value;
+      this.render();
+    });
     clearInterval(this._minuterie);
     const zone = this.element.querySelector(".loups-minuteur");
     if (!zone) return;
@@ -236,6 +301,67 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
     const a = game.actors.get(cible.dataset.id);
     return tenter(() => a?.update({ "system.revele": !a.system.revele }));
   }
+  // Rejouer avec les mêmes joueurs (et le même nombre de compagnons IA) : nouvelle partie, nouvelle distribution.
+  static async #rejouer() {
+    const enCours = !["preparation", "fin"].includes(lireEtat().phase);
+    const ok = await foundry.applications.api.DialogV2.confirm({
+      window: { title: "LAKOUR_LOUPS.Table.Rejouer" },
+      content: `<p>${t(enCours ? "LAKOUR_LOUPS.Table.RejouerEnCours" : "LAKOUR_LOUPS.Table.RejouerQuestion")}</p>`
+    });
+    if (!ok) return;
+    return tenter(async () => {
+      const r = await api().nouvellePartie({ memesJoueurs: true });
+      ui.notifications.info(t("LAKOUR_LOUPS.Table.Rejoue", { n: r.joueurs.length + r.compagnons.length, composition: r.composition.libelle }));
+    });
+  }
+  // ---------------- préparation (MJ humain)
+  static #prepCocher(event, cible) { MJ.cocher(this.preparation, cible.dataset.id); this.render(); }
+  static #prepIA() { return tenter(async () => { await MJ.ajouterIA(1); this.render(); }); }
+  static #prepRetirerIA() { return tenter(async () => { await MJ.retirerIA(); this.render(); }); }
+  static #prepMode(event, cible) { this.preparation.mode = cible.dataset.mode === "manuel" ? "manuel" : "auto"; this.render(); }
+  static #prepRole(event, cible) { MJ.changerRole(this.preparation, cible.dataset.cle, Number(cible.dataset.delta)); this.render(); }
+  static async #distribuer() {
+    const enCours = !["preparation", "fin"].includes(lireEtat().phase) && lireEtat().partie;
+    if (enCours) {
+      const ok = await foundry.applications.api.DialogV2.confirm({ window: { title: "LAKOUR_LOUPS.Preparation.Distribuer" },
+        content: `<p>${t("LAKOUR_LOUPS.Table.RejouerEnCours")}</p>` });
+      if (!ok) return;
+    }
+    return tenter(async () => {
+      const r = await MJ.distribuer(this.preparation);
+      this.ignorer.clear();
+      ui.notifications.info(t("LAKOUR_LOUPS.Table.Rejoue", { n: r.joueurs.length + r.compagnons.length, composition: r.composition.libelle }));
+      this.render();
+    });
+  }
+  // ---------------- la nuit, rôle par rôle
+  static #reveiller(event, cible) {
+    const role = cible.dataset.role;
+    this.render();
+    return tenter(async () => { await api().reveiller(role); this.render(); });
+  }
+  static #reveillerTout() { return tenter(async () => { await MJ.reveillerTout(); this.render(); }); }
+  // ---------------- exécution, Braconnière
+  static async #executer(event, cible) {
+    const a = game.actors.get(cible.dataset.id);
+    if (!a) return;
+    const ok = await foundry.applications.api.DialogV2.confirm({
+      window: { title: "LAKOUR_LOUPS.Table.Executer" }, content: `<p>${t("LAKOUR_LOUPS.Table.ExecuterQuestion", { noms: foundry.utils.escapeHTML(a.name) })}</p>`
+    });
+    if (ok) await tenter(() => MJ.executer(a.id));
+  }
+  static async #emporter(event, cible) {
+    const emporteur = game.actors.get(cible.dataset.id);
+    const vivants = tousLesVillageois().filter(a => a.system.vivant);
+    const options = vivants.map(a => `<option value="${a.id}">${foundry.utils.escapeHTML(a.name)}</option>`).join("");
+    const id = await foundry.applications.api.DialogV2.prompt({
+      window: { title: "LAKOUR_LOUPS.Etapes.emporter" },
+      content: `<p>${t("LAKOUR_LOUPS.Etapes.Detail.emporter", { nom: foundry.utils.escapeHTML(emporteur?.name ?? "") })}</p><select name="cible">${options}</select>`,
+      ok: { callback: (ev, bouton) => bouton.form.elements.cible.value }
+    }).catch(() => "");
+    if (id) await tenter(() => MJ.emporter(id));
+  }
+  static #emporterPersonne(event, cible) { this.ignorer.add(`emporter:${cible.dataset.id}`); this.render(); }
   static #victoire() {
     return tenter(async () => {
       const g = await api().verifierVictoire();

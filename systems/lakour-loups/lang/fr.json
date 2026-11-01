@@ -115,7 +115,17 @@
         "lame": "Lame de la Forge :",
         "cachette": "Dans la Grange :",
         "asile": "À la Chapelle :"
-      }
+      },
+      "Rejouer": "Rejouer (mêmes joueurs)",
+      "RejouerQuestion": "Commencer une nouvelle partie avec les mêmes joueurs et les mêmes compagnons IA ? Une nouvelle composition est tirée et les rôles redistribués en secret.",
+      "RejouerEnCours": "La partie en cours n'est pas finie. L'abandonner et en commencer une nouvelle, avec les mêmes joueurs et compagnons IA ?",
+      "Rejoue": "Nouvelle partie : {n} villageois, {composition}.",
+      "MiseEnScene": "Mise en scène",
+      "MiseEnSceneAide": "Replace les jetons et la lumière selon la phase (c'est automatique ; ce bouton rattrape une scène dérangée).",
+      "EnAttente": "en attente",
+      "Reveiller": "Réveiller",
+      "ReveillerTout": "Réveiller tous les rôles, dans l'ordre",
+      "Personne": "Personne"
     },
     "Choix": {
       "Titre": "Dans la nuit…",
@@ -259,7 +269,9 @@
       "SilenceBeni": "{nom} a été béni : votre hurlement n'a pas prise sur lui.",
       "MessagerVide": "{nom} n'a rien écrit : votre besace est restée vide.",
       "MessageRecu": "Le Messager vous remet un mot de {nom} : « {texte} »",
-      "MessageRemis": "Vous avez remis le mot de {a} à {b}."
+      "MessageRemis": "Vous avez remis le mot de {a} à {b}.",
+      "ProiesDeLaMeute": "Cette nuit, la meute a attaqué {noms}.",
+      "InviteMessager": "Le Messager frappe à ta porte cette nuit : écris une phrase pour {nom}. Il la lui remettra à l'aube, de ta part."
     },
     "Messages": {
       "Mort": "{nom} est mort : {cause}.",
@@ -302,6 +314,14 @@
       "AnnoncesEnChat": {
         "Nom": "Annonces dans le chat",
         "Aide": "Les morts et la victoire sont aussi annoncées dans le chat."
+      },
+      "CanalDesMorts": {
+        "Nom": "Canal des morts",
+        "Aide": "Les morts peuvent parler entre eux : leurs messages deviennent des chuchotements aux seuls morts et au MJ. Sinon, ils ne peuvent plus que chuchoter au MJ."
+      },
+      "PlateauInteractif": {
+        "Nom": "Agir sur la carte",
+        "Aide": "Choix de nuit, votes et pouvoirs de jour se font au clic sur les jetons, depuis le bandeau. Décoché : les fenêtres de choix et de vote s'ouvrent comme avant."
       }
     },
     "Erreurs": {
@@ -314,7 +334,9 @@
       "SansRole": "Les deux villageois doivent avoir un rôle.",
       "PasDeVillageois": "Vous n'incarnez aucun villageois.",
       "MortNeVotePas": "Les morts ne votent plus.",
-      "PasDeMJ": "Aucun MJ n'est connecté : le pouvoir ne peut pas être appliqué."
+      "PasDeMJ": "Aucun MJ n'est connecté : le pouvoir ne peut pas être appliqué.",
+      "RolesInconnus": "Rôles inconnus ou absents du contenu : {roles}.",
+      "PersonneAReveiller": "Personne à réveiller pour « {role} » cette nuit."
     },
     "Batiments": {
       "taverne": "La Taverne",
@@ -393,6 +415,98 @@
         "texte": "Un dernier mot de {mots} mots au plus, et pas vide.",
         "personne": "Personne ne peut être désigné."
       }
+    },
+    "Plateau": {
+      "ChoisisSurLaCarte": "À toi : choisis sur la carte (clique sur un jeton allumé), puis « Valider » dans le bandeau."
+    },
+    "Bandeau": {
+      "Titre": "Bandeau de la veillée",
+      "NouvellePartie": "Nouvelle partie ! Ouvre « Mon rôle » pour découvrir le tien.",
+      "Mort": "Tu es mort : tu observes",
+      "Silence": "Réduit au silence",
+      "ChoisisTaCible": "Choisis ta cible",
+      "Compte": "{n} / {max} choisis",
+      "CliqueUnJeton": "clique sur un jeton allumé",
+      "Liste": "Liste",
+      "Confirmer": "Confirmer",
+      "Annuler": "Annuler",
+      "Vote": "Vote : clique sur le jeton de celui que tu accuses",
+      "VoteChapelle": "Chapelle : clique sur le jeton de celui qui dormira à l'abri",
+      "Utiliser": "Utiliser : {nom}",
+      "MonRole": "Mon rôle",
+      "MonRoleAide": "Ton carnet secret : ta carte de rôle et ce que tu apprends la nuit (toi seul le vois).",
+      "Attente": {
+        "preparation": "Le village se rassemble.",
+        "nuit": "La nuit tombe sur Brumecombe : chacun chez soi.",
+        "aube": "L'aube se lève sur le village.",
+        "jour": "Le village débat sur la place.",
+        "vote": "Le village vote.",
+        "fin": "La veillée est finie."
+      }
+    },
+    "Infobulle": {
+      "Vivant": "Vivant",
+      "Toi": "toi"
+    },
+    "Parole": {
+      "Mort": "Tu es mort : les vivants ne t'entendent plus. Tu peux chuchoter au narrateur.",
+      "Silence": "Tu es réduit au silence : tu ne peux pas parler pendant le débat et le vote d'aujourd'hui (chuchoter au narrateur reste possible).",
+      "CanalDesMorts": "Tu es mort : tes messages ne vont plus qu'aux autres morts et au narrateur."
+    },
+    "NouvellePartie": {
+      "Choisie": "composition choisie",
+      "Generee": "composition générée, {verdict}",
+      "Reprise": "mêmes rôles, rebattus",
+      "Annonce": "Nouvelle partie ! Les rôles des {n} villageois sont distribués en secret."
+    },
+    "Etapes": {
+      "Prochaine": "Prochaine étape :",
+      "LaMeute": "la meute",
+      "distribuer": "Distribuer les rôles",
+      "nuit": "Commencer la nuit",
+      "reveiller": "Réveiller : {nom}",
+      "attendre": "En attente : {nom} choisit…",
+      "aube": "Résoudre l'aube",
+      "emporter": "{nom} emporte quelqu'un dans la tombe",
+      "victoire": "Vérifier la victoire",
+      "debat": "Ouvrir le débat",
+      "ouvrirVote": "Ouvrir le vote",
+      "cloreVote": "Clore le vote",
+      "executer": "Éliminer {nom}",
+      "chapelle": "Vote de la Chapelle",
+      "rejouer": "Rejouer",
+      "Detail": {
+        "voixManquantes": "({n} voix manquent encore)",
+        "juge": "Le Juge de paix ({nom}) peut encore annuler ce vote.",
+        "emporter": "{nom} désigne qui il emporte (ou personne).",
+        "sansSecrets": "Ce navigateur n'a pas les secrets de la nuit."
+      }
+    },
+    "Preparation": {
+      "Titre": "Préparer la partie",
+      "Joueurs": "Joueurs",
+      "JoueursIA": "Joueurs IA",
+      "AjouterIA": "+ Joueur IA",
+      "RetirerIA": "Retirer un joueur IA",
+      "IAAbsente": "Activez le module MJ IA pour ajouter des joueurs IA.",
+      "IAIndisponible": "Les joueurs IA demandent le module MJ IA.",
+      "Composition": "Composition",
+      "Auto": "Équilibrée (auto)",
+      "Manuel": "Choix des rôles",
+      "Niveaux": {
+        "debutants": "Débutants",
+        "classique": "Classique",
+        "chaos": "Chaos"
+      },
+      "Equilibre": {
+        "equilibree": "Équilibrée ({somme})",
+        "village": "Favorable au village ({somme})",
+        "meute": "Favorable à la meute ({somme})"
+      },
+      "Loups": "{n} loup(s), {conseil} conseillé(s)",
+      "Trop": "Plus de rôles que de places : retirez-en.",
+      "Distribuer": "Distribuer",
+      "PersonneConnecte": "Aucun joueur connecté."
     }
   }
 }

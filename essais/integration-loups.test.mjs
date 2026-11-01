@@ -7,13 +7,17 @@
 // Avec des COMPAGNONS IA (villageois sans joueur, joués par le cerveau du MJ IA, ici en repli sans IA) : 3 humains simulés et
 // des compagnons, jusqu'à la victoire ; les compagnons choisissent la nuit (résolveur du système, sans socket), parlent au
 // débat et votent ; à chaque nuit, ce qu'on enverrait au modèle d'un compagnon ne contient aucun secret qu'il ignore.
+// Le PLATEAU suit : après chaque outil du narrateur, chaque villageois a un jeton verrouillé sur la scène du village, à sa
+// place pour la phase (devant sa maison la nuit et à l'aube, en cercle sur la place pour le vote, au cimetière s'il est
+// mort), la lumière est celle de la phase, l'image reste neutre tant que le rôle n'est pas révélé, crâne et silence suivent.
 // Lancer : npm run essais
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
-  installerFoundry, simulerJoueurs, calme, erreurs, envoyerAuMJ, journalHooks, emissions, messages, reglages, CONTENU
+  installerFoundry, simulerJoueurs, calme, erreurs, envoyerAuMJ, journalHooks, emissions, messages, reglages, CONTENU, ajouterScene, erreursHooks
 } from "./doublures/foundry-loups.mjs";
+import { PLAN_VILLAGE, PLATEAU_VILLAGE, PLACE, BATIMENTS_CARTE } from "../modules/lakour-veillees/contenu/village.mjs";
 
 installerFoundry({ contenu: true });
 const { api } = await import("../systems/lakour-loups/scripts/api.mjs");
@@ -23,6 +27,11 @@ const { creerHasard, choisir, melanger, verifierVictoire, CAUSES_SECRETES, POUVO
 const { OUTILS } = await import("../modules/lakour-mj-ia/scripts/outils.js");
 const { Compagnons, reinitialiserPrive, privesDe } = await import("../modules/lakour-mj-ia/scripts/compagnons-jeu.js");
 const { contexteCompagnon, texteBrut } = await import("../modules/lakour-mj-ia/scripts/compagnons.js");
+const plateau = await import("../systems/lakour-loups/scripts/plateau.mjs");
+const { versCases, lumiereDePhase } = await import("../systems/lakour-loups/logique/index.mjs");
+const NEUTRE = "modules/lakour-veillees/assets/jetons/villageois.svg";
+const CIMETIERE = BATIMENTS_CARTE.find(b => b.nom === "Cimetière");
+let sceneVillage = null;
 const outil = nom => OUTILS.find(o => o.nom === nom);
 
 const ROLES = Object.fromEntries(CONTENU.roles.map(r => [r.system.cle, r]));
@@ -40,6 +49,12 @@ function monde(n, graine, { simules = true } = {}) {
   game.settings.register("lakour-mj-ia", "personnaliteActive", { default: "conteuse" });
   game.lakourLoups = api;          // ce que fait le hook « ready » du système
   ecouterSocket();
+  // Le plateau : la scène du village, la mise en scène branchée sur les hooks du système (sans délai pour l'essai).
+  plateau.oublierPlateau();
+  plateau.brancherPlateau();
+  api.plateau.reglerDelais({ regroupement: 0, marque: 0, animation: 0, lumiere: 0 });
+  api.plateau.configurer({ jetonNeutre: NEUTRE });
+  sceneVillage = ajouterScene({ nom: "Brumecombe", plan: PLAN_VILLAGE });
   // Ce que fait le MJ IA au « ready » : le cerveau des compagnons répond aux demandes du système.
   reinitialiserPrive();
   game.messages = { get contents() { return messages; } };
@@ -124,6 +139,37 @@ function verifierSecrets(ou) {
   }
   controle = emissions.length;
   if (joueursSimules) assert.deepEqual(joueursSimules.journal.fuites, [], `${ou} : message privé diffusé à tous`);
+}
+
+// La scène du village après chaque outil : places de la phase, lumière, images, statuts publics.
+async function verifierPlateau(ou) {
+  await api.plateau.attendre();
+  const e = api.etat();
+  if (!e.partie) return;
+  assert.ok(sceneVillage.active, `${ou} : la scène du village est active`);
+  assert.equal(sceneVillage.environment.darknessLevel, lumiereDePhase(e.phase), `${ou} : lumière de la phase ${e.phase}`);
+  const g = { size: 100, sceneX: 0, sceneY: 0 };
+  const cercle = [];
+  for (const a of villageois()) {
+    const t = sceneVillage.tokens.filter(x => x.actorId === a.id);
+    assert.equal(t.length, 1, `${ou} : ${a.name} a un jeton et un seul`);
+    assert.equal(t[0].locked, true, `${ou} : jeton verrouillé`);
+    const c = versCases(t[0], g);
+    if (!a.system.vivant) {
+      assert.ok(c.x > CIMETIERE.x && c.x < CIMETIERE.x + CIMETIERE.l && c.y > CIMETIERE.y && c.y < CIMETIERE.y + CIMETIERE.h, `${ou} : ${a.name}, mort, au cimetière`);
+      assert.ok(a.statuses.has("dead"), `${ou} : ${a.name}, mort, porte le crâne`);
+    } else if (["jour", "vote", "fin"].includes(e.phase)) {
+      assert.ok(c.x - 0.5 >= PLACE.x && c.x + 0.5 <= PLACE.x + PLACE.l && c.y - 0.5 >= PLACE.y && c.y + 0.5 <= PLACE.y + PLACE.h, `${ou} : ${a.name} sur la place`);
+      cercle.push(c);
+    } else assert.deepEqual(c, PLATEAU_VILLAGE.seuils[a.system.maison], `${ou} : ${a.name} devant ${a.system.maison}`);
+    assert.equal(a.statuses.has("silence"), Boolean(a.system.vivant && a.system.silence), `${ou} : silence de ${a.name}`);
+    const revele = a.system.revele || e.phase === "fin";
+    assert.equal(t[0].texture.src, revele ? roleDe(a).img : NEUTRE, `${ou} : image de ${a.name} (${roleDe(a).system.cle}, révélé : ${revele})`);
+  }
+  for (let i = 0; i < cercle.length; i++) for (let j = i + 1; j < cercle.length; j++) {
+    assert.ok(Math.hypot(cercle[i].x - cercle[j].x, cercle[i].y - cercle[j].y) >= 1 - 1e-6, `${ou} : deux jetons du cercle se chevauchent`);
+  }
+  assert.deepEqual(erreursHooks, [], `${ou} : erreur dans un écouteur de hook`);
 }
 
 function verifierVillageois(usages) {
@@ -229,6 +275,7 @@ async function jouerPartie({ n, niveau, graine, nbCompagnons = 0 }) {
     assert.ok(!r.erreur, `${nom} en erreur : ${r.contenu}`);
     verifierTexte(r.contenu, nom);
     verifierSecrets(nom);
+    await verifierPlateau(nom);
     return r.contenu;
   };
   // Le narrateur élimine (emporté dans la tombe, puis désignés du vote) ; renvoie le texte s'il annonce la victoire.

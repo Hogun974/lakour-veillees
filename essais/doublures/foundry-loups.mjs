@@ -4,6 +4,9 @@
 // fetch de compositions.json) et des JOUEURS SIMULÉS qui répondent aux fenêtres de nuit et de vote par le socket du système.
 // Les villageois tenus par des compagnons IA (system.compagnon, sans joueur) ne sont pas simulés ici : ils répondent par le
 // résolveur du MJ IA (api.resolveurs.compagnon), branché par l'essai.
+// Le plateau : des SCÈNES (ajouterScene : la carte du village, avec son plan dans les drapeaux) et leurs JETONS
+// (création, mise à jour, déplacements par moveTokens, hooks preUpdateToken / preMoveToken comme dans le navigateur qui
+// modifie). Les hooks sont appelés pour de bon (Hooks.on / Hooks.callAll / Hooks.call) ; journalHooks les note tous.
 // Utilisée par essais/loups-api.test.mjs, essais/integration-loups.test.mjs et essais/compagnons.test.mjs.
 import { readFileSync, readdirSync } from "node:fs";
 import { creerHasard, choisir, melanger } from "../../systems/lakour-loups/logique/hasard.mjs";
@@ -69,6 +72,87 @@ export class FauxActeur {
   async createEmbeddedDocuments(type, liste) { return liste.map(d => { const o = new FauxObjet(d, this); this.items.set(o.id, o); return o; }); }
   async deleteEmbeddedDocuments(type, ids) { for (const id of ids) this.items.delete(id); }
   async toggleStatusEffect(s, { active }) { if (active) this.statuses.add(s); else this.statuses.delete(s); }
+  async getTokenDocument(donnees = {}) {
+    const base = { name: this.name, actorId: this.id, actorLink: true, ...structuredClone(this.prototypeToken ?? {}), ...structuredClone(donnees) };
+    base.actorId = this.id;
+    return { toObject: () => structuredClone(base) };
+  }
+}
+
+// ------------------------------------------------------------------ scènes et jetons
+export class FauxJeton {
+  constructor(d, scene) {
+    this.id = d._id ?? nouvelId(); this.parent = scene; this.documentName = "Token";
+    Object.assign(this, { name: "", actorId: null, x: 0, y: 0, locked: false, alpha: 1, hidden: false, width: 1, height: 1, level: null,
+      texture: { src: "", tint: "#ffffff" }, ...structuredClone({ ...d, _id: undefined }) });
+    delete this._id;
+    this.texture = { src: "", tint: "#ffffff", ...(d.texture ?? {}) };
+  }
+  get actor() { return globalThis.game.actors.get(this.actorId) ?? null; }
+  update(c, o) { return this.parent.updateEmbeddedDocuments("Token", [{ _id: this.id, ...c }], o).then(r => r[0]); }
+}
+
+export class FausseScene {
+  constructor({ nom = "Scène", plan = null, module = MODULE_CONTENU, cle = "village-de-brumecombe", obscurite = 0.55, taille = 100 } = {}) {
+    this.id = nouvelId(); this.name = nom; this.documentName = "Scene";
+    this.flags = plan ? { [module]: { cle, plan: structuredClone(plan) } } : {};
+    this.grid = { size: taille }; this.dimensions = { sceneX: 0, sceneY: 0, size: taille };
+    this.environment = { darknessLevel: obscurite, darknessLock: false };
+    this.initialLevel = { id: "niveau0000000001" };
+    this.tokens = new Collection();
+    this.journal = { mouvements: [], majs: [], creations: [], suppressions: [], lumieres: [], activations: 0 };
+  }
+  get active() { return globalThis.game.scenes?.idActive === this.id; }
+  getFlag(module, cle) { return this.flags?.[module]?.[cle]; }
+  async activate() { globalThis.game.scenes.idActive = this.id; this.journal.activations++; return this; }
+  async update(c, options = {}) {
+    if ("environment.darknessLevel" in c) { this.environment.darknessLevel = c["environment.darknessLevel"]; this.journal.lumieres.push({ valeur: this.environment.darknessLevel, options }); }
+    return this;
+  }
+  async createEmbeddedDocuments(type, liste) {
+    const crees = liste.map(d => { const t = new FauxJeton(d, this); this.tokens.set(t.id, t); return t; });
+    this.journal.creations.push(...crees.map(t => t.id));
+    return crees;
+  }
+  async deleteEmbeddedDocuments(type, ids) { for (const id of ids) this.tokens.delete(id); this.journal.suppressions.push(...ids); return ids; }
+  // Comme le navigateur qui modifie : preUpdateToken peut refuser (false) ; un changement de x, y passe aussi par preMoveToken.
+  async updateEmbeddedDocuments(type, majs, options = {}) {
+    const faits = [];
+    for (const { _id, ...c } of majs) {
+      const t = this.tokens.get(_id);
+      if (!t) continue;
+      if (globalThis.Hooks.call("preUpdateToken", t, structuredClone(c), options, globalThis.game.user.id) === false) continue;
+      if (("x" in c || "y" in c) && globalThis.Hooks.call("preMoveToken", t, { destination: { x: c.x ?? t.x, y: c.y ?? t.y } }, options) === false) continue;
+      appliquer(t, c);
+      this.journal.majs.push({ id: _id, c: structuredClone(c), options, user: globalThis.game.user.id });
+      faits.push(t);
+    }
+    return faits;
+  }
+  // Scene#moveTokens de Foundry v14 : { id: { destination: { x, y, action }, constrainOptions, … } }.
+  async moveTokens(instructions, options = {}) {
+    const r = {};
+    for (const [id, ins] of Object.entries(instructions)) {
+      const t = this.tokens.get(id);
+      const d = ins.destination ?? ins.waypoints?.at(-1) ?? {};
+      if (!t) { r[id] = false; continue; }
+      const move = { destination: { x: d.x, y: d.y }, method: options.method ?? "api", constrainOptions: ins.constrainOptions, action: d.action };
+      if (globalThis.Hooks.call("preUpdateToken", t, { x: d.x, y: d.y }, options, globalThis.game.user.id) === false
+        || globalThis.Hooks.call("preMoveToken", t, move, options) === false) { r[id] = false; continue; }
+      this.journal.mouvements.push({ id, de: { x: t.x, y: t.y }, vers: { x: d.x, y: d.y }, action: d.action, constrainOptions: structuredClone(ins.constrainOptions ?? {}), options: structuredClone(options) });
+      t.x = d.x; t.y = d.y;
+      r[id] = true;
+    }
+    return r;
+  }
+}
+
+// Une scène dans le monde (la carte du village : plan dans les drapeaux du module de contenu).
+export function ajouterScene(options = {}) {
+  const sc = new FausseScene(options);
+  globalThis.game.scenes.set(sc.id, sc);
+  if (options.active) globalThis.game.scenes.idActive = sc.id;
+  return sc;
 }
 
 // ------------------------------------------------------------------ contenu réel de lakour-veillees (src/)
@@ -134,7 +218,7 @@ function resoudreUuid(uuid) {
 }
 
 // ------------------------------------------------------------------ installation
-export let journalHooks, emissions, messages, reglages;
+export let journalHooks, emissions, messages, reglages, erreursHooks = [];
 let ecouteursMJ = [], clients = [], enVol = new Set(), erreursSocket = [];
 export const erreurs = () => erreursSocket;
 
@@ -197,8 +281,35 @@ export function installerFoundry({ joueurs = 6, contenu = false } = {}) {
     }
   };
   items.fromCompendium = doc => { const d = doc.toObject(); delete d._id; return d; };
-  globalThis.Hooks = { callAll: (nom, ...args) => journalHooks.push({ nom, args }), on() {}, once() {} };
-  globalThis.CONST = { DOCUMENT_OWNERSHIP_LEVELS: { NONE: 0, LIMITED: 1, OBSERVER: 2, OWNER: 3 }, TOKEN_DISPOSITIONS: { NEUTRAL: 0 } };
+  // Des hooks qui appellent leurs écouteurs (comme Foundry) ; une erreur d'écouteur est notée, sans arrêter les autres.
+  const ecouteursHooks = new Map();
+  erreursHooks = [];
+  const ecouteurs = nom => [...(ecouteursHooks.get(nom) ?? [])];
+  globalThis.Hooks = {
+    callAll: (nom, ...args) => {
+      journalHooks.push({ nom, args });
+      for (const e of ecouteurs(nom)) {
+        if (e.once) ecouteursHooks.get(nom).delete(e);
+        try { const r = e.fn(...args); if (r?.catch) r.catch(err => erreursHooks.push(err)); } catch (err) { erreursHooks.push(err); }
+      }
+      return true;
+    },
+    call: (nom, ...args) => {
+      journalHooks.push({ nom, args });
+      for (const e of ecouteurs(nom)) {
+        try { if (e.fn(...args) === false) return false; } catch (err) { erreursHooks.push(err); }
+      }
+      return true;
+    },
+    on: (nom, fn) => { if (!ecouteursHooks.has(nom)) ecouteursHooks.set(nom, new Set()); const e = { fn }; ecouteursHooks.get(nom).add(e); return e; },
+    once: (nom, fn) => { if (!ecouteursHooks.has(nom)) ecouteursHooks.set(nom, new Set()); const e = { fn, once: true }; ecouteursHooks.get(nom).add(e); return e; }
+  };
+  const scenes = new Collection();
+  scenes.idActive = null;
+  Object.defineProperty(scenes, "active", { get: () => scenes.get(scenes.idActive) ?? null });
+  game.scenes = scenes;
+  globalThis.CONST = { DOCUMENT_OWNERSHIP_LEVELS: { NONE: 0, LIMITED: 1, OBSERVER: 2, OWNER: 3 }, TOKEN_DISPOSITIONS: { NEUTRAL: 0 },
+    TOKEN_DISPLAY_MODES: { NONE: 0, CONTROL: 10, OWNER_HOVER: 20, HOVER: 30, OWNER: 40, ALWAYS: 50 } };
   globalThis.Actor = { implementation: { create: async d => { const a = new FauxActeur(d); game.actors.set(a.id, a); return a; } } };
   globalThis.ChatMessage = { implementation: { create: async m => { messages.push(m); return m; } } };
   globalThis.fromUuid = async uuid => resoudreUuid(uuid);

@@ -14,7 +14,7 @@ import { ID, CLE_MEUTE, EFFETS, EFFETS_AUTOMATISES, EFFETS_NARRATEUR, causePubli
 import * as L from "../logique/index.mjs";
 import { estMJActif, emettre, annoncer } from "./canal.mjs";
 import { reglage } from "./reglages.mjs";
-import { garderSecrets } from "./secrets.mjs";
+import { garderSecrets, secretsMJ } from "./secrets.mjs";
 import { noterMonVote } from "./prive.mjs";
 import {
   t, tousLesVillageois, roleDe, metierDe, villageoisAPlat, lireEtat, lirePublic, monVillageois, clesDesBatiments,
@@ -22,6 +22,9 @@ import {
 } from "./donnees.mjs";
 import { ouvrirChoix, fermerChoix } from "./apps/choix.mjs";
 import { ouvrirTable } from "./apps/table.mjs";
+import {
+  planifierMiseEnScene, attendreMiseEnScene, mettreEnScene, configurerPlateau, reglerDelais, sceneDuVillage, voulu, imageNeutre, imageDuJeton
+} from "./plateau.mjs";
 
 const NIVEAUX = () => CONST.DOCUMENT_OWNERSHIP_LEVELS;
 
@@ -221,6 +224,7 @@ function terminer(id, cibles, expire, texte = "") {
 export function recevoirReponse({ id, cibles, texte, userId }) {
   const p = enAttente.get(id);
   if (!p || p.demande.destinataire !== userId) return false;
+  if (game.actors.get(p.demande.acteurId)?.system.vivant === false) return terminer(id, [], false, "");
   return terminer(id, cibles, false, texte);
 }
 
@@ -305,8 +309,73 @@ function nomDuPouvoir(pouvoir, acteur) {
   return game.i18n.has(cle) ? t(cle) : pouvoir;
 }
 
+// ------------------------------------------------------------------ nouvelle partie
+// Les demandes de nuit encore ouvertes (une partie abandonnée) : closes, chacune chez son joueur.
+function annulerDemandes() {
+  for (const id of [...enAttente.keys()]) terminer(id, [], true);
+  votesCompagnons = Promise.resolve();
+}
+
+// Le contenu disponible : rôles, métiers et bâtiments (compendiums d'objets, puis objets du monde) par clé, et, du module
+// qui fournit les rôles, son équilibre (assets/equilibre.json) et ses compositions prêtes (assets/compositions.json).
+async function contenuDisponible() {
+  const roles = new Map(), batiments = new Map(), metiers = new Map(), noms = new Map();
+  let paquet = "";
+  const ranger = (e, origine = "") => {
+    const cle = e.system?.cle;
+    if (!cle || !e.uuid) return;
+    if (e.type === "role" && !roles.has(cle)) { roles.set(cle, e.uuid); noms.set(cle, e.name); paquet ||= origine; }
+    else if (e.type === "metier" && !metiers.has(cle)) metiers.set(cle, e.uuid);
+    else if (e.type === "batiment" && !batiments.has(cle)) batiments.set(cle, e.uuid);
+  };
+  for (const pack of game.packs?.contents ?? []) {
+    if (pack.documentName !== "Item" || typeof pack.getIndex !== "function") continue;
+    const index = await pack.getIndex({ fields: ["system.cle"] });
+    for (const e of (typeof index.values === "function" ? index.values() : index)) ranger(e, pack.metadata?.packageName ?? "");
+  }
+  for (const i of game.items?.contents ?? [...(game.items?.values?.() ?? [])]) ranger(i);
+  const lire = async fichier => {
+    if (!paquet) return null;
+    try {
+      const r = await fetch(foundry.utils.getRoute(`modules/${paquet}/assets/${fichier}`), { cache: "no-store" });
+      return r.ok === false ? null : await r.json();
+    } catch { return null; }
+  };
+  const [equilibre, compositions] = await Promise.all([lire("equilibre.json"), lire("compositions.json")]);
+  return { roles, metiers: [...metiers.values()], batiments, noms, equilibre: equilibre ?? { roles: {}, batiments: {} }, compositions: compositions ?? {} };
+}
+
+const lireReglage = (cle, defaut) => { try { return game.settings.get(ID, cle) ?? defaut; } catch { return defaut; } };
+// L'historique des parties (rôles et bâtiments en jeu, jamais qui avait quoi), pour varier les compositions ; celui du
+// MJ IA (lakour-mj-ia.historiqueLoups) s'y ajoute s'il existe.
+function historiqueDesParties() {
+  let ia = [];
+  try { if (game.settings.settings?.has?.("lakour-mj-ia.historiqueLoups")) ia = game.settings.get("lakour-mj-ia", "historiqueLoups") ?? []; } catch { ia = []; }
+  return [...ia, ...lireReglage("historique", [])].sort((a, b) => (a.quand ?? 0) - (b.quand ?? 0)).slice(-10);
+}
+
+// Une clé de rôle d'après sa clé ou son nom.
+function cleDeRole(texte, contenu) {
+  const n = String(texte ?? "").trim().toLowerCase();
+  if (contenu.roles.has(n)) return n;
+  return [...contenu.noms].find(([, nom]) => nom.toLowerCase() === n)?.[0] ?? null;
+}
+
+// Les réveils de nuit en cours (demandes envoyées, sans réponse encore) : roleCle.
+const reveilsEnCours = new Set();
+let pointCompagnons = null;
+
 // ------------------------------------------------------------------ l'API
 export const api = {
+  // Point d'enregistrement des compagnons IA, déposé par le MJ IA (s'il est actif, même sans séance de narrateur) :
+  // { disponible: true, async creer(n) -> [acteurId], async retirer(acteurId) }. La Table de jeu s'en sert pour ajouter
+  // ou retirer des joueurs IA ; le hook lakourLoups.compagnons prévient quand il change. null : pas de joueurs IA.
+  get compagnons() { return pointCompagnons; },
+  set compagnons(point) {
+    pointCompagnons = point && typeof point === "object" ? point : null;
+    Hooks.callAll("lakourLoups.compagnons", pointCompagnons);
+  },
+
   logique: L,
   // Résolveurs fournis par d'autres modules. compagnon(demande) -> [acteurId] (choix de nuit, vote) ou texte (mode "texte") :
   // le MJ IA y branche le cerveau de ses compagnons. demande : { type: "demande" | "vote", mode?, id, acteurId, acteurNom,
@@ -322,10 +391,18 @@ export const api = {
     return tousLesVillageois();
   },
 
-  // compagnons : noms des villageois tenus par des compagnons IA (sans joueur), en plus des joueurs.
+  // compagnons : les villageois tenus par des compagnons IA (sans joueur), en plus des joueurs : un nom (un compagnon d'une
+  // partie précédente est repris et renommé, sinon un villageois est créé), ou l'id d'un villageois compagnon déjà là
+  // (créé par le MJ IA, api.compagnons.creer : il garde son nom), ou { acteurId } / { nom }.
   async distribuer({ roles = [], metiers = [], joueurs = [], compagnons = [], maisons = [], graine, composition = "", batiments = [] } = {}) {
     exigerMJ();
-    const nomsCompagnons = compagnons.map(n => String(typeof n === "object" ? n?.nom ?? "" : n ?? "").trim()).filter(Boolean);
+    const estPlaceCompagnon = id => { const a = game.actors.get(id); return a?.type === "villageois" && estCompagnon(a); };
+    const placesIA = compagnons.map(n => {
+      const id = typeof n === "object" ? n?.acteurId ?? "" : String(n ?? "");
+      if (id && estPlaceCompagnon(id)) return { acteurId: id, nom: game.actors.get(id).name };
+      return { acteurId: "", nom: String(typeof n === "object" ? n?.nom ?? "" : n ?? "").trim() };
+    }).filter(c => c.acteurId || c.nom);
+    const nomsCompagnons = placesIA.map(c => c.nom);
     if (!joueurs.length && !nomsCompagnons.length) throw new Error(t("LAKOUR_LOUPS.Erreurs.PasDeJoueurs"));
     const cache = new Map();
     for (const uuid of [...roles, ...metiers]) {
@@ -344,7 +421,8 @@ export const api = {
     const lesMaisons = maisons.length ? maisons : L.maisonsDuVillage(places.length);
     const tirage = L.distribuer({ roles, metiers, joueurs: places, maisons: lesMaisons, graine });
     // Les compagnons d'une partie précédente sont repris (renommés) ; ceux qui restent sont retirés du village.
-    const anciensCompagnons = tousLesVillageois().filter(a => a.system.compagnon && !a.system.joueur);
+    const reserves = new Set(placesIA.map(c => c.acteurId).filter(Boolean));
+    const anciensCompagnons = tousLesVillageois().filter(a => a.system.compagnon && !a.system.joueur && !reserves.has(a.id));
     const sortie = [];
     for (const att of tirage) {
       const indexCompagnon = att.joueur.startsWith(PLACE_COMPAGNON) ? Number(att.joueur.slice(PLACE_COMPAGNON.length)) : -1;
@@ -356,8 +434,9 @@ export const api = {
         maison: att.maison, amoureux: "", silence: false, protections: 0 };
       const ownership = compagnon ? { default: NIVEAUX().LIMITED } : { default: NIVEAUX().LIMITED, [att.joueur]: NIVEAUX().OWNER };
       const nomCompagnon = compagnon ? nomsCompagnons[indexCompagnon] : "";
-      let acteur = compagnon ? anciensCompagnons.shift() : tousLesVillageois().find(a => a.system.joueur === att.joueur);
-      if (acteur && compagnon) await acteur.update({ name: nomCompagnon, "prototypeToken.name": nomCompagnon });
+      const reserve = compagnon ? placesIA[indexCompagnon].acteurId : "";
+      let acteur = compagnon ? (reserve ? game.actors.get(reserve) : anciensCompagnons.shift()) : tousLesVillageois().find(a => a.system.joueur === att.joueur);
+      if (acteur && compagnon && acteur.name !== nomCompagnon) await acteur.update({ name: nomCompagnon, "prototypeToken.name": nomCompagnon });
       if (acteur) {
         const anciens = acteur.items.filter(i => i.type === "role" || i.type === "metier").map(i => i.id);
         if (anciens.length) await acteur.deleteEmbeddedDocuments("Item", anciens);
@@ -371,7 +450,10 @@ export const api = {
       await acteur.createEmbeddedDocuments("Item", [roleData, metierData].filter(Boolean));
       sortie.push({ acteurId: acteur.id, userId: compagnon ? "" : att.joueur, compagnon, roleCle: roleData.system?.cle ?? "" });
     }
-    for (const a of anciensCompagnons) await a.delete();
+    for (const a of anciensCompagnons) {
+      if (typeof api.compagnons?.retirer === "function") { try { await api.compagnons.retirer(a.id); } catch { /* repli */ } }
+      if (game.actors.get(a.id)) await a.delete();
+    }
     const enJeu = villageoisAPlat().filter(v => sortie.some(s => s.acteurId === v.id));
     const etat = await modifierEtat(() => {
       const e = L.etatInitial();
@@ -404,6 +486,161 @@ export const api = {
     return foundry.utils.deepClone(etat);
   },
 
+  // Une nouvelle partie avec les MÊMES participants : mêmes humains (memesJoueurs, sinon les joueurs connectés), même
+  // nombre de compagnons IA (mêmes villageois, mêmes noms). Tout est remis à zéro (état public et secrets, vivants, non
+  // révélés, sans silence, rôles et métiers retirés puis redistribués), le plateau est remis en place (jetons neutres
+  // devant les maisons, lumière de jour, scène du village active). Composition : roles (clés ou noms) si donnés, sinon
+  // la composition prête nommée, sinon une composition équilibrée générée (niveau, historique pour varier), et à
+  // défaut d'équilibre, les rôles de la partie précédente rebattus.
+  // -> { partie, joueurs: [{ userId, nom, acteurId }], compagnons: [{ nom, acteurId }],
+  //      composition: { cle, libelle, niveau, roles: [cle], batiments: [cle], somme?, verdict? } }
+  // Hook lakourLoups.nouvellePartie : chez le MJ ce résumé ; chez tous { partie, joueurs: n, compagnons: n, composition: { cle, libelle } }.
+  // joueurs : [userId] (au lieu des mêmes, ou des connectés) ; compagnons : [acteurId] des villageois compagnons à garder
+  // (par défaut : tous ceux du village, mêmes noms).
+  async nouvellePartie({ memesJoueurs = true, joueurs = null, compagnons: ia = null, composition = "", roles = [], niveau = "", graine } = {}) {
+    exigerMJ();
+    const avant = lireEtat();
+    const anciens = tousLesVillageois();
+    const humains = Array.isArray(joueurs) ? [...new Set(joueurs.filter(id => game.users.get(id) && !game.users.get(id).isGM))]
+      : memesJoueurs ? [...new Set(anciens.map(a => a.system.joueur).filter(id => id && game.users.get(id)))]
+        : game.users.filter(u => u.active && !u.isGM).map(u => u.id);
+    const compagnons = Array.isArray(ia) ? ia.filter(id => estCompagnon(game.actors.get(id))) : anciens.filter(estCompagnon).map(a => a.id);
+    memesJoueurs = memesJoueurs && !Array.isArray(joueurs);
+    const total = humains.length + compagnons.length;
+    if (!total) throw new Error(t("LAKOUR_LOUPS.Erreurs.PasDeJoueurs"));
+    const contenu = await contenuDisponible();
+    const precedents = anciens.map(a => roleDe(a)?.system.cle).filter(Boolean);
+    const historique = [...historiqueDesParties(), ...(precedents.length ? [{ roles: precedents, batiments: avant.batimentsCles ?? [], quand: Date.now() }] : [])];
+    const niveauPrecedent = [...historique].reverse().find(h => h.niveau)?.niveau ?? contenu.compositions[avant.composition]?.niveau ?? "classique";
+    const niv = L.NIVEAUX.includes(niveau) ? niveau : niveauPrecedent;
+    const equilibreOk = Object.keys(contenu.equilibre.roles ?? {}).length > 0 && total >= 4;
+    const genere = inclure => L.composer(total, contenu.equilibre, { niveau: niv, inclure, historique, graine });
+    let compo;
+    if (roles.length) {
+      const cles = roles.map(r => cleDeRole(r, contenu));
+      if (cles.some(c => !c)) throw new Error(t("LAKOUR_LOUPS.Erreurs.RolesInconnus", { roles: roles.filter((_, i) => !cles[i]).join(", ") }));
+      const bat = equilibreOk ? genere(cles.filter(c => c !== "villageois" && c !== "loup-de-brumecombe")).batiments : avant.batimentsCles ?? [];
+      compo = { cle: "choisie", libelle: t("LAKOUR_LOUPS.NouvellePartie.Choisie"), niveau: niv, roles: cles, batiments: bat };
+    } else if (composition && contenu.compositions[composition]) {
+      const c = contenu.compositions[composition];
+      compo = { cle: composition, libelle: c.libelle ?? composition, niveau: c.niveau ?? niv, roles: [...c.roles], batiments: [...(c.batiments ?? [])] };
+    } else if (equilibreOk) {
+      const g = genere([]);
+      compo = { cle: "generee", libelle: t("LAKOUR_LOUPS.NouvellePartie.Generee", { verdict: g.verdict }), niveau: niv, roles: g.roles, batiments: g.batiments, somme: g.somme, verdict: g.verdict };
+    } else {
+      compo = { cle: avant.composition || "reprise", libelle: t("LAKOUR_LOUPS.NouvellePartie.Reprise"), niveau: niv, roles: precedents, batiments: avant.batimentsCles ?? [] };
+    }
+    const cles = compo.roles.slice(0, total);
+    while (cles.length < total) cles.push("villageois");
+    compo.roles = cles;
+    const uuidsRoles = cles.map(c => contenu.roles.get(c));
+    if (uuidsRoles.some(u => !u)) throw new Error(t("LAKOUR_LOUPS.Erreurs.RolesInconnus", { roles: cles.filter((_, i) => !uuidsRoles[i]).join(", ") }));
+    const metiers = contenu.metiers.length ? Array.from({ length: total }, (_, i) => contenu.metiers[i % contenu.metiers.length]) : [];
+    compo.batiments = compo.batiments.filter(c => contenu.batiments.has(c));
+    const batiments = compo.batiments.map(c => contenu.batiments.get(c));
+    // Une partie abandonnée : ses demandes de nuit se ferment ; les villageois de joueurs qui ne rejouent pas quittent le village.
+    annulerDemandes();
+    if (!memesJoueurs) for (const a of anciens.filter(x => x.system.joueur && !humains.includes(x.system.joueur))) await a.delete();
+    const sortie = await api.distribuer({ roles: uuidsRoles, metiers, joueurs: humains, compagnons, maisons: L.maisonsDuVillage(total),
+      graine, composition: compo.cle, batiments });
+    try {
+      await game.settings.set(ID, "historique", [...lireReglage("historique", []), { roles: [...cles], batiments: [...compo.batiments], niveau: compo.niveau, composition: compo.cle, quand: Date.now() }].slice(-10));
+    } catch { /* réglage absent */ }
+    const partie = lireEtat().partie;
+    const resume = {
+      partie,
+      joueurs: sortie.filter(x => !x.compagnon).map(x => ({ userId: x.userId, nom: game.users.get(x.userId)?.name ?? "", acteurId: x.acteurId })),
+      compagnons: sortie.filter(x => x.compagnon).map(x => ({ nom: game.actors.get(x.acteurId)?.name ?? "", acteurId: x.acteurId })),
+      composition: { cle: compo.cle, libelle: compo.libelle, niveau: compo.niveau, roles: [...cles], batiments: [...compo.batiments],
+        ...(compo.somme !== undefined ? { somme: compo.somme, verdict: compo.verdict } : {}) }
+    };
+    annoncer("lakourLoups.nouvellePartie", [foundry.utils.deepClone(resume)],
+      [{ partie, joueurs: resume.joueurs.length, compagnons: resume.compagnons.length, composition: { cle: compo.cle, libelle: compo.libelle } }]);
+    await annonceChat(echapper(t("LAKOUR_LOUPS.NouvellePartie.Annonce", { n: total })));
+    return resume;
+  },
+
+  // Réveille un rôle de la nuit (ou la meute) comme le ferait le narrateur : candidats du système (effets du jour compris),
+  // demande secrète au joueur (ou au compagnon IA), mot du Messager, puis note l'action. Pour la Table de jeu du MJ humain.
+  // -> { roleCle, acteurIds, cibles, texte }
+  async reveiller(roleCle, { delai } = {}) {
+    exigerMJ();
+    const etat = lireEtat();
+    const tour = Math.max(1, etat.tour);
+    const entree = L.ordreDeNuit(villageoisAPlat(), tour).find(e => e.roleCle === roleCle);
+    if (!entree) throw new Error(t("LAKOUR_LOUPS.Erreurs.PersonneAReveiller", { role: String(roleCle) }));
+    const ms = Number(delai) > 0 ? Number(delai) : reglage("delaiChoix") * 1000;
+    const acteurs = entree.acteurIds.map(id => game.actors.get(id));
+    const roles = acteurs.map(a => roleDe(a));
+    const meute = roleCle === CLE_MEUTE;
+    const role = meute ? roles.find(r => r?.system.camp === "meute" && Number(r.system.nuit.ordre) === 40) : roles[0];
+    const effet = meute ? "tuer" : role?.system.effet ?? "";
+    const base = api.candidatsDeNuit({ acteurId: entree.acteurIds[0], roleCle });
+    // Les proies de la meute cette nuit (pour la Louve mère et l'Herboriste).
+    const rolesParCle = new Map(villageoisAPlat().filter(v => v.role).map(v => [v.role.cle, v.role]));
+    const proies = etat.nuit.actions.filter(a => a.roleCle === CLE_MEUTE
+      || (rolesParCle.get(a.roleCle)?.camp === "meute" && rolesParCle.get(a.roleCle)?.effet === "tuer")).flatMap(a => a.cibles);
+    let candidats = base;
+    let invite = role?.system.nuit.invite || (meute ? "" : t("LAKOUR_LOUPS.Choix.InviteParDefaut"));
+    if (effet === "voir-role-mort") candidats = base.length ? tousLesVillageois().filter(a => !a.system.vivant).map(a => a.id) : [];
+    if (effet === "mordre") candidats = candidats.filter(id => proies.includes(id));
+    if (effet === "remede" && proies.length) invite = `${t("LAKOUR_LOUPS.Nuit.ProiesDeLaMeute", { noms: proies.map(id => game.actors.get(id)?.name ?? "").join(", ") })} ${invite}`;
+    reveilsEnCours.add(roleCle);
+    Hooks.callAll("lakourLoups.reveil", { roleCle, enCours: true });
+    let cibles = [], texte = "";
+    try {
+      if (!candidats.length && Number(entree.cibles) > 0) cibles = [];
+      else if (meute || (role?.system.camp === "meute" && acteurs.length > 1)) cibles = await api.demanderActionMeute({ invite, candidats, delai: ms });
+      else cibles = await api.demanderAction({ acteurId: entree.acteurIds[0], invite, candidats, nombre: entree.cibles, delai: ms });
+      if (effet === "messager" && cibles.length === 2 && cibles[0] !== cibles[1]) {
+        texte = await api.demanderTexte({ acteurId: cibles[0], delai: ms,
+          invite: t("LAKOUR_LOUPS.Nuit.InviteMessager", { nom: game.actors.get(cibles[1])?.name ?? "" }) });
+      }
+      await api.noterAction({ acteurId: entree.acteurIds[0], roleCle, cibles, ...(texte ? { texte } : {}) });
+    } finally {
+      reveilsEnCours.delete(roleCle);
+      Hooks.callAll("lakourLoups.reveil", { roleCle, enCours: false });
+    }
+    return { roleCle, acteurIds: [...entree.acteurIds], cibles, texte };
+  },
+
+  reveilsEnCours() {
+    return [...reveilsEnCours];
+  },
+
+  // L'étape suivante pour le MJ humain (logique/etapes.mjs) : { cle, action, donnees, attente, detail }.
+  // ignorer : étapes écartées par le MJ (« emporter:<id> » quand la Braconnière n'emporte personne).
+  etapeSuivante({ ignorer = [] } = {}) {
+    return L.etapeSuivante(lirePublic(), estMJActif() ? secretsMJ() : null,
+      { villageois: villageoisAPlat(), attente: [...reveilsEnCours], ignorer });
+  },
+
+  // Le contenu de la partie (rôles, métiers, bâtiments, équilibre, compositions prêtes), pour la préparation sur la Table.
+  // -> { roles: [{ cle, nom, camp, poids, niveau }], niveaux, compositions: [{ cle, libelle, joueurs, niveau }] }
+  async contenu() {
+    const c = await contenuDisponible();
+    const eq = c.equilibre.roles ?? {};
+    return {
+      roles: [...c.roles.keys()].map(cle => ({ cle, nom: c.noms.get(cle) ?? cle, camp: eq[cle]?.camp ?? "village", poids: eq[cle]?.poids ?? 0, niveau: eq[cle]?.niveau ?? "" }))
+        .sort((a, b) => ["meute", "village", "solitaire"].indexOf(a.camp) - ["meute", "village", "solitaire"].indexOf(b.camp) || a.nom.localeCompare(b.nom, "fr")),
+      niveaux: [...L.NIVEAUX], equilibre: c.equilibre,
+      compositions: Object.entries(c.compositions).map(([cle, x]) => ({ cle, libelle: x.libelle ?? cle, joueurs: x.joueurs, niveau: x.niveau }))
+    };
+  },
+
+  // Le plateau du village (scripts/plateau.mjs) : mise en scène automatique chez le MJ actif.
+  plateau: {
+    mettreEnScene: options => mettreEnScene(options),
+    planifier: options => planifierMiseEnScene(options),
+    attendre: () => attendreMiseEnScene(),
+    configurer: options => configurerPlateau(options),
+    reglerDelais: d => reglerDelais(d),
+    scene: () => sceneDuVillage(),
+    voulu: () => voulu(),
+    imageNeutre: () => imageNeutre(),
+    imageDuJeton: acteur => imageDuJeton(acteur)
+  },
+
   ordreDeNuit() {
     return L.ordreDeNuit(villageoisAPlat(), Math.max(1, lireEtat().tour));
   },
@@ -420,6 +657,8 @@ export const api = {
     const acteur = acteurOuErreur(acteurId);
     // Un rôle sans cible (nuit.cibles = 0 : Ermite, Chasseur de primes) n'a rien à choisir : pas de fenêtre.
     if (Number(nombre) === 0) return Promise.resolve([]);
+    // Un mort n'agit plus (joueur ou compagnon IA) : il n'est pas réveillé.
+    if (!acteur.system.vivant) return Promise.resolve([]);
     const compagnon = estCompagnon(acteur);
     const user = compagnon ? null : game.users.get(acteur.system.joueur);
     if (!compagnon && !user?.active) return Promise.resolve([]);
@@ -443,6 +682,7 @@ export const api = {
   demanderTexte({ acteurId, invite = "", delai, max = L.LONGUEUR_MESSAGE } = {}) {
     exigerMJ();
     const acteur = acteurOuErreur(acteurId);
+    if (!acteur.system.vivant) return Promise.resolve("");
     const compagnon = estCompagnon(acteur);
     const user = compagnon ? null : game.users.get(acteur.system.joueur);
     if (!compagnon && !user?.active) return Promise.resolve("");

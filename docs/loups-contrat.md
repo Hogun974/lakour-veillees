@@ -7,7 +7,7 @@ Foundry v14 (14.369). Tout en français, textes originaux (aucun texte, aucune c
 
 ## 1. Système `lakour-loups`
 
-`systems/lakour-loups/system.json` : `id: "lakour-loups"`, `version: "0.2.1"`, `compatibility { minimum: "14", verified: "14.369" }`,
+`systems/lakour-loups/system.json` : `id: "lakour-loups"`, `version: "0.3.0"`, `compatibility { minimum: "14", verified: "14.369" }`,
 `socket: true`, `esmodules: ["lakour-loups.mjs"]`, langues fr et en, `documentTypes` ci-dessous,
 `grid { type: 1, distance: 1.5, units: "m" }`, `primaryTokenAttribute: null`.
 
@@ -164,6 +164,51 @@ jamais le choix), `lakourLoups.voteClos` (résultat public), `lakourLoups.aube` 
 (pouvoir de jour appliqué ; sans l'acteur pour la Conteuse), `lakourLoups.elimination` (cause publique), `lakourLoups.victoire`.
 Chez le MJ seulement : `lakourLoups.action` (action reçue), `lakourLoups.secret` (message secret envoyé). Chez un joueur :
 `lakourLoups.prive` (son carnet, sa prime ou son vote a changé).
+
+Ajouts 0.3.0 (MJ actif, sauf mention) :
+```
+nouvellePartie({ memesJoueurs = true, joueurs, compagnons, composition, roles, niveau, graine })
+    -> { partie, joueurs: [{ userId, nom, acteurId }], compagnons: [{ nom, acteurId }],
+         composition: { cle, libelle, niveau, roles: [cle], batiments: [cle], somme?, verdict? } }
+    Remet tout à zéro (état public et secrets, vivants, non révélés, sans silence, rôles et métiers retirés) et redistribue avec
+    les MÊMES participants : mêmes humains (memesJoueurs ; sinon `joueurs` [userId] ou les connectés), mêmes villageois
+    compagnons (mêmes noms ; `compagnons` [acteurId] pour en choisir). Composition : `roles` (clés ou noms) si donnés, sinon la
+    composition prête `composition`, sinon équilibrée (`composer`, niveau, historique pour varier), à défaut les rôles
+    précédents rebattus. Plateau remis (jetons neutres devant les maisons, statuts retirés, scène active, lumière de jour).
+    Hook lakourLoups.nouvellePartie : chez le MJ ce résumé ; chez tous { partie, joueurs: n, compagnons: n, composition: { cle, libelle } }.
+reveiller(roleCle, { delai })  -> réveille un rôle de la nuit (ou "meute") comme loups_nuit : candidats, demande, mot du
+                                  Messager, noterAction ; reveilsEnCours() -> [roleCle] ; hook lakourLoups.reveil (MJ)
+etapeSuivante({ ignorer })     -> { cle, action, donnees, attente, detail } (logique/etapes.mjs, pour le MJ humain)
+contenu()                      -> { roles: [{ cle, nom, camp, poids }], niveaux, equilibre, compositions } (tous)
+compagnons                     -> point d'enregistrement déposé par le MJ IA : { disponible, async creer(n) -> [acteurId],
+                                  async retirer(acteurId) } ; null sans lui ; hook lakourLoups.compagnons quand il change
+plateau.{ mettreEnScene, planifier, attendre, configurer({ jetonNeutre, styliser }), reglerDelais, scene, voulu }
+```
+`distribuer({ compagnons })` accepte aussi l'id d'un villageois compagnon déjà créé (il garde son nom). `demanderAction` et
+`demanderTexte` ne réveillent plus un mort (joueur ou compagnon) : ils rendent `[]` / `""`.
+
+### Plateau (scripts/plateau.mjs, logique/plateau.mjs)
+
+La scène du village est celle dont le drapeau `plan` (d'un module de contenu) a des éléments « Maison N » ; `plan.plateau`
+précise `seuils` (centre du jeton devant chaque maison), `cercle` ({ x, y, rayon, rayonMin }, en cases) et `cimetiere`.
+Chez le MJ actif, à chaque phase, mort, révélation ou silence (hooks du système, sans le MJ IA) : un jeton verrouillé
+(`locked`) par villageois, image NEUTRE tant que le rôle est caché (celle du rôle s'il est révélé, et pour tous à la fin),
+places (nuit, aube, préparatifs : devant sa maison ; jour, vote, fin : en cercle sur la place ; morts : au cimetière, marqués
+puis déplacés), déplacements `Scene#moveTokens` en marche (`action: "walk"`, `constrainOptions.ignoreWalls`), lumière
+(`environment.darknessLevel` : nuit 0,85, aube 0,4, vote 0,15, fin 0,3, sinon 0), statuts `dead` (surimpression) et
+`silence`, ambiances du MJ IA s'il est actif (« nuit », « tension »). Verrou : `preUpdateToken` et `preMoveToken` refusent
+à un non-MJ la place, l'image, le verrou d'un jeton de villageois ; la sous-classe du Token (scripts/jeton.mjs) lui refuse
+HUD, configuration et glisser.
+
+Chez chaque joueur, LOCAL (aucun document, aucun réglage monde) : bandeau d'action (scripts/apps/bandeau.mjs), halo des
+candidats, sélection, son vote, coche « a voté » (état public `vote.exprimes`), bulles du dépouillement, infobulle. Le clic
+sur un jeton qu'il ne contrôle pas est capté par la sous-classe du Token (`_canControl` sur `pointerdown`, `_onClickLeft`) ;
+seul le choix validé part au MJ actif (`reponse`, `vote`, `jour`), comme depuis les fenêtres, qui restent en secours.
+
+Parole (scripts/parole.mjs) : un mort n'écrit plus au chat public (canal des morts : chuchoté aux morts et au MJ, réglage
+`canalDesMorts`) ; un villageois réduit au silence se tait en phases « jour » et « vote » ; le MJ n'est jamais bloqué. Refus
+dans le navigateur de l'auteur (`preCreateChatMessage`), garde chez le MJ actif (`createChatMessage` : message retiré).
+Réglages ajoutés : `canalDesMorts` (monde), `plateauInteractif` (client), `historique` (monde, rôles des dernières parties).
 
 ### Compagnons IA (docs/compagnons.md)
 

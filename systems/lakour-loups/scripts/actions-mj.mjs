@@ -1,0 +1,125 @@
+// Les actions du MJ HUMAIN, telles que les font les boutons de la Table de jeu, sans narrateur IA : préparer et
+// distribuer, mener la nuit rôle par rôle, résoudre l'aube, ouvrir le débat et le vote, exécuter, emporter, vérifier la
+// victoire, rejouer. La mise en scène (jetons, lumière, statuts, ambiances) suit d'elle-même chaque changement : elle est
+// branchée sur les hooks du système, pas sur le MJ IA. Ici, pas de boîte de dialogue : la Table les pose avant d'appeler.
+import { t, tousLesVillageois, lireEtat } from "./donnees.mjs";
+
+const api = () => game.lakourLoups;
+
+// ------------------------------------------------------------------ préparation (état local de la Table du MJ)
+// { coches: [userId] | null (null : tous les joueurs connectés), mode: "auto" | "manuel", niveau, roles: { cle: n } }
+export const nouvellePreparation = () => ({ coches: null, mode: "auto", niveau: "classique", roles: {} });
+
+export const joueursConnectes = () => game.users.filter(u => !u.isGM && u.active);
+export const compagnonsDuVillage = () => tousLesVillageois().filter(a => a.system.compagnon && !a.system.joueur);
+export const iaDisponible = () => Boolean(api()?.compagnons?.disponible);
+
+export function joueursCoches(prep) {
+  const connectes = joueursConnectes().map(u => u.id);
+  return prep.coches === null ? connectes : prep.coches.filter(id => game.users.get(id));
+}
+
+export function cocher(prep, userId) {
+  const liste = new Set(joueursCoches(prep));
+  if (liste.has(userId)) liste.delete(userId);
+  else liste.add(userId);
+  prep.coches = [...liste];
+  return prep;
+}
+
+// La liste des rôles choisis à la main, complétée de villageois jusqu'au nombre de places.
+export function rolesManuels(prep, total) {
+  const roles = Object.entries(prep.roles).flatMap(([cle, n]) => Array.from({ length: Math.max(0, n) }, () => cle));
+  while (roles.length < total) roles.push("villageois");
+  return roles;
+}
+
+export function changerRole(prep, cle, delta) {
+  prep.roles[cle] = Math.max(0, (prep.roles[cle] ?? 0) + Number(delta || 0));
+  if (!prep.roles[cle]) delete prep.roles[cle];
+  return prep;
+}
+
+// L'équilibre d'une liste de rôles (poids du contenu) : { somme, verdict: "equilibree" | "village" | "meute", loups, loupsConseilles }.
+export function equilibreDesRoles(roles, equilibre) {
+  const L = api().logique;
+  const somme = L.equilibreDe(roles, equilibre);
+  const loups = roles.filter(c => equilibre.roles?.[c]?.camp === "meute").length;
+  return { somme, verdict: Math.abs(somme) <= 2 ? "equilibree" : somme > 0 ? "village" : "meute", loups, loupsConseilles: roles.length >= 4 ? L.nombreDeLoups(roles.length) : 0 };
+}
+
+// Ajouter ou retirer un joueur IA (par le point d'enregistrement du MJ IA).
+export async function ajouterIA(n = 1) {
+  const point = api()?.compagnons;
+  if (!point?.disponible) throw new Error(t("LAKOUR_LOUPS.Preparation.IAIndisponible"));
+  return point.creer(n);
+}
+export async function retirerIA() {
+  const dernier = compagnonsDuVillage().at(-1);
+  if (!dernier) return false;
+  const point = api()?.compagnons;
+  if (typeof point?.retirer === "function") await point.retirer(dernier.id);
+  if (game.actors.get(dernier.id)) await dernier.delete();
+  return true;
+}
+
+// « Distribuer » : les joueurs cochés et les compagnons IA du village, composition équilibrée (auto) ou choisie.
+export async function distribuer(prep) {
+  const joueurs = joueursCoches(prep);
+  const compagnons = compagnonsDuVillage().map(a => a.id);
+  const total = joueurs.length + compagnons.length;
+  return api().nouvellePartie({ memesJoueurs: false, joueurs, compagnons, niveau: prep.niveau,
+    roles: prep.mode === "manuel" ? rolesManuels(prep, total) : [] });
+}
+
+// ------------------------------------------------------------------ la partie, étape par étape
+export async function phase(p) { return api().changerPhase(p); }
+
+// Réveille tous les rôles qui restent, dans l'ordre de la nuit.
+export async function reveillerTout(options) {
+  const faits = [];
+  for (let i = 0; i < 40; i++) {
+    const e = api().etapeSuivante();
+    if (e.cle !== "reveiller") break;
+    faits.push(await api().reveiller(e.donnees.role, options));
+  }
+  return faits;
+}
+
+// L'aube : la nuit est résolue (messages remis aux carnets secrets), puis la victoire est vérifiée.
+export async function aube() {
+  if (lireEtat().phase === "nuit") await api().changerPhase("aube");
+  const r = await api().resoudreNuit({ chuchoter: true });
+  await api().verifierVictoire();
+  return r;
+}
+
+export async function executer(acteurId) {
+  const morts = await api().eliminer(acteurId, { cause: "vote" });
+  await api().verifierVictoire();
+  return morts;
+}
+
+export async function emporter(acteurId) {
+  const morts = await api().eliminer(acteurId, { cause: "emporte" });
+  await api().verifierVictoire();
+  return morts;
+}
+
+// Fait l'étape proposée (logique/etapes.mjs). choix : { cible } pour « emporter » (qui est emporté).
+export async function faireEtape(etape, { cible = "", delai } = {}) {
+  switch (etape.action) {
+    case "distribuer": return api().nouvellePartie({ memesJoueurs: tousLesVillageois().length > 0 });
+    case "phase": return phase(etape.donnees.phase);
+    case "reveiller": return api().reveiller(etape.donnees.role, { delai });
+    case "aube": return aube();
+    case "ouvrirVote": return api().ouvrirVote({});
+    case "cloreVote": return api().cloreVote();
+    case "executer": return executer(etape.donnees.id);
+    case "emporter": return cible ? emporter(cible) : null;
+    case "victoire": return api().verifierVictoire();
+    case "voteChapelle": return api().ouvrirVote({ objet: "chapelle" });
+    case "rejouer": return api().nouvellePartie({ memesJoueurs: true });
+    default: return null;
+  }
+}

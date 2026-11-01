@@ -15,7 +15,8 @@ import { CANAL } from "../logique/constantes.mjs";
 import { estMJActif, auteur, vientDUnMJ } from "./canal.mjs";
 import { recevoirReponse, recevoirVote, recevoirJour, envoyerCarnet } from "./api.mjs";
 import { recevoirSecret, recevoirCarnet, noterMonVote } from "./prive.mjs";
-import { ouvrirChoix, fermerChoix } from "./apps/choix.mjs";
+import { fermerChoix } from "./apps/choix.mjs";
+import { recevoirDemande, oublierDemande } from "./plateau-local.mjs";
 import { ouvrirCarnet } from "./apps/carnet.mjs";
 
 // Traite un message reçu. emetteur : l'identifiant de l'auteur donné par le serveur (second argument du socket).
@@ -35,9 +36,10 @@ export function traiterMessage(message, emetteur) {
   if (!vientDUnMJ(message, emetteur)) return false;
   switch (message.type) {
     case "demande":
-      if (message.destinataire === game.user.id) ouvrirChoix(message);
+      // Sur la carte (jetons candidats allumés chez ce joueur seul), sinon dans la fenêtre de choix.
+      if (message.destinataire === game.user.id) recevoirDemande(message);
       return true;
-    case "annuler": fermerChoix(message.id); return true;
+    case "annuler": fermerChoix(message.id); oublierDemande(message.id); return true;
     case "secret":
       recevoirSecret(message);
       ui.notifications?.info(game.i18n.localize("LAKOUR_LOUPS.Carnet.Nouveau"));

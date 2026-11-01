@@ -116,3 +116,18 @@ test("mutation : un plan invalide fait échouer la fabrication de la scène", ()
   plan.ouvertures.push({ x: 18, y: 14, cote: "nord", type: "porte" }); // au milieu de la place : aucun mur
   assert.throws(() => scene({ cle: "essai-mutation-village", nom: "Essai", plan, description: "Essai", decor }), /pas de mur à cet endroit/);
 });
+
+test("le plateau du village : un seuil devant chaque maison, le cercle sur la place, le cimetière sur son repère", async () => {
+  const L = await import("../systems/lakour-loups/logique/index.mjs");
+  const p = L.lirePlateau(PLAN_VILLAGE);
+  for (const m of MAISONS) assert.ok(PLAN_VILLAGE.plateau.seuils[m.nom], m.nom);
+  assert.equal(Object.keys(PLAN_VILLAGE.plateau.seuils).length, 18);
+  const place = PLAN_VILLAGE.pieces.find(x => x.nom === "Place du village");
+  const c = PLAN_VILLAGE.plateau.cercle;
+  assert.ok(c.x - c.rayon - 0.5 >= place.x && c.x + c.rayon + 0.5 <= place.x + place.l && c.y - c.rayon - 0.5 >= place.y && c.y + c.rayon + 0.5 <= place.y + place.h, "le cercle tient sur la place");
+  assert.deepEqual(PLAN_VILLAGE.plateau.cimetiere, (({ x, y, l, h }) => ({ x, y, l, h }))(PLAN_VILLAGE.elements.find(e => e.nom === "Cimetière")));
+  for (let n = 4; n <= 18; n++) assert.deepEqual(L.defautsDuCercle(p, L.placesEnCercle(p, n)), [], `${n} joueurs`);
+  // Mutation : un cercle trop grand déborde de la place.
+  const trop = L.lirePlateau({ ...PLAN_VILLAGE, plateau: { ...PLAN_VILLAGE.plateau, cercle: { ...c, rayon: 7, rayonMin: 7 } } });
+  assert.ok(L.defautsDuCercle(trop, L.placesEnCercle(trop, 18)).length > 0);
+});

@@ -308,3 +308,131 @@
 .lakour-loups .loups-carnet-liste { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .lakour-loups .loups-carnet-entree { padding: 6px 8px; border: 1px solid rgba(0, 0, 0, 0.2); border-radius: 4px; }
 .lakour-loups .loups-carnet-prime { margin: 4px 0 8px; }
+
+/* ------------------------------------------------------------------ bandeau d'action (haut de l'écran) */
+#lakour-loups-bandeau.loups-bandeau-jeu {
+  position: fixed; top: 10px; left: 50%; transform: translateX(-50%);
+  z-index: 70; pointer-events: auto;
+  max-width: min(980px, calc(100vw - 420px)); min-width: 360px;
+  font-family: Signika, sans-serif; font-size: 13px; color: var(--loups-texte);
+}
+.loups-bandeau-jeu .lb-corps {
+  --lb-teinte: var(--loups-lanterne);
+  display: flex; align-items: center; gap: 10px;
+  padding: 5px 6px 5px 5px;
+  background:
+    radial-gradient(ellipse at 0% 50%, color-mix(in srgb, var(--lb-teinte) 22%, transparent), transparent 60%),
+    linear-gradient(180deg, rgba(36, 27, 32, 0.94), rgba(21, 18, 26, 0.94));
+  border: 1px solid var(--loups-bord); border-radius: 999px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.7), 0 6px 22px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 236, 200, 0.06);
+  backdrop-filter: blur(3px);
+}
+.loups-bandeau-jeu .lb-corps.phase-nuit { --lb-teinte: #7f8fd6; }
+.loups-bandeau-jeu .lb-corps.phase-aube { --lb-teinte: #e59a7a; }
+.loups-bandeau-jeu .lb-corps.phase-jour { --lb-teinte: #e8c46a; }
+.loups-bandeau-jeu .lb-corps.phase-vote { --lb-teinte: var(--loups-rouille); }
+.loups-bandeau-jeu .lb-corps.phase-fin { --lb-teinte: #d9b45a; }
+.loups-bandeau-jeu .lb-corps.lb-a-toi { border-color: var(--loups-lanterne); animation: lb-appel 2.2s ease-in-out infinite; }
+@keyframes lb-appel {
+  50% { box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.7), 0 6px 22px rgba(0, 0, 0, 0.55), 0 0 18px rgba(240, 167, 66, 0.45); }
+}
+.loups-bandeau-jeu .lb-phase { display: flex; align-items: center; gap: 8px; flex: none; }
+.loups-bandeau-jeu .lb-icone {
+  display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--lb-teinte) 55%, #2b2125), #1e1922 75%);
+  border: 1px solid color-mix(in srgb, var(--lb-teinte) 60%, var(--loups-bord));
+  color: #fff4dc; font-size: 14px; text-shadow: 0 0 8px var(--lb-teinte);
+}
+.loups-bandeau-jeu .lb-phase-texte { display: flex; flex-direction: column; line-height: 1.05; }
+.loups-bandeau-jeu .lb-phase-nom { font-family: var(--loups-titre); font-size: 17px; color: var(--loups-parchemin); letter-spacing: 0.02em; white-space: nowrap; }
+.loups-bandeau-jeu .lb-tour { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--loups-terne); }
+.loups-bandeau-jeu .lb-minuteur {
+  flex: none; font-family: var(--loups-titre); font-size: 18px; color: var(--loups-lanterne);
+  padding: 0 8px; border-left: 1px solid var(--loups-bord); border-right: 1px solid var(--loups-bord);
+  text-shadow: 0 0 10px rgba(240, 167, 66, 0.45); font-variant-numeric: tabular-nums;
+}
+.loups-bandeau-jeu .lb-minuteur.urgent { color: #ff7a5c; animation: loups-pouls 1s ease-in-out infinite; }
+.loups-bandeau-jeu .lb-action { flex: 1 1 auto; min-width: 0; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; row-gap: 2px; }
+.loups-bandeau-jeu .lb-consigne { color: var(--loups-parchemin); font-weight: bold; }
+.loups-bandeau-jeu .lb-detail { color: var(--loups-terne); font-size: 12px; }
+.loups-bandeau-jeu .lb-annonce { color: var(--loups-lanterne); font-family: var(--loups-titre); font-size: 16px; }
+.loups-bandeau-jeu .lb-statut {
+  display: inline-flex; align-items: center; gap: 5px; padding: 1px 9px; border-radius: 999px; font-size: 12px;
+  border: 1px solid var(--loups-bord); background: rgba(0, 0, 0, 0.3);
+}
+.loups-bandeau-jeu .lb-statut.mort { border-color: var(--loups-sang); color: #f0b3a8; }
+.loups-bandeau-jeu .lb-statut.silence { border-color: var(--loups-brume); color: var(--loups-brume); }
+.loups-bandeau-jeu .lb-boutons { display: flex; align-items: center; gap: 4px; flex: none; }
+.loups-bandeau-jeu .lb-bouton {
+  display: inline-flex; align-items: center; gap: 5px; height: 28px; padding: 0 11px; margin: 0;
+  border-radius: 999px; border: 1px solid var(--loups-rouille); cursor: pointer; white-space: nowrap;
+  background: linear-gradient(#4a2f22, #3a241b); color: var(--loups-parchemin); font-size: 12px; font-weight: bold; line-height: 1;
+}
+.loups-bandeau-jeu .lb-bouton:hover:not(:disabled) { border-color: var(--loups-lanterne); box-shadow: 0 0 10px rgba(240, 167, 66, 0.35); }
+.loups-bandeau-jeu .lb-bouton:focus-visible { outline: 2px solid var(--loups-lanterne); outline-offset: 1px; }
+.loups-bandeau-jeu .lb-bouton.principal { background: linear-gradient(#b8732f, #8a4f1f); border-color: var(--loups-lanterne); color: #fff7e6; }
+.loups-bandeau-jeu .lb-bouton:disabled { opacity: 0.45; cursor: default; }
+.loups-bandeau-jeu .lb-bouton.discret { background: rgba(0, 0, 0, 0.25); border-color: var(--loups-bord); font-weight: normal; }
+.loups-bandeau-jeu .lb-bouton.icone { width: 28px; padding: 0; justify-content: center; }
+.loups-bandeau-jeu .lb-bouton i { font-size: 11px; }
+
+/* ------------------------------------------------------------------ infobulle d'un jeton */
+.loups-infobulle {
+  position: fixed; z-index: 75; pointer-events: none; transform: translate(-50%, -100%);
+  min-width: 150px; max-width: 260px; padding: 6px 10px 7px;
+  background: linear-gradient(180deg, rgba(36, 27, 32, 0.96), rgba(21, 18, 26, 0.96));
+  border: 1px solid var(--loups-bord); border-radius: 8px; color: var(--loups-texte);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6); font-family: Signika, sans-serif; font-size: 12px;
+  opacity: 0; transition: opacity 120ms ease-out;
+}
+.loups-infobulle.visible { opacity: 1; }
+.loups-infobulle .lib-nom { font-family: var(--loups-titre); font-size: 17px; color: var(--loups-parchemin); }
+.loups-infobulle .lib-soi { font-family: Signika, sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--loups-lanterne); }
+.loups-infobulle .lib-ligne { color: var(--loups-terne); }
+.loups-infobulle .lib-ligne i { width: 1.1em; color: var(--loups-rouille); }
+.loups-infobulle .lib-etats { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 3px; }
+.loups-infobulle .lib-etat { padding: 0 7px; border-radius: 999px; border: 1px solid var(--loups-bord); font-size: 11px; }
+.loups-infobulle .lib-etat.vivant { border-color: var(--loups-mousse); color: #cfe0b8; }
+.loups-infobulle .lib-etat.mort { border-color: var(--loups-sang); color: #f0b3a8; }
+.loups-infobulle .lib-etat.silence { border-color: var(--loups-brume); color: var(--loups-brume); }
+.loups-infobulle .lib-etat.vote { border-color: var(--loups-mousse); color: #cfe0b8; }
+.loups-infobulle .lib-role { margin-top: 4px; padding-top: 4px; border-top: 1px dashed var(--loups-bord); color: var(--loups-lanterne); }
+.loups-infobulle .lib-role.cache { color: var(--loups-terne); font-style: italic; }
+.loups-infobulle .lib-role.camp-meute { color: var(--loups-meute); }
+.loups-infobulle .lib-role.camp-village { color: var(--loups-village); }
+.loups-infobulle .lib-role.camp-solitaire { color: var(--loups-solitaire); }
+
+/* ------------------------------------------------------------------ Table : l'étape suivante (MJ humain) */
+.lakour-loups .loups-etape-ligne {
+  display: flex; align-items: baseline; gap: 0.5em; flex-wrap: wrap;
+  margin: 0.5em 0.9em 0; padding: 0.4em 0.8em; border-radius: var(--loups-rayon);
+  border: 1px dashed var(--loups-lanterne); background: var(--loups-lanterne-doux); color: var(--loups-parchemin);
+}
+.lakour-loups .loups-etape-ligne i { color: var(--loups-lanterne); }
+.lakour-loups .loups-etape-ligne small { color: var(--loups-terne); }
+.lakour-loups .loups-etape-ligne.attente { border-color: var(--loups-brume); background: rgba(143, 163, 184, 0.1); }
+.lakour-loups button.loups-etape {
+  outline: 2px dashed var(--loups-lanterne); outline-offset: 3px;
+  animation: loups-etape 1.6s ease-in-out infinite;
+}
+@keyframes loups-etape {
+  0%, 100% { outline-color: var(--loups-lanterne); box-shadow: 0 0 0 rgba(240, 167, 66, 0); }
+  50% { outline-color: rgba(240, 167, 66, 0.35); box-shadow: 0 0 14px rgba(240, 167, 66, 0.35); }
+}
+@media (prefers-reduced-motion: reduce) { .lakour-loups button.loups-etape { animation: none; } }
+
+/* ------------------------------------------------------------------ Table : préparer la partie */
+.lakour-loups .loups-preparation { margin: 0.6em 0.9em 0; }
+.lakour-loups .loups-prep-ligne { display: flex; align-items: center; gap: 0.5em; flex-wrap: wrap; margin: 0.35em 0; }
+.lakour-loups .loups-prep-ligne > .loups-etiquette { min-width: 7.5em; }
+.lakour-loups .loups-prep-joueur { display: inline-flex; align-items: center; gap: 0.25em; padding: 0.1em 0.6em; border: 1px solid var(--loups-bord); border-radius: 999px; }
+.lakour-loups .loups-prep-compteur { min-width: 1.5em; text-align: center; font-size: 1.1em; color: var(--loups-lanterne); }
+.lakour-loups .loups-grise { opacity: 0.6; }
+.lakour-loups .loups-prep-roles { list-style: none; margin: 0.3em 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 3px 10px; max-height: 220px; overflow-y: auto; }
+.lakour-loups .loups-prep-roles li { display: flex; align-items: center; gap: 0.4em; }
+.lakour-loups .loups-prep-roles .loups-nom { flex: 1; }
+.lakour-loups .loups-prep-roles .loups-camp { font-size: 0.75em; }
+.lakour-loups .loups-prep-nombre { display: inline-flex; align-items: center; gap: 4px; }
+.lakour-loups .loups-prep-nombre button { width: 22px; height: 22px; line-height: 1; padding: 0; }
+.lakour-loups .loups-prep-equilibre.verdict-equilibree { color: var(--loups-village); }
+.lakour-loups .loups-prep-equilibre.verdict-village, .lakour-loups .loups-prep-equilibre.verdict-meute { color: var(--loups-lanterne); }

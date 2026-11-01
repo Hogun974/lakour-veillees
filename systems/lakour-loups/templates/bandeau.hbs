@@ -1,0 +1,26 @@
+<div class="lb-corps phase-{{phase}} {{#if urgent}}lb-a-toi{{/if}}" role="toolbar" aria-label="{{localize 'LAKOUR_LOUPS.Bandeau.Titre'}}">
+  <div class="lb-phase" title="{{phaseLibelle}}">
+    <span class="lb-icone"><i class="fa-solid {{icone}}"></i></span>
+    <span class="lb-phase-texte">
+      <span class="lb-phase-nom">{{phaseLibelle}}</span>
+      {{#if tour}}<span class="lb-tour">{{localize "LAKOUR_LOUPS.Table.Tour"}} {{tour}}</span>{{/if}}
+    </span>
+  </div>
+  <span class="lb-minuteur" data-finit="{{finit}}" aria-live="polite" hidden></span>
+  <div class="lb-action">
+    {{#if annonce}}<span class="lb-annonce"><i class="fa-solid fa-star"></i> {{annonce}}</span>{{/if}}
+    {{#if statut}}<span class="lb-statut {{statut.cle}}"><i class="fa-solid {{statut.icone}}"></i> {{statut.texte}}</span>{{/if}}
+    {{#if consigne}}<span class="lb-consigne">{{consigne}}</span>{{/if}}
+    {{#if detail}}<span class="lb-detail">{{detail}}</span>{{/if}}
+  </div>
+  <div class="lb-boutons">
+    {{#each pouvoirs}}
+    <button type="button" class="lb-bouton" data-action="bandeauPouvoir" data-pouvoir="{{pouvoir}}"><i class="fa-solid fa-hand-sparkles"></i> {{libelle}}</button>
+    {{/each}}
+    {{#each boutons}}
+    <button type="button" class="lb-bouton {{#if principal}}principal{{/if}}" data-action="{{action}}" {{#if principal}}{{#unless @root.pret}}disabled{{/unless}}{{/if}}><i class="fa-solid {{icone}}"></i> {{libelle}}</button>
+    {{/each}}
+    {{#if monRole}}<button type="button" class="lb-bouton discret" data-action="bandeauRole" title="{{localize 'LAKOUR_LOUPS.Bandeau.MonRoleAide'}}"><i class="fa-solid fa-mask"></i> {{localize "LAKOUR_LOUPS.Bandeau.MonRole"}}</button>{{/if}}
+    <button type="button" class="lb-bouton discret icone" data-action="bandeauTable" title="{{localize 'LAKOUR_LOUPS.Table.Titre'}}" aria-label="{{localize 'LAKOUR_LOUPS.Table.Titre'}}"><i class="fa-solid fa-fire-flame-curved"></i></button>
+  </div>
+</div>

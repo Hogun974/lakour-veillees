@@ -13,6 +13,13 @@ import { carnetSecret } from "./scripts/apps/carnet.mjs";
 import { tableDeJeu, ouvrirTable } from "./scripts/apps/table.mjs";
 import { fenetreVote } from "./scripts/apps/vote.mjs";
 import { FicheVillageois, FicheRole, FicheMetier, FicheBatiment } from "./scripts/apps/fiches.mjs";
+import { brancherPlateau } from "./scripts/plateau.mjs";
+import * as plateauLocal from "./scripts/plateau-local.mjs";
+import { classeJetonLoups, rafraichirJetons, animerHalos } from "./scripts/jeton.mjs";
+import { bandeauAction, rafraichirBandeau } from "./scripts/apps/bandeau.mjs";
+import { surReponse } from "./scripts/apps/choix.mjs";
+import { brancherParole } from "./scripts/parole.mjs";
+import { brancherInfobulle } from "./scripts/infobulle.mjs";
 
 // ------------------------------------------------------------------ rafraîchissement des fenêtres
 let voteEtaitOuvert = false;
@@ -26,8 +33,9 @@ function quandEtatChange() {
   const vote = fenetreVote();
   const moi = monVillageois();
   if (etat.vote.ouvert) {
-    // Le vote s'ouvre : chaque joueur vivant voit la fenêtre de vote (et la Table de jeu).
-    if (!voteEtaitOuvert && moi?.system.vivant) {
+    // Le vote s'ouvre : chaque joueur vivant vote sur la carte (bandeau, clic sur un jeton) ; sans carte, ou s'il l'a
+    // choisi (réglage « plateauInteractif »), il voit la fenêtre de vote et la Table de jeu.
+    if (!voteEtaitOuvert && moi?.system.vivant && !plateauLocal.plateauInteractif([moi.id])) {
       vote.render({ force: true });
       if (!table.rendered) ouvrirTable();
     } else if (vote.rendered) vote.render();
@@ -36,11 +44,20 @@ function quandEtatChange() {
   for (const appli of foundry.applications.instances.values()) {
     if (appli instanceof FicheVillageois && appli.rendered) appli.render();
   }
+  rafraichirPlateauLocal();
+}
+
+// Le bandeau et les surimpressions des jetons suivent l'état (public, et local au joueur).
+function rafraichirPlateauLocal() {
+  if (!game.ready) return;
+  rafraichirBandeau();
+  rafraichirJetons();
 }
 
 // Ce que le MJ a envoyé à ce seul navigateur (carnet, prime, accusé de vote) : on rafraîchit ce qui l'affiche.
 Hooks.on("lakourLoups.prive", () => {
   if (!game.ready) return;
+  rafraichirPlateauLocal();
   if (carnetSecret().rendered) carnetSecret().render();
   if (tableDeJeu().rendered) tableDeJeu().render();
   if (fenetreVote().rendered) fenetreVote().render();
@@ -57,6 +74,8 @@ Hooks.once("init", () => {
   CONFIG.Item.dataModels.metier = ModeleMetier;
   CONFIG.Item.dataModels.batiment = ModeleBatiment;
   CONFIG.Actor.trackableAttributes = { villageois: { bar: [], value: [] } };
+  // Le jeton des villageois : clic au plateau, surimpressions locales, ni HUD ni glisser pour les joueurs (scripts/jeton.mjs).
+  CONFIG.Token.objectClass = classeJetonLoups(CONFIG.Token.objectClass);
 
   const { Actors, Items } = foundry.documents.collections;
   Actors.registerSheet(ID, FicheVillageois, { types: ["villageois"], makeDefault: true, label: "LAKOUR_LOUPS.Fiche.Villageois" });
@@ -65,6 +84,9 @@ Hooks.once("init", () => {
   Items.registerSheet(ID, FicheBatiment, { types: ["batiment"], makeDefault: true, label: "LAKOUR_LOUPS.Fiche.Batiment" });
 
   enregistrerReglages(quandEtatChange);
+  brancherPlateau();
+  brancherParole();
+  brancherInfobulle();
   foundry.applications.handlebars.loadTemplates([`systems/${ID}/templates/carte-role.hbs`]);
 });
 
@@ -82,8 +104,29 @@ Hooks.once("ready", () => {
   if (!game.user.isGM) versMJ({ type: "bonjour" });
   else if (estMJActif() && secretsPerdus(lirePublic())) ui.notifications.warn(t("LAKOUR_LOUPS.Table.SecretsPerdus"), { permanent: true });
   voteEtaitOuvert = false;
+  // Le plateau local : la fenêtre de secours qui répond éteint la carte ; tout changement local redessine bandeau et jetons.
+  surReponse(id => plateauLocal.oublierDemande(id));
+  plateauLocal.surChangement(rafraichirPlateauLocal);
+  bandeauAction().render({ force: true });
   quandEtatChange();
   Hooks.callAll("lakourLoups.pret", api);
+});
+
+// Le canevas est prêt (ou change de scène) : le bandeau sait si l'on agit par la carte ; les halos respirent.
+Hooks.on("canvasReady", () => {
+  animerHalos();
+  rafraichirPlateauLocal();
+});
+
+// Le dépouillement : les voix publiques en bulles au-dessus des jetons, quelques secondes.
+Hooks.on("lakourLoups.voteClos", resultat => {
+  if (resultat?.decompte) plateauLocal.montrerBulles(resultat.decompte);
+});
+
+// Une nouvelle partie : tout ce qui était local s'efface, le bandeau l'annonce.
+Hooks.on("lakourLoups.nouvellePartie", () => {
+  plateauLocal.remettreAZero();
+  plateauLocal.annoncer(game.i18n.localize("LAKOUR_LOUPS.Bandeau.NouvellePartie"));
 });
 
 // Un joueur qui se connecte en cours de partie reçoit son carnet secret du MJ actif.
@@ -104,7 +147,9 @@ for (const evenement of ["createItem", "updateItem", "deleteItem"]) {
   });
 }
 Hooks.on("updateActor", acteur => {
-  if (acteur.type === "villageois" && tableDeJeu().rendered) tableDeJeu().render();
+  if (acteur.type !== "villageois") return;
+  if (tableDeJeu().rendered) tableDeJeu().render();
+  rafraichirPlateauLocal();
 });
 
 // ------------------------------------------------------------------ bouton de la Table de jeu (calque Jetons)
@@ -121,3 +166,11 @@ Hooks.on("getSceneControlButtons", controles => {
     onChange: () => ouvrirTable()
   };
 });
+
+// La Table du MJ suit les réveils de la nuit, l'arrivée du point des compagnons IA (MJ IA) et les joueurs IA ajoutés ou retirés.
+for (const evenement of ["lakourLoups.reveil", "lakourLoups.compagnons", "createActor", "deleteActor"]) {
+  Hooks.on(evenement, () => {
+    if (game.ready && tableDeJeu().rendered) tableDeJeu().render();
+    if (game.ready && game.user.isGM) rafraichirBandeau();
+  });
+}

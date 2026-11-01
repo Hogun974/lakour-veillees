@@ -36,6 +36,18 @@ export function enregistrerReglages(quandEtatChange) {
     name: "LAKOUR_LOUPS.Reglages.ChanceEpier.Nom", hint: "LAKOUR_LOUPS.Reglages.ChanceEpier.Aide",
     scope: "world", config: true, type: Number, default: 0.33, range: { min: 0, max: 1, step: 0.01 }
   });
+  // Les morts parlent entre eux (et au MJ) : leurs messages deviennent des chuchotements aux seuls morts (scripts/parole.mjs).
+  game.settings.register(ID, "canalDesMorts", {
+    name: "LAKOUR_LOUPS.Reglages.CanalDesMorts.Nom", hint: "LAKOUR_LOUPS.Reglages.CanalDesMorts.Aide",
+    scope: "world", config: true, type: Boolean, default: true
+  });
+  // Agir par la carte (bandeau et clics sur les jetons) ; sinon, les fenêtres de choix et de vote s'ouvrent comme avant.
+  game.settings.register(ID, "plateauInteractif", {
+    name: "LAKOUR_LOUPS.Reglages.PlateauInteractif.Nom", hint: "LAKOUR_LOUPS.Reglages.PlateauInteractif.Aide",
+    scope: "client", config: true, type: Boolean, default: true, onChange: () => quandEtatChange?.()
+  });
+  // Rôles et bâtiments des dernières parties (jamais qui avait quoi), pour varier les compositions (nouvellePartie).
+  game.settings.register(ID, "historique", { scope: "world", config: false, type: Array, default: [] });
   game.settings.register(ID, "annoncesEnChat", {
     name: "LAKOUR_LOUPS.Reglages.AnnoncesEnChat.Nom", hint: "LAKOUR_LOUPS.Reglages.AnnoncesEnChat.Aide",
     scope: "world", config: true, type: Boolean, default: true

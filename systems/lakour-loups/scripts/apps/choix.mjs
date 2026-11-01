@@ -3,17 +3,23 @@
 // - demande de nuit (du MJ, par socket) : la réponse repart au MJ actif seul ;
 // - demande.mode === "texte" : une phrase à écrire (le mot que portera le Messager) ;
 // - ouvrirChoixLocal(demande, rappel) : un choix fait chez soi (cible d'un pouvoir de jour), rendu à `rappel`.
+// - ouvrirChoix(demande, { secours: true }) : la même demande, alors qu'elle est déjà sur la carte (plateau-local.mjs) ;
+//   fermer cette fenêtre-là ne passe pas : on peut encore choisir sur la carte.
 import { ID } from "../../logique/constantes.mjs";
 import { envoyerReponse } from "../api.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 const ouvertes = new Map();
+// Prévenu quand une fenêtre a répondu à une demande (la carte s'éteint alors : plateau-local.mjs).
+let quandRepondu = null;
+export function surReponse(fn) { quandRepondu = typeof fn === "function" ? fn : null; }
 
 export class FenetreChoix extends HandlebarsApplicationMixin(ApplicationV2) {
   constructor(demande, options = {}) {
     super({ ...options, id: `${ID}-choix-${demande.id}` });
     this.demande = demande;
     this.rappel = typeof options.rappel === "function" ? options.rappel : null;
+    this.secours = Boolean(options.secours);
     this.selection = new Set();
     this.repondu = false;
     this.annulee = false;
@@ -56,8 +62,8 @@ export class FenetreChoix extends HandlebarsApplicationMixin(ApplicationV2) {
 
   async _onClose(options) {
     clearInterval(this._minuterie);
-    ouvertes.delete(this.demande.id);
-    if (!this.repondu && !this.annulee) this.#repondre([], "");
+    if (ouvertes.get(this.demande.id) === this) ouvertes.delete(this.demande.id);
+    if (!this.repondu && !this.annulee && !this.secours) this.#repondre([], "");
     return super._onClose(options);
   }
 
@@ -65,7 +71,10 @@ export class FenetreChoix extends HandlebarsApplicationMixin(ApplicationV2) {
     if (this.repondu) return;
     this.repondu = true;
     if (this.rappel) this.rappel(cibles, texte);
-    else envoyerReponse(this.demande.id, cibles, texte);
+    else {
+      envoyerReponse(this.demande.id, cibles, texte);
+      quandRepondu?.(this.demande.id);
+    }
   }
 
   static #basculer(event, cible) {
@@ -89,8 +98,10 @@ export class FenetreChoix extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 }
 
-export function ouvrirChoix(demande) {
-  const f = new FenetreChoix(demande);
+export function ouvrirChoix(demande, { secours = false } = {}) {
+  const deja = ouvertes.get(demande.id);
+  if (deja) { deja.annulee = true; deja.close(); }
+  const f = new FenetreChoix(demande, { secours });
   ouvertes.set(demande.id, f);
   f.render({ force: true });
   return f;

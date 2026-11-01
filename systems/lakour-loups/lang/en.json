@@ -115,7 +115,17 @@
         "lame": "Forge blade:",
         "cachette": "In the Barn:",
         "asile": "In the Chapel:"
-      }
+      },
+      "Rejouer": "Play again (same players)",
+      "RejouerQuestion": "Start a new game with the same players and AI companions? A new setup is drawn and roles are dealt again in secret.",
+      "RejouerEnCours": "The current game is not over. Abandon it and start a new one, with the same players and AI companions?",
+      "Rejoue": "New game: {n} villagers, {composition}.",
+      "MiseEnScene": "Staging",
+      "MiseEnSceneAide": "Puts tokens and light back according to the phase (this is automatic; this button fixes a disturbed scene).",
+      "EnAttente": "waiting",
+      "Reveiller": "Wake",
+      "ReveillerTout": "Wake every role, in order",
+      "Personne": "No one"
     },
     "Choix": {
       "Titre": "In the night…",
@@ -259,7 +269,9 @@
       "SilenceBeni": "{nom} has been blessed: your howl has no hold on them.",
       "MessagerVide": "{nom} wrote nothing: your satchel stayed empty.",
       "MessageRecu": "The Messenger hands you a note from {nom}: “{texte}”",
-      "MessageRemis": "You delivered {a}'s note to {b}."
+      "MessageRemis": "You delivered {a}'s note to {b}.",
+      "ProiesDeLaMeute": "Tonight, the pack attacked {noms}.",
+      "InviteMessager": "The Messenger knocks at your door tonight: write a sentence for {nom}. He will hand it over at dawn, from you."
     },
     "Messages": {
       "Mort": "{nom} is dead: {cause}.",
@@ -302,6 +314,14 @@
       "AnnoncesEnChat": {
         "Nom": "Chat announcements",
         "Aide": "Deaths and victory are also announced in the chat."
+      },
+      "CanalDesMorts": {
+        "Nom": "Channel of the dead",
+        "Aide": "The dead may talk among themselves: their messages become whispers to the dead and the GM only. Otherwise, they can only whisper to the GM."
+      },
+      "PlateauInteractif": {
+        "Nom": "Act on the map",
+        "Aide": "Night choices, votes and day powers are made by clicking tokens, from the banner. Unchecked: the choice and vote windows open as before."
       }
     },
     "Erreurs": {
@@ -314,7 +334,9 @@
       "SansRole": "Both villagers must have a role.",
       "PasDeVillageois": "You do not play any villager.",
       "MortNeVotePas": "The dead no longer vote.",
-      "PasDeMJ": "No GM is connected: the power cannot be applied."
+      "PasDeMJ": "No GM is connected: the power cannot be applied.",
+      "RolesInconnus": "Unknown roles, or missing from the content: {roles}.",
+      "PersonneAReveiller": "No one to wake for \"{role}\" tonight."
     },
     "Batiments": {
       "taverne": "The Tavern",
@@ -393,6 +415,98 @@
         "texte": "A last word of {mots} words at most, and not empty.",
         "personne": "Nobody can be chosen."
       }
+    },
+    "Plateau": {
+      "ChoisisSurLaCarte": "Your turn: choose on the map (click a glowing token), then \"Confirm\" in the banner."
+    },
+    "Bandeau": {
+      "Titre": "Vigil banner",
+      "NouvellePartie": "New game! Open \"My role\" to discover yours.",
+      "Mort": "You are dead: you watch",
+      "Silence": "Silenced",
+      "ChoisisTaCible": "Choose your target",
+      "Compte": "{n} / {max} chosen",
+      "CliqueUnJeton": "click a glowing token",
+      "Liste": "List",
+      "Confirmer": "Confirm",
+      "Annuler": "Cancel",
+      "Vote": "Vote: click the token of the one you accuse",
+      "VoteChapelle": "Chapel: click the token of the one who will sleep in safety",
+      "Utiliser": "Use: {nom}",
+      "MonRole": "My role",
+      "MonRoleAide": "Your secret notebook: your role card and what you learn at night (only you can see it).",
+      "Attente": {
+        "preparation": "The village gathers.",
+        "nuit": "Night falls on Brumecombe: everyone stays home.",
+        "aube": "Dawn breaks over the village.",
+        "jour": "The village debates on the square.",
+        "vote": "The village votes.",
+        "fin": "The vigil is over."
+      }
+    },
+    "Infobulle": {
+      "Vivant": "Alive",
+      "Toi": "you"
+    },
+    "Parole": {
+      "Mort": "You are dead: the living no longer hear you. You may whisper to the narrator.",
+      "Silence": "You are silenced: you cannot speak during today's debate and vote (whispering to the narrator is still allowed).",
+      "CanalDesMorts": "You are dead: your messages now reach only the other dead and the narrator."
+    },
+    "NouvellePartie": {
+      "Choisie": "chosen setup",
+      "Generee": "generated setup, {verdict}",
+      "Reprise": "same roles, reshuffled",
+      "Annonce": "New game! The roles of the {n} villagers are dealt in secret."
+    },
+    "Etapes": {
+      "Prochaine": "Next step:",
+      "LaMeute": "the pack",
+      "distribuer": "Deal the roles",
+      "nuit": "Start the night",
+      "reveiller": "Wake: {nom}",
+      "attendre": "Waiting: {nom} is choosing…",
+      "aube": "Resolve the dawn",
+      "emporter": "{nom} takes someone to the grave",
+      "victoire": "Check for victory",
+      "debat": "Open the debate",
+      "ouvrirVote": "Open the vote",
+      "cloreVote": "Close the vote",
+      "executer": "Eliminate {nom}",
+      "chapelle": "Chapel vote",
+      "rejouer": "Play again",
+      "Detail": {
+        "voixManquantes": "({n} votes still missing)",
+        "juge": "The Justice of the Peace ({nom}) may still cancel this vote.",
+        "emporter": "{nom} chooses whom to take along (or no one).",
+        "sansSecrets": "This browser does not hold the night's secrets."
+      }
+    },
+    "Preparation": {
+      "Titre": "Prepare the game",
+      "Joueurs": "Players",
+      "JoueursIA": "AI players",
+      "AjouterIA": "+ AI player",
+      "RetirerIA": "Remove an AI player",
+      "IAAbsente": "Enable the AI GM module to add AI players.",
+      "IAIndisponible": "AI players require the AI GM module.",
+      "Composition": "Setup",
+      "Auto": "Balanced (auto)",
+      "Manuel": "Pick the roles",
+      "Niveaux": {
+        "debutants": "Beginners",
+        "classique": "Classic",
+        "chaos": "Chaos"
+      },
+      "Equilibre": {
+        "equilibree": "Balanced ({somme})",
+        "village": "Favours the village ({somme})",
+        "meute": "Favours the pack ({somme})"
+      },
+      "Loups": "{n} wolf/wolves, {conseil} advised",
+      "Trop": "More roles than seats: remove some.",
+      "Distribuer": "Deal",
+      "PersonneConnecte": "No player connected."
     }
   }
 }

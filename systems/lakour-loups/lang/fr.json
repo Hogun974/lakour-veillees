@@ -101,6 +101,7 @@
       "VoteChapelle": "Vote de la Chapelle",
       "AsileDonne": "{nom} dormira à la Chapelle.",
       "VoteAnnule": "Ce vote a été annulé ou se rejoue : personne n'est exécuté.",
+      "TempsEcoule": "Le temps du vote est écoulé : dépouillement.",
       "SecretsPerdus": "Ce navigateur n'a pas les secrets de la partie en cours (autre MJ ou autre navigateur) : les choix déjà faits cette nuit, les primes et les fioles sont perdus.",
       "Benit": "Béni par le Curé",
       "Ruban": "Ruban de la Tisserande",
@@ -305,7 +306,7 @@
       },
       "DureeVote": {
         "Nom": "Durée du vote (secondes)",
-        "Aide": "Minuteur affiché sur la Table de jeu ; 0 = sans minuteur."
+        "Aide": "Minuteur affiché dans le bandeau et sur la Table de jeu ; à zéro, le vote se clôt de lui-même (l'exécution reste à confirmer). 0 = sans minuteur : le MJ clôt le vote."
       },
       "ChanceEpier": {
         "Nom": "Risque d'être repéré en épiant",
@@ -340,7 +341,8 @@
       "MortNeVotePas": "Les morts ne votent plus.",
       "PasDeMJ": "Aucun MJ n'est connecté : le pouvoir ne peut pas être appliqué.",
       "RolesInconnus": "Rôles inconnus ou absents du contenu : {roles}.",
-      "PersonneAReveiller": "Personne à réveiller pour « {role} » cette nuit."
+      "PersonneAReveiller": "Personne à réveiller pour « {role} » cette nuit.",
+      "PasDeVote": "Aucun vote n'est ouvert."
     },
     "Batiments": {
       "taverne": "La Taverne",
@@ -446,8 +448,8 @@
         "bandeauAbstenir": "Tu ne votes contre personne (ton vote déjà donné est retiré).",
         "bandeauAnnuler": "Renonce à ce pouvoir pour l'instant : rien n'est utilisé.",
         "bandeauVoter": "Ouvre la liste des accusés pour voter (tu peux aussi cliquer sur un jeton). Tu peux changer d'avis tant que le vote est ouvert.",
-        "bandeauOuvrirVote": "Lance le vote du village : chaque vivant désigne qui il accuse, avec le temps fixé dans les réglages.",
-        "bandeauCloreVote": "Arrête le vote et compte les voix ; l'exécution des élus est demandée ensuite."
+        "bandeauOuvrirVote": "Lance le vote du village : chaque vivant désigne qui il accuse, avec le temps fixé dans les réglages ; à zéro, il se clôt de lui-même.",
+        "bandeauCloreVote": "Arrête le vote sans attendre la fin du minuteur et compte les voix ; l'exécution des élus est demandée ensuite."
       },
       "Salon": {
         "nuit": "🔇 La nuit, silence",

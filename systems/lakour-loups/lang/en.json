@@ -101,6 +101,7 @@
       "VoteChapelle": "Chapel vote",
       "AsileDonne": "{nom} will sleep in the Chapel.",
       "VoteAnnule": "This vote was cancelled or is being replayed: nobody is executed.",
+      "TempsEcoule": "Voting time is up: counting the votes.",
       "SecretsPerdus": "This browser does not hold the secrets of the current game (another GM or browser): tonight's choices, bounties and vials are lost.",
       "Benit": "Blessed by the Priest",
       "Ruban": "Weaver's ribbon",
@@ -305,7 +306,7 @@
       },
       "DureeVote": {
         "Nom": "Vote duration (seconds)",
-        "Aide": "Timer shown on the game table; 0 = no timer."
+        "Aide": "Timer shown in the banner and on the game table; at zero, the vote closes by itself (the execution still needs confirming). 0 = no timer: the GM closes the vote."
       },
       "ChanceEpier": {
         "Nom": "Risk of being caught spying",
@@ -340,7 +341,8 @@
       "MortNeVotePas": "The dead no longer vote.",
       "PasDeMJ": "No GM is connected: the power cannot be applied.",
       "RolesInconnus": "Unknown roles, or missing from the content: {roles}.",
-      "PersonneAReveiller": "No one to wake for \"{role}\" tonight."
+      "PersonneAReveiller": "No one to wake for \"{role}\" tonight.",
+      "PasDeVote": "No vote is open."
     },
     "Batiments": {
       "taverne": "The Tavern",
@@ -446,8 +448,8 @@
         "bandeauAbstenir": "You vote against no one (any vote already cast is withdrawn).",
         "bandeauAnnuler": "Give up this power for now: nothing is used.",
         "bandeauVoter": "Open the list of the accused to vote (you can also click a token). You may change your mind while the vote is open.",
-        "bandeauOuvrirVote": "Start the village vote: every living player names who they accuse, within the time set in the settings.",
-        "bandeauCloreVote": "Stop the vote and count the votes; executing the chosen is asked next."
+        "bandeauOuvrirVote": "Start the village vote: every living player names who they accuse, within the time set in the settings; at zero, it closes by itself.",
+        "bandeauCloreVote": "Stop the vote without waiting for the timer and count the votes; executing the chosen is asked next."
       },
       "Salon": {
         "nuit": "🔇 Night: silence",

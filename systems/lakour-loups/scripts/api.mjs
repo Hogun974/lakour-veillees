@@ -848,6 +848,8 @@ export const api = {
     await votesCompagnons;   // les voix des compagnons encore en réflexion
     const votants = tousLesVillageois().filter(a => a.system.vivant).map(a => a.id);
     const r = await modifierEtat(e => {
+      // Déjà clos (minuteur écoulé, ou clos ailleurs entre-temps) : on ne recompte pas un vote fermé.
+      if (!e?.vote?.ouvert) throw new Error(t("LAKOUR_LOUPS.Erreurs.PasDeVote"));
       const c = L.cloreVote(e, { votants });
       if (c.prolonge) {
         const nom = game.actors.get(c.prolonge)?.name ?? c.prolonge;

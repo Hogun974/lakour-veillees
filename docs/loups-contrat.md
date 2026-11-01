@@ -142,10 +142,11 @@ resoudreNuit({ chuchoter })               -> { morts, revelations, messages: [{a
                                             annonces : textes publics déjà postés au chat ; chuchoter: true -> le système remet
                                             lui-même les messages au carnet secret
 ouvrirVote({ candidats, duree, double, objet })  -> vote : chaque joueur vivant voit une fenêtre de vote (et la Table de jeu) ;
-                                            voix secrètes jusqu'à la clôture ; objet "chapelle" : asile de la Chapelle
+                                            voix secrètes jusqu'à la clôture ; objet "chapelle" : asile de la Chapelle ;
+                                            avec une durée, le MJ actif le clôt de lui-même à zéro (scripts/fin-du-vote.mjs)
 cloreVote()                               -> { decompte: {acteurId: voix}, elu: acteurId|null (égalité = null), elus, votes, objet, numero }
                                             ou { prolonge: acteurId } (ruban de la Tisserande : le vote reste ouvert une minute) ;
-                                            un vote "chapelle" met l'élu à l'abri d'office
+                                            un vote "chapelle" met l'élu à l'abri d'office ; sans vote ouvert : erreur (pas de recompte)
 pouvoirsDeJour(acteurId)                  -> [{ pouvoir, nom, source, cibles, texte, possible, raison, raisonTexte, candidats: [{id, nom}] }]
                                             ("" : ceux du village, la Chapelle)
 agirDeJour({ acteurId, pouvoir, cibles, texte }) -> { pouvoir, annonces } ; erreur claire si impossible (moment, cibles, usage)

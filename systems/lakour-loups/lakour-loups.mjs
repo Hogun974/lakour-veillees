@@ -10,7 +10,8 @@ import { estMJActif, versMJ } from "./scripts/canal.mjs";
 import { secretsPerdus } from "./scripts/secrets.mjs";
 import { chargerPrive, mesSecrets } from "./scripts/prive.mjs";
 import { carnetSecret } from "./scripts/apps/carnet.mjs";
-import { tableDeJeu, ouvrirTable } from "./scripts/apps/table.mjs";
+import { tableDeJeu, ouvrirTable, cloreLeVote } from "./scripts/apps/table.mjs";
+import { surveillerFinDuVote } from "./scripts/fin-du-vote.mjs";
 import { fenetreVote } from "./scripts/apps/vote.mjs";
 import { FicheVillageois, FicheRole, FicheMetier, FicheBatiment } from "./scripts/apps/fiches.mjs";
 import { brancherPlateau } from "./scripts/plateau.mjs";
@@ -42,6 +43,8 @@ function quandEtatChange() {
     } else if (vote.rendered) vote.render();
   } else if (vote.rendered) vote.close();
   voteEtaitOuvert = etat.vote.ouvert;
+  // Chez le MJ actif, le vote à minuteur se clôt de lui-même à zéro.
+  surveillerFinDuVote(cloreLeVote);
   for (const appli of foundry.applications.instances.values()) {
     if (appli instanceof FicheVillageois && appli.rendered) appli.render();
   }

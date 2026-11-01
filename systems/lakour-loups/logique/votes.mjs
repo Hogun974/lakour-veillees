@@ -58,6 +58,13 @@ function poidsDe(poids, votant) {
 
 // Majorité simple d'un petit groupe (la meute) : le plus choisi ; égalité -> le premier choisi dans le temps.
 // choix : [{ votant, cible, quand }]
+// L'échéance d'un vote ouvert à minuteur : -> { cle, dans } (ms avant zéro), ou null (pas de vote ouvert, ou sans minuteur).
+// La clé change avec le vote (nouveau numéro, ou prolongé d'une minute par le ruban) : l'ancienne échéance ne vaut plus.
+export function echeanceDuVote(vote, maintenant = Date.now()) {
+  if (!vote?.ouvert || !(vote.finit > 0)) return null;
+  return { cle: `${vote.numero}|${vote.finit}`, dans: Math.max(0, vote.finit - maintenant) };
+}
+
 export function majoriteMeute(choix = []) {
   const valides = choix.filter(c => c?.cible);
   if (!valides.length) return null;

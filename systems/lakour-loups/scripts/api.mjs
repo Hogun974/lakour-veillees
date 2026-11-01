@@ -21,6 +21,7 @@ import {
   libellePhase, libelleCamp, libelleCause, libelleVainqueur
 } from "./donnees.mjs";
 import { ouvrirChoix, fermerChoix } from "./apps/choix.mjs";
+import { audibilite, audibiliteActeur } from "./salons.mjs";
 import { ouvrirTable } from "./apps/table.mjs";
 import {
   planifierMiseEnScene, attendreMiseEnScene, mettreEnScene, configurerPlateau, reglerDelais, sceneDuVillage, voulu, imageNeutre, imageDuJeton
@@ -1005,6 +1006,19 @@ export const api = {
 
   ouvrirTable() {
     return ouvrirTable();
+  },
+
+  // ---------------------------------------------------------------- salons vocaux (scripts/salons.mjs, logique/salons.mjs)
+  // Qui entend ce locuteur, et peut-il parler, dans la voix intégrée de Foundry (et pour la voix des IA, la transcription).
+  // Chez le MJ actif : la matrice complète (camps compris) ; ailleurs, une réponse prudente d'après ce que ce navigateur sait.
+  // Hook lakourLoups.audibilite ({ phase }) à chaque changement.
+  // -> { peutParler: Boolean, auditeurs: [userId] }
+  audibilite(userId) {
+    return audibilite(userId);
+  },
+  // Même question pour un acteur (compagnon IA, sans utilisateur) : -> { peutParler, auditeurs: [userId], acteursAuditeurs: [acteurId] }
+  audibiliteActeur(acteurId) {
+    return audibiliteActeur(acteurId);
   },
 
   // Extensions utiles au narrateur et aux essais.

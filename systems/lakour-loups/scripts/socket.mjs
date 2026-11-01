@@ -6,10 +6,12 @@
 //                     { type: "carnet", partie, acteurId, entrees, prime, vote }   tout son carnet (connexion, rechargement)
 //                     { type: "monVote", partie, numero, cible }  accusé de son vote
 //                     { type: "avis", texte }                     refus (pouvoir de jour impossible, vote hors délai)
+//                     { type: "salon", partie, ligne }            sa ligne des salons vocaux (scripts/salons.mjs) : { phase,
+//                                                                 salon, peutParler, auditeurs, entend, loups? (un loup, la nuit) }
 //   joueur -> MJ actif : { type: "reponse", id, cibles, texte, userId }
 //                        { type: "vote", votant, cible, userId }
 //                        { type: "jour", acteurId, pouvoir, cibles, texte, userId }
-//                        { type: "bonjour", userId }             « renvoie-moi mon carnet »
+//                        { type: "bonjour", userId }             « renvoie-moi mon carnet » (et ma ligne des salons)
 //   MJ -> tous : { type: "hook", nom, args }  (arguments publics seulement)
 import { CANAL } from "../logique/constantes.mjs";
 import { estMJActif, auteur, vientDUnMJ } from "./canal.mjs";
@@ -18,6 +20,7 @@ import { recevoirSecret, recevoirCarnet, noterMonVote } from "./prive.mjs";
 import { fermerChoix } from "./apps/choix.mjs";
 import { recevoirDemande, oublierDemande } from "./plateau-local.mjs";
 import { ouvrirCarnet } from "./apps/carnet.mjs";
+import { recevoirLigne, envoyerLigne } from "./salons.mjs";
 
 // Traite un message reçu. emetteur : l'identifiant de l'auteur donné par le serveur (second argument du socket).
 export function traiterMessage(message, emetteur) {
@@ -30,7 +33,10 @@ export function traiterMessage(message, emetteur) {
     case "reponse": return estMJActif() && recevoirReponse(pourMoi);
     case "vote": return estMJActif() && recevoirVote(pourMoi);
     case "jour": return estMJActif() && recevoirJour(pourMoi);
-    case "bonjour": return estMJActif() && envoyerCarnet(qui);
+    case "bonjour":
+      if (!estMJActif()) return false;
+      envoyerLigne(qui);
+      return envoyerCarnet(qui);
   }
   // Le reste ne vient que d'un MJ.
   if (!vientDUnMJ(message, emetteur)) return false;
@@ -48,6 +54,7 @@ export function traiterMessage(message, emetteur) {
     case "carnet": recevoirCarnet(message); return true;
     case "monVote": noterMonVote(message); return true;
     case "avis": ui.notifications?.warn(String(message.texte ?? "")); return true;
+    case "salon": return recevoirLigne(message);
     case "hook":
       if (typeof message.nom === "string" && message.nom.startsWith("lakourLoups.")) Hooks.callAll(message.nom, ...(message.args ?? []));
       return true;

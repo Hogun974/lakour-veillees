@@ -319,6 +319,10 @@
         "Nom": "Channel of the dead",
         "Aide": "The dead may talk among themselves: their messages become whispers to the dead and the GM only. Otherwise, they can only whisper to the GM."
       },
+      "SalonsAutomatiques": {
+        "Nom": "Automatic voice rooms",
+        "Aide": "With Foundry built-in voice (A/V): at night only the wolves talk to each other; the dead speak only to the dead; a silenced player stays quiet during the debate and the vote. Each browser mutes what it must not hear, and its own microphone when it must stay quiet. The GM always hears everything. Unchecked: everyone talks to everyone."
+      },
       "PlateauInteractif": {
         "Nom": "Act on the map",
         "Aide": "Night choices, votes and day powers are made by clicking tokens, from the banner. Unchecked: the choice and vote windows open as before."
@@ -433,6 +437,13 @@
       "Vote": "Vote: click the token of the one you accuse",
       "VoteChapelle": "Chapel: click the token of the one who will sleep in safety",
       "Utiliser": "Use: {nom}",
+      "Salon": {
+        "nuit": "🔇 Night: silence",
+        "taniere": "🐺 Den: you speak to the wolves",
+        "morts": "👻 You speak to the dead",
+        "silence": "🔇 Silenced",
+        "Aide": "Voice room: what Foundry built-in voice lets you say and hear right now."
+      },
       "MonRole": "My role",
       "MonRoleAide": "Your secret notebook: your role card and what you learn at night (only you can see it).",
       "Attente": {

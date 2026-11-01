@@ -3,9 +3,12 @@
 // jour (« Utiliser : Forgeron »), ou, pour un mort, « Tu es mort : tu observes ». Il remplace les fenêtres, qui restent
 // disponibles en secours (« Liste », Table de jeu). Ce qu'il montre de secret (sa sélection, son vote, son rôle) ne
 // vient que de ce navigateur : rien n'en sort, sinon le choix validé, au seul MJ actif.
+// Avec la voix intégrée de Foundry (A/V) et les salons vocaux, il montre aussi le salon du joueur (« 🔇 La nuit, silence »,
+// « 🐺 Tanière : tu parles aux loups », « 👻 Tu parles aux morts », « 🔇 Réduit au silence ») : sa ligne, reçue du MJ actif.
 import { ID } from "../../logique/constantes.mjs";
 import { t, lireEtat, monVillageois, libellePhase, libelleVainqueur } from "../donnees.mjs";
 import { monVote } from "../prive.mjs";
+import { salonAffiche } from "../salons.mjs";
 import * as local from "../plateau-local.mjs";
 import { ouvrirCarnet } from "./carnet.mjs";
 import { ouvrirTable } from "./table.mjs";
@@ -24,14 +27,15 @@ export function contexteBandeau() {
   const ctx = {
     gm, phase: etat.phase, phaseLibelle: libellePhase(etat.phase), icone: ICONES[etat.phase] ?? "fa-moon", tour: etat.tour,
     finit: 0, monRole: Boolean(moi), statut: null, consigne: "", detail: "", boutons: [], pouvoirs: [], annonce: local.annonceEnCours(),
-    vainqueur: etat.phase === "fin" ? libelleVainqueur(etat.vainqueur) : ""
+    vainqueur: etat.phase === "fin" ? libelleVainqueur(etat.vainqueur) : "",
+    salon: salonAffiche()
   };
   const bouton = (action, libelle, icone, { principal = false, data = {} } = {}) => ctx.boutons.push({ action, libelle, icone, principal, data: Object.entries(data).map(([k, val]) => ({ k, val })) });
   if (etat.phase === "preparation" && etat.partie && !ctx.annonce) ctx.annonce = t("LAKOUR_LOUPS.Bandeau.NouvellePartie");
 
   // L'état du joueur : mort, ou réduit au silence.
   if (moi && !moi.system.vivant) ctx.statut = { cle: "mort", icone: "fa-skull", texte: t("LAKOUR_LOUPS.Bandeau.Mort") };
-  else if (moi?.system.silence) ctx.statut = { cle: "silence", icone: "fa-comment-slash", texte: t("LAKOUR_LOUPS.Bandeau.Silence") };
+  else if (moi?.system.silence && ctx.salon?.cle !== "silence") ctx.statut = { cle: "silence", icone: "fa-comment-slash", texte: t("LAKOUR_LOUPS.Bandeau.Silence") };
 
   if (l.mode === "nuit") {
     ctx.consigne = l.demande.invite || t("LAKOUR_LOUPS.Bandeau.ChoisisTaCible");

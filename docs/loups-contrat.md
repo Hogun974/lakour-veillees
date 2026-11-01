@@ -7,7 +7,7 @@ Foundry v14 (14.369). Tout en français, textes originaux (aucun texte, aucune c
 
 ## 1. Système `lakour-loups`
 
-`systems/lakour-loups/system.json` : `id: "lakour-loups"`, `version: "0.3.0"`, `compatibility { minimum: "14", verified: "14.369" }`,
+`systems/lakour-loups/system.json` : `id: "lakour-loups"`, `version: "0.4.0"`, `compatibility { minimum: "14", verified: "14.369" }`,
 `socket: true`, `esmodules: ["lakour-loups.mjs"]`, langues fr et en, `documentTypes` ci-dessous,
 `grid { type: 1, distance: 1.5, units: "m" }`, `primaryTokenAttribute: null`.
 
@@ -101,8 +101,9 @@ Le serveur v14 (`server/dist/server/sockets.mjs`, `handleCustomSocket`) livre `g
 aux seuls navigateurs de ces utilisateurs (sans `recipients` : à tous les autres) et ajoute l'identifiant de l'émetteur, tiré de la
 session, en second argument du récepteur. Le système s'en sert ainsi :
 - MJ → un joueur (`recipients: [son userId]`) : `demande` (choix de nuit, ou `mode: "texte"` pour le mot du Messager), `annuler`,
-  `secret` (une entrée de son carnet), `carnet` (tout son carnet, sa prime, son vote en cours), `monVote` (accusé), `avis` (refus) ;
-- joueur → MJ actif seul : `reponse`, `vote`, `jour` (pouvoir de jour), `bonjour` (« renvoie-moi mon carnet ») ;
+  `secret` (une entrée de son carnet), `carnet` (tout son carnet, sa prime, son vote en cours), `monVote` (accusé), `avis` (refus),
+  `salon` (sa ligne des salons vocaux, §1 « Salons vocaux ») ;
+- joueur → MJ actif seul : `reponse`, `vote`, `jour` (pouvoir de jour), `bonjour` (« renvoie-moi mon carnet », et ma ligne des salons) ;
 - MJ → tous : `hook`, avec des arguments publics seulement ;
 - l'émetteur donné par le serveur fait foi : un message dont `userId` le contredit est rejeté ; ce qui s'adresse à un joueur
   n'est accepté que d'un MJ.
@@ -186,6 +187,54 @@ plateau.{ mettreEnScene, planifier, attendre, configurer({ jetonNeutre, styliser
 ```
 `distribuer({ compagnons })` accepte aussi l'id d'un villageois compagnon déjà créé (il garde son nom). `demanderAction` et
 `demanderTexte` ne réveillent plus un mort (joueur ou compagnon) : ils rendent `[]` / `""`.
+
+Ajouts 0.4.0 — salons vocaux (voir aussi `lakour-mj-ia/docs/voix-et-ecoute.md` §3) :
+```
+audibilite(userId)          -> { peutParler: Boolean, auditeurs: [userId], acteursAuditeurs: [acteurId] (chez le MJ actif seulement) }
+audibiliteActeur(acteurId)  -> { peutParler: Boolean, auditeurs: [userId], acteursAuditeurs: [acteurId] }   (compagnons IA)
+```
+Calcul complet chez le MJ actif (camps compris) ; chez un autre navigateur, réponse prudente d'après ce qu'il sait (sa propre
+ligne pour lui-même ; pour un autre, aucun camp connu, sauf la meute pour un loup). `auditeurs` ne contient jamais le locuteur ;
+`acteursAuditeurs` : les villageois qui entendent (compagnons compris, joueurs humains aussi), hors le locuteur.
+Hook `lakourLoups.audibilite` (`{ phase }`, rien d'autre) à chaque changement de la matrice : chez tous pour ce qui est public
+(phase, aube, victoire, mort, silence, distribution, nouvelle partie, réglage), chez le MJ actif seul pour ce qui ne l'est pas
+(un villageois mordu qui rejoint la meute). Chez le joueur : `lakourLoups.salon` (local) quand sa ligne change.
+
+### Salons vocaux (logique/salons.mjs, scripts/salons.mjs)
+
+Avec la voix intégrée de Foundry (A/V), réglage monde **`salonsAutomatiques`** (« Salons vocaux automatiques », vrai par défaut) :
+
+| Qui parle            | Jour (`aube`, `jour`, `vote`) | Nuit (`nuit`) |
+|----------------------|-------------------------------|---------------|
+| un vivant            | tous (vivants et morts)       | personne, micro coupé — sauf un loup : les loups (et les morts si `mortsVoientTout`) |
+| un mort (ou un spectateur sans villageois) | les morts seulement | les morts seulement |
+| un réduit au silence | personne pendant `jour` et `vote` (il parle à l'aube) | personne |
+
+Le MJ (tout utilisateur MJ, même s'il incarne un villageois) entend tout et parle à tous. `preparation` et `fin`, ou le réglage
+décoché : tout le monde parle à tout le monde. Est loup le villageois dont le camp ACTUEL est `meute` : les six loups du contenu
+(Loup de Brumecombe, affamé, déguisé, Louve mère, hurleur, flaireur), le mordu (à l'aube, `changerCamp` : il est à la tanière
+la nuit suivante), pas un loup dont le Colporteur a pris le rôle ; le rôle ne sert que si le camp manque.
+Fonction pure : `audibilite(etatPublic, secretsMJ, locuteur, table)` -> `{ peutParler, auditeurs, acteursAuditeurs, salon }`, avec
+`table = { villageois, utilisateurs: [{ id, mj }], mortsVoientTout, automatique, loupsConnus }` (`secretsMJ` null : aucun camp connu
+hors `loupsConnus`) ; `ligneDe(…, userId, table)` -> `{ phase, salon, peutParler, auditeurs, entend, loups? }` ; salons : `mj`,
+`libre`, `village`, `taniere`, `morts`, `nuit`, `silence`.
+
+Chez le MJ actif, à chaque changement, chaque joueur connecté reçoit sa seule ligne (socket `salon`, `recipients: [userId]`,
+seulement si elle a changé ; à la connexion et sur `bonjour`, toujours). `entend` et `auditeurs` ne nomment, la nuit, aucun loup
+pour un non-loup ; `loups` (acteurIds de la meute) n'est donné qu'à un loup, la nuit. Rien dans un réglage monde ni un document.
+
+Dans chaque navigateur non MJ, d'après sa ligne (code client v14 lu : `AVMaster`, `SimplePeerAVClient`, `CameraViews`) :
+- les flux de ceux qu'il ne doit pas entendre sont coupés LOCALEMENT : pistes du flux distant (`getMediaStreamForUser`) désactivées
+  (son et image), `<video class="user-camera">` muet, voyant « parle » (`ui.webrtc.setUserIsSpeaking`) forcé éteint ; réappliqué
+  à chaque rendu des caméras (`renderCameraViews`, `renderCameraPopout`, `rtcSettingsChanged`) ;
+- son micro, quand il doit se taire : `game.webrtc.broadcast` et `game.webrtc.client.toggleBroadcast` enveloppés sur l'instance
+  (toujours `false` : ni pousser pour parler, ni détection de voix, ni « toujours », ni voyant chez les autres) ;
+- aucun réglage A/V persistant n'est écrit (ni `muted`, ni `volume`) ; tout est rendu quand la ligne le permet (préparatifs,
+  fin, réglage décoché), si l'A/V est désactivé, et au départ du monde (`beforeunload`). Le MJ n'est jamais coupé.
+- Bandeau : « 🔇 La nuit, silence », « 🐺 Tanière : tu parles aux loups », « 👻 Tu parles aux morts », « 🔇 Réduit au silence » ;
+  rien sans A/V (mode « Désactivé ») ni pour un vivant le jour.
+Limite : appliqué dans chaque navigateur (contournable par un tricheur dans la console), comme le reste (§6). Le système gère seul
+les salons, sans le MJ IA ; le MJ IA consulte `audibilite` pour la voix des IA et la transcription.
 
 ### Plateau (scripts/plateau.mjs, logique/plateau.mjs)
 

@@ -362,6 +362,16 @@
 }
 .loups-bandeau-jeu .lb-statut.mort { border-color: var(--loups-sang); color: #f0b3a8; }
 .loups-bandeau-jeu .lb-statut.silence { border-color: var(--loups-brume); color: var(--loups-brume); }
+/* Le salon vocal du joueur (voix intégrée de Foundry). */
+.loups-bandeau-jeu .lb-salon {
+  display: inline-flex; align-items: center; padding: 1px 9px; border-radius: 999px; font-size: 12px; white-space: nowrap;
+  border: 1px dashed var(--loups-bord); background: rgba(0, 0, 0, 0.3); color: var(--loups-terne);
+}
+.loups-bandeau-jeu .lb-salon.taniere { border-color: var(--loups-meute); color: #f0b3a8; }
+.loups-bandeau-jeu .lb-salon.morts { border-color: var(--loups-brume); color: var(--loups-brume); }
+.loups-bandeau-jeu .lb-salon.silence { border-color: var(--loups-brume); color: var(--loups-brume); }
+/* Une caméra coupée par les salons vocaux : on ne l'entend pas, on ne la voit pas parler. */
+.camera-view.lakour-coupe .video-container { opacity: 0.35; filter: grayscale(1); }
 .loups-bandeau-jeu .lb-boutons { display: flex; align-items: center; gap: 4px; flex: none; }
 .loups-bandeau-jeu .lb-bouton {
   display: inline-flex; align-items: center; gap: 5px; height: 28px; padding: 0 11px; margin: 0;

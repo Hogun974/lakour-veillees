@@ -3,10 +3,12 @@ import { ID } from "../logique/constantes.mjs";
 import { etatInitial } from "../logique/etat.mjs";
 import { oublierSecrets } from "./secrets.mjs";
 import { oublierPrive } from "./prive.mjs";
+import { oublierSalons, quandReglageSalons } from "./salons.mjs";
 
 export function enregistrerReglages(quandEtatChange) {
   oublierSecrets();
   oublierPrive();
+  oublierSalons();
   // L'état de la partie (contrat §1). Écrit seulement par le MJ actif.
   game.settings.register(ID, "partie", {
     scope: "world", config: false, type: Object, default: etatInitial(),
@@ -22,7 +24,7 @@ export function enregistrerReglages(quandEtatChange) {
   });
   game.settings.register(ID, "mortsVoientTout", {
     name: "LAKOUR_LOUPS.Reglages.MortsVoientTout.Nom", hint: "LAKOUR_LOUPS.Reglages.MortsVoientTout.Aide",
-    scope: "world", config: true, type: Boolean, default: true, onChange: () => quandEtatChange?.()
+    scope: "world", config: true, type: Boolean, default: true, onChange: () => { quandEtatChange?.(); quandReglageSalons(); }
   });
   game.settings.register(ID, "delaiChoix", {
     name: "LAKOUR_LOUPS.Reglages.DelaiChoix.Nom", hint: "LAKOUR_LOUPS.Reglages.DelaiChoix.Aide",
@@ -40,6 +42,12 @@ export function enregistrerReglages(quandEtatChange) {
   game.settings.register(ID, "canalDesMorts", {
     name: "LAKOUR_LOUPS.Reglages.CanalDesMorts.Nom", hint: "LAKOUR_LOUPS.Reglages.CanalDesMorts.Aide",
     scope: "world", config: true, type: Boolean, default: true
+  });
+  // Salons vocaux (voix intégrée de Foundry, A/V) : la nuit, seuls les loups se parlent ; les morts ne parlent qu'aux morts ;
+  // un réduit au silence se tait pendant le débat et le vote (scripts/salons.mjs). Décoché : tout le monde parle à tout le monde.
+  game.settings.register(ID, "salonsAutomatiques", {
+    name: "LAKOUR_LOUPS.Reglages.SalonsAutomatiques.Nom", hint: "LAKOUR_LOUPS.Reglages.SalonsAutomatiques.Aide",
+    scope: "world", config: true, type: Boolean, default: true, onChange: () => quandReglageSalons()
   });
   // Agir par la carte (bandeau et clics sur les jetons) ; sinon, les fenêtres de choix et de vote s'ouvrent comme avant.
   game.settings.register(ID, "plateauInteractif", {

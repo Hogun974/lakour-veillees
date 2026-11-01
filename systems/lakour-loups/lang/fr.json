@@ -319,6 +319,10 @@
         "Nom": "Canal des morts",
         "Aide": "Les morts peuvent parler entre eux : leurs messages deviennent des chuchotements aux seuls morts et au MJ. Sinon, ils ne peuvent plus que chuchoter au MJ."
       },
+      "SalonsAutomatiques": {
+        "Nom": "Salons vocaux automatiques",
+        "Aide": "Avec la voix intégrée de Foundry (A/V) : la nuit, seuls les loups se parlent ; les morts ne parlent qu'aux morts ; un joueur réduit au silence se tait pendant le débat et le vote. Chaque navigateur coupe ce qu'il ne doit pas entendre, et son micro quand il doit se taire. Le MJ entend toujours tout. Décoché : tout le monde parle à tout le monde."
+      },
       "PlateauInteractif": {
         "Nom": "Agir sur la carte",
         "Aide": "Choix de nuit, votes et pouvoirs de jour se font au clic sur les jetons, depuis le bandeau. Décoché : les fenêtres de choix et de vote s'ouvrent comme avant."
@@ -433,6 +437,13 @@
       "Vote": "Vote : clique sur le jeton de celui que tu accuses",
       "VoteChapelle": "Chapelle : clique sur le jeton de celui qui dormira à l'abri",
       "Utiliser": "Utiliser : {nom}",
+      "Salon": {
+        "nuit": "🔇 La nuit, silence",
+        "taniere": "🐺 Tanière : tu parles aux loups",
+        "morts": "👻 Tu parles aux morts",
+        "silence": "🔇 Réduit au silence",
+        "Aide": "Salon vocal : ce que la voix intégrée de Foundry te laisse dire et entendre en ce moment."
+      },
       "MonRole": "Mon rôle",
       "MonRoleAide": "Ton carnet secret : ta carte de rôle et ce que tu apprends la nuit (toi seul le vois).",
       "Attente": {

@@ -20,6 +20,7 @@ import { bandeauAction, rafraichirBandeau } from "./scripts/apps/bandeau.mjs";
 import { surReponse } from "./scripts/apps/choix.mjs";
 import { brancherParole } from "./scripts/parole.mjs";
 import { brancherInfobulle } from "./scripts/infobulle.mjs";
+import { brancherSalons, rafraichirSalons } from "./scripts/salons.mjs";
 
 // ------------------------------------------------------------------ rafraîchissement des fenêtres
 let voteEtaitOuvert = false;
@@ -87,6 +88,7 @@ Hooks.once("init", () => {
   brancherPlateau();
   brancherParole();
   brancherInfobulle();
+  brancherSalons();
   foundry.applications.handlebars.loadTemplates([`systems/${ID}/templates/carte-role.hbs`]);
 });
 
@@ -109,6 +111,8 @@ Hooks.once("ready", () => {
   plateauLocal.surChangement(rafraichirPlateauLocal);
   bandeauAction().render({ force: true });
   quandEtatChange();
+  // Les salons vocaux : le MJ actif calcule la matrice et envoie à chacun sa ligne (les joueurs la demandent par « bonjour »).
+  if (estMJActif()) rafraichirSalons({ forcer: true });
   Hooks.callAll("lakourLoups.pret", api);
 });
 
@@ -117,6 +121,9 @@ Hooks.on("canvasReady", () => {
   animerHalos();
   rafraichirPlateauLocal();
 });
+
+// Ma ligne des salons vocaux a changé (ce que la voix de Foundry me laisse dire et entendre) : le bandeau l'affiche.
+Hooks.on("lakourLoups.salon", () => rafraichirPlateauLocal());
 
 // Le dépouillement : les voix publiques en bulles au-dessus des jetons, quelques secondes.
 Hooks.on("lakourLoups.voteClos", resultat => {

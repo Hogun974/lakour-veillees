@@ -190,7 +190,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
             ? (resultat.elus ?? []).filter(id => game.actors.get(id)?.system.vivant).map(id => ({ id, nom: nomDe(id) })) : [] } : null
       },
       historique: chronique,
-      etape, preparation,
+      etape, preparation, nuit,
       emporteur: etape?.cle === "emporter" ? { id: etape.donnees.id, nom: etape.donnees.nom } : null,
       reveils: gm ? api().reveilsEnCours?.() ?? [] : []
     };

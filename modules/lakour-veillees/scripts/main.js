@@ -5,7 +5,9 @@
 // reçoit d'ici le jeton NEUTRE des Veillées (« villageois », qui cache le rôle) et le style visuel des images.
 const ID = "lakour-veillees";
 const SYSTEME = "lakour-loups";
-const VERSION_CONTENU = "0.3.0";   // 0.3.0 : plan du village avec son plateau (seuils, cercle, cimetière)
+// 0.3.0 : plan du village avec son plateau (seuils, cercle, cimetière) ; 0.5.0 (aligné sur module.json) : carte épinglée
+// (une épingle par bâtiment vers sa page du guide du joueur, sons), journaux gardant leur identifiant et leur visibilité.
+const VERSION_CONTENU = "0.5.0";
 
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 
@@ -60,25 +62,82 @@ export async function compositions() {
   } catch { return {}; }
 }
 
+// Un guide déjà installé d'une version précédente reprend les pages du compendium (avec leurs identifiants : les épingles
+// les visent) et la visibilité du compendium (les installations d'avant 0.5.0 la perdaient) ; son nom, son dossier et les
+// droits donnés à chaque joueur restent. Les retouches faites à la main dans ses pages sont perdues.
+async function rafraichirJournal(existant, source) {
+  if (existant.getFlag(ID, "version") === VERSION_CONTENU) return false;
+  await existant.deleteEmbeddedDocuments("JournalEntryPage", existant.pages.map(p => p.id));
+  await existant.createEmbeddedDocuments("JournalEntryPage", source.pages.map(p => p.toObject()), { keepId: true });
+  await existant.update({ "ownership.default": source.ownership.default, [`flags.${ID}.version`]: VERSION_CONTENU });
+  return true;
+}
+
+// Sons d'ambiance, zones et épingles de la carte du module, marqués comme tels. Les épingles visent les journaux du monde
+// (journaux : identifiant au compendium -> identifiant dans le monde ; les pages gardent les leurs).
+const COLLECTIONS_VIVANTES = [["AmbientSound", "sounds"], ["Region", "regions"], ["Note", "notes"]];
+export function carteVivante(donnees, journaux) {
+  const marque = d => foundry.utils.mergeObject(d, { [`flags.${ID}.carte`]: true }, { inplace: false });
+  return {
+    sounds: (donnees.sounds ?? []).map(marque),
+    regions: (donnees.regions ?? []).map(marque),
+    notes: (donnees.notes ?? []).map(n => marque({ ...n, entryId: journaux.get(n.entryId) ?? n.entryId }))
+  };
+}
+
+// Une carte déjà importée d'une version précédente reçoit les sons, zones et épingles du module : ceux d'avant (marqués,
+// ou portant l'identifiant d'un document du compendium, comme les sons déduits importés avant 0.5.0) sont remplacés ; ses
+// jetons, ses lumières et ce que le MJ y a ajouté restent.
+export async function rafraichirScene(scene, source, journaux) {
+  if (scene.getFlag(ID, "version") === VERSION_CONTENU) return false;
+  const donnees = source.toObject();
+  const vivante = carteVivante(donnees, journaux);
+  for (const [type, champ] of COLLECTIONS_VIVANTES) {
+    const duModule = new Set((donnees[champ] ?? []).map(d => d._id));
+    const anciens = scene[champ].filter(d => d.getFlag(ID, "carte") || duModule.has(d.id)).map(d => d.id);
+    if (anciens.length) await scene.deleteEmbeddedDocuments(type, anciens);
+    if (vivante[champ].length) await scene.createEmbeddedDocuments(type, vivante[champ], { keepId: true });
+  }
+  await scene.setFlag(ID, "version", VERSION_CONTENU);
+  return true;
+}
+
 export async function installer() {
   const rapport = [];
   const nomDossier = game.i18n.localize("LAKOURVEIL.Titre");
+  const journauxDuMonde = new Map();   // identifiant au compendium -> identifiant dans le monde
 
-  // Guides et variantes : visibilité de chaque journal fixée par le compendium (guide du narrateur caché).
+  // Guides et variantes : visibilité de chaque journal fixée par le compendium (guide du joueur et variantes visibles,
+  // guide du narrateur caché), d'où clearOwnership: false.
   const journaux = await game.packs.get(`${ID}.journaux`).getDocuments();
   for (const j of journaux) {
-    if (game.journal.find(x => x.getFlag(ID, "cle") === j.getFlag(ID, "cle"))) continue;
-    await JournalEntry.implementation.create({ ...game.journal.fromCompendium(j), folder: (await dossier("JournalEntry", nomDossier)).id });
+    const existant = game.journal.find(x => x.getFlag(ID, "cle") === j.getFlag(ID, "cle"));
+    if (existant) {
+      journauxDuMonde.set(j.id, existant.id);
+      if (await rafraichirJournal(existant, j)) rapport.push(`${j.name} (mis à jour)`);
+      continue;
+    }
+    // Même identifiant qu'au compendium (s'il est libre) : les épingles de la carte le visent.
+    const libre = !game.journal.get(j.id);
+    const donnees = foundry.utils.mergeObject(game.journal.fromCompendium(j, { keepId: libre, clearOwnership: false }), { [`flags.${ID}.version`]: VERSION_CONTENU });
+    const cree = await JournalEntry.implementation.create({ ...donnees, folder: (await dossier("JournalEntry", nomDossier)).id }, { keepId: libre });
+    journauxDuMonde.set(j.id, cree.id);
     rapport.push(j.name);
   }
 
-  // Scène du village ; les dessins (étiquettes des pièces) prennent le MJ pour auteur.
+  // Scène du village ; les dessins (étiquettes des pièces) prennent le MJ pour auteur ; sons et épingles raccordés.
   const scenes = await game.packs.get(`${ID}.scenes`)?.getDocuments() ?? [];
   for (const s of scenes) {
     const cle = s.getFlag(ID, "cle");
-    if (game.scenes.find(x => x.getFlag(ID, "cle") === cle)) continue;
+    const existante = game.scenes.find(x => x.getFlag(ID, "cle") === cle);
+    if (existante) {
+      if (await rafraichirScene(existante, s, journauxDuMonde)) rapport.push(`${s.name} (sons et épingles)`);
+      continue;
+    }
     const donnees = game.scenes.fromCompendium(s);
     donnees.drawings = donnees.drawings?.map(d => ({ ...d, author: game.user.id }));
+    Object.assign(donnees, carteVivante(donnees, journauxDuMonde));
+    foundry.utils.setProperty(donnees, `flags.${ID}.version`, VERSION_CONTENU);
     await Scene.implementation.create({ ...donnees, folder: (await dossier("Scene", nomDossier)).id });
     rapport.push(s.name);
   }

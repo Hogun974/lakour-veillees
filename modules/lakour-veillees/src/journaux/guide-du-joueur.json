@@ -171,6 +171,196 @@
         "default": -1
       },
       "flags": {}
+    },
+    {
+      "_id": "dC60w4AikPtzKrzh",
+      "_key": "!journal.pages!IWLvmKtjvzPRJYr5.dC60w4AikPtzKrzh",
+      "name": "La Chapelle",
+      "type": "text",
+      "sort": 900,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<p>Une chapelle de pierre grise au nord de la place, avec un clocher trop haut pour elle. La porte n'a jamais eu de serrure.</p><h2>En jeu</h2><p><em>Le village y met un joueur à l'abri chaque nuit.</em></p><p><strong>Asile.</strong> Chaque jour, après le vote, le village désigne à main levée (un second vote, rapide) un joueur vivant qui <strong>dormira à la Chapelle</strong> : la meute ne peut pas l'attaquer la nuit suivante. Jamais deux nuits de suite le même joueur. Le poison et le feu passent la porte.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "QIKXHcnrr9M6qTbg",
+      "_key": "!journal.pages!IWLvmKtjvzPRJYr5.QIKXHcnrr9M6qTbg",
+      "name": "Le Moulin",
+      "type": "text",
+      "sort": 1000,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<p>Le moulin à vent sur la butte de l'ouest. Ses ailes tournent même quand il n'y a pas de vent, disent les enfants.</p><h2>En jeu</h2><p><em>La meule compte les loups vivants.</em></p><p><strong>La meule qui compte.</strong> Chaque matin, la Meunière (si quelqu'un a ce métier) apprend en secret le <strong>nombre de loups encore vivants</strong>. Sans Meunière vivante, le narrateur l'annonce à tout le village <strong>un matin sur deux</strong> (après la deuxième nuit, la quatrième…).</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "tbL4JLTRngZb6B7E",
+      "_key": "!journal.pages!IWLvmKtjvzPRJYr5.tbL4JLTRngZb6B7E",
+      "name": "La Taverne",
+      "type": "text",
+      "sort": 1100,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<p>La Taverne du Chaudron Fêlé, au bord de la place : trois lits à l'étage, un feu qui ne s'éteint jamais.</p><h2>En jeu</h2><p><em>Ceux qui y dorment se protègent, sauf si un loup est parmi eux.</em></p><p><strong>Dortoir.</strong> Chaque jour, jusqu'à <strong>trois joueurs</strong> peuvent annoncer qu'ils dormiront à la Taverne. La nuit suivante, la meute <strong>ne peut tuer aucun d'eux</strong>… sauf si <strong>un loup</strong> dort parmi eux : alors elle peut y tuer celui de son choix, et aucune protection ne joue. L'hôte de l'Aubergiste prend l'un des trois lits. Le poison et le feu atteignent les dormeurs comme ailleurs.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "25GHYdzbhWMiRLU9",
+      "_key": "!journal.pages!IWLvmKtjvzPRJYr5.25GHYdzbhWMiRLU9",
+      "name": "Le Gibet",
+      "type": "text",
+      "sort": 1200,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<p>Une potence de chêne noirci au coin de la place. On ne s'en sert presque jamais, et c'est déjà trop.</p><h2>En jeu</h2><p><em>Une exécution exige la majorité absolue.</em></p><p><strong>Majorité absolue.</strong> Pour exécuter un joueur, il faut que <strong>plus de la moitié des vivants</strong> aient voté pour lui. Sinon, personne n'est exécuté ce jour-là.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "7KpinLXkoJ8poGNx",
+      "_key": "!journal.pages!IWLvmKtjvzPRJYr5.7KpinLXkoJ8poGNx",
+      "name": "Le Puits",
+      "type": "text",
+      "sort": 1300,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<p>Le vieux puits au milieu de la place. Ceux qui se penchent dessus entendent parfois leur nom.</p><h2>En jeu</h2><p><em>Un mort peut transmettre un dernier mot.</em></p><p><strong>Dernier mot.</strong> <strong>Une fois par partie</strong>, un joueur qui vient de mourir (cette nuit ou ce jour) peut confier au puits un <strong>dernier mot de dix mots au plus</strong>, que le narrateur lit au village. Le premier mort qui le demande l'obtient.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "ik0N2ip2FfeNXbdH",
+      "_key": "!journal.pages!IWLvmKtjvzPRJYr5.ik0N2ip2FfeNXbdH",
+      "name": "La Forge",
+      "type": "text",
+      "sort": 1400,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<p>La forge à l'ouest de la place, toujours rouge, toujours chaude. Le forgeron dort à côté de l'enclume.</p><h2>En jeu</h2><p><em>Une lame qui blesse la meute.</em></p><p><strong>Une lame sous l'oreiller.</strong> <strong>Une fois par partie</strong>, pendant le jour, un joueur peut annoncer qu'il emporte une <strong>lame</strong> de la forge. Si la meute l'attaque la nuit suivante, la lame ne le protège pas (il meurt, sauf protection), mais il <strong>blesse un loup</strong> tiré au hasard parmi ceux qui chassaient : ce loup est <strong>réduit au silence</strong> au jour suivant (le narrateur dit seulement « du sang de bête sur le seuil »).</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "rrl6GKhc6WIIz5UL",
+      "_key": "!journal.pages!IWLvmKtjvzPRJYr5.rrl6GKhc6WIIz5UL",
+      "name": "Le Cimetière",
+      "type": "text",
+      "sort": 1500,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<p>Le cimetière derrière la chapelle, ses croix penchées et son if qui ne perd jamais ses aiguilles.</p><h2>En jeu</h2><p><em>Le camp des morts finit par se savoir.</em></p><p><strong>Les tombes parlent.</strong> Si les rôles ne sont <strong>pas révélés à la mort</strong>, le narrateur annonce chaque matin le <strong>camp</strong> (pas le rôle) de chaque joueur mort depuis le matin précédent, les morts de la nuit compris. Si les rôles sont révélés à la mort, le Cimetière est sans effet.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "HkUwbvZBwyxUzIEC",
+      "_key": "!journal.pages!IWLvmKtjvzPRJYr5.HkUwbvZBwyxUzIEC",
+      "name": "Le Pont",
+      "type": "text",
+      "sort": 1600,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<p>Le pont de pierre sur la Brume, la rivière qui coupe le village. Les maisons 13 à 18 sont sur l'autre rive.</p><h2>En jeu</h2><p><em>La meute ne traverse pas deux nuits de suite.</em></p><p><strong>L'autre rive.</strong> Les maisons <strong>13 à 18</strong> sont de l'autre côté du Pont ; environ un tiers des joueurs y dort, quelle que soit la taille du village. Si la meute a tué sur l'autre rive une nuit, elle <strong>ne peut pas traverser</strong> la nuit suivante : aucune maison de l'autre rive ne peut être sa proie.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "liUCpIQEbHv1MUa8",
+      "_key": "!journal.pages!IWLvmKtjvzPRJYr5.liUCpIQEbHv1MUa8",
+      "name": "Le Lavoir",
+      "type": "text",
+      "sort": 1700,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<p>Le lavoir couvert au bord de la rivière : on y lave le linge, et surtout les réputations.</p><h2>En jeu</h2><p><em>Chaque matin, un indice vrai mais flou.</em></p><p><strong>Les bavardages.</strong> Chaque matin, le narrateur rapporte ce qu'on dit au lavoir : un <strong>indice vrai mais flou</strong> sur la nuit passée (« quelqu'un est sorti par la porte de derrière », « la victime avait de la visite deux nuits plus tôt »). Il ne nomme jamais personne.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "qMF6dr4pK51fZjkQ",
+      "_key": "!journal.pages!IWLvmKtjvzPRJYr5.qMF6dr4pK51fZjkQ",
+      "name": "La Grange",
+      "type": "text",
+      "sort": 1800,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<p>La grange des Vaudrey sur l'autre rive, pleine de foin et de courants d'air.</p><h2>En jeu</h2><p><em>Une cachette où l'on ne peut ni être trouvé ni agir.</em></p><p><strong>Cachette.</strong> <strong>Une fois par partie et par joueur</strong>, on peut annoncer pendant le jour qu'on se cache dans la Grange : la nuit suivante, on <strong>ne peut pas être trouvé</strong> (aucune visite ne réussit, et le feu d'une maison vide ne tue personne), mais on <strong>ne peut pas agir</strong>. Deux joueurs au plus par nuit.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
     }
   ]
 }

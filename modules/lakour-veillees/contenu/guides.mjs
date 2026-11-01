@@ -9,6 +9,24 @@ import { BATIMENTS } from "./batiments.mjs";
 const ligne = d => `- **${d.name}** — ${d.__resume}`;
 const rolesDu = camp => ROLES.filter(r => r.system.camp === camp);
 
+// HTML d'un objet (html() de aides.mjs) -> texte de page (gras, italique, paragraphes), que journal() remet en HTML.
+const versTexte = h => String(h).replace(/<\/p><p>/g, "\n\n").replace(/<br>/g, "\n").replace(/<\/?strong>/g, "**").replace(/<\/?em>/g, "*")
+  .replace(/<[^>]+>/g, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+const majuscule = t => t.charAt(0).toUpperCase() + t.slice(1);
+
+// Une page par bâtiment, en fin de guide du joueur (titre = nom du bâtiment) : l'épingle du bâtiment sur la carte du
+// village y mène (village.mjs). Textes repris de batiments.mjs, sans règle nouvelle.
+const pageDuBatiment = b => ({
+  titre: b.name,
+  texte: `${versTexte(b.system.description)}
+
+# En jeu
+
+*${majuscule(b.__resume)}*
+
+${versTexte(b.system.regle)}`
+});
+
 // Ordre de réveil, calculé depuis les rôles : la meute groupée à 40, puis chaque rôle qui agit seul.
 export function ordreDeReveil() {
   const actifs = ROLES.filter(r => r.system.nuit.actif);
@@ -150,7 +168,8 @@ ${METIERS.map(ligne).join("\n")}`
 Chaque partie met **4 à 6 bâtiments** en jeu : le narrateur les annonce au début, et la Table de jeu les rappelle. Chacun change une règle. Sur la carte, chaque bâtiment est un lieu du village où l'on peut se retrouver.
 
 ${BATIMENTS.map(b => `- **${b.name}** — ${b.__resume} ${b.system.regle.replace(/<[^>]+>/g, "")}`).join("\n")}`
-    }
+    },
+    ...BATIMENTS.map(pageDuBatiment)
   ]
 });
 

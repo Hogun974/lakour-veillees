@@ -4,7 +4,14 @@
 // Gibet, Puits, Forge, Cimetière, Pont, Lavoir, Grange). Les maisons 13 à 18 et la Grange sont sur l'autre rive.
 // La rivière, les chemins, les arbres et les toits sont du décor dessiné (decorVillage), pas des pièces : ils ne
 // créent aucun mur, et la carte reste ouverte comme un plateau de jeu.
-import { scene } from "./cartes.mjs";
+// Carte lue : une épingle par bâtiment vers sa page du guide du joueur (visible), les sons déduits par le moteur et deux
+// sons d'ambiance en plus. Aucune zone : les jetons sont posés et déplacés par le système (plateau.mjs, mouvements animés),
+// une zone « texte » s'élèverait à chaque mise en scène, une « pause » ou une « téléportation » gênerait le plateau.
+import { planVersScene } from "../../lakour-mj-ia/scripts/cartes.js";
+import { scene, TAILLE, DISTANCE } from "./cartes.mjs";
+import { MODULE } from "./aides.mjs";
+import { BATIMENTS } from "./batiments.mjs";
+import { GUIDES } from "./guides.mjs";
 
 export const CLE_VILLAGE = "village-de-brumecombe";
 export const L = 42, H = 30;
@@ -66,7 +73,7 @@ export const PLATEAU_VILLAGE = {
   cimetiere: { x: 22, y: 2, l: 6, h: 5 }
 };
 
-export const PLAN_VILLAGE = {
+const PLAN_DE_BASE = {
   largeur: L, hauteur: H, lumiere: "nuit",
   pieces: [{ nom: "Brumecombe", x: 0, y: 0, l: L, h: H, sol: "herbe" }, PLACE],
   ouvertures: pourtourOuvert(PLACE),
@@ -74,6 +81,57 @@ export const PLAN_VILLAGE = {
   elements: [...MAISONS, ...BATIMENTS_CARTE],
   plateau: PLATEAU_VILLAGE
 };
+
+// ======================================================================= Épingles et sons
+
+// Page du guide du joueur qui décrit le bâtiment de la carte nommé `nom` (repere de batiments.mjs, page titrée du nom de
+// l'objet, guides.mjs) : { entryId, pageId, titre }. Une cible absente ou un guide caché est une erreur de fabrication.
+export function pageDuBatiment(nom, guides = GUIDES, batiments = BATIMENTS) {
+  const b = batiments.find(x => x.system.repere === nom);
+  if (!b) throw new Error(`Épingle de « ${nom} » : aucun bâtiment n'a ce repère`);
+  const guide = guides.find(g => g.flags[MODULE].cle === "guide-du-joueur");
+  if (!guide) throw new Error(`Épingle de « ${nom} » : guide du joueur absent`);
+  if (!guide.flags[MODULE].visible || guide.ownership.default < 2) throw new Error(`Épingle de « ${nom} » : le guide du joueur n'est pas visible des joueurs`);
+  const page = guide.pages.find(p => p.name === b.name);
+  if (!page) throw new Error(`Épingle de « ${nom} » : page « ${b.name} » absente du guide du joueur`);
+  return { entryId: guide._id, pageId: page._id, titre: b.name };
+}
+
+// Icône du cœur de Foundry 14 (icons/svg/<nom>.svg) de chaque bâtiment.
+export const ICONES_BATIMENTS = {
+  Chapelle: "temple", Cimetière: "obelisk", Moulin: "windmill", Taverne: "tankard", Forge: "sword",
+  Gibet: "skull", Puits: "sound", Pont: "bridge", Lavoir: "waterfall", Grange: "house"
+};
+
+// Case de l'épingle : au centre du bâtiment ; pour le Cimetière, où le système range les jetons des morts, juste à
+// côté, contre le muret est, pour qu'aucun jeton ne la recouvre.
+export function caseEpingle(b, plateau = PLATEAU_VILLAGE) {
+  const c = plateau.cimetiere;
+  const surLesMorts = b.x < c.x + c.l && c.x < b.x + b.l && b.y < c.y + c.h && c.y < b.y + b.h;
+  return surLesMorts ? { x: b.x + b.l, y: b.y + Math.floor(b.h / 2) } : { x: b.x + Math.floor((b.l - 1) / 2), y: b.y + Math.floor((b.h - 1) / 2) };
+}
+
+export const EPINGLES = BATIMENTS_CARTE.map(b => {
+  const { entryId, pageId, titre } = pageDuBatiment(b.nom);
+  return { ...caseEpingle(b), entryId, pageId, texte: titre, icone: `icons/svg/${ICONES_BATIMENTS[b.nom]}.svg` };
+});
+
+// Sons : ceux que le moteur déduit du plan (forge de la Forge, nuit sur le village ; la foule de la place et de la
+// Taverne se tait la nuit), recopiés tels quels car un plan qui donne ses `sons` n'en déduit plus, puis deux de plus.
+export function sonsDeduits(plan) {
+  const { erreurs, scene: s } = planVersScene({ ...plan, sons: [] }, { taille: TAILLE, distance: DISTANCE });
+  if (erreurs.length) throw new Error(`Sons déduits : ${erreurs.join(" ; ")}`);
+  return s.sounds.map(x => ({
+    son: x.path.split("/").pop().replace(/\.wav$/, ""), x: x.x / TAILLE - 0.5, y: x.y / TAILLE - 0.5,
+    rayon: x.radius / DISTANCE, volume: x.volume, nom: x.name.split(" — ")[1]
+  }));
+}
+export const SONS_EN_PLUS = [
+  { son: "feu", x: 28, y: 10, rayon: 3, volume: 0.3, nom: "Âtre de la Taverne" },   // « un feu qui ne s'éteint jamais »
+  { son: "mer", x: 32, y: 21, rayon: 4, volume: 0.2, nom: "la Brume" }               // la rivière, entre le Pont et le Lavoir
+];
+
+export const PLAN_VILLAGE = { ...PLAN_DE_BASE, sons: [...sonsDeduits(PLAN_DE_BASE), ...SONS_EN_PLUS], notes: EPINGLES };
 
 // ======================================================================= Décor dessiné
 

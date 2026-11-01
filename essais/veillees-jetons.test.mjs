@@ -48,7 +48,7 @@ test("un jeton par métier et par bâtiment, images des objets ; figurants.json 
       assert.ok(existsSync(d.doc.img) && existsSync(d.doc.img.replace("/jetons/", "/jetons/3d/")), `${d.doc.name} : ${d.doc.img}`);
     }
   }
-  assert.equal(liste.metiers.length, 12);
+  assert.equal(liste.metiers.length, 14);
   assert.equal(liste.batiments.length, 10);
   const types = JSON.parse(readFileSync(FICHIER_FIGURANTS, "utf8"));
   assert.ok(Object.keys(types).length >= 10);

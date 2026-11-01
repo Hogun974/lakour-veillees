@@ -214,8 +214,8 @@ Avec la voix intégrée de Foundry (A/V), réglage monde **`salonsAutomatiques`*
 | un réduit au silence | personne pendant `jour` et `vote` (il parle à l'aube) | personne |
 
 Le MJ (tout utilisateur MJ, même s'il incarne un villageois) entend tout et parle à tous. `preparation` et `fin`, ou le réglage
-décoché : tout le monde parle à tout le monde. Est loup le villageois dont le camp ACTUEL est `meute` : les six loups du contenu
-(Loup de Brumecombe, affamé, déguisé, Louve mère, hurleur, flaireur), le mordu (à l'aube, `changerCamp` : il est à la tanière
+décoché : tout le monde parle à tout le monde. Est loup le villageois dont le camp ACTUEL est `meute` : les sept loups du contenu
+(Loup de Brumecombe, affamé, déguisé, Louve mère, hurleur, flaireur, des roseaux), le mordu (à l'aube, `changerCamp` : il est à la tanière
 la nuit suivante), pas un loup dont le Colporteur a pris le rôle ; le rôle ne sert que si le camp manque.
 Fonction pure : `audibilite(etatPublic, secretsMJ, locuteur, table)` -> `{ peutParler, auditeurs, acteursAuditeurs, salon }`, avec
 `table = { villageois, utilisateurs: [{ id, mj }], mortsVoientTout, automatique, loupsConnus }` (`secretsMJ` null : aucun camp connu
@@ -314,6 +314,19 @@ par `demanderTexte`, messages par `envoyerSecret`, annonces de l'aube rendues au
 rappel du Juge de paix), `loups_eliminer` (refuse d'exécuter « vote » pendant un vote rouvert), `loups_effet`, et **`loups_jour`**
 (action `lister` : pouvoirs de jour possibles ; action `utiliser` : applique celui qu'un joueur annonce, via `agirDeJour`).
 
+Ce que le MJ IA doit savoir des rôles et métiers ajoutés en 0.6.0 (aucun outil nouveau : tout passe par les mêmes appels) :
+- **Loup des roseaux** (meute, `voir-actif`, ordre 45) : réveillé avec la meute puis seul ; `loups_nuit` lui demande une maison, le
+  système lui répond au carnet « a agi / n'a pas bougé ».
+- **Louvetier** (village, `voir-camp`, ordre 61, `apparence: "meute"`) : les visions le voient de la meute ; le narrateur ne corrige
+  jamais (règle à tenir dans la narration).
+- **Pêcheur de nuit** (village, `tuer`, une fois par partie, ordre 48) et **Dame du gué** (solitaire, `tuer`, une nuit sur deux,
+  ordre 47, `dernier-survivant`) : leurs victimes ne sont pas des « proies de la meute » (ni Louve mère, ni invite de l'Herboriste) ;
+  morts annoncés « dans la nuit » sans traces de crocs.
+- **Ramoneuse** et **Éclusière** : métiers publics, listés par `pouvoirsDeJour` / `loups_jour` (dont la description cite les douze
+  premiers, mais la liste vient du système) ; l'écluse apparaît dans « la nuit prochaine » de la Table de jeu (`Table.Effets.ecluse`).
+Le guide du narrateur (journal caché, lu par le MJ IA) reprend ces consignes ; le guide du joueur a une page « Nouveaux visages de la
+veillée ».
+
 ## 4. Clés d'effet (automatisables par le système, sinon arbitrées par le narrateur)
 
 `tuer`, `proteger`, `voir-camp`, `voir-role-mort`, `eclairer` (démasque un loup qui entre), `silence`, `vote-double`,
@@ -322,10 +335,21 @@ rappel du Juge de paix), `loups_eliminer` (refuse d'exécuter « vote » pendant
 (`resoudreNuit()`), dont `messager` (le mot écrit par l'expéditeur, `action.texte`, remis au seul destinataire), ou de jour
 (`annuler-vote` : le Juge de paix, voir §5). Ce que le système ne connaîtrait pas reste raconté et arbitré par le MJ (`narrateur`).
 
+Un même effet sert plusieurs rôles, réglés autrement (camp, cibles, usages, nuits, `apparence`, `victoireCle`) : un rôle nouveau
+n'a pas besoin de code tant qu'il s'en tient à ces clés. Conventions de `resoudreNuit()` qui en découlent (contenu 0.6.0) :
+- `tuer` par un rôle **hors meute** (Pêcheur de nuit, une fois par partie ; Dame du gué, une nuit sur deux) : cause `nuit` (pas de
+  crocs pour le Tanneur), arrêté par une protection, un remède ou une absence (Passeur, Grange), **pas** par le verrou, l'asile de la
+  Chapelle ni la Taverne (réservés aux attaques de loup) ; il atteint les solitaires que la meute ne peut pas tuer ;
+- `voir-actif` avec une cible (Loup des roseaux) : « a agi / n'a pas bougé cette nuit » ; sans cible (Ermite) : un nom tiré au hasard
+  parmi ceux qui ont agi ; un loup qui vise une maison y entre (la lanterne le démasque) ;
+- `apparence` : camp montré aux visions `voir-camp` (Loup déguisé : `village` ; Louvetier : `meute`) ; le Cimetière et les salons
+  suivent le camp réel ;
+- `victoireCle: "dernier-survivant"` (Pyromane, Dame du gué) : la meute ne peut pas le tuer ; le village ne gagne pas tant qu'il vit.
+
 ## 5. Pouvoirs de jour (`logique/jour.mjs`)
 
 Désignés par la clé du métier, du rôle ou du bâtiment. Moments : « au matin » = phases `aube`/`jour` (et, pour Chasseresse,
-Colporteur de nouvelles et Tanneur, le jour qui suit une nuit résolue) ; « pendant le jour » = `aube`/`jour`/`vote`.
+Ramoneuse, Colporteur de nouvelles et Tanneur, le jour qui suit une nuit résolue) ; « pendant le jour » = `aube`/`jour`/`vote`.
 Un effet posé de jour vaut pour la nuit suivante (`jour.effets[].nuit = tour + 1`). Tous les métiers sont publics : leur usage
 est annoncé au chat avec le nom de celui qui agit.
 
@@ -343,6 +367,8 @@ est annoncé au chat avec le nom de celui qui agit.
 | `passeur` | 1 (soi compris) | hors d'atteinte : ni visité (meute, poison, visions), ni brûlé ; n'agit pas |
 | `tanneur` | 1 mort de la nuit | annonce « traces de crocs » (meute, épié) ou non, d'après la vraie cause |
 | `maitresse-d-ecole` | 1 (le premier) | l'appel : 30 s chacun, dans l'ordre des maisons à partir du joueur choisi |
+| `ramoneuse` | 1 vivant (soi compris) | annonce si sa maison a reçu de la visite la nuit passée (`bilan.visites` secret : proie de la meute, cibles des pouvoirs hors soi) ; ni qui, ni pourquoi |
+| `eclusiere` | — | écluse fermée (effet `ecluse`, une par nuit) : la nuit suivante, `pontBloque` comme le Pont, même sans lui ; la meute (et un loup qui tue seul) ne vise aucune maison de l'autre rive |
 | `juge-de-paix` | — | juste après le dépouillement d'un vote d'exécution, avant l'exécution : se révèle, le vote se rouvre |
 | `conteuse` | 1 (pas soi) | deux minutes sur ce joueur, qui ne peut pas répondre ; annoncé sans nommer la Conteuse |
 | `taverne` | soi | dort à la Taverne (3 lits) : la meute n'y tue pas, sauf si un loup y dort (alors sans protection) |
@@ -353,7 +379,8 @@ est annoncé au chat avec le nom de celui qui agit.
 
 À l'aube, sans action : **Moulin** (la Meunière vivante apprend en secret le nombre de loups ; sans elle, annonce publique les
 matins pairs), **Lavoir** (indice flou public), **Cimetière** (sans révélation à la mort : camp des morts pas encore annoncés),
-**Pont** (maisons 13 à 18 ; après une proie tuée sur l'autre rive, la meute ne peut pas y chasser la nuit suivante), **Gibet**
+**Pont** (maisons 13 à 18 ; après une proie tuée sur l'autre rive, la meute ne peut pas y chasser la nuit suivante ; l'écluse de
+l'Éclusière a le même effet, Pont en jeu ou non), **Gibet**
 (majorité absolue, inchangé).
 
 ## 6. Ce qui reste visible (limites de Foundry v14)

@@ -1,0 +1,37 @@
+{
+  "_id": "bannRn0UAGWzBH0O",
+  "_key": "!items!bannRn0UAGWzBH0O",
+  "name": "Ramoneuse",
+  "type": "metier",
+  "img": "modules/lakour-veillees/assets/jetons/metier-ramoneuse.svg",
+  "system": {
+    "cle": "ramoneuse",
+    "description": "<p>Du haut des toits, tu vois tous les seuils de Brumecombe, et la suie garde la trace des pas.</p><p><strong>Une fois par partie</strong>, au matin, tu désignes la maison d'un joueur vivant (la tienne comprise) : le narrateur dit à tout le village si elle a <strong>reçu de la visite</strong> la nuit passée (un loup, ou un pouvoir qui la visait), sans dire qui est venu ni pourquoi.</p>",
+    "jour": {
+      "actif": true,
+      "invite": "Sur quel toit montes-tu ce matin ?",
+      "cibles": 1
+    },
+    "usages": {
+      "max": 1,
+      "restant": 1
+    },
+    "effet": "voir-actif"
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "ramoneuse"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

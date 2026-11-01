@@ -5,6 +5,7 @@
   "louve-mere": "modules/lakour-veillees/assets/jetons/3d/louve-mere.svg",
   "loup-hurleur": "modules/lakour-veillees/assets/jetons/3d/loup-hurleur.svg",
   "loup-flaireur": "modules/lakour-veillees/assets/jetons/3d/loup-flaireur.svg",
+  "loup-des-roseaux": "modules/lakour-veillees/assets/jetons/3d/loup-des-roseaux.svg",
   "villageois": "modules/lakour-veillees/assets/jetons/3d/villageois.svg",
   "veilleuse-de-lanterne": "modules/lakour-veillees/assets/jetons/3d/veilleuse-de-lanterne.svg",
   "liseuse-de-cendres": "modules/lakour-veillees/assets/jetons/3d/liseuse-de-cendres.svg",
@@ -21,8 +22,11 @@
   "entremetteuse": "modules/lakour-veillees/assets/jetons/3d/entremetteuse.svg",
   "gardienne-des-cles": "modules/lakour-veillees/assets/jetons/3d/gardienne-des-cles.svg",
   "sourcier": "modules/lakour-veillees/assets/jetons/3d/sourcier.svg",
+  "louvetier": "modules/lakour-veillees/assets/jetons/3d/louvetier.svg",
+  "pecheur-de-nuit": "modules/lakour-veillees/assets/jetons/3d/pecheur-de-nuit.svg",
   "revenant": "modules/lakour-veillees/assets/jetons/3d/revenant.svg",
   "colporteur": "modules/lakour-veillees/assets/jetons/3d/colporteur.svg",
   "chasseur-de-primes": "modules/lakour-veillees/assets/jetons/3d/chasseur-de-primes.svg",
-  "pyromane": "modules/lakour-veillees/assets/jetons/3d/pyromane.svg"
+  "pyromane": "modules/lakour-veillees/assets/jetons/3d/pyromane.svg",
+  "dame-du-gue": "modules/lakour-veillees/assets/jetons/3d/dame-du-gue.svg"
 }

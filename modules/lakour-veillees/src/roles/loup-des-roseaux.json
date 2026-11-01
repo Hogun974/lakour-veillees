@@ -1,0 +1,45 @@
+{
+  "_id": "PPw5SB5fZn8NZoC6",
+  "_key": "!items!PPw5SB5fZn8NZoC6",
+  "name": "Loup des roseaux",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/loup-des-roseaux.svg",
+  "system": {
+    "cle": "loup-des-roseaux",
+    "camp": "meute",
+    "description": "<p>Tu connais chaque touffe de roseaux entre le Pont et le Moulin, et personne ne t'y voit attendre.</p><p>Tu chasses chaque nuit avec la meute. Puis, <strong>chaque nuit</strong>, tu guettes la maison d'un joueur : le narrateur te dit en secret s'il <strong>a agi</strong> cette nuit (un pouvoir de nuit, ou la chasse), sans dire ce qu'il a fait. De quoi repérer ceux qui cachent un pouvoir, et les désigner à la meute la nuit suivante.</p><p>Guetter, c'est rôder au seuil : si la Veilleuse de lanterne éclaire la maison que tu guettes, tu es démasqué.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 45,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 1,
+      "soiMeme": false,
+      "invite": "Depuis les roseaux, quelle porte guettes-tu cette nuit ?"
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "voir-actif",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "loup-des-roseaux"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

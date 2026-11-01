@@ -29,7 +29,8 @@
 // - effets du jour : hors d'atteinte (Passeur, Grange) = ni visité ni agissant ; gardé à l'œil (Garde du guet) = ne vise
 //   que sa maison ; asile (Chapelle) et Taverne = la meute n'y tue pas (Taverne : sauf si un loup y dort, et alors sans
 //   protection) ; verrou (Forgeron) = la première attaque de loup échoue ; lame (Forge) = la proie blesse un loup ;
-//   béni (Curé) = jamais réduit au silence ; Pont bloqué = la meute ne traverse pas vers l'autre rive.
+//   béni (Curé) = jamais réduit au silence ; Pont bloqué (ou écluse fermée par l'Éclusière) = la meute ne traverse pas
+//   vers l'autre rive.
 //
 // Ordre : liens d'amour, protections, épier, attaques (meute, tuer), morsure, poison, feu, remède, éclairer,
 // informations, silence, échanges, cloche, chagrin en cascade, emporter.

@@ -1,0 +1,45 @@
+{
+  "_id": "fjHGd55SIOeEfG0j",
+  "_key": "!items!fjHGd55SIOeEfG0j",
+  "name": "Louvetier",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/louvetier.svg",
+  "system": {
+    "cle": "louvetier",
+    "camp": "village",
+    "description": "<p>Tu traques les loups depuis tant d'hivers que tu as fini par prendre leur odeur.</p><p><strong>Chaque nuit</strong>, tu suis la piste d'un joueur et le narrateur te dit en secret son <strong>camp</strong> : Village, Meute ou Solitaire.</p><p>Mais <strong>toute vision te voit du camp de la Meute</strong> (Liseuse de cendres, Sourcier, Loup flaireur…). Si l'on t'accuse sur la foi des cendres, ce sera ta parole contre la leur : choisis bien le moment de dire ce que tu sais. Les loups, eux, savent que tu n'es pas des leurs.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 61,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 1,
+      "soiMeme": false,
+      "invite": "Sur quelle piste lâches-tu tes chiens cette nuit ?"
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "voir-camp",
+    "apparence": "meute",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "louvetier"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

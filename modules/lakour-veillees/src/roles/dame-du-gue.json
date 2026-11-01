@@ -1,0 +1,45 @@
+{
+  "_id": "AI6OVZG5008lzsqa",
+  "_key": "!items!AI6OVZG5008lzsqa",
+  "name": "Dame du gué",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/dame-du-gue.svg",
+  "system": {
+    "cle": "dame-du-gue",
+    "camp": "solitaire",
+    "description": "<p>À Brumecombe, on dit qu'une femme pâle lave son linge au gué quand la brume monte, et que ceux qui s'approchent pour l'aider ne reviennent pas.</p><p><strong>Une nuit sur deux</strong> (la deuxième, la quatrième…), tu chantes au bord de l'eau et tu désignes un joueur : il suit ta voix jusqu'au gué et <strong>se noie</strong>. On le trouve mort à l'aube, sauf s'il était protégé cette nuit ou sauvé par un remède.</p><p>La meute ne peut pas te tuer : quand elle entre chez toi, elle n'y trouve que de l'eau froide. Le vote, le poison, le feu et le harpon, si.</p>",
+    "victoire": "<p>Tu gagnes <strong>seule</strong> si tu es la dernière vivante, ou la dernière avec un seul autre joueur qui n'est pas un loup.</p>",
+    "nuit": {
+      "actif": true,
+      "ordre": 47,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": true,
+      "cibles": 1,
+      "soiMeme": false,
+      "invite": "Ton chant monte sur la rivière : qui suit ta voix jusqu'au gué cette nuit ?"
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "tuer",
+    "apparence": "",
+    "victoireCle": "dernier-survivant"
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "dame-du-gue"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

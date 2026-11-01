@@ -24,7 +24,7 @@ import { decompterVotes } from "./votes.mjs";
 
 export function jourInitial() {
   // effets : [{ type, acteurId, cible, nuit }] posés de jour pour la nuit n° `nuit` (verrou, surveille, gite, traversee,
-  // taverne, lame, cachette, asile). benis : à vie. rubans : jusqu'au vote où ils servent. puits : le dernier mot.
+  // taverne, lame, cachette, asile, ecluse). benis : à vie. rubans : jusqu'au vote où ils servent. puits : le dernier mot.
   return { effets: [], benis: [], rubans: [], puits: null, conteuse: null, appel: null };
 }
 

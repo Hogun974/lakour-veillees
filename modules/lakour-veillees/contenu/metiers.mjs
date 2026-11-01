@@ -98,5 +98,21 @@ export const METIERS = [
 
 **Une fois par partie**, au début d'un débat, tu **fais l'appel** : tu désignes qui parle en premier, puis chaque joueur vivant parle **trente secondes**, à tour de rôle, dans l'ordre des maisons, avant le débat libre.`,
     jour: { invite: "Qui parle en premier à l'appel ?", cibles: 1 }
+  }),
+  metier({
+    cle: "ramoneuse", nom: "Ramoneuse", effet: "voir-actif", usages: 1,
+    resume: "dit au village si une maison a reçu de la visite la nuit passée.",
+    pouvoir: `Du haut des toits, tu vois tous les seuils de Brumecombe, et la suie garde la trace des pas.
+
+**Une fois par partie**, au matin, tu désignes la maison d'un joueur vivant (la tienne comprise) : le narrateur dit à tout le village si elle a **reçu de la visite** la nuit passée (un loup, ou un pouvoir qui la visait), sans dire qui est venu ni pourquoi.`,
+    jour: { invite: "Sur quel toit montes-tu ce matin ?", cibles: 1 }
+  }),
+  metier({
+    cle: "eclusiere", nom: "Éclusière", effet: "proteger", usages: 1,
+    resume: "ferme l'écluse : la nuit suivante, la meute ne peut chasser aucune maison de l'autre rive.",
+    pouvoir: `Tes vannes règlent le cours de la Brume : quand tu les fermes, l'eau monte sous le Pont et le gué disparaît.
+
+**Une fois par partie**, pendant le jour, tu **fermes l'écluse** : la nuit suivante, **la meute ne peut chasser aucune maison de l'autre rive** (maisons 13 à 18), comme quand le Pont est bloqué. Tout le monde le sait, les loups aussi. Les autres pouvoirs de nuit passent.`,
+    jour: { invite: "Fermes-tu l'écluse pour la nuit qui vient ?", cibles: 0 }
   })
 ];

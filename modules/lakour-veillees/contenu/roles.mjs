@@ -59,6 +59,16 @@ Tu chasses chaque nuit avec la meute. Puis, **chaque nuit**, tu désignes un jou
 
 Tu chasses chaque nuit avec la meute. Puis, **chaque nuit**, tu flaires la porte d'un joueur et le narrateur te dit en secret son **camp** (Village, Meute ou Solitaire). Tu peux partager ce que tu sais avec la meute la nuit suivante.`,
     nuit: { ordre: 44, cibles: 1, invite: "Quel seuil veux-tu flairer cette nuit ?" }
+  }),
+  role({
+    cle: "loup-des-roseaux", nom: "Loup des roseaux", camp: "meute", effet: "voir-actif",
+    resume: "chaque nuit, guette une maison depuis les roseaux et apprend si son occupant a agi.",
+    pouvoir: `Tu connais chaque touffe de roseaux entre le Pont et le Moulin, et personne ne t'y voit attendre.
+
+Tu chasses chaque nuit avec la meute. Puis, **chaque nuit**, tu guettes la maison d'un joueur : le narrateur te dit en secret s'il **a agi** cette nuit (un pouvoir de nuit, ou la chasse), sans dire ce qu'il a fait. De quoi repérer ceux qui cachent un pouvoir, et les désigner à la meute la nuit suivante.
+
+Guetter, c'est rôder au seuil : si la Veilleuse de lanterne éclaire la maison que tu guettes, tu es démasqué.`,
+    nuit: { ordre: 45, cibles: 1, invite: "Depuis les roseaux, quelle porte guettes-tu cette nuit ?" }
   })
 ];
 
@@ -193,6 +203,26 @@ Les amants gagnent **ensemble**, quel que soit leur camp : si l'un est loup et l
 
 **Une nuit sur deux**, tu désignes **deux joueurs** et le narrateur te dit en secret s'ils sont **du même camp** ou non. Rien de plus.`,
     nuit: { ordre: 62, cibles: 2, uneNuitSurDeux: true, invite: "Entre quels deux joueurs fais-tu passer ta baguette ?" }
+  }),
+  role({
+    cle: "louvetier", nom: "Louvetier", camp: "village", effet: "voir-camp", apparence: "meute",
+    resume: "chaque nuit, apprend le camp d'un joueur ; mais il sent le loup : toute vision le voit de la meute.",
+    pouvoir: `Tu traques les loups depuis tant d'hivers que tu as fini par prendre leur odeur.
+
+**Chaque nuit**, tu suis la piste d'un joueur et le narrateur te dit en secret son **camp** : Village, Meute ou Solitaire.
+
+Mais **toute vision te voit du camp de la Meute** (Liseuse de cendres, Sourcier, Loup flaireur…). Si l'on t'accuse sur la foi des cendres, ce sera ta parole contre la leur : choisis bien le moment de dire ce que tu sais. Les loups, eux, savent que tu n'es pas des leurs.`,
+    nuit: { ordre: 61, cibles: 1, invite: "Sur quelle piste lâches-tu tes chiens cette nuit ?" }
+  }),
+  role({
+    cle: "pecheur-de-nuit", nom: "Pêcheur de nuit", camp: "village", effet: "tuer", usages: 1,
+    resume: "une fois par partie, lance son harpon dans la brume : sa cible meurt à l'aube, sauf si elle est protégée.",
+    pouvoir: `Tu connais les eaux noires de la Brume, et ce qui y remue après minuit.
+
+**Une fois par partie**, la nuit, tu lances ton **harpon** sur la maison d'un joueur : celui qui y dort **meurt à l'aube**, sauf s'il est protégé cette nuit (Garde du pont, Gardienne des clés) ou sauvé par un remède. Ton harpon atteint aussi ceux que la meute ne peut pas tuer, et il ne laisse aucune trace de crocs.
+
+Vise juste : un harpon perdu dans la poitrine d'un voisin ne revient pas. Tant que tu passes, tu le gardes.`,
+    nuit: { ordre: 48, cibles: 1, invite: "Sur quelle maison lances-tu ton harpon cette nuit ? Passe pour le garder." }
   })
 ];
 
@@ -237,6 +267,17 @@ Tu n'as aucun pouvoir de nuit. Ton seul but : te faire **exécuter par le vote d
 La meute ne peut pas te tuer : quand elle entre chez toi, elle repart bredouille.`,
     victoire: `Tu gagnes **seul** si tu es le dernier vivant, ou le dernier avec un seul autre joueur qui n'est pas un loup.`,
     nuit: { ordre: 55, cibles: 1, soiMeme: true, invite: "Quelle maison asperges-tu ? Désigne-toi pour embraser toutes les maisons aspergées." }
+  }),
+  role({
+    cle: "dame-du-gue", nom: "Dame du gué", camp: "solitaire", effet: "tuer", victoireCle: "dernier-survivant",
+    resume: "une nuit sur deux, attire un joueur au gué où il se noie ; la meute ne peut pas la tuer ; gagne seule.",
+    pouvoir: `À Brumecombe, on dit qu'une femme pâle lave son linge au gué quand la brume monte, et que ceux qui s'approchent pour l'aider ne reviennent pas.
+
+**Une nuit sur deux** (la deuxième, la quatrième…), tu chantes au bord de l'eau et tu désignes un joueur : il suit ta voix jusqu'au gué et **se noie**. On le trouve mort à l'aube, sauf s'il était protégé cette nuit ou sauvé par un remède.
+
+La meute ne peut pas te tuer : quand elle entre chez toi, elle n'y trouve que de l'eau froide. Le vote, le poison, le feu et le harpon, si.`,
+    victoire: `Tu gagnes **seule** si tu es la dernière vivante, ou la dernière avec un seul autre joueur qui n'est pas un loup.`,
+    nuit: { ordre: 47, cibles: 1, uneNuitSurDeux: true, invite: "Ton chant monte sur la rivière : qui suit ta voix jusqu'au gué cette nuit ?" }
   })
 ];
 

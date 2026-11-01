@@ -108,7 +108,7 @@ const VERIFICATIONS = {
       const salon = L.audibilite(etat("nuit"), SECRETS, "u3", t).salon;
       assert.equal(salon, r.system.camp === "meute" ? "taniere" : "nuit", r.system.cle);
     }
-    for (const cle of ["loup-de-brumecombe", "louve-mere", "loup-affame", "loup-hurleur", "loup-flaireur", "loup-deguise"]) {
+    for (const cle of ["loup-de-brumecombe", "louve-mere", "loup-affame", "loup-hurleur", "loup-flaireur", "loup-deguise", "loup-des-roseaux"]) {
       assert.equal(ROLES.find(r => r.system.cle === cle)?.system.camp, "meute", cle);
     }
   },

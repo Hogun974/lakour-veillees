@@ -113,3 +113,49 @@ test("contenu : toutes les compositions se jouent jusqu'au bout (parties simulé
   }
   assert.deepEqual(sansFin, []);
 });
+
+test("contenu : Loup des roseaux, Louvetier, Pêcheur de nuit et Dame du gué tels que décrits, avec les seuls effets déjà automatisés", options, () => {
+  for (const cle of ["loup-des-roseaux", "louvetier", "pecheur-de-nuit", "dame-du-gue"]) assert.ok(L.EFFETS_AUTOMATISES.includes(ROLES[cle].effet), cle);
+  const vs = [v("l", "loup-de-brumecombe"), v("r", "loup-des-roseaux"), v("lv", "louvetier"), v("pe", "pecheur-de-nuit"), v("d", "dame-du-gue"),
+    v("li", "liseuse-de-cendres"), v("so", "sourcier"), v("ve", "veilleuse-de-lanterne"), v("g", "garde-du-pont"), v("x", "villageois"), v("y", "villageois")];
+  const nuit = (actions, tour = 1, extra = {}) => L.resoudreNuit({ villageois: vs, actions, tour, hasard: () => 0, ...extra });
+  const dit = (r, qui) => r.messages.filter(m => m.destinataire === qui).map(m => m.cle.split(".").pop());
+
+  // Réveils : le Loup des roseaux chasse avec la meute puis guette seul ; la Dame du gué les nuits paires ; le Pêcheur tant qu'il a son harpon.
+  const reveil = tour => L.ordreDeNuit(vs, tour).map(e => e.roleCle);
+  assert.ok(L.ordreDeNuit(vs, 1).find(e => e.roleCle === "meute").acteurIds.includes("r"));
+  assert.ok(reveil(1).indexOf("loup-des-roseaux") > reveil(1).indexOf("meute"));
+  assert.ok(reveil(1).includes("pecheur-de-nuit") && !reveil(1).includes("dame-du-gue") && reveil(2).includes("dame-du-gue"));
+  const harponUse = vs.map(x => (x.id === "pe" ? { ...x, role: { ...x.role, usages: { max: 1, restant: 0 } } } : x));
+  assert.ok(!L.ordreDeNuit(harponUse, 3).some(e => e.roleCle === "pecheur-de-nuit"), "un seul harpon");
+
+  // Loup des roseaux : a-t-il agi ? Sans dire quoi. Il rôde au seuil : la lanterne le démasque.
+  assert.deepEqual(dit(nuit([{ acteurId: "li", roleCle: "liseuse-de-cendres", cibles: ["x"] }, { acteurId: "r", roleCle: "loup-des-roseaux", cibles: ["li"] }]), "r"), ["ActifOui"]);
+  const guet = nuit([{ acteurId: "r", roleCle: "loup-des-roseaux", cibles: ["y"] }, { acteurId: "ve", roleCle: "veilleuse-de-lanterne", cibles: ["y"] }]);
+  assert.deepEqual(dit(guet, "r"), ["ActifNon"]);
+  assert.deepEqual(guet.revelations.map(x => x.acteurId), ["r"]);
+
+  // Louvetier : il voit juste, mais toute vision le voit de la meute.
+  const vision = nuit([{ acteurId: "li", roleCle: "liseuse-de-cendres", cibles: ["lv"] }, { acteurId: "lv", roleCle: "louvetier", cibles: ["x"] },
+    { acteurId: "so", roleCle: "sourcier", cibles: ["lv", "l"] }], 2);
+  assert.equal(vision.messages.find(m => m.destinataire === "li").donnees.camp, "meute");
+  assert.equal(vision.messages.find(m => m.destinataire === "lv").donnees.camp, "village");
+  assert.deepEqual(dit(vision, "so"), ["MemeCamp"]);
+  assert.equal(nuit([{ acteurId: "lv", roleCle: "louvetier", cibles: ["r"] }]).messages.find(m => m.destinataire === "lv").donnees.camp, "meute");
+
+  // Pêcheur de nuit : sa cible meurt (pas de crocs), sauf protection ; le verrou du Forgeron n'arrête que les loups ; il atteint la Dame du gué.
+  assert.deepEqual(nuit([{ acteurId: "pe", roleCle: "pecheur-de-nuit", cibles: ["y"] }]).deces, [{ acteurId: "y", cause: "nuit" }]);
+  assert.deepEqual(nuit([{ acteurId: "pe", roleCle: "pecheur-de-nuit", cibles: ["y"] }, { acteurId: "g", roleCle: "garde-du-pont", cibles: ["y"] }]).morts, []);
+  assert.deepEqual(nuit([{ acteurId: "pe", roleCle: "pecheur-de-nuit", cibles: ["y"] }], 1, { jour: { verrous: ["y"] } }).morts, ["y"]);
+  assert.deepEqual(nuit([{ acteurId: "pe", roleCle: "pecheur-de-nuit", cibles: ["d"] }]).morts, ["d"]);
+
+  // Dame du gué : noyade comme le harpon ; la meute ne peut pas la tuer ; elle gagne seule, dernière avec un non-loup.
+  assert.deepEqual(nuit([{ acteurId: "d", roleCle: "dame-du-gue", cibles: ["x"] }], 2).deces, [{ acteurId: "x", cause: "nuit" }]);
+  const bredouille = nuit([{ acteurId: "l", roleCle: "meute", cibles: ["d"] }], 2);
+  assert.deepEqual(bredouille.morts, []);
+  assert.ok(bredouille.sauves.some(s => s.acteurId === "d" && s.par === "immunite"));
+  const fin = vivants => vs.map(x => ({ ...x, vivant: vivants.includes(x.id) }));
+  assert.equal(L.verifierVictoire({ villageois: fin(["d", "x"]) }), "d");
+  assert.equal(L.verifierVictoire({ villageois: fin(["d", "l"]) }), "meute", "dernière avec un loup : la meute l'emporte");
+  assert.equal(L.verifierVictoire({ villageois: fin(["d", "x", "y"]) }), "", "le village n'a pas gagné tant qu'elle vit");
+});

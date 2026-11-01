@@ -12,6 +12,7 @@ export const EQUILIBRE = {
   "louve-mere": { camp: "meute", poids: -9, niveau: "chaos", joueursMin: 10, unique: true },
   "loup-hurleur": { camp: "meute", poids: -7, niveau: "classique", joueursMin: 8, unique: true },
   "loup-flaireur": { camp: "meute", poids: -8, niveau: "classique", joueursMin: 9, unique: true },
+  "loup-des-roseaux": { camp: "meute", poids: -7, niveau: "classique", joueursMin: 10, unique: true },
   // --- Village : information
   "liseuse-de-cendres": { camp: "village", poids: 7, niveau: "debutants", joueursMin: 4, unique: true, information: true },
   "sourcier": { camp: "village", poids: 4, niveau: "classique", joueursMin: 8, unique: true, information: true },
@@ -19,6 +20,8 @@ export const EQUILIBRE = {
   "fossoyeur": { camp: "village", poids: 3, niveau: "debutants", joueursMin: 7, unique: true, information: true },
   "ermite": { camp: "village", poids: 3, niveau: "classique", joueursMin: 9, unique: true, information: true },
   "enfant-de-la-brume": { camp: "village", poids: 3, niveau: "classique", joueursMin: 8, unique: true, information: true },
+  // Le Louvetier voit juste chaque nuit, mais les visions le donnent pour un loup : un peu moins que la Liseuse.
+  "louvetier": { camp: "village", poids: 4, niveau: "classique", joueursMin: 9, unique: true, information: true },
   // --- Village : protection et soin
   "garde-du-pont": { camp: "village", poids: 4, niveau: "debutants", joueursMin: 4, unique: true, protection: true },
   "gardienne-des-cles": { camp: "village", poids: 3, niveau: "classique", joueursMin: 9, unique: true, protection: true },
@@ -29,13 +32,17 @@ export const EQUILIBRE = {
   "juge-de-paix": { camp: "village", poids: 3, niveau: "classique", joueursMin: 8, unique: true },
   "conteuse": { camp: "village", poids: 2, niveau: "classique", joueursMin: 8, unique: true },
   "messager": { camp: "village", poids: 2, niveau: "classique", joueursMin: 9, unique: true },
+  // Un seul harpon, qui peut tuer un voisin aussi bien qu'un loup, mais qui atteint les tueurs solitaires.
+  "pecheur-de-nuit": { camp: "village", poids: 3, niveau: "classique", joueursMin: 9, unique: true },
   "entremetteuse": { camp: "village", poids: -1, niveau: "chaos", joueursMin: 8, unique: true },
   "villageois": { camp: "village", poids: 1, niveau: "debutants", joueursMin: 4, unique: false },
   // --- Solitaires
   "revenant": { camp: "solitaire", poids: -2, niveau: "classique", joueursMin: 9, unique: true },
   "chasseur-de-primes": { camp: "solitaire", poids: -2, niveau: "classique", joueursMin: 9, unique: true },
   "colporteur": { camp: "solitaire", poids: -1, niveau: "chaos", joueursMin: 8, unique: true },
-  "pyromane": { camp: "solitaire", poids: -6, niveau: "chaos", joueursMin: 10, unique: true }
+  "pyromane": { camp: "solitaire", poids: -6, niveau: "chaos", joueursMin: 10, unique: true },
+  // Ne tue qu'une nuit sur deux (le Pyromane peut tout embraser d'un coup), mais la meute ne peut pas la tuer.
+  "dame-du-gue": { camp: "solitaire", poids: -5, niveau: "chaos", joueursMin: 10, unique: true }
 };
 
 // Bâtiments : niveau minimal (les plus perturbants attendent le niveau classique ou chaos).

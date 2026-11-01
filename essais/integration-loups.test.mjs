@@ -266,8 +266,8 @@ function verifierSavoirDesCompagnons(ou) {
 // ------------------------------------------------------------------ une partie, menée par les outils du MJ IA
 async function jouerPartie({ n, niveau, graine, nbCompagnons = 0 }) {
   const joueurs = monde(n, graine);
-  // Une graine sur cinq sans révélation à la mort : le Cimetière parle alors.
-  if (graine === "cendres") await game.settings.set("lakour-loups", "revelerALaMort", false);
+  // Une graine sur cinq sans révélation à la mort, avec ou sans compagnons : le Cimetière parle alors (s'il est tiré).
+  if (graine.split("-")[0] === "cendres") await game.settings.set("lakour-loups", "revelerALaMort", false);
   const hasardOrigine = Math.random;
   Math.random = creerHasard(`${graine}-monde`);    // distribution, primes, épier, nouvelles : reproductibles
   const h = creerHasard(`${graine}-mj`);

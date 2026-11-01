@@ -115,7 +115,8 @@
         "taverne": "À la Taverne :",
         "lame": "Lame de la Forge :",
         "cachette": "Dans la Grange :",
-        "asile": "À la Chapelle :"
+        "asile": "À la Chapelle :",
+        "ecluse": "Écluse fermée par :"
       },
       "Rejouer": "Rejouer (mêmes joueurs)",
       "RejouerQuestion": "Commencer une nouvelle partie avec les mêmes joueurs et les mêmes compagnons IA ? Une nouvelle composition est tirée et les rôles redistribués en secret.",
@@ -381,6 +382,9 @@
       "Traversee": "{qui} fait traverser la rivière à {nom} : la nuit prochaine, personne ne pourra le visiter, et il ne pourra pas agir.",
       "CrocsOui": "{qui} examine le corps de {nom} : il porte des traces de crocs.",
       "CrocsNon": "{qui} examine le corps de {nom} : il ne porte aucune trace de crocs.",
+      "SuieOui": "{qui} monte sur le toit de {nom} : la suie garde des traces, sa maison a reçu de la visite cette nuit.",
+      "SuieNon": "{qui} monte sur le toit de {nom} : la suie est intacte, personne n'est venu chez {nom} cette nuit.",
+      "Ecluse": "{qui} ferme l'écluse : la nuit prochaine, l'eau monte sous le Pont et la meute ne pourra chasser aucune maison de l'autre rive.",
       "Appel": "{qui} fait l'appel : chacun parle {duree} secondes, dans cet ordre : {noms}.",
       "Annule": "{qui}, Juge de paix, annule le vote : personne n'est exécuté, et le village revote aussitôt, sans nouveau débat.",
       "Conteuse": "Une histoire court la veillée : pendant deux minutes, le village ne parle que de {nom}, qui ne peut pas répondre.",

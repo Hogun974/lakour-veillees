@@ -78,6 +78,22 @@ const VERIFICATIONS = {
     e.morts[0].phase = "aube";
     assert.match(agir(L, vs, e, "t", "tanneur", ["x"]).annonces[0].texte, /aucune trace/);
   },
+  "Ramoneuse : les visites de la nuit": L => {
+    const vs = [...base(), v("ra", "villageois", 15, "ramoneuse")];
+    const e = { ...jour(L, { phase: "aube" }), nuitPrecedente: { actions: [], bilan: { sorties: ["x"], visites: ["g"] } } };
+    assert.match(agir(L, vs, e, "ra", "ramoneuse", ["x"]).annonces[0].texte, /personne n.est venu/);
+    assert.match(agir(L, vs, e, "ra", "ramoneuse", ["g"]).annonces[0].texte, /reçu de la visite/);
+  },
+  "Éclusière : la meute ne traverse pas": L => {
+    const vs = [...base(), v("ec", "villageois", 16, "eclusiere")];
+    const e = agir(L, vs, jour(L, { batimentsCles: [] }), "ec", "eclusiere").etat;
+    assert.ok(!L.candidatsDeNuit({ villageois: vs, etat: e, roleCle: "meute", tour: 2 }).includes("me"));
+    assert.deepEqual(nuit(L, vs, e, [meute("me")]).morts, []);
+  },
+  "Éclusière : une écluse par nuit": L => {
+    const vs = [...base(), v("ec", "villageois", 16, "eclusiere")];
+    assert.equal(raison(L, vs, agir(L, vs, jour(L), "ec", "eclusiere").etat, "ec", "eclusiere"), "deja");
+  },
   "Chasseresse : le bilan de la nuit": L => {
     const e = { ...jour(L, { phase: "aube" }), nuitPrecedente: { actions: [], bilan: { sorties: ["li"], visites: [] } } };
     assert.match(agir(L, base(), e, "j", "chasseresse", ["x"]).annonces[0].texte, /n'a pas quitté/);
@@ -187,6 +203,9 @@ const MUTATIONS = [
   ["jour.mjs", "return vivants.filter(v => !hier.includes(v.id)).map(v => v.id);", "return vivants.map(v => v.id);", "Chapelle pas deux nuits de suite"],
   ["jour.mjs", "const crocs = cause === \"meute\" || cause === \"epie\";", "const crocs = true;", "Tanneur"],
   ["jour.mjs", "const sorti = (etat.nuitPrecedente.bilan?.sorties ?? []).includes(c);", "const sorti = true;", "Chasseresse"],
+  ["jour.mjs", "const visite = (etat.nuitPrecedente.bilan?.visites ?? []).includes(c);", "const visite = (etat.nuitPrecedente.bilan?.sorties ?? []).includes(c);", "Ramoneuse : visites, pas sorties"],
+  ["jour.mjs", " || de(\"ecluse\").length > 0", "", "Éclusière : la meute ne traverse pas"],
+  ["jour.mjs", "if (effetsPour(etat, \"ecluse\", nuit).length) return non(\"deja\");", "", "Éclusière : une écluse par nuit"],
   ["jour.mjs", "const loups = villageois.filter(v => vivant(v) && v.camp === \"meute\").length;", "const loups = villageois.filter(v => v.camp === \"meute\").length;", "Meunière"],
   ["jour.mjs", "case \"apothicaire\": return vivants.filter(v => v.silence).map(v => v.id);", "case \"apothicaire\": return vivants.map(v => v.id);", "Apothicaire"],
   ["jour.mjs", "const ordre = [...vivants.slice(i), ...vivants.slice(0, i)].map(v => v.id);", "const ordre = vivants.map(v => v.id);", "Maîtresse d'école"],

@@ -23,6 +23,7 @@ export const JETONS_ROLES = {
   "louve-mere": "lorc/paw-heart",
   "loup-hurleur": "lorc/wolf-howl",
   "loup-flaireur": "delapouite/sniffing-dog",
+  "loup-des-roseaux": "lorc/werewolf",                 // tapi, aux aguets
   // --- Le Village
   "villageois": "lorc/cowled",                          // jeton neutre : capuchon, visage dans l'ombre
   "veilleuse-de-lanterne": "lorc/lantern-flame",
@@ -40,11 +41,14 @@ export const JETONS_ROLES = {
   "entremetteuse": "lorc/cupidon-arrow",
   "gardienne-des-cles": "lorc/skeleton-key",
   "sourcier": "lorc/droplets",                        // il cherche l'eau
+  "louvetier": "lorc/hound",                          // ses chiens de meute
+  "pecheur-de-nuit": "lorc/harpoon-trident",
   // --- Les solitaires
   "revenant": "lorc/ghost",
   "colporteur": "lorc/swap-bag",
   "chasseur-de-primes": "delapouite/target-poster",
-  "pyromane": "delapouite/torch"
+  "pyromane": "delapouite/torch",
+  "dame-du-gue": "lorc/spectre"                        // la femme pâle du gué
 };
 
 // Clé du métier -> icône (fichier « metier-<cle> »).
@@ -60,7 +64,9 @@ export const JETONS_METIERS = {
   "tisserande": "caro-asercion/spinning-wheel",
   "passeur": "delapouite/wood-canoe",
   "tanneur": "delapouite/animal-hide",
-  "maitresse-d-ecole": "delapouite/teacher"
+  "maitresse-d-ecole": "delapouite/teacher",
+  "ramoneuse": "delapouite/broom",                   // le hérisson du ramoneur
+  "eclusiere": "lorc/anchor"
 };
 
 // Clé du bâtiment -> icône (fichier « batiment-<cle> », image de l'objet).

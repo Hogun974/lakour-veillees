@@ -10,8 +10,8 @@
 //
 // - Le MJ (tout utilisateur MJ) entend tout et parle à tous ; préparatifs et fin : tout le monde parle à tout le monde.
 // - Un loup, c'est le camp ACTUEL du villageois (« meute ») : les loups de la meute (Loup de Brumecombe, affamé, déguisé,
-//   Louve mère, hurleur, flaireur), le villageois mordu par la Louve mère (changerCamp à l'aube : il rejoint la tanière la
-//   nuit suivante), et pas un loup dont le Colporteur a pris le rôle (son camp suit le rôle reçu). Le rôle ne sert que si
+//   Louve mère, hurleur, flaireur, des roseaux), le villageois mordu par la Louve mère (changerCamp à l'aube : il rejoint
+//   la tanière la nuit suivante), et pas un loup dont le Colporteur a pris le rôle (son camp suit le rôle reçu). Le rôle ne sert que si
 //   le camp manque.
 // - Un spectateur (utilisateur sans villageois) est traité comme un mort : il observe.
 // - Les camps ne sont connus que du MJ actif : sans ses secrets (secretsMJ null, chez un autre navigateur), on ne compte

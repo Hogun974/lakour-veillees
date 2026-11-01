@@ -20,7 +20,7 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 const api = () => game.lakourLoups;
 const nomDe = id => game.actors.get(id)?.name ?? id;
-const TYPES_EFFETS = ["verrou", "surveille", "gite", "traversee", "taverne", "lame", "cachette", "asile"];
+const TYPES_EFFETS = ["verrou", "surveille", "gite", "traversee", "taverne", "lame", "cachette", "asile", "ecluse"];
 
 async function tenter(fn) {
   try { return await fn(); } catch (e) { ui.notifications.error(e.message); console.error(e); }

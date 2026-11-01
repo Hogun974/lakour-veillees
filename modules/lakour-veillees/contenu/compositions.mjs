@@ -19,9 +19,11 @@ export const NIVEAUX = {
   },
   classique: {
     libelle: "Classique",
-    loupsSpeciaux: n => (n >= 16 ? ["loup-affame", "loup-deguise"] : n >= 12 ? ["loup-affame"] : []),
+    loupsSpeciaux: n => (n >= 16 ? ["loup-affame", "loup-deguise", "loup-des-roseaux"] : n >= 14 ? ["loup-affame", "loup-des-roseaux"]
+      : n >= 12 ? ["loup-affame"] : []),
     solitaires: n => ["revenant", "chasseur-de-primes"].slice(0, n >= 16 ? 2 : n >= 10 ? 1 : 0),
-    village: ["liseuse-de-cendres", "garde-du-pont", "herboriste", "braconniere", "veilleuse-de-lanterne", "entremetteuse",
+    // Le Louvetier dès 12 joueurs : une seconde vision au village, qui brouille la première.
+    village: ["liseuse-de-cendres", "garde-du-pont", "herboriste", "braconniere", "veilleuse-de-lanterne", "louvetier", "entremetteuse",
       "fossoyeur", "sonneur", "juge-de-paix", "conteuse", "ermite"],
     villageois: v => Math.ceil(v / 4),
     batiments: n => (n >= 12 ? ["chapelle", "moulin", "taverne", "puits", "cimetiere", "gibet"] : ["chapelle", "moulin", "taverne", "puits", "cimetiere"])
@@ -29,8 +31,9 @@ export const NIVEAUX = {
   chaos: {
     libelle: "Chaos",
     loupsSpeciaux: () => ["loup-hurleur", "louve-mere", "loup-affame", "loup-flaireur", "loup-deguise"],
-    solitaires: n => ["pyromane", "colporteur", "revenant", "chasseur-de-primes"].slice(0, n >= 15 ? 3 : n >= 11 ? 2 : n >= 7 ? 1 : 0),
-    village: ["liseuse-de-cendres", "herboriste", "enfant-de-la-brume", "entremetteuse", "messager", "gardienne-des-cles", "sourcier",
+    // Dès 15 joueurs, deux tueurs solitaires (Pyromane, Dame du gué) ; le Pêcheur de nuit, dès 12, peut les atteindre.
+    solitaires: n => ["pyromane", "colporteur", "dame-du-gue", "revenant", "chasseur-de-primes"].slice(0, n >= 15 ? 3 : n >= 11 ? 2 : n >= 7 ? 1 : 0),
+    village: ["liseuse-de-cendres", "herboriste", "enfant-de-la-brume", "entremetteuse", "messager", "pecheur-de-nuit", "gardienne-des-cles", "sourcier",
       "conteuse", "ermite", "sonneur", "juge-de-paix", "veilleuse-de-lanterne", "braconniere", "fossoyeur"],
     villageois: v => Math.floor(v / 5),
     batiments: n => (n >= 12 ? ["taverne", "gibet", "pont", "forge", "grange", "lavoir"] : ["taverne", "pont", "forge", "grange", "lavoir"])

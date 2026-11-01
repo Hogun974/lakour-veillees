@@ -2,7 +2,7 @@
   "id": "lakour-veillees",
   "title": "La Kour — Les Veillées de Brumecombe",
   "description": "Contenu du jeu original « Les Veillées de Brumecombe », un jeu de déduction sociale de la famille du loup-garou, pour le système La Kour Loups : rôles de la meute, du village et des solitaires, métiers publics, bâtiments, guides du joueur et du narrateur, variantes, tables, compositions de 6 à 18 joueurs et carte du village avec son plan. Textes originaux, pour un usage privé à la table. Jetons : icônes de game-icons.net (licence CC BY 3.0), voir CREDITS.md.",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "authors": [{ "name": "Jordan" }],
   "compatibility": { "minimum": "14", "verified": "14.369" },
   "relationships": {

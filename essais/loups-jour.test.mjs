@@ -1,5 +1,5 @@
 // Pouvoirs de JOUR des « Veillées de Brumecombe » (logique pure, systems/lakour-loups/logique/jour.mjs) et leurs effets sur
-// la nuit suivante (resolution.mjs) : les 12 métiers, le Juge de paix, la Conteuse, le Messager (de nuit), les bâtiments
+// la nuit suivante (resolution.mjs) : les 14 métiers, le Juge de paix, la Conteuse, le Messager (de nuit), les bâtiments
 // (Chapelle, Moulin, Taverne, Puits, Forge, Cimetière, Pont, Lavoir, Grange). Lancer : npm run essais
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -43,7 +43,7 @@ test("pouvoirs possédés : métier, rôle de jour (Juge de paix, Conteuse), bâ
   const vs = village();
   assert.deepEqual(L.pouvoirsPossedes(vs.find(x => x.id === "j"), ["taverne", "chapelle"]), ["chasseresse", "juge-de-paix", "taverne"]);
   assert.deepEqual(L.pouvoirsPossedes(vs.find(x => x.id === "x"), []), ["aubergiste"]);
-  assert.equal(Object.keys(L.POUVOIRS_JOUR).length, 19, "12 métiers, 2 rôles, 5 bâtiments");
+  assert.equal(Object.keys(L.POUVOIRS_JOUR).length, 21, "14 métiers, 2 rôles, 5 bâtiments");
 });
 
 test("moments : jamais la nuit ni avant la partie ; « au matin » seulement après une nuit résolue ; un usage ; pas les morts", () => {
@@ -369,4 +369,38 @@ test("Pont : un tiers des maisons sur l'autre rive ; après une proie tuée là-
   assert.deepEqual(nuitApres(vs, etat, [meute("y")]).morts, [], "la proie de l'autre rive est hors de portée");
   assert.deepEqual(nuitApres(vs, { ...etat, batimentsCles: [] }, [meute("y")]).morts, ["y"], "sans Pont en jeu, rien ne change");
   assert.deepEqual(nuitApres(vs, etat, [meute("g")]).morts, ["g"], "la place reste ouverte");
+});
+
+test("Ramoneuse : au matin, dit au village si une maison a reçu de la visite la nuit passée (bilan secret), sans dire qui", () => {
+  const vs = [...village(), v("ra", "villageois", { metier: "ramoneuse" })];
+  const nuit = L.resoudreNuit({ villageois: vs, actions: [meute("x"), { acteurId: "li", roleCle: "liseuse-de-cendres", cibles: ["g"] },
+    { acteurId: "g", roleCle: "garde-du-pont", cibles: ["g"] }], hasard: () => 0 });
+  assert.deepEqual(nuit.bilan.visites.sort(), ["g", "x"], "la proie et la maison lue ; se garder soi-même n'est pas une visite");
+  const etat = L.cloreNuit({ ...etatDuJour(), phase: "nuit" }, { bilan: nuit.bilan });
+  etat.phase = "aube";
+  const oui = agir(vs, etat, "ra", "ramoneuse", ["g"]);
+  assert.match(oui.annonces[0].texte, /Nom-ra monte sur le toit de Nom-g : la suie garde des traces/);
+  assert.doesNotMatch(oui.annonces[0].texte, /Nom-li|Liseuse/, "ni qui est venu, ni pourquoi");
+  assert.match(agir(vs, etat, "ra", "ramoneuse", ["h"]).annonces[0].texte, /personne n'est venu chez Nom-h/);
+  assert.deepEqual(oui.changements, [{ type: "usage", acteurId: "ra", objet: "metier" }]);
+  assert.equal(L.verifierPouvoir({ villageois: vs, etat, acteurId: "ra", pouvoir: "ramoneuse", cibles: ["ra"] }).raison, "", "sa propre maison");
+  assert.equal(L.verifierPouvoir({ villageois: vs, etat: etatDuJour({ nuitResolue: 0 }), acteurId: "ra", pouvoir: "ramoneuse", cibles: ["g"] }).raison, "nuit");
+  assert.equal(L.verifierPouvoir({ villageois: vs, etat: { ...etat, phase: "vote" }, acteurId: "ra", pouvoir: "ramoneuse", cibles: ["g"] }).raison, "phase", "au matin seulement");
+});
+
+test("Éclusière : l'écluse fermée, la meute ne chasse aucune maison de l'autre rive la nuit suivante (comme le Pont bloqué) ; une par nuit", () => {
+  const vs = [...village(), v("ec", "villageois", { metier: "eclusiere" }), v("af", "affame"), v("z", "villageois", { maison: "Maison 15" })];
+  const r = agir(vs, etatDuJour({ batimentsCles: [] }), "ec", "eclusiere");
+  assert.match(r.annonces[0].texte, /Nom-ec ferme l'écluse : la nuit prochaine, l'eau monte sous le Pont/);
+  assert.deepEqual(r.etat.jour.effets, [{ type: "ecluse", acteurId: "ec", cible: "ec", nuit: 2 }]);
+  assert.equal(L.effetsDeLaNuit(r.etat, 2).pontBloque, true, "même sans le Pont en jeu");
+  assert.equal(L.effetsDeLaNuit(r.etat, 3).pontBloque, false, "la nuit suivante seulement");
+  assert.ok(!L.candidatsDeNuit({ villageois: vs, etat: r.etat, roleCle: "meute", tour: 2 }).includes("z"));
+  assert.ok(!L.candidatsDeNuit({ villageois: vs, etat: r.etat, acteurId: "af", roleCle: "loup-affame", tour: 2 }).includes("z"), "ni le Loup affamé");
+  assert.deepEqual(nuitApres(vs, r.etat, [meute("z")]).morts, [], "la proie de l'autre rive est hors de portée");
+  assert.deepEqual(nuitApres(vs, r.etat, [{ acteurId: "af", roleCle: "loup-affame", cibles: ["z"] }]).morts, []);
+  assert.deepEqual(nuitApres(vs, r.etat, [meute("x")]).morts, ["x"], "la place reste ouverte");
+  assert.deepEqual(nuitApres(vs, r.etat, [{ acteurId: "h", roleCle: "herboriste", cibles: ["z"] }]).morts, ["z"], "les autres pouvoirs passent");
+  assert.equal(L.verifierPouvoir({ villageois: vs, etat: r.etat, acteurId: "ec", pouvoir: "eclusiere" }).raison, "deja", "une écluse par nuit");
+  assert.equal(L.verifierPouvoir({ villageois: vs, etat: etatDuJour({ phase: "vote" }), acteurId: "ec", pouvoir: "eclusiere" }).raison, "", "pendant le jour, jusqu'à la nuit");
 });

@@ -27,6 +27,33 @@ const pageDuBatiment = b => ({
 ${versTexte(b.system.regle)}`
 });
 
+// Les nouveaux visages de la veillée (0.6.0) : leur texte complet, repris des objets (roles.mjs, metiers.mjs), en dernière
+// page du guide du joueur (après les pages des bâtiments, pour garder leurs identifiants et les épingles de la carte).
+export const NOUVEAUX_ROLES = ["loup-des-roseaux", "louvetier", "pecheur-de-nuit", "dame-du-gue"];
+export const NOUVEAUX_METIERS = ["ramoneuse", "eclusiere"];
+const CAMP_LISIBLE = { meute: "camp de la Meute", village: "camp du Village", solitaire: "solitaire" };
+const ficheDuRole = r => `## ${r.name} (${CAMP_LISIBLE[r.system.camp]})
+
+*${majuscule(r.__resume)}*
+
+${versTexte(r.system.description)}${r.system.victoire ? `
+
+**Victoire.** ${versTexte(r.system.victoire)}` : ""}`;
+const ficheDuMetier = m => `## ${m.name} (métier public)
+
+*${majuscule(m.__resume)}*
+
+${versTexte(m.system.description)}`;
+const pageDesNouveaux = () => ({
+  titre: "Nouveaux visages de la veillée",
+  texte: `# Ce que la brume a ramené
+
+Quatre rôles et deux métiers venus des berges de la Brume. Ils ne sont pas dans toutes les compositions : le narrateur annonce au début ceux qui sont en jeu.
+
+${[...NOUVEAUX_ROLES.map(c => ficheDuRole(ROLES.find(r => r.system.cle === c))),
+  ...NOUVEAUX_METIERS.map(c => ficheDuMetier(METIERS.find(m => m.system.cle === c)))].join("\n\n")}`
+});
+
 // Ordre de réveil, calculé depuis les rôles : la meute groupée à 40, puis chaque rôle qui agit seul.
 export function ordreDeReveil() {
   const actifs = ROLES.filter(r => r.system.nuit.actif);
@@ -169,7 +196,8 @@ Chaque partie met **4 à 6 bâtiments** en jeu : le narrateur les annonce au dé
 
 ${BATIMENTS.map(b => `- **${b.name}** — ${b.__resume} ${b.system.regle.replace(/<[^>]+>/g, "")}`).join("\n")}`
     },
-    ...BATIMENTS.map(pageDuBatiment)
+    ...BATIMENTS.map(pageDuBatiment),
+    pageDesNouveaux()
   ]
 });
 
@@ -227,15 +255,19 @@ ${ordreDeReveil().map(e => `- **${e.o}** — ${e.texte} : « ${e.invite} »`).jo
 - Une **fenêtre de choix** par rôle, avec un délai (quarante-cinq secondes par défaut ; une minute pour la meute, qui discute). Au délai, le rôle **passe**.
 - La meute vote : à la majorité, et à égalité le premier choix. Les loups peuvent se parler en privé pendant leur réveil ; rien de ce qu'ils disent ne sort de leur canal.
 - Note chaque action dans l'ordre (Table de jeu ou noterAction), même quand le rôle passe.
-- Les loups qui ont un pouvoir propre (Louve mère, Loup affamé, Loup hurleur, Loup flaireur) se réveillent **avec la meute à 40**, puis **seuls à leur ordre**.
+- Les loups qui ont un pouvoir propre (Louve mère, Loup affamé, Loup hurleur, Loup flaireur, Loup des roseaux) se réveillent **avec la meute à 40**, puis **seuls à leur ordre**.
 - **La meute choisit ensemble** : un seul réveil à 40, un vote des loups vivants. Les loups à pouvoir propre se réveillent **ensuite, seuls**, chacun à son ordre.
 - **Herboriste** : dis-lui la victime de la meute avant de lui demander son choix (même si la victime est protégée : elle ne doit rien deviner). Si elle désigne **la victime**, c'est le remède ; si elle désigne **quelqu'un d'autre**, c'est le poison. Une fiole par nuit.
 - **Pyromane** : s'il désigne une autre maison, il l'asperge ; s'il **se désigne lui-même**, il embrase toutes les maisons aspergées.
 - **Enfant de la brume** : s'il épie, montre-lui ce que la meute s'est dit, sans les noms. Tire un dé à trois faces : sur un 1, il est repéré et devient la victime de la meute à la place de la sienne.
 - **Ermite** : tire au hasard un joueur qui a agi cette nuit (la meute compte) ; s'il n'y en a aucun, dis « aucune lanterne n'a bougé ».
+- **Loup des roseaux** : il désigne une maison ; dis-lui seulement si son occupant **a agi** cette nuit (pouvoir de nuit, ou la chasse), jamais ce qu'il a fait. Il rôde au seuil : la lanterne de la Veilleuse le démasque comme un loup qui entre.
+- **Louvetier** : il apprend le camp d'un joueur, comme la Liseuse. Mais toute vision (Liseuse, Sourcier, Loup flaireur) le voit **de la meute** : réponds-leur « Meute » sans hésiter, même si tu sais qu'il n'en est pas.
+- **Pêcheur de nuit** : un seul harpon par partie. Sa cible meurt à l'aube, sauf protection (Garde du pont, Gardienne des clés), remède ou absence (Passeur, Grange) ; ni le verrou du Forgeron, ni l'asile de la Chapelle, ni la Taverne ne l'arrêtent, car ce n'est pas une attaque de loup. Il atteint aussi le Pyromane et la Dame du gué.
+- **Dame du gué** : elle ne se réveille qu'**une nuit sur deux** (nuits paires). Sa noyade suit les mêmes règles que le harpon. La meute ne peut pas la tuer : si elle entre chez elle, elle repart bredouille, et tu n'en dis rien au matin.
 - **Fossoyeur** : il ne peut interroger qu'un mort. S'il n'y en a pas, réveille-le quand même et dis-lui « aucune tombe fraîche ».
 - **Messager** : il désigne l'expéditeur puis le destinataire. Une fenêtre s'ouvre aussitôt chez l'expéditeur, qui écrit sa phrase ; le système la remet en secret au destinataire à l'aube, avec le nom de l'expéditeur. Tu ne la lis à personne.
-- **Effets du jour** : un joueur caché (Grange) ou passé sur l'autre rive (Passeur) ne se réveille pas et personne ne peut le désigner ; un joueur gardé à l'œil (Garde du guet) ne peut viser que sa propre maison (une tombe n'en est pas une) ; la meute ne peut viser ni l'asile de la Chapelle, ni les dormeurs de la Taverne (sauf si un loup dort parmi eux), ni l'autre rive quand le Pont est bloqué. La Table de jeu et le MJ IA proposent d'eux-mêmes les bons candidats.
+- **Effets du jour** : un joueur caché (Grange) ou passé sur l'autre rive (Passeur) ne se réveille pas et personne ne peut le désigner ; un joueur gardé à l'œil (Garde du guet) ne peut viser que sa propre maison (une tombe n'en est pas une) ; la meute ne peut viser ni l'asile de la Chapelle, ni les dormeurs de la Taverne (sauf si un loup dort parmi eux), ni l'autre rive quand le Pont est bloqué ou que l'Éclusière a fermé l'écluse. La Table de jeu et le MJ IA proposent d'eux-mêmes les bons candidats.
 
 # Ce que tu dis
 
@@ -250,12 +282,12 @@ Le système fait tout ceci de lui-même à l'aube (bouton « Résoudre l'aube »
 1. **Cachettes et asiles** : Grange et Passeur (personne n'y entre, ni loup, ni visite, ni feu ; celui qui s'y cache n'agit pas), Chapelle (la meute n'y entre pas), Taverne (la meute n'y tue pas, sauf si un loup y dort : alors sans protection).
 2. **Protections** : Garde du pont, Gardienne des clés, verrou du Forgeron (la première attaque de loup échoue).
 3. **Morsure** : si la Louve mère a mordu, la victime change de camp, personne ne meurt de la meute.
-4. **Attaques** : victime de la meute, seconde victime du Loup affamé.
+4. **Attaques** : victime de la meute, seconde victime du Loup affamé, harpon du Pêcheur de nuit, noyade de la Dame du gué (ces deux-là ne sont pas des attaques de loup : seuls une protection, un remède ou une absence les arrêtent).
 5. **Remède et poison** de l'Herboriste.
 6. **Feu** : si le Pyromane a embrasé, toutes les maisons aspergées brûlent (protégées ou non).
 7. **Lanterne** : un loup entré dans la maison éclairée est démasqué.
 8. **Cascades** : amant mort de chagrin, Braconnière qui emporte quelqu'un (elle choisit au matin).
-9. **Informations** : Liseuse, Sourcier, Loup flaireur, Ermite, Fossoyeur, mot du Messager (en secret) ; lame de la Forge (« du sang de bête sur le seuil »), Moulin, Lavoir, Cimetière (annoncés au village).
+9. **Informations** : Liseuse, Sourcier, Louvetier, Loup flaireur, Loup des roseaux, Ermite, Fossoyeur, mot du Messager (en secret) ; lame de la Forge (« du sang de bête sur le seuil »), Moulin, Lavoir, Cimetière (annoncés au village).
 10. **Victoire** : vérifie-la avant d'ouvrir le jour.
 
 # Raconter une mort
@@ -279,7 +311,8 @@ Si **personne n'est mort**, dis-le avec la même gravité : « Le jour se lève 
 - **Débat** : cinq minutes par défaut. Quatre minutes à moins de dix vivants, trois minutes à moins de six. Annonce la dernière minute.
 - Laisse parler, relance ceux qui se taisent (« Maison 12, tu dors encore ? »), coupe ceux qui monopolisent. Ne donne **jamais** ton avis.
 - Les pouvoirs de jour (métiers, Juge de paix, Conteuse, Taverne, Forge, Grange, Puits) se jouent depuis la Table de jeu de chaque joueur ; quand un joueur l'annonce à voix haute, applique-le toi-même (le MJ IA : loups_jour). Le système vérifie le moment (« au matin » = l'aube ou le jour qui suit une nuit ; « pendant le jour » = jusqu'à la nuit), les cibles permises et les usages, puis l'annonce au village. Un refus s'explique tout seul : ne le commente pas.
-- Ce que disent les métiers d'information (Meunière, Chasseresse, Tanneur, Colporteur de nouvelles) est calculé par le système sur la vraie nuit : tu n'as rien à inventer.
+- Ce que disent les métiers d'information (Meunière, Chasseresse, Ramoneuse, Tanneur, Colporteur de nouvelles) est calculé par le système sur la vraie nuit : tu n'as rien à inventer. La Ramoneuse dit si une maison a **reçu de la visite** (un loup, ou un pouvoir qui la visait) ; la Chasseresse, si un joueur **est sorti**.
+- L'**Éclusière** ferme l'écluse pour la nuit suivante : la meute ne peut chasser aucune maison de l'autre rive (maisons 13 à 18), exactement comme quand le Pont est bloqué. Rappelle-le en ouvrant la nuit.
 
 # Le vote
 
@@ -302,7 +335,7 @@ Si **personne n'est mort**, dis-le avec la même gravité : « Le jour se lève 
 - Loups aussi nombreux que les autres vivants : victoire de la **Meute**.
 - **Revenant** exécuté, cible du **Chasseur de primes** exécutée : victoire immédiate du solitaire (la partie continue pour les autres si tu le souhaites, ou s'arrête : annonce-le au début).
 - **Amants** derniers vivants : ils gagnent ensemble.
-- **Pyromane** dernier vivant (ou avec un seul non-loup) : il gagne seul.`
+- **Pyromane** ou **Dame du gué** dernier vivant (ou avec un seul non-loup) : il gagne seul. Tant que l'un de ces deux tueurs vit, le village n'a pas gagné, même sans loup ; s'ils sont tous les deux en vie, aucun ne gagne avant que l'autre tombe.`
     },
     {
       titre: "Ambiance : un automne gothique",
@@ -378,7 +411,11 @@ Pose sur la carte quelques **figurants** pour animer le village : le garde du gu
 - **Garde du guet sur un loup** : la meute chasse sans lui ; son vote de meute ne compte pas.
 - **Cible du Chasseur de primes tuée la nuit** : le Chasseur devient villageois (camp Village).
 - **Revenant tué la nuit** : il a perdu, simplement.
-- **Pyromane attaqué par la meute** : rien ne se passe, la meute repart bredouille ; ne dis rien au matin.
+- **Pyromane ou Dame du gué attaqués par la meute** : rien ne se passe, la meute repart bredouille ; ne dis rien au matin.
+- **Louvetier et visions** : la Liseuse qui le lit voit « Meute », le Sourcier le dit du même camp qu'un loup. C'est voulu : ne corrige jamais, même quand le village s'apprête à l'exécuter. Le Cimetière, lui, annonce son vrai camp.
+- **Louvetier mordu** : il rejoint la meute et sa vision lit désormais pour elle ; les visions le voient toujours « Meute ».
+- **Harpon ou noyade sur un loup** : le loup meurt, sans traces de crocs (le Tanneur le dira). Sur un amant : l'autre meurt de chagrin.
+- **Éclusière et Pont** : les deux bloquent la même chose ; ils ne s'additionnent pas.
 - **Taverne et Loup** : si un loup y dort, la meute peut y tuer qui elle veut, sans protection possible.
 
 # Si un joueur se trompe
@@ -422,8 +459,8 @@ const variantes = journal({
       texte: `# Recettes
 
 - Environ **un loup pour quatre joueurs**, jamais moins de deux.
-- Au moins **un rôle d'information** (Liseuse de cendres, Sourcier, Veilleuse de lanterne) et **un rôle de protection** (Garde du pont, Gardienne des clés, Herboriste) pour le village.
-- **Un solitaire** à partir de dix joueurs ; deux à partir de quinze. Le Pyromane est le plus difficile à arrêter : ne l'ajoutez qu'avec une Liseuse ou un Sourcier.
+- Au moins **un rôle d'information** (Liseuse de cendres, Sourcier, Veilleuse de lanterne, Louvetier) et **un rôle de protection** (Garde du pont, Gardienne des clés, Herboriste) pour le village.
+- **Un solitaire** à partir de dix joueurs ; deux à partir de quinze. Le Pyromane et la Dame du gué sont les plus difficiles à arrêter : ne les ajoutez qu'avec une Liseuse ou un Sourcier, et pensez au Pêcheur de nuit, dont le harpon les atteint.
 - Gardez **au moins un quart de villageois sans pouvoir** : ce sont eux qui font les votes honnêtes.
 - **4 bâtiments** pour une partie simple, **6** pour une partie riche ; évitez le Gibet à moins de huit joueurs, il bloque trop de votes.`
     }

@@ -76,8 +76,8 @@ test("solitaires : chacun a sa condition de victoire ; les autres n'en ont pas",
   }
 });
 
-test("12 métiers publics et 10 bâtiments, avec règle et repère", () => {
-  assert.equal(metiers.length, 12);
+test("14 métiers publics et 10 bâtiments, avec règle et repère", () => {
+  assert.equal(metiers.length, 14);
   for (const m of metiers) {
     assert.equal(m.type, "metier");
     assert.ok(m.system.jour.actif && m.system.jour.invite, m.name);
@@ -122,19 +122,20 @@ test("installateur : monde lakour-loups seulement, guides et scène importés, p
   for (const motif of [/journaux`\)\.getDocuments/, /scenes`\)\?\.getDocuments/, /plans\.json/, /registerMenu/, /lakourStyleVisuel/, /cheminSelonStyle/]) assert.match(main, motif);
 });
 
-test("extensions du système : apparence (Loup déguisé vu village) et victoireCle des solitaires", async () => {
+test("extensions du système : apparence (Loup déguisé vu village, Louvetier vu meute) et victoireCle des solitaires", async () => {
   const { VICTOIRES: VICTOIRES_SYSTEME } = await import("../systems/lakour-loups/logique/constantes.mjs");
   const { apparenceDe } = await import("../systems/lakour-loups/logique/resolution.mjs");
   const { victoireCleDe } = await import("../systems/lakour-loups/logique/victoire.mjs");
   assert.deepEqual(VICTOIRES, VICTOIRES_SYSTEME, "mêmes clés de victoire que le système");
-  const attendues = { revenant: "execute", pyromane: "dernier-survivant", "chasseur-de-primes": "cible-executee", colporteur: "" };
+  const attendues = { revenant: "execute", pyromane: "dernier-survivant", "dame-du-gue": "dernier-survivant", "chasseur-de-primes": "cible-executee", colporteur: "" };
+  const apparences = { "loup-deguise": "village", louvetier: "meute" };
   for (const r of roles) {
     const s = r.system;
-    assert.equal(s.apparence, s.cle === "loup-deguise" ? "village" : "", `${r.name} : apparence`);
+    assert.equal(s.apparence, apparences[s.cle] ?? "", `${r.name} : apparence`);
     assert.equal(s.victoireCle, attendues[s.cle] ?? "", `${r.name} : victoireCle`);
     // Le système lit bien ces champs : vision et victoire.
     const v = { camp: s.camp, role: { cle: s.cle, apparence: s.apparence, victoireCle: s.victoireCle } };
-    assert.equal(apparenceDe(v), s.cle === "loup-deguise" ? "village" : s.camp, r.name);
+    assert.equal(apparenceDe(v), apparences[s.cle] ?? s.camp, r.name);
     assert.equal(victoireCleDe(v.role), attendues[s.cle] ?? "", r.name);
   }
 });
@@ -144,6 +145,38 @@ test("conventions du système dans les textes : poison sur un autre que la victi
   assert.match(parCle("herboriste").system.nuit.invite, /quelqu'un d'autre pour l'empoisonner/);
   assert.match(parCle("pyromane").system.description, /tu te désignes toi-même/);
   assert.ok(parCle("pyromane").system.nuit.soiMeme);
+});
+
+test("automatisation de bout en bout : chaque métier a son pouvoir de jour dans le système, chaque effet de rôle est appliqué", async () => {
+  const { POUVOIRS_JOUR } = await import("../systems/lakour-loups/logique/jour.mjs");
+  const { EFFETS_AUTOMATISES } = await import("../systems/lakour-loups/logique/constantes.mjs");
+  for (const m of metiers) assert.equal(POUVOIRS_JOUR[m.system.cle]?.source, "metier", `${m.name} : pouvoir de jour inconnu du système`);
+  for (const m of metiers) assert.equal(POUVOIRS_JOUR[m.system.cle].cibles, m.system.jour.cibles, `${m.name} : cibles`);
+  for (const r of roles.filter(x => x.system.effet)) {
+    assert.ok(EFFETS_AUTOMATISES.includes(r.system.effet) || POUVOIRS_JOUR[r.system.cle]?.source === "role", `${r.name} : effet ${r.system.effet} non appliqué`);
+  }
+});
+
+test("nouveaux visages (0.6.0) : jeton, poids, composition prête, fiche au guide du joueur, consignes au narrateur", async () => {
+  const { NOUVEAUX_ROLES, NOUVEAUX_METIERS } = await import("../modules/lakour-veillees/contenu/guides.mjs");
+  const equilibre = JSON.parse(readFileSync(`modules/${M}/assets/equilibre.json`, "utf8"));
+  const compos = Object.values(JSON.parse(readFileSync(`modules/${M}/assets/compositions.json`, "utf8")));
+  const page = (cle, titre) => docs.find(d => d.cle === `journaux:${cle}`).doc.pages.filter(p => !titre || p.name === titre).map(p => p.text.content).join(" ");
+  const fiches = page("guide-du-joueur", "Nouveaux visages de la veillée"), narrateur = page("guide-du-narrateur");
+  assert.deepEqual(NOUVEAUX_ROLES.map(c => parCle(c).system.camp), ["meute", "village", "village", "solitaire"]);
+  for (const cle of NOUVEAUX_ROLES) {
+    const r = parCle(cle);
+    assert.ok(existsSync(r.img), `${r.name} : jeton`);
+    assert.equal(equilibre.roles[cle]?.camp, r.system.camp, `${r.name} : poids`);
+    assert.ok(compos.some(c => c.roles.includes(cle)), `${r.name} : dans aucune composition prête`);
+    assert.ok(fiches.includes(r.name) && fiches.includes(r.system.description.slice(3, 60)), `${r.name} : fiche du guide`);
+    assert.ok(narrateur.includes(r.name), `${r.name} : absent du guide du narrateur`);
+  }
+  for (const cle of NOUVEAUX_METIERS) {
+    const m = metiers.find(x => x.system.cle === cle);
+    assert.ok(existsSync(m.img) && fiches.includes(m.name) && narrateur.includes(m.name), m.name);
+  }
+  assert.match(fiches, /Victoire\.<\/strong> Tu gagnes <strong>seule<\/strong>/, "la victoire de la Dame du gué");
 });
 
 // ---------------------------------------------------------------- Mutations

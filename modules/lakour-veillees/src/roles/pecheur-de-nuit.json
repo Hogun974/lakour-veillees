@@ -1,0 +1,45 @@
+{
+  "_id": "QL9bHTV6yZrgAvVR",
+  "_key": "!items!QL9bHTV6yZrgAvVR",
+  "name": "Pêcheur de nuit",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/pecheur-de-nuit.svg",
+  "system": {
+    "cle": "pecheur-de-nuit",
+    "camp": "village",
+    "description": "<p>Tu connais les eaux noires de la Brume, et ce qui y remue après minuit.</p><p><strong>Une fois par partie</strong>, la nuit, tu lances ton <strong>harpon</strong> sur la maison d'un joueur : celui qui y dort <strong>meurt à l'aube</strong>, sauf s'il est protégé cette nuit (Garde du pont, Gardienne des clés) ou sauvé par un remède. Ton harpon atteint aussi ceux que la meute ne peut pas tuer, et il ne laisse aucune trace de crocs.</p><p>Vise juste : un harpon perdu dans la poitrine d'un voisin ne revient pas. Tant que tu passes, tu le gardes.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 48,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 1,
+      "soiMeme": false,
+      "invite": "Sur quelle maison lances-tu ton harpon cette nuit ? Passe pour le garder."
+    },
+    "usages": {
+      "max": 1,
+      "restant": 1
+    },
+    "effet": "tuer",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "pecheur-de-nuit"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

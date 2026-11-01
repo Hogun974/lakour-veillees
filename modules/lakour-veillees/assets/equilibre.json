@@ -42,6 +42,13 @@
       "joueursMin": 9,
       "unique": true
     },
+    "loup-des-roseaux": {
+      "camp": "meute",
+      "poids": -7,
+      "niveau": "classique",
+      "joueursMin": 10,
+      "unique": true
+    },
     "liseuse-de-cendres": {
       "camp": "village",
       "poids": 7,
@@ -87,6 +94,14 @@
       "poids": 3,
       "niveau": "classique",
       "joueursMin": 8,
+      "unique": true,
+      "information": true
+    },
+    "louvetier": {
+      "camp": "village",
+      "poids": 4,
+      "niveau": "classique",
+      "joueursMin": 9,
       "unique": true,
       "information": true
     },
@@ -149,6 +164,13 @@
       "joueursMin": 9,
       "unique": true
     },
+    "pecheur-de-nuit": {
+      "camp": "village",
+      "poids": 3,
+      "niveau": "classique",
+      "joueursMin": 9,
+      "unique": true
+    },
     "entremetteuse": {
       "camp": "village",
       "poids": -1,
@@ -187,6 +209,13 @@
     "pyromane": {
       "camp": "solitaire",
       "poids": -6,
+      "niveau": "chaos",
+      "joueursMin": 10,
+      "unique": true
+    },
+    "dame-du-gue": {
+      "camp": "solitaire",
+      "poids": -5,
       "niveau": "chaos",
       "joueursMin": 10,
       "unique": true

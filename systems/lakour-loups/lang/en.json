@@ -115,7 +115,8 @@
         "taverne": "At the Tavern:",
         "lame": "Forge blade:",
         "cachette": "In the Barn:",
-        "asile": "In the Chapel:"
+        "asile": "In the Chapel:",
+        "ecluse": "Sluice closed by:"
       },
       "Rejouer": "Play again (same players)",
       "RejouerQuestion": "Start a new game with the same players and AI companions? A new setup is drawn and roles are dealt again in secret.",
@@ -381,6 +382,9 @@
       "Traversee": "{qui} ferries {nom} across the river: next night, nobody can visit them, and they cannot act.",
       "CrocsOui": "{qui} examines {nom}'s body: it bears fang marks.",
       "CrocsNon": "{qui} examines {nom}'s body: it bears no fang marks.",
+      "SuieOui": "{qui} climbs onto {nom}'s roof: the soot holds traces, their house had a visitor last night.",
+      "SuieNon": "{qui} climbs onto {nom}'s roof: the soot is untouched, nobody came to {nom}'s house last night.",
+      "Ecluse": "{qui} closes the sluice: next night, the water rises under the Bridge and the pack cannot hunt any house on the far bank.",
       "Appel": "{qui} calls the roll: everyone speaks {duree} seconds, in this order: {noms}.",
       "Annule": "{qui}, Justice of the Peace, cancels the vote: nobody is executed, and the village votes again at once, without a new debate.",
       "Conteuse": "A story runs through the gathering: for two minutes, the village talks only about {nom}, who cannot answer.",

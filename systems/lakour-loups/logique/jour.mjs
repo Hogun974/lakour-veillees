@@ -45,6 +45,8 @@ export const POUVOIRS_JOUR = {
   passeur: { source: "metier", cibles: 1, soiMeme: true, phases: JOURNEE },
   tanneur: { source: "metier", cibles: 1, phases: MATIN, apresNuit: true },
   "maitresse-d-ecole": { source: "metier", cibles: 1, soiMeme: true, phases: MATIN },
+  ramoneuse: { source: "metier", cibles: 1, soiMeme: true, phases: MATIN, apresNuit: true },
+  eclusiere: { source: "metier", cibles: 0, phases: JOURNEE },
   "juge-de-paix": { source: "role", cibles: 0, phases: ["vote"], revele: true },
   conteuse: { source: "role", cibles: 1, soiMeme: false, phases: MATIN },
   taverne: { source: "batiment", cibles: 0, phases: JOURNEE },
@@ -151,6 +153,9 @@ export function verifierPouvoir({ villageois = [], etat: e, acteurId = "", pouvo
     case "chapelle":
       if (effetsPour(etat, "asile", nuit).length) return non("deja");
       break;
+    case "eclusiere":
+      if (effetsPour(etat, "ecluse", nuit).length) return non("deja");
+      break;
   }
 
   const candidats = candidatsDuPouvoir({ villageois, etat, acteurId, pouvoir });
@@ -247,6 +252,17 @@ export function appliquerPouvoir({ villageois = [], etat: e, acteurId = "", pouv
         : `${qui} examine le corps de ${n} : il ne porte aucune trace de crocs.`, { qui, nom: n });
       break;
     }
+    case "ramoneuse": {
+      // La suie garde les traces : la maison a-t-elle reçu de la visite (bilan secret de la nuit passée) ? Ni qui, ni pourquoi.
+      const visite = (etat.nuitPrecedente.bilan?.visites ?? []).includes(c);
+      annonce(visite ? "SuieOui" : "SuieNon", visite ? `${qui} monte sur le toit de ${n} : la suie garde des traces, sa maison a reçu de la visite cette nuit.`
+        : `${qui} monte sur le toit de ${n} : la suie est intacte, personne n'est venu chez ${n} cette nuit.`, { qui, nom: n });
+      break;
+    }
+    case "eclusiere":
+      poser("ecluse", acteurId);
+      annonce("Ecluse", `${qui} ferme l'écluse : la nuit prochaine, l'eau monte sous le Pont et la meute ne pourra chasser aucune maison de l'autre rive.`, { qui });
+      break;
     case "maitresse-d-ecole": {
       const vivants = villageois.filter(vivant).sort((a, b) => numeroDeMaison(a.maison) - numeroDeMaison(b.maison) || String(a.nom).localeCompare(String(b.nom)));
       const i = vivants.findIndex(v => v.id === c);
@@ -305,7 +321,8 @@ export function effetsDeLaNuit(e, tour, { batiments } = {}) {
     verrous: de("verrou"), surveilles: de("surveille"), asiles: de("asile"), lames: de("lame"),
     horsDAtteinte: de("traversee", "cachette"), taverne: de("taverne", "gite"),
     taverneEnJeu: enJeu.includes("taverne"), benis: [...etat.jour.benis],
-    pontBloque: enJeu.includes("pont") && Number(etat.pont?.bloqueNuit) === tour
+    // Le Pont bloqué (après une proie tuée sur l'autre rive) ou l'écluse fermée par l'Éclusière : même effet.
+    pontBloque: (enJeu.includes("pont") && Number(etat.pont?.bloqueNuit) === tour) || de("ecluse").length > 0
   };
 }
 

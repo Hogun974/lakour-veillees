@@ -327,7 +327,8 @@
       "PlateauInteractif": {
         "Nom": "Act on the map",
         "Aide": "Night choices, votes and day powers are made by clicking tokens, from the banner. Unchecked: the choice and vote windows open as before."
-      }
+      },
+      "SignalTour": { "Nom": "Signal when it is my turn", "Aide": "A soft chime, for me only, when a night choice or a vote is waiting for me; if I am looking at another tab, its title blinks until I come back." }
     },
     "Erreurs": {
       "PasMJ": "Only the active GM can run the game (lakour-loups).",
@@ -551,6 +552,7 @@
       "Mort": "died in round {tour}, {cause}",
       "IA": "AI player"
     },
+    "Signal": { "Choix": "Your turn to choose", "Vote": "The vote is open" },
     "Chroniques": {
       "Titre": "Chronicles of Brumecombe",
       "Palmares": "Hall of fame",

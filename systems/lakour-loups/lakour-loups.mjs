@@ -12,6 +12,7 @@ import { chargerPrive, mesSecrets } from "./scripts/prive.mjs";
 import { carnetSecret } from "./scripts/apps/carnet.mjs";
 import { tableDeJeu, ouvrirTable, cloreLeVote } from "./scripts/apps/table.mjs";
 import { surveillerFinDuVote } from "./scripts/fin-du-vote.mjs";
+import { signaler } from "./scripts/signal.mjs";
 import { fenetreVote } from "./scripts/apps/vote.mjs";
 import { FicheVillageois, FicheRole, FicheMetier, FicheBatiment } from "./scripts/apps/fiches.mjs";
 import { brancherPlateau } from "./scripts/plateau.mjs";
@@ -35,6 +36,8 @@ function quandEtatChange() {
   const vote = fenetreVote();
   const moi = monVillageois();
   if (etat.vote.ouvert) {
+    // Le vote s'ouvre : chaque vivant l'entend (tintement chez lui seul), même s'il regarde ailleurs.
+    if (!voteEtaitOuvert && moi?.system.vivant) signaler(t("LAKOUR_LOUPS.Signal.Vote"));
     // Le vote s'ouvre : chaque joueur vivant vote sur la carte (bandeau, clic sur un jeton) ; sans carte, ou s'il l'a
     // choisi (réglage « plateauInteractif »), il voit la fenêtre de vote et la Table de jeu.
     if (!voteEtaitOuvert && moi?.system.vivant && !plateauLocal.plateauInteractif([moi.id])) {

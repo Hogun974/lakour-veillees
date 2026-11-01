@@ -327,7 +327,8 @@
       "PlateauInteractif": {
         "Nom": "Agir sur la carte",
         "Aide": "Choix de nuit, votes et pouvoirs de jour se font au clic sur les jetons, depuis le bandeau. Décoché : les fenêtres de choix et de vote s'ouvrent comme avant."
-      }
+      },
+      "SignalTour": { "Nom": "Signal quand c'est à moi", "Aide": "Un tintement discret, chez moi seul, quand un choix de nuit ou un vote m'attend ; si je regarde un autre onglet, son titre clignote jusqu'à mon retour." }
     },
     "Erreurs": {
       "PasMJ": "Seul le MJ actif peut mener la partie (lakour-loups).",
@@ -551,6 +552,7 @@
       "Mort": "mort au tour {tour}, {cause}",
       "IA": "joueur IA"
     },
+    "Signal": { "Choix": "À toi de choisir", "Vote": "Le vote est ouvert" },
     "Chroniques": {
       "Titre": "Chroniques de Brumecombe",
       "Palmares": "Palmarès",

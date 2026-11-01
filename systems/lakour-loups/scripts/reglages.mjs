@@ -54,6 +54,11 @@ export function enregistrerReglages(quandEtatChange) {
     name: "LAKOUR_LOUPS.Reglages.PlateauInteractif.Nom", hint: "LAKOUR_LOUPS.Reglages.PlateauInteractif.Aide",
     scope: "client", config: true, type: Boolean, default: true, onChange: () => quandEtatChange?.()
   });
+  // Le tintement (et le titre qui clignote) quand un choix secret ou un vote attend ce joueur (scripts/signal.mjs).
+  game.settings.register(ID, "signalTour", {
+    name: "LAKOUR_LOUPS.Reglages.SignalTour.Nom", hint: "LAKOUR_LOUPS.Reglages.SignalTour.Aide",
+    scope: "client", config: true, type: Boolean, default: true
+  });
   // Rôles et bâtiments des dernières parties (jamais qui avait quoi), pour varier les compositions (nouvellePartie).
   game.settings.register(ID, "historique", { scope: "world", config: false, type: Array, default: [] });
   // Les veillées finies, racontées dans le journal des Chroniques (scripts/chroniques.mjs) : les 50 dernières.

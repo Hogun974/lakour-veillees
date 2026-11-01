@@ -21,6 +21,7 @@ import { fermerChoix } from "./apps/choix.mjs";
 import { recevoirDemande, oublierDemande } from "./plateau-local.mjs";
 import { ouvrirCarnet } from "./apps/carnet.mjs";
 import { recevoirLigne, envoyerLigne } from "./salons.mjs";
+import { signaler } from "./signal.mjs";
 
 // Traite un message reçu. emetteur : l'identifiant de l'auteur donné par le serveur (second argument du socket).
 export function traiterMessage(message, emetteur) {
@@ -43,7 +44,9 @@ export function traiterMessage(message, emetteur) {
   switch (message.type) {
     case "demande":
       // Sur la carte (jetons candidats allumés chez ce joueur seul), sinon dans la fenêtre de choix.
-      if (message.destinataire === game.user.id) recevoirDemande(message);
+      if (message.destinataire !== game.user.id) return true;
+      recevoirDemande(message);
+      signaler(game.i18n.localize("LAKOUR_LOUPS.Signal.Choix"));
       return true;
     case "annuler": fermerChoix(message.id); oublierDemande(message.id); return true;
     case "secret":

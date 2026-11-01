@@ -6,7 +6,7 @@
       {{#if tour}}<span class="lb-tour">{{localize "LAKOUR_LOUPS.Table.Tour"}} {{tour}}</span>{{/if}}
     </span>
   </div>
-  <span class="lb-minuteur" data-finit="{{finit}}" aria-live="polite" hidden></span>
+  <span class="lb-minuteur" data-finit="{{finit}}" title="{{localize 'LAKOUR_LOUPS.Bandeau.TempsRestant'}}" hidden><i class="fa-solid fa-hourglass-half"></i> <span class="lb-reste" aria-live="off"></span></span>
   <div class="lb-action">
     {{#if annonce}}<span class="lb-annonce"><i class="fa-solid fa-star"></i> {{annonce}}</span>{{/if}}
     {{#if salon}}<span class="lb-salon {{salon.cle}}" title="{{salon.aide}}">{{salon.texte}}</span>{{/if}}
@@ -16,7 +16,7 @@
   </div>
   <div class="lb-boutons">
     {{#each pouvoirs}}
-    <button type="button" class="lb-bouton" data-action="bandeauPouvoir" data-pouvoir="{{pouvoir}}"><i class="fa-solid fa-hand-sparkles"></i> {{libelle}}</button>
+    <button type="button" class="lb-bouton {{#unless possible}}grise{{/unless}}" data-action="bandeauPouvoir" data-pouvoir="{{pouvoir}}" {{#unless possible}}aria-disabled="true" title="{{raison}}"{{/unless}}><i class="fa-solid {{icone}}"></i> {{libelle}}</button>
     {{/each}}
     {{#each boutons}}
     <button type="button" class="lb-bouton {{#if principal}}principal{{/if}}" data-action="{{action}}" {{#if principal}}{{#unless @root.pret}}disabled{{/unless}}{{/if}}><i class="fa-solid {{icone}}"></i> {{libelle}}</button>

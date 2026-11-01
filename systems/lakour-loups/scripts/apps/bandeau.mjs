@@ -1,6 +1,7 @@
 // Le bandeau d'action, en haut de l'écran de chaque joueur (et du MJ) : la phase, le tour et le minuteur, « Mon rôle »
 // (le carnet secret), et l'action du moment — « Choisis ta cible » (nuit), « Vote » (clic sur un jeton), un pouvoir de
-// jour (« Utiliser : Forgeron »), ou, pour un mort, « Tu es mort : tu observes ». Il remplace les fenêtres, qui restent
+// jour du rôle ou du métier (« Utiliser : Forgeron », grisé quand ce n'est pas le moment), ou, pour un mort, « Tu es mort :
+// tu observes ». Pendant le vote : « Voter » (la liste) et le temps restant ; le MJ y ouvre et y clôt le vote. Il remplace les fenêtres, qui restent
 // disponibles en secours (« Liste », Table de jeu). Ce qu'il montre de secret (sa sélection, son vote, son rôle) ne
 // vient que de ce navigateur : rien n'en sort, sinon le choix validé, au seul MJ actif.
 // Avec la voix intégrée de Foundry (A/V) et les salons vocaux, il montre aussi le salon du joueur (« 🔇 La nuit, silence »,
@@ -11,11 +12,24 @@ import { monVote } from "../prive.mjs";
 import { salonAffiche } from "../salons.mjs";
 import * as local from "../plateau-local.mjs";
 import { ouvrirCarnet } from "./carnet.mjs";
-import { ouvrirTable } from "./table.mjs";
+import { ouvrirTable, cloreLeVote } from "./table.mjs";
+import { fenetreVote } from "./vote.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 const nomDe = id => game.actors.get(id)?.name ?? "";
 const ICONES = { preparation: "fa-scroll", nuit: "fa-moon", aube: "fa-cloud-sun", jour: "fa-sun", vote: "fa-scale-balanced", fin: "fa-crown" };
+const ICONES_POUVOIR = { role: "fa-mask", metier: "fa-hammer", batiment: "fa-landmark" };
+
+// Mes pouvoirs de jour : rôle et métier toujours montrés (grisés, avec la raison, quand ce n'est pas le moment ou qu'ils
+// ont servi) ; les autres (bâtiments, Puits) seulement quand ils peuvent servir.
+function mesPouvoirs(moi) {
+  try {
+    return game.lakourLoups.pouvoirsDeJour(moi.id)
+      .filter(p => p.possible || (["role", "metier"].includes(p.source) && !["absent", "inconnu", "mort"].includes(p.raison)))
+      .map(p => ({ pouvoir: p.pouvoir, libelle: t("LAKOUR_LOUPS.Bandeau.Utiliser", { nom: p.nom }), icone: ICONES_POUVOIR[p.source] ?? "fa-hand-sparkles",
+        possible: p.possible, raison: p.possible ? "" : p.raisonTexte }));
+  } catch { return []; }
+}
 
 // Le contenu du bandeau, pour l'utilisateur courant (éprouvé hors Foundry dans les essais).
 export function contexteBandeau() {
@@ -61,32 +75,32 @@ export function contexteBandeau() {
     ctx.detail = `${v.exprimes.length} / ${game.actors.filter(a => a.type === "villageois" && a.system.vivant).length} ${t("LAKOUR_LOUPS.Vote.OntVote")}`;
     if (l.mode === "vote") {
       ctx.detail += ` · ${t("LAKOUR_LOUPS.Vote.VotreVoix")} ${monChoix ? nomDe(monChoix) : t("LAKOUR_LOUPS.Vote.Personne")}`;
+      // Voter : un clic sur un jeton, ou ce bouton (la liste des candidats).
+      bouton("bandeauVoter", t("LAKOUR_LOUPS.Bandeau.Voter"), "fa-check-to-slot", { principal: !monChoix });
       bouton("bandeauAbstenir", t("LAKOUR_LOUPS.Vote.Abstention"), "fa-hand");
     }
+    if (moi) ctx.pouvoirs = mesPouvoirs(moi);
     ctx.pret = true;
   } else if (moi?.system.vivant) {
-    // Pouvoirs de jour possibles maintenant.
-    try {
-      ctx.pouvoirs = game.lakourLoups.pouvoirsDeJour(moi.id).filter(p => p.possible)
-        .map(p => ({ pouvoir: p.pouvoir, libelle: t("LAKOUR_LOUPS.Bandeau.Utiliser", { nom: p.nom }) }));
-    } catch { ctx.pouvoirs = []; }
+    ctx.pouvoirs = mesPouvoirs(moi);
     ctx.consigne = t(`LAKOUR_LOUPS.Bandeau.Attente.${etat.phase}`);
   } else if (moi) {
     // Un mort : le Puits peut encore lui offrir un dernier mot.
-    try {
-      ctx.pouvoirs = game.lakourLoups.pouvoirsDeJour(moi.id).filter(p => p.possible)
-        .map(p => ({ pouvoir: p.pouvoir, libelle: t("LAKOUR_LOUPS.Bandeau.Utiliser", { nom: p.nom }) }));
-    } catch { ctx.pouvoirs = []; }
+    ctx.pouvoirs = mesPouvoirs(moi);
   } else ctx.consigne = t(`LAKOUR_LOUPS.Bandeau.Attente.${etat.phase}`);
   if (ctx.vainqueur) ctx.consigne = ctx.vainqueur;
-  // Le MJ (sans villageois) : l'étape suivante de la Table de jeu, en rappel.
-  if (gm && !moi && !ctx.boutons.length) {
+  // Le MJ (sans villageois) : l'étape suivante de la Table de jeu, en rappel (pendant le vote, le décompte des voix).
+  if (gm && !moi && !ctx.boutons.length && !v.ouvert) {
     try {
       const e = game.lakourLoups.etapeSuivante();
       const nom = e.donnees.meute ? t("LAKOUR_LOUPS.Etapes.LaMeute") : e.donnees.nom ?? "";
       ctx.detail = `${t("LAKOUR_LOUPS.Etapes.Prochaine")} ${t(`LAKOUR_LOUPS.Etapes.${e.cle}`, { ...e.donnees, nom })}`;
     } catch { /* API pas encore prête */ }
   }
+  // Le MJ ouvre et clôt le vote depuis le bandeau, sans passer par la Table.
+  if (gm && v.ouvert) bouton("bandeauCloreVote", t("LAKOUR_LOUPS.Table.CloreVote"), "fa-gavel", { principal: true });
+  else if (gm && etat.partie && etat.phase === "jour") bouton("bandeauOuvrirVote", t("LAKOUR_LOUPS.Table.OuvrirVote"), "fa-scale-balanced", { principal: true });
+  if (gm && ctx.boutons.length && !l.mode) ctx.pret = true;
   return ctx;
 }
 
@@ -102,9 +116,15 @@ export class BandeauAction extends HandlebarsApplicationMixin(ApplicationV2) {
       bandeauListe: () => local.ouvrirListe(),
       bandeauAbstenir: () => local.abstenir(),
       bandeauAnnuler: () => local.annulerPouvoir(),
-      bandeauPouvoir: (event, cible) => local.commencerPouvoir(cible.dataset.pouvoir),
+      // Grisé (pas le moment, déjà servi) : le clic dit pourquoi, au lieu de ne rien faire.
+      bandeauPouvoir: (event, cible) => cible.getAttribute("aria-disabled") === "true" ? ui.notifications.info(cible.title) : local.commencerPouvoir(cible.dataset.pouvoir),
       bandeauRole: () => ouvrirCarnet(),
-      bandeauTable: () => ouvrirTable()
+      bandeauTable: () => ouvrirTable(),
+      bandeauVoter: () => fenetreVote().render({ force: true }),
+      bandeauOuvrirVote: async () => {
+        try { await game.lakourLoups.ouvrirVote({}); } catch (e) { ui.notifications.error(e.message); }
+      },
+      bandeauCloreVote: () => cloreLeVote()
     }
   };
 
@@ -129,10 +149,10 @@ export class BandeauAction extends HandlebarsApplicationMixin(ApplicationV2) {
     if (!zone) return;
     const tic = () => {
       const finit = Number(zone.dataset.finit) || 0;
-      if (!finit) { zone.textContent = ""; zone.hidden = true; return; }
+      if (!finit) { zone.hidden = true; return; }
       const reste = Math.max(0, Math.ceil((finit - Date.now()) / 1000));
       zone.hidden = false;
-      zone.textContent = `${Math.floor(reste / 60)}:${String(reste % 60).padStart(2, "0")}`;
+      zone.querySelector(".lb-reste").textContent = `${Math.floor(reste / 60)}:${String(reste % 60).padStart(2, "0")}`;
       zone.classList.toggle("urgent", reste > 0 && reste <= 15);
     };
     tic();

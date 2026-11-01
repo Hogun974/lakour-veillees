@@ -437,6 +437,8 @@
       "Vote": "Vote: click the token of the one you accuse",
       "VoteChapelle": "Chapel: click the token of the one who will sleep in safety",
       "Utiliser": "Use: {nom}",
+      "Voter": "Vote",
+      "TempsRestant": "Time left",
       "Salon": {
         "nuit": "🔇 Night: silence",
         "taniere": "🐺 Den: you speak to the wolves",

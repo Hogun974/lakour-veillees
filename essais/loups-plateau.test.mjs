@@ -512,6 +512,19 @@ const VERIFICATIONS = {
     const { scene, U } = monde(M);
     await distribuer(M, U);
     await M.api.changerPhase("nuit");
+    // La nuit, aucun pouvoir de jour ne sert : ceux du rôle et du métier restent visibles, grisés, avec la raison.
+    let grises = 0;
+    for (const a of villageois().filter(x => x.system.joueur)) {
+      commeJoueur(a.system.joueur);
+      canevasDe(scene);
+      const possedes = M.api.pouvoirsDeJour(a.id).filter(p => ["role", "metier"].includes(p.source)).map(p => p.pouvoir);
+      const montres = M.bandeau.contexteBandeau().pouvoirs;
+      assert.deepEqual(montres.filter(p => possedes.includes(p.pouvoir)).map(p => p.pouvoir), possedes, `${a.name} : rôle et métier montrés`);
+      for (const p of montres.filter(x => !x.possible)) { assert.ok(p.raison, `${a.name} : raison du grisé`); grises++; }
+      commeMJ();
+      delete globalThis.canvas;
+    }
+    assert.ok(grises > 0, "au moins un pouvoir grisé la nuit");
     await M.api.changerPhase("jour");
     commeJoueur("u1");
     canevasDe(scene);
@@ -532,12 +545,28 @@ const VERIFICATIONS = {
       M.local.valider();
       assert.deepEqual(emissions.slice(n).map(e => [e.type, e.pouvoir, e.cibles, e.recipients]), [["jour", "forgeron", [cible], ["mj"]]]);
     }
+    // Rôle et métier : leurs pouvoirs de jour sont toujours là, actifs ou grisés avec la raison.
+    for (const p of ctx.pouvoirs) {
+      assert.ok(p.icone && typeof p.possible === "boolean", `pouvoir ${p.pouvoir} : icône et état`);
+      assert.ok(p.possible || p.raison, `pouvoir ${p.pouvoir} grisé : la raison est donnée`);
+    }
+    const possedes = M.api.pouvoirsDeJour(moi.id).filter(p => ["role", "metier"].includes(p.source));
+    assert.deepEqual(ctx.pouvoirs.map(p => p.pouvoir).filter(x => possedes.some(p => p.pouvoir === x)), possedes.map(p => p.pouvoir),
+      "chaque pouvoir de rôle ou de métier a son bouton");
     commeMJ();
+    delete globalThis.canvas;
+    assert.ok(M.bandeau.contexteBandeau().boutons.some(b => b.action === "bandeauOuvrirVote"), "le MJ ouvre le vote depuis le bandeau");
     await M.api.ouvrirVote({ duree: 90 });
+    const mj = M.bandeau.contexteBandeau();
+    assert.ok(mj.boutons.some(b => b.action === "bandeauCloreVote") && mj.finit > Date.now(), "le MJ clôt le vote et voit le temps");
+    assert.match(mj.detail, /\//, "le MJ voit le décompte des voix");
     commeJoueur("u1");
+    canevasDe(scene);
     ctx = M.bandeau.contexteBandeau();
     assert.ok(ctx.finit > Date.now(), "le minuteur du vote");
     assert.match(ctx.consigne, /Vote/);
+    assert.ok(ctx.boutons.some(b => b.action === "bandeauVoter") && ctx.boutons.some(b => b.action === "bandeauAbstenir"), "Voter et s'abstenir");
+    assert.ok(!ctx.boutons.some(b => b.action === "bandeauCloreVote"), "un joueur ne clôt pas le vote");
     commeMJ();
     await M.api.reduireAuSilence(moi.id);
     commeJoueur("u1");
@@ -648,6 +677,9 @@ const VERIFICATIONS = {
 // ------------------------------------------------------------------ mutations
 // [fichier (relatif au système), avant, après, règle]
 const MUTATIONS = [
+  ["scripts/apps/bandeau.mjs", "bouton(\"bandeauVoter\", t(\"LAKOUR_LOUPS.Bandeau.Voter\"), \"fa-check-to-slot\", { principal: !monChoix });", "", "bouton Voter du bandeau"],
+  ["scripts/apps/bandeau.mjs", "if (gm && v.ouvert) bouton(", "if (false) bouton(", "le MJ clôt le vote depuis le bandeau"],
+  ["scripts/apps/bandeau.mjs", ".filter(p => p.possible || ([\"role\", \"metier\"].includes(p.source) && ![\"absent\", \"inconnu\", \"mort\"].includes(p.raison)))", ".filter(p => p.possible)", "rôle et métier grisés, pas cachés"],
   ["logique/plateau.mjs", "const cercle = PHASES_DU_CERCLE.includes(phase);", "const cercle = false;", "cercle sur la place"],
   ["logique/plateau.mjs", "const rayons = [voulu, ...[c.rayon, c.rayonMin, (c.rayon + c.rayonMin) / 2].filter(r => r !== voulu)];", "const rayons = [c.rayon * 1.6];", "cercle dans la place"],
   ["logique/plateau.mjs", "if (!d) return places;", "return disposer(c, total, c.rayonMin * 0.4, 0);", "cercle sans chevauchement"],

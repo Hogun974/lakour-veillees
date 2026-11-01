@@ -244,24 +244,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
   }
   static #ouvrirVote() { return tenter(() => api().ouvrirVote({})); }
   static #voteChapelle() { return tenter(() => api().ouvrirVote({ objet: "chapelle" })); }
-  static #cloreVote() {
-    return tenter(async () => {
-      const r = await api().cloreVote();
-      if (r.prolonge) return ui.notifications.info(t("LAKOUR_LOUPS.Jour.RubanDefense", { nom: nomDe(r.prolonge) }));
-      if (r.objet === "chapelle") return ui.notifications.info(r.elu ? t("LAKOUR_LOUPS.Table.AsileDonne", { nom: nomDe(r.elu) }) : t("LAKOUR_LOUPS.Journal.VoteNul"));
-      if (!r.elus.length) return ui.notifications.info(t("LAKOUR_LOUPS.Journal.VoteNul"));
-      const noms = r.elus.map(nomDe).join(", ");
-      const ok = await foundry.applications.api.DialogV2.confirm({
-        window: { title: "LAKOUR_LOUPS.Table.Executer" }, content: `<p>${t("LAKOUR_LOUPS.Table.ExecuterQuestion", { noms: foundry.utils.escapeHTML(noms) })}</p>`
-      });
-      if (!ok) return;
-      // Le Juge de paix a pu annuler ce vote pendant que la question était posée : on n'exécute que ce vote-ci.
-      const e = lireEtat();
-      if (e.vote.ouvert || e.vote.resultat?.numero !== r.numero) return ui.notifications.info(t("LAKOUR_LOUPS.Table.VoteAnnule"));
-      for (const id of r.elus) await api().eliminer(id, { cause: "vote" });
-      await api().verifierVictoire();
-    });
-  }
+  static #cloreVote() { return cloreLeVote(); }
   // Un pouvoir de jour : on choisit la cible (ou on écrit le dernier mot) ici, puis le MJ actif applique.
   static async #pouvoir(event, cible) {
     const pouvoir = cible.dataset.pouvoir;
@@ -368,6 +351,26 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
       ui.notifications.info(g ? libelleVainqueur(g) : t("LAKOUR_LOUPS.Table.PasEncore"));
     });
   }
+}
+
+// Clore le vote (Table de jeu ou bandeau du MJ) : le résultat, puis, après confirmation, l'exécution des élus.
+export function cloreLeVote() {
+  return tenter(async () => {
+    const r = await api().cloreVote();
+    if (r.prolonge) return ui.notifications.info(t("LAKOUR_LOUPS.Jour.RubanDefense", { nom: nomDe(r.prolonge) }));
+    if (r.objet === "chapelle") return ui.notifications.info(r.elu ? t("LAKOUR_LOUPS.Table.AsileDonne", { nom: nomDe(r.elu) }) : t("LAKOUR_LOUPS.Journal.VoteNul"));
+    if (!r.elus.length) return ui.notifications.info(t("LAKOUR_LOUPS.Journal.VoteNul"));
+    const noms = r.elus.map(nomDe).join(", ");
+    const ok = await foundry.applications.api.DialogV2.confirm({
+      window: { title: "LAKOUR_LOUPS.Table.Executer" }, content: `<p>${t("LAKOUR_LOUPS.Table.ExecuterQuestion", { noms: foundry.utils.escapeHTML(noms) })}</p>`
+    });
+    if (!ok) return;
+    // Le Juge de paix a pu annuler ce vote pendant que la question était posée : on n'exécute que ce vote-ci.
+    const e = lireEtat();
+    if (e.vote.ouvert || e.vote.resultat?.numero !== r.numero) return ui.notifications.info(t("LAKOUR_LOUPS.Table.VoteAnnule"));
+    for (const id of r.elus) await api().eliminer(id, { cause: "vote" });
+    await api().verifierVictoire();
+  });
 }
 
 function tenterSync(fn, defaut) {

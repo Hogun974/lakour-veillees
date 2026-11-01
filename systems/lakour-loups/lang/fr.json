@@ -437,6 +437,8 @@
       "Vote": "Vote : clique sur le jeton de celui que tu accuses",
       "VoteChapelle": "Chapelle : clique sur le jeton de celui qui dormira à l'abri",
       "Utiliser": "Utiliser : {nom}",
+      "Voter": "Voter",
+      "TempsRestant": "Temps restant",
       "Salon": {
         "nuit": "🔇 La nuit, silence",
         "taniere": "🐺 Tanière : tu parles aux loups",

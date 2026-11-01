@@ -352,6 +352,7 @@
   text-shadow: 0 0 10px rgba(240, 167, 66, 0.45); font-variant-numeric: tabular-nums;
 }
 .loups-bandeau-jeu .lb-minuteur.urgent { color: #ff7a5c; animation: loups-pouls 1s ease-in-out infinite; }
+.loups-bandeau-jeu .lb-minuteur i { font-size: 13px; opacity: 0.8; }
 .loups-bandeau-jeu .lb-action { flex: 1 1 auto; min-width: 0; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; row-gap: 2px; }
 .loups-bandeau-jeu .lb-consigne { color: var(--loups-parchemin); font-weight: bold; }
 .loups-bandeau-jeu .lb-detail { color: var(--loups-terne); font-size: 12px; }
@@ -382,6 +383,7 @@
 .loups-bandeau-jeu .lb-bouton:focus-visible { outline: 2px solid var(--loups-lanterne); outline-offset: 1px; }
 .loups-bandeau-jeu .lb-bouton.principal { background: linear-gradient(#b8732f, #8a4f1f); border-color: var(--loups-lanterne); color: #fff7e6; }
 .loups-bandeau-jeu .lb-bouton:disabled { opacity: 0.45; cursor: default; }
+.loups-bandeau-jeu .lb-bouton.grise { opacity: 0.45; cursor: help; }
 .loups-bandeau-jeu .lb-bouton.discret { background: rgba(0, 0, 0, 0.25); border-color: var(--loups-bord); font-weight: normal; }
 .loups-bandeau-jeu .lb-bouton.icone { width: 28px; padding: 0; justify-content: center; }
 .loups-bandeau-jeu .lb-bouton i { font-size: 11px; }

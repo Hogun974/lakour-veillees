@@ -73,7 +73,11 @@ export function scene({ cle, nom, plan, description, decor, visionDesJetons = fa
     ...s,
     levels: embarquer(s.levels, "levels"), walls: embarquer(s.walls, "walls"),
     drawings: embarquer(s.drawings, "drawings").map(d => ({ ...d, author: AUTEUR_CARTES })), lights: embarquer(s.lights, "lights"),
-    tokens: [], notes: [], sounds: [], regions: [], tiles: [],
+    // Scène vivante : sons d'ambiance, épingles de journal et zones ; les comportements d'une zone sont embarqués
+    // un niveau plus bas (clé « !scenes.regions.behaviors!scène.zone.comportement », comme les effets des objets d'acteurs).
+    sounds: embarquer(s.sounds, "sounds"), notes: embarquer(s.notes, "notes"),
+    regions: embarquer(s.regions, "regions").map(r => ({ ...r, behaviors: r.behaviors.map(b => ({ ...b, _key: `!scenes.regions.behaviors!${_id}.${r._id}.${b._id}` })) })),
+    tokens: [], tiles: [],
     ownership: { default: 0 }, folder: null, sort: 0,
     flags: { [MODULE]: { cle, description, plan } }, _stats: STATS
   };

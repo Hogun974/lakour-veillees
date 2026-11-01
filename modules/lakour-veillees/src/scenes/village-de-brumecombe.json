@@ -712,10 +712,47 @@
       "flags": {}
     }
   ],
-  "tokens": [],
-  "notes": [],
-  "sounds": [],
+  "sounds": [
+    {
+      "name": "forge — Forge",
+      "x": 1050,
+      "y": 1150,
+      "elevation": 0,
+      "levels": [],
+      "radius": 6,
+      "path": "modules/lakour-mj-ia/assets/sons/forge.wav",
+      "repeat": true,
+      "volume": 0.3,
+      "walls": true,
+      "easing": true,
+      "hidden": false,
+      "locked": false,
+      "_id": "mlJXIZ44TPKzJfEj",
+      "_key": "!scenes.sounds!mYZHsnhVOQZRi5f1.mlJXIZ44TPKzJfEj",
+      "flags": {}
+    },
+    {
+      "name": "nuit — Brumecombe",
+      "x": 2100,
+      "y": 1500,
+      "elevation": 0,
+      "levels": [],
+      "radius": 22.5,
+      "path": "modules/lakour-mj-ia/assets/sons/nuit.wav",
+      "repeat": true,
+      "volume": 0.25,
+      "walls": true,
+      "easing": true,
+      "hidden": false,
+      "locked": false,
+      "_id": "JyaXxsbEL1auzUfa",
+      "_key": "!scenes.sounds!mYZHsnhVOQZRi5f1.JyaXxsbEL1auzUfa",
+      "flags": {}
+    }
+  ],
   "regions": [],
+  "notes": [],
+  "tokens": [],
   "tiles": [],
   "ownership": {
     "default": 0

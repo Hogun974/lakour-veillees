@@ -1,0 +1,30 @@
+{
+  "_id": "DuiM5DsHwb7Ym563",
+  "_key": "!items!DuiM5DsHwb7Ym563",
+  "name": "La Taverne",
+  "type": "batiment",
+  "img": "modules/lakour-veillees/assets/jetons/batiment-taverne.svg",
+  "system": {
+    "cle": "taverne",
+    "description": "<p>La Taverne du Chaudron Fêlé, au bord de la place : trois lits à l'étage, un feu qui ne s'éteint jamais.</p>",
+    "regle": "<p><strong>Dortoir.</strong> Chaque jour, jusqu'à <strong>trois joueurs</strong> peuvent annoncer qu'ils dormiront à la Taverne. La nuit suivante, la meute <strong>ne peut tuer aucun d'eux</strong>… sauf si <strong>un loup</strong> dort parmi eux : alors elle peut y tuer celui de son choix, et aucune protection ne joue. L'hôte de l'Aubergiste prend l'un des trois lits. Le poison et le feu atteignent les dormeurs comme ailleurs.</p>",
+    "repere": "Taverne",
+    "effet": "proteger"
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "taverne"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

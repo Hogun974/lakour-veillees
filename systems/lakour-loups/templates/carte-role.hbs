@@ -1,0 +1,19 @@
+<div class="lakour-loups carte-role">
+  <header>
+    {{#if img}}<img src="{{img}}" alt="">{{/if}}
+    <div>
+      <div class="carte-role-qui">{{acteur}}</div>
+      <h3>{{role}}</h3>
+      <div class="carte-role-camp">{{camp}}</div>
+    </div>
+  </header>
+  <div class="carte-role-texte">{{{description}}}</div>
+  {{#if victoire}}<div class="carte-role-victoire"><strong>{{localize "LAKOUR_LOUPS.Role.Victoire"}}</strong>{{{victoire}}}</div>{{/if}}
+  <ul class="carte-role-details">
+    {{#if metier}}<li><strong>{{localize "LAKOUR_LOUPS.Fiche.Metier"}}</strong> {{metier}}</li>{{/if}}
+    {{#if maison}}<li><strong>{{localize "LAKOUR_LOUPS.Fiche.Maison"}}</strong> {{maison}}</li>{{/if}}
+    {{#if meute}}<li><strong>{{localize "LAKOUR_LOUPS.Fiche.Meute"}}</strong> {{meute}}</li>{{/if}}
+    {{#if prime}}<li><strong>{{localize "LAKOUR_LOUPS.Fiche.Prime"}}</strong> {{prime}}</li>{{/if}}
+  </ul>
+  <p class="carte-role-secret">{{localize "LAKOUR_LOUPS.Fiche.Secret"}}</p>
+</div>

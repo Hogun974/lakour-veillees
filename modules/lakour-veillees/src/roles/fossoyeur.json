@@ -1,0 +1,45 @@
+{
+  "_id": "bdJKFOUO9Ps29Yk6",
+  "_key": "!items!bdJKFOUO9Ps29Yk6",
+  "name": "Fossoyeur",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/fossoyeur.svg",
+  "system": {
+    "cle": "fossoyeur",
+    "camp": "village",
+    "description": "<p>Tu ranges les morts, et les morts te parlent.</p><p><strong>Chaque nuit</strong>, en dernier, tu désignes un joueur mort (de la nuit ou d'avant) : le narrateur te dit en secret son <strong>rôle exact</strong>, même si les rôles ne sont pas révélés à la mort. Tu dois attendre qu'il y ait un mort.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 90,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 1,
+      "soiMeme": false,
+      "invite": "Quelle tombe interroges-tu cette nuit ?"
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "voir-role-mort",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "fossoyeur"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

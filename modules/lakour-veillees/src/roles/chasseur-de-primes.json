@@ -1,0 +1,45 @@
+{
+  "_id": "W6cBRI1JdaB6I6nb",
+  "_key": "!items!W6cBRI1JdaB6I6nb",
+  "name": "Chasseur de primes",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/chasseur-de-primes.svg",
+  "system": {
+    "cle": "chasseur-de-primes",
+    "camp": "solitaire",
+    "description": "<p>Quelqu'un t'a payé pour qu'un voisin finisse au gibet.</p><p><strong>La première nuit</strong>, le narrateur te donne en secret le nom de ta <strong>cible</strong>, tirée au hasard parmi les autres joueurs. Tu n'as pas d'autre pouvoir que ta langue.</p>",
+    "victoire": "<p>Tu gagnes <strong>seul et aussitôt</strong> si ta cible est exécutée par le vote du village, que tu sois vivant ou non. Si elle meurt d'une autre façon, tu deviens un simple villageois et joues avec le village.</p>",
+    "nuit": {
+      "actif": true,
+      "ordre": 6,
+      "premiereNuitSeulement": true,
+      "uneNuitSurDeux": false,
+      "cibles": 0,
+      "soiMeme": false,
+      "invite": "Le narrateur te glisse le nom de ta cible."
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "",
+    "apparence": "",
+    "victoireCle": "cible-executee"
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "chasseur-de-primes"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

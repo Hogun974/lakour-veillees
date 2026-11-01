@@ -1,0 +1,45 @@
+{
+  "_id": "DFwCH3McvuG7izJy",
+  "_key": "!items!DFwCH3McvuG7izJy",
+  "name": "Conteuse",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/conteuse.svg",
+  "system": {
+    "cle": "conteuse",
+    "camp": "village",
+    "description": "<p>Tu sais raconter les gens mieux qu'ils ne se racontent eux-mêmes.</p><p><strong>Une fois par partie</strong>, au début d'un débat, tu désignes un joueur : pendant <strong>deux minutes</strong>, le village ne parle que de lui, et il <strong>ne peut pas répondre</strong>. Ensuite le débat reprend normalement.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": false,
+      "ordre": 50,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 0,
+      "soiMeme": false,
+      "invite": ""
+    },
+    "usages": {
+      "max": 1,
+      "restant": 1
+    },
+    "effet": "",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "conteuse"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

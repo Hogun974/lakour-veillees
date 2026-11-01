@@ -1,0 +1,45 @@
+{
+  "_id": "ljJRT9ai0CsCvXFR",
+  "_key": "!items!ljJRT9ai0CsCvXFR",
+  "name": "Gardienne des clés",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/gardienne-des-cles.svg",
+  "system": {
+    "cle": "gardienne-des-cles",
+    "camp": "village",
+    "description": "<p>Toutes les clés du village pendent à ta ceinture.</p><p><strong>Chaque nuit</strong>, tu verrouilles une maison (pas la tienne) : <strong>personne n'y entre</strong> cette nuit (ni loup, ni visite), mais <strong>celui qui y dort ne peut pas agir</strong> non plus. Tu ne peux pas verrouiller deux nuits de suite la même maison.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 15,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 1,
+      "soiMeme": false,
+      "invite": "Quelle porte verrouilles-tu cette nuit ?"
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "proteger",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "gardienne-des-cles"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

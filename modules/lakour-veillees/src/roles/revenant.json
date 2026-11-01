@@ -1,0 +1,45 @@
+{
+  "_id": "ehZ9XdQ07PApf0mn",
+  "_key": "!items!ehZ9XdQ07PApf0mn",
+  "name": "Revenant",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/revenant.svg",
+  "system": {
+    "cle": "revenant",
+    "camp": "solitaire",
+    "description": "<p>Tu es déjà mort une fois. Tu veux qu'on te le rende officiel.</p><p>Tu n'as aucun pouvoir de nuit. Ton seul but : te faire <strong>exécuter par le vote du village</strong>. Une mort de nuit ne compte pas.</p>",
+    "victoire": "<p>Tu gagnes <strong>seul et aussitôt</strong> si le village t'exécute au vote. La partie continue pour les autres.</p>",
+    "nuit": {
+      "actif": false,
+      "ordre": 50,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 0,
+      "soiMeme": false,
+      "invite": ""
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "",
+    "apparence": "",
+    "victoireCle": "execute"
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "revenant"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

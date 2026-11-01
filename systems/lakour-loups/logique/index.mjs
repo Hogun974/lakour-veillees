@@ -1,0 +1,11 @@
+// Toute la logique pure du jeu, sans Foundry : éprouvable en Node (essais/loups-*.test.mjs).
+export * from "./constantes.mjs";
+export * from "./hasard.mjs";
+export * from "./votes.mjs";
+export * from "./nuit.mjs";
+export * from "./resolution.mjs";
+export * from "./victoire.mjs";
+export * from "./distribution.mjs";
+export * from "./etat.mjs";
+export * from "./composition.mjs";
+export * from "./jour.mjs";

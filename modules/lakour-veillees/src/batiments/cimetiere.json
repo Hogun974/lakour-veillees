@@ -1,0 +1,30 @@
+{
+  "_id": "R0peqJDFG29jmkOn",
+  "_key": "!items!R0peqJDFG29jmkOn",
+  "name": "Le Cimetière",
+  "type": "batiment",
+  "img": "modules/lakour-veillees/assets/jetons/batiment-cimetiere.svg",
+  "system": {
+    "cle": "cimetiere",
+    "description": "<p>Le cimetière derrière la chapelle, ses croix penchées et son if qui ne perd jamais ses aiguilles.</p>",
+    "regle": "<p><strong>Les tombes parlent.</strong> Si les rôles ne sont <strong>pas révélés à la mort</strong>, le narrateur annonce chaque matin le <strong>camp</strong> (pas le rôle) de chaque joueur mort depuis le matin précédent, les morts de la nuit compris. Si les rôles sont révélés à la mort, le Cimetière est sans effet.</p>",
+    "repere": "Cimetière",
+    "effet": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "cimetiere"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

@@ -1,0 +1,1405 @@
+{
+  "_id": "mYZHsnhVOQZRi5f1",
+  "_key": "!scenes!mYZHsnhVOQZRi5f1",
+  "name": "Brumecombe — le village",
+  "navName": "Brumecombe — le village",
+  "navigation": true,
+  "active": false,
+  "width": 4200,
+  "height": 3000,
+  "padding": 0,
+  "grid": {
+    "type": 1,
+    "size": 100,
+    "distance": 1.5,
+    "units": "m"
+  },
+  "tokenVision": false,
+  "environment": {
+    "darknessLevel": 0.55,
+    "globalLight": {
+      "enabled": false
+    }
+  },
+  "levels": [
+    {
+      "_id": "defaultLevel0000",
+      "name": "Niveau principal",
+      "elevation": {
+        "bottom": 0,
+        "top": null
+      },
+      "background": {
+        "color": "#18181b",
+        "src": "modules/lakour-veillees/assets/cartes/village-de-brumecombe.svg"
+      },
+      "_key": "!scenes.levels!mYZHsnhVOQZRi5f1.defaultLevel0000",
+      "flags": {}
+    }
+  ],
+  "initialLevel": "defaultLevel0000",
+  "walls": [
+    {
+      "c": [
+        0,
+        0,
+        4200,
+        0
+      ],
+      "move": 20,
+      "sight": 20,
+      "light": 20,
+      "sound": 20,
+      "door": 0,
+      "ds": 0,
+      "dir": 0,
+      "levels": [],
+      "_id": "P9iOGaTAxP5Kl7Wh",
+      "_key": "!scenes.walls!mYZHsnhVOQZRi5f1.P9iOGaTAxP5Kl7Wh",
+      "flags": {}
+    },
+    {
+      "c": [
+        0,
+        3000,
+        4200,
+        3000
+      ],
+      "move": 20,
+      "sight": 20,
+      "light": 20,
+      "sound": 20,
+      "door": 0,
+      "ds": 0,
+      "dir": 0,
+      "levels": [],
+      "_id": "nSb0j7x7DGEdpzWm",
+      "_key": "!scenes.walls!mYZHsnhVOQZRi5f1.nSb0j7x7DGEdpzWm",
+      "flags": {}
+    },
+    {
+      "c": [
+        0,
+        0,
+        0,
+        3000
+      ],
+      "move": 20,
+      "sight": 20,
+      "light": 20,
+      "sound": 20,
+      "door": 0,
+      "ds": 0,
+      "dir": 0,
+      "levels": [],
+      "_id": "1EZxGbrDhQZEIkM2",
+      "_key": "!scenes.walls!mYZHsnhVOQZRi5f1.1EZxGbrDhQZEIkM2",
+      "flags": {}
+    },
+    {
+      "c": [
+        4200,
+        0,
+        4200,
+        3000
+      ],
+      "move": 20,
+      "sight": 20,
+      "light": 20,
+      "sound": 20,
+      "door": 0,
+      "ds": 0,
+      "dir": 0,
+      "levels": [],
+      "_id": "8LUGqkdWS5jTLSOV",
+      "_key": "!scenes.walls!mYZHsnhVOQZRi5f1.8LUGqkdWS5jTLSOV",
+      "flags": {}
+    }
+  ],
+  "drawings": [
+    {
+      "x": 0,
+      "y": 0,
+      "shape": {
+        "type": "r",
+        "width": 4200,
+        "height": 3000
+      },
+      "fillType": 0,
+      "fillColor": "#000000",
+      "fillAlpha": 0,
+      "strokeWidth": 0,
+      "strokeColor": "#000000",
+      "strokeAlpha": 0,
+      "levels": [],
+      "text": "Brumecombe",
+      "fontSize": 33,
+      "textColor": "#ffffff",
+      "textAlpha": 0.8,
+      "hidden": true,
+      "sort": 1000,
+      "_id": "OyxlL3u19gCBXjzO",
+      "_key": "!scenes.drawings!mYZHsnhVOQZRi5f1.OyxlL3u19gCBXjzO",
+      "flags": {},
+      "author": "aGlJlrPDVmqCIkaF"
+    },
+    {
+      "x": 1300,
+      "y": 1000,
+      "shape": {
+        "type": "r",
+        "width": 1200,
+        "height": 1000
+      },
+      "fillType": 0,
+      "fillColor": "#000000",
+      "fillAlpha": 0,
+      "strokeWidth": 0,
+      "strokeColor": "#000000",
+      "strokeAlpha": 0,
+      "levels": [],
+      "text": "Place du village",
+      "fontSize": 33,
+      "textColor": "#ffffff",
+      "textAlpha": 0.8,
+      "hidden": true,
+      "sort": 1001,
+      "_id": "LFf0HRIq03hCggih",
+      "_key": "!scenes.drawings!mYZHsnhVOQZRi5f1.LFf0HRIq03hCggih",
+      "flags": {},
+      "author": "aGlJlrPDVmqCIkaF"
+    }
+  ],
+  "lights": [
+    {
+      "x": 1350,
+      "y": 1050,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 4.5,
+        "bright": 2.5,
+        "color": "#ffcc77",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "1fE5HtftDHvfuUNO",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.1fE5HtftDHvfuUNO",
+      "flags": {}
+    },
+    {
+      "x": 2450,
+      "y": 1050,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 4.5,
+        "bright": 2.5,
+        "color": "#ffcc77",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "AP4Tcege9yIUKfE5",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.AP4Tcege9yIUKfE5",
+      "flags": {}
+    },
+    {
+      "x": 1350,
+      "y": 1950,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 4.5,
+        "bright": 2.5,
+        "color": "#ffcc77",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "BXOEAKF4GztkJwvo",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.BXOEAKF4GztkJwvo",
+      "flags": {}
+    },
+    {
+      "x": 2450,
+      "y": 1950,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 4.5,
+        "bright": 2.5,
+        "color": "#ffcc77",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "Muy0vXhWeHUyTcQe",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.Muy0vXhWeHUyTcQe",
+      "flags": {}
+    },
+    {
+      "x": 1950,
+      "y": 750,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 4.5,
+        "bright": 2.5,
+        "color": "#d8c8ff",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "4w65C3dCXcilgi9Y",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.4w65C3dCXcilgi9Y",
+      "flags": {}
+    },
+    {
+      "x": 2850,
+      "y": 1350,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 4.5,
+        "bright": 2.5,
+        "color": "#ff9a40",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "vndBwLtHti1KWG3J",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.vndBwLtHti1KWG3J",
+      "flags": {}
+    },
+    {
+      "x": 1050,
+      "y": 1350,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 4.5,
+        "bright": 2.5,
+        "color": "#ff6a20",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "C3ko3zJmlQDr9DZ3",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.C3ko3zJmlQDr9DZ3",
+      "flags": {}
+    },
+    {
+      "x": 3050,
+      "y": 1350,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 3,
+        "bright": 1.5,
+        "color": "#ffd28a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "N2Jsco3523hwTZXZ",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.N2Jsco3523hwTZXZ",
+      "flags": {}
+    },
+    {
+      "x": 3450,
+      "y": 1650,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 3,
+        "bright": 1.5,
+        "color": "#ffd28a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "V495IWuEznSQvFsk",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.V495IWuEznSQvFsk",
+      "flags": {}
+    },
+    {
+      "x": 2850,
+      "y": 2350,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 3,
+        "bright": 1.5,
+        "color": "#cfe0ff",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "SuyKalcxN7s25uBf",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.SuyKalcxN7s25uBf",
+      "flags": {}
+    },
+    {
+      "x": 450,
+      "y": 550,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 3,
+        "bright": 1.5,
+        "color": "#ffcc88",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "Z0VWa93nq8EAfLAk",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.Z0VWa93nq8EAfLAk",
+      "flags": {}
+    },
+    {
+      "x": 3750,
+      "y": 2750,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 3,
+        "bright": 1.5,
+        "color": "#ffb060",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "dkjNE8XLdixD5IYz",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.dkjNE8XLdixD5IYz",
+      "flags": {}
+    },
+    {
+      "x": 850,
+      "y": 450,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "KYAT7mBjaSArZgtB",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.KYAT7mBjaSArZgtB",
+      "flags": {}
+    },
+    {
+      "x": 1450,
+      "y": 450,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "FbkbaJ8IEYbmDZCV",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.FbkbaJ8IEYbmDZCV",
+      "flags": {}
+    },
+    {
+      "x": 750,
+      "y": 850,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "ILmpf4mTDJi0vnIv",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.ILmpf4mTDJi0vnIv",
+      "flags": {}
+    },
+    {
+      "x": 1150,
+      "y": 850,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "OQDrjDCiSADhsFod",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.OQDrjDCiSADhsFod",
+      "flags": {}
+    },
+    {
+      "x": 650,
+      "y": 1250,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "SCCbhwiGgwB15FXK",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.SCCbhwiGgwB15FXK",
+      "flags": {}
+    },
+    {
+      "x": 250,
+      "y": 1950,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "dpXDv3mNjRg7GFFp",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.dpXDv3mNjRg7GFFp",
+      "flags": {}
+    },
+    {
+      "x": 650,
+      "y": 1950,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "R6tXshO4EiXHMYdN",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.R6tXshO4EiXHMYdN",
+      "flags": {}
+    },
+    {
+      "x": 1050,
+      "y": 1950,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "PYERAknniU5XQ5JG",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.PYERAknniU5XQ5JG",
+      "flags": {}
+    },
+    {
+      "x": 350,
+      "y": 2450,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "JPecqMUuZS7BnQyF",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.JPecqMUuZS7BnQyF",
+      "flags": {}
+    },
+    {
+      "x": 850,
+      "y": 2450,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "ywk8VCFhUvpo4RDK",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.ywk8VCFhUvpo4RDK",
+      "flags": {}
+    },
+    {
+      "x": 1350,
+      "y": 2450,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "ZIHdJ0sBACBjEHGk",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.ZIHdJ0sBACBjEHGk",
+      "flags": {}
+    },
+    {
+      "x": 2350,
+      "y": 2450,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "QLa8x2CrCEizmsIn",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.QLa8x2CrCEizmsIn",
+      "flags": {}
+    },
+    {
+      "x": 3550,
+      "y": 550,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "RnwoumGw31NZdsIk",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.RnwoumGw31NZdsIk",
+      "flags": {}
+    },
+    {
+      "x": 4050,
+      "y": 550,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "SdQJr7kJjjJzI5ET",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.SdQJr7kJjjJzI5ET",
+      "flags": {}
+    },
+    {
+      "x": 3550,
+      "y": 1050,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "5sqDNDVWw5Vdf4nc",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.5sqDNDVWw5Vdf4nc",
+      "flags": {}
+    },
+    {
+      "x": 4050,
+      "y": 1050,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "XnBRBBkMMm9d9GWV",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.XnBRBBkMMm9d9GWV",
+      "flags": {}
+    },
+    {
+      "x": 3550,
+      "y": 2050,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "nqwIEO5FkVdg5D5k",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.nqwIEO5FkVdg5D5k",
+      "flags": {}
+    },
+    {
+      "x": 4050,
+      "y": 2050,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5
+      },
+      "_id": "2xmBX3eCxD8sPsuo",
+      "_key": "!scenes.lights!mYZHsnhVOQZRi5f1.2xmBX3eCxD8sPsuo",
+      "flags": {}
+    }
+  ],
+  "tokens": [],
+  "notes": [],
+  "sounds": [],
+  "regions": [],
+  "tiles": [],
+  "ownership": {
+    "default": 0
+  },
+  "folder": null,
+  "sort": 0,
+  "flags": {
+    "lakour-veillees": {
+      "cle": "village-de-brumecombe",
+      "description": "Le village de Brumecombe, de nuit : dix-huit maisons (« Maison 1 » à « Maison 18 » ; 13 à 18 sur l'autre rive de la Brume), la place du village où l'on débat et vote, et les dix bâtiments (Chapelle, Cimetière, Moulin, Taverne, Forge, Gibet, Puits, Pont, Lavoir, Grange). Chaque joueur a son jeton devant sa maison ; le jour, on se rassemble sur la place autour du Puits, et l'accusé se tient devant le Gibet.",
+      "plan": {
+        "largeur": 42,
+        "hauteur": 30,
+        "lumiere": "nuit",
+        "pieces": [
+          {
+            "nom": "Brumecombe",
+            "x": 0,
+            "y": 0,
+            "l": 42,
+            "h": 30,
+            "sol": "herbe"
+          },
+          {
+            "nom": "Place du village",
+            "x": 13,
+            "y": 10,
+            "l": 12,
+            "h": 10,
+            "sol": "pierre"
+          }
+        ],
+        "ouvertures": [
+          {
+            "x": 13,
+            "y": 10,
+            "cote": "nord",
+            "type": "passage"
+          },
+          {
+            "x": 13,
+            "y": 19,
+            "cote": "sud",
+            "type": "passage"
+          },
+          {
+            "x": 14,
+            "y": 10,
+            "cote": "nord",
+            "type": "passage"
+          },
+          {
+            "x": 14,
+            "y": 19,
+            "cote": "sud",
+            "type": "passage"
+          },
+          {
+            "x": 15,
+            "y": 10,
+            "cote": "nord",
+            "type": "passage"
+          },
+          {
+            "x": 15,
+            "y": 19,
+            "cote": "sud",
+            "type": "passage"
+          },
+          {
+            "x": 16,
+            "y": 10,
+            "cote": "nord",
+            "type": "passage"
+          },
+          {
+            "x": 16,
+            "y": 19,
+            "cote": "sud",
+            "type": "passage"
+          },
+          {
+            "x": 17,
+            "y": 10,
+            "cote": "nord",
+            "type": "passage"
+          },
+          {
+            "x": 17,
+            "y": 19,
+            "cote": "sud",
+            "type": "passage"
+          },
+          {
+            "x": 18,
+            "y": 10,
+            "cote": "nord",
+            "type": "passage"
+          },
+          {
+            "x": 18,
+            "y": 19,
+            "cote": "sud",
+            "type": "passage"
+          },
+          {
+            "x": 19,
+            "y": 10,
+            "cote": "nord",
+            "type": "passage"
+          },
+          {
+            "x": 19,
+            "y": 19,
+            "cote": "sud",
+            "type": "passage"
+          },
+          {
+            "x": 20,
+            "y": 10,
+            "cote": "nord",
+            "type": "passage"
+          },
+          {
+            "x": 20,
+            "y": 19,
+            "cote": "sud",
+            "type": "passage"
+          },
+          {
+            "x": 21,
+            "y": 10,
+            "cote": "nord",
+            "type": "passage"
+          },
+          {
+            "x": 21,
+            "y": 19,
+            "cote": "sud",
+            "type": "passage"
+          },
+          {
+            "x": 22,
+            "y": 10,
+            "cote": "nord",
+            "type": "passage"
+          },
+          {
+            "x": 22,
+            "y": 19,
+            "cote": "sud",
+            "type": "passage"
+          },
+          {
+            "x": 23,
+            "y": 10,
+            "cote": "nord",
+            "type": "passage"
+          },
+          {
+            "x": 23,
+            "y": 19,
+            "cote": "sud",
+            "type": "passage"
+          },
+          {
+            "x": 24,
+            "y": 10,
+            "cote": "nord",
+            "type": "passage"
+          },
+          {
+            "x": 24,
+            "y": 19,
+            "cote": "sud",
+            "type": "passage"
+          },
+          {
+            "x": 13,
+            "y": 10,
+            "cote": "ouest",
+            "type": "passage"
+          },
+          {
+            "x": 24,
+            "y": 10,
+            "cote": "est",
+            "type": "passage"
+          },
+          {
+            "x": 13,
+            "y": 11,
+            "cote": "ouest",
+            "type": "passage"
+          },
+          {
+            "x": 24,
+            "y": 11,
+            "cote": "est",
+            "type": "passage"
+          },
+          {
+            "x": 13,
+            "y": 12,
+            "cote": "ouest",
+            "type": "passage"
+          },
+          {
+            "x": 24,
+            "y": 12,
+            "cote": "est",
+            "type": "passage"
+          },
+          {
+            "x": 13,
+            "y": 13,
+            "cote": "ouest",
+            "type": "passage"
+          },
+          {
+            "x": 24,
+            "y": 13,
+            "cote": "est",
+            "type": "passage"
+          },
+          {
+            "x": 13,
+            "y": 14,
+            "cote": "ouest",
+            "type": "passage"
+          },
+          {
+            "x": 24,
+            "y": 14,
+            "cote": "est",
+            "type": "passage"
+          },
+          {
+            "x": 13,
+            "y": 15,
+            "cote": "ouest",
+            "type": "passage"
+          },
+          {
+            "x": 24,
+            "y": 15,
+            "cote": "est",
+            "type": "passage"
+          },
+          {
+            "x": 13,
+            "y": 16,
+            "cote": "ouest",
+            "type": "passage"
+          },
+          {
+            "x": 24,
+            "y": 16,
+            "cote": "est",
+            "type": "passage"
+          },
+          {
+            "x": 13,
+            "y": 17,
+            "cote": "ouest",
+            "type": "passage"
+          },
+          {
+            "x": 24,
+            "y": 17,
+            "cote": "est",
+            "type": "passage"
+          },
+          {
+            "x": 13,
+            "y": 18,
+            "cote": "ouest",
+            "type": "passage"
+          },
+          {
+            "x": 24,
+            "y": 18,
+            "cote": "est",
+            "type": "passage"
+          },
+          {
+            "x": 13,
+            "y": 19,
+            "cote": "ouest",
+            "type": "passage"
+          },
+          {
+            "x": 24,
+            "y": 19,
+            "cote": "est",
+            "type": "passage"
+          }
+        ],
+        "lumieres": [
+          {
+            "x": 13,
+            "y": 10,
+            "rayon": 3,
+            "couleur": "#ffcc77"
+          },
+          {
+            "x": 24,
+            "y": 10,
+            "rayon": 3,
+            "couleur": "#ffcc77"
+          },
+          {
+            "x": 13,
+            "y": 19,
+            "rayon": 3,
+            "couleur": "#ffcc77"
+          },
+          {
+            "x": 24,
+            "y": 19,
+            "rayon": 3,
+            "couleur": "#ffcc77"
+          },
+          {
+            "x": 19,
+            "y": 7,
+            "rayon": 3,
+            "couleur": "#d8c8ff"
+          },
+          {
+            "x": 28,
+            "y": 13,
+            "rayon": 3,
+            "couleur": "#ff9a40"
+          },
+          {
+            "x": 10,
+            "y": 13,
+            "rayon": 3,
+            "couleur": "#ff6a20"
+          },
+          {
+            "x": 30,
+            "y": 13,
+            "rayon": 2,
+            "couleur": "#ffd28a"
+          },
+          {
+            "x": 34,
+            "y": 16,
+            "rayon": 2,
+            "couleur": "#ffd28a"
+          },
+          {
+            "x": 28,
+            "y": 23,
+            "rayon": 2,
+            "couleur": "#cfe0ff"
+          },
+          {
+            "x": 4,
+            "y": 5,
+            "rayon": 2,
+            "couleur": "#ffcc88"
+          },
+          {
+            "x": 37,
+            "y": 27,
+            "rayon": 2,
+            "couleur": "#ffb060"
+          },
+          {
+            "x": 8,
+            "y": 4,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 14,
+            "y": 4,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 7,
+            "y": 8,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 11,
+            "y": 8,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 6,
+            "y": 12,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 2,
+            "y": 19,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 6,
+            "y": 19,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 10,
+            "y": 19,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 3,
+            "y": 24,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 8,
+            "y": 24,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 13,
+            "y": 24,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 23,
+            "y": 24,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 35,
+            "y": 5,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 40,
+            "y": 5,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 35,
+            "y": 10,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 40,
+            "y": 10,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 35,
+            "y": 20,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 40,
+            "y": 20,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          }
+        ],
+        "elements": [
+          {
+            "nom": "Maison 1",
+            "x": 7,
+            "y": 2,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 2",
+            "x": 13,
+            "y": 2,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 3",
+            "x": 6,
+            "y": 6,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 4",
+            "x": 10,
+            "y": 6,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 5",
+            "x": 5,
+            "y": 10,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 6",
+            "x": 1,
+            "y": 17,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 7",
+            "x": 5,
+            "y": 17,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 8",
+            "x": 9,
+            "y": 17,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 9",
+            "x": 2,
+            "y": 22,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 10",
+            "x": 7,
+            "y": 22,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 11",
+            "x": 12,
+            "y": 22,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 12",
+            "x": 22,
+            "y": 22,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 13",
+            "x": 34,
+            "y": 3,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 14",
+            "x": 39,
+            "y": 3,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 15",
+            "x": 34,
+            "y": 8,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 16",
+            "x": 39,
+            "y": 8,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 17",
+            "x": 34,
+            "y": 18,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 18",
+            "x": 39,
+            "y": 18,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Chapelle",
+            "x": 17,
+            "y": 2,
+            "l": 4,
+            "h": 5
+          },
+          {
+            "nom": "Cimetière",
+            "x": 22,
+            "y": 2,
+            "l": 6,
+            "h": 5
+          },
+          {
+            "nom": "Moulin",
+            "x": 2,
+            "y": 2,
+            "l": 3,
+            "h": 3
+          },
+          {
+            "nom": "Taverne",
+            "x": 26,
+            "y": 10,
+            "l": 4,
+            "h": 3
+          },
+          {
+            "nom": "Forge",
+            "x": 9,
+            "y": 10,
+            "l": 3,
+            "h": 3
+          },
+          {
+            "nom": "Gibet",
+            "x": 14,
+            "y": 11,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Puits",
+            "x": 18,
+            "y": 14,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Pont",
+            "x": 31,
+            "y": 14,
+            "l": 3,
+            "h": 2
+          },
+          {
+            "nom": "Lavoir",
+            "x": 27,
+            "y": 21,
+            "l": 3,
+            "h": 2
+          },
+          {
+            "nom": "Grange",
+            "x": 35,
+            "y": 23,
+            "l": 5,
+            "h": 4
+          }
+        ]
+      }
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

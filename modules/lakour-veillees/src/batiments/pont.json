@@ -1,0 +1,30 @@
+{
+  "_id": "bVJKwASGyN0fAEa7",
+  "_key": "!items!bVJKwASGyN0fAEa7",
+  "name": "Le Pont",
+  "type": "batiment",
+  "img": "modules/lakour-veillees/assets/jetons/batiment-pont.svg",
+  "system": {
+    "cle": "pont",
+    "description": "<p>Le pont de pierre sur la Brume, la rivière qui coupe le village. Les maisons 13 à 18 sont sur l'autre rive.</p>",
+    "regle": "<p><strong>L'autre rive.</strong> Les maisons <strong>13 à 18</strong> sont de l'autre côté du Pont ; environ un tiers des joueurs y dort, quelle que soit la taille du village. Si la meute a tué sur l'autre rive une nuit, elle <strong>ne peut pas traverser</strong> la nuit suivante : aucune maison de l'autre rive ne peut être sa proie.</p>",
+    "repere": "Pont",
+    "effet": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "pont"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

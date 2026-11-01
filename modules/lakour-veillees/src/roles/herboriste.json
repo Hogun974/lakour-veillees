@@ -1,0 +1,45 @@
+{
+  "_id": "DbHGXiBw2d5RPPc6",
+  "_key": "!items!DbHGXiBw2d5RPPc6",
+  "name": "Herboriste",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/herboriste.svg",
+  "system": {
+    "cle": "herboriste",
+    "camp": "village",
+    "description": "<p>Tes fioles dorment dans la paille, une verte et une noire.</p><p>Chaque nuit, après la chasse, le narrateur te dit qui la meute a attaqué. Tu désignes alors un joueur :<br>- <strong>la victime de la nuit</strong> : tu lui verses ton <strong>remède</strong>, elle survit (une fois par partie) ;<br>- <strong>n'importe qui d'autre</strong> : tu verses ton <strong>poison</strong> dans son verre, il meurt à l'aube (une fois par partie).</p><p>Une seule fiole par nuit. Si la victime, c'est toi, tu peux te sauver toi-même. Passe pour garder tes fioles.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 50,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 1,
+      "soiMeme": true,
+      "invite": "Désigne la victime pour la sauver, quelqu'un d'autre pour l'empoisonner, ou passe."
+    },
+    "usages": {
+      "max": 2,
+      "restant": 2
+    },
+    "effet": "remede",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "herboriste"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

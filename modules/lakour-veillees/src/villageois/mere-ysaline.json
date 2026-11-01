@@ -1,0 +1,57 @@
+{
+  "_id": "kveB1UsXhHo4k4qa",
+  "_key": "!actors!kveB1UsXhHo4k4qa",
+  "name": "Mère Ysaline, la doyenne",
+  "type": "villageois",
+  "img": "modules/lakour-veillees/assets/jetons/villageois.svg",
+  "system": {
+    "joueur": "",
+    "vivant": true,
+    "revele": false,
+    "camp": "village",
+    "maison": "Puits",
+    "amoureux": "",
+    "silence": false,
+    "protections": 0,
+    "notes": "<p>La plus vieille du village. Elle passe ses journées sur le banc près du puits et se souvient de « l'autre automne », celui dont personne ne veut parler.</p>"
+  },
+  "items": [],
+  "effects": [],
+  "prototypeToken": {
+    "name": "Mère Ysaline, la doyenne",
+    "actorLink": false,
+    "disposition": 0,
+    "displayName": 20,
+    "displayBars": 0,
+    "width": 1,
+    "height": 1,
+    "texture": {
+      "src": "modules/lakour-veillees/assets/jetons/villageois.svg",
+      "fit": "contain",
+      "scaleX": 1,
+      "scaleY": 1
+    },
+    "bar1": {
+      "attribute": null
+    },
+    "bar2": {
+      "attribute": null
+    }
+  },
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "mere-ysaline",
+      "jeton": "villageois"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

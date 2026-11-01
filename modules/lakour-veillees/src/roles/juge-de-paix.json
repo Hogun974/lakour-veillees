@@ -1,0 +1,45 @@
+{
+  "_id": "bI0Iczu8Z58vbIy3",
+  "_key": "!items!bI0Iczu8Z58vbIy3",
+  "name": "Juge de paix",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/juge-de-paix.svg",
+  "system": {
+    "cle": "juge-de-paix",
+    "camp": "village",
+    "description": "<p>Tu portes l'écharpe et le registre.</p><p><strong>Une fois par partie</strong>, juste après le dépouillement et avant l'exécution, tu peux <strong>annuler le vote</strong> : personne n'est exécuté et le village <strong>revote</strong> aussitôt, sans nouveau débat. Tu te révèles en le faisant.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": false,
+      "ordre": 50,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 0,
+      "soiMeme": false,
+      "invite": ""
+    },
+    "usages": {
+      "max": 1,
+      "restant": 1
+    },
+    "effet": "annuler-vote",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "juge-de-paix"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

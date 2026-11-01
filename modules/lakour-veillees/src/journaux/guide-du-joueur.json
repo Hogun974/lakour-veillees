@@ -1,0 +1,176 @@
+{
+  "_id": "IWLvmKtjvzPRJYr5",
+  "_key": "!journal!IWLvmKtjvzPRJYr5",
+  "name": "Les Veillées de Brumecombe — Guide du joueur",
+  "folder": null,
+  "sort": 0,
+  "categories": [],
+  "ownership": {
+    "default": 2
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "guide-du-joueur",
+      "visible": true
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  },
+  "pages": [
+    {
+      "_id": "Fqt9ZQXVhrS4aEav",
+      "_key": "!journal.pages!IWLvmKtjvzPRJYr5.Fqt9ZQXVhrS4aEav",
+      "name": "Bienvenue à Brumecombe",
+      "type": "text",
+      "sort": 100,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Un village dans la brume</h2><p>Brumecombe est un village de fond de vallée, coupé du monde chaque automne par une brume si épaisse qu'on n'y voit pas sa propre main. Une rivière, la Brume, le traverse ; un pont de pierre relie les deux rives. Il y a une chapelle, un moulin, une taverne, une forge, un cimetière et dix-huit maisons aux volets clos.</p><p>Cet automne, on a retrouvé le berger de la Combe-aux-Sorbiers dans le fossé, la gorge ouverte. Ce n'était pas un loup des bois : les loups des bois n'ouvrent pas les loquets.</p><p><strong>Certains d'entre vous sont des loups.</strong> Le jour, ils parlent, votent et pleurent avec les autres. La nuit, ils entrent dans les maisons. Les autres ont une seule arme : la parole, et le vote du village.</p><h2>Le principe</h2><ul><li>Chaque joueur reçoit en secret un <strong>rôle</strong> : il dit dans quel camp il joue et quel pouvoir il a.</li><li>Chaque joueur reçoit aussi un <strong>métier</strong>, public : tout le monde sait qui est le forgeron ou la meunière. Le métier ne dit rien du camp.</li><li>La partie alterne <strong>nuits</strong> (les rôles agissent en secret) et <strong>jours</strong> (le village débat, puis vote pour exécuter un suspect).</li><li>Un <strong>narrateur</strong> mène la partie : c'est le MJ, humain ou IA. Il connaît tous les rôles et ne ment jamais sur les règles.</li></ul><h2>Les camps</h2><ul><li><strong>Le Village</strong> gagne quand <strong>plus aucun loup</strong> ne vit.</li><li><strong>La Meute</strong> gagne quand les loups sont <strong>aussi nombreux</strong> que tous les autres vivants réunis.</li><li><strong>Les solitaires</strong> ont chacun leur propre condition de victoire, écrite sur leur rôle.</li><li><strong>Les amants</strong> (liés par l'Entremetteuse) gagnent ensemble s'ils sont les deux derniers vivants, quel que soit leur camp ; sinon chacun gagne avec son camp.</li></ul>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "0r20QSMNpotjnHTY",
+      "_key": "!journal.pages!IWLvmKtjvzPRJYr5.0r20QSMNpotjnHTY",
+      "name": "Déroulement d'une partie",
+      "type": "text",
+      "sort": 200,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>La préparation</h2><p>Le narrateur choisit une composition (selon le nombre de joueurs et le niveau), met 4 à 6 <strong>bâtiments</strong> en jeu, puis distribue en secret un rôle et un métier à chacun. Chacun reçoit son rôle en <strong>message privé</strong> et voit sa fiche ; personne d'autre ne la voit. Chacun a une <strong>maison</strong> sur la carte du village (« Maison 1 » à « Maison 18 »).</p><h2>La nuit</h2><p>Le narrateur annonce la nuit. Tout le monde « ferme les yeux » : on se tait, on n'écrit plus sur le canal commun.</p><p>Le narrateur réveille les rôles <strong>un par un, dans l'ordre</strong>, toujours en secret : une <strong>fenêtre de choix</strong> s'ouvre chez le joueur concerné, avec une question (« Quelle maison éclaires-tu cette nuit ? ») et la liste des joueurs. Il choisit, ou il passe. Les loups se réveillent ensemble et votent pour leur victime ; à égalité, le premier choix l'emporte.</p><p>Si ta fenêtre ne s'ouvre pas, c'est que ton rôle ne joue pas cette nuit. Ne le dis à personne.</p><h2>L'aube</h2><p>Le narrateur raconte ce que le village découvre au matin : qui est mort, et parfois comment. Selon le réglage, le <strong>rôle des morts est révélé</strong> ou non. Un mort ne parle plus, ne vote plus, et ne doit plus rien révéler aux vivants (il peut regarder la partie).</p><h2>Le jour</h2><p>Le village <strong>débat</strong> : on accuse, on se défend, on ment ou l'on dit vrai. Le débat est minuté (cinq minutes par défaut, moins quand il reste peu de joueurs).</p><p>Les <strong>pouvoirs de jour</strong> (ton métier, quelques rôles comme le Juge de paix ou la Conteuse, et certains bâtiments) se jouent pendant le jour : clique sur ton pouvoir dans la <strong>Table de jeu</strong>, ou annonce-le au narrateur à voix haute. Le système vérifie que c'est le bon moment, applique l'effet et l'annonce au village. Un pouvoir « une fois par partie » ne revient pas.</p><h2>Le vote</h2><p>Le narrateur ouvre le <strong>vote</strong> : chaque vivant clique sur un nom dans la fenêtre de vote (ou sur la Table de jeu). On peut changer d'avis jusqu'à la clôture. Les voix restent <strong>secrètes jusqu'au dépouillement</strong> : on voit seulement qui a déjà voté. Au dépouillement, le joueur qui a <strong>le plus de voix est exécuté</strong> et quitte la partie — sauf si le <strong>Juge de paix</strong> annule le vote (le village revote aussitôt) ou si le plus désigné porte le <strong>ruban de la Tisserande</strong> (une minute de défense de plus, le vote reste ouvert).</p><p>Si la <strong>Chapelle</strong> est en jeu, un second vote, rapide, désigne ensuite qui dormira à l'abri la nuit suivante.</p><p><strong>Égalité</strong> : les ex æquo ont trente secondes chacun pour se défendre, puis le village revote <strong>entre eux seulement</strong>. Nouvelle égalité : personne n'est exécuté ce jour-là, et la nuit tombe.</p><p>Puis la nuit revient, et ainsi de suite jusqu'à la victoire d'un camp.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "PYGneq7UaCKyiAXF",
+      "_key": "!journal.pages!IWLvmKtjvzPRJYr5.PYGneq7UaCKyiAXF",
+      "name": "Dans Foundry",
+      "type": "text",
+      "sort": 300,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Ce que tu vois</h2><ul><li><strong>La carte du village</strong> : chaque joueur a son jeton devant sa maison. Les jetons montrent un <strong>villageois encapuchonné</strong> tant que le rôle n'est pas révélé ; à la mort (si les rôles sont révélés), le jeton prend l'image du rôle.</li><li><strong>La Table de jeu</strong> (bouton dans les contrôles du calque Jetons) : la phase, le tour, le minuteur, qui vit et qui est mort, les métiers, les bâtiments en jeu, <strong>tes pouvoirs de jour</strong> (un bouton par pouvoir, grisé quand ce n'est pas le moment), ce qui vaudra la nuit prochaine (verrous, Taverne, Grange…), et pendant un vote, les boutons de vote.</li><li><strong>Ta fiche</strong> : ton rôle et ton pouvoir (toi seul et le narrateur les voyez), ton métier (public).</li><li><strong>La fenêtre de choix de nuit</strong> : elle ne s'ouvre que chez toi, et rien n'apparaît chez les autres. Si le Messager te choisit comme expéditeur, elle te demande d'écrire ta phrase.</li></ul><h2>Les messages privés</h2><p>Le narrateur te parle en message privé pour tout ce qui est secret : ton rôle, ce que tu apprends la nuit, le mot que te porte le Messager. Tout arrive dans ton <strong>carnet secret</strong> (bouton de la Table de jeu), envoyé à toi seul. <strong>Ne recopie jamais un message privé sur le canal commun</strong> : dire ce que tu sais, c'est ton droit ; montrer la preuve, c'est interdit.</p><h2>Le savoir-vivre de la veillée</h2><ul><li>Pendant la nuit, silence sur le canal commun et sur la voix.</li><li>Pas de capture d'écran de ta fiche ni de ta fenêtre de choix.</li><li>Mentir sur ton rôle est permis, et même attendu. Tricher en dehors du jeu ne l'est pas.</li><li>Les morts se taisent. Ils peuvent rire, mais en silence.</li><li>On attaque des rôles, pas des personnes.</li></ul><h2>Les compagnons IA</h2><p>Pour compléter une petite table, le narrateur peut donner des places à des <strong>compagnons IA</strong> : des villageois joués par une IA, comme des joueurs. Ils reçoivent un rôle en secret, choisissent la nuit, parlent au débat et votent. Ils ne trichent pas : un compagnon ne sait que ce que sait son villageois (son rôle, son carnet, ce qui se dit en public). Soupçonne-les, crois-les ou mens-leur comme à n'importe qui.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "5hUHALWZp9AW8uVQ",
+      "_key": "!journal.pages!IWLvmKtjvzPRJYr5.5hUHALWZp9AW8uVQ",
+      "name": "Les rôles de la Meute",
+      "type": "text",
+      "sort": 400,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>La Meute</h2><p>Les loups se reconnaissent dès la première nuit. Chaque nuit, <strong>ils se réveillent ensemble</strong> et désignent une victime. Certains loups ont en plus un pouvoir propre : ils se réveillent une seconde fois, seuls.</p><ul><li><strong>Loup de Brumecombe</strong> — chaque nuit, avec la meute, choisit la victime.</li><li><strong>Loup affamé</strong> — une nuit sur deux, tue seul une seconde victime.</li><li><strong>Loup déguisé</strong> — apparaît comme villageois à toute vision ; perd son masque s'il survit à un vote qui l'a désigné.</li><li><strong>Louve mère</strong> — une fois par partie, mord la victime de la meute au lieu de la tuer : elle rejoint la meute en secret.</li><li><strong>Loup hurleur</strong> — chaque nuit, impose le silence à un joueur pour le débat du lendemain.</li><li><strong>Loup flaireur</strong> — chaque nuit, flaire un joueur et apprend son camp.</li></ul>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "1pSxCTUtrYl8LBp0",
+      "_key": "!journal.pages!IWLvmKtjvzPRJYr5.1pSxCTUtrYl8LBp0",
+      "name": "Les rôles du Village",
+      "type": "text",
+      "sort": 500,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Le Village</h2><p>Le village gagne quand plus aucun loup ne vit. La plupart de ses rôles ont un pouvoir, de nuit ou de jour ; certains n'en ont aucun.</p><ul><li><strong>Villageois</strong> — aucun pouvoir, une voix.</li><li><strong>Veilleuse de lanterne</strong> — éclaire une maison chaque nuit : un loup qui y entre est démasqué à l'aube.</li><li><strong>Liseuse de cendres</strong> — chaque nuit, apprend le camp d'un joueur.</li><li><strong>Herboriste</strong> — un remède (sauve la victime de la nuit) et un poison (tue), une fois chacun.</li><li><strong>Garde du pont</strong> — protège un joueur par nuit, jamais deux fois de suite le même.</li><li><strong>Sonneur</strong> — une fois par partie, sonne la cloche : le vote du jour désigne deux condamnés.</li><li><strong>Fossoyeur</strong> — chaque matin, apprend le rôle exact d'un mort.</li><li><strong>Braconnière</strong> — si elle meurt, elle emporte un joueur de son choix.</li><li><strong>Conteuse</strong> — une fois par partie, impose deux minutes de débat sur un joueur, qui ne peut pas répondre.</li><li><strong>Juge de paix</strong> — une fois par partie, annule un vote : le village revote.</li><li><strong>Enfant de la brume</strong> — peut épier la meute la nuit, mais s'il est repéré, il devient la victime.</li><li><strong>Ermite</strong> — chaque nuit, apprend le nom d'un joueur qui a agi (sans savoir ce qu'il a fait).</li><li><strong>Messager</strong> — chaque nuit, porte un message secret entre deux joueurs.</li><li><strong>Entremetteuse</strong> — unit deux amants la première nuit, puis joue avec le village.</li><li><strong>Gardienne des clés</strong> — chaque nuit, verrouille une maison : personne n'y entre, personne n'en sort.</li><li><strong>Sourcier</strong> — une nuit sur deux, apprend si deux joueurs sont du même camp.</li></ul>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "52N3zwvQlajoeEAt",
+      "_key": "!journal.pages!IWLvmKtjvzPRJYr5.52N3zwvQlajoeEAt",
+      "name": "Les solitaires",
+      "type": "text",
+      "sort": 600,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Les solitaires</h2><p>Ils ne jouent ni pour le village ni pour la meute. Chacun a sa propre condition de victoire.</p><ul><li><strong>Revenant</strong> — gagne s'il est exécuté par le village. <em>Victoire :</em> Tu gagnes seul et aussitôt si le village t'exécute au vote. La partie continue pour les autres.</li><li><strong>Colporteur</strong> — échange en secret son rôle avec un autre joueur, une fois ; gagne avec son nouveau camp. <em>Victoire :</em> Tant que tu n'as pas échangé, tu ne peux pas gagner. Après l'échange, tu gagnes avec le camp de ton nouveau rôle. Celui qui a reçu ton rôle reste solitaire et ne gagne que s'il est encore vivant à la fin de la partie.</li><li><strong>Chasseur de primes</strong> — reçoit une cible au début : gagne si elle est exécutée de jour. <em>Victoire :</em> Tu gagnes seul et aussitôt si ta cible est exécutée par le vote du village, que tu sois vivant ou non. Si elle meurt d'une autre façon, tu deviens un simple villageois et joues avec le village.</li><li><strong>Pyromane</strong> — asperge une maison par nuit ; une nuit, met le feu à toutes les maisons aspergées ; gagne seul. <em>Victoire :</em> Tu gagnes seul si tu es le dernier vivant, ou le dernier avec un seul autre joueur qui n'est pas un loup.</li></ul>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "CxKHPCOdqapMGQad",
+      "_key": "!journal.pages!IWLvmKtjvzPRJYr5.CxKHPCOdqapMGQad",
+      "name": "Les métiers",
+      "type": "text",
+      "sort": 700,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Les métiers publics</h2><p>Chaque joueur a un métier, <strong>connu de tous</strong>. Il donne un petit pouvoir de <strong>jour</strong>, en général <strong>une fois par partie</strong> : on l'annonce à voix haute au narrateur. Un métier ne dit rien du camp : la meunière peut être une louve.</p><ul><li><strong>Forgeron</strong> — forge un verrou : la prochaine attaque de loup contre une maison échoue.</li><li><strong>Meunière</strong> — annonce combien de loups vivent encore.</li><li><strong>Garde du guet</strong> — garde un joueur à l'œil : il ne peut visiter aucune autre maison la nuit suivante.</li><li><strong>Curé</strong> — bénit un joueur : il ne peut pas être réduit au silence et parle le premier.</li><li><strong>Chasseresse</strong> — apprend si un joueur a quitté sa maison cette nuit.</li><li><strong>Aubergiste</strong> — offre le gîte : un joueur dort à la Taverne la nuit suivante.</li><li><strong>Apothicaire</strong> — rend la parole à un joueur réduit au silence.</li><li><strong>Colporteur de nouvelles</strong> — obtient du narrateur un indice vrai mais flou sur la nuit.</li><li><strong>Tisserande</strong> — noue un ruban : le joueur désigné au vote gagne une minute de défense.</li><li><strong>Passeur</strong> — fait traverser un joueur : il ne peut ni être visité ni agir la nuit suivante.</li><li><strong>Tanneur</strong> — examine un mort de la nuit : traces de crocs ou non.</li><li><strong>Maîtresse d'école</strong> — fait l'appel : chacun parle trente secondes, à tour de rôle.</li></ul>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "eAtpj7TZAGIntonE",
+      "_key": "!journal.pages!IWLvmKtjvzPRJYr5.eAtpj7TZAGIntonE",
+      "name": "Les bâtiments",
+      "type": "text",
+      "sort": 800,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Les bâtiments en jeu</h2><p>Chaque partie met <strong>4 à 6 bâtiments</strong> en jeu : le narrateur les annonce au début, et la Table de jeu les rappelle. Chacun change une règle. Sur la carte, chaque bâtiment est un lieu du village où l'on peut se retrouver.</p><ul><li><strong>La Chapelle</strong> — le village y met un joueur à l'abri chaque nuit. Asile. Chaque jour, après le vote, le village désigne à main levée (un second vote, rapide) un joueur vivant qui dormira à la Chapelle : la meute ne peut pas l'attaquer la nuit suivante. Jamais deux nuits de suite le même joueur. Le poison et le feu passent la porte.</li><li><strong>Le Moulin</strong> — la meule compte les loups vivants. La meule qui compte. Chaque matin, la Meunière (si quelqu'un a ce métier) apprend en secret le nombre de loups encore vivants. Sans Meunière vivante, le narrateur l'annonce à tout le village un matin sur deux (après la deuxième nuit, la quatrième…).</li><li><strong>La Taverne</strong> — ceux qui y dorment se protègent, sauf si un loup est parmi eux. Dortoir. Chaque jour, jusqu'à trois joueurs peuvent annoncer qu'ils dormiront à la Taverne. La nuit suivante, la meute ne peut tuer aucun d'eux… sauf si un loup dort parmi eux : alors elle peut y tuer celui de son choix, et aucune protection ne joue. L'hôte de l'Aubergiste prend l'un des trois lits. Le poison et le feu atteignent les dormeurs comme ailleurs.</li><li><strong>Le Gibet</strong> — une exécution exige la majorité absolue. Majorité absolue. Pour exécuter un joueur, il faut que plus de la moitié des vivants aient voté pour lui. Sinon, personne n'est exécuté ce jour-là.</li><li><strong>Le Puits</strong> — un mort peut transmettre un dernier mot. Dernier mot. Une fois par partie, un joueur qui vient de mourir (cette nuit ou ce jour) peut confier au puits un dernier mot de dix mots au plus, que le narrateur lit au village. Le premier mort qui le demande l'obtient.</li><li><strong>La Forge</strong> — une lame qui blesse la meute. Une lame sous l'oreiller. Une fois par partie, pendant le jour, un joueur peut annoncer qu'il emporte une lame de la forge. Si la meute l'attaque la nuit suivante, la lame ne le protège pas (il meurt, sauf protection), mais il blesse un loup tiré au hasard parmi ceux qui chassaient : ce loup est réduit au silence au jour suivant (le narrateur dit seulement « du sang de bête sur le seuil »).</li><li><strong>Le Cimetière</strong> — le camp des morts finit par se savoir. Les tombes parlent. Si les rôles ne sont pas révélés à la mort, le narrateur annonce chaque matin le camp (pas le rôle) de chaque joueur mort depuis le matin précédent, les morts de la nuit compris. Si les rôles sont révélés à la mort, le Cimetière est sans effet.</li><li><strong>Le Pont</strong> — la meute ne traverse pas deux nuits de suite. L'autre rive. Les maisons 13 à 18 sont de l'autre côté du Pont ; environ un tiers des joueurs y dort, quelle que soit la taille du village. Si la meute a tué sur l'autre rive une nuit, elle ne peut pas traverser la nuit suivante : aucune maison de l'autre rive ne peut être sa proie.</li><li><strong>Le Lavoir</strong> — chaque matin, un indice vrai mais flou. Les bavardages. Chaque matin, le narrateur rapporte ce qu'on dit au lavoir : un indice vrai mais flou sur la nuit passée (« quelqu'un est sorti par la porte de derrière », « la victime avait de la visite deux nuits plus tôt »). Il ne nomme jamais personne.</li><li><strong>La Grange</strong> — une cachette où l'on ne peut ni être trouvé ni agir. Cachette. Une fois par partie et par joueur, on peut annoncer pendant le jour qu'on se cache dans la Grange : la nuit suivante, on ne peut pas être trouvé (aucune visite ne réussit, et le feu d'une maison vide ne tue personne), mais on ne peut pas agir. Deux joueurs au plus par nuit.</li></ul>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    }
+  ]
+}

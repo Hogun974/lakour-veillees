@@ -1,0 +1,30 @@
+{
+  "_id": "Rg4NsKM5nw6jNIg8",
+  "_key": "!items!Rg4NsKM5nw6jNIg8",
+  "name": "Le Moulin",
+  "type": "batiment",
+  "img": "modules/lakour-veillees/assets/jetons/batiment-moulin.svg",
+  "system": {
+    "cle": "moulin",
+    "description": "<p>Le moulin à vent sur la butte de l'ouest. Ses ailes tournent même quand il n'y a pas de vent, disent les enfants.</p>",
+    "regle": "<p><strong>La meule qui compte.</strong> Chaque matin, la Meunière (si quelqu'un a ce métier) apprend en secret le <strong>nombre de loups encore vivants</strong>. Sans Meunière vivante, le narrateur l'annonce à tout le village <strong>un matin sur deux</strong> (après la deuxième nuit, la quatrième…).</p>",
+    "repere": "Moulin",
+    "effet": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "moulin"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

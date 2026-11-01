@@ -1,0 +1,45 @@
+{
+  "_id": "Q0BRLSmf34mpvMPU",
+  "_key": "!items!Q0BRLSmf34mpvMPU",
+  "name": "Sonneur",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/sonneur.svg",
+  "system": {
+    "cle": "sonneur",
+    "camp": "village",
+    "description": "<p>La corde de la cloche passe par ta fenêtre.</p><p><strong>Une fois par partie</strong>, au début d'un vote, tu peux annoncer que tu sonnes la cloche : <strong>ce vote désigne deux condamnés</strong> au lieu d'un (les deux villageois qui ont le plus de voix ; une égalité pour la seconde place la laisse vide). Tu te révèles en le faisant.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": false,
+      "ordre": 50,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 0,
+      "soiMeme": false,
+      "invite": ""
+    },
+    "usages": {
+      "max": 1,
+      "restant": 1
+    },
+    "effet": "vote-double",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "sonneur"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

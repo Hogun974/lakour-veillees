@@ -1,0 +1,37 @@
+{
+  "_id": "Xms3unABnsOov4TS",
+  "_key": "!items!Xms3unABnsOov4TS",
+  "name": "Garde du guet",
+  "type": "metier",
+  "img": "modules/lakour-veillees/assets/jetons/metier-garde.svg",
+  "system": {
+    "cle": "garde",
+    "description": "<p>Tu fais la ronde avec ta pique et ton sifflet.</p><p><strong>Une fois par partie</strong>, pendant le jour, tu annonces que tu <strong>gardes un joueur à l'œil</strong> : la nuit suivante, il ne peut utiliser <strong>aucun pouvoir qui vise une autre maison</strong> que la sienne (s'il est loup, la meute chasse sans lui).</p>",
+    "jour": {
+      "actif": true,
+      "invite": "Qui gardes-tu à l'œil cette nuit ?",
+      "cibles": 1
+    },
+    "usages": {
+      "max": 1,
+      "restant": 1
+    },
+    "effet": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "garde"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

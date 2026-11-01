@@ -1,0 +1,45 @@
+{
+  "_id": "nvxabQa8s1E8fYPS",
+  "_key": "!items!nvxabQa8s1E8fYPS",
+  "name": "Entremetteuse",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/entremetteuse.svg",
+  "system": {
+    "cle": "entremetteuse",
+    "camp": "village",
+    "description": "<p>Tu as marié la moitié du village et tu n'as pas dit ton dernier mot.</p><p><strong>La première nuit</strong>, tu désignes deux joueurs (toi comprise) : ils deviennent <strong>amants</strong>. Le narrateur les prévient en secret ; ils apprennent le nom l'un de l'autre, pas leur rôle. Si l'un meurt, l'autre meurt de chagrin aussitôt.</p><p>Les amants gagnent <strong>ensemble</strong>, quel que soit leur camp : si l'un est loup et l'autre villageois, ils ne gagnent qu'en restant les deux derniers vivants. Toi, ensuite, tu joues avec le village.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 5,
+      "premiereNuitSeulement": true,
+      "uneNuitSurDeux": false,
+      "cibles": 2,
+      "soiMeme": true,
+      "invite": "Quels deux cœurs lies-tu cette nuit ?"
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "lien-amour",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "entremetteuse"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

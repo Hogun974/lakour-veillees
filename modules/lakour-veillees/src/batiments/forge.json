@@ -1,0 +1,30 @@
+{
+  "_id": "xF0rpQdfm1I5aCuj",
+  "_key": "!items!xF0rpQdfm1I5aCuj",
+  "name": "La Forge",
+  "type": "batiment",
+  "img": "modules/lakour-veillees/assets/jetons/batiment-forge.svg",
+  "system": {
+    "cle": "forge",
+    "description": "<p>La forge à l'ouest de la place, toujours rouge, toujours chaude. Le forgeron dort à côté de l'enclume.</p>",
+    "regle": "<p><strong>Une lame sous l'oreiller.</strong> <strong>Une fois par partie</strong>, pendant le jour, un joueur peut annoncer qu'il emporte une <strong>lame</strong> de la forge. Si la meute l'attaque la nuit suivante, la lame ne le protège pas (il meurt, sauf protection), mais il <strong>blesse un loup</strong> tiré au hasard parmi ceux qui chassaient : ce loup est <strong>réduit au silence</strong> au jour suivant (le narrateur dit seulement « du sang de bête sur le seuil »).</p>",
+    "repere": "Forge",
+    "effet": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "forge"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

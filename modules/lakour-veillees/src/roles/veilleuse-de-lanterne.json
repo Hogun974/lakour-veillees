@@ -1,0 +1,45 @@
+{
+  "_id": "E3HcICLsexn0uSqA",
+  "_key": "!items!E3HcICLsexn0uSqA",
+  "name": "Veilleuse de lanterne",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/veilleuse-de-lanterne.svg",
+  "system": {
+    "cle": "veilleuse-de-lanterne",
+    "camp": "village",
+    "description": "<p>Tu marches la nuit avec ta lanterne, et la brume s'écarte devant toi.</p><p><strong>Chaque nuit</strong>, tu éclaires une maison (la tienne comprise). Si un <strong>loup</strong> y entre cette nuit (pour tuer, mordre ou flairer), il est <strong>démasqué à l'aube</strong> : le narrateur annonce son nom à tout le village. Ta lumière ne protège personne.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 25,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 1,
+      "soiMeme": true,
+      "invite": "Quelle maison éclaires-tu cette nuit ?"
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "eclairer",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "veilleuse-de-lanterne"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

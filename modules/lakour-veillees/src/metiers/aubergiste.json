@@ -1,0 +1,37 @@
+{
+  "_id": "W8qJeQ1Pxc8fal57",
+  "_key": "!items!W8qJeQ1Pxc8fal57",
+  "name": "Aubergiste",
+  "type": "metier",
+  "img": "modules/lakour-veillees/assets/jetons/metier-aubergiste.svg",
+  "system": {
+    "cle": "aubergiste",
+    "description": "<p>Ta salle est la seule du village où l'on parle à voix haute après la nuit tombée.</p><p><strong>Une fois par partie</strong>, pendant le jour, tu offres le <strong>gîte</strong> à un joueur (toi compris) : la nuit suivante, il dort à la <strong>Taverne</strong> et non chez lui. La meute qui entre dans sa maison la trouve vide (le poison et le feu, eux, l'atteignent). Si la Taverne est en jeu, il y prend l'un des trois lits et sa règle s'applique.</p>",
+    "jour": {
+      "actif": true,
+      "invite": "À qui offres-tu un lit à la Taverne cette nuit ?",
+      "cibles": 1
+    },
+    "usages": {
+      "max": 1,
+      "restant": 1
+    },
+    "effet": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "aubergiste"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

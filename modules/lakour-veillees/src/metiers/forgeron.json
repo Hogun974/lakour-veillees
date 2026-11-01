@@ -1,0 +1,37 @@
+{
+  "_id": "EiwiuY8leDaDWabk",
+  "_key": "!items!EiwiuY8leDaDWabk",
+  "name": "Forgeron",
+  "type": "metier",
+  "img": "modules/lakour-veillees/assets/jetons/metier-forgeron.svg",
+  "system": {
+    "cle": "forgeron",
+    "description": "<p>Ton marteau s'entend de la place, et ta porte ne ferme jamais tout à fait.</p><p><strong>Une fois par partie</strong>, pendant le jour, tu forges un <strong>verrou</strong> pour la maison d'un joueur (la tienne comprise) : la nuit suivante, la <strong>première attaque de loup</strong> contre cette maison échoue (le poison et le feu passent). Tout le monde sait à qui tu l'as donné.</p>",
+    "jour": {
+      "actif": true,
+      "invite": "À quelle maison donnes-tu ton verrou ?",
+      "cibles": 1
+    },
+    "usages": {
+      "max": 1,
+      "restant": 1
+    },
+    "effet": "proteger"
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "forgeron"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

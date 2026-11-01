@@ -1,0 +1,45 @@
+{
+  "_id": "BzLf5oSqNiV9ingT",
+  "_key": "!items!BzLf5oSqNiV9ingT",
+  "name": "Louve mère",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/louve-mere.svg",
+  "system": {
+    "cle": "louve-mere",
+    "camp": "meute",
+    "description": "<p>Tu as porté la meute avant qu'elle ait des noms.</p><p>Tu chasses chaque nuit avec la meute. <strong>Une fois par partie</strong>, juste après le choix de la meute, tu peux décider de <strong>mordre</strong> la victime au lieu de la tuer : personne ne meurt cette nuit-là, et la victime rejoint la meute en secret. Elle garde son rôle et ses pouvoirs, mais joue désormais pour les loups ; le narrateur la prévient en secret et elle se réveille avec la meute dès la nuit suivante.</p><p>Une victime protégée ne peut pas être mordue.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 41,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 1,
+      "soiMeme": false,
+      "invite": "La meute a choisi sa proie. Désigne-la pour la mordre au lieu de la tuer, ou passe."
+    },
+    "usages": {
+      "max": 1,
+      "restant": 1
+    },
+    "effet": "mordre",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "louve-mere"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

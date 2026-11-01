@@ -1,0 +1,30 @@
+{
+  "_id": "ADpPNKk8GepkynTw",
+  "_key": "!items!ADpPNKk8GepkynTw",
+  "name": "Le Puits",
+  "type": "batiment",
+  "img": "modules/lakour-veillees/assets/jetons/batiment-puits.svg",
+  "system": {
+    "cle": "puits",
+    "description": "<p>Le vieux puits au milieu de la place. Ceux qui se penchent dessus entendent parfois leur nom.</p>",
+    "regle": "<p><strong>Dernier mot.</strong> <strong>Une fois par partie</strong>, un joueur qui vient de mourir (cette nuit ou ce jour) peut confier au puits un <strong>dernier mot de dix mots au plus</strong>, que le narrateur lit au village. Le premier mort qui le demande l'obtient.</p>",
+    "repere": "Puits",
+    "effet": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "puits"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

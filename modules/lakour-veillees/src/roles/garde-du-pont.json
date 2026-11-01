@@ -1,0 +1,45 @@
+{
+  "_id": "mJhYVgFyhtzv9kXX",
+  "_key": "!items!mJhYVgFyhtzv9kXX",
+  "name": "Garde du pont",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/garde-du-pont.svg",
+  "system": {
+    "cle": "garde-du-pont",
+    "camp": "village",
+    "description": "<p>Tu tiens le pont depuis vingt hivers et tu sais rester éveillé.</p><p><strong>Chaque nuit</strong>, tu veilles sur un joueur (toi compris) : s'il est attaqué par la meute cette nuit, il survit. Tu ne peux pas protéger <strong>deux nuits de suite</strong> le même joueur. Ta garde n'arrête ni le poison ni le feu.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 20,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 1,
+      "soiMeme": true,
+      "invite": "Devant quelle porte montes-tu la garde cette nuit ?"
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "proteger",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "garde-du-pont"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

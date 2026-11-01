@@ -1,0 +1,45 @@
+{
+  "_id": "WEFt1DsF9Kz3ohnc",
+  "_key": "!items!WEFt1DsF9Kz3ohnc",
+  "name": "Loup flaireur",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/loup-flaireur.svg",
+  "system": {
+    "cle": "loup-flaireur",
+    "camp": "meute",
+    "description": "<p>Ton museau lit les seuils mieux qu'un registre.</p><p>Tu chasses chaque nuit avec la meute. Puis, <strong>chaque nuit</strong>, tu flaires la porte d'un joueur et le narrateur te dit en secret son <strong>camp</strong> (Village, Meute ou Solitaire). Tu peux partager ce que tu sais avec la meute la nuit suivante.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 44,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 1,
+      "soiMeme": false,
+      "invite": "Quel seuil veux-tu flairer cette nuit ?"
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "voir-camp",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "loup-flaireur"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

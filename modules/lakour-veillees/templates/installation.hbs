@@ -1,0 +1,11 @@
+<section class="lakourveil-installation">
+  {{#if systemeOk}}
+  <p>{{localize "LAKOURVEIL.Explication"}}</p>
+  <p>
+    {{#if installe}}<strong>{{localize "LAKOURVEIL.DejaInstalle"}}</strong> ({{installe}}){{else}}<em>{{localize "LAKOURVEIL.PasInstalle"}}</em>{{/if}}
+  </p>
+  <button type="button" data-action="installer"><i class="fa-solid fa-download"></i> {{localize "LAKOURVEIL.Installer"}}</button>
+  {{else}}
+  <p>{{localize "LAKOURVEIL.MauvaisSysteme"}}</p>
+  {{/if}}
+</section>

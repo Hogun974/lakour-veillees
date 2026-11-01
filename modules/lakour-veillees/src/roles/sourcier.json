@@ -1,0 +1,45 @@
+{
+  "_id": "q4anrYcTzDxWlW2V",
+  "_key": "!items!q4anrYcTzDxWlW2V",
+  "name": "Sourcier",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/sourcier.svg",
+  "system": {
+    "cle": "sourcier",
+    "camp": "village",
+    "description": "<p>Ta baguette de coudrier tremble entre deux personnes qui se ressemblent.</p><p><strong>Une nuit sur deux</strong>, tu désignes <strong>deux joueurs</strong> et le narrateur te dit en secret s'ils sont <strong>du même camp</strong> ou non. Rien de plus.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 62,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": true,
+      "cibles": 2,
+      "soiMeme": false,
+      "invite": "Entre quels deux joueurs fais-tu passer ta baguette ?"
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "voir-camp",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "sourcier"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

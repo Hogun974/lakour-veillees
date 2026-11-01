@@ -1,0 +1,30 @@
+{
+  "_id": "2rgmMfujSeFsz7nW",
+  "_key": "!items!2rgmMfujSeFsz7nW",
+  "name": "La Chapelle",
+  "type": "batiment",
+  "img": "modules/lakour-veillees/assets/jetons/batiment-chapelle.svg",
+  "system": {
+    "cle": "chapelle",
+    "description": "<p>Une chapelle de pierre grise au nord de la place, avec un clocher trop haut pour elle. La porte n'a jamais eu de serrure.</p>",
+    "regle": "<p><strong>Asile.</strong> Chaque jour, après le vote, le village désigne à main levée (un second vote, rapide) un joueur vivant qui <strong>dormira à la Chapelle</strong> : la meute ne peut pas l'attaquer la nuit suivante. Jamais deux nuits de suite le même joueur. Le poison et le feu passent la porte.</p>",
+    "repere": "Chapelle",
+    "effet": "proteger"
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "chapelle"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

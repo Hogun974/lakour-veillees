@@ -1,0 +1,45 @@
+{
+  "_id": "Uz9e9vNGNh8w7jNm",
+  "_key": "!items!Uz9e9vNGNh8w7jNm",
+  "name": "Loup affamé",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/loup-affame.svg",
+  "system": {
+    "cle": "loup-affame",
+    "camp": "meute",
+    "description": "<p>Tu chasses avec la meute, mais ta faim ne s'apaise jamais.</p><p><strong>Une nuit sur deux</strong> (la deuxième, la quatrième…), après la chasse de la meute, tu te réveilles seul et tu choisis une <strong>seconde victime</strong>. Si tu es le dernier loup vivant, ta faim te pousse à chasser toutes les nuits.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 42,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": true,
+      "cibles": 1,
+      "soiMeme": false,
+      "invite": "Ta faim te ronge : quelle maison visites-tu seul cette nuit ?"
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "tuer",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "loup-affame"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

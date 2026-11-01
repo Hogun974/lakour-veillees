@@ -1,0 +1,387 @@
+{
+  "_id": "MUAdMWPpEXvzldYp",
+  "_key": "!tables!MUAdMWPpEXvzldYp",
+  "name": "Présages de l'aube",
+  "img": "icons/svg/d20-black.svg",
+  "description": "<p>Pour les matins où personne n'est mort, ou pour ouvrir le jour. Aucun présage ne désigne un joueur.</p>",
+  "formula": "1d24",
+  "replacement": true,
+  "displayRoll": true,
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "presages-de-l-aube"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  },
+  "results": [
+    {
+      "_id": "bEuScIvWJdmRixbA",
+      "_key": "!tables.results!MUAdMWPpEXvzldYp.bEuScIvWJdmRixbA",
+      "type": "text",
+      "name": "",
+      "description": "<p>Le jour se lève sans soleil. La brume est si basse qu'on ne voit plus le clocher.</p>",
+      "range": [
+        1,
+        1
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "RyVS8RZFAL15pNEh",
+      "_key": "!tables.results!MUAdMWPpEXvzldYp.RyVS8RZFAL15pNEh",
+      "type": "text",
+      "name": "",
+      "description": "<p>Un corbeau s'est posé sur le gibet et refuse de s'envoler, même quand on lui jette des pierres.</p>",
+      "range": [
+        2,
+        2
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "UkSfZBgVEPNGSt2H",
+      "_key": "!tables.results!MUAdMWPpEXvzldYp.UkSfZBgVEPNGSt2H",
+      "type": "text",
+      "name": "",
+      "description": "<p>L'eau du puits est tiède ce matin, comme si quelque chose y avait dormi.</p>",
+      "range": [
+        3,
+        3
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "f5aIDSorEMSqAQ4B",
+      "_key": "!tables.results!MUAdMWPpEXvzldYp.f5aIDSorEMSqAQ4B",
+      "type": "text",
+      "name": "",
+      "description": "<p>Toutes les feuilles du tilleul de la place sont tombées en une seule nuit.</p>",
+      "range": [
+        4,
+        4
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "lDn7NmyyottgiGvF",
+      "_key": "!tables.results!MUAdMWPpEXvzldYp.lDn7NmyyottgiGvF",
+      "type": "text",
+      "name": "",
+      "description": "<p>Le coq des Fougerol a chanté treize fois, puis s'est tu pour de bon.</p>",
+      "range": [
+        5,
+        5
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "JrYnHeBxtBrhDLYu",
+      "_key": "!tables.results!MUAdMWPpEXvzldYp.JrYnHeBxtBrhDLYu",
+      "type": "text",
+      "name": "",
+      "description": "<p>Sur la rivière, un tapis de feuilles rousses remonte le courant.</p>",
+      "range": [
+        6,
+        6
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "DK7Ej1uQyeVf1oqz",
+      "_key": "!tables.results!MUAdMWPpEXvzldYp.DK7Ej1uQyeVf1oqz",
+      "type": "text",
+      "name": "",
+      "description": "<p>Les chiens du village se sont tous tournés vers la même maison, sans aboyer.</p>",
+      "range": [
+        7,
+        7
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "ncU7FFyBXPIugKqx",
+      "_key": "!tables.results!MUAdMWPpEXvzldYp.ncU7FFyBXPIugKqx",
+      "type": "text",
+      "name": "",
+      "description": "<p>La cloche de la chapelle porte une longue rayure fraîche, comme une griffe sur du métal.</p>",
+      "range": [
+        8,
+        8
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "QqmCODG2fW09WCH0",
+      "_key": "!tables.results!MUAdMWPpEXvzldYp.QqmCODG2fW09WCH0",
+      "type": "text",
+      "name": "",
+      "description": "<p>Il a gelé cette nuit, mais seulement sur les seuils des maisons.</p>",
+      "range": [
+        9,
+        9
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "gggWRTgHxQUoGKKi",
+      "_key": "!tables.results!MUAdMWPpEXvzldYp.gggWRTgHxQUoGKKi",
+      "type": "text",
+      "name": "",
+      "description": "<p>Une chouette blanche est restée sur le toit du moulin jusqu'au lever du jour.</p>",
+      "range": [
+        10,
+        10
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "gCSMtYA46fWvMcQH",
+      "_key": "!tables.results!MUAdMWPpEXvzldYp.gCSMtYA46fWvMcQH",
+      "type": "text",
+      "name": "",
+      "description": "<p>Le vent tourne au nord. Les anciens disent que c'est le vent des choix difficiles.</p>",
+      "range": [
+        11,
+        11
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "9CJBLsfaMjDQsOuN",
+      "_key": "!tables.results!MUAdMWPpEXvzldYp.9CJBLsfaMjDQsOuN",
+      "type": "text",
+      "name": "",
+      "description": "<p>Les bougies de la chapelle ont toutes brûlé jusqu'au bout, alors que personne ne les avait allumées.</p>",
+      "range": [
+        12,
+        12
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "WMClfPQ3CxmdjHRC",
+      "_key": "!tables.results!MUAdMWPpEXvzldYp.WMClfPQ3CxmdjHRC",
+      "type": "text",
+      "name": "",
+      "description": "<p>On a trouvé un cercle de champignons noirs au milieu de la place.</p>",
+      "range": [
+        13,
+        13
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "6JHgHmhuCZV3sUQ5",
+      "_key": "!tables.results!MUAdMWPpEXvzldYp.6JHgHmhuCZV3sUQ5",
+      "type": "text",
+      "name": "",
+      "description": "<p>Le linge étendu au lavoir est sec, mais il sent la fumée.</p>",
+      "range": [
+        14,
+        14
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "ZvBXcbAIRk8f7ItS",
+      "_key": "!tables.results!MUAdMWPpEXvzldYp.ZvBXcbAIRk8f7ItS",
+      "type": "text",
+      "name": "",
+      "description": "<p>Une rangée de petites pierres blanches mène d'une maison à une autre. Personne ne dit les avoir posées.</p>",
+      "range": [
+        15,
+        15
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "UoHpwOHYckZf6Fqw",
+      "_key": "!tables.results!MUAdMWPpEXvzldYp.UoHpwOHYckZf6Fqw",
+      "type": "text",
+      "name": "",
+      "description": "<p>La lune est encore visible en plein jour, pâle et énorme au-dessus de la combe.</p>",
+      "range": [
+        16,
+        16
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "GfckAHykEALIbadK",
+      "_key": "!tables.results!MUAdMWPpEXvzldYp.GfckAHykEALIbadK",
+      "type": "text",
+      "name": "",
+      "description": "<p>Les pommes du verger ont toutes une tache brune, au même endroit.</p>",
+      "range": [
+        17,
+        17
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "jDooBy6BUk54wqAq",
+      "_key": "!tables.results!MUAdMWPpEXvzldYp.jDooBy6BUk54wqAq",
+      "type": "text",
+      "name": "",
+      "description": "<p>La forge s'est rallumée seule pendant la nuit ; le forgeron jure qu'il l'avait couverte.</p>",
+      "range": [
+        18,
+        18
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "xpjA3xR7C4iQWleT",
+      "_key": "!tables.results!MUAdMWPpEXvzldYp.xpjA3xR7C4iQWleT",
+      "type": "text",
+      "name": "",
+      "description": "<p>Une odeur de miel brûlé flotte sur tout le village et ne se dissipe pas.</p>",
+      "range": [
+        19,
+        19
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "enMv4GicmAZQWHKQ",
+      "_key": "!tables.results!MUAdMWPpEXvzldYp.enMv4GicmAZQWHKQ",
+      "type": "text",
+      "name": "",
+      "description": "<p>Les sorbiers du cimetière sont couverts de baies rouges, alors qu'ils étaient nus hier.</p>",
+      "range": [
+        20,
+        20
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "hY6yWB6DlAH3NMVO",
+      "_key": "!tables.results!MUAdMWPpEXvzldYp.hY6yWB6DlAH3NMVO",
+      "type": "text",
+      "name": "",
+      "description": "<p>Le vieux puits renvoie un écho de trop : quand on crie un nom, il en répond deux.</p>",
+      "range": [
+        21,
+        21
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "roVD9DS4K5fGtQJL",
+      "_key": "!tables.results!MUAdMWPpEXvzldYp.roVD9DS4K5fGtQJL",
+      "type": "text",
+      "name": "",
+      "description": "<p>Un renard traverse la place au grand jour, regarde chacun en face, et repart vers le bois.</p>",
+      "range": [
+        22,
+        22
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "LAGkiflzSveabAdx",
+      "_key": "!tables.results!MUAdMWPpEXvzldYp.LAGkiflzSveabAdx",
+      "type": "text",
+      "name": "",
+      "description": "<p>La brume s'est levée d'un coup, et pendant une minute on a vu tout le village très net, comme dans un miroir.</p>",
+      "range": [
+        23,
+        23
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "B3mpiXBEuvaiiR7d",
+      "_key": "!tables.results!MUAdMWPpEXvzldYp.B3mpiXBEuvaiiR7d",
+      "type": "text",
+      "name": "",
+      "description": "<p>Personne n'a rêvé cette nuit. Absolument personne.</p>",
+      "range": [
+        24,
+        24
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    }
+  ]
+}

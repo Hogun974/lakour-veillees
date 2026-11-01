@@ -1,0 +1,37 @@
+{
+  "_id": "KdWGbntuYKcXeKhQ",
+  "_key": "!items!KdWGbntuYKcXeKhQ",
+  "name": "Passeur",
+  "type": "metier",
+  "img": "modules/lakour-veillees/assets/jetons/metier-passeur.svg",
+  "system": {
+    "cle": "passeur",
+    "description": "<p>Ta barque connaît la rivière par cœur, même sous la brume.</p><p><strong>Une fois par partie</strong>, pendant le jour, tu fais <strong>traverser la rivière</strong> à un joueur (toi compris) : la nuit suivante, il dort de l'autre côté du <strong>Pont</strong>, hors d'atteinte. Personne ne peut le visiter, mais il ne peut pas agir non plus.</p>",
+    "jour": {
+      "actif": true,
+      "invite": "Qui fais-tu traverser ce soir ?",
+      "cibles": 1
+    },
+    "usages": {
+      "max": 1,
+      "restant": 1
+    },
+    "effet": "proteger"
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "passeur"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "LAKOURVEIL": {
+    "Titre": "The Vigils of Brumecombe",
+    "Proposer": "Install The Vigils of Brumecombe content in this world? The player guide, the narrator guide (hidden), the variants and the village map will be imported; roles, trades, buildings, tables and non-player villagers stay in the compendiums.",
+    "Installe": "The Vigils of Brumecombe installed: {liste}.",
+    "RienDeNeuf": "everything was already in place",
+    "StyleApplique": "{n} map(s) or token(s) switched to the new style.",
+    "Ouvrir": "Install",
+    "Aide": "Imports the guides, the variants and the village map into this world, and updates its plan.",
+    "Explication": "The player guide, the narrator guide (hidden from players), the variants and the map of Brumecombe village are imported into the world; roles, trades, buildings, tables and non-player villagers stay in the compendiums. Nothing is deleted; an already imported document is not duplicated.",
+    "Installer": "Install the content in this world",
+    "DejaInstalle": "Content installed",
+    "PasInstalle": "Content not installed in this world yet.",
+    "MauvaisSysteme": "This world does not use the La Kour Loups system: nothing to install."
+  }
+}

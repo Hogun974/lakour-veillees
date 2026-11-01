@@ -1,0 +1,57 @@
+<div class="loups-fiche-corps">
+  <header class="loups-fiche-tete camp-{{system.camp}}">
+    <img class="loups-fiche-portrait" src="{{objet.img}}" alt="" {{#if editable}}data-action="editImage" data-edit="img"{{/if}}>
+    <div class="loups-fiche-identite">
+      {{#if editable}}<input class="loups-fiche-nom" type="text" name="name" value="{{objet.name}}">{{else}}<h1 class="loups-fiche-nom">{{objet.name}}</h1>{{/if}}
+      <div class="loups-pastilles">
+        <span class="loups-pastille"><i class="fa-solid fa-mask"></i> {{localize "TYPES.Item.role"}}</span>
+        <span class="loups-pastille camp">{{lookup camps system.camp}}</span>
+        {{#if system.nuit.actif}}<span class="loups-pastille nuit"><i class="fa-solid fa-moon"></i> {{system.nuit.ordre}}</span>{{/if}}
+      </div>
+    </div>
+  </header>
+
+  <div class="loups-corps">
+    <section class="loups-encart">
+      <h3>{{localize "LAKOUR_LOUPS.Role.Pouvoir"}}</h3>
+      {{#if editable}}
+      <prose-mirror name="system.description" value="{{system.description}}" toggled data-document-uuid="{{objet.uuid}}">{{{enrichis.description}}}</prose-mirror>
+      {{else}}<div class="loups-texte">{{{enrichis.description}}}</div>{{/if}}
+    </section>
+
+    {{#if solitaire}}
+    <section class="loups-encart">
+      <h3>{{localize "LAKOUR_LOUPS.Role.Victoire"}}</h3>
+      {{#if editable}}
+      <prose-mirror name="system.victoire" value="{{system.victoire}}" toggled data-document-uuid="{{objet.uuid}}">{{{enrichis.victoire}}}</prose-mirror>
+      {{else}}<div class="loups-texte">{{{enrichis.victoire}}}</div>{{/if}}
+    </section>
+    {{/if}}
+
+    {{#if gm}}
+    <section class="loups-encart loups-mj">
+      <h3><i class="fa-solid fa-gears"></i> {{localize "LAKOUR_LOUPS.Role.Regles"}}</h3>
+      <div class="loups-champs">
+        <label>{{localize "LAKOUR_LOUPS.Role.Cle"}} <input type="text" name="system.cle" value="{{system.cle}}"></label>
+        <label>{{localize "LAKOUR_LOUPS.Role.Camp"}} <select name="system.camp">{{selectOptions camps selected=system.camp}}</select></label>
+        <label class="large">{{localize "LAKOUR_LOUPS.Role.Effet"}} <select name="system.effet">{{selectOptions effets selected=system.effet}}</select></label>
+        <label>{{localize "LAKOUR_LOUPS.Role.Apparence"}} <select name="system.apparence">{{selectOptions apparences selected=system.apparence}}</select></label>
+        {{#if solitaire}}<label>{{localize "LAKOUR_LOUPS.Role.VictoireCle"}} <select name="system.victoireCle">{{selectOptions victoires selected=system.victoireCle}}</select></label>{{/if}}
+        <label>{{localize "LAKOUR_LOUPS.Role.UsagesMax"}} <input type="number" name="system.usages.max" value="{{system.usages.max}}" min="0" step="1"></label>
+        <label>{{localize "LAKOUR_LOUPS.Role.UsagesRestant"}} <input type="number" name="system.usages.restant" value="{{system.usages.restant}}" min="0" step="1"></label>
+      </div>
+      <h4><i class="fa-solid fa-moon"></i> {{localize "LAKOUR_LOUPS.Role.Nuit"}}</h4>
+      <div class="loups-champs">
+        <label class="case"><input type="checkbox" name="system.nuit.actif" {{checked system.nuit.actif}}> {{localize "LAKOUR_LOUPS.Role.Actif"}}</label>
+        <label>{{localize "LAKOUR_LOUPS.Role.Ordre"}} <input type="number" name="system.nuit.ordre" value="{{system.nuit.ordre}}" min="0" step="1"></label>
+        <label>{{localize "LAKOUR_LOUPS.Role.Cibles"}} <input type="number" name="system.nuit.cibles" value="{{system.nuit.cibles}}" min="0" step="1"></label>
+        <label class="case"><input type="checkbox" name="system.nuit.soiMeme" {{checked system.nuit.soiMeme}}> {{localize "LAKOUR_LOUPS.Role.SoiMeme"}}</label>
+        <label class="case"><input type="checkbox" name="system.nuit.premiereNuitSeulement" {{checked system.nuit.premiereNuitSeulement}}> {{localize "LAKOUR_LOUPS.Role.PremiereNuit"}}</label>
+        <label class="case"><input type="checkbox" name="system.nuit.uneNuitSurDeux" {{checked system.nuit.uneNuitSurDeux}}> {{localize "LAKOUR_LOUPS.Role.UneNuitSurDeux"}}</label>
+        <label class="large">{{localize "LAKOUR_LOUPS.Role.Invite"}} <input type="text" name="system.nuit.invite" value="{{system.nuit.invite}}"></label>
+      </div>
+      <p class="loups-aide">{{localize "LAKOUR_LOUPS.Role.AideOrdre"}}</p>
+    </section>
+    {{/if}}
+  </div>
+</div>

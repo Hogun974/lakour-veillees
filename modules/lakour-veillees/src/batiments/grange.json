@@ -1,0 +1,30 @@
+{
+  "_id": "B1YZZ2QtFYykpNB1",
+  "_key": "!items!B1YZZ2QtFYykpNB1",
+  "name": "La Grange",
+  "type": "batiment",
+  "img": "modules/lakour-veillees/assets/jetons/batiment-grange.svg",
+  "system": {
+    "cle": "grange",
+    "description": "<p>La grange des Vaudrey sur l'autre rive, pleine de foin et de courants d'air.</p>",
+    "regle": "<p><strong>Cachette.</strong> <strong>Une fois par partie et par joueur</strong>, on peut annoncer pendant le jour qu'on se cache dans la Grange : la nuit suivante, on <strong>ne peut pas être trouvé</strong> (aucune visite ne réussit, et le feu d'une maison vide ne tue personne), mais on <strong>ne peut pas agir</strong>. Deux joueurs au plus par nuit.</p>",
+    "repere": "Grange",
+    "effet": "proteger"
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "grange"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

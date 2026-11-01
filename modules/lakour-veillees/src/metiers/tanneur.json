@@ -1,0 +1,37 @@
+{
+  "_id": "uqYmRSoXtTd3SuTQ",
+  "_key": "!items!uqYmRSoXtTd3SuTQ",
+  "name": "Tanneur",
+  "type": "metier",
+  "img": "modules/lakour-veillees/assets/jetons/metier-tanneur.svg",
+  "system": {
+    "cle": "tanneur",
+    "description": "<p>Les peaux n'ont plus de secret pour toi, ni celles des bêtes ni celles des gens.</p><p><strong>Une fois par partie</strong>, au matin, tu examines un <strong>mort de la nuit</strong> : le narrateur dit à tout le village s'il porte des <strong>traces de crocs</strong> (la meute) ou non (poison, feu, chagrin, collet).</p>",
+    "jour": {
+      "actif": true,
+      "invite": "Quel corps examines-tu ce matin ?",
+      "cibles": 1
+    },
+    "usages": {
+      "max": 1,
+      "restant": 1
+    },
+    "effet": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "tanneur"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

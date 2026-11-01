@@ -1,0 +1,81 @@
+<div class="loups-fiche-corps">
+  <header class="loups-fiche-tete {{#unless system.vivant}}mort{{/unless}}">
+    <img class="loups-fiche-portrait" src="{{acteur.img}}" alt="" {{#if editable}}data-action="editImage" data-edit="img"{{/if}}>
+    <div class="loups-fiche-identite">
+      {{#if editable}}<input class="loups-fiche-nom" type="text" name="name" value="{{acteur.name}}">{{else}}<h1 class="loups-fiche-nom">{{acteur.name}}</h1>{{/if}}
+      <div class="loups-pastilles">
+        {{#if system.vivant}}<span class="loups-pastille vivant"><i class="fa-solid fa-heart-pulse"></i> {{localize "LAKOUR_LOUPS.Fiche.Vivant"}}</span>
+        {{else}}<span class="loups-pastille mort"><i class="fa-solid fa-cross"></i> {{localize "LAKOUR_LOUPS.Table.Mort"}}</span>{{/if}}
+        {{#if system.revele}}<span class="loups-pastille revele"><i class="fa-solid fa-eye"></i> {{localize "LAKOUR_LOUPS.Fiche.Revele"}}</span>{{/if}}
+        {{#if system.silence}}<span class="loups-pastille silence"><i class="fa-solid fa-comment-slash"></i> {{localize "LAKOUR_LOUPS.Table.Silence"}}</span>{{/if}}
+        {{#if system.maison}}<span class="loups-pastille"><i class="fa-solid fa-door-closed"></i> {{system.maison}}</span>{{/if}}
+      </div>
+      <div class="loups-detail"><i class="fa-solid fa-user"></i> {{joueurNom}}</div>
+    </div>
+  </header>
+
+  <div class="loups-corps">
+    <section class="loups-encart loups-secret">
+      <h3><i class="fa-solid fa-mask"></i> {{localize "LAKOUR_LOUPS.Fiche.Role"}}
+        {{#if voitRole}}{{#unless system.revele}}<span class="loups-etiquette">{{localize "LAKOUR_LOUPS.Fiche.Secret"}}</span>{{/unless}}{{/if}}</h3>
+      {{#if voitRole}}
+        {{#if role}}
+        <div class="loups-objet">
+          <img src="{{role.img}}" alt="" data-action="ouvrirObjet" data-item-id="{{role.id}}">
+          <div>
+            <div class="loups-nom" data-action="ouvrirObjet" data-item-id="{{role.id}}">{{role.nom}}</div>
+            <div class="loups-detail">{{localize "LAKOUR_LOUPS.Fiche.CampActuel"}} : <strong>{{campLibelle}}</strong>{{#if role.usages}} · {{localize "LAKOUR_LOUPS.Fiche.Usages"}} {{role.usages}}{{/if}}</div>
+          </div>
+          {{#if gm}}<button type="button" class="loups-icone" data-action="retirerObjet" data-item-id="{{role.id}}" title="{{localize 'LAKOUR_LOUPS.Fiche.Retirer'}}"><i class="fa-solid fa-trash"></i></button>{{/if}}
+        </div>
+        <div class="loups-texte">{{{role.description}}}</div>
+        {{#if role.victoire}}<div class="loups-texte victoire"><strong>{{localize "LAKOUR_LOUPS.Role.Victoire"}}</strong>{{{role.victoire}}}</div>{{/if}}
+        {{#if amoureuxNom}}<p class="loups-detail"><i class="fa-solid fa-heart"></i> {{localize "LAKOUR_LOUPS.Fiche.Amoureux"}} : <strong>{{amoureuxNom}}</strong></p>{{/if}}
+        {{#if prime}}<p class="loups-detail"><i class="fa-solid fa-crosshairs"></i> {{localize "LAKOUR_LOUPS.Fiche.Prime"}} <strong>{{prime}}</strong></p>{{/if}}
+        {{else}}
+        <p class="loups-vide">{{localize "LAKOUR_LOUPS.Fiche.SansRole"}}</p>
+        {{/if}}
+      {{else}}
+        <p class="loups-vide"><i class="fa-solid fa-lock"></i> {{localize "LAKOUR_LOUPS.Fiche.RoleCache"}}</p>
+      {{/if}}
+    </section>
+
+    <section class="loups-encart">
+      <h3><i class="fa-solid fa-hammer"></i> {{localize "LAKOUR_LOUPS.Fiche.Metier"}}</h3>
+      {{#if metier}}
+      <div class="loups-objet">
+        <img src="{{metier.img}}" alt="" data-action="ouvrirObjet" data-item-id="{{metier.id}}">
+        <div>
+          <div class="loups-nom" data-action="ouvrirObjet" data-item-id="{{metier.id}}">{{metier.nom}}</div>
+          {{#if metier.usages}}<div class="loups-detail">{{localize "LAKOUR_LOUPS.Fiche.Usages"}} {{metier.usages}}</div>{{/if}}
+        </div>
+        {{#if gm}}<button type="button" class="loups-icone" data-action="retirerObjet" data-item-id="{{metier.id}}" title="{{localize 'LAKOUR_LOUPS.Fiche.Retirer'}}"><i class="fa-solid fa-trash"></i></button>{{/if}}
+      </div>
+      <div class="loups-texte">{{{metier.description}}}</div>
+      {{else}}<p class="loups-vide">{{localize "LAKOUR_LOUPS.Fiche.SansMetier"}}</p>{{/if}}
+    </section>
+
+    {{#if gm}}
+    <section class="loups-encart loups-mj">
+      <h3><i class="fa-solid fa-hat-wizard"></i> {{localize "LAKOUR_LOUPS.Fiche.Etat"}}</h3>
+      <div class="loups-champs">
+        <label>{{localize "LAKOUR_LOUPS.Fiche.Joueur"}} <select name="system.joueur">{{selectOptions joueurs selected=system.joueur}}</select></label>
+        <label>{{localize "LAKOUR_LOUPS.Fiche.CampActuel"}} <select name="system.camp">{{selectOptions camps selected=system.camp}}</select></label>
+        <label>{{localize "LAKOUR_LOUPS.Fiche.Maison"}} <input type="text" name="system.maison" value="{{system.maison}}"></label>
+        <label>{{localize "LAKOUR_LOUPS.Fiche.Amoureux"}} <select name="system.amoureux">{{selectOptions autres selected=system.amoureux}}</select></label>
+        <label>{{localize "LAKOUR_LOUPS.Fiche.Protections"}} <input type="number" name="system.protections" value="{{system.protections}}" min="0" step="1"></label>
+        <label class="case"><input type="checkbox" name="system.vivant" {{checked system.vivant}}> {{localize "LAKOUR_LOUPS.Fiche.Vivant"}}</label>
+        <label class="case"><input type="checkbox" name="system.revele" {{checked system.revele}}> {{localize "LAKOUR_LOUPS.Fiche.Revele"}}</label>
+        <label class="case"><input type="checkbox" name="system.silence" {{checked system.silence}}> {{localize "LAKOUR_LOUPS.Table.Silence"}}</label>
+      </div>
+    </section>
+    {{/if}}
+
+    <section class="loups-encart">
+      <h3><i class="fa-solid fa-feather"></i> {{localize "LAKOUR_LOUPS.Fiche.Notes"}}</h3>
+      {{#if editable}}
+      <prose-mirror name="system.notes" value="{{system.notes}}" toggled data-document-uuid="{{acteur.uuid}}">{{{notesEnrichies}}}</prose-mirror>
+      {{else}}<div class="loups-texte">{{{notesEnrichies}}}</div>{{/if}}
+    </section>
+  </div>
+</div>

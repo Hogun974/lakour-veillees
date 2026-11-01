@@ -1,0 +1,45 @@
+{
+  "_id": "EIEytD0t0BWM9t2A",
+  "_key": "!items!EIEytD0t0BWM9t2A",
+  "name": "Liseuse de cendres",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/liseuse-de-cendres.svg",
+  "system": {
+    "cle": "liseuse-de-cendres",
+    "camp": "village",
+    "description": "<p>Tu lis l'avenir dans la cendre froide de l'âtre.</p><p><strong>Chaque nuit</strong>, tu désignes un joueur et le narrateur te dit en secret son <strong>camp</strong> : Village, Meute ou Solitaire. Pas son rôle. À toi de choisir quand dire ce que tu sais, et à qui.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 60,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 1,
+      "soiMeme": false,
+      "invite": "Dans quelles cendres lis-tu cette nuit ?"
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "voir-camp",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "liseuse-de-cendres"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

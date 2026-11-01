@@ -1,0 +1,45 @@
+{
+  "_id": "cGm34UkueggYhPa3",
+  "_key": "!items!cGm34UkueggYhPa3",
+  "name": "Enfant de la brume",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/enfant-de-la-brume.svg",
+  "system": {
+    "cle": "enfant-de-la-brume",
+    "camp": "village",
+    "description": "<p>Tu ne dors jamais quand il le faudrait.</p><p><strong>Chaque nuit</strong>, tu peux choisir d'<strong>épier</strong> la meute : le narrateur te montre ce que les loups se disent (sans leurs noms, sauf s'ils se trahissent). Mais à chaque fois, tu as <strong>une chance sur trois d'être repéré</strong> : alors la meute te prend pour victime à la place de celle qu'elle avait choisie.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 39,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 1,
+      "soiMeme": true,
+      "invite": "Désigne-toi pour te glisser hors du lit et épier la meute, ou passe."
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "epier",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "enfant-de-la-brume"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

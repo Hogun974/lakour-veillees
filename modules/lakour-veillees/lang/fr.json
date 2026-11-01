@@ -1,0 +1,16 @@
+{
+  "LAKOURVEIL": {
+    "Titre": "Les Veillées de Brumecombe",
+    "Proposer": "Installer le contenu des Veillées de Brumecombe dans ce monde ? Le guide du joueur, le guide du narrateur (caché), les variantes et la carte du village seront importés ; rôles, métiers, bâtiments, tables et villageois non joués restent dans les compendiums.",
+    "Installe": "Veillées de Brumecombe installées : {liste}.",
+    "RienDeNeuf": "tout était déjà en place",
+    "StyleApplique": "{n} carte(s) ou jeton(s) basculé(s) dans le nouveau style.",
+    "Ouvrir": "Installer",
+    "Aide": "Importe dans ce monde les guides, les variantes et la carte du village, et met à jour son plan.",
+    "Explication": "Le guide du joueur, le guide du narrateur (caché aux joueurs), les variantes et la carte du village de Brumecombe sont importés dans le monde ; rôles, métiers, bâtiments, tables et villageois non joués restent dans les compendiums. Rien n'est effacé ; un document déjà importé n'est pas dupliqué.",
+    "Installer": "Installer le contenu dans ce monde",
+    "DejaInstalle": "Contenu installé",
+    "PasInstalle": "Contenu pas encore installé dans ce monde.",
+    "MauvaisSysteme": "Ce monde n'utilise pas le système La Kour Loups : rien à installer."
+  }
+}

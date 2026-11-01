@@ -1,0 +1,1134 @@
+{
+  "debutants-06": {
+    "libelle": "Débutants — 6 joueurs",
+    "joueurs": [
+      6,
+      6
+    ],
+    "niveau": "debutants",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": [
+      "chapelle",
+      "puits",
+      "moulin",
+      "lavoir"
+    ]
+  },
+  "debutants-07": {
+    "libelle": "Débutants — 7 joueurs",
+    "joueurs": [
+      7,
+      7
+    ],
+    "niveau": "debutants",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "herboriste",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": [
+      "chapelle",
+      "puits",
+      "moulin",
+      "lavoir"
+    ]
+  },
+  "debutants-08": {
+    "libelle": "Débutants — 8 joueurs",
+    "joueurs": [
+      8,
+      8
+    ],
+    "niveau": "debutants",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "herboriste",
+      "villageois",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": [
+      "chapelle",
+      "puits",
+      "moulin",
+      "lavoir"
+    ]
+  },
+  "debutants-09": {
+    "libelle": "Débutants — 9 joueurs",
+    "joueurs": [
+      9,
+      9
+    ],
+    "niveau": "debutants",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "herboriste",
+      "villageois",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": [
+      "chapelle",
+      "puits",
+      "moulin",
+      "lavoir"
+    ]
+  },
+  "debutants-10": {
+    "libelle": "Débutants — 10 joueurs",
+    "joueurs": [
+      10,
+      10
+    ],
+    "niveau": "debutants",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "herboriste",
+      "braconniere",
+      "villageois",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": [
+      "chapelle",
+      "puits",
+      "moulin",
+      "lavoir"
+    ]
+  },
+  "debutants-11": {
+    "libelle": "Débutants — 11 joueurs",
+    "joueurs": [
+      11,
+      11
+    ],
+    "niveau": "debutants",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "herboriste",
+      "braconniere",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": [
+      "chapelle",
+      "puits",
+      "moulin",
+      "lavoir"
+    ]
+  },
+  "debutants-12": {
+    "libelle": "Débutants — 12 joueurs",
+    "joueurs": [
+      12,
+      12
+    ],
+    "niveau": "debutants",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "herboriste",
+      "braconniere",
+      "veilleuse-de-lanterne",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": [
+      "chapelle",
+      "puits",
+      "moulin",
+      "lavoir"
+    ]
+  },
+  "debutants-13": {
+    "libelle": "Débutants — 13 joueurs",
+    "joueurs": [
+      13,
+      13
+    ],
+    "niveau": "debutants",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "herboriste",
+      "braconniere",
+      "veilleuse-de-lanterne",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": [
+      "chapelle",
+      "puits",
+      "moulin",
+      "lavoir"
+    ]
+  },
+  "debutants-14": {
+    "libelle": "Débutants — 14 joueurs",
+    "joueurs": [
+      14,
+      14
+    ],
+    "niveau": "debutants",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "herboriste",
+      "braconniere",
+      "veilleuse-de-lanterne",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": [
+      "chapelle",
+      "puits",
+      "moulin",
+      "lavoir"
+    ]
+  },
+  "debutants-15": {
+    "libelle": "Débutants — 15 joueurs",
+    "joueurs": [
+      15,
+      15
+    ],
+    "niveau": "debutants",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "herboriste",
+      "braconniere",
+      "veilleuse-de-lanterne",
+      "fossoyeur",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": [
+      "chapelle",
+      "puits",
+      "moulin",
+      "lavoir"
+    ]
+  },
+  "debutants-16": {
+    "libelle": "Débutants — 16 joueurs",
+    "joueurs": [
+      16,
+      16
+    ],
+    "niveau": "debutants",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "herboriste",
+      "braconniere",
+      "veilleuse-de-lanterne",
+      "fossoyeur",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": [
+      "chapelle",
+      "puits",
+      "moulin",
+      "lavoir"
+    ]
+  },
+  "debutants-17": {
+    "libelle": "Débutants — 17 joueurs",
+    "joueurs": [
+      17,
+      17
+    ],
+    "niveau": "debutants",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "herboriste",
+      "braconniere",
+      "veilleuse-de-lanterne",
+      "fossoyeur",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": [
+      "chapelle",
+      "puits",
+      "moulin",
+      "lavoir"
+    ]
+  },
+  "debutants-18": {
+    "libelle": "Débutants — 18 joueurs",
+    "joueurs": [
+      18,
+      18
+    ],
+    "niveau": "debutants",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "herboriste",
+      "braconniere",
+      "veilleuse-de-lanterne",
+      "fossoyeur",
+      "sonneur",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": [
+      "chapelle",
+      "puits",
+      "moulin",
+      "lavoir"
+    ]
+  },
+  "classique-06": {
+    "libelle": "Classique — 6 joueurs",
+    "joueurs": [
+      6,
+      6
+    ],
+    "niveau": "classique",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "herboriste",
+      "villageois"
+    ],
+    "batiments": [
+      "chapelle",
+      "moulin",
+      "taverne",
+      "puits",
+      "cimetiere"
+    ]
+  },
+  "classique-07": {
+    "libelle": "Classique — 7 joueurs",
+    "joueurs": [
+      7,
+      7
+    ],
+    "niveau": "classique",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "herboriste",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": [
+      "chapelle",
+      "moulin",
+      "taverne",
+      "puits",
+      "cimetiere"
+    ]
+  },
+  "classique-08": {
+    "libelle": "Classique — 8 joueurs",
+    "joueurs": [
+      8,
+      8
+    ],
+    "niveau": "classique",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "herboriste",
+      "braconniere",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": [
+      "chapelle",
+      "moulin",
+      "taverne",
+      "puits",
+      "cimetiere"
+    ]
+  },
+  "classique-09": {
+    "libelle": "Classique — 9 joueurs",
+    "joueurs": [
+      9,
+      9
+    ],
+    "niveau": "classique",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "herboriste",
+      "braconniere",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": [
+      "chapelle",
+      "moulin",
+      "taverne",
+      "puits",
+      "cimetiere"
+    ]
+  },
+  "classique-10": {
+    "libelle": "Classique — 10 joueurs",
+    "joueurs": [
+      10,
+      10
+    ],
+    "niveau": "classique",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "herboriste",
+      "braconniere",
+      "villageois",
+      "villageois",
+      "revenant"
+    ],
+    "batiments": [
+      "chapelle",
+      "moulin",
+      "taverne",
+      "puits",
+      "cimetiere"
+    ]
+  },
+  "classique-11": {
+    "libelle": "Classique — 11 joueurs",
+    "joueurs": [
+      11,
+      11
+    ],
+    "niveau": "classique",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "herboriste",
+      "braconniere",
+      "veilleuse-de-lanterne",
+      "villageois",
+      "villageois",
+      "revenant"
+    ],
+    "batiments": [
+      "chapelle",
+      "moulin",
+      "taverne",
+      "puits",
+      "cimetiere"
+    ]
+  },
+  "classique-12": {
+    "libelle": "Classique — 12 joueurs",
+    "joueurs": [
+      12,
+      12
+    ],
+    "niveau": "classique",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-affame",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "herboriste",
+      "braconniere",
+      "veilleuse-de-lanterne",
+      "entremetteuse",
+      "villageois",
+      "villageois",
+      "revenant"
+    ],
+    "batiments": [
+      "chapelle",
+      "moulin",
+      "taverne",
+      "puits",
+      "cimetiere",
+      "gibet"
+    ]
+  },
+  "classique-13": {
+    "libelle": "Classique — 13 joueurs",
+    "joueurs": [
+      13,
+      13
+    ],
+    "niveau": "classique",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-affame",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "herboriste",
+      "braconniere",
+      "veilleuse-de-lanterne",
+      "entremetteuse",
+      "villageois",
+      "villageois",
+      "revenant"
+    ],
+    "batiments": [
+      "chapelle",
+      "moulin",
+      "taverne",
+      "puits",
+      "cimetiere",
+      "gibet"
+    ]
+  },
+  "classique-14": {
+    "libelle": "Classique — 14 joueurs",
+    "joueurs": [
+      14,
+      14
+    ],
+    "niveau": "classique",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-affame",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "herboriste",
+      "braconniere",
+      "veilleuse-de-lanterne",
+      "entremetteuse",
+      "villageois",
+      "villageois",
+      "villageois",
+      "revenant"
+    ],
+    "batiments": [
+      "chapelle",
+      "moulin",
+      "taverne",
+      "puits",
+      "cimetiere",
+      "gibet"
+    ]
+  },
+  "classique-15": {
+    "libelle": "Classique — 15 joueurs",
+    "joueurs": [
+      15,
+      15
+    ],
+    "niveau": "classique",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-affame",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "herboriste",
+      "braconniere",
+      "veilleuse-de-lanterne",
+      "entremetteuse",
+      "fossoyeur",
+      "villageois",
+      "villageois",
+      "villageois",
+      "revenant"
+    ],
+    "batiments": [
+      "chapelle",
+      "moulin",
+      "taverne",
+      "puits",
+      "cimetiere",
+      "gibet"
+    ]
+  },
+  "classique-16": {
+    "libelle": "Classique — 16 joueurs",
+    "joueurs": [
+      16,
+      16
+    ],
+    "niveau": "classique",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-affame",
+      "loup-deguise",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "herboriste",
+      "braconniere",
+      "veilleuse-de-lanterne",
+      "entremetteuse",
+      "villageois",
+      "villageois",
+      "villageois",
+      "revenant",
+      "chasseur-de-primes"
+    ],
+    "batiments": [
+      "chapelle",
+      "moulin",
+      "taverne",
+      "puits",
+      "cimetiere",
+      "gibet"
+    ]
+  },
+  "classique-17": {
+    "libelle": "Classique — 17 joueurs",
+    "joueurs": [
+      17,
+      17
+    ],
+    "niveau": "classique",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-affame",
+      "loup-deguise",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "herboriste",
+      "braconniere",
+      "veilleuse-de-lanterne",
+      "entremetteuse",
+      "fossoyeur",
+      "villageois",
+      "villageois",
+      "villageois",
+      "revenant",
+      "chasseur-de-primes"
+    ],
+    "batiments": [
+      "chapelle",
+      "moulin",
+      "taverne",
+      "puits",
+      "cimetiere",
+      "gibet"
+    ]
+  },
+  "classique-18": {
+    "libelle": "Classique — 18 joueurs",
+    "joueurs": [
+      18,
+      18
+    ],
+    "niveau": "classique",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-affame",
+      "loup-deguise",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "liseuse-de-cendres",
+      "garde-du-pont",
+      "herboriste",
+      "braconniere",
+      "veilleuse-de-lanterne",
+      "entremetteuse",
+      "fossoyeur",
+      "sonneur",
+      "villageois",
+      "villageois",
+      "villageois",
+      "revenant",
+      "chasseur-de-primes"
+    ],
+    "batiments": [
+      "chapelle",
+      "moulin",
+      "taverne",
+      "puits",
+      "cimetiere",
+      "gibet"
+    ]
+  },
+  "chaos-06": {
+    "libelle": "Chaos — 6 joueurs",
+    "joueurs": [
+      6,
+      6
+    ],
+    "niveau": "chaos",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-hurleur",
+      "liseuse-de-cendres",
+      "herboriste",
+      "enfant-de-la-brume",
+      "entremetteuse"
+    ],
+    "batiments": [
+      "taverne",
+      "pont",
+      "forge",
+      "grange",
+      "lavoir"
+    ]
+  },
+  "chaos-07": {
+    "libelle": "Chaos — 7 joueurs",
+    "joueurs": [
+      7,
+      7
+    ],
+    "niveau": "chaos",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-hurleur",
+      "liseuse-de-cendres",
+      "herboriste",
+      "enfant-de-la-brume",
+      "entremetteuse",
+      "pyromane"
+    ],
+    "batiments": [
+      "taverne",
+      "pont",
+      "forge",
+      "grange",
+      "lavoir"
+    ]
+  },
+  "chaos-08": {
+    "libelle": "Chaos — 8 joueurs",
+    "joueurs": [
+      8,
+      8
+    ],
+    "niveau": "chaos",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-hurleur",
+      "liseuse-de-cendres",
+      "herboriste",
+      "enfant-de-la-brume",
+      "entremetteuse",
+      "villageois",
+      "pyromane"
+    ],
+    "batiments": [
+      "taverne",
+      "pont",
+      "forge",
+      "grange",
+      "lavoir"
+    ]
+  },
+  "chaos-09": {
+    "libelle": "Chaos — 9 joueurs",
+    "joueurs": [
+      9,
+      9
+    ],
+    "niveau": "chaos",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-hurleur",
+      "louve-mere",
+      "liseuse-de-cendres",
+      "herboriste",
+      "enfant-de-la-brume",
+      "entremetteuse",
+      "villageois",
+      "pyromane"
+    ],
+    "batiments": [
+      "taverne",
+      "pont",
+      "forge",
+      "grange",
+      "lavoir"
+    ]
+  },
+  "chaos-10": {
+    "libelle": "Chaos — 10 joueurs",
+    "joueurs": [
+      10,
+      10
+    ],
+    "niveau": "chaos",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-hurleur",
+      "louve-mere",
+      "liseuse-de-cendres",
+      "herboriste",
+      "enfant-de-la-brume",
+      "entremetteuse",
+      "messager",
+      "villageois",
+      "pyromane"
+    ],
+    "batiments": [
+      "taverne",
+      "pont",
+      "forge",
+      "grange",
+      "lavoir"
+    ]
+  },
+  "chaos-11": {
+    "libelle": "Chaos — 11 joueurs",
+    "joueurs": [
+      11,
+      11
+    ],
+    "niveau": "chaos",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-hurleur",
+      "louve-mere",
+      "liseuse-de-cendres",
+      "herboriste",
+      "enfant-de-la-brume",
+      "entremetteuse",
+      "messager",
+      "villageois",
+      "pyromane",
+      "colporteur"
+    ],
+    "batiments": [
+      "taverne",
+      "pont",
+      "forge",
+      "grange",
+      "lavoir"
+    ]
+  },
+  "chaos-12": {
+    "libelle": "Chaos — 12 joueurs",
+    "joueurs": [
+      12,
+      12
+    ],
+    "niveau": "chaos",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-hurleur",
+      "louve-mere",
+      "liseuse-de-cendres",
+      "herboriste",
+      "enfant-de-la-brume",
+      "entremetteuse",
+      "messager",
+      "gardienne-des-cles",
+      "villageois",
+      "pyromane",
+      "colporteur"
+    ],
+    "batiments": [
+      "taverne",
+      "gibet",
+      "pont",
+      "forge",
+      "grange",
+      "lavoir"
+    ]
+  },
+  "chaos-13": {
+    "libelle": "Chaos — 13 joueurs",
+    "joueurs": [
+      13,
+      13
+    ],
+    "niveau": "chaos",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-hurleur",
+      "louve-mere",
+      "loup-affame",
+      "liseuse-de-cendres",
+      "herboriste",
+      "enfant-de-la-brume",
+      "entremetteuse",
+      "messager",
+      "gardienne-des-cles",
+      "villageois",
+      "pyromane",
+      "colporteur"
+    ],
+    "batiments": [
+      "taverne",
+      "gibet",
+      "pont",
+      "forge",
+      "grange",
+      "lavoir"
+    ]
+  },
+  "chaos-14": {
+    "libelle": "Chaos — 14 joueurs",
+    "joueurs": [
+      14,
+      14
+    ],
+    "niveau": "chaos",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-hurleur",
+      "louve-mere",
+      "loup-affame",
+      "liseuse-de-cendres",
+      "herboriste",
+      "enfant-de-la-brume",
+      "entremetteuse",
+      "messager",
+      "gardienne-des-cles",
+      "sourcier",
+      "villageois",
+      "pyromane",
+      "colporteur"
+    ],
+    "batiments": [
+      "taverne",
+      "gibet",
+      "pont",
+      "forge",
+      "grange",
+      "lavoir"
+    ]
+  },
+  "chaos-15": {
+    "libelle": "Chaos — 15 joueurs",
+    "joueurs": [
+      15,
+      15
+    ],
+    "niveau": "chaos",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-hurleur",
+      "louve-mere",
+      "loup-affame",
+      "liseuse-de-cendres",
+      "herboriste",
+      "enfant-de-la-brume",
+      "entremetteuse",
+      "messager",
+      "gardienne-des-cles",
+      "sourcier",
+      "villageois",
+      "pyromane",
+      "colporteur",
+      "revenant"
+    ],
+    "batiments": [
+      "taverne",
+      "gibet",
+      "pont",
+      "forge",
+      "grange",
+      "lavoir"
+    ]
+  },
+  "chaos-16": {
+    "libelle": "Chaos — 16 joueurs",
+    "joueurs": [
+      16,
+      16
+    ],
+    "niveau": "chaos",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-hurleur",
+      "louve-mere",
+      "loup-affame",
+      "loup-flaireur",
+      "liseuse-de-cendres",
+      "herboriste",
+      "enfant-de-la-brume",
+      "entremetteuse",
+      "messager",
+      "gardienne-des-cles",
+      "sourcier",
+      "villageois",
+      "pyromane",
+      "colporteur",
+      "revenant"
+    ],
+    "batiments": [
+      "taverne",
+      "gibet",
+      "pont",
+      "forge",
+      "grange",
+      "lavoir"
+    ]
+  },
+  "chaos-17": {
+    "libelle": "Chaos — 17 joueurs",
+    "joueurs": [
+      17,
+      17
+    ],
+    "niveau": "chaos",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-hurleur",
+      "louve-mere",
+      "loup-affame",
+      "loup-flaireur",
+      "liseuse-de-cendres",
+      "herboriste",
+      "enfant-de-la-brume",
+      "entremetteuse",
+      "messager",
+      "gardienne-des-cles",
+      "sourcier",
+      "conteuse",
+      "villageois",
+      "pyromane",
+      "colporteur",
+      "revenant"
+    ],
+    "batiments": [
+      "taverne",
+      "gibet",
+      "pont",
+      "forge",
+      "grange",
+      "lavoir"
+    ]
+  },
+  "chaos-18": {
+    "libelle": "Chaos — 18 joueurs",
+    "joueurs": [
+      18,
+      18
+    ],
+    "niveau": "chaos",
+    "roles": [
+      "loup-de-brumecombe",
+      "loup-hurleur",
+      "louve-mere",
+      "loup-affame",
+      "loup-flaireur",
+      "liseuse-de-cendres",
+      "herboriste",
+      "enfant-de-la-brume",
+      "entremetteuse",
+      "messager",
+      "gardienne-des-cles",
+      "sourcier",
+      "conteuse",
+      "villageois",
+      "villageois",
+      "pyromane",
+      "colporteur",
+      "revenant"
+    ],
+    "batiments": [
+      "taverne",
+      "gibet",
+      "pont",
+      "forge",
+      "grange",
+      "lavoir"
+    ]
+  }
+}

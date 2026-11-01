@@ -1,0 +1,45 @@
+{
+  "_id": "WfyOiwGOC4X8AjQV",
+  "_key": "!items!WfyOiwGOC4X8AjQV",
+  "name": "Colporteur",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/colporteur.svg",
+  "system": {
+    "cle": "colporteur",
+    "camp": "solitaire",
+    "description": "<p>Tout s'échange, à Brumecombe, même ce qu'on est.</p><p><strong>Une fois par partie</strong>, la nuit, tu désignes un joueur : vous <strong>échangez vos rôles</strong> en secret. Le narrateur vous dit à tous deux votre nouveau rôle. L'autre devient Colporteur, sans pouvoir d'échange (il est déjà usé).</p>",
+    "victoire": "<p>Tant que tu n'as pas échangé, tu ne peux pas gagner. Après l'échange, tu gagnes avec le <strong>camp de ton nouveau rôle</strong>. Celui qui a reçu ton rôle reste solitaire et ne gagne que s'il est encore vivant à la fin de la partie.</p>",
+    "nuit": {
+      "actif": true,
+      "ordre": 8,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 1,
+      "soiMeme": false,
+      "invite": "Avec qui échanges-tu ta besace cette nuit ? Passe pour la garder."
+    },
+    "usages": {
+      "max": 1,
+      "restant": 1
+    },
+    "effet": "echanger-role",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "colporteur"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

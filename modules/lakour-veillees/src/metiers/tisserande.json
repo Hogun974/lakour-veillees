@@ -1,0 +1,37 @@
+{
+  "_id": "wm5iXtpVF5J13VXG",
+  "_key": "!items!wm5iXtpVF5J13VXG",
+  "name": "Tisserande",
+  "type": "metier",
+  "img": "modules/lakour-veillees/assets/jetons/metier-tisserande.svg",
+  "system": {
+    "cle": "tisserande",
+    "description": "<p>Ton métier claque du matin au soir, et tu connais tous les fils.</p><p><strong>Une fois par partie</strong>, pendant le jour, tu noues un <strong>ruban</strong> au poignet d'un joueur : s'il est le plus désigné d'un vote, le dépouillement attend : il gagne <strong>une minute de défense</strong> de plus, pendant laquelle le vote reste ouvert. Le ruban ne sert qu'une fois.</p>",
+    "jour": {
+      "actif": true,
+      "invite": "Au poignet de qui noues-tu ton ruban ?",
+      "cibles": 1
+    },
+    "usages": {
+      "max": 1,
+      "restant": 1
+    },
+    "effet": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "tisserande"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

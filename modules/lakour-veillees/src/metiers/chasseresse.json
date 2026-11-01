@@ -1,0 +1,37 @@
+{
+  "_id": "DM1Dq8QcINj2LFTF",
+  "_key": "!items!DM1Dq8QcINj2LFTF",
+  "name": "Chasseresse",
+  "type": "metier",
+  "img": "modules/lakour-veillees/assets/jetons/metier-chasseresse.svg",
+  "system": {
+    "cle": "chasseresse",
+    "description": "<p>Tu lis la boue des chemins comme d'autres lisent l'almanach.</p><p><strong>Une fois par partie</strong>, au matin, tu désignes un joueur : le narrateur dit à tout le village s'il a <strong>quitté sa maison</strong> la nuit passée (pouvoir de nuit ou chasse), sans dire ce qu'il a fait.</p>",
+    "jour": {
+      "actif": true,
+      "invite": "Quelles traces suis-tu ce matin ?",
+      "cibles": 1
+    },
+    "usages": {
+      "max": 1,
+      "restant": 1
+    },
+    "effet": "voir-actif"
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "chasseresse"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

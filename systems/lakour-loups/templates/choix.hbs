@@ -1,0 +1,31 @@
+<div class="loups-choix-corps">
+  <header class="loups-choix-tete">
+    <i class="fa-solid fa-moon"></i>
+    <div>
+      <div class="loups-etiquette">{{acteurNom}}</div>
+      <p class="loups-invite">{{invite}}</p>
+    </div>
+    {{#if minuteur}}<div class="loups-minuteur"></div>{{/if}}
+  </header>
+  {{#if texte}}
+  <textarea class="loups-texte" name="texte" maxlength="{{max}}" rows="3" placeholder="{{localize 'LAKOUR_LOUPS.Choix.TexteAide'}}"></textarea>
+  {{else}}
+  {{#if plusieurs}}<p class="loups-consigne">{{localize "LAKOUR_LOUPS.Choix.Plusieurs" n=nombre}} ({{choisis}} / {{nombre}})</p>{{/if}}
+  <ul class="loups-candidats">
+    {{#each candidats}}
+    <li>
+      <button type="button" class="loups-candidat {{#if choisi}}choisi{{/if}}" data-action="basculer" data-id="{{id}}" aria-pressed="{{#if choisi}}true{{else}}false{{/if}}">
+        {{#if img}}<img src="{{img}}" alt="">{{/if}}
+        <span class="loups-nom">{{nom}}</span>
+        {{#if maison}}<small>{{maison}}</small>{{/if}}
+        {{#if choisi}}<i class="fa-solid fa-check"></i>{{/if}}
+      </button>
+    </li>
+    {{/each}}
+  </ul>
+  {{/if}}
+  <footer class="loups-pied">
+    <button type="button" class="loups-bouton discret" data-action="passer"><i class="fa-solid fa-forward"></i> {{localize "LAKOUR_LOUPS.Choix.Passer"}}</button>
+    <button type="submit" class="loups-bouton" {{#unless peutValider}}disabled{{/unless}}><i class="fa-solid fa-check"></i> {{localize "LAKOUR_LOUPS.Choix.Valider"}}</button>
+  </footer>
+</div>

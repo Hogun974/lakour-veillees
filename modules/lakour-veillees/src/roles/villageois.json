@@ -1,0 +1,45 @@
+{
+  "_id": "lLRBx6jDMCnJKY4C",
+  "_key": "!items!lLRBx6jDMCnJKY4C",
+  "name": "Villageois",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/villageois.svg",
+  "system": {
+    "cle": "villageois",
+    "camp": "village",
+    "description": "<p>Tu n'as ni don ni secret. Tu as mieux : des yeux, des oreilles et une voix au vote.</p><p>Écoute qui parle trop, qui se tait, qui change d'avis. C'est toi que la meute veut convaincre ; c'est toi qui décides.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": false,
+      "ordre": 50,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 0,
+      "soiMeme": false,
+      "invite": ""
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "villageois"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

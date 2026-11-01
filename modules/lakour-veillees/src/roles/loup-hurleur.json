@@ -1,0 +1,45 @@
+{
+  "_id": "YdI25qY9jqzCUtcU",
+  "_key": "!items!YdI25qY9jqzCUtcU",
+  "name": "Loup hurleur",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/loup-hurleur.svg",
+  "system": {
+    "cle": "loup-hurleur",
+    "camp": "meute",
+    "description": "<p>Ton cri traverse les volets et glace les gorges.</p><p>Tu chasses chaque nuit avec la meute. Puis, <strong>chaque nuit</strong>, tu désignes un joueur : au matin, il est <strong>réduit au silence</strong> et ne pourra ni parler ni écrire pendant le débat du jour. Il peut voter. Tu ne peux pas choisir deux nuits de suite le même joueur.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 43,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 1,
+      "soiMeme": false,
+      "invite": "Ton hurlement cherche une gorge : qui se taira demain ?"
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "silence",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "loup-hurleur"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "lakour-loups",
+  "title": "Les Veillées de Brumecombe",
+  "description": "Jeu original de déduction sociale de la famille du loup-garou : un village de vallée pris dans la brume d'automne, des loups cachés, des nuits secrètes et des votes au grand jour. Système de jeu La Kour, mené par un narrateur humain ou par le MJ IA.",
+  "version": "0.2.1",
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14.369"
+  },
+  "authors": [
+    { "name": "La Kour" }
+  ],
+  "esmodules": ["lakour-loups.mjs"],
+  "styles": ["styles/lakour-loups.css"],
+  "languages": [
+    { "lang": "fr", "name": "Français", "path": "lang/fr.json" },
+    { "lang": "en", "name": "English", "path": "lang/en.json" }
+  ],
+  "documentTypes": {
+    "Actor": {
+      "villageois": { "htmlFields": ["notes"] }
+    },
+    "Item": {
+      "role": { "htmlFields": ["description", "victoire"] },
+      "metier": { "htmlFields": ["description"] },
+      "batiment": { "htmlFields": ["description", "regle"] }
+    }
+  },
+  "socket": true,
+  "grid": {
+    "type": 1,
+    "distance": 1.5,
+    "units": "m"
+  },
+  "primaryTokenAttribute": null,
+  "secondaryTokenAttribute": null,
+  "flags": {
+    "hotReload": { "extensions": ["css", "hbs", "json"] }
+  }
+}

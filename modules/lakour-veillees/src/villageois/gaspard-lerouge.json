@@ -1,0 +1,57 @@
+{
+  "_id": "vl2VTAcsyf0BVVqz",
+  "_key": "!actors!vl2VTAcsyf0BVVqz",
+  "name": "Gaspard Lerouge, l'aubergiste",
+  "type": "villageois",
+  "img": "modules/lakour-veillees/assets/jetons/metier-aubergiste.svg",
+  "system": {
+    "joueur": "",
+    "vivant": true,
+    "revele": false,
+    "camp": "village",
+    "maison": "Taverne",
+    "amoureux": "",
+    "silence": false,
+    "protections": 0,
+    "notes": "<p>Gros, rieur, et plus attentif qu'il n'en a l'air. Il ne sert plus à boire après le couvre-feu, mais il laisse la lampe allumée.</p>"
+  },
+  "items": [],
+  "effects": [],
+  "prototypeToken": {
+    "name": "Gaspard Lerouge, l'aubergiste",
+    "actorLink": false,
+    "disposition": 0,
+    "displayName": 20,
+    "displayBars": 0,
+    "width": 1,
+    "height": 1,
+    "texture": {
+      "src": "modules/lakour-veillees/assets/jetons/metier-aubergiste.svg",
+      "fit": "contain",
+      "scaleX": 1,
+      "scaleY": 1
+    },
+    "bar1": {
+      "attribute": null
+    },
+    "bar2": {
+      "attribute": null
+    }
+  },
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "gaspard-lerouge",
+      "jeton": "metier-aubergiste"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

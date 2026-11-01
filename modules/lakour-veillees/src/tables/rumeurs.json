@@ -1,0 +1,387 @@
+{
+  "_id": "5HVy0NAiv7TMaar7",
+  "_key": "!tables!5HVy0NAiv7TMaar7",
+  "name": "Rumeurs du village",
+  "img": "icons/svg/d20-black.svg",
+  "description": "<p>Ce qu'on se dit à mi-voix sur la place. À glisser dans un débat qui s'essouffle : une rumeur n'est ni vraie ni fausse, elle donne à parler.</p>",
+  "formula": "1d24",
+  "replacement": true,
+  "displayRoll": true,
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "rumeurs"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  },
+  "results": [
+    {
+      "_id": "QHUAKDWG8l45NFgK",
+      "_key": "!tables.results!5HVy0NAiv7TMaar7.QHUAKDWG8l45NFgK",
+      "type": "text",
+      "name": "",
+      "description": "<p>Quelqu'un a vu une lanterne traverser le pont après minuit, et personne ne l'a vue revenir.</p>",
+      "range": [
+        1,
+        1
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "kZdvLDblYuSuxwrx",
+      "_key": "!tables.results!5HVy0NAiv7TMaar7.kZdvLDblYuSuxwrx",
+      "type": "text",
+      "name": "",
+      "description": "<p>Le chien des Vaudrey n'aboie plus depuis trois nuits. Il ne mange plus non plus.</p>",
+      "range": [
+        2,
+        2
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "ncbcWPQS7wHc8e3a",
+      "_key": "!tables.results!5HVy0NAiv7TMaar7.ncbcWPQS7wHc8e3a",
+      "type": "text",
+      "name": "",
+      "description": "<p>On dit que la meunière compte ses sacs de farine deux fois, et qu'il en manque toujours un.</p>",
+      "range": [
+        3,
+        3
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "8LlKaDs1YPwOl2Vg",
+      "_key": "!tables.results!5HVy0NAiv7TMaar7.8LlKaDs1YPwOl2Vg",
+      "type": "text",
+      "name": "",
+      "description": "<p>Une des maisons de l'autre rive a laissé ses volets ouverts toute la nuit. Par oubli, ou pour guetter ?</p>",
+      "range": [
+        4,
+        4
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "PsOIQoDYZ3nqALeZ",
+      "_key": "!tables.results!5HVy0NAiv7TMaar7.PsOIQoDYZ3nqALeZ",
+      "type": "text",
+      "name": "",
+      "description": "<p>Le curé a changé la serrure de la sacristie. Il n'a pas dit pourquoi.</p>",
+      "range": [
+        5,
+        5
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "bHBwfJkKyMww11aP",
+      "_key": "!tables.results!5HVy0NAiv7TMaar7.bHBwfJkKyMww11aP",
+      "type": "text",
+      "name": "",
+      "description": "<p>À la taverne, quelqu'un a payé sa tournée avec une pièce qui sentait la terre mouillée.</p>",
+      "range": [
+        6,
+        6
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "j6ExBDTAjckkzG0E",
+      "_key": "!tables.results!5HVy0NAiv7TMaar7.j6ExBDTAjckkzG0E",
+      "type": "text",
+      "name": "",
+      "description": "<p>La vieille Mahaut jure que les corbeaux se posent toujours sur le même toit.</p>",
+      "range": [
+        7,
+        7
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "KoAFLpBW2O8qmUUl",
+      "_key": "!tables.results!5HVy0NAiv7TMaar7.KoAFLpBW2O8qmUUl",
+      "type": "text",
+      "name": "",
+      "description": "<p>On a retrouvé des touffes de poils gris accrochées à la haie du lavoir.</p>",
+      "range": [
+        8,
+        8
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "cKop1NDMYr9Xm5eh",
+      "_key": "!tables.results!5HVy0NAiv7TMaar7.cKop1NDMYr9Xm5eh",
+      "type": "text",
+      "name": "",
+      "description": "<p>Quelqu'un a demandé à la forge une lame courte, sans manche, « pour couper le pain ».</p>",
+      "range": [
+        9,
+        9
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "VpTZxDJ2YDliVwFs",
+      "_key": "!tables.results!5HVy0NAiv7TMaar7.VpTZxDJ2YDliVwFs",
+      "type": "text",
+      "name": "",
+      "description": "<p>Deux voisins qui ne se parlaient plus depuis dix ans ont été vus se serrer la main sur la place.</p>",
+      "range": [
+        10,
+        10
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "KPPaHgXmmOXkyHqS",
+      "_key": "!tables.results!5HVy0NAiv7TMaar7.KPPaHgXmmOXkyHqS",
+      "type": "text",
+      "name": "",
+      "description": "<p>Les enfants disent qu'un homme sans visage se tient parfois au bout du cimetière, à l'heure où l'on rentre les bêtes.</p>",
+      "range": [
+        11,
+        11
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "hGHk6Kjz62Ol2lde",
+      "_key": "!tables.results!5HVy0NAiv7TMaar7.hGHk6Kjz62Ol2lde",
+      "type": "text",
+      "name": "",
+      "description": "<p>Le passeur prétend qu'on lui a demandé de traverser à la nage, une nuit, sans barque ni lumière.</p>",
+      "range": [
+        12,
+        12
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "GFzeDEI5l5qFlEnt",
+      "_key": "!tables.results!5HVy0NAiv7TMaar7.GFzeDEI5l5qFlEnt",
+      "type": "text",
+      "name": "",
+      "description": "<p>Une femme a pleuré toute une nuit dans une maison où personne n'habite.</p>",
+      "range": [
+        13,
+        13
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "0aPmznGm5w3Q6ZMI",
+      "_key": "!tables.results!5HVy0NAiv7TMaar7.0aPmznGm5w3Q6ZMI",
+      "type": "text",
+      "name": "",
+      "description": "<p>On a entendu siffler l'air de la fête des moissons à trois heures du matin, près du puits.</p>",
+      "range": [
+        14,
+        14
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "fKsVJDWXCfJBdBwH",
+      "_key": "!tables.results!5HVy0NAiv7TMaar7.fKsVJDWXCfJBdBwH",
+      "type": "text",
+      "name": "",
+      "description": "<p>Le garde du guet a trouvé sa pique plantée dans la porte de la chapelle.</p>",
+      "range": [
+        15,
+        15
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "2RqURBYiM9ScAg87",
+      "_key": "!tables.results!5HVy0NAiv7TMaar7.2RqURBYiM9ScAg87",
+      "type": "text",
+      "name": "",
+      "description": "<p>Quelqu'un vend des amulettes de sorbier à la sortie de la messe. Elles se vendent très bien.</p>",
+      "range": [
+        16,
+        16
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "TufE3rUfO0JEKX4o",
+      "_key": "!tables.results!5HVy0NAiv7TMaar7.TufE3rUfO0JEKX4o",
+      "type": "text",
+      "name": "",
+      "description": "<p>Le tanneur dit que certaines peaux, cet automne, ont le poil qui repousse après le tannage.</p>",
+      "range": [
+        17,
+        17
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "Hk7ClVEQNSmt11xx",
+      "_key": "!tables.results!5HVy0NAiv7TMaar7.Hk7ClVEQNSmt11xx",
+      "type": "text",
+      "name": "",
+      "description": "<p>L'aubergiste jure qu'un de ses clients ne touche jamais au pain, seulement à la viande, et crue.</p>",
+      "range": [
+        18,
+        18
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "kYPCi341wzTr1Yvx",
+      "_key": "!tables.results!5HVy0NAiv7TMaar7.kYPCi341wzTr1Yvx",
+      "type": "text",
+      "name": "",
+      "description": "<p>Une lettre sans signature a été glissée sous la porte de la maîtresse d'école. Elle l'a brûlée sans la lire, dit-elle.</p>",
+      "range": [
+        19,
+        19
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "R9luavJ17bUUqwC4",
+      "_key": "!tables.results!5HVy0NAiv7TMaar7.R9luavJ17bUUqwC4",
+      "type": "text",
+      "name": "",
+      "description": "<p>On a vu deux silhouettes se disputer devant la grange, puis plus qu'une seule repartir.</p>",
+      "range": [
+        20,
+        20
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "JbBDC69VD4dmyESk",
+      "_key": "!tables.results!5HVy0NAiv7TMaar7.JbBDC69VD4dmyESk",
+      "type": "text",
+      "name": "",
+      "description": "<p>La cloche a sonné un coup, seule, à l'heure où personne ne la tire.</p>",
+      "range": [
+        21,
+        21
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "FKN51KRruvOoYTxM",
+      "_key": "!tables.results!5HVy0NAiv7TMaar7.FKN51KRruvOoYTxM",
+      "type": "text",
+      "name": "",
+      "description": "<p>Quelqu'un a laissé des traces de pas nus dans la boue du chemin, des traces qui deviennent plus larges vers le bois.</p>",
+      "range": [
+        22,
+        22
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "pQ7pnfB0h9bsy8Hk",
+      "_key": "!tables.results!5HVy0NAiv7TMaar7.pQ7pnfB0h9bsy8Hk",
+      "type": "text",
+      "name": "",
+      "description": "<p>La herboriste a acheté plus de belladone qu'il n'en faut pour soigner un village entier.</p>",
+      "range": [
+        23,
+        23
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "pLEUzw7LvCp81Y2C",
+      "_key": "!tables.results!5HVy0NAiv7TMaar7.pLEUzw7LvCp81Y2C",
+      "type": "text",
+      "name": "",
+      "description": "<p>On murmure qu'une famille de Brumecombe a déjà eu un loup parmi les siens, il y a trois générations, et qu'on n'a jamais dit lequel.</p>",
+      "range": [
+        24,
+        24
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    }
+  ]
+}

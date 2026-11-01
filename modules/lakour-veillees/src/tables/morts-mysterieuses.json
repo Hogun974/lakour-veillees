@@ -1,0 +1,387 @@
+{
+  "_id": "93TEgEyE65YPD8Yo",
+  "_key": "!tables!93TEgEyE65YPD8Yo",
+  "name": "Morts mystérieuses",
+  "img": "icons/svg/d20-black.svg",
+  "description": "<p>Récits de mort pour l'aube : trois phrases au plus. Adapte le lieu (« Maison 7 »), le nom, et retire tout détail qui livrerait la cause si elle doit rester secrète.</p>",
+  "formula": "1d24",
+  "replacement": true,
+  "displayRoll": true,
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "morts-mysterieuses"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  },
+  "results": [
+    {
+      "_id": "av6W9h1EIGHUfrtJ",
+      "_key": "!tables.results!93TEgEyE65YPD8Yo.av6W9h1EIGHUfrtJ",
+      "type": "text",
+      "name": "",
+      "description": "<p>La porte était entrouverte et le feu éteint. Dans le lit défait, il ne restait qu'une forme creusée et un peu de terre noire.</p>",
+      "range": [
+        1,
+        1
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "ozUesxADsPuGRRtF",
+      "_key": "!tables.results!93TEgEyE65YPD8Yo.ozUesxADsPuGRRtF",
+      "type": "text",
+      "name": "",
+      "description": "<p>On l'a trouvé assis à sa table, la cuillère encore à la main, les yeux tournés vers la fenêtre. Sur la vitre, une buée en forme de main.</p>",
+      "range": [
+        2,
+        2
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "AMq2sDI6kYy3bEKp",
+      "_key": "!tables.results!93TEgEyE65YPD8Yo.AMq2sDI6kYy3bEKp",
+      "type": "text",
+      "name": "",
+      "description": "<p>Les volets avaient été arrachés de l'extérieur. Dans la neige fondue du seuil, des empreintes qui commencent humaines et finissent autrement.</p>",
+      "range": [
+        3,
+        3
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "lBLA8kLztwG6qF0b",
+      "_key": "!tables.results!93TEgEyE65YPD8Yo.lBLA8kLztwG6qF0b",
+      "type": "text",
+      "name": "",
+      "description": "<p>Le corps reposait au bord du puits, enveloppé dans sa propre courtepointe, comme si quelqu'un avait voulu le border une dernière fois.</p>",
+      "range": [
+        4,
+        4
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "oSPbNHEMEaxVevDM",
+      "_key": "!tables.results!93TEgEyE65YPD8Yo.oSPbNHEMEaxVevDM",
+      "type": "text",
+      "name": "",
+      "description": "<p>Sa maison était parfaitement rangée. Trop rangée. Seul le loquet de la porte portait des marques de dents.</p>",
+      "range": [
+        5,
+        5
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "BjmFaEm829BgNa8d",
+      "_key": "!tables.results!93TEgEyE65YPD8Yo.BjmFaEm829BgNa8d",
+      "type": "text",
+      "name": "",
+      "description": "<p>On l'a retrouvé dans le lavoir, au matin, flottant parmi les draps. Personne n'avait entendu de cri.</p>",
+      "range": [
+        6,
+        6
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "tOhHdhhwqakB4TYi",
+      "_key": "!tables.results!93TEgEyE65YPD8Yo.tOhHdhhwqakB4TYi",
+      "type": "text",
+      "name": "",
+      "description": "<p>Une traînée de feuilles mouillées menait de sa porte jusqu'à la lisière du bois. Elle s'arrêtait net.</p>",
+      "range": [
+        7,
+        7
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "LWLOKZgEeiFaiLCU",
+      "_key": "!tables.results!93TEgEyE65YPD8Yo.LWLOKZgEeiFaiLCU",
+      "type": "text",
+      "name": "",
+      "description": "<p>Les poules du voisin étaient toutes vivantes, et toutes silencieuses. Chez lui, la chandelle brûlait encore.</p>",
+      "range": [
+        8,
+        8
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "MbtQ3kEQXQxaIOsH",
+      "_key": "!tables.results!93TEgEyE65YPD8Yo.MbtQ3kEQXQxaIOsH",
+      "type": "text",
+      "name": "",
+      "description": "<p>Il gisait sur le pont, une main tendue vers l'autre rive, comme s'il avait voulu prévenir quelqu'un.</p>",
+      "range": [
+        9,
+        9
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "pawV2LNZRA9sqXog",
+      "_key": "!tables.results!93TEgEyE65YPD8Yo.pawV2LNZRA9sqXog",
+      "type": "text",
+      "name": "",
+      "description": "<p>Sa chaise à bascule balançait encore quand on est entré. Elle était vide ; le corps était derrière la porte.</p>",
+      "range": [
+        10,
+        10
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "QPNB4OUPpaN7A5r3",
+      "_key": "!tables.results!93TEgEyE65YPD8Yo.QPNB4OUPpaN7A5r3",
+      "type": "text",
+      "name": "",
+      "description": "<p>On a d'abord cru à une chute dans l'escalier. Puis on a vu que l'escalier avait été griffé de haut en bas.</p>",
+      "range": [
+        11,
+        11
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "c7eeqy1LAuzEGqdl",
+      "_key": "!tables.results!93TEgEyE65YPD8Yo.c7eeqy1LAuzEGqdl",
+      "type": "text",
+      "name": "",
+      "description": "<p>La chambre sentait la cire chaude et le fer. Sur l'oreiller, une seule plume de corbeau.</p>",
+      "range": [
+        12,
+        12
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "bq7bh6kp2Cwin4ZI",
+      "_key": "!tables.results!93TEgEyE65YPD8Yo.bq7bh6kp2Cwin4ZI",
+      "type": "text",
+      "name": "",
+      "description": "<p>Sa lanterne était posée devant la maison, toujours allumée, comme pour qu'on le retrouve vite.</p>",
+      "range": [
+        13,
+        13
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "GROQrGqaQFYWOxA5",
+      "_key": "!tables.results!93TEgEyE65YPD8Yo.GROQrGqaQFYWOxA5",
+      "type": "text",
+      "name": "",
+      "description": "<p>Il était couché dans le foin de la grange, paisible. Seule sa main serrait une poignée de poils gris.</p>",
+      "range": [
+        14,
+        14
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "MId6SvJs3fBvefEp",
+      "_key": "!tables.results!93TEgEyE65YPD8Yo.MId6SvJs3fBvefEp",
+      "type": "text",
+      "name": "",
+      "description": "<p>La porte était fermée à double tour, de l'intérieur. La fenêtre aussi. Et pourtant.</p>",
+      "range": [
+        15,
+        15
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "xFuhgouVOP4glKWA",
+      "_key": "!tables.results!93TEgEyE65YPD8Yo.xFuhgouVOP4glKWA",
+      "type": "text",
+      "name": "",
+      "description": "<p>On l'a trouvé au pied du gibet, assis, le dos contre le poteau, comme s'il avait attendu toute la nuit.</p>",
+      "range": [
+        16,
+        16
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "fGdlrTbXDJfBDgnA",
+      "_key": "!tables.results!93TEgEyE65YPD8Yo.fGdlrTbXDJfBDgnA",
+      "type": "text",
+      "name": "",
+      "description": "<p>Le chat de la maison n'a pas voulu entrer. Il miaule encore sur le seuil.</p>",
+      "range": [
+        17,
+        17
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "pGjCBeTUW5rE4GBy",
+      "_key": "!tables.results!93TEgEyE65YPD8Yo.pGjCBeTUW5rE4GBy",
+      "type": "text",
+      "name": "",
+      "description": "<p>Sur la table, deux bols de soupe servis, un seul entamé. L'autre convive n'a jamais été retrouvé.</p>",
+      "range": [
+        18,
+        18
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "3RXmlzFeI5pAOyTK",
+      "_key": "!tables.results!93TEgEyE65YPD8Yo.3RXmlzFeI5pAOyTK",
+      "type": "text",
+      "name": "",
+      "description": "<p>La cheminée était pleine de cendres froides où l'on voyait encore la forme d'une lettre brûlée.</p>",
+      "range": [
+        19,
+        19
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "05TaqX7eWAfpZPGG",
+      "_key": "!tables.results!93TEgEyE65YPD8Yo.05TaqX7eWAfpZPGG",
+      "type": "text",
+      "name": "",
+      "description": "<p>Ses sabots étaient alignés devant la porte, bien droits. Ses pieds nus, eux, étaient couverts de boue jusqu'aux genoux.</p>",
+      "range": [
+        20,
+        20
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "12DoDHvcAvf1mSpJ",
+      "_key": "!tables.results!93TEgEyE65YPD8Yo.12DoDHvcAvf1mSpJ",
+      "type": "text",
+      "name": "",
+      "description": "<p>On a cherché toute la matinée. On l'a trouvé dans le cimetière, allongé sur une tombe qui n'était pas la sienne.</p>",
+      "range": [
+        21,
+        21
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "84SgJBCiWtJtA6yi",
+      "_key": "!tables.results!93TEgEyE65YPD8Yo.84SgJBCiWtJtA6yi",
+      "type": "text",
+      "name": "",
+      "description": "<p>Rien n'était cassé, rien n'avait été volé. Seul le miroir de la chambre avait été retourné contre le mur.</p>",
+      "range": [
+        22,
+        22
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "qUUK995PsxUzgXg9",
+      "_key": "!tables.results!93TEgEyE65YPD8Yo.qUUK995PsxUzgXg9",
+      "type": "text",
+      "name": "",
+      "description": "<p>Les draps étaient tachés de cire rouge et non de sang. C'est le médecin qui l'a dit. Personne ne l'a cru.</p>",
+      "range": [
+        23,
+        23
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    },
+    {
+      "_id": "TxpJ2c408Nf2dX2b",
+      "_key": "!tables.results!93TEgEyE65YPD8Yo.TxpJ2c408Nf2dX2b",
+      "type": "text",
+      "name": "",
+      "description": "<p>Le vent avait éteint toutes les chandelles de la maison, sauf celle qui brûlait à son chevet.</p>",
+      "range": [
+        24,
+        24
+      ],
+      "weight": 1,
+      "drawn": false,
+      "img": null,
+      "flags": {}
+    }
+  ]
+}

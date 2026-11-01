@@ -1,0 +1,45 @@
+{
+  "_id": "gTJ29YElJZRvt9Ue",
+  "_key": "!items!gTJ29YElJZRvt9Ue",
+  "name": "Pyromane",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/pyromane.svg",
+  "system": {
+    "cle": "pyromane",
+    "camp": "solitaire",
+    "description": "<p>L'huile de lampe sent bon, et les maisons sont en bois.</p><p><strong>Chaque nuit</strong>, tu fais l'une de ces deux choses :<br>- <strong>asperger</strong> d'huile une maison (celui qui y dort ne le sait pas) ;<br>- <strong>embraser</strong> (tu te désignes toi-même) : toutes les maisons aspergées brûlent, et ceux qui y dorment meurent à l'aube, protégés ou non.</p><p>La meute ne peut pas te tuer : quand elle entre chez toi, elle repart bredouille.</p>",
+    "victoire": "<p>Tu gagnes <strong>seul</strong> si tu es le dernier vivant, ou le dernier avec un seul autre joueur qui n'est pas un loup.</p>",
+    "nuit": {
+      "actif": true,
+      "ordre": 55,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 1,
+      "soiMeme": true,
+      "invite": "Quelle maison asperges-tu ? Désigne-toi pour embraser toutes les maisons aspergées."
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "asperger",
+    "apparence": "",
+    "victoireCle": "dernier-survivant"
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "pyromane"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

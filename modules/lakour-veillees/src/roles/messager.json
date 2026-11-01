@@ -1,0 +1,45 @@
+{
+  "_id": "EaTu22EmiOPFBLjc",
+  "_key": "!items!EaTu22EmiOPFBLjc",
+  "name": "Messager",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/messager.svg",
+  "system": {
+    "cle": "messager",
+    "camp": "village",
+    "description": "<p>Tu connais tous les raccourcis et toutes les boîtes aux lettres.</p><p><strong>Chaque nuit</strong>, tu peux porter un <strong>message secret</strong> : tu désignes un expéditeur et un destinataire (toi compris), dans cet ordre. L'expéditeur écrit aussitôt une phrase, dans une fenêtre qui ne s'ouvre que chez lui ; le narrateur la remet au destinataire à l'aube, avec le nom de l'expéditeur. Personne d'autre ne la lit.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 10,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 2,
+      "soiMeme": true,
+      "invite": "Qui écrit, et à qui portes-tu son message cette nuit ?"
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "messager",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "messager"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

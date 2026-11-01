@@ -1,0 +1,81 @@
+{
+  "_id": "PImyfSaT7Yt7S2ab",
+  "_key": "!journal!PImyfSaT7Yt7S2ab",
+  "name": "Les Veillées de Brumecombe — Variantes",
+  "folder": null,
+  "sort": 0,
+  "categories": [],
+  "ownership": {
+    "default": 2
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "regles-des-variantes",
+      "visible": true
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  },
+  "pages": [
+    {
+      "_id": "X6tjnRCCbAD1DsSb",
+      "_key": "!journal.pages!PImyfSaT7Yt7S2ab.X6tjnRCCbAD1DsSb",
+      "name": "Réglages de la partie",
+      "type": "text",
+      "sort": 100,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>À annoncer avant la distribution</h2><ul><li><strong>Révélation à la mort</strong> (par défaut : oui) : le rôle d'un mort est montré à tous. Sans révélation, la partie est plus longue et plus trouble ; mettez le <strong>Cimetière</strong> en jeu pour garder un peu d'information.</li><li><strong>Nombre de loups</strong> : la composition le donne (2 à 5). Un loup de plus pour un groupe aguerri, un de moins pour un groupe qui débute.</li><li><strong>Temps de débat</strong> : 5 minutes par défaut ; 3 minutes pour une partie nerveuse ; 8 minutes pour une veillée bavarde.</li><li><strong>Rôles autorisés</strong> : le narrateur peut retirer un rôle d'une composition et le remplacer par un villageois, ou par un rôle du même camp.</li><li><strong>Ambiance</strong> : gothique sérieux (par défaut) ou comique.</li></ul>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "dcPqQKdP8uPYxXkL",
+      "_key": "!journal.pages!PImyfSaT7Yt7S2ab.dcPqQKdP8uPYxXkL",
+      "name": "Variantes de règles",
+      "type": "text",
+      "sort": 200,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Pour changer la veillée</h2><ul><li><strong>Nuit sans lune</strong> : la première nuit, la meute se reconnaît mais ne tue pas. Idéal pour une première partie.</li><li><strong>Brume épaisse</strong> : aucun rôle n'est révélé, ni à la mort ni par un pouvoir. Le Fossoyeur et le Cimetière deviennent précieux.</li><li><strong>Vote à bulletin secret</strong> : le décompte est donné, pas qui a voté pour qui.</li><li><strong>Veillée rapide</strong> : débat de 3 minutes, vote de 30 secondes, fenêtres de nuit de 30 secondes.</li><li><strong>Le village ne dort jamais</strong> : chaque joueur vivant peut, une fois par partie, rester éveillé une nuit : il apprend le nombre de visites reçues par sa maison, mais il est réduit au silence le lendemain (fatigue).</li><li><strong>Dernière veillée</strong> : quand il ne reste que trois vivants, le débat dure une minute et chaque joueur doit voter, sans abstention.</li><li><strong>Bâtiments tirés au sort</strong> : au lieu de ceux de la composition, tirez 4 à 6 bâtiments au hasard parmi les dix.</li><li><strong>Métiers cachés</strong> : les métiers sont secrets eux aussi ; on les révèle en les utilisant.</li></ul>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "sDVlIIAtX48gDFjR",
+      "_key": "!journal.pages!PImyfSaT7Yt7S2ab.sDVlIIAtX48gDFjR",
+      "name": "Composer sa propre partie",
+      "type": "text",
+      "sort": 300,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Recettes</h2><ul><li>Environ <strong>un loup pour quatre joueurs</strong>, jamais moins de deux.</li><li>Au moins <strong>un rôle d'information</strong> (Liseuse de cendres, Sourcier, Veilleuse de lanterne) et <strong>un rôle de protection</strong> (Garde du pont, Gardienne des clés, Herboriste) pour le village.</li><li><strong>Un solitaire</strong> à partir de dix joueurs ; deux à partir de quinze. Le Pyromane est le plus difficile à arrêter : ne l'ajoutez qu'avec une Liseuse ou un Sourcier.</li><li>Gardez <strong>au moins un quart de villageois sans pouvoir</strong> : ce sont eux qui font les votes honnêtes.</li><li><strong>4 bâtiments</strong> pour une partie simple, <strong>6</strong> pour une partie riche ; évitez le Gibet à moins de huit joueurs, il bloque trop de votes.</li></ul>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    }
+  ]
+}

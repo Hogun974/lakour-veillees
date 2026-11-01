@@ -1,0 +1,13 @@
+<div class="loups-carnet-corps">
+  <p class="loups-consigne"><i class="fa-solid fa-lock"></i> {{aide}}</p>
+  {{#if prime}}<p class="loups-carnet-prime"><i class="fa-solid fa-crosshairs"></i> {{localize "LAKOUR_LOUPS.Carnet.Prime"}} <strong>{{prime}}</strong></p>{{/if}}
+  <ol class="loups-carnet-liste">
+    {{#each entrees}}
+    <li class="loups-carnet-entree">
+      <div class="loups-etiquette">{{#if tour}}{{localize "LAKOUR_LOUPS.Table.Tour"}} {{tour}}{{/if}}{{#if titre}} · {{titre}}{{/if}}</div>
+      <div class="loups-carnet-texte">{{{contenu}}}</div>
+    </li>
+    {{/each}}
+  </ol>
+  {{#if vide}}<p class="loups-vide">{{localize "LAKOUR_LOUPS.Carnet.Vide"}}</p>{{/if}}
+</div>

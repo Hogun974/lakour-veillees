@@ -1,0 +1,57 @@
+{
+  "_id": "itfFPEZ8rwATe0l9",
+  "_key": "!actors!itfFPEZ8rwATe0l9",
+  "name": "Bastien Grenier, garde du guet",
+  "type": "villageois",
+  "img": "modules/lakour-veillees/assets/jetons/metier-garde.svg",
+  "system": {
+    "joueur": "",
+    "vivant": true,
+    "revele": false,
+    "camp": "village",
+    "maison": "Pont",
+    "amoureux": "",
+    "silence": false,
+    "protections": 0,
+    "notes": "<p>Il fait la ronde avec sa pique et son sifflet, et ne siffle jamais. On le voit souvent appuyé au parapet du pont, à regarder la brume.</p>"
+  },
+  "items": [],
+  "effects": [],
+  "prototypeToken": {
+    "name": "Bastien Grenier, garde du guet",
+    "actorLink": false,
+    "disposition": 0,
+    "displayName": 20,
+    "displayBars": 0,
+    "width": 1,
+    "height": 1,
+    "texture": {
+      "src": "modules/lakour-veillees/assets/jetons/metier-garde.svg",
+      "fit": "contain",
+      "scaleX": 1,
+      "scaleY": 1
+    },
+    "bar1": {
+      "attribute": null
+    },
+    "bar2": {
+      "attribute": null
+    }
+  },
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "bastien-grenier",
+      "jeton": "metier-garde"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

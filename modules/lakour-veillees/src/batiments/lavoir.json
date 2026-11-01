@@ -1,0 +1,30 @@
+{
+  "_id": "UchZugIE6gnV4JDz",
+  "_key": "!items!UchZugIE6gnV4JDz",
+  "name": "Le Lavoir",
+  "type": "batiment",
+  "img": "modules/lakour-veillees/assets/jetons/batiment-lavoir.svg",
+  "system": {
+    "cle": "lavoir",
+    "description": "<p>Le lavoir couvert au bord de la rivière : on y lave le linge, et surtout les réputations.</p>",
+    "regle": "<p><strong>Les bavardages.</strong> Chaque matin, le narrateur rapporte ce qu'on dit au lavoir : un <strong>indice vrai mais flou</strong> sur la nuit passée (« quelqu'un est sorti par la porte de derrière », « la victime avait de la visite deux nuits plus tôt »). Il ne nomme jamais personne.</p>",
+    "repere": "Lavoir",
+    "effet": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "lavoir"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

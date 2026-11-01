@@ -1,0 +1,30 @@
+{
+  "_id": "ap1JoJfTcFCLgHBV",
+  "_key": "!items!ap1JoJfTcFCLgHBV",
+  "name": "Le Gibet",
+  "type": "batiment",
+  "img": "modules/lakour-veillees/assets/jetons/batiment-gibet.svg",
+  "system": {
+    "cle": "gibet",
+    "description": "<p>Une potence de chêne noirci au coin de la place. On ne s'en sert presque jamais, et c'est déjà trop.</p>",
+    "regle": "<p><strong>Majorité absolue.</strong> Pour exécuter un joueur, il faut que <strong>plus de la moitié des vivants</strong> aient voté pour lui. Sinon, personne n'est exécuté ce jour-là.</p>",
+    "repere": "Gibet",
+    "effet": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "gibet"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

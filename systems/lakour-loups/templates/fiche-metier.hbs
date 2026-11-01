@@ -1,0 +1,34 @@
+<div class="loups-fiche-corps">
+  <header class="loups-fiche-tete">
+    <img class="loups-fiche-portrait" src="{{objet.img}}" alt="" {{#if editable}}data-action="editImage" data-edit="img"{{/if}}>
+    <div class="loups-fiche-identite">
+      {{#if editable}}<input class="loups-fiche-nom" type="text" name="name" value="{{objet.name}}">{{else}}<h1 class="loups-fiche-nom">{{objet.name}}</h1>{{/if}}
+      <div class="loups-pastilles">
+        <span class="loups-pastille"><i class="fa-solid fa-hammer"></i> {{localize "TYPES.Item.metier"}}</span>
+        {{#if system.jour.actif}}<span class="loups-pastille jour"><i class="fa-solid fa-sun"></i> {{localize "LAKOUR_LOUPS.Metier.PouvoirDeJour"}}</span>{{/if}}
+      </div>
+    </div>
+  </header>
+  <div class="loups-corps">
+    <section class="loups-encart">
+      <h3>{{localize "LAKOUR_LOUPS.Metier.Savoir"}}</h3>
+      {{#if editable}}
+      <prose-mirror name="system.description" value="{{system.description}}" toggled data-document-uuid="{{objet.uuid}}">{{{enrichis.description}}}</prose-mirror>
+      {{else}}<div class="loups-texte">{{{enrichis.description}}}</div>{{/if}}
+    </section>
+    {{#if gm}}
+    <section class="loups-encart loups-mj">
+      <h3><i class="fa-solid fa-gears"></i> {{localize "LAKOUR_LOUPS.Role.Regles"}}</h3>
+      <div class="loups-champs">
+        <label>{{localize "LAKOUR_LOUPS.Role.Cle"}} <input type="text" name="system.cle" value="{{system.cle}}"></label>
+        <label class="large">{{localize "LAKOUR_LOUPS.Role.Effet"}} <select name="system.effet">{{selectOptions effets selected=system.effet}}</select></label>
+        <label class="case"><input type="checkbox" name="system.jour.actif" {{checked system.jour.actif}}> {{localize "LAKOUR_LOUPS.Metier.PouvoirDeJour"}}</label>
+        <label>{{localize "LAKOUR_LOUPS.Role.Cibles"}} <input type="number" name="system.jour.cibles" value="{{system.jour.cibles}}" min="0" step="1"></label>
+        <label class="large">{{localize "LAKOUR_LOUPS.Role.Invite"}} <input type="text" name="system.jour.invite" value="{{system.jour.invite}}"></label>
+        <label>{{localize "LAKOUR_LOUPS.Role.UsagesMax"}} <input type="number" name="system.usages.max" value="{{system.usages.max}}" min="0" step="1"></label>
+        <label>{{localize "LAKOUR_LOUPS.Role.UsagesRestant"}} <input type="number" name="system.usages.restant" value="{{system.usages.restant}}" min="0" step="1"></label>
+      </div>
+    </section>
+    {{/if}}
+  </div>
+</div>

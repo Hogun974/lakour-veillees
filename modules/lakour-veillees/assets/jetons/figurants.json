@@ -1,0 +1,62 @@
+{
+  "villageois": {
+    "libelle": "Villageois anonyme",
+    "jeton": "villageois"
+  },
+  "garde": {
+    "libelle": "Garde du guet",
+    "jeton": "metier-garde"
+  },
+  "cure": {
+    "libelle": "Curé",
+    "jeton": "metier-cure"
+  },
+  "forgeron": {
+    "libelle": "Forgeron",
+    "jeton": "metier-forgeron"
+  },
+  "meuniere": {
+    "libelle": "Meunière",
+    "jeton": "metier-meuniere"
+  },
+  "aubergiste": {
+    "libelle": "Aubergiste",
+    "jeton": "metier-aubergiste"
+  },
+  "passeur": {
+    "libelle": "Passeur",
+    "jeton": "metier-passeur"
+  },
+  "enfant": {
+    "libelle": "Enfant",
+    "jeton": "figurant-enfant"
+  },
+  "paysan": {
+    "libelle": "Paysan",
+    "jeton": "figurant-paysan"
+  },
+  "religieuse": {
+    "libelle": "Religieuse",
+    "jeton": "figurant-religieuse"
+  },
+  "lavandiere": {
+    "libelle": "Lavandière",
+    "jeton": "figurant-lavandiere"
+  },
+  "chien": {
+    "libelle": "Chien de ferme",
+    "jeton": "figurant-chien"
+  },
+  "corbeau": {
+    "libelle": "Corbeau",
+    "jeton": "figurant-corbeau"
+  },
+  "chat": {
+    "libelle": "Chat",
+    "jeton": "figurant-chat"
+  },
+  "ombre": {
+    "libelle": "Silhouette dans la brume",
+    "jeton": "figurant-ombre"
+  }
+}

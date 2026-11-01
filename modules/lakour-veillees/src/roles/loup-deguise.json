@@ -1,0 +1,45 @@
+{
+  "_id": "MjNo9cYF7dLJNcua",
+  "_key": "!items!MjNo9cYF7dLJNcua",
+  "name": "Loup déguisé",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/loup-deguise.svg",
+  "system": {
+    "cle": "loup-deguise",
+    "camp": "meute",
+    "description": "<p>Tu portes un visage d'emprunt cousu de patience.</p><p>Tu chasses chaque nuit avec la meute. <strong>Toute vision te voit comme un villageois du camp du Village</strong> (Liseuse de cendres, Sourcier, Loup flaireur…). La Veilleuse de lanterne te démasque comme les autres si tu entres dans la maison qu'elle éclaire.</p><p>Si tu es <strong>le plus désigné d'un vote sans être exécuté</strong> (égalité, vote annulé, majorité manquée), le masque tombe : à partir de là, les visions disent la vérité sur toi.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 40,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 1,
+      "soiMeme": false,
+      "invite": "Quelle maison la meute visite-t-elle cette nuit ?"
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "tuer",
+    "apparence": "village",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "loup-deguise"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

@@ -1,0 +1,35 @@
+<div class="loups-vote-corps">
+  <header class="loups-choix-tete">
+    <i class="fa-solid fa-scale-balanced"></i>
+    <div>
+      <div class="loups-etiquette">{{localize "LAKOUR_LOUPS.Vote.Place"}}</div>
+      <p class="loups-invite">{{#if chapelle}}{{localize "LAKOUR_LOUPS.Vote.QuestionChapelle"}}{{else}}{{localize "LAKOUR_LOUPS.Vote.Question"}}{{/if}}</p>
+      <div class="loups-pastilles">
+        {{#if double}}<span class="loups-pastille cloche"><i class="fa-solid fa-bell"></i> {{localize "LAKOUR_LOUPS.Vote.Double"}}</span>{{/if}}
+        {{#if majoriteAbsolue}}<span class="loups-pastille gibet">{{localize "LAKOUR_LOUPS.Vote.MajoriteAbsolue"}}</span>{{/if}}
+      </div>
+    </div>
+    <div class="loups-minuteur"></div>
+  </header>
+  {{#if ouvert}}
+  <p class="loups-consigne">{{exprimes}} / {{votants}} {{localize "LAKOUR_LOUPS.Vote.OntVote"}} · {{localize "LAKOUR_LOUPS.Vote.VotreVoix"}} <strong>{{monChoixNom}}</strong></p>
+  <ul class="loups-candidats">
+    {{#each candidats}}
+    <li>
+      <button type="button" class="loups-candidat {{#if choisi}}choisi{{/if}}" data-action="voter" data-id="{{id}}" {{#unless @root.peutVoter}}disabled{{/unless}}>
+        <img src="{{img}}" alt="">
+        <span class="loups-nom">{{nom}}{{#if moi}} ({{localize "LAKOUR_LOUPS.Table.Vous"}}){{/if}}</span>
+        <small>{{maison}}{{#if metier}} · {{metier}}{{/if}}</small>
+        {{#if choisi}}<i class="fa-solid fa-hand-point-up"></i>{{/if}}
+      </button>
+    </li>
+    {{/each}}
+  </ul>
+  <footer class="loups-pied">
+    <button type="button" class="loups-bouton discret" data-action="table"><i class="fa-solid fa-fire-flame-curved"></i> {{localize "LAKOUR_LOUPS.Table.Titre"}}</button>
+    {{#if peutVoter}}<button type="button" class="loups-bouton discret" data-action="abstenir">{{localize "LAKOUR_LOUPS.Vote.Abstention"}}</button>{{/if}}
+  </footer>
+  {{else}}
+  <p class="loups-vide">{{localize "LAKOUR_LOUPS.Vote.Clos"}}</p>
+  {{/if}}
+</div>

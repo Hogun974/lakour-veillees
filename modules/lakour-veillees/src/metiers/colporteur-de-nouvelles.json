@@ -1,0 +1,37 @@
+{
+  "_id": "BLWUq0c4PAVKz0Nc",
+  "_key": "!items!BLWUq0c4PAVKz0Nc",
+  "name": "Colporteur de nouvelles",
+  "type": "metier",
+  "img": "modules/lakour-veillees/assets/jetons/metier-colporteur-de-nouvelles.svg",
+  "system": {
+    "cle": "colporteur-de-nouvelles",
+    "description": "<p>Tu sais tout avant tout le monde, et tu le dis plus fort.</p><p><strong>Une fois par partie</strong>, au matin, tu demandes au narrateur une <strong>nouvelle</strong> de la nuit : un indice <strong>vrai mais flou</strong>, qu'il annonce à tout le village (« deux maisons voisines ont eu de la visite », « la victime connaissait celui qui l'a trouvée »).</p>",
+    "jour": {
+      "actif": true,
+      "invite": "Veux-tu crier la nouvelle du matin ?",
+      "cibles": 0
+    },
+    "usages": {
+      "max": 1,
+      "restant": 1
+    },
+    "effet": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "colporteur-de-nouvelles"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "_id": "l4dHX2ZGrBUCEhcv",
+  "_key": "!items!l4dHX2ZGrBUCEhcv",
+  "name": "Ermite",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/ermite.svg",
+  "system": {
+    "cle": "ermite",
+    "camp": "village",
+    "description": "<p>De ta cabane au-dessus du village, tu vois les lanternes qui bougent.</p><p><strong>Chaque nuit</strong>, à la fin de la nuit, le narrateur te donne en secret le nom d'<strong>un joueur qui a agi</strong> cette nuit (pouvoir de nuit ou chasse de la meute), tiré au hasard. Tu ne sais pas ce qu'il a fait.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 70,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 0,
+      "soiMeme": false,
+      "invite": "Tu guettes les lanternes. Le narrateur va te souffler un nom."
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "voir-actif",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "ermite"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

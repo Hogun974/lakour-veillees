@@ -1,0 +1,45 @@
+{
+  "_id": "oCF4vG3ph14XPoyd",
+  "_key": "!items!oCF4vG3ph14XPoyd",
+  "name": "Loup de Brumecombe",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/loup-de-brumecombe.svg",
+  "system": {
+    "cle": "loup-de-brumecombe",
+    "camp": "meute",
+    "description": "<p>Le jour, tu es un voisin comme un autre. La nuit, tu retrouves la meute dans la brume.</p><p><strong>Chaque nuit</strong>, avec les autres loups, tu choisis une maison où entrer : celui qui y dort meurt, sauf s'il est protégé. Les loups se reconnaissent entre eux dès la première nuit.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 40,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 1,
+      "soiMeme": false,
+      "invite": "Quelle maison la meute visite-t-elle cette nuit ?"
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "tuer",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "loup-de-brumecombe"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

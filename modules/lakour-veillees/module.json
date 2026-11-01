@@ -1,0 +1,28 @@
+{
+  "id": "lakour-veillees",
+  "title": "La Kour — Les Veillées de Brumecombe",
+  "description": "Contenu du jeu original « Les Veillées de Brumecombe », un jeu de déduction sociale de la famille du loup-garou, pour le système La Kour Loups : rôles de la meute, du village et des solitaires, métiers publics, bâtiments, guides du joueur et du narrateur, variantes, tables, compositions de 6 à 18 joueurs et carte du village avec son plan. Textes originaux, pour un usage privé à la table. Jetons : icônes de game-icons.net (licence CC BY 3.0), voir CREDITS.md.",
+  "version": "0.2.1",
+  "authors": [{ "name": "Jordan" }],
+  "compatibility": { "minimum": "14", "verified": "14.369" },
+  "relationships": {
+    "systems": [{ "id": "lakour-loups", "type": "system", "compatibility": { "minimum": "0.2.1" } }]
+  },
+  "esmodules": ["scripts/main.js"],
+  "languages": [
+    { "lang": "fr", "name": "Français", "path": "lang/fr.json" },
+    { "lang": "en", "name": "English", "path": "lang/en.json" }
+  ],
+  "packs": [
+    { "name": "roles", "label": "Veillées — Rôles", "path": "packs/roles", "type": "Item", "system": "lakour-loups", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },
+    { "name": "metiers", "label": "Veillées — Métiers", "path": "packs/metiers", "type": "Item", "system": "lakour-loups", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },
+    { "name": "batiments", "label": "Veillées — Bâtiments", "path": "packs/batiments", "type": "Item", "system": "lakour-loups", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },
+    { "name": "journaux", "label": "Veillées — Guides et variantes", "path": "packs/journaux", "type": "JournalEntry", "ownership": { "PLAYER": "NONE", "ASSISTANT": "OWNER" } },
+    { "name": "tables", "label": "Veillées — Tables du narrateur", "path": "packs/tables", "type": "RollTable", "ownership": { "PLAYER": "NONE", "ASSISTANT": "OWNER" } },
+    { "name": "scenes", "label": "Veillées — Scènes", "path": "packs/scenes", "type": "Scene", "ownership": { "PLAYER": "NONE", "ASSISTANT": "OWNER" } },
+    { "name": "villageois", "label": "Veillées — Villageois non joués", "path": "packs/villageois", "type": "Actor", "system": "lakour-loups", "ownership": { "PLAYER": "NONE", "ASSISTANT": "OWNER" } }
+  ],
+  "packFolders": [
+    { "name": "Les Veillées de Brumecombe", "sorting": "m", "color": "#3a2a4a", "packs": ["journaux", "scenes", "roles", "metiers", "batiments", "villageois", "tables"] }
+  ]
+}

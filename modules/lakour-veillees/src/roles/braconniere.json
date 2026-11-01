@@ -1,0 +1,45 @@
+{
+  "_id": "BV59CvnztDht98LJ",
+  "_key": "!items!BV59CvnztDht98LJ",
+  "name": "Braconnière",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/braconniere.svg",
+  "system": {
+    "cle": "braconniere",
+    "camp": "village",
+    "description": "<p>Tes collets tiennent encore quand toi tu tombes.</p><p><strong>Quand tu meurs</strong>, de nuit ou au vote, tu désignes aussitôt un joueur vivant : il meurt avec toi. Si tu es réduite au silence, tu peux le désigner du doigt.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": false,
+      "ordre": 50,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 0,
+      "soiMeme": false,
+      "invite": ""
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "emporter",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "braconniere"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

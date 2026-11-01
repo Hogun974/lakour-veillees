@@ -1,0 +1,37 @@
+{
+  "_id": "9yr7s89OUikqYkOK",
+  "_key": "!items!9yr7s89OUikqYkOK",
+  "name": "Apothicaire",
+  "type": "metier",
+  "img": "modules/lakour-veillees/assets/jetons/metier-apothicaire.svg",
+  "system": {
+    "cle": "apothicaire",
+    "description": "<p>Sirop de coquelicot, miel et sauge : rien ne résiste à tes pastilles.</p><p><strong>Une fois par partie</strong>, au début d'un débat, tu <strong>rends la parole</strong> à un joueur réduit au silence.</p>",
+    "jour": {
+      "actif": true,
+      "invite": "À qui rends-tu la voix ?",
+      "cibles": 1
+    },
+    "usages": {
+      "max": 1,
+      "restant": 1
+    },
+    "effet": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "apothicaire"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

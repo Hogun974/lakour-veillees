@@ -1,0 +1,3 @@
+[submodule "modules/lakour-mj-ia"]
+	path = modules/lakour-mj-ia
+	url = ../lakour-mj-ia

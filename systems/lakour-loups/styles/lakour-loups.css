@@ -1,0 +1,310 @@
+/* Les Veillées de Brumecombe — thème sombre « veillée d'automne » : nuit de vallée, lanterne ambrée, feuilles rousses. */
+
+.lakour-loups {
+  --loups-nuit: #15121a;
+  --loups-nuit-2: #1e1922;
+  --loups-bois: #2b2125;
+  --loups-bord: #4a3a33;
+  --loups-parchemin: #eadfc8;
+  --loups-texte: #e2d6bf;
+  --loups-terne: #a99a84;
+  --loups-lanterne: #f0a742;
+  --loups-lanterne-doux: rgba(240, 167, 66, 0.16);
+  --loups-rouille: #b5532d;
+  --loups-sang: #a8312f;
+  --loups-mousse: #7f9a62;
+  --loups-brume: #8fa3b8;
+  --loups-meute: #c0463a;
+  --loups-village: #8fb06a;
+  --loups-solitaire: #b48ad0;
+  --loups-titre: "Modesto Condensed", "Signika", Georgia, serif;
+  --loups-rayon: 8px;
+}
+
+/* ------------------------------------------------------------------ fenêtres */
+.application.lakour-loups {
+  color: var(--loups-texte);
+  background: var(--loups-nuit);
+  border: 1px solid var(--loups-bord);
+  box-shadow: 0 0 0 1px #000, 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 60px rgba(240, 167, 66, 0.06);
+}
+.application.lakour-loups .window-header {
+  background: linear-gradient(90deg, #241b20, #33241f 60%, #241b20);
+  border-bottom: 1px solid var(--loups-bord);
+  color: var(--loups-parchemin);
+}
+.application.lakour-loups .window-header .window-title { font-family: var(--loups-titre); font-size: 1.35em; letter-spacing: 0.03em; }
+.application.lakour-loups .window-header .window-icon { color: var(--loups-lanterne); }
+.application.lakour-loups .window-content {
+  padding: 0;
+  color: var(--loups-texte);
+  background:
+    radial-gradient(ellipse at 15% 0%, rgba(240, 167, 66, 0.10), transparent 55%),
+    radial-gradient(ellipse at 100% 100%, rgba(143, 163, 184, 0.08), transparent 50%),
+    var(--loups-nuit);
+}
+.lakour-loups h1, .lakour-loups h2, .lakour-loups h3, .lakour-loups h4 {
+  font-family: var(--loups-titre);
+  color: var(--loups-parchemin);
+  border: none;
+  margin: 0 0 0.4em;
+  font-weight: normal;
+}
+.lakour-loups h2 { font-size: 1.5em; }
+.lakour-loups h3 { font-size: 1.3em; }
+.lakour-loups h4 { font-size: 1.1em; color: var(--loups-terne); }
+.lakour-loups h2 i, .lakour-loups h3 i { color: var(--loups-lanterne); margin-right: 0.25em; }
+
+.lakour-loups input[type="text"], .lakour-loups input[type="number"], .lakour-loups select {
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--loups-texte);
+  border: 1px solid var(--loups-bord);
+  border-radius: 4px;
+}
+.lakour-loups input:focus, .lakour-loups select:focus { border-color: var(--loups-lanterne); box-shadow: 0 0 0 2px var(--loups-lanterne-doux); outline: none; }
+.lakour-loups button { color: var(--loups-texte); }
+
+/* ------------------------------------------------------------------ éléments communs */
+.lakour-loups .loups-etiquette { font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.08em; color: var(--loups-terne); }
+.lakour-loups .loups-vide { color: var(--loups-terne); font-style: italic; }
+.lakour-loups .loups-aide { color: var(--loups-terne); font-size: 0.85em; margin: 0.4em 0 0; }
+.lakour-loups .loups-detail { color: var(--loups-terne); font-size: 0.88em; line-height: 1.35; }
+.lakour-loups .loups-detail i { width: 1.1em; text-align: center; color: var(--loups-rouille); }
+.lakour-loups .loups-detail.mj i { color: var(--loups-brume); }
+.lakour-loups .loups-compte { font-family: Signika, sans-serif; font-size: 0.6em; background: var(--loups-bois); border-radius: 999px; padding: 0.1em 0.6em; vertical-align: middle; color: var(--loups-terne); }
+
+.lakour-loups .loups-pastilles { display: flex; flex-wrap: wrap; gap: 0.35em; margin: 0.3em 0; }
+.lakour-loups .loups-pastille {
+  display: inline-flex; align-items: center; gap: 0.3em;
+  font-size: 0.8em; padding: 0.15em 0.6em; border-radius: 999px;
+  background: var(--loups-bois); border: 1px solid var(--loups-bord); color: var(--loups-texte);
+}
+.lakour-loups .loups-pastille.vivant { border-color: var(--loups-mousse); color: #cfe0b8; }
+.lakour-loups .loups-pastille.mort { border-color: var(--loups-sang); color: #f0b3a8; }
+.lakour-loups .loups-pastille.revele { border-color: var(--loups-lanterne); color: var(--loups-lanterne); }
+.lakour-loups .loups-pastille.silence { border-color: var(--loups-brume); color: var(--loups-brume); }
+.lakour-loups .loups-pastille.cloche, .lakour-loups .loups-pastille.nuit { border-color: var(--loups-lanterne); color: var(--loups-lanterne); }
+.lakour-loups .loups-pastille.gibet { border-color: var(--loups-rouille); color: #f3b190; }
+.lakour-loups .loups-pastille.jour { border-color: #d9c069; color: #ecd98f; }
+
+.lakour-loups .loups-bouton {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.4em;
+  padding: 0.35em 0.9em; border-radius: 6px; cursor: pointer;
+  background: linear-gradient(#4a2f22, #3a241b);
+  border: 1px solid var(--loups-rouille);
+  color: var(--loups-parchemin);
+  font-weight: bold;
+}
+.lakour-loups .loups-bouton:hover:not(:disabled) { box-shadow: 0 0 12px rgba(240, 167, 66, 0.35); border-color: var(--loups-lanterne); }
+.lakour-loups .loups-bouton:disabled { opacity: 0.45; cursor: default; }
+.lakour-loups .loups-bouton.discret { background: transparent; border-color: var(--loups-bord); font-weight: normal; }
+.lakour-loups .loups-bouton.actif { background: linear-gradient(#a8642a, #7f461c); border-color: var(--loups-lanterne); }
+
+.lakour-loups .loups-encart {
+  background: rgba(43, 33, 37, 0.55);
+  border: 1px solid var(--loups-bord);
+  border-radius: var(--loups-rayon);
+  padding: 0.7em 0.85em;
+  margin-bottom: 0.8em;
+}
+.lakour-loups .loups-minuteur {
+  font-family: var(--loups-titre); font-size: 1.9em; color: var(--loups-lanterne);
+  min-width: 3ch; text-align: right; text-shadow: 0 0 12px rgba(240, 167, 66, 0.4);
+}
+.lakour-loups .loups-minuteur.urgent { color: #ff7a5c; animation: loups-pouls 1s ease-in-out infinite; }
+@keyframes loups-pouls { 50% { opacity: 0.55; } }
+
+.lakour-loups .camp-meute .loups-camp, .lakour-loups .loups-pastille.camp-meute { color: var(--loups-meute); }
+.lakour-loups .camp-village .loups-camp { color: var(--loups-village); }
+.lakour-loups .camp-solitaire .loups-camp { color: var(--loups-solitaire); }
+
+/* ------------------------------------------------------------------ Table de jeu */
+.lakour-loups .loups-table-corps { display: flex; flex-direction: column; height: 100%; }
+.lakour-loups .loups-bandeau {
+  display: flex; align-items: center; gap: 1em;
+  padding: 0.7em 1em;
+  border-bottom: 1px solid var(--loups-bord);
+  background: linear-gradient(180deg, rgba(240, 167, 66, 0.08), transparent);
+}
+.lakour-loups .nuit .loups-bandeau { background: linear-gradient(180deg, rgba(143, 163, 184, 0.12), transparent); }
+.lakour-loups .loups-phase { display: flex; align-items: center; gap: 0.7em; flex: 1; }
+.lakour-loups .loups-phase-icone {
+  width: 2.4em; height: 2.4em; display: grid; place-items: center; border-radius: 50%;
+  background: var(--loups-bois); border: 1px solid var(--loups-lanterne); color: var(--loups-lanterne); font-size: 1.2em;
+}
+.lakour-loups .nuit .loups-phase-icone { border-color: var(--loups-brume); color: var(--loups-brume); }
+.lakour-loups .loups-phase-nom { font-family: var(--loups-titre); font-size: 1.8em; color: var(--loups-parchemin); line-height: 1; }
+.lakour-loups .loups-phase-tour { color: var(--loups-terne); font-size: 0.9em; }
+.lakour-loups .loups-moi { color: var(--loups-parchemin); }
+.lakour-loups .loups-victoire {
+  margin: 0.6em 1em 0; padding: 0.6em 1em; border-radius: var(--loups-rayon);
+  background: linear-gradient(90deg, rgba(240, 167, 66, 0.25), rgba(181, 83, 45, 0.25));
+  border: 1px solid var(--loups-lanterne); font-family: var(--loups-titre); font-size: 1.5em; color: var(--loups-parchemin);
+}
+.lakour-loups .loups-victoire i { color: var(--loups-lanterne); }
+.lakour-loups .loups-colonnes { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 1em; padding: 0.9em 1em; flex: 1; min-height: 0; }
+.lakour-loups .loups-colonne { overflow-y: auto; min-height: 0; padding-right: 0.2em; }
+
+.lakour-loups .loups-vote-bandeau {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.6em;
+  padding: 0.55em 0.8em; margin-bottom: 0.9em; border-radius: var(--loups-rayon);
+  background: var(--loups-lanterne-doux); border: 1px solid var(--loups-lanterne);
+}
+.lakour-loups .loups-vote-bandeau > i { color: var(--loups-lanterne); }
+.lakour-loups .loups-vote-bandeau .loups-bouton { margin-left: auto; }
+
+.lakour-loups .loups-grille {
+  list-style: none; margin: 0 0 1em; padding: 0;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 0.6em;
+}
+.lakour-loups .loups-carte {
+  position: relative; display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 0.55em; align-items: start;
+  padding: 0.55em; border-radius: var(--loups-rayon);
+  background: linear-gradient(160deg, #2a2026, #1d171c);
+  border: 1px solid var(--loups-bord);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.lakour-loups .loups-carte:hover { border-color: #6a5446; }
+.lakour-loups .loups-carte.moi { border-color: var(--loups-mousse); }
+.lakour-loups .loups-carte.choisi { border-color: var(--loups-lanterne); box-shadow: 0 0 14px rgba(240, 167, 66, 0.3); }
+.lakour-loups .loups-carte.elu { border-color: var(--loups-sang); box-shadow: 0 0 14px rgba(168, 49, 47, 0.45); }
+.lakour-loups .loups-carte.mort { opacity: 0.72; filter: saturate(0.5); }
+.lakour-loups .loups-carte.mort .loups-portrait { filter: grayscale(1); }
+.lakour-loups .loups-portrait {
+  width: 52px; height: 52px; object-fit: cover; border-radius: 50%;
+  border: 2px solid var(--loups-bord); background: #000; cursor: pointer;
+}
+.lakour-loups .loups-nom { font-weight: bold; color: var(--loups-parchemin); cursor: pointer; overflow-wrap: anywhere; }
+.lakour-loups .loups-role { margin-top: 0.2em; font-size: 0.88em; color: var(--loups-lanterne); }
+.lakour-loups .loups-role .loups-camp { font-size: 0.9em; margin-left: 0.2em; }
+.lakour-loups .loups-carte-etat { display: flex; flex-direction: column; align-items: flex-end; gap: 0.3em; color: var(--loups-brume); }
+.lakour-loups .loups-voix {
+  min-width: 1.8em; text-align: center; font-weight: bold;
+  background: var(--loups-sang); color: #fff; border-radius: 999px; padding: 0.05em 0.45em;
+}
+.lakour-loups .loups-bouton.voter { grid-column: 1 / -1; width: 100%; }
+.lakour-loups .loups-mj-boutons { position: absolute; right: 0.35em; bottom: 0.35em; display: flex; gap: 0.2em; opacity: 0.45; }
+.lakour-loups .loups-carte:hover .loups-mj-boutons { opacity: 1; }
+.lakour-loups .loups-mj-boutons button {
+  width: 1.9em; height: 1.9em; line-height: 1; padding: 0; border-radius: 4px;
+  background: rgba(0, 0, 0, 0.4); border: 1px solid var(--loups-bord); font-size: 0.8em; cursor: pointer;
+}
+.lakour-loups .loups-mj-boutons button:hover { border-color: var(--loups-lanterne); color: var(--loups-lanterne); }
+
+.lakour-loups .loups-decompte { list-style: none; padding: 0; margin: 0 0 0.5em; }
+.lakour-loups .loups-decompte li { display: flex; justify-content: space-between; padding: 0.2em 0; border-bottom: 1px dashed var(--loups-bord); }
+.lakour-loups .loups-decompte li.elu { color: #f0b3a8; font-weight: bold; }
+.lakour-loups .loups-verdict { margin: 0; }
+
+.lakour-loups .loups-batiments { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.35em; }
+.lakour-loups .loups-batiments li {
+  display: grid; grid-template-columns: 32px 1fr; grid-template-rows: auto auto; column-gap: 0.5em; align-items: center;
+  cursor: pointer; padding: 0.25em; border-radius: 6px;
+}
+.lakour-loups .loups-batiments li:hover { background: var(--loups-lanterne-doux); }
+.lakour-loups .loups-batiments img { width: 32px; height: 32px; grid-row: span 2; border: none; border-radius: 4px; }
+.lakour-loups .loups-batiments small { color: var(--loups-terne); }
+
+.lakour-loups .loups-phases { display: flex; flex-wrap: wrap; gap: 0.3em; margin-bottom: 0.6em; }
+.lakour-loups .loups-phases button, .lakour-loups .loups-actions button {
+  flex: 1 1 auto; padding: 0.3em 0.5em; border-radius: 5px; cursor: pointer;
+  background: var(--loups-bois); border: 1px solid var(--loups-bord); font-size: 0.85em;
+}
+.lakour-loups .loups-phases button.actif { border-color: var(--loups-lanterne); color: var(--loups-lanterne); }
+.lakour-loups .loups-actions { display: grid; gap: 0.35em; }
+.lakour-loups .loups-actions button:hover, .lakour-loups .loups-phases button:hover { border-color: var(--loups-lanterne); }
+.lakour-loups .loups-ordre { margin: 0 0 0.5em; padding-left: 1.4em; }
+.lakour-loups .loups-ordre li.fait { opacity: 0.55; text-decoration: line-through; }
+.lakour-loups .loups-ordre code { background: rgba(0, 0, 0, 0.35); color: var(--loups-lanterne); border: none; }
+.lakour-loups .loups-journal { list-style: none; margin: 0; padding: 0; font-size: 0.85em; display: grid; gap: 0.3em; }
+
+/* ------------------------------------------------------------------ choix de nuit et vote */
+.lakour-loups .loups-choix-corps, .lakour-loups .loups-vote-corps { padding: 0.9em 1em; }
+.lakour-loups .loups-choix-tete { display: flex; gap: 0.8em; align-items: flex-start; margin-bottom: 0.6em; }
+.lakour-loups .loups-choix-tete > i { font-size: 1.8em; color: var(--loups-brume); margin-top: 0.15em; }
+.lakour-loups .loups-vote-corps .loups-choix-tete > i { color: var(--loups-lanterne); }
+.lakour-loups .loups-choix-tete > div:nth-child(2) { flex: 1; }
+.lakour-loups .loups-invite { font-family: var(--loups-titre); font-size: 1.45em; color: var(--loups-parchemin); margin: 0.1em 0 0; line-height: 1.15; }
+.lakour-loups .loups-consigne { color: var(--loups-terne); margin: 0 0 0.6em; }
+.lakour-loups .loups-candidats {
+  list-style: none; margin: 0 0 0.8em; padding: 0;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.5em;
+  max-height: 420px; overflow-y: auto;
+}
+.lakour-loups .loups-candidat {
+  width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; gap: 0.25em;
+  padding: 0.6em 0.4em; border-radius: var(--loups-rayon); cursor: pointer; position: relative;
+  background: linear-gradient(160deg, #2a2026, #1d171c); border: 1px solid var(--loups-bord);
+  line-height: 1.2; text-align: center;
+}
+.lakour-loups .loups-candidat img { width: 56px; height: 56px; object-fit: cover; border-radius: 50%; border: 2px solid var(--loups-bord); }
+.lakour-loups .loups-candidat small { color: var(--loups-terne); }
+.lakour-loups .loups-candidat:hover:not(:disabled) { border-color: var(--loups-lanterne); }
+.lakour-loups .loups-candidat.choisi { border-color: var(--loups-lanterne); background: linear-gradient(160deg, #4a3020, #2a1d17); box-shadow: 0 0 16px rgba(240, 167, 66, 0.35); }
+.lakour-loups .loups-candidat.choisi img { border-color: var(--loups-lanterne); }
+.lakour-loups .loups-candidat > i { position: absolute; top: 0.4em; right: 0.5em; color: var(--loups-lanterne); }
+.lakour-loups .loups-candidat:disabled { cursor: default; opacity: 0.7; }
+.lakour-loups .loups-pied { display: flex; justify-content: flex-end; gap: 0.5em; }
+
+/* ------------------------------------------------------------------ fiches */
+.lakour-loups.loups-fiche .window-content { overflow: hidden; }
+.lakour-loups .loups-fiche-corps { display: flex; flex-direction: column; height: 100%; }
+.lakour-loups .loups-fiche-tete {
+  display: flex; gap: 0.9em; align-items: center; padding: 0.9em 1em;
+  border-bottom: 1px solid var(--loups-bord);
+  background: linear-gradient(180deg, rgba(240, 167, 66, 0.10), transparent);
+}
+.lakour-loups .loups-fiche-tete.mort { background: linear-gradient(180deg, rgba(168, 49, 47, 0.18), transparent); }
+.lakour-loups .loups-fiche-tete.mort .loups-fiche-portrait { filter: grayscale(1); }
+.lakour-loups .loups-fiche-portrait {
+  width: 88px; height: 88px; object-fit: cover; border-radius: 50%; flex: none;
+  border: 2px solid var(--loups-lanterne); background: #000; box-shadow: 0 0 18px rgba(240, 167, 66, 0.25);
+}
+.lakour-loups .loups-fiche-identite { flex: 1; min-width: 0; }
+.lakour-loups .loups-fiche-nom {
+  font-family: var(--loups-titre); font-size: 2em; color: var(--loups-parchemin);
+  width: 100%; height: auto; margin: 0; padding: 0; background: transparent; border: none; border-bottom: 1px solid transparent;
+}
+.lakour-loups input.loups-fiche-nom:hover, .lakour-loups input.loups-fiche-nom:focus { border-bottom-color: var(--loups-bord); box-shadow: none; }
+.lakour-loups .loups-corps { padding: 0.9em 1em; overflow-y: auto; flex: 1; }
+.lakour-loups .loups-secret { border-color: #5b3f37; background: linear-gradient(160deg, rgba(74, 47, 34, 0.45), rgba(30, 25, 34, 0.6)); }
+.lakour-loups .loups-objet { display: flex; align-items: center; gap: 0.6em; margin-bottom: 0.5em; }
+.lakour-loups .loups-objet img { width: 44px; height: 44px; border-radius: 6px; border: 1px solid var(--loups-bord); cursor: pointer; }
+.lakour-loups .loups-objet > div { flex: 1; }
+.lakour-loups .loups-icone { width: 2em; height: 2em; padding: 0; background: transparent; border: 1px solid var(--loups-bord); border-radius: 4px; cursor: pointer; }
+.lakour-loups .loups-texte { line-height: 1.45; color: var(--loups-texte); }
+.lakour-loups .loups-texte p:first-child { margin-top: 0; }
+.lakour-loups .loups-texte.victoire { margin-top: 0.5em; padding-top: 0.5em; border-top: 1px dashed var(--loups-bord); }
+.lakour-loups .loups-champs { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.5em 0.8em; }
+.lakour-loups .loups-champs label { display: flex; flex-direction: column; gap: 0.2em; font-size: 0.85em; color: var(--loups-terne); }
+.lakour-loups .loups-champs label.case { flex-direction: row; align-items: center; color: var(--loups-texte); }
+.lakour-loups .loups-champs label.large { grid-column: 1 / -1; }
+.lakour-loups .loups-mj { border-style: dashed; }
+.lakour-loups prose-mirror { min-height: 6em; background: rgba(0, 0, 0, 0.2); border-radius: 6px; color: var(--loups-texte); }
+.lakour-loups prose-mirror .editor-content { padding: 0.4em 0.6em; }
+
+/* ------------------------------------------------------------------ messages du chat */
+.chat-message .lakour-loups.carte-role {
+  --loups-lanterne: #f0a742;
+  background: linear-gradient(160deg, #2a2026, #15121a); color: #e2d6bf;
+  border: 1px solid #4a3a33; border-radius: 8px; padding: 0.6em 0.7em;
+}
+.chat-message .lakour-loups.carte-role header { display: flex; gap: 0.6em; align-items: center; }
+.chat-message .lakour-loups.carte-role header img { width: 48px; height: 48px; border: 1px solid #f0a742; border-radius: 6px; }
+.chat-message .lakour-loups.carte-role h3 { font-family: "Modesto Condensed", Signika, serif; font-size: 1.5em; color: #eadfc8; margin: 0; border: none; }
+.chat-message .lakour-loups .carte-role-qui, .chat-message .lakour-loups .carte-role-camp { font-size: 0.8em; color: #a99a84; text-transform: uppercase; letter-spacing: 0.06em; }
+.chat-message .lakour-loups .carte-role-camp { color: #f0a742; }
+.chat-message .lakour-loups .carte-role-details { list-style: none; padding: 0; margin: 0.5em 0 0; font-size: 0.9em; }
+.chat-message .lakour-loups .carte-role-victoire { border-top: 1px dashed #4a3a33; margin-top: 0.4em; padding-top: 0.4em; }
+.chat-message .lakour-loups .carte-role-secret { margin: 0.5em 0 0; font-size: 0.8em; font-style: italic; color: #a99a84; }
+.chat-message .lakour-loups.annonce { font-family: "Modesto Condensed", Signika, serif; font-size: 1.15em; }
+
+/* Pouvoirs de jour, effets de la nuit prochaine, carnet secret, alertes */
+.lakour-loups .loups-pouvoirs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.lakour-loups .loups-pouvoirs small { opacity: 0.75; }
+.lakour-loups .loups-alerte { margin: 4px 0; padding: 4px 8px; border-left: 3px solid #b8860b; background: rgba(184, 134, 11, 0.12); }
+.lakour-loups .loups-journal li.secret { opacity: 0.85; font-style: italic; }
+.lakour-loups .loups-texte { width: 100%; min-height: 4em; margin: 6px 0; }
+.lakour-loups .loups-carnet-liste { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.lakour-loups .loups-carnet-entree { padding: 6px 8px; border: 1px solid rgba(0, 0, 0, 0.2); border-radius: 4px; }
+.lakour-loups .loups-carnet-prime { margin: 4px 0 8px; }

@@ -1,0 +1,16 @@
+{
+  "name": "lakour-veillees",
+  "private": true,
+  "type": "module",
+  "description": "Monde des Veillées de Brumecombe : système lakour-loups et module de contenu lakour-veillees, avec le moteur commun lakour-mj-ia en sous-module.",
+  "scripts": {
+    "essais": "node --test \"essais/**/*.test.mjs\"",
+    "fabriquer-jetons-veillees": "node outils/fabriquer-jetons-veillees.mjs",
+    "fabriquer-veillees": "node outils/fabriquer-veillees.mjs",
+    "contrat": "node modules/lakour-mj-ia/outils/contrat-contenu.mjs modules/lakour-veillees",
+    "valider": "node modules/lakour-mj-ia/outils/valider-foundry.mjs modules/lakour-veillees lakour-loups"
+  },
+  "devDependencies": {
+    "@foundryvtt/foundryvtt-cli": "3.0.5"
+  }
+}

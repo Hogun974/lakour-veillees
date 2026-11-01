@@ -1,0 +1,36 @@
+<div class="loups-fiche-corps">
+  <header class="loups-fiche-tete">
+    <img class="loups-fiche-portrait" src="{{objet.img}}" alt="" {{#if editable}}data-action="editImage" data-edit="img"{{/if}}>
+    <div class="loups-fiche-identite">
+      {{#if editable}}<input class="loups-fiche-nom" type="text" name="name" value="{{objet.name}}">{{else}}<h1 class="loups-fiche-nom">{{objet.name}}</h1>{{/if}}
+      <div class="loups-pastilles">
+        <span class="loups-pastille"><i class="fa-solid fa-landmark"></i> {{localize "TYPES.Item.batiment"}}</span>
+        {{#if system.repere}}<span class="loups-pastille"><i class="fa-solid fa-location-dot"></i> {{system.repere}}</span>{{/if}}
+      </div>
+    </div>
+  </header>
+  <div class="loups-corps">
+    <section class="loups-encart">
+      <h3>{{localize "LAKOUR_LOUPS.Batiment.Lieu"}}</h3>
+      {{#if editable}}
+      <prose-mirror name="system.description" value="{{system.description}}" toggled data-document-uuid="{{objet.uuid}}">{{{enrichis.description}}}</prose-mirror>
+      {{else}}<div class="loups-texte">{{{enrichis.description}}}</div>{{/if}}
+    </section>
+    <section class="loups-encart">
+      <h3><i class="fa-solid fa-scroll"></i> {{localize "LAKOUR_LOUPS.Batiment.Regle"}}</h3>
+      {{#if editable}}
+      <prose-mirror name="system.regle" value="{{system.regle}}" toggled data-document-uuid="{{objet.uuid}}">{{{enrichis.regle}}}</prose-mirror>
+      {{else}}<div class="loups-texte">{{{enrichis.regle}}}</div>{{/if}}
+    </section>
+    {{#if gm}}
+    <section class="loups-encart loups-mj">
+      <h3><i class="fa-solid fa-gears"></i> {{localize "LAKOUR_LOUPS.Role.Regles"}}</h3>
+      <div class="loups-champs">
+        <label>{{localize "LAKOUR_LOUPS.Role.Cle"}} <input type="text" name="system.cle" value="{{system.cle}}"></label>
+        <label>{{localize "LAKOUR_LOUPS.Batiment.Repere"}} <input type="text" name="system.repere" value="{{system.repere}}"></label>
+        <label class="large">{{localize "LAKOUR_LOUPS.Role.Effet"}} <select name="system.effet">{{selectOptions effets selected=system.effet}}</select></label>
+      </div>
+    </section>
+    {{/if}}
+  </div>
+</div>

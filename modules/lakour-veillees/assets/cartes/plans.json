@@ -1,0 +1,671 @@
+{
+ "village-de-brumecombe": {
+  "largeur": 42,
+  "hauteur": 30,
+  "lumiere": "nuit",
+  "pieces": [
+   {
+    "nom": "Brumecombe",
+    "x": 0,
+    "y": 0,
+    "l": 42,
+    "h": 30,
+    "sol": "herbe"
+   },
+   {
+    "nom": "Place du village",
+    "x": 13,
+    "y": 10,
+    "l": 12,
+    "h": 10,
+    "sol": "pierre"
+   }
+  ],
+  "ouvertures": [
+   {
+    "x": 13,
+    "y": 10,
+    "cote": "nord",
+    "type": "passage"
+   },
+   {
+    "x": 13,
+    "y": 19,
+    "cote": "sud",
+    "type": "passage"
+   },
+   {
+    "x": 14,
+    "y": 10,
+    "cote": "nord",
+    "type": "passage"
+   },
+   {
+    "x": 14,
+    "y": 19,
+    "cote": "sud",
+    "type": "passage"
+   },
+   {
+    "x": 15,
+    "y": 10,
+    "cote": "nord",
+    "type": "passage"
+   },
+   {
+    "x": 15,
+    "y": 19,
+    "cote": "sud",
+    "type": "passage"
+   },
+   {
+    "x": 16,
+    "y": 10,
+    "cote": "nord",
+    "type": "passage"
+   },
+   {
+    "x": 16,
+    "y": 19,
+    "cote": "sud",
+    "type": "passage"
+   },
+   {
+    "x": 17,
+    "y": 10,
+    "cote": "nord",
+    "type": "passage"
+   },
+   {
+    "x": 17,
+    "y": 19,
+    "cote": "sud",
+    "type": "passage"
+   },
+   {
+    "x": 18,
+    "y": 10,
+    "cote": "nord",
+    "type": "passage"
+   },
+   {
+    "x": 18,
+    "y": 19,
+    "cote": "sud",
+    "type": "passage"
+   },
+   {
+    "x": 19,
+    "y": 10,
+    "cote": "nord",
+    "type": "passage"
+   },
+   {
+    "x": 19,
+    "y": 19,
+    "cote": "sud",
+    "type": "passage"
+   },
+   {
+    "x": 20,
+    "y": 10,
+    "cote": "nord",
+    "type": "passage"
+   },
+   {
+    "x": 20,
+    "y": 19,
+    "cote": "sud",
+    "type": "passage"
+   },
+   {
+    "x": 21,
+    "y": 10,
+    "cote": "nord",
+    "type": "passage"
+   },
+   {
+    "x": 21,
+    "y": 19,
+    "cote": "sud",
+    "type": "passage"
+   },
+   {
+    "x": 22,
+    "y": 10,
+    "cote": "nord",
+    "type": "passage"
+   },
+   {
+    "x": 22,
+    "y": 19,
+    "cote": "sud",
+    "type": "passage"
+   },
+   {
+    "x": 23,
+    "y": 10,
+    "cote": "nord",
+    "type": "passage"
+   },
+   {
+    "x": 23,
+    "y": 19,
+    "cote": "sud",
+    "type": "passage"
+   },
+   {
+    "x": 24,
+    "y": 10,
+    "cote": "nord",
+    "type": "passage"
+   },
+   {
+    "x": 24,
+    "y": 19,
+    "cote": "sud",
+    "type": "passage"
+   },
+   {
+    "x": 13,
+    "y": 10,
+    "cote": "ouest",
+    "type": "passage"
+   },
+   {
+    "x": 24,
+    "y": 10,
+    "cote": "est",
+    "type": "passage"
+   },
+   {
+    "x": 13,
+    "y": 11,
+    "cote": "ouest",
+    "type": "passage"
+   },
+   {
+    "x": 24,
+    "y": 11,
+    "cote": "est",
+    "type": "passage"
+   },
+   {
+    "x": 13,
+    "y": 12,
+    "cote": "ouest",
+    "type": "passage"
+   },
+   {
+    "x": 24,
+    "y": 12,
+    "cote": "est",
+    "type": "passage"
+   },
+   {
+    "x": 13,
+    "y": 13,
+    "cote": "ouest",
+    "type": "passage"
+   },
+   {
+    "x": 24,
+    "y": 13,
+    "cote": "est",
+    "type": "passage"
+   },
+   {
+    "x": 13,
+    "y": 14,
+    "cote": "ouest",
+    "type": "passage"
+   },
+   {
+    "x": 24,
+    "y": 14,
+    "cote": "est",
+    "type": "passage"
+   },
+   {
+    "x": 13,
+    "y": 15,
+    "cote": "ouest",
+    "type": "passage"
+   },
+   {
+    "x": 24,
+    "y": 15,
+    "cote": "est",
+    "type": "passage"
+   },
+   {
+    "x": 13,
+    "y": 16,
+    "cote": "ouest",
+    "type": "passage"
+   },
+   {
+    "x": 24,
+    "y": 16,
+    "cote": "est",
+    "type": "passage"
+   },
+   {
+    "x": 13,
+    "y": 17,
+    "cote": "ouest",
+    "type": "passage"
+   },
+   {
+    "x": 24,
+    "y": 17,
+    "cote": "est",
+    "type": "passage"
+   },
+   {
+    "x": 13,
+    "y": 18,
+    "cote": "ouest",
+    "type": "passage"
+   },
+   {
+    "x": 24,
+    "y": 18,
+    "cote": "est",
+    "type": "passage"
+   },
+   {
+    "x": 13,
+    "y": 19,
+    "cote": "ouest",
+    "type": "passage"
+   },
+   {
+    "x": 24,
+    "y": 19,
+    "cote": "est",
+    "type": "passage"
+   }
+  ],
+  "lumieres": [
+   {
+    "x": 13,
+    "y": 10,
+    "rayon": 3,
+    "couleur": "#ffcc77"
+   },
+   {
+    "x": 24,
+    "y": 10,
+    "rayon": 3,
+    "couleur": "#ffcc77"
+   },
+   {
+    "x": 13,
+    "y": 19,
+    "rayon": 3,
+    "couleur": "#ffcc77"
+   },
+   {
+    "x": 24,
+    "y": 19,
+    "rayon": 3,
+    "couleur": "#ffcc77"
+   },
+   {
+    "x": 19,
+    "y": 7,
+    "rayon": 3,
+    "couleur": "#d8c8ff"
+   },
+   {
+    "x": 28,
+    "y": 13,
+    "rayon": 3,
+    "couleur": "#ff9a40"
+   },
+   {
+    "x": 10,
+    "y": 13,
+    "rayon": 3,
+    "couleur": "#ff6a20"
+   },
+   {
+    "x": 30,
+    "y": 13,
+    "rayon": 2,
+    "couleur": "#ffd28a"
+   },
+   {
+    "x": 34,
+    "y": 16,
+    "rayon": 2,
+    "couleur": "#ffd28a"
+   },
+   {
+    "x": 28,
+    "y": 23,
+    "rayon": 2,
+    "couleur": "#cfe0ff"
+   },
+   {
+    "x": 4,
+    "y": 5,
+    "rayon": 2,
+    "couleur": "#ffcc88"
+   },
+   {
+    "x": 37,
+    "y": 27,
+    "rayon": 2,
+    "couleur": "#ffb060"
+   },
+   {
+    "x": 8,
+    "y": 4,
+    "rayon": 1,
+    "couleur": "#ffb85a"
+   },
+   {
+    "x": 14,
+    "y": 4,
+    "rayon": 1,
+    "couleur": "#ffb85a"
+   },
+   {
+    "x": 7,
+    "y": 8,
+    "rayon": 1,
+    "couleur": "#ffb85a"
+   },
+   {
+    "x": 11,
+    "y": 8,
+    "rayon": 1,
+    "couleur": "#ffb85a"
+   },
+   {
+    "x": 6,
+    "y": 12,
+    "rayon": 1,
+    "couleur": "#ffb85a"
+   },
+   {
+    "x": 2,
+    "y": 19,
+    "rayon": 1,
+    "couleur": "#ffb85a"
+   },
+   {
+    "x": 6,
+    "y": 19,
+    "rayon": 1,
+    "couleur": "#ffb85a"
+   },
+   {
+    "x": 10,
+    "y": 19,
+    "rayon": 1,
+    "couleur": "#ffb85a"
+   },
+   {
+    "x": 3,
+    "y": 24,
+    "rayon": 1,
+    "couleur": "#ffb85a"
+   },
+   {
+    "x": 8,
+    "y": 24,
+    "rayon": 1,
+    "couleur": "#ffb85a"
+   },
+   {
+    "x": 13,
+    "y": 24,
+    "rayon": 1,
+    "couleur": "#ffb85a"
+   },
+   {
+    "x": 23,
+    "y": 24,
+    "rayon": 1,
+    "couleur": "#ffb85a"
+   },
+   {
+    "x": 35,
+    "y": 5,
+    "rayon": 1,
+    "couleur": "#ffb85a"
+   },
+   {
+    "x": 40,
+    "y": 5,
+    "rayon": 1,
+    "couleur": "#ffb85a"
+   },
+   {
+    "x": 35,
+    "y": 10,
+    "rayon": 1,
+    "couleur": "#ffb85a"
+   },
+   {
+    "x": 40,
+    "y": 10,
+    "rayon": 1,
+    "couleur": "#ffb85a"
+   },
+   {
+    "x": 35,
+    "y": 20,
+    "rayon": 1,
+    "couleur": "#ffb85a"
+   },
+   {
+    "x": 40,
+    "y": 20,
+    "rayon": 1,
+    "couleur": "#ffb85a"
+   }
+  ],
+  "elements": [
+   {
+    "nom": "Maison 1",
+    "x": 7,
+    "y": 2,
+    "l": 2,
+    "h": 2
+   },
+   {
+    "nom": "Maison 2",
+    "x": 13,
+    "y": 2,
+    "l": 2,
+    "h": 2
+   },
+   {
+    "nom": "Maison 3",
+    "x": 6,
+    "y": 6,
+    "l": 2,
+    "h": 2
+   },
+   {
+    "nom": "Maison 4",
+    "x": 10,
+    "y": 6,
+    "l": 2,
+    "h": 2
+   },
+   {
+    "nom": "Maison 5",
+    "x": 5,
+    "y": 10,
+    "l": 2,
+    "h": 2
+   },
+   {
+    "nom": "Maison 6",
+    "x": 1,
+    "y": 17,
+    "l": 2,
+    "h": 2
+   },
+   {
+    "nom": "Maison 7",
+    "x": 5,
+    "y": 17,
+    "l": 2,
+    "h": 2
+   },
+   {
+    "nom": "Maison 8",
+    "x": 9,
+    "y": 17,
+    "l": 2,
+    "h": 2
+   },
+   {
+    "nom": "Maison 9",
+    "x": 2,
+    "y": 22,
+    "l": 2,
+    "h": 2
+   },
+   {
+    "nom": "Maison 10",
+    "x": 7,
+    "y": 22,
+    "l": 2,
+    "h": 2
+   },
+   {
+    "nom": "Maison 11",
+    "x": 12,
+    "y": 22,
+    "l": 2,
+    "h": 2
+   },
+   {
+    "nom": "Maison 12",
+    "x": 22,
+    "y": 22,
+    "l": 2,
+    "h": 2
+   },
+   {
+    "nom": "Maison 13",
+    "x": 34,
+    "y": 3,
+    "l": 2,
+    "h": 2
+   },
+   {
+    "nom": "Maison 14",
+    "x": 39,
+    "y": 3,
+    "l": 2,
+    "h": 2
+   },
+   {
+    "nom": "Maison 15",
+    "x": 34,
+    "y": 8,
+    "l": 2,
+    "h": 2
+   },
+   {
+    "nom": "Maison 16",
+    "x": 39,
+    "y": 8,
+    "l": 2,
+    "h": 2
+   },
+   {
+    "nom": "Maison 17",
+    "x": 34,
+    "y": 18,
+    "l": 2,
+    "h": 2
+   },
+   {
+    "nom": "Maison 18",
+    "x": 39,
+    "y": 18,
+    "l": 2,
+    "h": 2
+   },
+   {
+    "nom": "Chapelle",
+    "x": 17,
+    "y": 2,
+    "l": 4,
+    "h": 5
+   },
+   {
+    "nom": "Cimetière",
+    "x": 22,
+    "y": 2,
+    "l": 6,
+    "h": 5
+   },
+   {
+    "nom": "Moulin",
+    "x": 2,
+    "y": 2,
+    "l": 3,
+    "h": 3
+   },
+   {
+    "nom": "Taverne",
+    "x": 26,
+    "y": 10,
+    "l": 4,
+    "h": 3
+   },
+   {
+    "nom": "Forge",
+    "x": 9,
+    "y": 10,
+    "l": 3,
+    "h": 3
+   },
+   {
+    "nom": "Gibet",
+    "x": 14,
+    "y": 11,
+    "l": 2,
+    "h": 2
+   },
+   {
+    "nom": "Puits",
+    "x": 18,
+    "y": 14,
+    "l": 2,
+    "h": 2
+   },
+   {
+    "nom": "Pont",
+    "x": 31,
+    "y": 14,
+    "l": 3,
+    "h": 2
+   },
+   {
+    "nom": "Lavoir",
+    "x": 27,
+    "y": 21,
+    "l": 3,
+    "h": 2
+   },
+   {
+    "nom": "Grange",
+    "x": 35,
+    "y": 23,
+    "l": 5,
+    "h": 4
+   }
+  ]
+ }
+}

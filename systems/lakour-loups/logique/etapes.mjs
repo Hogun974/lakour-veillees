@@ -17,6 +17,7 @@ import { normaliserEtat, fusionnerEtat } from "./etat.mjs";
 import { ordreDeNuit } from "./nuit.mjs";
 import { verifierVictoire } from "./victoire.mjs";
 import { electionAttendue, voteExecutionDuJour } from "./bailli.mjs";
+import { glasSonne } from "./calendrier.mjs";
 
 const etape = (cle, action, donnees = {}, extra = {}) => ({ cle, action, donnees, attente: false, detail: null, ...extra });
 
@@ -36,8 +37,10 @@ export function emporteursEnAttente(etat, villageois = [], ignorer = []) {
 }
 
 // Un vote ouvert : le clore (avec les voix qui manquent encore).
+// Les voix qui manquent : celles des vivants (le Dernier souffle d'un mort ne remplace pas une voix vivante).
 function cloture(v, vivants) {
-  const manquent = Math.max(0, vivants.length - v.exprimes.length);
+  const ids = new Set(vivants.map(x => x.id));
+  const manquent = Math.max(0, vivants.length - v.exprimes.filter(id => ids.has(id)).length);
   return etape("cloreVote", "cloreVote", { n: manquent, objet: v.objet }, manquent ? { detail: { cle: "voixManquantes", donnees: { n: manquent } } } : {});
 }
 
@@ -52,7 +55,8 @@ export function etapeSuivante(etatPublic, secretsMJ = null, { villageois = [], a
   const apresUneMort = () => {
     const [emporteur] = emporteursEnAttente(etat, villageois, ignorer);
     if (emporteur) return etape("emporter", "emporter", { id: emporteur, nom: nom(emporteur) }, { detail: { cle: "emporter", donnees: { nom: nom(emporteur) } } });
-    if (!etat.vainqueur && verifierVictoire({ villageois, morts: etat.morts, primes: etat.primes ?? {}, peste: etat.peste })) return etape("victoire", "victoire");
+    // Le Glas final (calendrier.mjs) : le jour N fini, la partie s'arrête.
+    if (!etat.vainqueur && verifierVictoire({ villageois, morts: etat.morts, glas: glasSonne(etat), primes: etat.primes ?? {}, peste: etat.peste })) return etape("victoire", "victoire");
     return null;
   };
 

@@ -23,6 +23,7 @@
 import { choisir } from "./hasard.mjs";
 import { normaliserEtat } from "./etat.mjs";
 import { inscrire } from "./registre.mjs";
+import { presageDuJour } from "./almanach.mjs";
 
 export const POIDS_DU_BAILLI = 2;
 // Les phases où l'élection est proposée (le débat, ou le vote quand celui d'exécution n'a pas encore eu lieu).
@@ -49,8 +50,10 @@ export function bailliEnCharge(etat, vivants = null) {
 }
 
 // Le poids des voix d'un dépouillement : la voix du Bailli vivant compte double, aux votes d'exécution seulement.
+// Le sceau brisé de l'Almanach des brumes : pas de voix double ce jour-là.
 export function poidsDesVoix(etat, vivants = null) {
   if ((etat?.vote?.objet ?? "execution") !== "execution") return {};
+  if (presageDuJour(etat) === "sceau-brise") return {};
   const id = bailliEnCharge(etat, vivants);
   return id ? { [id]: POIDS_DU_BAILLI } : {};
 }
@@ -184,6 +187,6 @@ export function trancherVote(e, choix = [], { vivants = null } = {}) {
 // L'entrée du Registre pour un vote clos (ce qui est public après la clôture).
 export function entreeDeVote(r) {
   return { type: "vote", numero: r.numero, objet: r.objet, votes: { ...(r.votes ?? {}) }, decompte: { ...(r.decompte ?? {}) },
-    elus: [...(r.elus ?? [])], egalite: Boolean(r.egalite), poids: { ...(r.poids ?? {}) },
+    elus: [...(r.elus ?? [])], egalite: Boolean(r.egalite), poids: { ...(r.poids ?? {}) }, souffles: [...(r.souffles ?? [])],
     departage: r.departage ? { par: r.departage.par, choix: [...(r.departage.choix ?? [])] } : null };
 }

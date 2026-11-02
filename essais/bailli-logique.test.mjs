@@ -306,7 +306,7 @@ const MUTATIONS = [
   ["etat.mjs", "    ouvrirSuccession(etat, acteurId, quand);\n", "", "la mort du Bailli"],
   ["etat.mjs", "  if (!resultat.departage) inscrire(etat, entreeDeVote(resultat), maintenant);", "  inscrire(etat, entreeDeVote(resultat), maintenant);", "Registre : attendre le départage"],
   ["etat.mjs", "  if (!resultat.departage) inscrire(etat, entreeDeVote(resultat), maintenant);\n", "", "Registre : votes clos"],
-  ["etat.mjs", "\"journalSecret\", \"masques\", \"carnets\"", "\"journalSecret\", \"carnets\"", "masques secrets"],
+  ["etat.mjs", "\"journalSecret\", \"masques\", \"somnambules\"", "\"journalSecret\", \"somnambules\"", "masques secrets"],
   ["etat.mjs", "for (const cle of [\"asperges\", \"journalSecret\", \"masques\"])", "for (const cle of [\"asperges\", \"journalSecret\"])", "masques rendus au MJ"],
   ["etat.mjs", "departage: bailli && r.departage ?", "departage: r.departage ?", "départage sans Bailli"],
   ["etat.mjs", "const bailli = v.objet === \"execution\" ? bailliEnCharge(etat, votants) : \"\";", "const bailli = bailliEnCharge(etat, votants);", "départage : l'exécution seulement"],

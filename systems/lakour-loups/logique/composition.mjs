@@ -31,7 +31,8 @@ function catalogue(equilibre, n, niveau, exclure, peste = false) {
     permis: new Map(permis),
     loupsSpeciaux: famille(([cle, r]) => r.camp === "meute" && cle !== BASE_LOUP),
     solitaires: famille(([, r]) => r.camp === "solitaire"),
-    pouvoirsVillage: famille(([cle, r]) => r.camp === "village" && cle !== BASE_VILLAGE),
+    // Un rôle « surDemande » (Somnambule, Rosière) ne sort jamais d'un tirage : seulement si on le demande (inclure, rôles choisis).
+    pouvoirsVillage: famille(([cle, r]) => r.camp === "village" && cle !== BASE_VILLAGE && !r.surDemande),
     information: famille(([cle, r]) => r.camp === "village" && r.information)
   };
 }
@@ -99,8 +100,10 @@ export function composer(n, equilibre, { niveau = "classique", inclure = [], exc
   if (!candidats.length) throw new Error(`Aucune composition possible pour ${n} joueurs avec ces contraintes.`);
   candidats.sort((a, b) => a.score - b.score);
   // Au hasard parmi celles qui valent presque la meilleure (pas une de plus loin) : deux parties de suite ne se ressemblent
-  // pas, sans sacrifier l'équilibre.
-  const proches = candidats.filter(c => c.score <= candidats[0].score + 1 && (peste || Math.abs(c.somme - cible) <= Math.abs(candidats[0].somme - cible) + 1));
+  // pas, sans sacrifier l'équilibre (un point d'écart de plus que la meilleure, mais jamais au-delà de ±2 quand elle y est).
+  const ecart = Math.abs(candidats[0].somme - cible);
+  const tolere = Math.max(ecart, Math.min(ecart + 1, 2));
+  const proches = candidats.filter(c => c.score <= candidats[0].score + 1 && (peste || Math.abs(c.somme - cible) <= tolere));
   const choix = proches[Math.floor(hasard() * Math.min(8, proches.length))];
   // Bâtiments du niveau, les moins joués récemment d'abord.
   const batimentsPermis = Object.entries(equilibre.batiments ?? {}).filter(([, b]) => rangNiveau(b.niveau) <= rangNiveau(niveau)).map(([cle]) => cle);

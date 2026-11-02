@@ -133,7 +133,7 @@ const MUTATIONS_ETAPES = [
   ["if (emporteur) return etape(", "if (false) return etape(", "Braconnière"],
   ["if (suivis <= avant && !ignorer.includes(`emporter:${m.acteurId}`)) enAttente.push(m.acteurId);", "enAttente.push(m.acteurId);", "Braconnière servie"],
   ["if (!etat.vainqueur && verifierVictoire(", "if (false && verifierVictoire(", "victoire"],
-  ["const manquent = Math.max(0, vivants.length - v.exprimes.length);", "const manquent = 0;", "voix manquantes"],
+  ["const manquent = Math.max(0, vivants.length - v.exprimes.filter(id => ids.has(id)).length);", "const manquent = 0;", "voix manquantes"],
   ["if (condamne) {", "if (false) {", "exécuter le désigné"],
   ["const juge = vivants.find(x => x.role?.effet === \"annuler-vote\" && !x.revele", "const juge = vivants.find(x => x.role?.effet === \"annuler-vote\"", "Juge révélé"],
   ["if (enJeu.includes(\"chapelle\") && !asile && !voteChapelle && r?.objet === \"execution\") return etape(\"chapelle\", \"voteChapelle\");", "", "Chapelle"],

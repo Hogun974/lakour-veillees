@@ -9,6 +9,7 @@
 // Le Registre du greffier (public) : chaque vote clos, voix par voix, les morts et leur cause publique, le Bailli, et les
 // déclarations qu'un vivant y fait inscrire pendant le jour (champ « Déclarer au Registre »).
 import { ID, PHASES } from "../../logique/constantes.mjs";
+import * as L from "../../logique/index.mjs";
 import { LONGUEUR_DECLARATION as LONGUEUR } from "../../logique/registre.mjs";
 import { diagnosticVoix } from "../../logique/salons.mjs";
 import {
@@ -43,7 +44,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
       voter: TableDeJeu.#voter, abstenir: TableDeJeu.#abstenir, fiche: TableDeJeu.#fiche, batiment: TableDeJeu.#batiment,
       phase: TableDeJeu.#phase, aube: TableDeJeu.#aube, ouvrirVote: TableDeJeu.#ouvrirVote, cloreVote: TableDeJeu.#cloreVote,
       voteChapelle: TableDeJeu.#voteChapelle, voteBailli: TableDeJeu.#voteBailli, declarer: TableDeJeu.#declarer,
-      trancher: TableDeJeu.#trancher, nommerBailli: TableDeJeu.#nommerBailli,
+      trancher: TableDeJeu.#trancher, nommerBailli: TableDeJeu.#nommerBailli, bonneEtoile: TableDeJeu.#bonneEtoile, glasFinal: TableDeJeu.#glasFinal,
       pouvoir: TableDeJeu.#pouvoir, carnet: () => ouvrirCarnet(),
       eliminer: TableDeJeu.#eliminer, reveler: TableDeJeu.#reveler, victoire: TableDeJeu.#victoire, rejouer: TableDeJeu.#rejouer,
       miseEnScene: () => tenter(() => api().plateau.mettreEnScene({ activer: true })),
@@ -76,6 +77,8 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
     const bailli = tenterSync(() => api().bailli(), null);
     const bailliId = bailli?.acteurId ?? "";
 
+    // Le poids des voix d'aujourd'hui (Bailli : double, sauf le jour du sceau fêlé) : pour le décompte à main levée et la pastille.
+    const pesees = L.poidsDesVoix(etat, tousLesVillageois().filter(a => a.system.vivant).map(a => a.id));
     const fiche = a => {
       const role = roleDe(a), metier = metierDe(a);
       const voitRole = fin || roleVisible(a);
@@ -87,12 +90,18 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
         camp: voitRole ? libelleCamp(a.system.camp) : "", campCle: voitRole ? a.system.camp : "",
         revele: a.system.revele, silence: a.system.silence, moi: a.id === moi?.id,
         benit: etat.jour.benis.includes(a.id), ruban: etat.jour.rubans.includes(a.id), bailli: Boolean(bailliId) && a.id === bailliId,
+        // Le MJ seul sait qui rêve son rôle (secret : l'objet porté est le rôle rêvé).
+        somnambule: gm && Boolean(etat.somnambules?.[a.id]) && !etat.somnambules[a.id].devoile,
+        souffle: !a.system.vivant && Boolean(etat.souffle?.actif) && !etat.souffle.utilises.includes(a.id),
         joueur: game.users.get(a.system.joueur)?.name ?? "",
         cause: mort ? libelleCause(mort.cause) : "", tourMort: mort?.tour ?? "",
         candidat: v.ouvert && v.candidats.includes(a.id),
         aVote: v.ouvert && v.exprimes.includes(a.id),
         monChoix: v.ouvert && monChoix === a.id,
-        voix: resultat ? resultat.decompte?.[a.id] ?? 0 : null, montreVoix: Boolean(resultat),
+        // Jour de foire (Almanach) : à main levée, les voix se comptent pendant le vote.
+        voix: resultat ? resultat.decompte?.[a.id] ?? 0
+          : v.mainLevee ? Object.entries(v.votes ?? {}).filter(([, c]) => c === a.id).reduce((s, [votant]) => s + (pesees[votant] ?? 1), 0) : null,
+        montreVoix: Boolean(resultat) || Boolean(v.ouvert && v.mainLevee),
         elu: Boolean(resultat?.elus?.includes(a.id)),
         amoureux: gm && a.system.amoureux ? game.actors.get(a.system.amoureux)?.name ?? "" : "",
         protections: gm ? a.system.protections : 0,
@@ -201,8 +210,13 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
       choix: (resultat.departage.choix ?? []).map(nomDe).join(", "),
       candidats: gm && resultat.departage.enAttente ? resultat.departage.candidats.map(id => ({ id, nom: nomDe(id) })) : [] } : null;
 
+    // L'Almanach des brumes (présage du jour, public), le Glas final (public), la Bonne étoile (MJ, secret, avant la 1re aube).
+    const presage = tenterSync(() => api().presage(), null);
+    const saints = gm ? { etoileOuverte: Boolean(etat.partie) && etat.tour <= 1 && etat.nuitResolue < 1, etoile: etat.bonneEtoile ? nomDe(etat.bonneEtoile) : "",
+      vivants: tousLesVillageois().filter(a => a.system.vivant).map(a => ({ id: a.id, nom: a.name, choisi: a.id === etat.bonneEtoile })) } : null;
     // L'élection quand elle est due (une par jour, avant le vote d'exécution) ; nommer le Bailli à la main quand la charge est vide.
     return {
+      presage: presage?.cle ? presage : null, glas: etat.glas, saints,
       gm, phase: etat.phase, phaseLibelle: libellePhase(etat.phase), tour: etat.tour, fini: fin,
       composition: gm ? etat.composition : "", peste: gm && Boolean(etat.peste?.active),
       vainqueur: libelleVainqueur(etat.vainqueur, etat), crier: Boolean(cri?.ok), moiId: moi?.id ?? "",
@@ -219,9 +233,11 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
       moi: moi ? { nom: moi.name, vivant: moi.system.vivant, silence: moi.system.silence } : null,
       vote: {
         ouvert: v.ouvert, double: v.double, majoriteAbsolue: v.majoriteAbsolue, chapelle: v.objet === "chapelle", bailli: v.objet === "bailli",
-        voixDouble: v.objet === "execution" && bailliId ? nomDe(bailliId) : "",
-        exprimes: v.exprimes.length, votants: vivants.length,
-        peutVoter: Boolean(v.ouvert && moi?.system.vivant), minuteur: Boolean(v.finit),
+        voixDouble: v.objet === "execution" && bailliId && pesees[bailliId] > 1 ? nomDe(bailliId) : "",
+        exprimes: v.exprimes.filter(id => vivants.some(x => x.id === id)).length, votants: vivants.length,
+        souffles: v.exprimes.filter(id => !vivants.some(x => x.id === id)).length,
+        peutVoter: Boolean(v.ouvert && moi && (moi.system.vivant || tenterSync(() => api().peutSouffler(moi.id).ok, false))), minuteur: Boolean(v.finit),
+        souffle: Boolean(v.ouvert && moi && !moi.system.vivant), mainLevee: Boolean(v.mainLevee),
         resultat: resultat ? { lignes, egalite: resultat.egalite, personne: !resultat.elus?.length, bailli: resultat.objet === "bailli", sort: Boolean(resultat.sort), departage,
           elus: (resultat.elus ?? []).map(nomDe).join(", "),
           condamnes: resultat.objet === "execution" && resultat.numero === v.numero
@@ -283,6 +299,15 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
   static #ouvrirVote() { return tenter(() => api().ouvrirVote({})); }
   static #voteChapelle() { return tenter(() => api().ouvrirVote({ objet: "chapelle" })); }
   static #voteBailli() { return tenter(() => api().ouvrirVote({ objet: "bailli" })); }
+  // Les Saints du calendrier : la Bonne étoile (choix dans la liste) et le Glas final (jour N, 0 : jamais).
+  static #bonneEtoile() {
+    const id = this.element.querySelector("select[name=bonneEtoile]")?.value ?? "";
+    return tenter(() => api().bonneEtoile(id));
+  }
+  static #glasFinal() {
+    const n = Number(this.element.querySelector("input[name=glasFinal]")?.value) || 0;
+    return tenter(() => api().glasFinal(n));
+  }
   // Le MJ tranche à la place du Bailli (data-id : l'ex aequo désigné ; vide : personne).
   static #trancher(event, cible) { return tenter(() => api().trancher(cible.dataset.id ? [cible.dataset.id] : [])); }
   // Le MJ remet le sceau à un vivant de son choix (charge vacante, ou succession qui traîne).

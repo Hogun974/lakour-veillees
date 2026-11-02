@@ -11,7 +11,11 @@
 //   primes     : { chasseurId: cibleId } (le chasseur de primes apprend sa cible la nuit où il se réveille).
 //   fioles     : { herboristeId: { remede: true, poison: true } } fioles déjà vidées (une de chaque par partie).
 //   jour       : effets posés pendant le jour pour cette nuit (effetsDeLaNuit, jour.mjs) : { verrous, surveilles, asiles,
-//                lames, horsDAtteinte, taverne, taverneEnJeu, benis, pontBloque }.
+//                lames, horsDAtteinte, taverne, taverneEnJeu, benis, pontBloque, givre, etoiles }.
+//                givre (Almanach des brumes) : aucune protection ni verrou ne tient cette nuit ; etoiles : [acteurId] protégés en
+//                secret par le narrateur (la Bonne étoile, la première nuit).
+//   somnambules: [acteurId] qui rêvent leur rôle (somnambule.mjs) : leurs visions sont fausses ; rolesFactices : [nom de rôle]
+//                parmi lesquels un Fossoyeur rêvé lit un faux rôle.
 // -> { morts, deces, sauves, revelations, messages, changements, asperges, fioles, fiolesVides, voteDouble, enAttente, narrateur,
 //      annonces, bilan, pontFranchi }
 //    annonces : [msg] publiques (la lame de la Forge) ; bilan : { visites, sorties, victime, loup, sauves, attaques } pour les
@@ -42,6 +46,7 @@
 // Tout se joue sur l'état du début de nuit : un mort de la nuit agit encore cette nuit-là.
 
 import { CLE_MEUTE, CLE_PESTE, CAUSES, EFFETS_AUTOMATISES } from "./constantes.mjs";
+import { campInverse, roleFactice } from "./somnambule.mjs";
 import { choisir } from "./hasard.mjs";
 import { seReveille, agitAvecLaMeute } from "./nuit.mjs";
 import { victoireCleDe } from "./victoire.mjs";
@@ -70,7 +75,9 @@ export function effetDeLAction(action, acteur) {
 const msg = (destinataire, cle, texte, donnees = {}) => ({ destinataire, cle: `LAKOUR_LOUPS.Nuit.${cle}`, texte, donnees });
 const sansCible = role => Number(role?.nuit?.cibles ?? 1) === 0;
 
-export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges = [], precedentes = [], primes = {}, fioles = {}, hasard = Math.random, chanceEpier = 1 / 3, jour = {} } = {}) {
+export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges = [], precedentes = [], primes = {}, fioles = {}, hasard = Math.random, chanceEpier = 1 / 3, jour = {},
+  somnambules = [], rolesFactices = [] } = {}) {
+  const reve = new Set(somnambules);
   const parId = new Map(villageois.map(v => [v.id, v]));
   const nom = id => parId.get(id)?.nom ?? id;
   const vivant = id => parId.get(id)?.vivant !== false && parId.has(id);
@@ -80,7 +87,7 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
   const surveilles = new Set(jour.surveilles ?? []);
   const asiles = new Set(jour.asiles ?? []);
   const taverne = new Set(jour.taverne ?? []);
-  const verrous = new Set(jour.verrous ?? []);
+  const verrous = new Set(jour.givre ? [] : jour.verrous ?? []);   // le givre de l'Almanach : aucun verrou ne tient
   const benis = new Set(jour.benis ?? []);
   const lames = new Set(jour.lames ?? []);
   const loupATaverne = Boolean(jour.taverneEnJeu) && [...taverne].some(id => vivant(id) && parId.get(id).camp === "meute");
@@ -158,10 +165,13 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
   }
 
   // 2. Protections (celles posées dans la nuit par l'API + celles des rôles), jamais deux nuits de suite la même cible.
+  // La Bonne étoile du narrateur (première nuit) protège en secret ; le givre de l'Almanach glace toute protection.
   const proteges = new Set(villageois.filter(v => Number(v.protections) > 0).map(v => v.id));
+  for (const id of jour.etoiles ?? []) proteges.add(id);
+  if (jour.givre) proteges.clear();
   for (const a of parEffet("proteger")) {
     const cible = a.cibles[0];
-    if (!cible) continue;
+    if (!cible || jour.givre) continue;
     if (precedente(a.acteurId, "proteger")?.cibles?.[0] === cible) {
       sortie.messages.push(msg(a.acteurId, "ProtectionRefusee", `Vous ne pouvez pas protéger ${nom(cible)} deux nuits de suite.`, { nom: nom(cible) }));
       continue;
@@ -360,12 +370,14 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
   for (const a of parEffet("voir-camp")) {
     const [c, d] = a.cibles;
     if (!c) continue;
+    // Un Somnambule rêve sa vision : elle est fausse, tirée du VRAI camp (inversé ; « même camp » à l'envers) : jamais mieux
+    // qu'une vraie vision (ni Loup déguisé démasqué, ni Louvetier blanchi).
     if (d) {   // deux cibles (le Sourcier) : même camp ou non
-      const meme = apparenceDe(parId.get(c)) === apparenceDe(parId.get(d));
+      const meme = reve.has(a.acteurId) ? parId.get(c)?.camp !== parId.get(d)?.camp : apparenceDe(parId.get(c)) === apparenceDe(parId.get(d));
       sortie.messages.push(msg(a.acteurId, meme ? "MemeCamp" : "PasMemeCamp",
         meme ? `${nom(c)} et ${nom(d)} sont du même camp.` : `${nom(c)} et ${nom(d)} ne sont pas du même camp.`, { a: nom(c), b: nom(d) }));
     } else {
-      const camp = apparenceDe(parId.get(c));
+      const camp = reve.has(a.acteurId) ? campInverse(parId.get(c)?.camp) : apparenceDe(parId.get(c));
       sortie.messages.push(msg(a.acteurId, "VoirCamp", `Les cendres parlent : ${nom(c)} est du camp « ${camp} ».`, { nom: nom(c), camp }));
     }
   }
@@ -373,8 +385,11 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
     const c = a.cibles[0];
     if (!c) continue;
     const mort = parId.get(c);
+    const vrai = mort.role?.nom ?? mort.role?.cle ?? "?";
+    // Un mort dont le rôle est déjà révélé se lit tel quel, même en rêve (une contradiction trahirait le Somnambule).
+    const lu = reve.has(a.acteurId) && !mort.revele ? roleFactice(vrai, rolesFactices, hasard) : vrai;
     sortie.messages.push(mort.vivant === false
-      ? msg(a.acteurId, "VoirRoleMort", `${nom(c)} était : ${mort.role?.nom ?? mort.role?.cle ?? "?"}.`, { nom: nom(c), role: mort.role?.nom ?? mort.role?.cle ?? "?" })
+      ? msg(a.acteurId, "VoirRoleMort", `${nom(c)} était : ${lu}.`, { nom: nom(c), role: lu })
       : msg(a.acteurId, "PasMort", `${nom(c)} n'est pas mort.`, { nom: nom(c) }));
   }
   const ontAgi = new Set(retenues.filter(a => a.cibles.length && a.roleCle !== CLE_PESTE).map(a => a.acteurId).filter(Boolean));

@@ -6,10 +6,12 @@
 // vient que de ce navigateur : rien n'en sort, sinon le choix validé, au seul MJ actif.
 // Le jour, un vivant y trouve aussi « C'est la peste noire ! » (le cri de la variante Peste noire, logique/peste.mjs) : il
 // n'apprend rien avant de crier (le bouton est là dans toutes les parties), seul le MJ actif tranche.
+// Un mort qui garde son Dernier souffle le lit dans son statut, et vote comme un vivant (vote d'exécution, une fois).
 // Le Bailli (public) y paraît : « Bailli : X » (« Tu es le Bailli : ta voix compte double » pour lui) ; le MJ y ouvre son élection.
 // Avec la voix intégrée de Foundry (A/V) et les salons vocaux, il montre aussi le salon du joueur (« 🔇 La nuit, silence »,
 // « 🐺 Tanière : tu parles aux loups », « 👻 Tu parles aux morts », « 🔇 Réduit au silence ») : sa ligne, reçue du MJ actif.
 import { ID } from "../../logique/constantes.mjs";
+import * as L from "../../logique/index.mjs";
 import { t, lireEtat, monVillageois, libellePhase, libelleVainqueur } from "../donnees.mjs";
 import { monVote } from "../prive.mjs";
 import { salonAffiche } from "../salons.mjs";
@@ -60,7 +62,9 @@ export function contexteBandeau() {
   // Le Bailli en charge (public).
   const bailliId = etat.bailli?.actif && etat.phase !== "fin" ? etat.bailli.acteurId : "";
   if (bailliId && game.actors.get(bailliId)?.system.vivant) {
-    ctx.bailli = moi?.id === bailliId ? { moi: true, texte: t("LAKOUR_LOUPS.Bailli.TuEs"), aide: t("LAKOUR_LOUPS.Bailli.Aide") }
+    // Le jour du sceau fêlé (Almanach), sa voix ne compte pas double : le bandeau ne le lui promet pas.
+    const sceau = L.presageDuJour(etat) === "sceau-brise";
+    ctx.bailli = moi?.id === bailliId ? { moi: true, texte: t(sceau ? "LAKOUR_LOUPS.Bailli.TuEsSceau" : "LAKOUR_LOUPS.Bailli.TuEs"), aide: t("LAKOUR_LOUPS.Bailli.Aide") }
       : { moi: false, texte: t("LAKOUR_LOUPS.Bailli.Bandeau", { nom: nomDe(bailliId) }), aide: t("LAKOUR_LOUPS.Bailli.Aide") };
   }
   // Chaque bouton a son infobulle (LAKOUR_LOUPS.Bandeau.Aide.<action>) : ce qu'il fait.
@@ -69,7 +73,9 @@ export function contexteBandeau() {
   if (etat.phase === "preparation" && etat.partie && !ctx.annonce) ctx.annonce = t("LAKOUR_LOUPS.Bandeau.NouvellePartie");
 
   // L'état du joueur : mort, ou réduit au silence.
-  if (moi && !moi.system.vivant) ctx.statut = { cle: "mort", icone: "fa-skull", texte: t("LAKOUR_LOUPS.Bandeau.Mort") };
+  // Un mort qui garde son Dernier souffle le sait (il votera une fois encore, à un vote d'exécution).
+  const souffle = moi && !moi.system.vivant && L.aSonSouffle(etat, { id: moi.id, vivant: false });
+  if (moi && !moi.system.vivant) ctx.statut = { cle: "mort", icone: "fa-skull", texte: t(souffle ? "LAKOUR_LOUPS.Souffle.Bandeau" : "LAKOUR_LOUPS.Bandeau.Mort") };
   else if (moi?.system.silence && ctx.salon?.cle !== "silence") ctx.statut = { cle: "silence", icone: "fa-comment-slash", texte: t("LAKOUR_LOUPS.Bandeau.Silence") };
 
   if (l.mode === "nuit") {
@@ -93,9 +99,13 @@ export function contexteBandeau() {
     ctx.finit = v.finit ?? 0;
     const monChoix = !moi ? "" : gm ? v.votes?.[moi.id] ?? "" : monVote(v.numero);
     ctx.consigne = t({ chapelle: "LAKOUR_LOUPS.Bandeau.VoteChapelle", bailli: "LAKOUR_LOUPS.Bandeau.VoteBailli" }[v.objet] ?? "LAKOUR_LOUPS.Bandeau.Vote");
-    ctx.detail = `${v.exprimes.length} / ${game.actors.filter(a => a.type === "villageois" && a.system.vivant).length} ${t("LAKOUR_LOUPS.Vote.OntVote")}`;
+    // Les vivants qui ont voté ; les souffles des morts, à part.
+    const compte = L.compteDesVoix({ etat, villageois: game.actors.filter(a => a.type === "villageois").map(a => ({ id: a.id, vivant: a.system.vivant })) });
+    ctx.detail = `${compte.exprimes} / ${compte.attendus} ${t("LAKOUR_LOUPS.Vote.OntVote")}`
+      + (compte.souffles ? ` · ${t("LAKOUR_LOUPS.Souffle.Compte", { n: compte.souffles })}` : "");
     if (l.mode === "vote") {
       ctx.detail += ` · ${t("LAKOUR_LOUPS.Vote.VotreVoix")} ${monChoix ? nomDe(monChoix) : t("LAKOUR_LOUPS.Vote.Personne")}`;
+      if (!moi.system.vivant) ctx.detail += ` · ${t("LAKOUR_LOUPS.Souffle.Voter")}`;
       // Voter : un clic sur un jeton, ou ce bouton (la liste des candidats).
       bouton("bandeauVoter", t("LAKOUR_LOUPS.Bandeau.Voter"), "fa-check-to-slot", { principal: !monChoix });
       bouton("bandeauAbstenir", t("LAKOUR_LOUPS.Vote.Abstention"), "fa-hand");

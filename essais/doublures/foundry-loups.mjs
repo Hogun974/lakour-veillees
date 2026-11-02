@@ -263,7 +263,9 @@ export const livreA = (emission, userId) => !emission.recipients || emission.rec
 
 // chancePeste : la chance d'une peste noire pour une partie composée d'elle-même (réglage « lakour-loups.chancePeste ») ;
 // 0 par défaut, pour que les parties des essais restent reproductibles (la rareté s'éprouve sur L.tirerPeste).
-export function installerFoundry({ joueurs = 6, contenu = false, chancePeste = 0 } = {}) {
+// dernierSouffle : le réglage « lakour-loups.dernierSouffle » (vrai dans Foundry) ; faux par défaut ici, pour que les morts
+// simulés qui tentent de voter soient refusés comme avant (ses propres essais l'activent : essais/lot2-*.test.mjs).
+export function installerFoundry({ joueurs = 6, contenu = false, chancePeste = 0, dernierSouffle = false } = {}) {
   compteur = 0;
   journalHooks = []; emissions = []; messages = []; reglages = new Map();
   ecouteursMJ = []; clients = []; enVol = new Set(); erreursSocket = [];
@@ -282,7 +284,8 @@ export function installerFoundry({ joueurs = 6, contenu = false, chancePeste = 0
     i18n: { localize: c => formater(c), format: formater, has: c => typeof chemin(FR, c) === "string" },
     settings: {
       register(id, cle, conf) {
-        const valeur = id === "lakour-loups" && cle === "chancePeste" ? chancePeste : structuredClone(conf.default);
+        const valeur = id === "lakour-loups" && cle === "chancePeste" ? chancePeste
+          : id === "lakour-loups" && cle === "dernierSouffle" ? dernierSouffle : structuredClone(conf.default);
         reglages.set(`${id}.${cle}`, { valeur, conf });
       },
       get(id, cle) { return structuredClone(reglages.get(`${id}.${cle}`).valeur); },

@@ -215,6 +215,24 @@ Mais **toute vision te voit du camp de la Meute** (Liseuse de cendres, Sourcier,
     nuit: { ordre: 61, cibles: 1, invite: "Sur quelle piste lâches-tu tes chiens cette nuit ?" }
   }),
   role({
+    cle: "somnambule", nom: "Somnambule", camp: "village",
+    resume: "croit tenir un rôle de vision (Liseuse de cendres, Fossoyeur ou Sourcier), mais il rêve : ses visions sont fausses.",
+    pouvoir: `Tu marchais la nuit, les yeux ouverts, et tu croyais voir.
+
+**Tu ne savais pas que tu étais Somnambule.** À la distribution, tu as reçu la carte d'un rôle de vision (Liseuse de cendres, Fossoyeur ou Sourcier) et tu l'as joué de bonne foi : chaque nuit, tu te levais, tu désignais, et le narrateur te répondait. Mais tu rêvais : **tes visions étaient fausses**, toujours plausibles, jamais vraies.
+
+Tu es bien du camp du **Village**, et tu gagnes avec lui. On ne découvre ta vraie nature qu'à ta mort (ou à la fin de la partie).`
+  }),
+  role({
+    cle: "rosiere", nom: "Rosière", camp: "village",
+    resume: "la fierté du village : si le village l'exécute par le vote, le Village perd aussitôt.",
+    pouvoir: `Tu portes la couronne de roses de l'année, et tout Brumecombe s'est juré de te garder.
+
+Tu n'as aucun pouvoir, mais **ta vie est le serment du village** : si le village t'**exécute par le vote**, le serment est rompu et **le Village perd aussitôt** (la meute l'emporte). La nuit, tu meurs comme tout le monde, sans que rien d'autre ne se passe.
+
+À toi de te faire croire sans te dévoiler trop tôt : une Rosière qui se déclare devient la cible préférée des loups, et un loup qui se dit Rosière peut sauver sa peau.`
+  }),
+  role({
     cle: "pecheur-de-nuit", nom: "Pêcheur de nuit", camp: "village", effet: "tuer", usages: 1,
     resume: "une fois par partie, lance son harpon dans la brume : sa cible meurt à l'aube, sauf si elle est protégée.",
     pouvoir: `Tu connais les eaux noires de la Brume, et ce qui y remue après minuit.

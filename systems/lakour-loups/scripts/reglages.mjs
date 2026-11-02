@@ -93,6 +93,18 @@ export function enregistrerReglages(quandEtatChange) {
     name: "LAKOUR_LOUPS.Reglages.Masques.Nom", hint: "LAKOUR_LOUPS.Reglages.Masques.Aide",
     scope: "world", config: true, type: Boolean, default: true
   });
+  // Le Dernier souffle (logique/souffle.mjs) : chaque mort garde une voix, pour un vote d'exécution. Oui par défaut : un mort reste
+  // dans la veillée jusqu'au bout, et sa voix unique est publique au dépouillement (le Registre la garde).
+  game.settings.register(ID, "dernierSouffle", {
+    name: "LAKOUR_LOUPS.Reglages.DernierSouffle.Nom", hint: "LAKOUR_LOUPS.Reglages.DernierSouffle.Aide",
+    scope: "world", config: true, type: Boolean, default: true
+  });
+  // L'Almanach des brumes (logique/almanach.mjs) : un présage tiré à chaque aube change la règle du jour. Non par défaut : une
+  // variante, pour les tables qui connaissent déjà le jeu.
+  game.settings.register(ID, "almanach", {
+    name: "LAKOUR_LOUPS.Reglages.Almanach.Nom", hint: "LAKOUR_LOUPS.Reglages.Almanach.Aide",
+    scope: "world", config: true, type: Boolean, default: false
+  });
   game.settings.register(ID, "annoncesEnChat", {
     name: "LAKOUR_LOUPS.Reglages.AnnoncesEnChat.Nom", hint: "LAKOUR_LOUPS.Reglages.AnnoncesEnChat.Aide",
     scope: "world", config: true, type: Boolean, default: true

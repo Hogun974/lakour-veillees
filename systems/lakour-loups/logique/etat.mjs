@@ -22,12 +22,21 @@
 //   +peste [S]: null | { active, porteur, victimes, decouverte, crieur } (la variante Peste noire, peste.mjs ; dévoilée à la fin),
 //   +bailli: { actif, acteurId, depuis, succession, election } (la charge publique du Bailli, bailli.mjs),
 //   +registre: [entrée] (le Registre du greffier, public : votes clos, morts et cause publique, Bailli, déclarations ; registre.mjs),
-//   +masques [S]: [cle de rôle] (les Masques de veillée de la meute, masques.mjs) }
+//   +masques [S]: [cle de rôle] (les Masques de veillée de la meute, masques.mjs),
+//   +souffle: { actif, utilises } (le Dernier souffle des morts, souffle.mjs), +presage: { actif, cle, tour } (l'Almanach des
+//   brumes, almanach.mjs), +glas: N (le Glas final, calendrier.mjs), +somnambules [S]: { acteurId: { croit, vrai, devoile } }
+//   (somnambule.mjs), +bonneEtoile [S]: acteurId (la Bonne étoile du narrateur, calendrier.mjs),
+//   +aConsigner [S]: null | { roles, batiments, niveau, composition, quand } (la composition de la partie en cours, versée au
+//   réglage monde « historique » seulement quand la partie est finie ou abandonnée : livré à tous, il la trahirait) ;
+//   vote : +mainLevee (le jour de foire de l'Almanach : les voix sont publiques pendant le vote), resultat : +souffles }
 
 import { PHASES, causePublique } from "./constantes.mjs";
 import { decompterVotes } from "./votes.mjs";
 import { bailliInitial, normaliserBailli, bailliEnCharge, poidsDesVoix, ouvrirSuccession, entreeDeVote } from "./bailli.mjs";
 import { inscrire } from "./registre.mjs";
+import { souffleInitial, normaliserSouffle } from "./souffle.mjs";
+import { presageInitial, normaliserPresage, presageDuJour } from "./almanach.mjs";
+import { normaliserGlas } from "./calendrier.mjs";
 
 // Les objets d'un vote : l'exécution du jour, l'asile de la Chapelle, l'élection du Bailli.
 export const OBJETS_DE_VOTE = ["execution", "chapelle", "bailli"];
@@ -48,7 +57,8 @@ export function etatInitial() {
     nuitPrecedente: { actions: [], bilan: null }, asperges: [], primes: {}, fioles: {}, voteDoubleDemain: false, nuitResolue: 0,
     causes: {}, journalSecret: [], carnets: {},
     jour: jourInitial(), pont: { bloqueNuit: 0 }, cimetiere: [], peste: null,
-    bailli: bailliInitial(), registre: [], masques: []
+    bailli: bailliInitial(), registre: [], masques: [],
+    souffle: souffleInitial(), presage: presageInitial(), glas: 0, somnambules: {}, bonneEtoile: "", aConsigner: null
   };
 }
 
@@ -65,11 +75,15 @@ export function normaliserEtat(e) {
   etat.pont = { ...base.pont, ...(x.pont ?? {}) };
   for (const cle of ["batiments", "batimentsCles", "morts", "historique", "asperges", "journalSecret", "cimetiere", "registre", "masques"]) if (!Array.isArray(etat[cle])) etat[cle] = [];
   for (const cle of ["effets", "benis", "rubans"]) if (!Array.isArray(etat.jour[cle])) etat.jour[cle] = [];
-  for (const cle of ["primes", "fioles", "causes", "carnets"]) if (!etat[cle] || typeof etat[cle] !== "object") etat[cle] = {};
+  for (const cle of ["primes", "fioles", "causes", "carnets", "somnambules"]) if (!etat[cle] || typeof etat[cle] !== "object") etat[cle] = {};
   if (!Array.isArray(etat.vote.exprimes)) etat.vote.exprimes = [];
   if (!PHASES.includes(etat.phase)) etat.phase = "preparation";
   etat.peste = normaliserPeste(etat.peste);
   etat.bailli = normaliserBailli(etat.bailli);
+  etat.souffle = normaliserSouffle(etat.souffle);
+  etat.presage = normaliserPresage(etat.presage);
+  etat.glas = normaliserGlas(etat.glas);
+  etat.bonneEtoile = String(etat.bonneEtoile ?? "");
   etat.tour = Number(etat.tour) || 0;
   return etat;
 }
@@ -90,17 +104,20 @@ export function separerEtat(e) {
   const secret = {
     partie: etat.partie, nuit: etat.nuit, nuitPrecedente: etat.nuitPrecedente, asperges: etat.asperges, primes: etat.primes,
     fioles: etat.fioles, journalSecret: etat.journalSecret, carnets: etat.carnets, votes: etat.vote.votes, causes: {},
-    composition: etat.composition, peste: etat.peste, masques: etat.masques
+    composition: etat.composition, peste: etat.peste, masques: etat.masques, somnambules: etat.somnambules, bonneEtoile: etat.bonneEtoile,
+    aConsigner: etat.aConsigner
   };
   const pub = copie(etat);
   pub.nuit = base.nuit;
   pub.nuitPrecedente = base.nuitPrecedente;
-  for (const cle of ["asperges", "primes", "fioles", "journalSecret", "masques", "carnets", "causes", "composition"]) pub[cle] = base[cle];
+  for (const cle of ["asperges", "primes", "fioles", "journalSecret", "masques", "somnambules", "bonneEtoile", "aConsigner", "carnets", "causes", "composition"]) pub[cle] = base[cle];
   // La peste noire n'existe pas dans l'état public avant la fin (ni même la clé) ; à la fin, la partie se dévoile.
   delete pub.peste;
   if (etat.phase === "fin" && etat.peste) pub.peste = copie(etat.peste);
   pub.vote.exprimes = etat.vote.ouvert ? Object.keys(etat.vote.votes) : [];
   pub.vote.votes = {};
+  // Jour de foire (Almanach des brumes) : le vote se fait à main levée, les voix sont publiques pendant le vote.
+  if (etat.vote.ouvert && etat.vote.mainLevee) pub.vote.votes = copie(etat.vote.votes);
   pub.morts = etat.morts.map(m => {
     const visible = causePublique(m.cause);
     if (visible !== m.cause) secret.causes[m.acteurId] = m.cause;
@@ -117,7 +134,9 @@ export function fusionnerEtat(pub, secret) {
   if (s.nuit) etat.nuit = { ...etat.nuit, ...s.nuit };
   if (s.nuitPrecedente) etat.nuitPrecedente = { ...etat.nuitPrecedente, ...s.nuitPrecedente };
   for (const cle of ["asperges", "journalSecret", "masques"]) if (Array.isArray(s[cle])) etat[cle] = s[cle];
-  for (const cle of ["primes", "fioles", "carnets"]) if (s[cle] && typeof s[cle] === "object") etat[cle] = s[cle];
+  for (const cle of ["primes", "fioles", "carnets", "somnambules"]) if (s[cle] && typeof s[cle] === "object") etat[cle] = s[cle];
+  if (typeof s.bonneEtoile === "string") etat.bonneEtoile = s.bonneEtoile;
+  if (s.aConsigner !== undefined) etat.aConsigner = s.aConsigner;
   if (s.votes && typeof s.votes === "object") etat.vote.votes = s.votes;
   if (typeof s.composition === "string") etat.composition = s.composition;
   if (s.peste !== undefined) etat.peste = normaliserPeste(s.peste);
@@ -194,9 +213,12 @@ export function ouvrirVote(e, { candidats = [], duree = 0, double, majoriteAbsol
     candidats: [...candidats], votes: {}, exprimes: [],
     double: execution ? (double ?? Boolean(etat.voteDoubleDemain)) : false,
     finit: duree > 0 ? maintenant + duree : 0, duree: duree > 0 ? duree : 0,
-    majoriteAbsolue: execution && Boolean(majoriteAbsolue), prolonge: "", resultat: null
+    majoriteAbsolue: execution && (Boolean(majoriteAbsolue) || presageDuJour(etat) === "lune-rousse"), prolonge: "", resultat: null,
+    mainLevee: presageDuJour(etat) === "foire"
   };
   if (execution) etat.voteDoubleDemain = false;
+  // Le glas de l'Almanach : ce jour-là seulement (pas reporté au lendemain si l'on ne vote pas).
+  if (execution && presageDuJour(etat) === "glas") etat.vote.double = true;
   // L'élection du Bailli se tient au débat, sans changer de phase (les pouvoirs du matin restent permis, pas d'ambiance du vote).
   if (sujet !== "bailli") etat.phase = "vote";
   return etat;
@@ -222,7 +244,8 @@ export function enregistrerVote(e, { votant, cible, votants = null, maintenant =
 // qui laisse une place vide attend son départage (resultat.departage.enAttente, puis trancherVote). Le vote clos entre au
 // Registre (un vote à départager, une fois tranché).
 // -> { etat, resultat } ou { etat, resultat: null, prolonge: acteurId }.
-export function cloreVote(e, { votants = null, poids = {}, maintenant = Date.now(), prolongation = 60000 } = {}) {
+// souffles : les morts qui ont encore leur Dernier souffle (souffle.mjs) ; leur voix rendue au dépouillement est consommée.
+export function cloreVote(e, { votants = null, poids = {}, maintenant = Date.now(), prolongation = 60000, souffles = [] } = {}) {
   const etat = normaliserEtat(e);
   const v = etat.vote;
   const pesees = { ...poidsDesVoix(etat, votants), ...poids };
@@ -238,8 +261,10 @@ export function cloreVote(e, { votants = null, poids = {}, maintenant = Date.now
       return { etat, resultat: null, prolonge: porteur };
     }
   }
+  const souffle = v.objet === "execution" ? souffles.filter(id => id in r.votes) : [];
+  etat.souffle.utilises = [...new Set([...etat.souffle.utilises, ...souffle])];
   const resultat = { decompte: r.decompte, elu: r.elu, elus: r.elus, votes: r.votes, egalite: r.egalite,
-    objet: v.objet, numero: v.numero, tour: etat.tour,
+    objet: v.objet, numero: v.numero, tour: etat.tour, souffles: souffle,
     poids: Object.fromEntries(Object.entries(pesees).filter(([id]) => id in r.votes)),
     departage: bailli && r.departage ? { par: bailli, candidats: r.departage.candidats, places: r.departage.places, enAttente: true, choix: [] } : null };
   v.ouvert = false;

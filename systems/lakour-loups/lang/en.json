@@ -173,7 +173,8 @@
       "TempsEcoule": "Too late: voting time is over.",
       "TempsEcouleCourt": "Time's up",
       "QuestionChapelle": "Who will sleep in the shelter of the Chapel next night?",
-      "QuestionBailli": "Whom does the village elect as Bailiff?"
+      "QuestionBailli": "Whom does the village elect as Bailiff?",
+      "MainLevee": "Show of hands: votes are public"
     },
     "Fiche": {
       "Villageois": "Villager sheet",
@@ -367,6 +368,14 @@
       "Masques": {
         "Nom": "Vigil masks",
         "Aide": "When roles are dealt, the pack secretly receives two or three Village roles that are not in play, which it can safely claim. Never in a black plague game."
+      },
+      "DernierSouffle": {
+        "Nom": "The Last breath",
+        "Aide": "Each dead villager keeps one vote, once, for an execution vote. Applies from the next deal."
+      },
+      "Almanach": {
+        "Nom": "The Almanac of mists (variant)",
+        "Aide": "At each dawn, a drawn omen changes the rule of the day or of the next night, announced to all. Applies from the next deal."
       }
     },
     "Erreurs": {
@@ -688,7 +697,8 @@
       },
       "SceauAttend": "The seal waits: {nom}, the late Bailiff, names a successor; the count follows.",
       "ParLeSort": "named by fate",
-      "InviteNommer": "To whom does the narrator hand the village seal?"
+      "InviteNommer": "To whom does the narrator hand the village seal?",
+      "TuEsSceau": "You are the Bailiff (cracked seal: your vote is single today)"
     },
     "Registre": {
       "Titre": "Clerk's register",
@@ -728,14 +738,87 @@
         "phase": "The Register is only open during the day.",
         "silence": "Silenced, you cannot declare anything during the debate or the vote.",
         "texte": "Write your statement first.",
-        "trop": "You have already had {n} statements written today."
-      }
+        "trop": "You have already had {n} statements written today.",
+        "brouillard": "Thick fog: the clerk takes no statement today."
+      },
+      "VoixSouffle": "{qui} (last breath) → {cible}"
     },
     "Masques": {
       "Titre": "Vigil masks",
       "Intro": "The pack has its masks: none of these Village roles is in play. You may claim to be one of them; nobody can claim the same.",
       "Conseil": "Agree among yourselves before using them: two wolves claiming the same mask give themselves away.",
       "Journal": "Vigil masks handed to the pack: {roles}."
+    },
+    "Souffle": {
+      "Bandeau": "You are dead: your last breath remains",
+      "Voter": "Last breath: your vote counts, once only",
+      "Garde": "Keeps their last breath",
+      "Compte": "+ {n} last breath(s)"
+    },
+    "Almanach": {
+      "Annonce": "Almanac of mists — {nom}: {effet}",
+      "Rumeur": "Rumour has it that {indice}",
+      "Presages": {
+        "ciel-clair": {
+          "Nom": "Clear sky",
+          "Effet": "Nothing changes today."
+        },
+        "givre": {
+          "Nom": "Night of frost",
+          "Effet": "Next night, no protection holds: no guard, no keeper, no lock."
+        },
+        "crue": {
+          "Nom": "River in flood",
+          "Effet": "Next night, the Bridge is cut: the pack cannot hunt the far bank."
+        },
+        "foire": {
+          "Nom": "Fair day",
+          "Effet": "Today, votes are cast by show of hands: everyone sees them during the vote."
+        },
+        "brouillard": {
+          "Nom": "Thick fog",
+          "Effet": "Today, the clerk sees nothing: no statement in the Register."
+        },
+        "glas": {
+          "Nom": "The knell",
+          "Effet": "Today, the vote names two condemned."
+        },
+        "lune-rousse": {
+          "Nom": "Russet moon",
+          "Effet": "Today, condemning needs an absolute majority."
+        },
+        "rumeur": {
+          "Nom": "Market day",
+          "Effet": "A true but vague rumour runs about last night."
+        },
+        "vent-du-nord": {
+          "Nom": "North wind",
+          "Effet": "The wind carries silences away: everyone may speak today."
+        },
+        "sceau-brise": {
+          "Nom": "Cracked seal",
+          "Effet": "Today, the Bailiff's vote does not count double."
+        }
+      }
+    },
+    "Somnambule": {
+      "Devoile": "{nom} was a Sleepwalker: their role was only a dream.",
+      "MJ": "Sleepwalker: dreams this role (false visions)"
+    },
+    "Calendrier": {
+      "GlasAnnonce": "The final knell will toll on the evening of day {n}: if the pack still lives, it will win.",
+      "GlasLeve": "The final knell will not toll.",
+      "Glas": "Final knell: day {n}",
+      "GlasAide": "On the evening of that day (after its vote), the game stops: the pack wins if a wolf still lives, otherwise a living lone killer, otherwise the village.",
+      "GlasTitre": "Final knell (day)",
+      "Poser": "Set",
+      "Etoile": "Lucky star: {nom} is secretly protected on the first night.",
+      "EtoileAucune": "Lucky star: nobody.",
+      "EtoileTitre": "Lucky star",
+      "EtoileAide": "The narrator secretly protects a beginner on the first night. Nobody is told.",
+      "Refus": {
+        "etoile": "The Lucky star only watches over the first night, before its dawn."
+      }
     }
   }
 }

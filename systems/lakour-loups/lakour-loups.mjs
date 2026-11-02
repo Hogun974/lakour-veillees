@@ -42,10 +42,12 @@ function quandEtatChange() {
   const moi = monVillageois();
   if (etat.vote.ouvert) {
     // Le vote s'ouvre : chaque vivant l'entend (tintement chez lui seul), même s'il regarde ailleurs.
-    if (!voteEtaitOuvert && moi?.system.vivant) signaler(t("LAKOUR_LOUPS.Signal.Vote"));
+    // Un mort qui garde son Dernier souffle vote encore (vote d'exécution).
+    const votant = Boolean(moi?.system.vivant) || Boolean(moi && api.peutSouffler(moi.id).ok);
+    if (!voteEtaitOuvert && votant) signaler(t("LAKOUR_LOUPS.Signal.Vote"));
     // Le vote s'ouvre : chaque joueur vivant vote sur la carte (bandeau, clic sur un jeton) ; sans carte, ou s'il l'a
     // choisi (réglage « plateauInteractif »), il voit la fenêtre de vote et la Table de jeu.
-    if (!voteEtaitOuvert && moi?.system.vivant && !plateauLocal.plateauInteractif([moi.id])) {
+    if (!voteEtaitOuvert && votant && !plateauLocal.plateauInteractif([moi.id])) {
       vote.render({ force: true });
       if (!table.rendered) ouvrirTable();
     } else if (vote.rendered) vote.render();

@@ -3,7 +3,7 @@
 // poids : ce que le rôle apporte à son camp, du point de vue du village (positif = aide le village, négatif = l'affaiblit).
 //         Une partie équilibrée a une somme proche de 0 : chaque loup « coûte » autour de -6, chaque villageois rapporte +1.
 // niveau : niveau minimal où le rôle peut sortir (debutants < classique < chaos) ; joueursMin : nombre minimal de joueurs ;
-// unique : au plus un exemplaire (tous sauf le loup de base et le villageois).
+// unique : au plus un exemplaire (tous sauf le loup de base et le villageois) ; surDemande : jamais tiré par le générateur.
 export const EQUILIBRE = {
   // --- Meute
   "loup-de-brumecombe": { camp: "meute", poids: -6, niveau: "debutants", joueursMin: 4, unique: false },
@@ -35,6 +35,11 @@ export const EQUILIBRE = {
   // Un seul harpon, qui peut tuer un voisin aussi bien qu'un loup, mais qui atteint les tueurs solitaires.
   "pecheur-de-nuit": { camp: "village", poids: 3, niveau: "classique", joueursMin: 9, unique: true },
   "entremetteuse": { camp: "village", poids: -1, niveau: "chaos", joueursMin: 8, unique: true },
+  // Le Somnambule occupe une place de vision, mais ses visions mentent : il égare le village. La Rosière : une voix, mais
+  // l'exécuter fait perdre le village. Rôles « sur demande » : jamais tirés d'office par le générateur, seulement choisis
+  // par le narrateur (composition à la main, rôles imposés).
+  "somnambule": { camp: "village", poids: -1, niveau: "chaos", joueursMin: 9, unique: true, surDemande: true },
+  "rosiere": { camp: "village", poids: -1, niveau: "classique", joueursMin: 8, unique: true, surDemande: true },
   "villageois": { camp: "village", poids: 1, niveau: "debutants", joueursMin: 4, unique: false },
   // --- Solitaires
   "revenant": { camp: "solitaire", poids: -2, niveau: "classique", joueursMin: 9, unique: true },

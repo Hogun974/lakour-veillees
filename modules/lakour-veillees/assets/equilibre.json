@@ -178,6 +178,22 @@
       "joueursMin": 8,
       "unique": true
     },
+    "somnambule": {
+      "camp": "village",
+      "poids": -1,
+      "niveau": "chaos",
+      "joueursMin": 9,
+      "unique": true,
+      "surDemande": true
+    },
+    "rosiere": {
+      "camp": "village",
+      "poids": -1,
+      "niveau": "classique",
+      "joueursMin": 8,
+      "unique": true,
+      "surDemande": true
+    },
     "villageois": {
       "camp": "village",
       "poids": 1,

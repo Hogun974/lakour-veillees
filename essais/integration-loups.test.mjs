@@ -810,9 +810,17 @@ test("loups_distribuer auto : rôles imposés et exclus respectés ; l'historiqu
   await outil("loups_distribuer").executer({ joueurs: [], mode: "auto", niveau: "classique", roles: [], batiments: [], inclure: ["Conteuse"], exclure: ["Garde du pont"], composition: "" });
   const premiere = villageois().map(a => roleDe(a).system.cle);
   assert.ok(premiere.includes("conteuse") && !premiere.includes("garde-du-pont"));
-  assert.equal(game.settings.get("lakour-mj-ia", "historiqueLoups").length, 1, "la partie est mémorisée");
-  const memoire = game.settings.get("lakour-mj-ia", "historiqueLoups")[0];
-  assert.deepEqual([...memoire.roles].sort(), [...premiere].sort());
+  // La composition en cours reste secrète (réglage monde livré à tous) : elle n'entre à l'historique qu'à la fin de la partie,
+  // ou quand une nouvelle distribution l'abandonne.
+  // (Une partie d'un essai précédent, abandonnée par cette distribution, a pu y entrer : on compte à partir d'ici.)
+  const avant = game.settings.get("lakour-mj-ia", "historiqueLoups").length;
+  const cle = h => [...h.roles].sort().join();
+  assert.ok(!game.settings.get("lakour-mj-ia", "historiqueLoups").some(h => cle(h) === [...premiere].sort().join()),
+    "la partie en cours n'est pas publiée");
+  await outil("loups_distribuer").executer({ joueurs: [], mode: "auto", niveau: "classique", roles: [], batiments: [], inclure: [], exclure: [], composition: "" });
+  const historique = game.settings.get("lakour-mj-ia", "historiqueLoups");
+  assert.equal(historique.length, avant + 1, "la partie abandonnée est mémorisée");
+  assert.deepEqual([...historique.at(-1).roles].sort(), [...premiere].sort());
 });
 
 // ------------------------------------------------------------------ la PESTE NOIRE, partie complète

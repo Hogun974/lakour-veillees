@@ -82,8 +82,9 @@ const VERIFICATIONS = {
     finally { mock.timers.reset(); M.signal.arreterClignotement(); delete globalThis.document; }
   },
 
-  "le vote qui s'ouvre sonne chez chaque vivant"(M) {
-    assert.match(M.entree, /if \(!voteEtaitOuvert && moi\?\.system\.vivant\) signaler\(t\("LAKOUR_LOUPS\.Signal\.Vote"\)\);/);
+  "le vote qui s'ouvre sonne chez chaque vivant (et chez un mort qui garde son Dernier souffle)"(M) {
+    assert.match(M.entree, /const votant = Boolean\(moi\?\.system\.vivant\) \|\| Boolean\(moi && api\.peutSouffler\(moi\.id\)\.ok\);/);
+    assert.match(M.entree, /if \(!voteEtaitOuvert && votant\) signaler\(t\("LAKOUR_LOUPS\.Signal\.Vote"\)\);/);
   }
 };
 
@@ -94,7 +95,8 @@ const MUTATIONS = [
   ["scripts/signal.mjs", "if (game.user?.isGM || !game.settings.get(ID, \"signalTour\")) return false;", "", "ni MJ ni réglage coupé"],
   ["scripts/signal.mjs", "if (typeof document === \"undefined\" || !document.hidden || clignotement) return;", "if (typeof document === \"undefined\" || clignotement) return;", "onglet visible tranquille"],
   ["scripts/signal.mjs", "const retour = () => { if (!document.hidden) arreterClignotement(); };", "const retour = () => {};", "retour à l'onglet"],
-  ["lakour-loups.mjs", "if (!voteEtaitOuvert && moi?.system.vivant) signaler(", "if (false) signaler(", "vote signalé"]
+  ["lakour-loups.mjs", "if (!voteEtaitOuvert && votant) signaler(", "if (false) signaler(", "vote signalé"],
+  ["lakour-loups.mjs", " || Boolean(moi && api.peutSouffler(moi.id).ok);", ";", "le Dernier souffle signalé"]
 ];
 
 async function chargerMutant(fichier, avant, apres) {

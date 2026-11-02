@@ -47,6 +47,8 @@ export function plateauInteractif(ids = []) {
 }
 
 const moiVivant = () => Boolean(monVillageois()?.system.vivant);
+// Un mort qui a encore son Dernier souffle vote lui aussi, à un vote d'exécution (logique/souffle.mjs).
+const moiSouffle = () => { const m = monVillageois(); return Boolean(m) && L.peutSouffler(lireEtat(), { id: m.id, vivant: m.system.vivant }); };
 
 // ------------------------------------------------------------------ demandes de nuit
 // Une demande arrive du MJ : sur la carte si possible (et pas un mot à écrire), sinon dans la fenêtre de choix.
@@ -112,6 +114,7 @@ export function modeActif() {
   if (local.pouvoir) return "jour";
   const v = lireEtat().vote;
   if (v.ouvert && moiVivant()) return "vote";
+  if (moiSouffle()) return "vote";
   return "";
 }
 

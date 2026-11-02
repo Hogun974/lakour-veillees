@@ -23,6 +23,8 @@
   "gardienne-des-cles": "modules/lakour-veillees/assets/jetons/gardienne-des-cles.svg",
   "sourcier": "modules/lakour-veillees/assets/jetons/sourcier.svg",
   "louvetier": "modules/lakour-veillees/assets/jetons/louvetier.svg",
+  "somnambule": "modules/lakour-veillees/assets/jetons/somnambule.svg",
+  "rosiere": "modules/lakour-veillees/assets/jetons/rosiere.svg",
   "pecheur-de-nuit": "modules/lakour-veillees/assets/jetons/pecheur-de-nuit.svg",
   "revenant": "modules/lakour-veillees/assets/jetons/revenant.svg",
   "colporteur": "modules/lakour-veillees/assets/jetons/colporteur.svg",

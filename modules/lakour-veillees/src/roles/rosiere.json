@@ -1,0 +1,45 @@
+{
+  "_id": "OpNwFB8BnMiJLbw0",
+  "_key": "!items!OpNwFB8BnMiJLbw0",
+  "name": "Rosière",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/rosiere.svg",
+  "system": {
+    "cle": "rosiere",
+    "camp": "village",
+    "description": "<p>Tu portes la couronne de roses de l'année, et tout Brumecombe s'est juré de te garder.</p><p>Tu n'as aucun pouvoir, mais <strong>ta vie est le serment du village</strong> : si le village t'<strong>exécute par le vote</strong>, le serment est rompu et <strong>le Village perd aussitôt</strong> (la meute l'emporte). La nuit, tu meurs comme tout le monde, sans que rien d'autre ne se passe.</p><p>À toi de te faire croire sans te dévoiler trop tôt : une Rosière qui se déclare devient la cible préférée des loups, et un loup qui se dit Rosière peut sauver sa peau.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": false,
+      "ordre": 50,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 0,
+      "soiMeme": false,
+      "invite": ""
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "rosiere"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

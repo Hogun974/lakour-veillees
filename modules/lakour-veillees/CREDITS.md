@@ -41,6 +41,7 @@ relief). Fichiers produits par `outils/fabriquer-jetons-veillees.mjs` ; les corr
 | [fog](https://game-icons.net/1x1/delapouite/fog.html) | Delapouite | Rôle — Enfant de la brume |
 | [graveyard](https://game-icons.net/1x1/delapouite/graveyard.html) | Delapouite | Bâtiment — Le Cimetière |
 | [herbs-bundle](https://game-icons.net/1x1/delapouite/herbs-bundle.html) | Delapouite | Rôle — Herboriste |
+| [jewel-crown](https://game-icons.net/1x1/delapouite/jewel-crown.html) | Delapouite | Rôle — Rosière |
 | [sitting-dog](https://game-icons.net/1x1/delapouite/sitting-dog.html) | Delapouite | Figurant — Chien de ferme |
 | [sniffing-dog](https://game-icons.net/1x1/delapouite/sniffing-dog.html) | Delapouite | Rôle — Loup flaireur |
 | [stone-bridge](https://game-icons.net/1x1/delapouite/stone-bridge.html) | Delapouite | Rôle — Garde du pont ; Bâtiment — Le Pont |
@@ -56,6 +57,7 @@ relief). Fichiers produits par `outils/fabriquer-jetons-veillees.mjs` ; les corr
 | [anvil-impact](https://game-icons.net/1x1/lorc/anvil-impact.html) | Lorc | Bâtiment — La Forge |
 | [beer-stein](https://game-icons.net/1x1/lorc/beer-stein.html) | Lorc | Métier — Aubergiste |
 | [bestial-fangs](https://game-icons.net/1x1/lorc/bestial-fangs.html) | Lorc | Rôle — Loup affamé |
+| [candle-light](https://game-icons.net/1x1/lorc/candle-light.html) | Lorc | Rôle — Somnambule |
 | [cat](https://game-icons.net/1x1/lorc/cat.html) | Lorc | Figurant — Chat |
 | [cowled](https://game-icons.net/1x1/lorc/cowled.html) | Lorc | Villageois (rôle caché) |
 | [crystal-ball](https://game-icons.net/1x1/lorc/crystal-ball.html) | Lorc | Rôle — Liseuse de cendres |

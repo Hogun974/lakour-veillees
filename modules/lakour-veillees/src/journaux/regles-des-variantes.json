@@ -31,7 +31,7 @@
         "level": 1
       },
       "text": {
-        "content": "<h2>À annoncer avant la distribution</h2><ul><li><strong>Révélation à la mort</strong> (par défaut : oui) : le rôle d'un mort est montré à tous. Sans révélation, la partie est plus longue et plus trouble ; mettez le <strong>Cimetière</strong> en jeu pour garder un peu d'information.</li><li><strong>Nombre de loups</strong> : la composition le donne (2 à 5). Un loup de plus pour un groupe aguerri, un de moins pour un groupe qui débute.</li><li><strong>Temps de débat</strong> : 5 minutes par défaut ; 3 minutes pour une partie nerveuse ; 8 minutes pour une veillée bavarde.</li><li><strong>Rôles autorisés</strong> : le narrateur peut retirer un rôle d'une composition et le remplacer par un villageois, ou par un rôle du même camp.</li><li><strong>Composition secrète</strong> (toujours) : le narrateur n'annonce ni les rôles en jeu, ni le nombre de loups.</li><li><strong>Peste noire</strong> : le narrateur peut décider d'une partie sans loups (voir le guide du joueur) ; sinon, elle survient rarement d'elle-même.</li><li><strong>Le Bailli</strong> (par défaut : oui) : un Bailli élu le premier jour, voix double, il tranche les égalités et désigne son successeur. Sans lui, les égalités se revotent entre ex æquo.</li><li><strong>Masques de veillée</strong> (par défaut : oui) : la meute reçoit en secret deux ou trois rôles du Village absents qu'elle peut prétendre être. Sans eux, la partie est plus dure pour les loups.</li><li><strong>Ambiance</strong> : gothique sérieux (par défaut) ou comique.</li></ul>",
+        "content": "<h2>À annoncer avant la distribution</h2><ul><li><strong>Révélation à la mort</strong> (par défaut : oui) : le rôle d'un mort est montré à tous. Sans révélation, la partie est plus longue et plus trouble ; mettez le <strong>Cimetière</strong> en jeu pour garder un peu d'information.</li><li><strong>Nombre de loups</strong> : la composition le donne (2 à 5). Un loup de plus pour un groupe aguerri, un de moins pour un groupe qui débute.</li><li><strong>Temps de débat</strong> : 5 minutes par défaut ; 3 minutes pour une partie nerveuse ; 8 minutes pour une veillée bavarde.</li><li><strong>Rôles autorisés</strong> : le narrateur peut retirer un rôle d'une composition et le remplacer par un villageois, ou par un rôle du même camp.</li><li><strong>Composition secrète</strong> (toujours) : le narrateur n'annonce ni les rôles en jeu, ni le nombre de loups.</li><li><strong>Peste noire</strong> : le narrateur peut décider d'une partie sans loups (voir le guide du joueur) ; sinon, elle survient rarement d'elle-même.</li><li><strong>Le Bailli</strong> (par défaut : oui) : un Bailli élu le premier jour, voix double, il tranche les égalités et désigne son successeur. Sans lui, les égalités se revotent entre ex æquo.</li><li><strong>Masques de veillée</strong> (par défaut : oui) : la meute reçoit en secret deux ou trois rôles du Village absents qu'elle peut prétendre être. Sans eux, la partie est plus dure pour les loups.</li><li><strong>Dernier souffle</strong> (par défaut : oui) : chaque mort garde une voix, une seule fois, pour un vote d'exécution.</li><li><strong>Almanach des brumes</strong> (par défaut : non) : un présage par aube change la règle du jour (page suivante).</li><li><strong>Glas final</strong> et <strong>Bonne étoile</strong> : réglages du narrateur, à la Table de jeu (le jour où la partie s'arrête ; un débutant protégé en secret la première nuit).</li><li><strong>Somnambule</strong> et <strong>Rosière</strong> : rôles « sur demande », jamais tirés d'office ; le narrateur les ajoute à la main.</li><li><strong>Ambiance</strong> : gothique sérieux (par défaut) ou comique.</li></ul>",
         "format": 1
       },
       "ownership": {
@@ -42,9 +42,28 @@
     {
       "_id": "dcPqQKdP8uPYxXkL",
       "_key": "!journal.pages!PImyfSaT7Yt7S2ab.dcPqQKdP8uPYxXkL",
-      "name": "Variantes de règles",
+      "name": "L'Almanach des brumes",
       "type": "text",
       "sort": 200,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Un présage par aube</h2><p>Avec la variante <strong>Almanach des brumes</strong> (réglage du monde), chaque aube, après les morts de la nuit, le système tire un présage — jamais deux fois de suite le même —, l'annonce au village et l'applique lui-même. « Aujourd'hui » : jusqu'à la nuit ; « la nuit prochaine » : la nuit qui suit.</p><ul><li><strong>Ciel clair</strong> — Le ciel est lavé, la brume se tient au fond des combes. Rien ne change aujourd'hui.</li><li><strong>Nuit de givre</strong> — Le givre a pris les serrures et les manches des piques. La nuit prochaine, aucune protection ne tient : ni garde, ni gardienne, ni verrou.</li><li><strong>Crue de la rivière</strong> — La Brume a passé ses berges dans la nuit. La nuit prochaine, le Pont est sous l'eau : la meute ne chasse pas l'autre rive.</li><li><strong>Jour de foire</strong> — Les marchands sont sur la place, on parle fort et l'on vote à main levée : aujourd'hui, chacun voit les voix pendant le vote.</li><li><strong>Brouillard épais</strong> — On ne voit pas sa main devant soi. Le greffier range sa plume : aucune déclaration au Registre aujourd'hui.</li><li><strong>Le glas</strong> — La cloche a sonné seule avant l'aube, deux coups lents. Aujourd'hui, le vote désigne deux condamnés.</li><li><strong>Lune rousse</strong> — La lune s'est couchée rouge sur les toits. Aujourd'hui, il faut plus de la moitié du village pour condamner.</li><li><strong>Jour de marché</strong> — Au marché, une nouvelle court de bouche en bouche : le narrateur en crie une, vraie mais floue, sur la nuit passée.</li><li><strong>Vent du nord</strong> — Le vent du nord a soufflé toute la nuit et emporté les silences : chacun peut parler aujourd'hui.</li><li><strong>Sceau fêlé</strong> — Le sceau du village s'est fendu sur la table du Bailli. Aujourd'hui, sa voix ne compte pas double.</li></ul>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "sDVlIIAtX48gDFjR",
+      "_key": "!journal.pages!PImyfSaT7Yt7S2ab.sDVlIIAtX48gDFjR",
+      "name": "Variantes de règles",
+      "type": "text",
+      "sort": 300,
       "title": {
         "show": true,
         "level": 1
@@ -59,11 +78,11 @@
       "flags": {}
     },
     {
-      "_id": "sDVlIIAtX48gDFjR",
-      "_key": "!journal.pages!PImyfSaT7Yt7S2ab.sDVlIIAtX48gDFjR",
+      "_id": "PnFzfFn8mBCvj17B",
+      "_key": "!journal.pages!PImyfSaT7Yt7S2ab.PnFzfFn8mBCvj17B",
       "name": "Composer sa propre partie",
       "type": "text",
-      "sort": 300,
+      "sort": 400,
       "title": {
         "show": true,
         "level": 1

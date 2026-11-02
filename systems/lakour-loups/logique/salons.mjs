@@ -14,6 +14,10 @@
 //   la tanière la nuit suivante), et pas un loup dont le Colporteur a pris le rôle (son camp suit le rôle reçu). Le rôle ne sert que si
 //   le camp manque.
 // - Un spectateur (utilisateur sans villageois) est traité comme un mort : il observe.
+// - Le Dernier souffle (souffle.mjs) : un mort qui garde encore sa voix ne doit rien savoir des rôles cachés. Avec
+//   « mortsVoientTout », il n'entend pas la tanière, et les morts se partagent en deux salons : ceux qui gardent leur souffle
+//   (et les spectateurs, quand le souffle est en jeu : table.souffleActif) entre eux, ceux qui l'ont rendu (et voient tout)
+//   entre eux. table.villageois[].souffle : vrai tant qu'il le garde.
 // - Les camps ne sont connus que du MJ actif : sans ses secrets (secretsMJ null, chez un autre navigateur), on ne compte
 //   comme loups que ceux que ce navigateur connaît (table.loupsConnus : la meute, pour un loup), sinon personne.
 //
@@ -50,13 +54,13 @@ export function participants(etatPublic, secretsMJ, table = {}) {
   for (const u of utilisateurs) {
     const v = villageois.find(x => x.joueur === u.id) ?? null;
     if (mjs.has(u.id)) liste.push({ userId: u.id, acteurId: v?.id ?? "", mj: true, vivant: true, silence: false, loup: false });
-    else if (v) liste.push({ userId: u.id, acteurId: v.id, mj: false, vivant: v.vivant !== false, silence: Boolean(v.silence), loup: estLoup(v, secretsMJ, table) });
-    else liste.push({ userId: u.id, acteurId: "", mj: false, vivant: false, silence: false, loup: false, spectateur: true });
+    else if (v) liste.push({ userId: u.id, acteurId: v.id, mj: false, vivant: v.vivant !== false, silence: Boolean(v.silence), loup: estLoup(v, secretsMJ, table), souffle: Boolean(v.souffle) });
+    else liste.push({ userId: u.id, acteurId: "", mj: false, vivant: false, silence: false, loup: false, spectateur: true, souffle: Boolean(table.souffleActif) });
   }
   const connus = new Set(utilisateurs.map(u => u.id));
   for (const v of villageois) {
     if (v.joueur && connus.has(v.joueur)) continue;
-    liste.push({ userId: "", acteurId: v.id, mj: false, vivant: v.vivant !== false, silence: Boolean(v.silence), loup: estLoup(v, secretsMJ, table) });
+    liste.push({ userId: "", acteurId: v.id, mj: false, vivant: v.vivant !== false, silence: Boolean(v.silence), loup: estLoup(v, secretsMJ, table), souffle: Boolean(v.souffle) });
   }
   return liste;
 }
@@ -78,6 +82,9 @@ export const peutParlerDans = salon => SALONS_QUI_PARLENT.includes(salon);
 function entend(a, l, salonL, mortsVoientTout) {
   if (a === l || !peutParlerDans(salonL)) return false;
   if (a.mj || salonL === "mj" || salonL === "libre" || salonL === "village") return true;
+  // Le Dernier souffle : un mort qui garde sa voix n'entend ni la tanière, ni les morts qui voient tout (et réciproquement).
+  if (salonL === "taniere" && !a.vivant && a.souffle) return false;
+  if (salonL === "morts" && mortsVoientTout && Boolean(a.souffle) !== Boolean(l.souffle)) return false;
   if (salonL === "taniere") return (a.vivant && a.loup) || (!a.vivant && Boolean(mortsVoientTout));
   if (salonL === "morts") return !a.vivant;
   return false;

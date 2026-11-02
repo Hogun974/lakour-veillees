@@ -30,11 +30,13 @@ export const salonsAutomatiques = () => lire("salonsAutomatiques", true) !== fal
 
 // La table vue de ce navigateur (documents et réglages, que tous ont) ; loupsConnus : ce qu'un loup sait de sa meute.
 function table({ loupsConnus = [] } = {}) {
+  const pub = lirePublic();
   return {
+    // souffle : ce mort garde-t-il son Dernier souffle (logique/souffle.mjs) ? Il n'entend alors rien de ce qui trahit les rôles.
     villageois: villageoisAPlat().map(v => ({ id: v.id, joueur: v.joueur, vivant: v.vivant, silence: v.silence, camp: v.camp,
-      role: v.role ? { camp: v.role.camp } : null })),
+      role: v.role ? { camp: v.role.camp } : null, souffle: L.aSonSouffle(pub, v) })),
     utilisateurs: game.users.map(u => ({ id: u.id, mj: Boolean(u.isGM) })),
-    mortsVoientTout: Boolean(lire("mortsVoientTout", true)),
+    mortsVoientTout: Boolean(lire("mortsVoientTout", true)), souffleActif: Boolean(pub.souffle?.actif),
     automatique: salonsAutomatiques(),
     loupsConnus
   };
@@ -117,7 +119,7 @@ export function rafraichirSalons({ forcer = false } = {}) {
   const globale = JSON.stringify(lignes);
   // Ce que tous peuvent savoir : la phase, les réglages, qui joue, qui est mort, qui est réduit au silence.
   const publique = JSON.stringify([pub.partie, pub.phase, tab.automatique, tab.mortsVoientTout,
-    tab.villageois.map(v => [v.id, v.joueur, v.vivant, v.silence]), tab.utilisateurs]);
+    tab.villageois.map(v => [v.id, v.joueur, v.vivant, v.silence, v.souffle]), tab.utilisateurs]);
   if (forcer || publique !== derniere.publique) annoncer("lakourLoups.audibilite", [{ phase: pub.phase }]);
   else if (globale !== derniere.globale) Hooks.callAll("lakourLoups.audibilite", { phase: pub.phase });
   derniere = { globale, publique };

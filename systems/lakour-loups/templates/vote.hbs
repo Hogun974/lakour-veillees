@@ -7,13 +7,15 @@
       <div class="loups-pastilles">
         {{#if double}}<span class="loups-pastille cloche"><i class="fa-solid fa-bell"></i> {{localize "LAKOUR_LOUPS.Vote.Double"}}</span>{{/if}}
         {{#if majoriteAbsolue}}<span class="loups-pastille gibet">{{localize "LAKOUR_LOUPS.Vote.MajoriteAbsolue"}}</span>{{/if}}
+        {{#if mainLevee}}<span class="loups-pastille jour"><i class="fa-solid fa-hand"></i> {{localize "LAKOUR_LOUPS.Vote.MainLevee"}}</span>{{/if}}
+        {{#if souffle}}{{#if peutVoter}}<span class="loups-pastille mort"><i class="fa-solid fa-wind"></i> {{localize "LAKOUR_LOUPS.Souffle.Voter"}}</span>{{/if}}{{/if}}
         {{#if voixDouble}}<span class="loups-pastille bailli"><i class="fa-solid fa-stamp"></i> {{localize "LAKOUR_LOUPS.Bailli.TaVoixDouble"}}</span>{{/if}}
       </div>
     </div>
     <div class="loups-minuteur"></div>
   </header>
   {{#if ouvert}}
-  <p class="loups-consigne">{{exprimes}} / {{votants}} {{localize "LAKOUR_LOUPS.Vote.OntVote"}} · {{localize "LAKOUR_LOUPS.Vote.VotreVoix"}} <strong>{{monChoixNom}}</strong></p>
+  <p class="loups-consigne">{{exprimes}} / {{votants}} {{localize "LAKOUR_LOUPS.Vote.OntVote"}}{{#if souffles}} · {{localize "LAKOUR_LOUPS.Souffle.Compte" n=souffles}}{{/if}} · {{localize "LAKOUR_LOUPS.Vote.VotreVoix"}} <strong>{{monChoixNom}}</strong></p>
   <ul class="loups-candidats">
     {{#each candidats}}
     <li>

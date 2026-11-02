@@ -1,0 +1,45 @@
+{
+  "_id": "sGhOdB31nHy1oazW",
+  "_key": "!items!sGhOdB31nHy1oazW",
+  "name": "Somnambule",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/somnambule.svg",
+  "system": {
+    "cle": "somnambule",
+    "camp": "village",
+    "description": "<p>Tu marchais la nuit, les yeux ouverts, et tu croyais voir.</p><p><strong>Tu ne savais pas que tu étais Somnambule.</strong> À la distribution, tu as reçu la carte d'un rôle de vision (Liseuse de cendres, Fossoyeur ou Sourcier) et tu l'as joué de bonne foi : chaque nuit, tu te levais, tu désignais, et le narrateur te répondait. Mais tu rêvais : <strong>tes visions étaient fausses</strong>, toujours plausibles, jamais vraies.</p><p>Tu es bien du camp du <strong>Village</strong>, et tu gagnes avec lui. On ne découvre ta vraie nature qu'à ta mort (ou à la fin de la partie).</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": false,
+      "ordre": 50,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 0,
+      "soiMeme": false,
+      "invite": ""
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "somnambule"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

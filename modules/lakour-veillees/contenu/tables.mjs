@@ -93,6 +93,22 @@ const MORTS = [
   "Le vent avait éteint toutes les chandelles de la maison, sauf celle qui brûlait à son chevet."
 ];
 
+// L'Almanach des brumes (variante, réglage « almanach » du système) : un présage par aube, qui change la règle du jour ou de la
+// nuit suivante. Le système tire et applique lui-même le présage (logique/almanach.mjs) ; cette liste en donne le texte au
+// narrateur (et le texte à lire), dans le même ordre que le système : une page des Variantes (guides.mjs), pas une table à tirer.
+export const ALMANACH = [
+  ["ciel-clair", "Ciel clair", "Le ciel est lavé, la brume se tient au fond des combes. Rien ne change aujourd'hui."],
+  ["givre", "Nuit de givre", "Le givre a pris les serrures et les manches des piques. La nuit prochaine, aucune protection ne tient : ni garde, ni gardienne, ni verrou."],
+  ["crue", "Crue de la rivière", "La Brume a passé ses berges dans la nuit. La nuit prochaine, le Pont est sous l'eau : la meute ne chasse pas l'autre rive."],
+  ["foire", "Jour de foire", "Les marchands sont sur la place, on parle fort et l'on vote à main levée : aujourd'hui, chacun voit les voix pendant le vote."],
+  ["brouillard", "Brouillard épais", "On ne voit pas sa main devant soi. Le greffier range sa plume : aucune déclaration au Registre aujourd'hui."],
+  ["glas", "Le glas", "La cloche a sonné seule avant l'aube, deux coups lents. Aujourd'hui, le vote désigne deux condamnés."],
+  ["lune-rousse", "Lune rousse", "La lune s'est couchée rouge sur les toits. Aujourd'hui, il faut plus de la moitié du village pour condamner."],
+  ["rumeur", "Jour de marché", "Au marché, une nouvelle court de bouche en bouche : le narrateur en crie une, vraie mais floue, sur la nuit passée."],
+  ["vent-du-nord", "Vent du nord", "Le vent du nord a soufflé toute la nuit et emporté les silences : chacun peut parler aujourd'hui."],
+  ["sceau-brise", "Sceau fêlé", "Le sceau du village s'est fendu sur la table du Bailli. Aujourd'hui, sa voix ne compte pas double."]
+];
+
 export const TABLES = [
   table({ cle: "noms-de-villageois", nom: "Noms de villageois", description: "Prénoms et noms de familles de Brumecombe, pour les figurants, les morts d'autrefois et les voisins dont on parle.", resultats: NOMS }),
   table({ cle: "rumeurs", nom: "Rumeurs du village", description: "Ce qu'on se dit à mi-voix sur la place. À glisser dans un débat qui s'essouffle : une rumeur n'est ni vraie ni fausse, elle donne à parler.", resultats: RUMEURS }),

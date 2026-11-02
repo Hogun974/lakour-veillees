@@ -18,3 +18,7 @@ export * from "./peste.mjs";
 export * from "./bailli.mjs";
 export * from "./registre.mjs";
 export * from "./masques.mjs";
+export * from "./souffle.mjs";
+export * from "./almanach.mjs";
+export * from "./somnambule.mjs";
+export * from "./calendrier.mjs";

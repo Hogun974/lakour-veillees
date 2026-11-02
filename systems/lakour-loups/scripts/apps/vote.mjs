@@ -2,6 +2,7 @@
 // Objet : l'exécution, l'asile de la Chapelle ou l'élection du Bailli. On peut changer d'avis tant que le vote est ouvert ; les voix restent secrètes jusqu'à la clôture : l'état public ne dit que
 // QUI a voté (vote.exprimes) ; son propre choix, le joueur le tient de lui-même et de l'accusé du MJ (prive.mjs).
 import { ID } from "../../logique/constantes.mjs";
+import * as L from "../../logique/index.mjs";
 import { lireEtat, monVillageois, metierDe, t } from "../donnees.mjs";
 import { envoyerVote } from "../api.mjs";
 import { monVote } from "../prive.mjs";
@@ -29,11 +30,16 @@ export class FenetreVote extends HandlebarsApplicationMixin(ApplicationV2) {
     return {
       ouvert: v.ouvert, double: v.double, majoriteAbsolue: v.majoriteAbsolue, chapelle: v.objet === "chapelle", bailli: v.objet === "bailli",
       // Le Bailli vote : sa voix compte double au vote d'exécution (public).
-      voixDouble: v.objet === "execution" && Boolean(moi) && etat.bailli?.actif && etat.bailli.acteurId === moi.id,
-      peutVoter: Boolean(moi?.system.vivant && v.ouvert),
+      voixDouble: v.objet === "execution" && Boolean(moi) && etat.bailli?.actif && etat.bailli.acteurId === moi.id
+        && Boolean(L.poidsDesVoix(etat)[moi.id]),
+      // Un mort vote encore de son Dernier souffle (vote d'exécution) ; jour de foire : à main levée, les voix sont publiques.
+      peutVoter: Boolean(v.ouvert && moi && (moi.system.vivant || L.peutSouffler(etat, { id: moi.id, vivant: false }))),
+      souffle: Boolean(moi && !moi.system.vivant && v.ouvert), mainLevee: Boolean(v.mainLevee),
       moi: moi?.name ?? "",
       aVote: Boolean(monChoix),
-      exprimes: v.exprimes.length, votants: vivants.length,
+      // Les vivants qui ont voté ; les souffles des morts, à part.
+      exprimes: v.exprimes.filter(id => vivants.some(a => a.id === id)).length, votants: vivants.length,
+      souffles: v.exprimes.filter(id => !vivants.some(a => a.id === id)).length,
       candidats: v.candidats.map(id => game.actors.get(id)).filter(Boolean).map(a => ({
         id: a.id, nom: a.name, img: a.img, maison: a.system.maison, metier: metierDe(a)?.name ?? "",
         choisi: a.id === monChoix, moi: a.id === moi?.id

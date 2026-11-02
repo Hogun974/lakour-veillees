@@ -7,7 +7,7 @@ Foundry v14 (14.369). Tout en français, textes originaux (aucun texte, aucune c
 
 ## 1. Système `lakour-loups`
 
-`systems/lakour-loups/system.json` : `id: "lakour-loups"`, `version: "0.6.0"`, `compatibility { minimum: "14", verified: "14.369" }`,
+`systems/lakour-loups/system.json` : `id: "lakour-loups"`, `version: "0.7.0"`, `compatibility { minimum: "14", verified: "14.369" }`,
 `socket: true`, `esmodules: ["lakour-loups.mjs"]`, langues fr et en, `documentTypes` ci-dessous,
 `grid { type: 1, distance: 1.5, units: "m" }`, `primaryTokenAttribute: null`.
 
@@ -251,6 +251,45 @@ Socket : joueur -> MJ actif `{ type: "declaration", acteurId, texte }` (pour son
 (l'entrée inscrite). Demandes `type: "demande"` nouvelles, au seul Bailli (compagnon : `api.resolveurs.compagnon`) : `objet: "departage"`
 (`nombre` = places libres, candidats = ex aequo, il peut se désigner) et `objet: "succession"` (`posthume: true`, candidats = les vivants).
 Réglages monde : `bailli` et `masques` (vrais par défaut).
+
+Ajouts 0.7.0 — Dernier souffle, Almanach des brumes, Somnambule, Rosière, Saints du calendrier (§1 « Lot 0.7.0 ») :
+```
+distribuer({ …, glas }) / nouvellePartie({ …, glas })   -> le Glas final (jour N, 0 : jamais ; public, annoncé au chat)
+peutSouffler(acteurId)            -> { ok, aSonSouffle } (tous) : ce mort peut-il voter maintenant, de son Dernier souffle ?
+presage()                         -> { actif, cle, tour, nom, effet } (tous) : le présage du jour (ou de la nuit qui vient)
+resoudreNuit()                    -> + presage : la clé tirée à cette aube ("" sans Almanach)
+somnambules()                     -> [{ acteurId, nom, croit, croitNom, devoile }] (MJ actif ; SECRET)
+bonneEtoile(acteurId | "")        -> le narrateur protège en secret ce villageois la PREMIÈRE nuit (erreur claire après sa résolution)
+glasFinal(n)                      -> pose (ou lève, 0) le Glas final en cours de partie ; annoncé au chat
+verifierVictoire({ finDuJour })   -> finDuJour (optionnel) : le Glas sonne dès le jour N, même sans vote (changerPhase("nuit") l'utilise)
+reveiller(roleCle)                -> deux porteurs d'un même rôle hors meute (un Somnambule qui rêve un rôle déjà en jeu) : chacun est réveillé
+```
+Votes : un mort qui a encore son souffle est admis (socket `vote`, compagnon : demande `type: "vote"` avec `souffle: true`) aux votes
+d'exécution seulement ; `resultat.souffles` (consommés) ; Registre « dernier souffle ». Hook public `lakourLoups.presage` (`{ cle, tour }`).
+Réglages monde : `dernierSouffle` (vrai par défaut), `almanach` (faux par défaut). Rôles « sur demande » (`equilibre.surDemande`) :
+jamais tirés par le générateur.
+
+### Lot 0.7.0 (logique/souffle.mjs, almanach.mjs, somnambule.mjs, calendrier.mjs)
+
+**Dernier souffle** (public, `etat.souffle = { actif, utilises }`) : chaque mort garde UNE voix, au vote d'exécution, pesant 1, consommée
+au dépouillement si elle compte (pas par un vote prolongé par le ruban) ; le Gibet ne compte que les morts qui ont soufflé ; les voix qui
+manquent sont celles des vivants (`compteDesVoix` : les souffles à part). TANT QU'IL GARDE SA VOIX, un mort ne voit pas les rôles cachés
+(`roleVisible` ignore « mortsVoientTout ») ni n'entend la tanière, et les morts se partagent en deux salons (qui gardent leur souffle /
+qui voient tout) ; son souffle rendu (ou le réglage coupé), « mortsVoientTout » s'applique.
+**Almanach des brumes** (public, `etat.presage = { actif, cle, tour }`) : un présage par aube, jamais deux fois de suite : `ciel-clair`,
+`givre` (nuit suivante : ni protection ni verrou), `crue` (nuit suivante : Pont coupé), `foire` (vote à main levée : `vote.mainLevee`,
+voix publiques pendant le vote), `brouillard` (pas de déclaration), `glas` (vote double, ce jour-là seulement), `lune-rousse` (majorité absolue), `rumeur`
+(indice flou crié), `vent-du-nord` (silences levés), `sceau-brise` (pas de voix double du Bailli). Liste et textes : page des Variantes.
+**Somnambule** (SECRET, `etat.somnambules = { acteurId: { croit, vrai, devoile } }`) : il PORTE l'objet du rôle rêvé (Liseuse, Fossoyeur ou
+Sourcier, de préférence absent) — carte, fiche, carnet, compagnon IA, console le voient ainsi ; `resoudreNuit({ somnambules, rolesFactices })`
+rend ses visions fausses, tirées du VRAI camp (inversé ; « même camp » à l'envers : jamais mieux qu'une vraie vision face au Loup
+déguisé ou au Louvetier) et, pour un mort non révélé, un faux rôle hors meute et hors Somnambule (`nomsFactices`) ; à sa mort et à la fin, l'objet devient le vrai
+(Somnambule) avant toute révélation ; le Colporteur qui prend le rêve devient le Somnambule. Ni lui, ni la Rosière, ni un rôle « sur
+demande » ne sont jamais des masques de la meute. Deux porteurs d'un même rôle : `reveiller` les réveille chacun avec SES candidats.
+**Historique** : la composition de la partie en cours reste dans les secrets du MJ (`etat.aConsigner`) et n'entre au réglage monde
+`historique` (livré à tous) qu'à la fin (victoire), ou quand la partie est abandonnée (nouvelle distribution, village remis à zéro).
+**Rosière** : exécutée par le vote -> `verifierVictoire` rend « meute » (peste noire : « peste »), après les solitaires exécutés.
+**Glas final** (public, `etat.glas`) et **Bonne étoile** (SECRET, `etat.bonneEtoile`) : `calendrier.mjs` (`glasSonne`, `etoilesDeLaNuit`).
 
 ### Bailli, Registre, Masques (logique/bailli.mjs, logique/registre.mjs, logique/masques.mjs)
 

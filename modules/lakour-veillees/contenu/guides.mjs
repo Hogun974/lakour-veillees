@@ -5,6 +5,7 @@ import { ORDRE_MEUTE, journal } from "./aides.mjs";
 import { ROLES } from "./roles.mjs";
 import { METIERS } from "./metiers.mjs";
 import { BATIMENTS } from "./batiments.mjs";
+import { ALMANACH } from "./tables.mjs";
 
 const ligne = d => `- **${d.name}** — ${d.__resume}`;
 const rolesDu = camp => ROLES.filter(r => r.system.camp === camp);
@@ -117,7 +118,7 @@ Si ta fenêtre ne s'ouvre pas, c'est que ton rôle ne joue pas cette nuit. Ne le
 
 # L'aube
 
-Le narrateur raconte ce que le village découvre au matin : qui est mort, et parfois comment. Selon le réglage, le **rôle des morts est révélé** ou non. Un mort ne parle plus, ne vote plus, et ne doit plus rien révéler aux vivants (il peut regarder la partie).
+Le narrateur raconte ce que le village découvre au matin : qui est mort, et parfois comment. Selon le réglage, le **rôle des morts est révélé** ou non. Un mort ne parle plus aux vivants et ne doit plus rien leur révéler (il peut regarder la partie, et parler aux autres morts dans leur salon). Avec le **Dernier souffle** (réglage, par défaut oui), il garde **une seule voix** pour un vote d'exécution, à utiliser quand il veut : son bandeau le lui rappelle, et le Registre la note « dernier souffle » au dépouillement. Tant qu'il garde cette voix, il ne voit pas les rôles cachés et n'entend pas la meute la nuit, même si les morts « voient tout » : il voterait en connaissant les loups. Une fois sa voix rendue, il rejoint les morts qui voient tout.
 
 # Le jour
 
@@ -141,6 +142,8 @@ Le narrateur ouvre le **vote** : chaque vivant clique sur un nom dans la fenêtr
 
 Si la **Chapelle** est en jeu, un second vote, rapide, désigne ensuite qui dormira à l'abri la nuit suivante.
 
+Si la **Rosière** est exécutée par le vote, le serment de Brumecombe est rompu : **le Village perd aussitôt**. Réfléchis avant de condamner quelqu'un qui s'en réclame… et souviens-toi qu'un loup peut mentir.
+
 **Égalité** : s'il y a un **Bailli**, il tranche. Sans Bailli (charge vacante, ou Bailli absent de la partie), les ex æquo ont trente secondes chacun pour se défendre, puis le village revote **entre eux seulement** ; nouvelle égalité : personne n'est exécuté ce jour-là, et la nuit tombe.
 
 Puis la nuit revient, et ainsi de suite jusqu'à la victoire d'un camp.`
@@ -158,6 +161,10 @@ Puis la nuit revient, et ainsi de suite jusqu'à la victoire d'un camp.`
 # Les messages privés
 
 Le narrateur te parle en message privé pour tout ce qui est secret : ton rôle, ce que tu apprends la nuit, le mot que te porte le Messager. Tout arrive dans ton **carnet secret** (bouton de la Table de jeu), envoyé à toi seul. **Ne recopie jamais un message privé sur le canal commun** : dire ce que tu sais, c'est ton droit ; montrer la preuve, c'est interdit.
+
+# L'Almanach des brumes
+
+Dans les veillées qui jouent cette variante, chaque aube apporte un **présage**, annoncé à tous et rappelé en tête de la Table de jeu : il change la règle du jour (vote à main levée, deux condamnés, majorité absolue, pas de déclaration au Registre…) ou de la nuit suivante (givre, crue). La liste est dans les Variantes.
 
 # Le Registre du greffier
 
@@ -426,7 +433,16 @@ Le système y inscrit seul chaque vote clos (voix par voix), chaque mort avec sa
 - **Revenant** exécuté, cible du **Chasseur de primes** exécutée : victoire immédiate du solitaire (la partie continue pour les autres si tu le souhaites, ou s'arrête : annonce-le au début).
 - **Amants** derniers vivants : ils gagnent ensemble.
 - **Peste noire** : le cri juste fait gagner le village ; sinon la peste l'emporte quand il reste un vivant ou aucun (ni « plus aucun loup », ni amants, ni tueur solitaire ne finissent une peste).
-- **Pyromane** ou **Dame du gué** dernier vivant (ou avec un seul non-loup) : il gagne seul. Tant que l'un de ces deux tueurs vit, le village n'a pas gagné, même sans loup ; s'ils sont tous les deux en vie, aucun ne gagne avant que l'autre tombe.`
+- **Pyromane** ou **Dame du gué** dernier vivant (ou avec un seul non-loup) : il gagne seul. Tant que l'un de ces deux tueurs vit, le village n'a pas gagné, même sans loup ; s'ils sont tous les deux en vie, aucun ne gagne avant que l'autre tombe.
+- **Rosière** exécutée par le vote : le Village perd aussitôt, **la meute l'emporte** (dans une peste noire : la peste). Le Revenant ou le Chasseur de primes exécutés gagnent d'abord. Morte la nuit, rien de particulier.
+- **Glas final** (si tu l'as posé) : au soir du jour annoncé, après son vote (ou si la nuit allait tomber), la partie s'arrête : la meute gagne si un loup vit encore, sinon le tueur solitaire encore en vie, sinon le village ; dans une peste noire, la peste.
+
+# Le Dernier souffle, le Somnambule, les Saints du calendrier
+
+- **Dernier souffle** (réglage, par défaut oui) : chaque mort garde une voix, une seule fois, pour un vote d'exécution (ni Chapelle, ni élection du Bailli). Le système la reçoit et la consomme au dépouillement ; le Gibet ne compte que les morts qui ont soufflé à ce vote, et les voix qui manquent sont celles des vivants. Tant qu'un mort garde son souffle, il ne voit pas les rôles cachés, n'entend pas la tanière et ne parle qu'aux morts qui le gardent aussi ; son souffle rendu, « les morts voient tout » s'applique. Ne lui dis rien des rôles avant.
+- **Somnambule** (rôle sur demande) : à la distribution, il reçoit la carte d'un rôle de vision (Liseuse de cendres, Fossoyeur ou Sourcier, de préférence absent de la partie) et le joue de bonne foi ; le système lui rend des visions **fausses** (camp inverse, « même camp » à l'envers, faux rôle d'un mort). Toi seul le sais (marque sur ta Table de jeu). À sa mort, et à la fin, il est révélé Somnambule. Ne le trahis jamais, même quand ses visions font exécuter un innocent.
+- **Bonne étoile** (Table de jeu, avant la première aube) : tu protèges en secret un joueur débutant la première nuit. Personne n'est prévenu ; une attaque contre lui échoue sans bruit.
+- **Glas final** (Table de jeu, ou à la préparation) : le jour où la partie s'arrêtera, annoncé à tous dès que tu le poses.`
     },
     {
       titre: "Ambiance : un automne gothique",
@@ -548,7 +564,19 @@ const variantes = journal({
 - **Peste noire** : le narrateur peut décider d'une partie sans loups (voir le guide du joueur) ; sinon, elle survient rarement d'elle-même.
 - **Le Bailli** (par défaut : oui) : un Bailli élu le premier jour, voix double, il tranche les égalités et désigne son successeur. Sans lui, les égalités se revotent entre ex æquo.
 - **Masques de veillée** (par défaut : oui) : la meute reçoit en secret deux ou trois rôles du Village absents qu'elle peut prétendre être. Sans eux, la partie est plus dure pour les loups.
+- **Dernier souffle** (par défaut : oui) : chaque mort garde une voix, une seule fois, pour un vote d'exécution.
+- **Almanach des brumes** (par défaut : non) : un présage par aube change la règle du jour (page suivante).
+- **Glas final** et **Bonne étoile** : réglages du narrateur, à la Table de jeu (le jour où la partie s'arrête ; un débutant protégé en secret la première nuit).
+- **Somnambule** et **Rosière** : rôles « sur demande », jamais tirés d'office ; le narrateur les ajoute à la main.
 - **Ambiance** : gothique sérieux (par défaut) ou comique.`
+    },
+    {
+      titre: "L'Almanach des brumes",
+      texte: `# Un présage par aube
+
+Avec la variante **Almanach des brumes** (réglage du monde), chaque aube, après les morts de la nuit, le système tire un présage — jamais deux fois de suite le même —, l'annonce au village et l'applique lui-même. « Aujourd'hui » : jusqu'à la nuit ; « la nuit prochaine » : la nuit qui suit.
+
+${ALMANACH.map(([, nom, texte]) => `- **${nom}** — ${texte}`).join("\n")}`
     },
     {
       titre: "Variantes de règles",

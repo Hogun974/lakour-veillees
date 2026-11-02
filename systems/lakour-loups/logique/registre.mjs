@@ -15,6 +15,7 @@
 //   declaration : { acteurId, texte }
 import { causePublique } from "./constantes.mjs";
 import { PHASES_DU_SILENCE } from "./parole.mjs";
+import { presageDuJour } from "./almanach.mjs";
 
 export const LONGUEUR_DECLARATION = 160;
 export const DECLARATIONS_PAR_JOUR = 3;
@@ -35,7 +36,8 @@ export function inscrire(etat, entree, quand = Date.now()) {
 // Une déclaration propre : une ligne, sans balises, coupée à la longueur permise.
 export const nettoyerDeclaration = texte => String(texte ?? "").replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim().slice(0, LONGUEUR_DECLARATION);
 
-// Peut-il faire inscrire cette déclaration ? -> { ok, raison: "" | "absent" | "fin" | "mort" | "phase" | "silence" | "texte" | "trop", texte }
+// Peut-il faire inscrire cette déclaration ? -> { ok, raison: "" | "absent" | "fin" | "mort" | "phase" | "silence" | "brouillard"
+//   (le brouillard de l'Almanach des brumes) | "texte" | "trop", texte }
 export function verifierDeclaration({ villageois = [], etat, acteurId = "", texte = "" } = {}) {
   const propre = nettoyerDeclaration(texte);
   const non = raison => ({ ok: false, raison, texte: propre });
@@ -45,6 +47,7 @@ export function verifierDeclaration({ villageois = [], etat, acteurId = "", text
   if (v.vivant === false) return non("mort");
   if (!PHASES_DECLARATION.includes(etat?.phase)) return non("phase");
   if (v.silence && PHASES_DU_SILENCE.includes(etat.phase)) return non("silence");
+  if (presageDuJour(etat) === "brouillard") return non("brouillard");
   if (!propre) return non("texte");
   const deja = (etat.registre ?? []).filter(x => x.type === "declaration" && x.acteurId === acteurId && x.tour === etat.tour).length;
   if (deja >= DECLARATIONS_PAR_JOUR) return non("trop");

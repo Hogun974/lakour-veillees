@@ -28,8 +28,8 @@ test("le contenu fabriqué est conforme au contrat", () => {
   assert.deepEqual(verifierDocuments(docs), []);
 });
 
-test("environ 24 rôles plus le villageois : meute, village et solitaires, clés uniques", () => {
-  assert.ok(roles.length >= 25 && roles.length <= 30, `${roles.length} rôles`);
+test("une trentaine de rôles plus le villageois : meute, village et solitaires, clés uniques", () => {
+  assert.ok(roles.length >= 25 && roles.length <= 34, `${roles.length} rôles`);
   const parCamp = Object.groupBy(roles, r => r.system.camp);
   assert.deepEqual(Object.keys(parCamp).sort(), [...CAMPS].sort());
   assert.ok(parCamp.meute.length >= 5 && parCamp.solitaire.length >= 4 && parCamp.village.length >= 12);

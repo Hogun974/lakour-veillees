@@ -173,7 +173,8 @@
       "TempsEcoule": "Trop tard : le temps du vote est écoulé.",
       "TempsEcouleCourt": "Temps écoulé",
       "QuestionChapelle": "Qui dormira à l'abri de la Chapelle la nuit prochaine ?",
-      "QuestionBailli": "Qui le village élit-il Bailli ?"
+      "QuestionBailli": "Qui le village élit-il Bailli ?",
+      "MainLevee": "À main levée : les voix sont publiques"
     },
     "Fiche": {
       "Villageois": "Fiche de villageois",
@@ -367,6 +368,14 @@
       "Masques": {
         "Nom": "Masques de veillée",
         "Aide": "À la distribution, la meute reçoit en secret deux ou trois rôles du Village absents de la partie, qu'elle peut prétendre être sans risque. Jamais dans une peste noire."
+      },
+      "DernierSouffle": {
+        "Nom": "Le Dernier souffle",
+        "Aide": "Chaque mort garde une voix, une seule fois, pour un vote d'exécution. Pris en compte à la prochaine distribution."
+      },
+      "Almanach": {
+        "Nom": "L'Almanach des brumes (variante)",
+        "Aide": "À chaque aube, un présage tiré change la règle du jour ou de la nuit suivante, annoncé à tous. Pris en compte à la prochaine distribution."
       }
     },
     "Erreurs": {
@@ -688,7 +697,8 @@
       },
       "SceauAttend": "Le sceau attend : {nom}, Bailli défunt, désigne son successeur ; le dépouillement suit.",
       "ParLeSort": "désigné par le sort",
-      "InviteNommer": "À qui le narrateur remet-il le sceau du village ?"
+      "InviteNommer": "À qui le narrateur remet-il le sceau du village ?",
+      "TuEsSceau": "Tu es le Bailli (sceau fêlé : ta voix est simple aujourd'hui)"
     },
     "Registre": {
       "Titre": "Registre du greffier",
@@ -728,14 +738,87 @@
         "phase": "Le Registre ne s'ouvre que pendant le jour.",
         "silence": "Réduit au silence, tu ne peux rien déclarer pendant le débat ni le vote.",
         "texte": "Écris ta déclaration d'abord.",
-        "trop": "Tu as déjà fait inscrire {n} déclarations aujourd'hui."
-      }
+        "trop": "Tu as déjà fait inscrire {n} déclarations aujourd'hui.",
+        "brouillard": "Brouillard épais : le greffier ne prend aucune déclaration aujourd'hui."
+      },
+      "VoixSouffle": "{qui} (dernier souffle) → {cible}"
     },
     "Masques": {
       "Titre": "Masques de veillée",
       "Intro": "La meute a ses masques : aucun de ces rôles du Village n'est en jeu. Tu peux prétendre en être un, personne ne pourra se réclamer du même.",
       "Conseil": "Accordez-vous avant de vous en servir : deux loups qui revendiquent le même masque se trahissent.",
       "Journal": "Masques de veillée remis à la meute : {roles}."
+    },
+    "Souffle": {
+      "Bandeau": "Tu es mort : il te reste ton dernier souffle",
+      "Voter": "Dernier souffle : ta voix compte, une seule fois",
+      "Garde": "Garde son dernier souffle",
+      "Compte": "+ {n} dernier(s) souffle(s)"
+    },
+    "Almanach": {
+      "Annonce": "Almanach des brumes — {nom} : {effet}",
+      "Rumeur": "La rumeur court que {indice}",
+      "Presages": {
+        "ciel-clair": {
+          "Nom": "Ciel clair",
+          "Effet": "Rien ne change aujourd'hui."
+        },
+        "givre": {
+          "Nom": "Nuit de givre",
+          "Effet": "La nuit prochaine, aucune protection ne tient : ni garde, ni gardienne, ni verrou."
+        },
+        "crue": {
+          "Nom": "Crue de la rivière",
+          "Effet": "La nuit prochaine, le Pont est coupé : la meute ne chasse pas l'autre rive."
+        },
+        "foire": {
+          "Nom": "Jour de foire",
+          "Effet": "Aujourd'hui, on vote à main levée : chacun voit les voix pendant le vote."
+        },
+        "brouillard": {
+          "Nom": "Brouillard épais",
+          "Effet": "Aujourd'hui, le greffier n'y voit rien : aucune déclaration au Registre."
+        },
+        "glas": {
+          "Nom": "Le glas",
+          "Effet": "Aujourd'hui, le vote désigne deux condamnés."
+        },
+        "lune-rousse": {
+          "Nom": "Lune rousse",
+          "Effet": "Aujourd'hui, il faut la majorité absolue pour condamner."
+        },
+        "rumeur": {
+          "Nom": "Jour de marché",
+          "Effet": "Une rumeur vraie, mais floue, court sur la nuit passée."
+        },
+        "vent-du-nord": {
+          "Nom": "Vent du nord",
+          "Effet": "Le vent emporte les silences : chacun peut parler aujourd'hui."
+        },
+        "sceau-brise": {
+          "Nom": "Sceau fêlé",
+          "Effet": "Aujourd'hui, la voix du Bailli ne compte pas double."
+        }
+      }
+    },
+    "Somnambule": {
+      "Devoile": "{nom} était Somnambule : son rôle n'était qu'un rêve.",
+      "MJ": "Somnambule : il rêve ce rôle (ses visions sont fausses)"
+    },
+    "Calendrier": {
+      "GlasAnnonce": "Le glas final sonnera au soir du jour {n} : si la meute vit encore, elle l'emportera.",
+      "GlasLeve": "Le glas final ne sonnera pas.",
+      "Glas": "Glas final : jour {n}",
+      "GlasAide": "Au soir de ce jour (après son vote), la partie s'arrête : la meute gagne si un loup vit encore, sinon un tueur solitaire encore en vie, sinon le village.",
+      "GlasTitre": "Glas final (jour)",
+      "Poser": "Poser",
+      "Etoile": "Bonne étoile : {nom} est protégé en secret la première nuit.",
+      "EtoileAucune": "Bonne étoile : personne.",
+      "EtoileTitre": "Bonne étoile",
+      "EtoileAide": "Le narrateur protège en secret un joueur débutant la première nuit. Personne n'en est prévenu.",
+      "Refus": {
+        "etoile": "La Bonne étoile ne veille que sur la première nuit, avant son aube."
+      }
     }
   }
 }

@@ -194,7 +194,9 @@ let votesCompagnons = Promise.resolve();
 function faireVoterLesCompagnons(etat) {
   const v = etat?.vote;
   if (!v?.ouvert) return;
-  const compagnons = tousLesVillageois().filter(a => a.system.vivant && estCompagnon(a));
+  // Les compagnons vivants, et à un vote d'exécution, les compagnons morts qui ont encore leur Dernier souffle (souffle: true).
+  const admis = L.votantsAdmis({ etat, villageois: villageoisAPlat() });
+  const compagnons = tousLesVillageois().filter(a => admis.includes(a.id) && estCompagnon(a));
   if (!compagnons.length) return;
   const fiche = id => game.actors.get(id);
   const candidats = v.candidats.map(id => ({ id, nom: fiche(id)?.name ?? id, img: fiche(id)?.img ?? "", maison: fiche(id)?.system.maison ?? "" }));
@@ -203,7 +205,7 @@ function faireVoterLesCompagnons(etat) {
   const invite = t({ chapelle: "LAKOUR_LOUPS.Choix.InviteChapelle", bailli: "LAKOUR_LOUPS.Choix.InviteBailli" }[v.objet] ?? "LAKOUR_LOUPS.Choix.InviteVote");
   const tache = Promise.all(compagnons.map(async a => {
     const [cible = ""] = await demanderAuCompagnon({ type: "vote", id: foundry.utils.randomID(), acteurId: a.id, acteurNom: a.name, invite,
-      candidats, nombre: 1, delai: ms, objet: v.objet, numero: v.numero });
+      candidats, nombre: 1, delai: ms, objet: v.objet, numero: v.numero, ...(a.system.vivant ? {} : { souffle: true }) });
     const maintenant = lireEtat().vote;
     if (maintenant.ouvert && maintenant.numero === v.numero) await recevoirVote({ votant: a.id, cible, userId: game.user.id });
   }));
@@ -262,9 +264,10 @@ function ouvrirDemande(demande, user) {
 export async function recevoirVote({ votant, cible, userId }) {
   if (!estMJActif()) return false;
   const acteur = game.actors.get(votant), user = game.users.get(userId);
-  if (!acteur || !user || !acteur.system.vivant) return false;
+  // Un mort ne vote plus, sauf de son Dernier souffle à un vote d'exécution (logique/souffle.mjs).
+  const votants = L.votantsAdmis({ etat: lireEtat(), villageois: villageoisAPlat() });
+  if (!acteur || !user || !votants.includes(votant)) return false;
   if (!user.isGM && acteur.system.joueur !== userId) return false;
-  const votants = tousLesVillageois().filter(a => a.system.vivant).map(a => a.id);
   const r = await modifierEtat(e => L.enregistrerVote(e, { votant, cible: cible || "", votants }));
   if (r.ok) {
     // Chez les autres : seulement QUI a voté, jamais pour qui (le décompte est publié à la clôture).
@@ -277,7 +280,7 @@ export async function recevoirVote({ votant, cible, userId }) {
 export function envoyerVote(cible) {
   const moi = monVillageois();
   if (!moi) return ui.notifications.warn(t("LAKOUR_LOUPS.Erreurs.PasDeVillageois"));
-  if (!moi.system.vivant) return ui.notifications.warn(t("LAKOUR_LOUPS.Erreurs.MortNeVotePas"));
+  if (!moi.system.vivant && !L.peutSouffler(lirePublic(), { id: moi.id, vivant: false })) return ui.notifications.warn(t("LAKOUR_LOUPS.Erreurs.MortNeVotePas"));
   const message = { type: "vote", votant: moi.id, cible: cible ?? "", userId: game.user.id };
   if (estMJActif()) return recevoirVote(message);
   const pub = lirePublic();
@@ -346,7 +349,9 @@ export function ligneDuRegistre(x) {
   switch (x.type) {
     case "vote": {
       const voix = Object.entries(x.votes ?? {}).map(([votant, cible]) => (Number(x.poids?.[votant]) > 1
-        ? t("LAKOUR_LOUPS.Registre.VoixDouble", { qui: nom(votant), cible: nom(cible) }) : `${nom(votant)} → ${nom(cible)}`)).join(", ");
+        ? t("LAKOUR_LOUPS.Registre.VoixDouble", { qui: nom(votant), cible: nom(cible) })
+        : (x.souffles ?? []).includes(votant) ? t("LAKOUR_LOUPS.Registre.VoixSouffle", { qui: nom(votant), cible: nom(cible) })
+          : `${nom(votant)} → ${nom(cible)}`)).join(", ");
       const choix = x.departage?.choix ?? [];
       const issue = x.objet === "bailli"
         ? (x.elus?.length ? t("LAKOUR_LOUPS.Registre.IssueBailli", { noms: x.elus.map(nom).join(", ") }) : t(x.egalite ? "LAKOUR_LOUPS.Registre.Egalite" : "LAKOUR_LOUPS.Registre.Personne"))
@@ -540,6 +545,58 @@ function exigerSansDepartage() {
   if (L.departageEnAttente(lireEtat())) throw new Error(t("LAKOUR_LOUPS.Bailli.Refus.departage"));
 }
 
+// ------------------------------------------------------------------ l'historique des compositions
+// La composition de la partie finie (ou abandonnée : nouvelle distribution, village remis à zéro) entre enfin au réglage monde
+// « historique », pour varier la suivante. Pas avant : livré à tous les navigateurs, il trahirait les rôles en jeu.
+async function consignerComposition() {
+  const c = lireEtat().aConsigner;
+  if (!c) return;
+  try { await game.settings.set(ID, "historique", [...lireReglage("historique", []), c].slice(-10)); } catch { /* réglage absent */ }
+  await modifierEtat(e => { e.aConsigner = null; return e; });
+}
+
+// ------------------------------------------------------------------ le Somnambule (logique/somnambule.mjs)
+// Son vrai rôle remplace le rôle rêvé (à sa mort, et pour tous à la fin) ; le MJ le note. -> true s'il rêvait encore
+async function devoilerSomnambule(acteurId) {
+  const s = lireEtat().somnambules?.[acteurId];
+  if (!s || s.devoile) return false;
+  const acteur = game.actors.get(acteurId);
+  const doc = s.vrai ? await fromUuid(s.vrai) : null;
+  if (acteur && doc) {
+    const reve = roleDe(acteur);
+    if (reve) await acteur.deleteEmbeddedDocuments("Item", [reve.id]);
+    await acteur.createEmbeddedDocuments("Item", [donneesObjet(doc)]);
+  }
+  await modifierEtat(e => {
+    e.somnambules = { ...e.somnambules, [acteurId]: { ...e.somnambules[acteurId], devoile: true } };
+    return L.journaliserSecret(e, t("LAKOUR_LOUPS.Somnambule.Devoile", { nom: acteur?.name ?? acteurId }));
+  });
+  return true;
+}
+
+// ------------------------------------------------------------------ Almanach des brumes (logique/almanach.mjs)
+// À l'aube (après les morts de la nuit), le présage du jour : tiré, appliqué (silences levés par le vent du nord), annoncé au
+// chat et au journal public ; hook public lakourLoups.presage ({ cle, tour }). Rien sans l'Almanach, ni une partie finie.
+// -> la clé du présage, ou ""
+async function tirerLePresage(bilan) {
+  const avant = lireEtat();
+  if (!avant.presage.actif || avant.vainqueur || avant.phase === "fin") return "";
+  const cle = L.tirerPresage(avant);
+  let annonces = [];
+  const r = await modifierEtat(e => {
+    const x = L.appliquerPresage(e, { cle, villageois: villageoisAPlat(), bilan });
+    annonces = x.annonces.map(m => (m.cle.endsWith(".Annonce") ? t("LAKOUR_LOUPS.Almanach.Annonce", {
+      nom: t(`LAKOUR_LOUPS.Almanach.Presages.${cle}.Nom`), effet: t(`LAKOUR_LOUPS.Almanach.Presages.${cle}.Effet`) }) : texteMessage(m)));
+    let etat = x.etat;
+    for (const a of annonces) etat = L.journaliser(etat, a);
+    return { ...x, etat };
+  });
+  for (const c of r.changements) if (c.type === "silence") await game.actors.get(c.acteurId)?.update({ "system.silence": Boolean(c.valeur) });
+  for (const a of annonces) await annonceChat(echapper(a));
+  annoncer("lakourLoups.presage", [{ cle, tour: r.etat.tour }]);
+  return cle;
+}
+
 // ------------------------------------------------------------------ Masques de veillée (logique/masques.mjs)
 // Le nom d'un rôle d'après sa clé, sans attendre : objets du monde, puis index des compendiums déjà lus (contenuDisponible).
 function nomDeRole(cle) {
@@ -671,7 +728,9 @@ export const api = {
   // (créé par le MJ IA, api.compagnons.creer : il garde son nom), ou { acteurId } / { nom }.
   // peste : une partie de peste noire (logique/peste.mjs) : aucun rôle de la meute (chacun devient un simple villageois) ; le
   // drapeau reste un secret du MJ.
-  async distribuer({ roles = [], metiers = [], joueurs = [], compagnons = [], maisons = [], graine, composition = "", batiments = [], peste = false } = {}) {
+  // Le Somnambule (logique/somnambule.mjs) reçoit l'objet du rôle qu'il croit tenir ; son vrai rôle reste dans les secrets du MJ.
+  // glas : le Glas final du narrateur (jour N, 0 : jamais ; public). Le Dernier souffle et l'Almanach suivent leurs réglages.
+  async distribuer({ roles = [], metiers = [], joueurs = [], compagnons = [], maisons = [], graine, composition = "", batiments = [], peste = false, glas = 0 } = {}) {
     exigerMJ();
     const estPlaceCompagnon = id => { const a = game.actors.get(id); return a?.type === "villageois" && estCompagnon(a); };
     const placesIA = compagnons.map(n => {
@@ -681,6 +740,7 @@ export const api = {
     }).filter(c => c.acteurId || c.nom);
     const nomsCompagnons = placesIA.map(c => c.nom);
     if (!joueurs.length && !nomsCompagnons.length) throw new Error(t("LAKOUR_LOUPS.Erreurs.PasDeJoueurs"));
+    await consignerComposition();   // la partie précédente, abandonnée
     const cache = new Map();
     for (const uuid of [...roles, ...metiers]) {
       if (cache.has(uuid)) continue;
@@ -708,12 +768,25 @@ export const api = {
     const reserves = new Set(placesIA.map(c => c.acteurId).filter(Boolean));
     const anciensCompagnons = tousLesVillageois().filter(a => a.system.compagnon && !a.system.joueur && !reserves.has(a.id));
     const sortie = [];
+    // Les rôles tirés (pour rêver un rôle absent) et les Somnambules de la partie : { acteurId: { croit, vrai } }.
+    const rolesTires = tirage.map(att => cache.get(att.role)?.system?.cle).filter(Boolean);
+    const somnambules = {};
+    let contenuDesReves = null;
     for (const att of tirage) {
       const indexCompagnon = att.joueur.startsWith(PLACE_COMPAGNON) ? Number(att.joueur.slice(PLACE_COMPAGNON.length)) : -1;
       const compagnon = indexCompagnon >= 0;
       const user = compagnon ? null : game.users.get(att.joueur);
       const sansLoup = peste && cache.get(att.role)?.system?.camp === "meute";
-      const roleData = att.role && !sansLoup ? donneesObjet(cache.get(att.role)) : roleParDefaut();
+      let roleData = att.role && !sansLoup ? donneesObjet(cache.get(att.role)) : roleParDefaut();
+      // Le Somnambule porte l'objet du rôle qu'il rêve (de préférence absent de la partie).
+      let reve = null;
+      if (roleData.system?.cle === L.CLE_SOMNAMBULE) {
+        contenuDesReves ??= await contenuDisponible();
+        const croit = L.choisirReve({ disponibles: [...contenuDesReves.roles.keys()], enJeu: [...rolesTires, ...Object.values(somnambules).map(x => x.croit)],
+          hasard: L.creerHasard(graine === undefined || graine === null || graine === "" ? undefined : `reve|${graine}|${sortie.length}`) });
+        const doc = croit ? await fromUuid(contenuDesReves.roles.get(croit)) : null;
+        if (doc) { reve = { croit, vrai: att.role }; roleData = donneesObjet(doc); }
+      }
       const metierData = att.metier ? donneesObjet(cache.get(att.metier)) : null;
       const system = { joueur: compagnon ? "" : att.joueur, compagnon, vivant: true, revele: false, camp: roleData.system?.camp ?? "village",
         maison: att.maison, amoureux: "", silence: false, protections: 0 };
@@ -733,6 +806,7 @@ export const api = {
           prototypeToken: { name: nom, actorLink: true, disposition: CONST.TOKEN_DISPOSITIONS.NEUTRAL } });
       }
       await acteur.createEmbeddedDocuments("Item", [roleData, metierData].filter(Boolean));
+      if (reve) somnambules[acteur.id] = reve;
       sortie.push({ acteurId: acteur.id, userId: compagnon ? "" : att.joueur, compagnon, roleCle: roleData.system?.cle ?? "" });
     }
     for (const a of anciensCompagnons) {
@@ -749,6 +823,10 @@ export const api = {
       e.primes = L.designerPrimes(enJeu);
       if (peste) e.peste = L.pesteInitiale();
       e.bailli = L.bailliInitial(lireReglage("bailli", true));
+      e.souffle = L.souffleInitial(lireReglage("dernierSouffle", true));
+      e.presage = L.presageInitial(lireReglage("almanach", false));
+      e.glas = L.normaliserGlas(glas);
+      e.somnambules = somnambules;
       return L.journaliser(e, t("LAKOUR_LOUPS.Journal.Distribution", { n: sortie.length }));
     });
     for (const s of sortie) await envoyerRole(game.actors.get(s.acteurId));
@@ -756,7 +834,8 @@ export const api = {
     const loups = sortie.map(s => game.actors.get(s.acteurId)).filter(a => a?.system.camp === "meute");
     if (!peste && loups.length && lireReglage("masques", true)) {
       const contenu = await contenuDisponible();
-      const masques = L.choisirMasques({ roles: [...contenu.camps].map(([cle, camp]) => ({ cle, camp })), enJeu: sortie.map(s => s.roleCle),
+      const masques = L.choisirMasques({ roles: [...contenu.camps].map(([cle, camp]) => ({ cle, camp, surDemande: Boolean(contenu.equilibre.roles?.[cle]?.surDemande) })),
+        enJeu: sortie.map(s => s.roleCle),
         loups: loups.length, graine });
       if (masques.length) {
         await modifierEtat(e => {
@@ -767,6 +846,7 @@ export const api = {
       }
     }
     annoncer("lakourLoups.phase", ["preparation", etat], ["preparation", L.etatPublic(etat)]);
+    if (etat.glas) await annonceChat(echapper(t("LAKOUR_LOUPS.Calendrier.GlasAnnonce", { n: etat.glas })));
     return sortie;
   },
 
@@ -774,6 +854,11 @@ export const api = {
     exigerMJ();
     if (!L.PHASES.includes(phase)) throw new Error(t("LAKOUR_LOUPS.Erreurs.PhaseInconnue", { phase: String(phase) }));
     exigerSansDepartage();
+    // Le Glas final : le jour N fini, la nuit ne tombe plus, la partie s'arrête (règle de calendrier.mjs).
+    if (phase === "nuit") {
+      const e = lireEtat();
+      if (e.glas && e.tour >= e.glas && !e.vainqueur && await api.verifierVictoire({ finDuJour: true })) return foundry.utils.deepClone(lireEtat());
+    }
     if (phase === "nuit") {
       for (const a of tousLesVillageois().filter(a => a.system.silence)) await a.update({ "system.silence": false });
     }
@@ -802,8 +887,10 @@ export const api = {
   // (par défaut : tous ceux du village, mêmes noms).
   // peste : true (le MJ la choisit : rôles de la meute retirés), false (jamais) ; non précisé, une composition générée devient
   // une peste noire avec la chance CHANCE_PESTE (tirerPeste, reproductible avec la graine).
-  async nouvellePartie({ memesJoueurs = true, joueurs = null, compagnons: ia = null, composition = "", roles = [], niveau = "", graine, peste } = {}) {
+  // glas : le Glas final du narrateur (jour N ; 0 : jamais).
+  async nouvellePartie({ memesJoueurs = true, joueurs = null, compagnons: ia = null, composition = "", roles = [], niveau = "", graine, peste, glas = 0 } = {}) {
     exigerMJ();
+    await consignerComposition();
     const avant = lireEtat();
     const anciens = tousLesVillageois();
     const humains = Array.isArray(joueurs) ? [...new Set(joueurs.filter(id => game.users.get(id) && !game.users.get(id).isGM))]
@@ -851,10 +938,9 @@ export const api = {
     annulerDemandes();
     if (!memesJoueurs) for (const a of anciens.filter(x => x.system.joueur && !humains.includes(x.system.joueur))) await a.delete();
     const sortie = await api.distribuer({ roles: uuidsRoles, metiers, joueurs: humains, compagnons, maisons: L.maisonsDuVillage(total),
-      graine, composition: compo.cle, batiments, peste: enPeste });
-    try {
-      await game.settings.set(ID, "historique", [...lireReglage("historique", []), { roles: [...cles], batiments: [...compo.batiments], niveau: compo.niveau, composition: compo.cle, quand: Date.now() }].slice(-10));
-    } catch { /* réglage absent */ }
+      graine, composition: compo.cle, batiments, peste: enPeste, glas });
+    // La composition n'entre au réglage monde « historique » (livré à tous) qu'à la fin de la partie : en attendant, le MJ la garde.
+    await modifierEtat(e => { e.aConsigner = { roles: [...cles], batiments: [...compo.batiments], niveau: compo.niveau, composition: compo.cle, quand: Date.now() }; return e; });
     const partie = lireEtat().partie;
     const resume = {
       partie,
@@ -878,6 +964,7 @@ export const api = {
   // et l'historique des compositions restent.
   async remettreAZero() {
     exigerMJ();
+    await consignerComposition();
     annulerDemandes();
     const scenes = () => game.scenes?.contents ?? [...(game.scenes?.values?.() ?? [])];
     const jetonsDe = (scene, acteurId) => (scene.tokens?.contents ?? [...(scene.tokens?.values?.() ?? [])]).filter(t => t.actorId === acteurId);
@@ -932,23 +1019,36 @@ export const api = {
     const rolesParCle = new Map(villageoisAPlat().filter(v => v.role).map(v => [v.role.cle, v.role]));
     const proies = etat.nuit.actions.filter(a => a.roleCle === CLE_MEUTE || a.roleCle === CLE_PESTE
       || (rolesParCle.get(a.roleCle)?.camp === "meute" && rolesParCle.get(a.roleCle)?.effet === "tuer")).flatMap(a => a.cibles);
-    let candidats = base;
+    // Les candidats d'un porteur, selon SES contraintes (gardé à l'œil, hors d'atteinte…) et l'effet du rôle.
+    const candidatsPour = sa => {
+      if (effet === "voir-role-mort") return sa.length ? tousLesVillageois().filter(a => !a.system.vivant).map(a => a.id) : [];
+      return effet === "mordre" ? sa.filter(id => proies.includes(id)) : sa;
+    };
+    const candidats = candidatsPour(base);
     let invite = role?.system.nuit.invite || (meute ? "" : t("LAKOUR_LOUPS.Choix.InviteParDefaut"));
-    if (effet === "voir-role-mort") candidats = base.length ? tousLesVillageois().filter(a => !a.system.vivant).map(a => a.id) : [];
-    if (effet === "mordre") candidats = candidats.filter(id => proies.includes(id));
     if (effet === "remede" && proies.length) invite = `${t("LAKOUR_LOUPS.Nuit.ProiesDeLaMeute", { noms: proies.map(id => game.actors.get(id)?.name ?? "").join(", ") })} ${invite}`;
     reveilsEnCours.add(roleCle);
     Hooks.callAll("lakourLoups.reveil", { roleCle, enCours: true });
     let cibles = [], texte = "";
     try {
+      const enGroupe = meute || (role?.system.camp === "meute" && acteurs.length > 1);
       if (!candidats.length && Number(entree.cibles) > 0) cibles = [];
-      else if (meute || (role?.system.camp === "meute" && acteurs.length > 1)) cibles = await api.demanderActionMeute({ invite, candidats, delai: ms });
+      else if (enGroupe) cibles = await api.demanderActionMeute({ invite, candidats, delai: ms });
       else cibles = await api.demanderAction({ acteurId: entree.acteurIds[0], invite, candidats, nombre: entree.cibles, delai: ms });
       if (effet === "messager" && cibles.length === 2 && cibles[0] !== cibles[1]) {
         texte = await api.demanderTexte({ acteurId: cibles[0], delai: ms,
           invite: t("LAKOUR_LOUPS.Nuit.InviteMessager", { nom: game.actors.get(cibles[1])?.name ?? "" }) });
       }
       await api.noterAction({ acteurId: entree.acteurIds[0], roleCle, cibles, ...(texte ? { texte } : {}) });
+      // Deux porteurs d'un même rôle hors meute (un Somnambule qui rêve un rôle déjà en jeu) : chacun choisit, à son tour.
+      if (!enGroupe) {
+        for (const autre of entree.acteurIds.slice(1)) {
+          const siens = candidatsPour(api.candidatsDeNuit({ acteurId: autre, roleCle }));
+          if (!siens.length && Number(entree.cibles) > 0) continue;
+          const choix = await api.demanderAction({ acteurId: autre, invite, candidats: siens, nombre: entree.cibles, delai: ms });
+          await api.noterAction({ acteurId: autre, roleCle, cibles: choix });
+        }
+      }
     } finally {
       reveilsEnCours.delete(roleCle);
       Hooks.callAll("lakourLoups.reveil", { roleCle, enCours: false });
@@ -1094,10 +1194,14 @@ export const api = {
     }
     const tour = Math.max(1, avant.tour);
     const cles = clesDesBatiments(avant);
+    // Les Somnambules rêvent leurs visions : de faux rôles, pris parmi ceux du contenu.
+    const somnambules = L.reveurs(avant.somnambules);
+    const contenu = somnambules.length ? await contenuDisponible() : null;
+    const rolesFactices = contenu ? L.nomsFactices([...contenu.roles.keys()].map(cle => ({ cle, nom: contenu.noms.get(cle), camp: contenu.camps.get(cle) }))) : [];
     const r = L.resoudreNuit({
       villageois: villageoisAPlat(), actions: avant.nuit.actions, tour, asperges: avant.asperges,
       precedentes: avant.nuitPrecedente.actions, primes: avant.primes, fioles: avant.fioles, chanceEpier: reglage("chanceEpier"),
-      jour: L.effetsDeLaNuit(avant, tour, { batiments: cles })
+      jour: L.effetsDeLaNuit(avant, tour, { batiments: cles }), somnambules, rolesFactices
     });
     // Une fiole déjà vide n'a rien versé : l'usage décompté par noterAction est rendu, AVANT les échanges de rôles de la nuit
     // (sinon il irait au rôle reçu par échange, ex. un Colporteur qui pourrait échanger une seconde fois).
@@ -1153,7 +1257,9 @@ export const api = {
     }
     annoncer("lakourLoups.aube", [{ tour, morts: r.morts, annonces }]);
     suivreSuccession();
+    const presage = await tirerLePresage(r.bilan);
     return {
+      presage,
       morts: r.morts, revelations: r.revelations,
       messages, narration, annonces,
       deces: r.deces, sauves: r.sauves, changements: r.changements, enAttente: r.enAttente, narrateur: r.narrateur, voteDouble: r.voteDouble,
@@ -1206,7 +1312,9 @@ export const api = {
     const r = await modifierEtat(e => {
       // Déjà clos (minuteur écoulé, ou clos ailleurs entre-temps) : on ne recompte pas un vote fermé.
       if (!e?.vote?.ouvert) throw new Error(t("LAKOUR_LOUPS.Erreurs.PasDeVote"));
-      const c = L.cloreVote(e, { votants });
+      // Les morts qui soufflent à ce vote comptent parmi les votants (le Gibet ne compte qu'eux) ; leur souffle est rendu.
+      const souffles = e.vote.objet === "execution" ? L.souffleurs({ etat: e, villageois: villageoisAPlat() }) : [];
+      const c = L.cloreVote(e, { votants: [...votants, ...souffles.filter(id => id in e.vote.votes)], souffles });
       if (c.prolonge) {
         return { etat: L.journaliser(c.etat, t("LAKOUR_LOUPS.Jour.RubanDefense", { nom: nom(c.prolonge) })), prolonge: c.prolonge };
       }
@@ -1245,6 +1353,8 @@ export const api = {
     exigerMJ();
     const acteur = acteurOuErreur(acteurId);
     if (!acteur.system.vivant) return [];
+    // Un Somnambule meurt : on le découvre Somnambule (son vrai rôle remplace le rôle rêvé, avant toute révélation).
+    await devoilerSomnambule(acteurId);
     const montrer = reveler ?? reglage("revelerALaMort");
     const visible = causePublique(cause);
     await acteur.update({ "system.vivant": false, ...(montrer ? { "system.revele": true } : {}) });
@@ -1314,6 +1424,11 @@ export const api = {
       [f[a], f[b]] = [f[b], f[a]];
       for (const id of [a, b]) if (!f[id]) delete f[id];
       e.fioles = f;
+      // Le rêve du Somnambule suit l'objet du rôle rêvé : celui qui le reçoit devient le Somnambule.
+      const s = e.somnambules ?? {};
+      [s[a], s[b]] = [s[b], s[a]];
+      for (const id of [a, b]) if (!s[id]) delete s[id];
+      e.somnambules = s;
       return e;
     });
     await envoyerRole(A);
@@ -1324,11 +1439,16 @@ export const api = {
     return true;
   },
 
-  async verifierVictoire() {
+  // finDuJour : la nuit allait tomber (changerPhase) — le Glas final sonne alors dès le jour N, même sans vote ce jour-là.
+  async verifierVictoire({ finDuJour = false } = {}) {
     exigerMJ();
     const e = lireEtat();
-    const g = L.verifierVictoire({ villageois: villageoisAPlat(), morts: e.morts, primes: e.primes, peste: e.peste });
+    const glas = L.glasSonne(e) || (finDuJour && e.glas > 0 && e.tour >= e.glas && !e.vainqueur);
+    const g = L.verifierVictoire({ villageois: villageoisAPlat(), glas, morts: e.morts, primes: e.primes, peste: e.peste });
     if (g && e.vainqueur !== g) {
+      // Les cartes se retournent : chaque Somnambule est découvert avant le récit et les jetons de la fin.
+      for (const id of L.reveurs(e.somnambules)) await devoilerSomnambule(id);
+      await consignerComposition();
       const libelle = libelleVainqueur(g, e);
       const etat = await modifierEtat(x => L.journaliser(L.declarerVainqueur(x, g), libelle));
       // La partie est finie : l'état public dévoile maintenant la peste noire, s'il y en avait une.
@@ -1547,6 +1667,52 @@ export const api = {
   masques() {
     exigerMJ();
     return lireEtat().masques.map(cle => ({ cle, nom: nomDeRole(cle) }));
+  },
+
+  // ---------------------------------------------------------------- le Somnambule (SECRET : MJ actif seulement)
+  // -> [{ acteurId, nom, croit, croitNom, devoile }] : qui rêve quel rôle (le narrateur ne le dit jamais avant sa mort).
+  somnambules() {
+    exigerMJ();
+    return Object.entries(lireEtat().somnambules).map(([acteurId, s]) => ({ acteurId, nom: game.actors.get(acteurId)?.name ?? acteurId,
+      croit: s.croit, croitNom: nomDeRole(s.croit), devoile: Boolean(s.devoile) }));
+  },
+
+  // ---------------------------------------------------------------- le Dernier souffle et l'Almanach (publics, tous les navigateurs)
+  // Ce villageois mort peut-il voter maintenant, de son Dernier souffle ? -> { ok, aSonSouffle }
+  peutSouffler(acteurId) {
+    const e = lirePublic(), a = game.actors.get(acteurId);
+    const v = { id: acteurId, vivant: a?.system.vivant !== false };
+    return { ok: L.peutSouffler(e, v), aSonSouffle: L.aSonSouffle(e, v) };
+  },
+  // Le présage du jour (Almanach des brumes) : { actif, cle, tour, nom, effet } ; cle "" sans présage aujourd'hui.
+  presage() {
+    const e = lirePublic();
+    const cle = L.presageDuJour(e) || L.presageDeLaNuit(e, e.phase === "nuit" ? e.tour : e.tour + 1);
+    return { actif: e.presage.actif, cle, tour: e.presage.tour,
+      nom: cle ? t(`LAKOUR_LOUPS.Almanach.Presages.${cle}.Nom`) : "", effet: cle ? t(`LAKOUR_LOUPS.Almanach.Presages.${cle}.Effet`) : "" };
+  },
+
+  // ---------------------------------------------------------------- les Saints du calendrier (MJ actif)
+  // La Bonne étoile : le narrateur protège en secret ce villageois la PREMIÈRE nuit ("" : personne), avant qu'elle soit résolue.
+  async bonneEtoile(acteurId = "") {
+    exigerMJ();
+    const e = lireEtat();
+    if (e.tour > 1 || e.nuitResolue >= 1) throw new Error(t("LAKOUR_LOUPS.Calendrier.Refus.etoile"));
+    const a = acteurId ? acteurOuErreur(acteurId) : null;
+    await modifierEtat(x => {
+      x.bonneEtoile = acteurId;
+      return L.journaliserSecret(x, a ? t("LAKOUR_LOUPS.Calendrier.Etoile", { nom: a.name }) : t("LAKOUR_LOUPS.Calendrier.EtoileAucune"));
+    });
+    return acteurId;
+  },
+  // Le Glas final : la partie s'arrête au soir du jour n (0 : jamais) ; annoncé à tout le village. -> n
+  async glasFinal(n = 0) {
+    exigerMJ();
+    const glas = L.normaliserGlas(n);
+    const texte = glas ? t("LAKOUR_LOUPS.Calendrier.GlasAnnonce", { n: glas }) : t("LAKOUR_LOUPS.Calendrier.GlasLeve");
+    await modifierEtat(x => { x.glas = glas; return L.journaliser(x, texte); });
+    await annonceChat(echapper(texte));
+    return glas;
   },
 
   // ---------------------------------------------------------------- carnet secret

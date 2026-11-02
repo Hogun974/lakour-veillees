@@ -19,6 +19,8 @@ import { choisir } from "./hasard.mjs";
 import { normaliserEtat, ouvrirVote } from "./etat.mjs";
 import { numeroDeMaison, surLAutreRive } from "./distribution.mjs";
 import { marquerAnnule } from "./registre.mjs";
+import { presageDeLaNuit } from "./almanach.mjs";
+import { etoilesDeLaNuit } from "./calendrier.mjs";
 
 export const MATIN = ["aube", "jour"];             // « au matin », « au début d'un débat »
 export const JOURNEE = ["aube", "jour", "vote"];   // « pendant le jour »
@@ -325,6 +327,10 @@ export function effetsDeLaNuit(e, tour, { batiments } = {}) {
     taverneEnJeu: enJeu.includes("taverne"), benis: [...etat.jour.benis],
     // Le Pont bloqué (après une proie tuée sur l'autre rive) ou l'écluse fermée par l'Éclusière : même effet.
     pontBloque: (enJeu.includes("pont") && Number(etat.pont?.bloqueNuit) === tour) || de("ecluse").length > 0
+      || presageDeLaNuit(etat, tour) === "crue",
+    // Almanach des brumes : le givre glace toute protection ; la Bonne étoile du narrateur, la première nuit.
+    givre: presageDeLaNuit(etat, tour) === "givre",
+    etoiles: etoilesDeLaNuit(etat, tour)
   };
 }
 

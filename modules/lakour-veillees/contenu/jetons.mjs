@@ -43,6 +43,8 @@ export const JETONS_ROLES = {
   "sourcier": "lorc/droplets",                        // il cherche l'eau
   "louvetier": "lorc/hound",                          // ses chiens de meute
   "pecheur-de-nuit": "lorc/harpoon-trident",
+  "somnambule": "lorc/candle-light",                  // il marche la nuit, une chandelle à la main
+  "rosiere": "delapouite/jewel-crown",                // la couronne de l'année
   // --- Les solitaires
   "revenant": "lorc/ghost",
   "colporteur": "lorc/swap-bag",

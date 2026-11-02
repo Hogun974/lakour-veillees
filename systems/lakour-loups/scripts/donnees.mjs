@@ -1,6 +1,7 @@
 // Passerelle entre les documents Foundry et la logique pure (villageois « à plat »).
 import { ID } from "../logique/constantes.mjs";
 import { normaliserEtat, fusionnerEtat } from "../logique/etat.mjs";
+import { aSonSouffle } from "../logique/souffle.mjs";
 import { estMJActif } from "./canal.mjs";
 import { secretsMJ } from "./secrets.mjs";
 
@@ -59,11 +60,12 @@ export function monVillageois(user = game.user) {
   return tousLesVillageois().find(a => a.system.joueur === user.id) ?? null;
 }
 
-// Le rôle de cet acteur est-il visible de l'utilisateur courant ?
+// Le rôle de cet acteur est-il visible de l'utilisateur courant ? Un mort voit tout (réglage « mortsVoientTout »), sauf tant
+// qu'il garde son Dernier souffle (logique/souffle.mjs) : il voterait en connaissant les loups.
 export function roleVisible(acteur, user = game.user) {
   if (user.isGM || acteur.system.revele || acteur.isOwner) return true;
   const moi = monVillageois(user);
-  return Boolean(moi && !moi.system.vivant && game.settings.get(ID, "mortsVoientTout"));
+  return Boolean(moi && !moi.system.vivant && game.settings.get(ID, "mortsVoientTout") && !aSonSouffle(lirePublic(), { id: moi.id, vivant: false }));
 }
 
 // Libellés localisés.

@@ -330,6 +330,7 @@
         "Nom": "Automatic voice rooms",
         "Aide": "With Foundry built-in voice (A/V): at night only the wolves talk to each other; the dead speak only to the dead; a silenced player stays quiet during the debate and the vote. Each browser mutes what it must not hear, and its own microphone when it must stay quiet. The GM always hears everything. Unchecked: everyone talks to everyone."
       },
+      "RepartirAZero": { "Nom": "Start fresh every time the world is launched", "Aide": "A werewolf game is not resumed: when the world is launched, the game in progress is cleared (roles, trades, deaths, chat, secrets) and the village goes back to setup, its villagers ready to be dealt. The Chronicles and the hall of fame stay. Reloading the page (F5) resets nothing.", "Fait": "New vigil: the village starts fresh." },
       "PlateauInteractif": {
         "Nom": "Act on the map",
         "Aide": "Night choices, votes and day powers are made by clicking tokens, from the banner. Unchecked: the choice and vote windows open as before."

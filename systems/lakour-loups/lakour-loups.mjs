@@ -12,6 +12,7 @@ import { chargerPrive, mesSecrets } from "./scripts/prive.mjs";
 import { carnetSecret } from "./scripts/apps/carnet.mjs";
 import { tableDeJeu, ouvrirTable, cloreLeVote } from "./scripts/apps/table.mjs";
 import { surveillerFinDuVote } from "./scripts/fin-du-vote.mjs";
+import { repartirAuLancement } from "./scripts/lancement.mjs";
 import { signaler } from "./scripts/signal.mjs";
 import { fenetreVote } from "./scripts/apps/vote.mjs";
 import { FicheVillageois, FicheRole, FicheMetier, FicheBatiment } from "./scripts/apps/fiches.mjs";
@@ -114,7 +115,13 @@ Hooks.once("ready", () => {
   // qu'il a bien les secrets de la partie en cours (ils ne vivent que dans SON navigateur).
   chargerPrive(lirePublic().partie);
   if (!game.user.isGM) versMJ({ type: "bonjour" });
-  else if (estMJActif() && secretsPerdus(lirePublic())) ui.notifications.warn(t("LAKOUR_LOUPS.Table.SecretsPerdus"), { permanent: true });
+  else if (estMJActif()) {
+    // Un nouveau lancement du monde remet le village à zéro ; sinon (simple rechargement), la partie en cours reste et l'on
+    // vérifie que ce navigateur a bien ses secrets.
+    repartirAuLancement(api).then(remis => {
+      if (!remis && secretsPerdus(lirePublic())) ui.notifications.warn(t("LAKOUR_LOUPS.Table.SecretsPerdus"), { permanent: true });
+    }).catch(e => console.error(`${ID} | village remis à zéro`, e));
+  }
   voteEtaitOuvert = false;
   // Le plateau local : la fenêtre de secours qui répond éteint la carte ; tout changement local redessine bandeau et jetons.
   surReponse(id => plateauLocal.oublierDemande(id));

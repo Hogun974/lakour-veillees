@@ -16,6 +16,13 @@ export function enregistrerReglages(quandEtatChange) {
   });
   // Les secrets de la partie chez le MJ actif, et le carnet secret d'un joueur : portée « client », donc rangés dans
   // le navigateur (localStorage) et jamais envoyés au serveur ni aux autres joueurs (voir secrets.mjs et prive.mjs).
+  // Un loup-garou ne se reprend pas : à chaque lancement du monde, la partie repart de zéro (lancement.mjs). Le dernier
+  // lancement traité (game.world.lastPlayed) évite d'effacer une partie quand le MJ recharge simplement la page.
+  game.settings.register(ID, "repartirAZero", {
+    name: "LAKOUR_LOUPS.Reglages.RepartirAZero.Nom", hint: "LAKOUR_LOUPS.Reglages.RepartirAZero.Aide",
+    scope: "world", config: true, type: Boolean, default: true
+  });
+  game.settings.register(ID, "lancementTraite", { scope: "world", config: false, type: String, default: "" });
   game.settings.register(ID, "secrets", { scope: "client", config: false, type: Object, default: {} });
   game.settings.register(ID, "carnet", { scope: "client", config: false, type: Object, default: {} });
   game.settings.register(ID, "revelerALaMort", {

@@ -330,6 +330,7 @@
         "Nom": "Salons vocaux automatiques",
         "Aide": "Avec la voix intégrée de Foundry (A/V) : la nuit, seuls les loups se parlent ; les morts ne parlent qu'aux morts ; un joueur réduit au silence se tait pendant le débat et le vote. Chaque navigateur coupe ce qu'il ne doit pas entendre, et son micro quand il doit se taire. Le MJ entend toujours tout. Décoché : tout le monde parle à tout le monde."
       },
+      "RepartirAZero": { "Nom": "Repartir de zéro à chaque lancement du monde", "Aide": "Un loup-garou ne se reprend pas : quand le monde est lancé, la partie en cours est effacée (rôles, métiers, morts, chat, secrets) et le village revient aux préparatifs, ses villageois prêts pour la distribution. Les Chroniques et le palmarès restent. Recharger la page (F5) ne remet rien à zéro.", "Fait": "Nouvelle veillée : le village repart de zéro." },
       "PlateauInteractif": {
         "Nom": "Agir sur la carte",
         "Aide": "Choix de nuit, votes et pouvoirs de jour se font au clic sur les jetons, depuis le bandeau. Décoché : les fenêtres de choix et de vote s'ouvrent comme avant."

@@ -584,6 +584,25 @@ export const api = {
     return resume;
   },
 
+  // Le village vierge (lancement du monde) : aucune partie en cours, plus de rôles ni de métiers sur les villageois (ils
+  // restent, liés à leurs joueurs et aux compagnons, prêts pour la distribution), tous vivants et neutres, le chat vidé, les
+  // demandes de nuit closes, les secrets du MJ effacés. Les Chroniques, le palmarès et l'historique des compositions restent.
+  async remettreAZero() {
+    exigerMJ();
+    annulerDemandes();
+    for (const a of tousLesVillageois()) {
+      const objets = a.items.filter(i => i.type === "role" || i.type === "metier").map(i => i.id);
+      if (objets.length) await a.deleteEmbeddedDocuments("Item", objets);
+      await a.update({ "system.vivant": true, "system.revele": false, "system.camp": "village", "system.amoureux": "",
+        "system.silence": false, "system.protections": 0 });
+      try { if (a.statuses?.has("dead")) await a.toggleStatusEffect("dead", { active: false }); } catch { /* sans jeton */ }
+    }
+    if (game.messages?.size) await ChatMessage.implementation.deleteDocuments([], { deleteAll: true });
+    const etat = await modifierEtat(() => L.etatInitial());
+    annoncer("lakourLoups.phase", ["preparation", etat], ["preparation", L.etatPublic(etat)]);
+    return foundry.utils.deepClone(L.etatPublic(etat));
+  },
+
   // Réveille un rôle de la nuit (ou la meute) comme le ferait le narrateur : candidats du système (effets du jour compris),
   // demande secrète au joueur (ou au compagnon IA), mot du Messager, puis note l'action. Pour la Table de jeu du MJ humain.
   // -> { roleCle, acteurIds, cibles, texte }

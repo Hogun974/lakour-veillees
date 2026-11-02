@@ -73,7 +73,9 @@ n'existe que chez le MJ actif ; il se range en deux morceaux (`logique/etat.mjs`
   partie: String,                  // identifiant de la partie (les secrets d'une autre partie sont ignorés)
   phase: "preparation" | "nuit" | "aube" | "jour" | "vote" | "fin",
   tour: Number,                    // n° de la nuit / du jour (1 = première nuit)
-  composition: String,             // clé de composition utilisée
+  composition: String,             // SECRET : clé de composition utilisée ("" dans l'état public : la composition n'est jamais annoncée)
+  peste: null | { active, porteur, victimes, decouverte, crieur },   // SECRET : la variante Peste noire (§1 « Peste noire ») ;
+                                   //   absente de l'état public (pas même la clé) jusqu'à la phase "fin", où la partie se dévoile
   batiments: [String],             // uuid des bâtiments en jeu
   batimentsCles: [String],         // leurs clés (« chapelle », « pont »…)
   vote: { ouvert, numero, objet: "execution" | "chapelle", candidats: [acteurId],
@@ -84,8 +86,9 @@ n'existe que chez le MJ actif ; il se range en deux morceaux (`logique/etat.mjs`
   nuit: { actions: [ { acteurId, roleCle, cibles: [acteurId], quand, effet?, texte? } ] },   // SECRET
   nuitPrecedente: { actions, bilan: { sorties, visites, victime, loup, sauves, attaques } },  // SECRET
   asperges, primes, fioles,        // SECRETS
-  morts: [ { acteurId, tour, phase, cause } ],   // cause publique : "nuit" pour meute / poison / feu / épié (vraie cause SECRÈTE)
-  vainqueur: "" | "village" | "meute" | <acteurId d'un solitaire> ,
+  morts: [ { acteurId, tour, phase, cause } ],   // cause publique : "nuit" pour meute / poison / feu / épié / peste (vraie cause SECRÈTE) ;
+                                                 // "panique" : pendu pour un cri de peste à tort
+  vainqueur: "" | "village" | "meute" | "peste" | <acteurId d'un solitaire> ,
   historique: [ { tour, phase, texte } ],        // public (ce qui a été annoncé)
   journalSecret: [ { tour, phase, texte } ],     // SECRET : chronique du MJ (actions de nuit, messages secrets envoyés)
   carnets: { acteurId: [ { id, texte | html, titre, tour, phase, quand } ] },   // SECRET : carnet secret de chaque joueur
@@ -103,7 +106,8 @@ session, en second argument du récepteur. Le système s'en sert ainsi :
 - MJ → un joueur (`recipients: [son userId]`) : `demande` (choix de nuit, ou `mode: "texte"` pour le mot du Messager), `annuler`,
   `secret` (une entrée de son carnet), `carnet` (tout son carnet, sa prime, son vote en cours), `monVote` (accusé), `avis` (refus),
   `salon` (sa ligne des salons vocaux, §1 « Salons vocaux ») ;
-- joueur → MJ actif seul : `reponse`, `vote`, `jour` (pouvoir de jour), `bonjour` (« renvoie-moi mon carnet », et ma ligne des salons) ;
+- joueur → MJ actif seul : `reponse`, `vote`, `jour` (pouvoir de jour), `bonjour` (« renvoie-moi mon carnet », et ma ligne des salons),
+  `peste` (`{ acteurId }` : « C'est la peste noire ! », pour son propre villageois seulement) ;
 - MJ → tous : `hook`, avec des arguments publics seulement ;
 - l'émetteur donné par le serveur fait foi : un message dont `userId` le contredit est rejeté ; ce qui s'adresse à un joueur
   n'est accepté que d'un MJ.
@@ -126,6 +130,8 @@ distribuer({ roles: [uuid], metiers: [uuid], joueurs: [userId], compagnons: [nom
                                             précédente sont repris, les autres retirés du village.
                                             Chaque joueur reçoit son rôle dans son carnet secret et voit sa fiche (OWNER), personne
                                             d'autre. Maisons par défaut : maisonsDuVillage(n) (un tiers sur l'autre rive, 13 à 18).
+                                            peste: true -> partie de peste noire (rôles de la meute remplacés par un simple
+                                            villageois, drapeau secret etat.peste). composition : clé gardée dans les secrets du MJ.
 changerPhase(phase)                      -> écrit la phase (tour + 1 quand on passe à "nuit"), remet protections/silence selon la phase,
                                             appelle Hooks.callAll("lakourLoups.phase", phase, etat)
 ordreDeNuit()                            -> [{ roleCle, acteurIds }] : rôles vivants à réveiller cette nuit, dans l'ordre (meute groupée)
@@ -165,23 +171,35 @@ resolveurs.compagnon                     -> fonction fournie par le MJ IA : (dem
                                             numero? }. Voir « Compagnons IA » ci-dessous.
 Hooks (tous les navigateurs, arguments publics) : `lakourLoups.phase`, `lakourLoups.vote` (vote reçu : `{ votant }` seulement,
 jamais le choix), `lakourLoups.voteClos` (résultat public), `lakourLoups.aube` (`{ tour, morts, annonces }`), `lakourLoups.jour`
-(pouvoir de jour appliqué ; sans l'acteur pour la Conteuse), `lakourLoups.elimination` (cause publique), `lakourLoups.victoire`.
+(pouvoir de jour appliqué ; sans l'acteur pour la Conteuse), `lakourLoups.elimination` (cause publique), `lakourLoups.victoire`,
+`lakourLoups.cri` (`{ acteurId, juste }`, après le verdict d'un cri de peste).
 Chez le MJ seulement : `lakourLoups.action` (action reçue), `lakourLoups.secret` (message secret envoyé). Chez un joueur :
 `lakourLoups.prive` (son carnet, sa prime ou son vote a changé).
 
 Ajouts 0.3.0 (MJ actif, sauf mention) :
 ```
-nouvellePartie({ memesJoueurs = true, joueurs, compagnons, composition, roles, niveau, graine })
+nouvellePartie({ memesJoueurs = true, joueurs, compagnons, composition, roles, niveau, graine, peste })
     -> { partie, joueurs: [{ userId, nom, acteurId }], compagnons: [{ nom, acteurId }],
-         composition: { cle, libelle, niveau, roles: [cle], batiments: [cle], somme?, verdict? } }
+         composition: { cle, libelle, niveau, roles: [cle], batiments: [cle], somme?, verdict?, peste } }
     Remet tout à zéro (état public et secrets, vivants, non révélés, sans silence, rôles et métiers retirés) et redistribue avec
     les MÊMES participants : mêmes humains (memesJoueurs ; sinon `joueurs` [userId] ou les connectés), mêmes villageois
     compagnons (mêmes noms ; `compagnons` [acteurId] pour en choisir). Composition : `roles` (clés ou noms) si donnés, sinon la
     composition prête `composition`, sinon équilibrée (`composer`, niveau, historique pour varier), à défaut les rôles
     précédents rebattus. Plateau remis (jetons neutres devant les maisons, statuts retirés, scène active, lumière de jour).
-    Hook lakourLoups.nouvellePartie : chez le MJ ce résumé ; chez tous { partie, joueurs: n, compagnons: n, composition: { cle, libelle } }.
-reveiller(roleCle, { delai })  -> réveille un rôle de la nuit (ou "meute") comme loups_nuit : candidats, demande, mot du
-                                  Messager, noterAction ; reveilsEnCours() -> [roleCle] ; hook lakourLoups.reveil (MJ)
+    Hook lakourLoups.nouvellePartie : chez le MJ ce résumé ; chez tous { partie, joueurs: n, compagnons: n } (JAMAIS la composition).
+    peste : true (choisie : rôles de la meute retirés), false (jamais) ; non précisé, une composition GÉNÉRÉE devient une peste
+    noire avec la chance du réglage caché « chancePeste » (CHANCE_PESTE = 1/30 ; tirage à part, reproductible avec la graine).
+reveiller(roleCle, { delai, cible })  -> réveille un rôle de la nuit (ou "meute", ou "peste") comme loups_nuit : candidats, demande,
+                                  mot du Messager, noterAction ; reveilsEnCours() -> [roleCle] ; hook lakourLoups.reveil (MJ).
+                                  "peste" : le porteur (mort) choisit par une demande posthume ; sans porteur, cible (acteurId choisi
+                                  par le narrateur) ; à défaut ou sans réponse au délai, le hasard -> { roleCle, cibles, hasard }
+crierPeste(acteurId)           -> { juste, annonces, vainqueur } : le cri « C'est la peste noire ! » (erreur claire s'il n'est pas
+                                  permis) ; peutCrier(acteurId) -> { ok, raison, raisonTexte } (tous, d'après l'état public) ;
+                                  chancePeste() -> la chance du réglage caché
+remettreAZero()                -> le village vierge (lancement du monde) : partie, secrets et chat effacés, rôles et métiers retirés ;
+                                  les compagnons IA quittent le village (api.compagnons.retirer, puis acteur et jetons supprimés) ;
+                                  chacun retrouve le jeton de base (imageNeutre, au style plat/relief, prototype et jetons posés,
+                                  sans crâne ni silence) ; les villageois des joueurs humains restent. Chroniques et historique gardés.
 etapeSuivante({ ignorer })     -> { cle, action, donnees, attente, detail } (logique/etapes.mjs, pour le MJ humain)
 contenu()                      -> { roles: [{ cle, nom, camp, poids }], niveaux, equilibre, compositions } (tous)
 compagnons                     -> point d'enregistrement déposé par le MJ IA : { disponible, async creer(n) -> [acteurId],
@@ -202,6 +220,40 @@ ligne pour lui-même ; pour un autre, aucun camp connu, sauf la meute pour un lo
 Hook `lakourLoups.audibilite` (`{ phase }`, rien d'autre) à chaque changement de la matrice : chez tous pour ce qui est public
 (phase, aube, victoire, mort, silence, distribution, nouvelle partie, réglage), chez le MJ actif seul pour ce qui ne l'est pas
 (un villageois mordu qui rejoint la meute). Chez le joueur : `lakourLoups.salon` (local) quand sa ligne change.
+
+### Peste noire (logique/peste.mjs)
+
+Une variante RARE, et un secret jusqu'à la fin. Aucun rôle de la meute (`composer(n, equilibre, { peste: true })` ;
+`sansMeute(roles)` pour une liste donnée) ; métiers et bâtiments comme d'habitude. Elle survient :
+- d'elle-même, quand une partie se compose seule (composition générée par `nouvellePartie`, et par le MJ IA via `loups_composer`,
+  `loups_distribuer` mode auto, `loups_rejouer`) : `tirerPeste({ graine, chance })`, `CHANCE_PESTE = 1/30`, réglage monde caché
+  `chancePeste` (les essais le mettent à 0) ;
+- ou par choix du MJ : `nouvellePartie({ peste: true })`, `distribuer({ peste: true })`, case « Partie peste noire » des
+  préparatifs de la Table de jeu, paramètre `peste: "oui"` des outils du MJ IA.
+
+**Nuits.** `ordreDeNuit(villageois, tour, { peste: etat.peste })` : pas de meute ; à l'ordre 40, l'étape `"peste"` (CLE_PESTE).
+Tant qu'aucune victime de la peste n'est morte, le narrateur choisit (`reveiller("peste", { cible })` ; Table : « Réveiller : la
+peste », avec « Au hasard ») ; ensuite **le porteur** — la dernière victime MORTE de la peste (`etat.peste.porteur`, `suivrePeste` à
+l'aube) — désigne la suivante par une demande secrète `posthume` (fenêtre ou carte chez son joueur ; compagnon IA : son cerveau) ;
+sans réponse au délai, le hasard. `noterAction({ acteurId: porteur | "", roleCle: "peste", cibles })`. `resoudreNuit` attaque la
+victime EXACTEMENT comme une proie de la meute (protections, remède, verrou, asile, Taverne, absence, Pont/écluse, immunité des
+tueurs solitaires ; Pont franchi), sans loup qui entre (ni lanterne, ni sang, ni sortie, ni Ermite) ; cause secrète `"peste"`,
+publique `"nuit"`, même annonce au chat. Le porteur l'apprend dans son carnet secret (`Peste.CarnetPorteur`).
+
+**Le cri.** Pendant le jour (`aube`, `jour`, `vote`), tout villageois vivant et non réduit au silence (à l'aube, même réduit) peut
+crier « C'est la peste noire ! » : bouton du bandeau et de la Table (socket `peste`), bouton du MJ à côté de chaque vivant,
+`crierPeste(acteurId)`, outil `loups_peste`, ou un compagnon IA qui l'écrit dans sa réplique. Juste : `etat.peste.decouverte`,
+le vote se ferme, `verifierVictoire` -> `"village"` (libellé `Victoire.villagePeste`). Faux : le crieur est éliminé, cause publique
+`"panique"` (« pendu pour avoir semé la panique »).
+
+**Fins.** `verifierVictoire({ …, peste })` en peste noire : solitaires « exécuté » / « cible exécutée » d'abord, puis cri juste ->
+`"village"` ; un vivant ou aucun -> `"peste"` (VAINQUEUR_PESTE, « Brumecombe s'éteint dans la fièvre », personne ne gagne) ; sinon
+rien (ni « plus de loup », ni amants, ni tueur solitaire). Récit de fin et Chroniques (`peste: true`, « Peste noire ») la dévoilent.
+
+**Le secret.** `etat.peste` et `etat.composition` vont dans les secrets du MJ (`separerEtat`) ; l'état public n'a pas la clé
+`peste` avant la phase `fin` ; aucun hook public ni message de socket ne la porte (la demande `posthume` ne va qu'au porteur) ;
+la composition n'est jamais annoncée (hook `nouvellePartie` public sans composition, Table : composition et marque « Peste noire »
+chez le MJ seul). Limite (§6) : les objets `role` restent lisibles dans la console (aucun loup en jeu…).
 
 ### Salons vocaux (logique/salons.mjs, scripts/salons.mjs)
 
@@ -313,6 +365,18 @@ Outils `loups_*` (section « Narrateur des Veillées » de `modules/lakour-mj-ia
 par `demanderTexte`, messages par `envoyerSecret`, annonces de l'aube rendues au narrateur), `loups_vote` (objet `chapelle`, ruban,
 rappel du Juge de paix), `loups_eliminer` (refuse d'exécuter « vote » pendant un vote rouvert), `loups_effet`, et **`loups_jour`**
 (action `lister` : pouvoirs de jour possibles ; action `utiliser` : applique celui qu'un joueur annonce, via `agirDeJour`).
+
+**La composition ne s'annonce jamais** aux joueurs (ni rôles en jeu, ni nombre de loups) : `loups_composer` et `loups_distribuer` la
+rendent « pour toi seul », l'ouverture d'une nouvelle partie présente le village et les bâtiments sans elle. **Peste noire** (§1) :
+- `loups_composer`, `loups_distribuer`, `loups_rejouer` : paramètre `peste` (`"oui"`, `"non"`, `""` = le hasard du système, très
+  rare) ; une peste proposée par `loups_composer` reste une peste si ses rôles sont distribués tels quels (mode `roles`) ;
+- le narrateur le sait (distribution secrète, état du jeu, sortie des outils : « PESTE NOIRE (secret absolu…) ») et ne le dit
+  jamais avant la fin ; `loups_nuit` mène l'étape « la peste » : `peste_victime` (nom, ou « hasard ») tant qu'il n'y a pas de
+  porteur, ensuite le système demande au porteur ;
+- **`loups_peste`** (`villageois`) : quand un joueur crie « C'est la peste noire ! » à voix haute ; le système tranche ;
+- pilote automatique : la consigne de la nuit demande la victime au narrateur la première nuit d'une peste seulement ;
+- compagnons IA : ils ignorent la variante (vue publique) ; leur consigne leur permet de crier, prudemment (seulement
+  convaincus) ; une réplique qui contient « C'est la peste noire » est transmise à `crierPeste`.
 
 Ce que le MJ IA doit savoir des rôles et métiers ajoutés en 0.6.0 (aucun outil nouveau : tout passe par les mêmes appels) :
 - **Loup des roseaux** (meute, `voir-actif`, ordre 45) : réveillé avec la meute puis seul ; `loups_nuit` lui demande une maison, le

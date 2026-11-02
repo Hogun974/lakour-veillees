@@ -34,7 +34,7 @@ const roleDe = a => a?.items.find(i => i.type === "role") ?? null;
 function narrateur() {
   const appels = [];
   const args = {
-    nuit: { delai_secondes: 20 },
+    nuit: { delai_secondes: 20, peste_victime: "" },
     ouvrir: { action: "ouvrir", candidats: [], duree_secondes: 0, double: false, objet: "execution" },
     clore: { action: "clore", candidats: [], duree_secondes: 0, double: false, objet: "execution" }
   };

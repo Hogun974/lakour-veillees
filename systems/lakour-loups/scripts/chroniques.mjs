@@ -31,10 +31,11 @@ export function pagePalmares(chroniques) {
     + `<table class="loups-palmares"><thead><tr>${tete}</tr></thead><tbody>${lignes}</tbody></table></div>`;
 }
 
-export const nomDeVeillee = c => t("LAKOUR_LOUPS.Chroniques.Veillee", { date: date(c.quand) });
+// Une veillée de peste noire (c.peste) le dit dans son titre et en tête de sa page.
+export const nomDeVeillee = c => `${t("LAKOUR_LOUPS.Chroniques.Veillee", { date: date(c.quand) })}${c.peste ? ` — ${t("LAKOUR_LOUPS.Peste.Chronique")}` : ""}`;
 
 export function pageVeillee(c) {
-  return `<div class="lakour-loups"><p><strong>${echapper(c.vainqueur)}</strong></p>`
+  return `<div class="lakour-loups">${c.peste ? `<p><em>☣ ${echapper(t("LAKOUR_LOUPS.Peste.Recit"))}</em></p>` : ""}<p><strong>${echapper(c.vainqueur)}</strong></p>`
     + `<p>${t("LAKOUR_LOUPS.Recit.Resume", { n: c.lignes.length, tours: c.tours })}</p>${listeDuRecit(c.lignes)}</div>`;
 }
 
@@ -46,7 +47,7 @@ export function pagesDesChroniques(chroniques) {
   ];
 }
 
-// Ajoute la veillée finie ({ quand, tours, vainqueur (libellé), lignes }) et récrit le journal. -> le journal.
+// Ajoute la veillée finie ({ quand, tours, vainqueur (libellé), lignes, peste? }) et récrit le journal. -> le journal.
 export async function consignerVeillee(veillee) {
   const chroniques = [...(game.settings.get(ID, "chroniques") ?? []), veillee].slice(-MAX_CHRONIQUES);
   await game.settings.set(ID, "chroniques", chroniques);

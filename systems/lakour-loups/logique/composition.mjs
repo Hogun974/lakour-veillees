@@ -7,6 +7,8 @@
 //   - la variété : les rôles et bâtiments des dernières parties sont pénalisés (historique), pour changer d'une partie à l'autre ;
 //   - les souhaits : rôles à inclure absolument, rôles exclus.
 // Pur et reproductible avec une graine.
+// La peste noire (option peste, logique/peste.mjs) : aucun rôle de la meute (ni loup, ni rôle du camp de la meute) ; les
+// places vont au village (et aux solitaires que le niveau permet), au moins un rôle d'information comme d'habitude.
 import { creerHasard, melanger } from "./hasard.mjs";
 
 export const NIVEAUX = ["debutants", "classique", "chaos"];
@@ -21,9 +23,9 @@ const nombreDeBatiments = n => (n < 10 ? 4 : n < 14 ? 5 : 6);
 const BASE_LOUP = "loup-de-brumecombe", BASE_VILLAGE = "villageois";
 
 // Rôles permis pour ce niveau et ce nombre de joueurs, rangés par famille.
-function catalogue(equilibre, n, niveau, exclure) {
+function catalogue(equilibre, n, niveau, exclure, peste = false) {
   const permis = Object.entries(equilibre.roles ?? {}).filter(([cle, r]) =>
-    !exclure.has(cle) && rangNiveau(r.niveau) <= rangNiveau(niveau) && n >= (r.joueursMin ?? 0));
+    !exclure.has(cle) && rangNiveau(r.niveau) <= rangNiveau(niveau) && n >= (r.joueursMin ?? 0) && !(peste && r.camp === "meute"));
   const famille = f => permis.filter(f).map(([cle]) => cle);
   return {
     permis: new Map(permis),
@@ -48,7 +50,7 @@ function penaliteHistorique(cles, historique, champ) {
 }
 
 // Une composition tirée au hasard qui respecte les règles du niveau (ou null si impossible).
-function tirer(n, niveau, cat, inclure, hasard) {
+function tirer(n, niveau, cat, inclure, hasard, peste = false) {
   const roles = [];
   const prendre = (liste, nombre) => {
     const libres = melanger(liste.filter(c => !roles.includes(c)), hasard);
@@ -57,10 +59,11 @@ function tirer(n, niveau, cat, inclure, hasard) {
   const entre = ([min, max]) => min + Math.floor(hasard() * (max - min + 1));
   // Souhaits d'abord (rôles imposés), dans la limite du nombre de joueurs.
   for (const cle of inclure) if (cat.permis.has(cle) && (!cat.permis.get(cle).unique || !roles.includes(cle))) roles.push(cle);
-  const loups = nombreDeLoups(n);
+  const loups = peste ? 0 : nombreDeLoups(n);
   const loupsDeja = roles.filter(c => cat.permis.get(c)?.camp === "meute").length;
   prendre(cat.loupsSpeciaux, Math.max(0, Math.min(entre(LOUPS_SPECIAUX[niveau]), loups - 1) - roles.filter(c => cat.loupsSpeciaux.includes(c)).length));
-  while (roles.filter(c => cat.permis.get(c)?.camp === "meute").length < Math.max(loups, loupsDeja)) roles.push(BASE_LOUP);
+  // (Le loup de base exclu, ou une peste noire sans meute : pas de loup ajouté, plutôt qu'une boucle sans fin.)
+  while (cat.permis.has(BASE_LOUP) && roles.filter(c => cat.permis.get(c)?.camp === "meute").length < Math.max(loups, loupsDeja)) roles.push(BASE_LOUP);
   if (n >= 8) prendre(cat.solitaires, Math.max(0, entre(SOLITAIRES[niveau]) - roles.filter(c => cat.solitaires.includes(c)).length));
   // Au moins un rôle d'information pour le village.
   if (!roles.some(c => cat.information.includes(c))) prendre(cat.information, 1);
@@ -73,27 +76,31 @@ function tirer(n, niveau, cat, inclure, hasard) {
   return roles.slice(0, n);
 }
 
-// Point d'entrée. options : { niveau, inclure: [cle], exclure: [cle], historique: [{ roles, batiments }], cible = 0, graine, essais = 400 }
-export function composer(n, equilibre, { niveau = "classique", inclure = [], exclure = [], historique = [], cible = 0, graine, essais = 1200 } = {}) {
+// Les rôles d'une liste sans la meute (peste noire) : chaque rôle du camp de la meute devient un simple villageois.
+export const sansMeute = (roles, equilibre) => roles.map(cle => (equilibre.roles?.[cle]?.camp === "meute" ? BASE_VILLAGE : cle));
+
+// Point d'entrée. options : { niveau, inclure: [cle], exclure: [cle], historique: [{ roles, batiments }], cible = 0, graine, essais = 400,
+// peste (true : composition de peste noire, sans meute ; l'équilibre ne compte plus, seule la variété) }
+export function composer(n, equilibre, { niveau = "classique", inclure = [], exclure = [], historique = [], cible = 0, graine, essais = 1200, peste = false } = {}) {
   if (!Number.isInteger(n) || n < 4) throw new Error(`Il faut au moins 4 joueurs (${n}).`);
   if (!NIVEAUX.includes(niveau)) throw new Error(`Niveau inconnu : ${niveau}.`);
   const hasard = creerHasard(graine);
-  const cat = catalogue(equilibre, n, niveau, new Set(exclure));
+  const cat = catalogue(equilibre, n, niveau, new Set(exclure), peste);
   const inconnus = inclure.filter(c => !equilibre.roles?.[c]);
   if (inconnus.length) throw new Error(`Rôles inconnus : ${inconnus.join(", ")}.`);
   const candidats = [];
   for (let i = 0; i < essais; i++) {
-    const roles = tirer(n, niveau, cat, inclure, hasard);
+    const roles = tirer(n, niveau, cat, peste ? sansMeute(inclure, equilibre).filter(c => c !== BASE_VILLAGE) : inclure, hasard, peste);
     if (!roles) continue;
     const somme = equilibreDe(roles, equilibre);
-    const score = Math.abs(somme - cible) * 2 + penaliteHistorique(roles, historique, "roles") + hasard() * 0.5;
+    const score = (peste ? 0 : Math.abs(somme - cible) * 2) + penaliteHistorique(roles, historique, "roles") + hasard() * 0.5;
     candidats.push({ roles, somme, score });
   }
   if (!candidats.length) throw new Error(`Aucune composition possible pour ${n} joueurs avec ces contraintes.`);
   candidats.sort((a, b) => a.score - b.score);
   // Au hasard parmi celles qui valent presque la meilleure (pas une de plus loin) : deux parties de suite ne se ressemblent
   // pas, sans sacrifier l'équilibre.
-  const proches = candidats.filter(c => c.score <= candidats[0].score + 1 && Math.abs(c.somme - cible) <= Math.abs(candidats[0].somme - cible) + 1);
+  const proches = candidats.filter(c => c.score <= candidats[0].score + 1 && (peste || Math.abs(c.somme - cible) <= Math.abs(candidats[0].somme - cible) + 1));
   const choix = proches[Math.floor(hasard() * Math.min(8, proches.length))];
   // Bâtiments du niveau, les moins joués récemment d'abord.
   const batimentsPermis = Object.entries(equilibre.batiments ?? {}).filter(([, b]) => rangNiveau(b.niveau) <= rangNiveau(niveau)).map(([cle]) => cle);
@@ -104,6 +111,7 @@ export function composer(n, equilibre, { niveau = "classique", inclure = [], exc
   return {
     roles: melanger(choix.roles, hasard), batiments, somme: choix.somme, niveau,
     camps: { meute: compte("meute"), village: compte("village"), solitaire: compte("solitaire") },
-    verdict: Math.abs(choix.somme - cible) <= 2 ? "équilibrée" : choix.somme > cible ? "favorable au village" : "favorable à la meute"
+    verdict: peste ? "peste noire" : Math.abs(choix.somme - cible) <= 2 ? "équilibrée" : choix.somme > cible ? "favorable au village" : "favorable à la meute",
+    ...(peste ? { peste: true } : {})
   };
 }

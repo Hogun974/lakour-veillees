@@ -3,12 +3,14 @@
 // et pendant un vote : boutons de vote pour les vivants ; décompte visible après clôture.
 // Le MJ y trouve aussi ses commandes : phases, aube, vote, vote de la Chapelle, éliminer, révéler, victoire, chronique.
 // Un joueur ne lit que l'état public : qui a voté (pas pour qui), son propre vote venant de son navigateur (prive.mjs).
+// La composition n'y paraît que chez le MJ (avec, s'il y a lieu, la marque « Peste noire » : un secret) ; le jour, chacun peut
+// y crier « C'est la peste noire ! » (le MJ, pour un villageois qui le dit à voix haute).
 import { ID, PHASES } from "../../logique/constantes.mjs";
 import { diagnosticVoix } from "../../logique/salons.mjs";
 import {
   t, lireEtat, tousLesVillageois, monVillageois, roleDe, metierDe, roleVisible, libellePhase, libelleCamp, libelleCause, libelleVainqueur
 } from "../donnees.mjs";
-import { envoyerVote, envoyerJour } from "../api.mjs";
+import { envoyerVote, envoyerJour, envoyerCri } from "../api.mjs";
 import { estMJActif } from "../canal.mjs";
 import { secretsPerdus } from "../secrets.mjs";
 import { monVote, mesSecrets } from "../prive.mjs";
@@ -41,7 +43,8 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
       distribuer: TableDeJeu.#distribuer, reveiller: TableDeJeu.#reveiller, reveillerTout: TableDeJeu.#reveillerTout,
       executer: TableDeJeu.#executer, emporter: TableDeJeu.#emporter, emporterPersonne: TableDeJeu.#emporterPersonne,
       prepCocher: TableDeJeu.#prepCocher, prepIA: TableDeJeu.#prepIA, prepRetirerIA: TableDeJeu.#prepRetirerIA,
-      prepMode: TableDeJeu.#prepMode, prepRole: TableDeJeu.#prepRole,
+      prepMode: TableDeJeu.#prepMode, prepRole: TableDeJeu.#prepRole, prepPeste: TableDeJeu.#prepPeste,
+      crier: (event, cible) => crierALaPeste(cible.dataset.id),
       voixActiver: TableDeJeu.#voixActiver, voixMicro: TableDeJeu.#voixMicro
     }
   };
@@ -82,7 +85,9 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
         voix: resultat ? resultat.decompte?.[a.id] ?? 0 : null, montreVoix: Boolean(resultat),
         elu: Boolean(resultat?.elus?.includes(a.id)),
         amoureux: gm && a.system.amoureux ? game.actors.get(a.system.amoureux)?.name ?? "" : "",
-        protections: gm ? a.system.protections : 0
+        protections: gm ? a.system.protections : 0,
+        // Le MJ crie pour un villageois qui le dit à voix haute.
+        crier: gm && a.system.vivant && Boolean(tenterSync(() => api().peutCrier(a.id).ok, false))
       };
     };
     const tous = tousLesVillageois().sort((a, b) => a.system.maison.localeCompare(b.system.maison, "fr", { numeric: true }) || a.name.localeCompare(b.name));
@@ -140,7 +145,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
     if (gm && mjActif) {
       try {
         const e = api().etapeSuivante({ ignorer: [...this.ignorer] });
-        const donnees = { ...e.donnees, nom: e.donnees.meute ? t("LAKOUR_LOUPS.Etapes.LaMeute") : e.donnees.nom ?? "" };
+        const donnees = { ...e.donnees, nom: e.donnees.meute ? t("LAKOUR_LOUPS.Etapes.LaMeute") : e.donnees.peste ? t("LAKOUR_LOUPS.Etapes.LaPeste") : e.donnees.nom ?? "" };
         etape = { ...e, texte: t(`LAKOUR_LOUPS.Etapes.${e.cle}`, donnees),
           detail: e.detail ? t(`LAKOUR_LOUPS.Etapes.Detail.${e.detail.cle}`, e.detail.donnees) : "" };
       } catch { etape = null; }
@@ -169,13 +174,19 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
           loupsTexte: t("LAKOUR_LOUPS.Preparation.Loups", { n: eq.loups, conseil: eq.loupsConseilles }) } : null,
         trop: p.mode === "manuel" && Object.values(p.roles).reduce((a, b) => a + b, 0) > total,
         peutDistribuer: total >= 1,
+        peste: Boolean(p.peste),
         voix: voixDuMonde()
       };
     }
 
+    // Le cri de la peste noire pour mon villageois (vivant, le jour). La composition et la peste noire : au MJ seul (un
+    // joueur n'a ni l'une ni l'autre dans son état public).
+    const cri = moi ? tenterSync(() => api().peutCrier(moi.id), null) : null;
+
     return {
       gm, phase: etat.phase, phaseLibelle: libellePhase(etat.phase), tour: etat.tour, fini: fin,
-      composition: etat.composition, vainqueur: libelleVainqueur(etat.vainqueur),
+      composition: gm ? etat.composition : "", peste: gm && Boolean(etat.peste?.active),
+      vainqueur: libelleVainqueur(etat.vainqueur, etat), crier: Boolean(cri?.ok), moiId: moi?.id ?? "",
       estNuit: etat.phase === "nuit" || etat.phase === "aube",
       phases: PHASES.map(p => ({ cle: p, libelle: libellePhase(p), active: p === etat.phase })),
       vivants, morts, batiments, effets, conteuse, appel, pouvoirs,
@@ -308,6 +319,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
   static #prepRetirerIA() { return tenter(async () => { await MJ.retirerIA(); this.render(); }); }
   static #prepMode(event, cible) { this.preparation.mode = cible.dataset.mode === "manuel" ? "manuel" : "auto"; this.render(); }
   static #prepRole(event, cible) { MJ.changerRole(this.preparation, cible.dataset.cle, Number(cible.dataset.delta)); this.render(); }
+  static #prepPeste() { this.preparation.peste = !this.preparation.peste; this.render(); }
   static async #distribuer() {
     const enCours = !["preparation", "fin"].includes(lireEtat().phase) && lireEtat().partie;
     if (enCours) {
@@ -325,10 +337,20 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
   // ---------------- la nuit, rôle par rôle
   static #reveiller(event, cible) {
     const role = cible.dataset.role;
-    this.render();
-    return tenter(async () => { await api().reveiller(role); this.render(); });
+    return tenter(async () => {
+      // La peste sans porteur (première nuit) : le MJ choisit sa victime, ou laisse le hasard.
+      let options = {};
+      if (role === "peste" && !pesteAUnPorteur()) {
+        const choix = await choisirVictimeDeLaPeste();
+        if (choix === null) return;
+        options = { cible: choix };
+      }
+      this.render();
+      await api().reveiller(role, options);
+      this.render();
+    });
   }
-  static #reveillerTout() { return tenter(async () => { await MJ.reveillerTout(); this.render(); }); }
+  static #reveillerTout() { return tenter(async () => { await MJ.reveillerTout({ choisirPeste: choisirVictimeDeLaPeste }); this.render(); }); }
   // ---------------- exécution, Braconnière
   static async #executer(event, cible) {
     const a = game.actors.get(cible.dataset.id);
@@ -353,7 +375,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
   static #victoire() {
     return tenter(async () => {
       const g = await api().verifierVictoire();
-      ui.notifications.info(g ? libelleVainqueur(g) : t("LAKOUR_LOUPS.Table.PasEncore"));
+      ui.notifications.info(g ? libelleVainqueur(g, lireEtat()) : t("LAKOUR_LOUPS.Table.PasEncore"));
     });
   }
 }
@@ -376,6 +398,34 @@ export function cloreLeVote() {
     for (const id of r.elus) await api().eliminer(id, { cause: "vote" });
     await api().verifierVictoire();
   });
+}
+
+// ---------------- la peste noire
+// Le porteur de la peste (la dernière victime morte de la peste) existe-t-il ? Sinon, le MJ choisit la victime.
+const pesteAUnPorteur = () => Boolean(tenterSync(() => api().ordreDeNuit().find(e => e.roleCle === "peste")?.acteurIds.length, 0));
+
+// Le MJ humain choisit la victime de la peste : un villageois, ou « au hasard » (""). null : il renonce.
+export async function choisirVictimeDeLaPeste() {
+  const candidats = tenterSync(() => api().candidatsDeNuit({ roleCle: "peste" }), []);
+  const options = [`<option value="">${foundry.utils.escapeHTML(t("LAKOUR_LOUPS.Peste.AuHasard"))}</option>`,
+    ...candidats.map(id => `<option value="${id}">${foundry.utils.escapeHTML(nomDe(id))}</option>`)].join("");
+  return foundry.applications.api.DialogV2.prompt({
+    window: { title: "LAKOUR_LOUPS.Peste.Partie" },
+    content: `<p>${foundry.utils.escapeHTML(t("LAKOUR_LOUPS.Peste.InviteNarrateur"))}</p><select name="cible">${options}</select>`,
+    ok: { callback: (ev, bouton) => bouton.form.elements.cible.value }
+  }).catch(() => null);
+}
+
+// « C'est la peste noire ! » : une confirmation (le crieur risque sa vie), puis le cri part au MJ actif.
+export async function crierALaPeste(acteurId) {
+  const a = game.actors.get(acteurId);
+  if (!a) return;
+  const moi = monVillageois()?.id === acteurId;
+  const ok = await foundry.applications.api.DialogV2.confirm({
+    window: { title: "LAKOUR_LOUPS.Peste.Crier" },
+    content: `<p>${foundry.utils.escapeHTML(moi ? t("LAKOUR_LOUPS.Peste.Confirmer") : t("LAKOUR_LOUPS.Peste.ConfirmerPour", { nom: a.name }))}</p>`
+  });
+  if (ok) await tenter(() => envoyerCri(acteurId));
 }
 
 // ---------------- la voix de Foundry (A/V) : prête pour la veillée ? Réparée d'un clic par le MJ.

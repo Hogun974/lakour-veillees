@@ -14,3 +14,4 @@ export * from "./selection.mjs";
 export * from "./parole.mjs";
 export * from "./etapes.mjs";
 export * from "./salons.mjs";
+export * from "./peste.mjs";

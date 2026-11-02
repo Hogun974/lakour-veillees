@@ -3,7 +3,8 @@
 // resoudreNuit({ villageois, actions, tour, asperges, precedentes, primes, fioles, hasard, chanceEpier, jour })
 //   villageois : [{ id, nom, vivant, camp, maison, amoureux, protections, role: { cle, nom, camp, effet, apparence, nuit } }]
 //   actions    : [{ acteurId, roleCle, cibles: [id], effet? }]  — `effet` force la clé ; roleCle "meute" = choix de la meute
-//                (le MJ IA note la même action pour chaque loup : la meute n'a qu'UNE victime, à la majorité).
+//                (le MJ IA note la même action pour chaque loup : la meute n'a qu'UNE victime, à la majorité) ;
+//                roleCle "peste" = la victime de la peste noire (peste.mjs ; acteurId : le porteur, mort, ou "").
 //                Une action aux cibles vides est un « je passe », sauf pour les rôles à nuit.cibles = 0.
 //   asperges   : maisons déjà aspergées par le pyromane (ids des villageois), d'une nuit sur l'autre.
 //   precedentes: actions de la nuit d'avant (protéger ou faire taire : jamais deux nuits de suite la même personne).
@@ -32,11 +33,15 @@
 //   béni (Curé) = jamais réduit au silence ; Pont bloqué (ou écluse fermée par l'Éclusière) = la meute ne traverse pas
 //   vers l'autre rive.
 //
+// - Peste noire (action "peste") : la victime est attaquée EXACTEMENT comme une proie de la meute (asile, Taverne, verrou,
+//   protection, remède, absence, Pont, immunité des tueurs solitaires), mais aucun loup n'entre (ni lanterne, ni sang de la
+//   lame, ni sortie) ; cause secrète « peste », publique « nuit » ; bilan.victime la compte, bilan.loup reste vide.
+//
 // Ordre : liens d'amour, protections, épier, attaques (meute, tuer), morsure, poison, feu, remède, éclairer,
 // informations, silence, échanges, cloche, chagrin en cascade, emporter.
 // Tout se joue sur l'état du début de nuit : un mort de la nuit agit encore cette nuit-là.
 
-import { CLE_MEUTE, CAUSES, EFFETS_AUTOMATISES } from "./constantes.mjs";
+import { CLE_MEUTE, CLE_PESTE, CAUSES, EFFETS_AUTOMATISES } from "./constantes.mjs";
 import { choisir } from "./hasard.mjs";
 import { seReveille, agitAvecLaMeute } from "./nuit.mjs";
 import { victoireCleDe } from "./victoire.mjs";
@@ -58,7 +63,7 @@ export function apparenceDe(v) {
 
 export function effetDeLAction(action, acteur) {
   if (action.effet) return action.effet;
-  if (action.roleCle === CLE_MEUTE) return "tuer";
+  if (action.roleCle === CLE_MEUTE || action.roleCle === CLE_PESTE) return "tuer";
   return acteur?.role?.effet ?? "";
 }
 
@@ -99,13 +104,16 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
   for (const a of toutes) {
     const acteur = parId.get(a.acteurId);
     const deLaMeute = a.roleCle === CLE_MEUTE;
-    if (!deLaMeute && (!acteur || acteur.vivant === false)) continue;
+    const deLaPeste = a.roleCle === CLE_PESTE;   // son porteur est mort : il agit quand même
+    if (!deLaMeute && !deLaPeste && (!acteur || acteur.vivant === false)) continue;
     if (deLaMeute && !vivantsMeute.length) continue;
     const cibles = [...new Set((a.cibles ?? []).filter(id => parId.has(id)))];
-    const passe = !cibles.length && !a.effet && (deLaMeute || !sansCible(acteur?.role));
+    const passe = !cibles.length && !a.effet && (deLaMeute || deLaPeste || !sansCible(acteur?.role));
     if (passe) continue;
     const effet = effetDeLAction(a, acteur);
-    if (deLaMeute) {
+    if (deLaPeste) {
+      // Ni loup à empêcher, ni porteur à retenir (gardé à l'œil, hors d'atteinte : il est mort).
+    } else if (deLaMeute) {
       if (!peutChasser.length) {
         sortie.messages.push(msg("mj", "MeuteEmpechee", "Aucun loup n'a pu sortir cette nuit : la meute n'a pas chassé.", {}));
         continue;
@@ -119,19 +127,22 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
     }
     const absent = cibles.find(c => hors.has(c) && c !== a.acteurId && vivant(c));
     if (absent) {
-      sortie.messages.push(deLaMeute ? msg("mj", "MeuteBredouille", `La meute n'a trouvé personne chez ${nom(absent)} : il dormait hors d'atteinte.`, { nom: nom(absent) })
+      sortie.messages.push(deLaPeste ? msg("mj", "PesteBredouille", `La peste n'a trouvé personne chez ${nom(absent)} : il dormait hors d'atteinte.`, { nom: nom(absent) })
+        : deLaMeute ? msg("mj", "MeuteBredouille", `La meute n'a trouvé personne chez ${nom(absent)} : il dormait hors d'atteinte.`, { nom: nom(absent) })
         : msg(a.acteurId, "PersonneChez", `Personne ne répond chez ${nom(absent)} cette nuit.`, { nom: nom(absent) }));
       continue;
     }
-    const chasse = deLaMeute || (acteur?.camp === "meute" && effet === "tuer");
+    const chasse = deLaMeute || deLaPeste || (acteur?.camp === "meute" && effet === "tuer");
     const loin = chasse && jour.pontBloque && cibles.find(c => surLAutreRive(parId.get(c)?.maison));
     if (loin) {
-      sortie.messages.push(msg("mj", "PontBloque", `La meute n'a pas pu traverser le Pont jusqu'à ${nom(loin)}.`, { nom: nom(loin) }));
+      sortie.messages.push(deLaPeste ? msg("mj", "PestePont", `La peste n'a pas pu traverser le Pont jusqu'à ${nom(loin)}.`, { nom: nom(loin) })
+        : msg("mj", "PontBloque", `La meute n'a pas pu traverser le Pont jusqu'à ${nom(loin)}.`, { nom: nom(loin) }));
       continue;
     }
     retenues.push({ ...a, cibles, effet, explicite: Boolean(a.effet), acteur });
   }
-  const parEffet = e => retenues.filter(a => a.effet === e && a.roleCle !== CLE_MEUTE);
+  const groupe = a => a.roleCle === CLE_MEUTE || a.roleCle === CLE_PESTE;
+  const parEffet = e => retenues.filter(a => a.effet === e && !groupe(a));
   const precedente = (acteurId, effet) => precedentes.find(p => p.acteurId === acteurId && effetDeLAction(p, parId.get(acteurId)) === effet);
 
   // 1. Liens d'amour (deux cibles, ou l'acteur et sa cible).
@@ -181,9 +192,14 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
     }
   }
 
+  // La victime de la peste noire : la dernière notée (une par nuit).
+  const victimePeste = retenues.filter(a => a.roleCle === CLE_PESTE && a.cibles[0]).at(-1)?.cibles[0] ?? null;
+
   // 4. Attaques.
   const attaques = [];
   if (victimeMeute) attaques.push({ cible: victimeMeute, cause: CAUSES.meute, meute: true, loup: meuteEntre(victimeMeute) });
+  // La peste frappe comme la meute (mêmes protections), sans loup qui entre.
+  if (victimePeste) attaques.push({ cible: victimePeste, cause: CAUSES.peste, meute: true, peste: true });
   for (const a of parEffet("tuer")) {
     if (a.cibles[0]) attaques.push({ cible: a.cibles[0], cause: a.acteur?.camp === "meute" ? CAUSES.meute : CAUSES.nuit, meute: a.acteur?.camp === "meute" });
   }
@@ -199,9 +215,13 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
     return "";
   };
   const bloquees = new Set();
-  const noterBlocage = (cible, par) => {
+  const noterBlocage = (cible, par, peste = false) => {
     bloquees.add(cible);
     sortie.sauves.push({ acteurId: cible, par });
+    if (peste) {
+      sortie.messages.push(msg("mj", "PesteArretee", `La peste n'a pas pu atteindre ${nom(cible)} (${par}).`, { nom: nom(cible), par }));
+      return;
+    }
     const cle = { asile: "SauveAsile", taverne: "SauveTaverne", verrou: "SauveVerrou" }[par];
     const texte = { asile: `La meute n'a pas pu entrer à la Chapelle, où dormait ${nom(cible)}.`,
       taverne: `La meute n'a pas osé tuer ${nom(cible)} à la Taverne.`, verrou: `Le verrou du Forgeron a tenu chez ${nom(cible)}.` }[par];
@@ -273,7 +293,8 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
     if (!vivant(x.cible) || sortie.morts.includes(x.cible)) continue;
     if (x.meute && victoireCleDe(parId.get(x.cible)?.role) === "dernier-survivant") {
       sortie.sauves.push({ acteurId: x.cible, par: "immunite" });
-      sortie.messages.push(msg("mj", "Immunite", `La meute est repartie bredouille de chez ${nom(x.cible)}.`, { nom: nom(x.cible) }));
+      sortie.messages.push(x.peste ? msg("mj", "PesteArretee", `La peste n'a pas pu atteindre ${nom(x.cible)} (immunite).`, { nom: nom(x.cible), par: "immunite" })
+        : msg("mj", "Immunite", `La meute est repartie bredouille de chez ${nom(x.cible)}.`, { nom: nom(x.cible) }));
       continue;
     }
     // Hors d'atteinte (Passeur, Grange) : il ne dort pas chez lui, ni le feu de sa maison ni personne ne l'atteint.
@@ -283,7 +304,7 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
     }
     if (x.meute) {
       const porte = bloqueeALaPorte(x.cible);
-      if (porte) { noterBlocage(x.cible, porte); continue; }
+      if (porte) { noterBlocage(x.cible, porte, x.peste); continue; }
     }
     if (remedies.has(x.cible)) {
       sortie.sauves.push({ acteurId: x.cible, par: "remede" });
@@ -315,7 +336,7 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
   const loupMeute = attaques.find(x => x.meute && x.loup)?.loup ?? (victimeMeute ? meuteEntre(victimeMeute) : null);
   if (victimeMeute && loupMeute) entrees.push({ loup: loupMeute, cible: victimeMeute });
   for (const b of retenues) {
-    if (b.roleCle === CLE_MEUTE || b.acteur?.camp !== "meute") continue;
+    if (groupe(b) || b.acteur?.camp !== "meute") continue;
     for (const c of b.cibles) entrees.push({ loup: b.acteurId, cible: c });
   }
   for (const a of parEffet("eclairer")) {
@@ -350,7 +371,7 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
       ? msg(a.acteurId, "VoirRoleMort", `${nom(c)} était : ${mort.role?.nom ?? mort.role?.cle ?? "?"}.`, { nom: nom(c), role: mort.role?.nom ?? mort.role?.cle ?? "?" })
       : msg(a.acteurId, "PasMort", `${nom(c)} n'est pas mort.`, { nom: nom(c) }));
   }
-  const ontAgi = new Set(retenues.filter(a => a.cibles.length).map(a => a.acteurId).filter(Boolean));
+  const ontAgi = new Set(retenues.filter(a => a.cibles.length && a.roleCle !== CLE_PESTE).map(a => a.acteurId).filter(Boolean));
   for (const a of parEffet("voir-actif")) {
     const c = a.cibles[0];
     if (c) {
@@ -366,7 +387,7 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
   // Le chasseur de primes apprend sa cible.
   const informes = new Set();
   for (const a of retenues) {
-    if (a.roleCle === CLE_MEUTE || victoireCleDe(a.acteur?.role) !== "cible-executee" || informes.has(a.acteurId)) continue;
+    if (groupe(a) || victoireCleDe(a.acteur?.role) !== "cible-executee" || informes.has(a.acteurId)) continue;
     informes.add(a.acteurId);
     const cible = primes[a.acteurId];
     sortie.messages.push(cible
@@ -426,7 +447,7 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
 
   // Le reste : raconté et arbitré par le narrateur.
   for (const a of retenues) {
-    if (a.roleCle === CLE_MEUTE || informes.has(a.acteurId)) continue;
+    if (groupe(a) || informes.has(a.acteurId)) continue;
     if (!EFFETS_AUTOMATISES.includes(a.effet)) sortie.narrateur.push({ acteurId: a.acteurId, roleCle: a.roleCle, effet: a.effet, cibles: a.cibles });
   }
 
@@ -435,7 +456,7 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
   // Bilan de la nuit (secret, gardé par le MJ) : qui a quitté sa maison, quelles maisons ont reçu de la visite.
   const sorties = new Set(), visites = new Set();
   for (const b of retenues) {
-    if (b.roleCle === CLE_MEUTE) continue;
+    if (groupe(b)) continue;
     const dehors = b.cibles.filter(c => c !== b.acteurId);
     if (dehors.length) sorties.add(b.acteurId);
     for (const c of dehors) visites.add(c);
@@ -444,10 +465,12 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
     for (const id of peutChasser) sorties.add(id);
     visites.add(victimeMeute);
   }
-  sortie.bilan = { sorties: [...sorties], visites: [...visites], victime: victimeMeute ?? "", loup: victimeMeute ? loupMeute ?? "" : "",
+  if (victimePeste) visites.add(victimePeste);
+  sortie.bilan = { sorties: [...sorties], visites: [...visites], victime: victimeMeute ?? victimePeste ?? "", loup: victimeMeute ? loupMeute ?? "" : "",
     sauves: sortie.sauves.length, attaques: attaques.length };
-  sortie.pontFranchi = Boolean(victimeMeute && sortie.deces.some(d => d.acteurId === victimeMeute && d.cause === CAUSES.meute)
-    && surLAutreRive(parId.get(victimeMeute)?.maison));
+  // Une proie tuée sur l'autre rive bloque le Pont la nuit suivante : la peste comme la meute (rien ne doit les distinguer).
+  const franchi = (victime, cause) => Boolean(victime && sortie.deces.some(d => d.acteurId === victime && d.cause === cause) && surLAutreRive(parId.get(victime)?.maison));
+  sortie.pontFranchi = franchi(victimeMeute, CAUSES.meute) || franchi(victimePeste, CAUSES.peste);
   return sortie;
 }
 

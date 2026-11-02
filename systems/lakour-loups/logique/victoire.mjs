@@ -1,20 +1,25 @@
 // Conditions de victoire. Logique pure.
 //
-// verifierVictoire({ villageois, morts, primes }) -> "village" | "meute" | <acteurId> | ""
+// verifierVictoire({ villageois, morts, primes, peste }) -> "village" | "meute" | "peste" | <acteurId> | ""
 //   villageois : [{ id, vivant, camp, amoureux, role: { cle, victoireCle } }]
 //   morts      : etat.morts ([{ acteurId, tour, phase, cause }]) — cause "vote" = exécuté par le village
 //   primes     : { <id du chasseur de primes>: <id de sa cible> }
+//   peste      : etat.peste (secret du MJ ; null pour une partie ordinaire)
 //
 // Dans l'ordre :
 // 1. solitaire « exécuté » (le Revenant) : gagne s'il a été exécuté par le vote ;
 //    solitaire « cible-executee » (le Chasseur de primes) : gagne si sa cible a été exécutée par le vote ;
-// 2. personne en vie : pas de vainqueur ("") ;
+// 2. peste noire (logique/peste.mjs) : reconnue (cri juste) -> le village ; sinon, un vivant ou moins -> la peste ; sinon
+//    rien (ni « plus de loup » ni amants ni tueur solitaire ne finissent une partie de peste) ;
+//    personne en vie : pas de vainqueur ("") ;
 // 3. les deux derniers vivants sont amoureux : ils gagnent ensemble (leur camp s'ils en partagent un, sinon l'id
 //    du premier des deux) ;
 // 4. « dernier-survivant » (le Pyromane) : il gagne seul s'il est le dernier vivant, ou le dernier avec un seul autre
 //    joueur qui n'est pas un loup ;
 // 5. plus de loup ni de tueur solitaire en vie : le village gagne ;
 // 6. la meute est au moins aussi nombreuse que tous les autres vivants : la meute gagne.
+
+import { VAINQUEUR_PESTE } from "./constantes.mjs";
 
 export function victoireCleDe(role) {
   if (!role) return "";
@@ -26,7 +31,7 @@ export function victoireCleDe(role) {
   return "";
 }
 
-export function verifierVictoire({ villageois = [], morts = [], primes = {} } = {}) {
+export function verifierVictoire({ villageois = [], morts = [], primes = {}, peste = null } = {}) {
   const executes = new Set(morts.filter(m => m.cause === "vote").map(m => m.acteurId));
 
   for (const v of villageois) {
@@ -36,6 +41,10 @@ export function verifierVictoire({ villageois = [], morts = [], primes = {} } = 
   }
 
   const vivants = villageois.filter(v => v.vivant !== false);
+  if (peste?.active) {
+    if (peste.decouverte) return "village";
+    return vivants.length <= 1 ? VAINQUEUR_PESTE : "";
+  }
   if (!vivants.length) return "";
 
   if (vivants.length === 2) {

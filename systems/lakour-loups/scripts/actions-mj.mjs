@@ -7,8 +7,9 @@ import { t, tousLesVillageois, lireEtat } from "./donnees.mjs";
 const api = () => game.lakourLoups;
 
 // ------------------------------------------------------------------ préparation (état local de la Table du MJ)
-// { coches: [userId] | null (null : tous les joueurs connectés), mode: "auto" | "manuel", niveau, roles: { cle: n } }
-export const nouvellePreparation = () => ({ coches: null, mode: "auto", niveau: "classique", roles: {} });
+// { coches: [userId] | null (null : tous les joueurs connectés), mode: "auto" | "manuel", niveau, roles: { cle: n },
+//   peste: partie de peste noire choisie par le MJ (sinon, une partie générée le devient rarement d'elle-même) }
+export const nouvellePreparation = () => ({ coches: null, mode: "auto", niveau: "classique", roles: {}, peste: false });
 
 export const joueursConnectes = () => game.users.filter(u => !u.isGM && u.active);
 export const compagnonsDuVillage = () => tousLesVillageois().filter(a => a.system.compagnon && !a.system.joueur);
@@ -69,19 +70,26 @@ export async function distribuer(prep) {
   const compagnons = compagnonsDuVillage().map(a => a.id);
   const total = joueurs.length + compagnons.length;
   return api().nouvellePartie({ memesJoueurs: false, joueurs, compagnons, niveau: prep.niveau,
-    roles: prep.mode === "manuel" ? rolesManuels(prep, total) : [] });
+    roles: prep.mode === "manuel" ? rolesManuels(prep, total) : [], ...(prep.peste ? { peste: true } : {}) });
 }
 
 // ------------------------------------------------------------------ la partie, étape par étape
 export async function phase(p) { return api().changerPhase(p); }
 
-// Réveille tous les rôles qui restent, dans l'ordre de la nuit.
-export async function reveillerTout(options) {
+// Réveille tous les rôles qui restent, dans l'ordre de la nuit. La peste sans porteur (peste noire, première nuit) :
+// choisirPeste() rend la victime choisie par le MJ ("" : au hasard ; null : il s'arrête là) ; sans lui, le hasard.
+export async function reveillerTout({ choisirPeste = null, ...options } = {}) {
   const faits = [];
   for (let i = 0; i < 40; i++) {
     const e = api().etapeSuivante();
     if (e.cle !== "reveiller") break;
-    faits.push(await api().reveiller(e.donnees.role, options));
+    let extra = {};
+    if (e.donnees.peste && !e.donnees.qui && typeof choisirPeste === "function") {
+      const cible = await choisirPeste();
+      if (cible === null) break;
+      extra = { cible };
+    }
+    faits.push(await api().reveiller(e.donnees.role, { ...options, ...extra }));
   }
   return faits;
 }

@@ -668,7 +668,8 @@ const VERIFICATIONS = {
     // Le hook : chez tous, sans qui-a-quoi.
     const h = emissions.slice(nEmis).find(x => x.type === "hook" && x.nom === "lakourLoups.nouvellePartie");
     assert.ok(h, "hook diffusé");
-    assert.deepEqual(Object.keys(h.args[0]).sort(), ["compagnons", "composition", "joueurs", "partie"]);
+    // La composition n'est jamais annoncée aux joueurs.
+    assert.deepEqual(Object.keys(h.args[0]).sort(), ["compagnons", "joueurs", "partie"]);
     assert.equal(h.args[0].joueurs, 4);
     assert.ok(!JSON.stringify(h.args).includes("acteurId"));
     assert.ok(journalHooks.slice(nHooks).some(x => x.nom === "lakourLoups.nouvellePartie"));

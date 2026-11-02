@@ -261,7 +261,9 @@ export function brancherClient(fn) { clients.push(fn); }
 // Le message est-il livré au navigateur de cet utilisateur ? (comme handleCustomSocket du serveur v14)
 export const livreA = (emission, userId) => !emission.recipients || emission.recipients.includes(userId);
 
-export function installerFoundry({ joueurs = 6, contenu = false } = {}) {
+// chancePeste : la chance d'une peste noire pour une partie composée d'elle-même (réglage « lakour-loups.chancePeste ») ;
+// 0 par défaut, pour que les parties des essais restent reproductibles (la rareté s'éprouve sur L.tirerPeste).
+export function installerFoundry({ joueurs = 6, contenu = false, chancePeste = 0 } = {}) {
   compteur = 0;
   journalHooks = []; emissions = []; messages = []; reglages = new Map();
   ecouteursMJ = []; clients = []; enVol = new Set(); erreursSocket = [];
@@ -279,7 +281,10 @@ export function installerFoundry({ joueurs = 6, contenu = false } = {}) {
     user: mj, users, actors: new Collection(), items, journal: new Collection(), ready: true, system: { id: "lakour-loups" },
     i18n: { localize: c => formater(c), format: formater, has: c => typeof chemin(FR, c) === "string" },
     settings: {
-      register(id, cle, conf) { reglages.set(`${id}.${cle}`, { valeur: structuredClone(conf.default), conf }); },
+      register(id, cle, conf) {
+        const valeur = id === "lakour-loups" && cle === "chancePeste" ? chancePeste : structuredClone(conf.default);
+        reglages.set(`${id}.${cle}`, { valeur, conf });
+      },
       get(id, cle) { return structuredClone(reglages.get(`${id}.${cle}`).valeur); },
       async set(id, cle, v) { const r = reglages.get(`${id}.${cle}`); r.valeur = structuredClone(v); r.conf.onChange?.(structuredClone(v)); return v; }
     },

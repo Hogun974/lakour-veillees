@@ -14,7 +14,7 @@
 // Les effets posés de jour vivent dans etat.jour.effets : [{ type, acteurId, cible, nuit }] et valent pour la nuit n° `nuit`
 // (la nuit qui suit ce jour). effetsDeLaNuit(etat, tour) les regroupe pour resoudreNuit().
 
-import { CLE_MEUTE } from "./constantes.mjs";
+import { CLE_MEUTE, CLE_PESTE } from "./constantes.mjs";
 import { choisir } from "./hasard.mjs";
 import { normaliserEtat, ouvrirVote } from "./etat.mjs";
 import { numeroDeMaison, surLAutreRive } from "./distribution.mjs";
@@ -336,6 +336,7 @@ export function loupsQuiChassent(villageois = [], e, tour) {
 // pas les loups, ni ceux hors d'atteinte, ni l'asile de la Chapelle, ni les dormeurs de la Taverne (sauf si un loup
 // y dort), ni l'autre rive quand le Pont est bloqué. Un joueur hors d'atteinte n'agit pas ; gardé à l'œil, il ne vise
 // que sa propre maison. Le filtre « soi-même » reste celui du rôle (demanderAction).
+// roleCle "peste" (peste noire) : les mêmes candidats que la meute (la peste frappe comme elle, rien ne doit la distinguer).
 export function candidatsDeNuit({ villageois = [], etat: e, acteurId = "", roleCle = "", tour } = {}) {
   const etat = normaliserEtat(e);
   const n = tour ?? etat.tour;
@@ -343,8 +344,9 @@ export function candidatsDeNuit({ villageois = [], etat: e, acteurId = "", roleC
   const parId = new Map(villageois.map(v => [v.id, v]));
   const vivants = villageois.filter(vivant);
   const acteur = parId.get(acteurId);
-  const chasse = roleCle === CLE_MEUTE || (acteur?.camp === "meute" && acteur?.role?.effet === "tuer" && acteur?.role?.cle === roleCle);
-  if (roleCle !== CLE_MEUTE) {
+  const groupe = roleCle === CLE_MEUTE || roleCle === CLE_PESTE;
+  const chasse = groupe || (acteur?.camp === "meute" && acteur?.role?.effet === "tuer" && acteur?.role?.cle === roleCle);
+  if (!groupe) {
     if (fx.horsDAtteinte.includes(acteurId)) return [];
     if (fx.surveilles.includes(acteurId)) return vivants.some(v => v.id === acteurId) ? [acteurId] : [];
   }

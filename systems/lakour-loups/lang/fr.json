@@ -33,7 +33,9 @@
       "vote": "condamné par le village",
       "emporte": "emporté dans la tombe",
       "epie": "surpris à épier la meute",
-      "narrateur": "mort mystérieuse"
+      "narrateur": "mort mystérieuse",
+      "peste": "emporté par la peste noire",
+      "panique": "pendu pour avoir semé la panique"
     },
     "Effets": {
       "aucun": "aucun (arbitré par le narrateur)",
@@ -67,7 +69,9 @@
       "village": "Le village de Brumecombe l'emporte : plus aucun loup ne rôde dans la brume.",
       "meute": "La meute l'emporte : Brumecombe s'endort pour ne plus se réveiller.",
       "amoureux": "Les amoureux {a} et {b} l'emportent, seuls survivants de la vallée.",
-      "solitaire": "{nom} l'emporte, seul contre tous."
+      "solitaire": "{nom} l'emporte, seul contre tous.",
+      "peste": "Brumecombe s'éteint dans la fièvre : la peste noire l'emporte, sans que personne l'ait reconnue.",
+      "villagePeste": "Le village a reconnu la peste noire : Brumecombe chasse la fièvre et l'emporte."
     },
     "Table": {
       "Titre": "Table de veillée",
@@ -127,7 +131,8 @@
       "EnAttente": "en attente",
       "Reveiller": "Réveiller",
       "ReveillerTout": "Réveiller tous les rôles, dans l'ordre",
-      "Personne": "Personne"
+      "Personne": "Personne",
+      "CrierPour": "{nom} crie « C'est la peste noire ! »"
     },
     "Choix": {
       "Titre": "Dans la nuit…",
@@ -278,7 +283,10 @@
       "MessageRecu": "Le Messager vous remet un mot de {nom} : « {texte} »",
       "MessageRemis": "Vous avez remis le mot de {a} à {b}.",
       "ProiesDeLaMeute": "Cette nuit, la meute a attaqué {noms}.",
-      "InviteMessager": "Le Messager frappe à ta porte cette nuit : écris une phrase pour {nom}. Il la lui remettra à l'aube, de ta part."
+      "InviteMessager": "Le Messager frappe à ta porte cette nuit : écris une phrase pour {nom}. Il la lui remettra à l'aube, de ta part.",
+      "PesteBredouille": "La peste n'a trouvé personne chez {nom} : il dormait hors d'atteinte.",
+      "PestePont": "La peste n'a pas pu traverser le Pont jusqu'à {nom}.",
+      "PesteArretee": "La peste n'a pas pu atteindre {nom} ({par})."
     },
     "Messages": {
       "Mort": "{nom} est mort : {cause}.",
@@ -330,12 +338,19 @@
         "Nom": "Salons vocaux automatiques",
         "Aide": "Avec la voix intégrée de Foundry (A/V) : la nuit, seuls les loups se parlent ; les morts ne parlent qu'aux morts ; un joueur réduit au silence se tait pendant le débat et le vote. Chaque navigateur coupe ce qu'il ne doit pas entendre, et son micro quand il doit se taire. Le MJ entend toujours tout. Décoché : tout le monde parle à tout le monde."
       },
-      "RepartirAZero": { "Nom": "Repartir de zéro à chaque lancement du monde", "Aide": "Un loup-garou ne se reprend pas : quand le monde est lancé, la partie en cours est effacée (rôles, métiers, morts, chat, secrets) et le village revient aux préparatifs, ses villageois prêts pour la distribution. Les Chroniques et le palmarès restent. Recharger la page (F5) ne remet rien à zéro.", "Fait": "Nouvelle veillée : le village repart de zéro." },
+      "RepartirAZero": {
+        "Nom": "Repartir de zéro à chaque lancement du monde",
+        "Aide": "Un loup-garou ne se reprend pas : quand le monde est lancé, la partie en cours est effacée (rôles, métiers, morts, chat, secrets), les joueurs IA quittent le village et chacun retrouve le jeton de base ; le village revient aux préparatifs, les villageois des joueurs prêts pour la distribution. Les Chroniques et le palmarès restent. Recharger la page (F5) ne remet rien à zéro.",
+        "Fait": "Nouvelle veillée : le village repart de zéro."
+      },
       "PlateauInteractif": {
         "Nom": "Agir sur la carte",
         "Aide": "Choix de nuit, votes et pouvoirs de jour se font au clic sur les jetons, depuis le bandeau. Décoché : les fenêtres de choix et de vote s'ouvrent comme avant."
       },
-      "SignalTour": { "Nom": "Signal quand c'est à moi", "Aide": "Un tintement discret, chez moi seul, quand un choix de nuit ou un vote m'attend ; si je regarde un autre onglet, son titre clignote jusqu'à mon retour." }
+      "SignalTour": {
+        "Nom": "Signal quand c'est à moi",
+        "Aide": "Un tintement discret, chez moi seul, quand un choix de nuit ou un vote m'attend ; si je regarde un autre onglet, son titre clignote jusqu'à mon retour."
+      }
     },
     "Erreurs": {
       "PasMJ": "Seul le MJ actif peut mener la partie (lakour-loups).",
@@ -460,7 +475,8 @@
         "bandeauAnnuler": "Renonce à ce pouvoir pour l'instant : rien n'est utilisé.",
         "bandeauVoter": "Ouvre la liste des accusés pour voter (tu peux aussi cliquer sur un jeton). Tu peux changer d'avis tant que le vote est ouvert.",
         "bandeauOuvrirVote": "Lance le vote du village : chaque vivant désigne qui il accuse, avec le temps fixé dans les réglages ; à zéro, il se clôt de lui-même.",
-        "bandeauCloreVote": "Arrête le vote sans attendre la fin du minuteur et compte les voix ; l'exécution des élus est demandée ensuite."
+        "bandeauCloreVote": "Arrête le vote sans attendre la fin du minuteur et compte les voix ; l'exécution des élus est demandée ensuite.",
+        "bandeauPeste": "Crie « C'est la peste noire ! » au village. Si c'est vrai, la partie s'arrête et le village gagne ; si c'est faux, tu es pendu pour avoir semé la panique."
       },
       "Salon": {
         "nuit": "🔇 La nuit, silence",
@@ -493,7 +509,8 @@
       "Choisie": "composition choisie",
       "Generee": "composition générée, {verdict}",
       "Reprise": "mêmes rôles, rebattus",
-      "Annonce": "Nouvelle partie ! Les rôles des {n} villageois sont distribués en secret."
+      "Annonce": "Nouvelle partie ! Les rôles des {n} villageois sont distribués en secret.",
+      "Peste": "PESTE NOIRE (aucun loup, secret)"
     },
     "Etapes": {
       "Prochaine": "Prochaine étape :",
@@ -516,7 +533,8 @@
         "juge": "Le Juge de paix ({nom}) peut encore annuler ce vote.",
         "emporter": "{nom} désigne qui il emporte (ou personne).",
         "sansSecrets": "Ce navigateur n'a pas les secrets de la nuit."
-      }
+      },
+      "LaPeste": "la peste"
     },
     "Preparation": {
       "Titre": "Préparer la partie",
@@ -562,7 +580,10 @@
       "Mort": "mort au tour {tour}, {cause}",
       "IA": "joueur IA"
     },
-    "Signal": { "Choix": "À toi de choisir", "Vote": "Le vote est ouvert" },
+    "Signal": {
+      "Choix": "À toi de choisir",
+      "Vote": "Le vote est ouvert"
+    },
     "Chroniques": {
       "Titre": "Chroniques de Brumecombe",
       "Palmares": "Palmarès",
@@ -570,7 +591,42 @@
       "Vide": "Aucun joueur n'a encore fini une veillée.",
       "Veillee": "Veillée du {date}",
       "Lien": "Toutes les veillées et le palmarès : {lien}.",
-      "Colonnes": { "Joueur": "Joueur", "Veillees": "Veillées", "Victoires": "Victoires", "Survies": "En vie au dernier matin", "Meute": "Dans la meute" }
+      "Colonnes": {
+        "Joueur": "Joueur",
+        "Veillees": "Veillées",
+        "Victoires": "Victoires",
+        "Survies": "En vie au dernier matin",
+        "Meute": "Dans la meute"
+      }
+    },
+    "Peste": {
+      "Partie": "Peste noire",
+      "PartieAide": "Aucun loup : la peste frappe chaque nuit, choisie d'abord par le narrateur, puis par sa dernière victime. Secret : les joueurs n'en savent rien.",
+      "Preparation": "Partie peste noire",
+      "PreparationAide": "Une partie sans aucun loup : chaque nuit, la peste emporte quelqu'un. Les joueurs ne le savent pas : ils devront le découvrir et crier « C'est la peste noire ! ». Sans cette case, une partie composée d'elle-même le devient rarement.",
+      "Crier": "C'est la peste noire !",
+      "CrierAide": "Si tu es sûr qu'il n'y a pas de loups mais une peste : la partie s'arrête et le village gagne. Si tu te trompes, tu es pendu pour avoir semé la panique.",
+      "Confirmer": "Crier « C'est la peste noire ! » ? Si c'est vrai, le village gagne. Si c'est faux, tu seras pendu pour avoir semé la panique.",
+      "ConfirmerPour": "{nom} crie « C'est la peste noire ! » ? Si c'est faux, {nom} sera pendu pour avoir semé la panique.",
+      "CriJuste": "{nom} crie : « C'est la peste noire ! » Le village se tait, puis comprend : il n'y a jamais eu de loups à Brumecombe, seulement la fièvre qui passe de mort en mort. On brûle les draps, on ferme les puits, et la peste recule.",
+      "CriFaux": "{nom} crie : « C'est la peste noire ! » Mais les morts portent des traces que la fièvre ne laisse pas. Pour avoir semé la panique, le village pend {nom} sur-le-champ.",
+      "InvitePorteur": "La fièvre t'a emporté, mais elle n'a pas fini : en secret, désigne qui elle frappera cette nuit.",
+      "InviteNarrateur": "La peste : qui frappe-t-elle cette nuit ?",
+      "AuHasard": "Au hasard",
+      "CarnetPorteur": "Ce ne sont pas des loups qui t'ont emporté : c'est la peste noire. Il n'y a aucun loup à Brumecombe. Dès la nuit prochaine, c'est toi qui désigneras en secret sa prochaine victime. Les vivants ne doivent rien en savoir.",
+      "Porteur": "Peste : {nom} en est mort ; c'est lui qui désignera la prochaine victime.",
+      "Hasard": "La peste frappe au hasard : {nom}.",
+      "Choisie": "La peste frappe : {nom}.",
+      "Journal": "{nom} a crié « C'est la peste noire ! ».",
+      "Recit": "Ce n'étaient pas des loups : la peste noire rôdait à Brumecombe.",
+      "Chronique": "Peste noire",
+      "Refus": {
+        "partie": "Aucune partie en cours.",
+        "absent": "Ce villageois n'est pas de la veillée.",
+        "mort": "Les morts se taisent.",
+        "phase": "On ne crie qu'au grand jour (aube, débat, vote).",
+        "silence": "Réduit au silence, tu ne peux pas crier aujourd'hui."
+      }
     }
   }
 }

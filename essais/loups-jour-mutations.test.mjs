@@ -228,7 +228,7 @@ const MUTATIONS = [
   ["resolution.mjs", "sortie.messages.push(msg(destinataire, \"MessageRecu\"", "sortie.messages.push(msg(expediteur, \"MessageRecu\"", "Messager : destinataire"],
   ["resolution.mjs", ".replace(/<[^>]*>/g, \"\")", "", "Messager : sans balises"],
   ["resolution.mjs", "const loin = chasse && jour.pontBloque && cibles.find(", "const loin = false && cibles.find(", "Pont : la meute ne traverse pas"],
-  ["resolution.mjs", "    && surLAutreRive(parId.get(victimeMeute)?.maison));", ");", "Pont franchi"],
+  ["resolution.mjs", "&& surLAutreRive(parId.get(victime)?.maison));", ");", "Pont franchi"],
   ["resolution.mjs", "for (const id of peutChasser) sorties.add(id);", "", "bilan : sorties de la meute"],
   ["etat.mjs", "const porteur = max > 0 ? etat.jour.rubans.find(id => r.decompte[id] === max) : null;", "const porteur = null;", "ruban"],
   ["etat.mjs", "etat.jour.rubans = etat.jour.rubans.filter(id => id !== porteur);", "", "ruban dénoué"],

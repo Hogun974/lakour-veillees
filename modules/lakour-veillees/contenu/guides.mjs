@@ -48,7 +48,7 @@ const pageDesNouveaux = () => ({
   titre: "Nouveaux visages de la veillée",
   texte: `# Ce que la brume a ramené
 
-Quatre rôles et deux métiers venus des berges de la Brume. Ils ne sont pas dans toutes les compositions : le narrateur annonce au début ceux qui sont en jeu.
+Quatre rôles et deux métiers venus des berges de la Brume. Ils ne sont pas dans toutes les compositions, et le narrateur ne dit jamais lesquels sont en jeu : à vous de le deviner.
 
 ${[...NOUVEAUX_ROLES.map(c => ficheDuRole(ROLES.find(r => r.system.cle === c))),
   ...NOUVEAUX_METIERS.map(c => ficheDuMetier(METIERS.find(m => m.system.cle === c)))].join("\n\n")}`
@@ -95,13 +95,17 @@ Cet automne, on a retrouvé le berger de la Combe-aux-Sorbiers dans le fossé, l
 - **Le Village** gagne quand **plus aucun loup** ne vit.
 - **La Meute** gagne quand les loups sont **aussi nombreux** que tous les autres vivants réunis.
 - **Les solitaires** ont chacun leur propre condition de victoire, écrite sur leur rôle.
-- **Les amants** (liés par l'Entremetteuse) gagnent ensemble s'ils sont les deux derniers vivants, quel que soit leur camp ; sinon chacun gagne avec son camp.`
+- **Les amants** (liés par l'Entremetteuse) gagnent ensemble s'ils sont les deux derniers vivants, quel que soit leur camp ; sinon chacun gagne avec son camp.
+
+Il arrive, rarement, qu'il n'y ait **aucun loup** : c'est la **peste noire** (voir la page qui lui est consacrée).`
     },
     {
       titre: "Déroulement d'une partie",
       texte: `# La préparation
 
 Le narrateur choisit une composition (selon le nombre de joueurs et le niveau), met 4 à 6 **bâtiments** en jeu, puis distribue en secret un rôle et un métier à chacun. Chacun reçoit son rôle en **message privé** et voit sa fiche ; personne d'autre ne la voit. Chacun a une **maison** sur la carte du village (« Maison 1 » à « Maison 18 »).
+
+La composition reste **secrète** : le narrateur n'annonce ni les rôles en jeu, ni le nombre de loups. Seuls les bâtiments sont connus de tous. Le reste, le village le découvre en jouant.
 
 # La nuit
 
@@ -152,9 +156,35 @@ Le narrateur te parle en message privé pour tout ce qui est secret : ton rôle,
 - Les morts se taisent. Ils peuvent rire, mais en silence.
 - On attaque des rôles, pas des personnes.
 
+# Le cri de la peste noire
+
+Pendant le jour, chaque vivant voit dans son bandeau (et sur la Table de jeu) le bouton **« C'est la peste noire ! »**. Il est là dans toutes les parties : son seul aspect ne dit rien. Ne le presse que si tu es sûr de toi (voir la page « La peste noire »).
+
 # Les compagnons IA
 
 Pour compléter une petite table, le narrateur peut donner des places à des **compagnons IA** : des villageois joués par une IA, comme des joueurs. Ils reçoivent un rôle en secret, choisissent la nuit, parlent au débat et votent. Ils ne trichent pas : un compagnon ne sait que ce que sait son villageois (son rôle, son carnet, ce qui se dit en public). Soupçonne-les, crois-les ou mens-leur comme à n'importe qui.`
+    },
+    {
+      titre: "La peste noire",
+      texte: `# Une veillée sans loups
+
+Il arrive, rarement, qu'une veillée n'ait **aucun loup**. Les rôles sont tous du village (et parfois des solitaires), les métiers et les bâtiments sont les mêmes que d'habitude. Mais chaque nuit, quelqu'un meurt quand même : c'est la **peste noire**.
+
+- La première nuit, le narrateur guide la fièvre vers sa première maison.
+- Ensuite, c'est **sa dernière victime** qui, depuis la tombe, désigne en secret la suivante. Si tu meurs de la peste, tu l'apprends dans ton carnet secret, et c'est à toi de choisir la nuit suivante. Les morts ne parlent pas aux vivants : garde-le pour toi et pour les autres morts.
+- Une victime de la peste est annoncée **comme une victime des loups** : « tuée dans la nuit ». Les protections (garde, remède, verrou, asile de la Chapelle, Taverne, Grange, Passeur) la sauvent comme elles sauveraient d'une attaque de loup.
+- Les rôles d'information fonctionnent comme toujours. Simplement, ils ne trouveront **jamais** de loup.
+
+# Crier « C'est la peste noire ! »
+
+Pendant le jour (l'aube, le débat ou le vote), tout vivant qui n'est pas réduit au silence peut crier **« C'est la peste noire ! »** (bouton du bandeau, de la Table de jeu, ou à voix haute au narrateur).
+
+- **Si c'est vrai**, la partie s'arrête aussitôt : **le village gagne**.
+- **Si c'est faux**, le crieur est **pendu pour avoir semé la panique**. On ne crie donc pas au hasard.
+
+# Si personne ne la reconnaît
+
+Quand il ne reste qu'un seul vivant, ou plus personne, **la peste l'emporte** : Brumecombe s'éteint dans la fièvre, et tout le village a perdu.`
     },
     {
       titre: "Les rôles de la Meute",
@@ -234,6 +264,8 @@ Les compositions toutes prêtes vont de 6 à 18 joueurs, en trois niveaux :
 
 Chaque composition indique ses bâtiments (4 à 6). Tu peux en changer un, en annonçant la liste avant la distribution.
 
+**Ne révèle jamais la composition** : ni les rôles en jeu, ni le nombre de loups. Les bâtiments, eux, sont publics. Une partie peut même n'avoir aucun loup (la **peste noire**, page suivante) : rien ne doit le laisser deviner.
+
 # La distribution
 
 - Distribue les rôles et les métiers au hasard (la Table de jeu s'en charge). Chaque joueur reçoit son rôle en message privé.
@@ -241,6 +273,31 @@ Chaque composition indique ses bâtiments (4 à 6). Tu peux en changer un, en an
 - **Chasseur de primes** : tire sa cible au hasard parmi les autres joueurs (jamais un loup si possible, pour que la partie reste ouverte), et donne-la-lui la première nuit.
 - Annonce les **bâtiments en jeu** et les **variantes** choisies (révélation à la mort, durée du débat).
 - Lis à voix haute une présentation du village (deux ou trois phrases, pas plus).`
+    },
+    {
+      titre: "La peste noire",
+      texte: `# Une partie sans loups
+
+Rarement, une partie composée d'elle-même (Table de jeu, ou MJ IA) devient une **peste noire** ; tu peux aussi la choisir (Table de jeu, préparatifs : case **« Partie peste noire »**). Aucun rôle de la meute : leurs places vont au village (et aux solitaires que permet le niveau) ; métiers et bâtiments comme d'habitude. Toi seul le sais : la Table de jeu le marque « Peste noire » chez le MJ, jamais chez les joueurs.
+
+# La nuit
+
+- À la place de la meute, à l'ordre 40, l'étape **« la peste »**.
+- **Première nuit** (tant qu'aucune victime de la peste n'est morte) : c'est **toi** qui choisis la victime (bouton « Réveiller : la peste », liste des villageois, ou **« Au hasard »**). Le MJ IA la donne à loups_nuit (peste_victime).
+- **Nuits suivantes** : **la dernière victime morte de la peste** (le porteur) désigne en secret la suivante, dans une fenêtre ou sur la carte, comme une action de nuit (un compagnon IA, par son cerveau). Sans réponse au délai, le hasard choisit. Le porteur l'apprend dans son carnet secret à sa mort.
+- La victime est attaquée **exactement comme une proie de la meute** : Garde, Gardienne des clés, remède de l'Herboriste, verrou du Forgeron, asile de la Chapelle, Taverne, Grange, Passeur, Pont et écluse la protègent ; le Pyromane et la Dame du gué n'en meurent pas.
+- À l'aube, annonce-la **comme une victime de la meute** (« tuée dans la nuit ») : même ton, même phrase. Sa vraie cause, « emportée par la peste noire », n'apparaît qu'au récit de fin et aux Chroniques.
+- Les rôles d'information fonctionnent normalement : aucune vision ne montre de loup, la lanterne ne surprend personne, le Tanneur ne trouve pas de crocs, la Meunière compte zéro loup. C'est l'indice ; ne corrige rien, ne commente rien.
+
+# Le cri
+
+Pendant le jour, tout vivant (pas réduit au silence) peut crier **« C'est la peste noire ! »** (son bandeau, sa Table de jeu ; à voix haute : le bouton à côté de son nom sur ta Table, ou loups_peste pour le MJ IA). Le système tranche :
+- juste : la partie s'arrête, **le village gagne** (récit de fin, Chroniques « Peste noire ») ;
+- faux : le crieur est **pendu pour avoir semé la panique** (mort annoncée au village).
+
+# La fin
+
+Sans cri juste, quand il ne reste qu'**un vivant ou aucun**, **la peste l'emporte** : « Brumecombe s'éteint dans la fièvre ». Personne ne gagne. (Le Revenant exécuté ou la cible du Chasseur de primes exécutée gagnent comme d'habitude.)`
     },
     {
       titre: "Mener la nuit",
@@ -335,6 +392,7 @@ Si **personne n'est mort**, dis-le avec la même gravité : « Le jour se lève 
 - Loups aussi nombreux que les autres vivants : victoire de la **Meute**.
 - **Revenant** exécuté, cible du **Chasseur de primes** exécutée : victoire immédiate du solitaire (la partie continue pour les autres si tu le souhaites, ou s'arrête : annonce-le au début).
 - **Amants** derniers vivants : ils gagnent ensemble.
+- **Peste noire** : le cri juste fait gagner le village ; sinon la peste l'emporte quand il reste un vivant ou aucun (ni « plus aucun loup », ni amants, ni tueur solitaire ne finissent une peste).
 - **Pyromane** ou **Dame du gué** dernier vivant (ou avec un seul non-loup) : il gagne seul. Tant que l'un de ces deux tueurs vit, le village n'a pas gagné, même sans loup ; s'ils sont tous les deux en vie, aucun ne gagne avant que l'autre tombe.`
     },
     {
@@ -369,7 +427,8 @@ Pose sur la carte quelques **figurants** pour animer le village : le garde du gu
 - Les pouvoirs de jour : loups_jour (lister ce qui est possible, utiliser celui qu'un joueur annonce). Les métiers sont publics ; le Juge de paix et la Conteuse sont des rôles secrets — ne dis jamais qui les tient avant qu'ils ne s'en servent.
 - Ne réponds pas à « qui est le loup ? », ni à « est-ce que X a agi cette nuit ? », ni à « que dit ma fiche à propos de Y ? ». Réponds : « Le village devra le découvrir. »
 - Si un joueur te demande en privé ce que fait un rôle, réponds avec le texte du rôle, sans dire qui l'a.
-- Ne cite jamais le nombre de loups vivants, sauf effet public (Meunière, Moulin).
+- Ne cite jamais le nombre de loups vivants, sauf effet public (Meunière, Moulin), ni la composition, ni les rôles en jeu.
+- **Peste noire** : tu le sais (distribution secrète), tu ne le dis jamais, même par allusion. La première nuit, donne la victime à loups_nuit (peste_victime, ou « hasard ») ; ensuite, le porteur choisit. Quand un joueur crie « C'est la peste noire ! », loups_peste : le système tranche.
 
 # Tenir le fil
 
@@ -439,6 +498,8 @@ const variantes = journal({
 - **Nombre de loups** : la composition le donne (2 à 5). Un loup de plus pour un groupe aguerri, un de moins pour un groupe qui débute.
 - **Temps de débat** : 5 minutes par défaut ; 3 minutes pour une partie nerveuse ; 8 minutes pour une veillée bavarde.
 - **Rôles autorisés** : le narrateur peut retirer un rôle d'une composition et le remplacer par un villageois, ou par un rôle du même camp.
+- **Composition secrète** (toujours) : le narrateur n'annonce ni les rôles en jeu, ni le nombre de loups.
+- **Peste noire** : le narrateur peut décider d'une partie sans loups (voir le guide du joueur) ; sinon, elle survient rarement d'elle-même.
 - **Ambiance** : gothique sérieux (par défaut) ou comique.`
     },
     {

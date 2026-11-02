@@ -1,6 +1,7 @@
 // Socket « system.lakour-loups ». Chaque message a ses destinataires (recipients, voir canal.mjs) ; l'auteur est
 // l'identifiant donné par le serveur, pas ce que le message prétend.
-//   MJ -> un joueur : { type: "demande", id, destinataire, acteurId, invite, candidats, nombre, delai, finit, mode? ("texte"), max? }
+//   MJ -> un joueur : { type: "demande", id, destinataire, acteurId, invite, candidats, nombre, delai, finit, mode? ("texte"), max?,
+//                       posthume? (demande faite à un mort : le porteur de la peste noire) }
 //                     { type: "annuler", id }
 //                     { type: "secret", partie, entree }          une entrée de son carnet secret
 //                     { type: "carnet", partie, acteurId, entrees, prime, vote }   tout son carnet (connexion, rechargement)
@@ -12,10 +13,11 @@
 //                        { type: "vote", votant, cible, userId }
 //                        { type: "jour", acteurId, pouvoir, cibles, texte, userId }
 //                        { type: "bonjour", userId }             « renvoie-moi mon carnet » (et ma ligne des salons)
+//                        { type: "peste", acteurId, userId }     « C'est la peste noire ! » (le MJ actif seul tranche)
 //   MJ -> tous : { type: "hook", nom, args }  (arguments publics seulement)
 import { CANAL } from "../logique/constantes.mjs";
 import { estMJActif, auteur, vientDUnMJ } from "./canal.mjs";
-import { recevoirReponse, recevoirVote, recevoirJour, envoyerCarnet } from "./api.mjs";
+import { recevoirReponse, recevoirVote, recevoirJour, recevoirCri, envoyerCarnet } from "./api.mjs";
 import { recevoirSecret, recevoirCarnet, noterMonVote } from "./prive.mjs";
 import { fermerChoix } from "./apps/choix.mjs";
 import { recevoirDemande, oublierDemande } from "./plateau-local.mjs";
@@ -34,6 +36,7 @@ export function traiterMessage(message, emetteur) {
     case "reponse": return estMJActif() && recevoirReponse(pourMoi);
     case "vote": return estMJActif() && recevoirVote(pourMoi);
     case "jour": return estMJActif() && recevoirJour(pourMoi);
+    case "peste": return estMJActif() && recevoirCri(pourMoi);
     case "bonjour":
       if (!estMJActif()) return false;
       envoyerLigne(qui);

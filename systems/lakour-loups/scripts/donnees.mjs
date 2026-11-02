@@ -73,8 +73,11 @@ export function libelleCause(c) {
   const cle = `LAKOUR_LOUPS.Causes.${c}`;
   return game.i18n.has(cle) ? t(cle) : (c || t("LAKOUR_LOUPS.Causes.narrateur"));
 }
-export function libelleVainqueur(v) {
+// etat : l'état de la partie (complet chez le MJ, public ailleurs, où la peste noire n'apparaît qu'à la fin).
+export function libelleVainqueur(v, etat = null) {
   if (!v) return "";
+  if (v === "peste") return t("LAKOUR_LOUPS.Victoire.peste");
+  if (v === "village" && etat?.peste?.active) return t("LAKOUR_LOUPS.Victoire.villagePeste");
   if (v === "village" || v === "meute") return t(`LAKOUR_LOUPS.Victoire.${v}`);
   const a = game.actors.get(v);
   const lie = a?.system.amoureux ? game.actors.get(a.system.amoureux) : null;

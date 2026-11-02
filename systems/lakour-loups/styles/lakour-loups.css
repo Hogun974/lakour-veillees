@@ -86,6 +86,9 @@
 .lakour-loups .loups-pastille.cloche, .lakour-loups .loups-pastille.nuit { border-color: var(--loups-lanterne); color: var(--loups-lanterne); }
 .lakour-loups .loups-pastille.gibet { border-color: var(--loups-rouille); color: #f3b190; }
 .lakour-loups .loups-pastille.jour { border-color: #d9c069; color: #ecd98f; }
+/* La peste noire : marque du MJ seul (Table de jeu), et le bouton du cri. */
+.lakour-loups .loups-pastille.peste { border-color: #6d8a4a; color: #c9d99a; }
+.lakour-loups .loups-cri .loups-bouton { width: 100%; }
 
 .lakour-loups .loups-bouton {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.4em;

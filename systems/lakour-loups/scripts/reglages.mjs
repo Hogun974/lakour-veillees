@@ -1,5 +1,5 @@
 // Réglages du système.
-import { ID } from "../logique/constantes.mjs";
+import { ID, CHANCE_PESTE } from "../logique/constantes.mjs";
 import { etatInitial } from "../logique/etat.mjs";
 import { oublierSecrets } from "./secrets.mjs";
 import { oublierPrive } from "./prive.mjs";
@@ -68,6 +68,9 @@ export function enregistrerReglages(quandEtatChange) {
   });
   // Rôles et bâtiments des dernières parties (jamais qui avait quoi), pour varier les compositions (nouvellePartie).
   game.settings.register(ID, "historique", { scope: "world", config: false, type: Array, default: [] });
+  // La chance qu'une partie composée d'elle-même devienne une peste noire (logique/peste.mjs) : CHANCE_PESTE (1 sur 30),
+  // sans réglage visible (la fréquence n'est dite nulle part). Les essais la mettent à 0 pour des parties reproductibles.
+  game.settings.register(ID, "chancePeste", { scope: "world", config: false, type: Number, default: CHANCE_PESTE });
   // Les veillées finies, racontées dans le journal des Chroniques (scripts/chroniques.mjs) : les 50 dernières.
   game.settings.register(ID, "chroniques", { scope: "world", config: false, type: Array, default: [] });
   game.settings.register(ID, "annoncesEnChat", {

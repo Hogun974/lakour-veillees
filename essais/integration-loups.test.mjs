@@ -15,7 +15,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
-  installerFoundry, simulerJoueurs, calme, erreurs, envoyerAuMJ, journalHooks, emissions, messages, reglages, CONTENU, ajouterScene, erreursHooks
+  installerFoundry, simulerJoueurs, calme, erreurs, envoyerAuMJ, journalHooks, emissions, messages, reglages, CONTENU, ajouterScene, erreursHooks, FR
 } from "./doublures/foundry-loups.mjs";
 import { PLAN_VILLAGE, PLATEAU_VILLAGE, PLACE, BATIMENTS_CARTE } from "../modules/lakour-veillees/contenu/village.mjs";
 
@@ -121,6 +121,9 @@ function verifierSecrets(ou) {
   assert.deepEqual([pub.nuit.actions, pub.nuitPrecedente.actions, pub.nuitPrecedente.bilan, pub.primes, pub.fioles, pub.asperges, pub.vote.votes,
     pub.carnets, pub.journalSecret, pub.causes], [[], [], null, {}, {}, [], {}, {}, [], {}], `${ou} : secret dans l'état public`);
   for (const m of pub.morts) assert.ok(!CAUSES_SECRETES.includes(m.cause), `${ou} : vraie cause « ${m.cause} » dans l'état public`);
+  // La composition n'est jamais annoncée : ni sa clé dans l'état public ; la peste noire n'y existe pas avant la fin (pas même la clé).
+  assert.equal(pub.composition, "", `${ou} : composition dans l'état public`);
+  assert.ok(!("peste" in pub) || pub.phase === "fin", `${ou} : la peste noire dans l'état public avant la fin`);
   assert.equal(reglages.get("lakour-loups.secrets").conf.scope, "client");
   assert.equal(reglages.get("lakour-loups.carnet").conf.scope, "client");
   for (const e of emissions.slice(controle)) {
@@ -130,7 +133,10 @@ function verifierSecrets(ou) {
       if (etat?.nuit) {
         assert.deepEqual([etat.nuit.actions, etat.nuitPrecedente.actions, etat.primes, etat.fioles, etat.asperges, etat.vote.votes, etat.carnets],
           [[], [], {}, {}, [], {}, {}], `${ou} : ${e.nom} diffuse un secret`);
+        assert.equal(etat.composition, "", `${ou} : ${e.nom} diffuse la composition`);
+        assert.ok(!("peste" in etat) || etat.phase === "fin", `${ou} : ${e.nom} diffuse la peste noire avant la fin`);
       }
+      if (e.nom === "lakourLoups.nouvellePartie") assert.ok(!("composition" in e.args[0]), `${ou} : composition annoncée aux joueurs`);
       if (e.nom === "lakourLoups.vote") assert.deepEqual(Object.keys(e.args[0]), ["votant"], "un vote en cours diffusé avec son choix");
       if (e.nom === "lakourLoups.elimination") {
         assert.ok(!CAUSES_SECRETES.includes(e.args[0].cause), "vraie cause d'une mort de nuit diffusée");
@@ -341,7 +347,9 @@ async function jouerPartie({ n, niveau, graine, nbCompagnons = 0 }) {
     const total = n + nbCompagnons;
     const depart = await appeler("loups_distribuer", { joueurs: [], composition: "", niveau, ...(nbCompagnons ? { compagnons: nbCompagnons } : {}) });
     assert.match(depart, new RegExp(`composition « générée, [^»]+ » \\(${total} joueurs${nbCompagnons ? `, dont ${nbCompagnons} compagnons IA` : ""}\\)`));
-    assert.match(depart, /À annoncer à tous \(sans dire qui\) : Meute : /);
+    // La composition, pour le narrateur seul : elle ne s'annonce plus aux joueurs.
+    assert.match(depart, /Composition, pour toi seul \(ne l'annonce JAMAIS, ni le nombre de loups\) : Meute : /);
+    assert.doesNotMatch(depart, /PESTE NOIRE/, "une partie ordinaire ne parle pas de peste au narrateur");
     assert.equal(villageois().length, total);
     assert.equal(villageois().filter(a => a.system.compagnon && !a.system.joueur).length, nbCompagnons, "compagnons sans joueur");
     assert.equal(api.etat().composition, "generee");
@@ -797,4 +805,194 @@ test("loups_distribuer auto : rôles imposés et exclus respectés ; l'historiqu
   assert.equal(game.settings.get("lakour-mj-ia", "historiqueLoups").length, 1, "la partie est mémorisée");
   const memoire = game.settings.get("lakour-mj-ia", "historiqueLoups")[0];
   assert.deepEqual([...memoire.roles].sort(), [...premiere].sort());
+});
+
+// ------------------------------------------------------------------ la PESTE NOIRE, partie complète
+// Une partie de peste noire (loups_distribuer, peste « oui ») menée par les outils du narrateur jusqu'à la fin : aucun rôle de la
+// meute ; la première nuit, la peste frappe la victime du narrateur (peste_victime) ; ensuite, son porteur (la dernière victime,
+// MORTE) la désigne par une demande secrète (posthume) — joueur simulé ou compagnon IA ; chaque victime meurt comme une proie de
+// la meute (cause publique « nuit », même annonce) ; rien de la peste dans l'état public, les hooks, le socket ni le chat avant la
+// fin (sauf l'annonce d'un cri) ; à la fin : extinction (vainqueur « peste ») ou cri juste (loups_peste : le village gagne).
+const MORT_PUBLIQUE = new RegExp(FR.LAKOUR_LOUPS.Causes.nuit);
+const CRI = /C'est la peste noire/;
+async function jouerPeste({ n, graine, nbCompagnons = 0, crierAuJour = 0 }) {
+  monde(n, graine);
+  const hasardOrigine = Math.random;
+  Math.random = creerHasard(`${graine}-monde`);
+  const h = creerHasard(`${graine}-mj`);
+  const textes = [];
+  const appeler = async (nom, args) => {
+    const r = await outil(nom).executer(args);
+    textes.push(`${nom} ${JSON.stringify(args)}\n${r.contenu}`);
+    assert.ok(!r.erreur, `${nom} en erreur : ${r.contenu}`);
+    verifierTexte(r.contenu, nom);
+    verifierSecrets(nom);
+    await verifierPlateau(nom);
+    return r.contenu;
+  };
+  // Avant la fin, aucun mot de peste dans le chat public, sauf l'annonce d'un cri.
+  const chatSansPeste = ou => {
+    if (api.etat().phase === "fin") return;
+    for (const m of messages) {
+      const t = sansHTML(m.content);
+      if (!CRI.test(t)) assert.doesNotMatch(t, /peste|fièvre/i, `${ou} : la peste trahie au chat : ${t}`);
+    }
+  };
+  try {
+    const depart = await appeler("loups_distribuer", { joueurs: [], composition: "", niveau: "classique", peste: "oui", ...(nbCompagnons ? { compagnons: nbCompagnons } : {}) });
+    assert.match(depart, /PESTE NOIRE \(secret absolu/, "le narrateur sait que c'est la peste");
+    assert.match(depart, /Composition, pour toi seul/);
+    const equilibre = JSON.parse(readFileSync(new URL("../modules/lakour-veillees/assets/equilibre.json", import.meta.url), "utf8"));
+    assert.ok(villageois().every(a => equilibre.roles[roleDe(a).system.cle]?.camp !== "meute" && a.system.camp !== "meute"), "aucun rôle de la meute");
+    assert.equal(api.etat().peste.active, true);
+    assert.ok(!("peste" in reglages.get("lakour-loups.partie").valeur), "drapeau absent de l'état public");
+    let fin = "", tour = 0;
+    while (!fin) {
+      tour += 1;
+      assert.ok(tour <= 30, "plus de 30 tours");
+      const avant = api.etat();
+      const porteur = avant.peste.porteur;
+      const vivantsAvant = villageois().filter(a => a.system.vivant);
+      const victimeVoulue = porteur ? "" : choisir(vivantsAvant, h).name;
+      const nbEmis = emissions.length, nbChat = messages.length;
+      const nuit = await appeler("loups_nuit", { delai_secondes: 20, peste_victime: victimeVoulue });
+      chatSansPeste(`nuit ${tour}`);
+      const e = api.etat();
+      const peste = e.nuitPrecedente.actions.filter(x => x.roleCle === "peste");
+      assert.equal(peste.length, 1, "une étape de la peste par nuit");
+      assert.ok(!e.nuitPrecedente.actions.some(x => x.roleCle === "meute"), "pas de meute");
+      assert.equal(peste[0].acteurId, porteur, "notée au nom du porteur (aucun la première fois)");
+      const demandes = emissions.slice(nbEmis).filter(x => x.type === "demande" && x.posthume);
+      if (!porteur) {
+        assert.equal(demandes.length, 0, "pas de porteur : personne n'est réveillé pour la peste");
+        // La victime choisie par le narrateur (sauf si elle était hors d'atteinte : alors le hasard).
+        if (!/\(au hasard\)/.test(nuit)) assert.deepEqual(peste[0].cibles.map(id => game.actors.get(id).name), [victimeVoulue], "la victime choisie par le narrateur");
+        assert.match(nuit, /la peste \(ton choix\) →/);
+        couvert("peste : choix du narrateur");
+      } else {
+        const p = game.actors.get(porteur);
+        assert.equal(p.system.vivant, false, "le porteur est mort");
+        if (p.system.joueur) {
+          // Le porteur, mort, reçoit SA demande (à lui seul) ; son choix est noté, ou le hasard s'il passe.
+          assert.equal(demandes.length, 1, "le porteur est réveillé, mort");
+          assert.deepEqual(demandes[0].recipients, [p.system.joueur]);
+          assert.ok(demandes[0].candidats.every(c => vivantsAvant.some(v => v.id === c.id)), "candidats vivants");
+          const reponse = joueursSimules.journal.reponses.find(r => r.id === demandes[0].id);
+          if (reponse?.cibles.length) { assert.deepEqual(peste[0].cibles, reponse.cibles, "le choix du porteur"); couvert("peste : choix du porteur"); }
+          else { assert.match(nuit, /\(au hasard\)/); couvert("peste : hasard"); }
+        } else {
+          assert.equal(demandes.length, 0, "un compagnon porteur répond par son cerveau, sans socket");
+          couvert("peste : porteur compagnon");
+        }
+      }
+      // La victime morte de la peste : cause secrète « peste », publique « nuit », même annonce qu'une proie de la meute.
+      const morts = e.morts.filter(m => m.tour === e.tour && m.cause === "peste");
+      for (const m of morts) {
+        const nom = game.actors.get(m.acteurId).name;
+        assert.ok(messages.slice(nbChat).some(x => sansHTML(x.content).includes(nom) && MORT_PUBLIQUE.test(sansHTML(x.content))), `${nom} : annonce de mort ordinaire`);
+        if (!e.vainqueur) assert.equal(e.peste.porteur, m.acteurId, "la victime devient le porteur");
+        const mort = game.actors.get(m.acteurId);
+        if (mort.system.joueur) assert.ok(secretsEmis(nbEmis).some(x => x.entree.acteurId === m.acteurId && /peste noire/.test(x.entree.texte ?? "")), "le porteur l'apprend dans son carnet");
+        else assert.ok(api.carnet(m.acteurId).some(x => /peste noire/.test(x.texte ?? "")), "le compagnon porteur l'apprend dans son carnet");
+        couvert("peste : victime");
+      }
+      if (nbCompagnons) verifierSavoirDesCompagnons(`peste, nuit ${tour}`);
+      if (/VICTOIRE/.test(nuit)) { fin = nuit; break; }
+      await calme();
+      // Le jour : un cri juste arrête la partie.
+      if (crierAuJour && tour >= crierAuJour) {
+        const crieur = choisir(villageois().filter(a => a.system.vivant && !a.system.silence), h);
+        fin = await appeler("loups_peste", { villageois: crieur.name });
+        assert.match(fin, /C'était bien la peste noire/);
+        break;
+      }
+      await appeler("loups_vote", { action: "ouvrir", candidats: [], duree_secondes: 0, double: false, objet: "execution" });
+      await calme();
+      let clos = await appeler("loups_vote", { action: "clore", candidats: [], duree_secondes: 0, double: false, objet: "execution" });
+      for (let i = 0; (/porte le ruban de la Tisserande/.test(clos) || api.etat().vote.ouvert) && i < 8; i++) {
+        await calme();
+        clos = await appeler("loups_vote", { action: "clore", candidats: [], duree_secondes: 0, double: false, objet: "execution" });
+      }
+      for (const nom of /Désignés? : (.+) \(loups_eliminer pour chacun\)/.exec(clos)?.[1].split(" et ") ?? []) {
+        const t = await appeler("loups_eliminer", { villageois: nom, cause: "vote", reveler: true });
+        if (/VICTOIRE/.test(t)) { fin = t; break; }
+      }
+      chatSansPeste(`jour ${tour}`);
+    }
+    const e = api.etat();
+    assert.equal(e.phase, "fin");
+    const pub = reglages.get("lakour-loups.partie").valeur;
+    assert.equal(pub.peste?.active, true, "à la fin, la partie se dévoile");
+    const chat = messages.map(m => sansHTML(m.content)).join("\n");
+    assert.ok(chat.includes(FR.LAKOUR_LOUPS.Peste.Recit), "le récit de fin dévoile la peste");
+    assert.ok(chat.includes(FR.LAKOUR_LOUPS.Causes.peste), "la vraie cause, au récit");
+    const journal = game.journal.find(j => j.getFlag("lakour-loups", "chroniques"));
+    assert.ok(journal.pages.some(p => p.name.includes(FR.LAKOUR_LOUPS.Peste.Chronique)), "les Chroniques : Peste noire");
+    if (crierAuJour) {
+      assert.equal(e.vainqueur, "village");
+      assert.match(fin, /VICTOIRE : village/);
+      assert.ok(chat.includes(FR.LAKOUR_LOUPS.Victoire.villagePeste));
+      couvert("peste : cri juste");
+    } else {
+      assert.equal(e.vainqueur, "peste");
+      assert.ok(villageois().filter(a => a.system.vivant).length <= 1, "la peste l'emporte quand il reste un vivant ou aucun");
+      assert.match(fin, /VICTOIRE : la peste noire/);
+      assert.ok(chat.includes(FR.LAKOUR_LOUPS.Victoire.peste));
+      couvert("peste : extinction");
+    }
+    verifierSecrets("fin de la peste");
+    assert.deepEqual(erreurs(), []);
+    return { vainqueur: e.vainqueur, tours: tour };
+  } catch (err) {
+    throw new Error(`peste, ${n} joueurs${nbCompagnons ? ` et ${nbCompagnons} compagnons` : ""}, graine « ${graine} » : ${err.message}\n--- derniers échanges :\n${textes.slice(-4).join("\n\n")}`, { cause: err });
+  } finally {
+    Math.random = hasardOrigine;
+  }
+}
+
+test("PESTE NOIRE : parties complètes (humains, compagnons IA), extinction ou cri juste ; aucun secret avant la fin", async () => {
+  for (const graine of GRAINES) {
+    await jouerPeste({ n: 8, graine: `${graine}-peste` });
+    await jouerPeste({ n: 3, graine: `${graine}-peste-c`, nbCompagnons: 5 });
+    await jouerPeste({ n: 10, graine: `${graine}-peste-cri`, crierAuJour: 2 });
+  }
+  for (const effet of ["peste : choix du narrateur", "peste : choix du porteur", "peste : porteur compagnon", "peste : victime", "peste : extinction", "peste : cri juste"]) {
+    assert.ok(couverture.get(effet) > 0, `jamais exercé : ${effet}`);
+  }
+  // Reproductible.
+  const a = await jouerPeste({ n: 8, graine: "brume-peste" });
+  const b = await jouerPeste({ n: 8, graine: "brume-peste" });
+  assert.deepEqual(a, b);
+});
+
+test("cri « C'est la peste noire ! » dans une partie ordinaire : le crieur est pendu pour avoir semé la panique, la partie continue", async () => {
+  monde(10, "panique");
+  const hasardOrigine = Math.random;
+  Math.random = creerHasard("panique-monde");
+  try {
+    await outil("loups_distribuer").executer({ joueurs: [], composition: "classique-10", niveau: "", peste: "" });
+    assert.equal(api.etat().peste, null);
+    await outil("loups_nuit").executer({ delai_secondes: 20, peste_victime: "" });
+    await calme();
+    // Un mort ne crie pas ; un vivant, le jour, oui.
+    const mort = villageois().find(a => !a.system.vivant);
+    if (mort) assert.match((await outil("loups_peste").executer({ villageois: mort.name })).contenu, /Cri refusé/);
+    const crieur = villageois().find(a => a.system.vivant && a.system.camp !== "meute" && !a.system.silence);
+    const r = await outil("loups_peste").executer({ villageois: crieur.name });
+    assert.match(r.contenu, /Ce n'était pas la peste/);
+    assert.equal(crieur.system.vivant, false);
+    const pub = reglages.get("lakour-loups.partie").valeur;
+    assert.equal(pub.morts.find(m => m.acteurId === crieur.id).cause, "panique");
+    assert.ok(messages.some(m => sansHTML(m.content).includes(FR.LAKOUR_LOUPS.Causes.panique)), "annonce : pendu pour avoir semé la panique");
+    const elim = emissions.filter(e => e.type === "hook" && e.nom === "lakourLoups.elimination").at(-1);
+    assert.equal(elim.args[0].cause, "panique");
+    verifierSecrets("cri faux");
+    // Il ne crie pas deux fois (il est mort) ; la nuit, personne ne crie.
+    assert.match((await outil("loups_peste").executer({ villageois: crieur.name })).contenu, /Cri refusé/);
+    await api.changerPhase("nuit");
+    const autre = villageois().find(a => a.system.vivant);
+    assert.match((await outil("loups_peste").executer({ villageois: autre.name })).contenu, /Cri refusé/);
+  } finally {
+    Math.random = hasardOrigine;
+  }
 });

@@ -12,7 +12,7 @@
 // action : le data-action du bouton de la Table qui fait l'étape ("" = rien à presser, on attend les joueurs) ;
 // donnees : { phase, role, nom, id, n… } (pour le libellé et pour retrouver le bouton) ;
 // detail : { cle, donnees } facultatif (voix manquantes, Juge de paix, Braconnière…).
-import { CLE_MEUTE } from "./constantes.mjs";
+import { CLE_MEUTE, CLE_PESTE } from "./constantes.mjs";
 import { normaliserEtat, fusionnerEtat } from "./etat.mjs";
 import { ordreDeNuit } from "./nuit.mjs";
 import { verifierVictoire } from "./victoire.mjs";
@@ -45,7 +45,7 @@ export function etapeSuivante(etatPublic, secretsMJ = null, { villageois = [], a
   const apresUneMort = () => {
     const [emporteur] = emporteursEnAttente(etat, villageois, ignorer);
     if (emporteur) return etape("emporter", "emporter", { id: emporteur, nom: nom(emporteur) }, { detail: { cle: "emporter", donnees: { nom: nom(emporteur) } } });
-    if (!etat.vainqueur && verifierVictoire({ villageois, morts: etat.morts, primes: etat.primes ?? {} })) return etape("victoire", "victoire");
+    if (!etat.vainqueur && verifierVictoire({ villageois, morts: etat.morts, primes: etat.primes ?? {}, peste: etat.peste })) return etape("victoire", "victoire");
     return null;
   };
 
@@ -57,10 +57,12 @@ export function etapeSuivante(etatPublic, secretsMJ = null, { villageois = [], a
       if (etat.nuitResolue === tour) return apresUneMort() ?? etape("debat", "phase", { phase: "jour" });
       if (!secretsMJ) return etape("aube", "aube", {}, { detail: { cle: "sansSecrets", donnees: {} } });
       const faits = new Set(etat.nuit.actions.map(a => a.roleCle));
-      for (const e of ordreDeNuit(villageois, tour)) {
+      // Peste noire (secret du MJ) : l'étape « la peste », à la place de la meute ; qui : son porteur, s'il y en a un.
+      for (const e of ordreDeNuit(villageois, tour, { peste: etat.peste })) {
         if (faits.has(e.roleCle)) continue;
-        const roleNom = e.roleCle === CLE_MEUTE ? "" : villageois.find(v => v.id === e.acteurIds[0])?.role?.nom ?? e.roleCle;
-        const donnees = { role: e.roleCle, nom: roleNom, meute: e.roleCle === CLE_MEUTE, qui: e.acteurIds.map(nom).join(", ") };
+        const groupe = e.roleCle === CLE_MEUTE || e.roleCle === CLE_PESTE;
+        const roleNom = groupe ? "" : villageois.find(v => v.id === e.acteurIds[0])?.role?.nom ?? e.roleCle;
+        const donnees = { role: e.roleCle, nom: roleNom, meute: e.roleCle === CLE_MEUTE, peste: e.roleCle === CLE_PESTE, qui: e.acteurIds.map(nom).join(", ") };
         if (attente.includes(e.roleCle)) return etape("attendre", "", donnees, { attente: true });
         return etape("reveiller", "reveiller", donnees);
       }

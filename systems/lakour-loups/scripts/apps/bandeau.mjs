@@ -4,6 +4,8 @@
 // tu observes ». Pendant le vote : « Voter » (la liste) et le temps restant ; le MJ y ouvre et y clôt le vote. Il remplace les fenêtres, qui restent
 // disponibles en secours (« Liste », Table de jeu). Ce qu'il montre de secret (sa sélection, son vote, son rôle) ne
 // vient que de ce navigateur : rien n'en sort, sinon le choix validé, au seul MJ actif.
+// Le jour, un vivant y trouve aussi « C'est la peste noire ! » (le cri de la variante Peste noire, logique/peste.mjs) : il
+// n'apprend rien avant de crier (le bouton est là dans toutes les parties), seul le MJ actif tranche.
 // Avec la voix intégrée de Foundry (A/V) et les salons vocaux, il montre aussi le salon du joueur (« 🔇 La nuit, silence »,
 // « 🐺 Tanière : tu parles aux loups », « 👻 Tu parles aux morts », « 🔇 Réduit au silence ») : sa ligne, reçue du MJ actif.
 import { ID } from "../../logique/constantes.mjs";
@@ -12,7 +14,7 @@ import { monVote } from "../prive.mjs";
 import { salonAffiche } from "../salons.mjs";
 import * as local from "../plateau-local.mjs";
 import { ouvrirCarnet } from "./carnet.mjs";
-import { ouvrirTable, cloreLeVote } from "./table.mjs";
+import { ouvrirTable, cloreLeVote, crierALaPeste } from "./table.mjs";
 import { fenetreVote } from "./vote.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
@@ -46,7 +48,7 @@ export function contexteBandeau() {
   const ctx = {
     gm, phase: etat.phase, phaseLibelle: libellePhase(etat.phase), icone: ICONES[etat.phase] ?? "fa-moon", tour: etat.tour,
     finit: 0, monRole: Boolean(moi), statut: null, consigne: "", detail: "", boutons: [], pouvoirs: [], annonce: local.annonceEnCours(),
-    vainqueur: etat.phase === "fin" ? libelleVainqueur(etat.vainqueur) : "",
+    vainqueur: etat.phase === "fin" ? libelleVainqueur(etat.vainqueur, etat) : "",
     salon: salonAffiche()
   };
   // Chaque bouton a son infobulle (LAKOUR_LOUPS.Bandeau.Aide.<action>) : ce qu'il fait.
@@ -95,12 +97,18 @@ export function contexteBandeau() {
     // Un mort : le Puits peut encore lui offrir un dernier mot.
     ctx.pouvoirs = mesPouvoirs(moi);
   } else ctx.consigne = t(`LAKOUR_LOUPS.Bandeau.Attente.${etat.phase}`);
+  // Le cri de la peste noire : pour un vivant, pendant le jour, quand rien d'autre n'est en cours sur la carte.
+  if (moi && !l.mode) {
+    let cri = null;
+    try { cri = game.lakourLoups.peutCrier(moi.id); } catch { cri = null; }
+    if (cri?.ok) bouton("bandeauPeste", t("LAKOUR_LOUPS.Peste.Crier"), "fa-biohazard");
+  }
   if (ctx.vainqueur) ctx.consigne = ctx.vainqueur;
   // Le MJ (sans villageois) : l'étape suivante de la Table de jeu, en rappel (pendant le vote, le décompte des voix).
   if (gm && !moi && !ctx.boutons.length && !v.ouvert) {
     try {
       const e = game.lakourLoups.etapeSuivante();
-      const nom = e.donnees.meute ? t("LAKOUR_LOUPS.Etapes.LaMeute") : e.donnees.nom ?? "";
+      const nom = e.donnees.meute ? t("LAKOUR_LOUPS.Etapes.LaMeute") : e.donnees.peste ? t("LAKOUR_LOUPS.Etapes.LaPeste") : e.donnees.nom ?? "";
       ctx.detail = `${t("LAKOUR_LOUPS.Etapes.Prochaine")} ${t(`LAKOUR_LOUPS.Etapes.${e.cle}`, { ...e.donnees, nom })}`;
     } catch { /* API pas encore prête */ }
   }
@@ -131,7 +139,8 @@ export class BandeauAction extends HandlebarsApplicationMixin(ApplicationV2) {
       bandeauOuvrirVote: async () => {
         try { await game.lakourLoups.ouvrirVote({}); } catch (e) { ui.notifications.error(e.message); }
       },
-      bandeauCloreVote: () => cloreLeVote()
+      bandeauCloreVote: () => cloreLeVote(),
+      bandeauPeste: () => crierALaPeste(monVillageois()?.id)
     }
   };
 

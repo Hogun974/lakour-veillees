@@ -193,7 +193,7 @@ const MUTATIONS = [
   ["victoire.mjs", "(vivants.length === 1 || (vivants.length === 2 && vivants.find(v => v !== tueurs[0]).camp !== \"meute\"))", "vivants.length === 1", "pyromane avec un non-loup"],
   ["resolution.mjs", "let aspergees = new Set(asperges.filter(id => vivant(id)));", "let aspergees = new Set();", "asperger"],
   ["resolution.mjs", "sortie.enAttente.push(", "void (", "emporter"],
-  ["resolution.mjs", "if (!deLaMeute && (!acteur || acteur.vivant === false)) continue;", "if (!deLaMeute && !acteur) continue;", "les morts n'agissent plus"],
+  ["resolution.mjs", "if (!deLaMeute && !deLaPeste && (!acteur || acteur.vivant === false)) continue;", "if (!deLaMeute && !deLaPeste && !acteur) continue;", "les morts n'agissent plus"],
   ["resolution.mjs", "if (v.camp === \"meute\" && /deguis/.test(v.role?.cle ?? \"\")) return \"village\";", "", "loup déguisé"],
   ["resolution.mjs", "for (const v of nouveaux) v.protections = 0;", "", "protections remises à 0"],
   ["victoire.mjs", "if (meute === 0 && tueurs.length === 0) return \"village\";", "if (meute === 0) return \"village\";", "pyromane"],

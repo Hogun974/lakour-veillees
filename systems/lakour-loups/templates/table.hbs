@@ -4,7 +4,7 @@
       <span class="loups-phase-icone"><i class="fa-solid {{#if estNuit}}fa-moon{{else}}fa-sun{{/if}}"></i></span>
       <div>
         <div class="loups-phase-nom">{{phaseLibelle}}</div>
-        <div class="loups-phase-tour">{{localize "LAKOUR_LOUPS.Table.Tour"}} {{tour}}{{#if composition}} · {{composition}}{{/if}}</div>
+        <div class="loups-phase-tour">{{localize "LAKOUR_LOUPS.Table.Tour"}} {{tour}}{{#if composition}} · {{composition}}{{/if}}{{#if peste}} · <span class="loups-pastille peste" data-tooltip="{{localize 'LAKOUR_LOUPS.Peste.PartieAide'}}"><i class="fa-solid fa-biohazard"></i> {{localize "LAKOUR_LOUPS.Peste.Partie"}}</span>{{/if}}</div>
       </div>
     </div>
     <div class="loups-minuteur" aria-live="polite"></div>
@@ -53,6 +53,7 @@
       <button type="button" class="loups-bouton {{#unless preparation.auto}}discret{{/unless}}" data-action="prepMode" data-mode="auto">{{localize "LAKOUR_LOUPS.Preparation.Auto"}}</button>
       <button type="button" class="loups-bouton {{#unless preparation.manuel}}discret{{/unless}}" data-action="prepMode" data-mode="manuel">{{localize "LAKOUR_LOUPS.Preparation.Manuel"}}</button>
       <select name="prepNiveau">{{#each preparation.niveaux}}<option value="{{cle}}" {{#if choisi}}selected{{/if}}>{{libelle}}</option>{{/each}}</select>
+      <label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.Peste.PreparationAide'}}"><input type="checkbox" data-action="prepPeste" {{#if preparation.peste}}checked{{/if}}> <i class="fa-solid fa-biohazard"></i> {{localize "LAKOUR_LOUPS.Peste.Preparation"}}</label>
     </div>
     {{#if preparation.manuel}}
     <ul class="loups-prep-roles">
@@ -130,6 +131,7 @@
           <div class="loups-mj-boutons">
             <button type="button" data-action="reveler" data-id="{{id}}" title="{{localize 'LAKOUR_LOUPS.Table.Reveler'}}"><i class="fa-solid fa-eye"></i></button>
             <button type="button" data-action="eliminer" data-id="{{id}}" title="{{localize 'LAKOUR_LOUPS.Table.Eliminer'}}"><i class="fa-solid fa-skull"></i></button>
+            {{#if crier}}<button type="button" data-action="crier" data-id="{{id}}" title="{{localize 'LAKOUR_LOUPS.Table.CrierPour' nom=nom}}"><i class="fa-solid fa-biohazard"></i></button>{{/if}}
           </div>
           {{/if}}
         </li>
@@ -158,6 +160,11 @@
     </section>
 
     <aside class="loups-colonne loups-cote">
+      {{#if crier}}
+      <section class="loups-encart loups-cri">
+        <button type="button" class="loups-bouton" data-action="crier" data-id="{{moiId}}" data-tooltip="{{localize 'LAKOUR_LOUPS.Peste.CrierAide'}}"><i class="fa-solid fa-biohazard"></i> {{localize "LAKOUR_LOUPS.Peste.Crier"}}</button>
+      </section>
+      {{/if}}
       {{#if pouvoirs.length}}
       <section class="loups-encart">
         <h3><i class="fa-solid fa-hand-sparkles"></i> {{localize "LAKOUR_LOUPS.Table.Pouvoirs"}}</h3>

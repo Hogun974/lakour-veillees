@@ -17,7 +17,9 @@
 //   historique: [{ tour, phase, texte }],
 //   +nuitPrecedente [S]: { actions, bilan }, +asperges [S], +primes [S], +fioles [S], +voteDoubleDemain, +nuitResolue,
 //   +causes [S]: { acteurId: vraie cause }, +journalSecret [S]: [{ tour, phase, texte }], +carnets [S]: { acteurId: [entrée] },
-//   +jour: pouvoirs de jour (voir jour.mjs), +pont: { bloqueNuit }, +cimetiere: [acteurId dont le camp a été annoncé] }
+//   +jour: pouvoirs de jour (voir jour.mjs), +pont: { bloqueNuit }, +cimetiere: [acteurId dont le camp a été annoncé],
+//   composition [S] (la clé de composition : elle trahirait les rôles en jeu ; le MJ seul la voit),
+//   +peste [S]: null | { active, porteur, victimes, decouverte, crieur } (la variante Peste noire, peste.mjs ; dévoilée à la fin) }
 
 import { PHASES, causePublique } from "./constantes.mjs";
 import { decompterVotes } from "./votes.mjs";
@@ -37,7 +39,7 @@ export function etatInitial() {
     morts: [], vainqueur: "", historique: [],
     nuitPrecedente: { actions: [], bilan: null }, asperges: [], primes: {}, fioles: {}, voteDoubleDemain: false, nuitResolue: 0,
     causes: {}, journalSecret: [], carnets: {},
-    jour: jourInitial(), pont: { bloqueNuit: 0 }, cimetiere: []
+    jour: jourInitial(), pont: { bloqueNuit: 0 }, cimetiere: [], peste: null
   };
 }
 
@@ -57,8 +59,16 @@ export function normaliserEtat(e) {
   for (const cle of ["primes", "fioles", "causes", "carnets"]) if (!etat[cle] || typeof etat[cle] !== "object") etat[cle] = {};
   if (!Array.isArray(etat.vote.exprimes)) etat.vote.exprimes = [];
   if (!PHASES.includes(etat.phase)) etat.phase = "preparation";
+  etat.peste = normaliserPeste(etat.peste);
   etat.tour = Number(etat.tour) || 0;
   return etat;
+}
+
+// La variante Peste noire : null, ou sa forme complète.
+function normaliserPeste(p) {
+  if (!p || typeof p !== "object" || !p.active) return null;
+  return { active: true, porteur: String(p.porteur ?? ""), victimes: Array.isArray(p.victimes) ? [...p.victimes] : [],
+    decouverte: Boolean(p.decouverte), crieur: String(p.crieur ?? "") };
 }
 
 // ------------------------------------------------------------------ public / secret
@@ -69,12 +79,16 @@ export function separerEtat(e) {
   const base = etatInitial();
   const secret = {
     partie: etat.partie, nuit: etat.nuit, nuitPrecedente: etat.nuitPrecedente, asperges: etat.asperges, primes: etat.primes,
-    fioles: etat.fioles, journalSecret: etat.journalSecret, carnets: etat.carnets, votes: etat.vote.votes, causes: {}
+    fioles: etat.fioles, journalSecret: etat.journalSecret, carnets: etat.carnets, votes: etat.vote.votes, causes: {},
+    composition: etat.composition, peste: etat.peste
   };
   const pub = copie(etat);
   pub.nuit = base.nuit;
   pub.nuitPrecedente = base.nuitPrecedente;
-  for (const cle of ["asperges", "primes", "fioles", "journalSecret", "carnets", "causes"]) pub[cle] = base[cle];
+  for (const cle of ["asperges", "primes", "fioles", "journalSecret", "carnets", "causes", "composition"]) pub[cle] = base[cle];
+  // La peste noire n'existe pas dans l'état public avant la fin (ni même la clé) ; à la fin, la partie se dévoile.
+  delete pub.peste;
+  if (etat.phase === "fin" && etat.peste) pub.peste = copie(etat.peste);
   pub.vote.exprimes = etat.vote.ouvert ? Object.keys(etat.vote.votes) : [];
   pub.vote.votes = {};
   pub.morts = etat.morts.map(m => {
@@ -95,6 +109,8 @@ export function fusionnerEtat(pub, secret) {
   for (const cle of ["asperges", "journalSecret"]) if (Array.isArray(s[cle])) etat[cle] = s[cle];
   for (const cle of ["primes", "fioles", "carnets"]) if (s[cle] && typeof s[cle] === "object") etat[cle] = s[cle];
   if (s.votes && typeof s.votes === "object") etat.vote.votes = s.votes;
+  if (typeof s.composition === "string") etat.composition = s.composition;
+  if (s.peste !== undefined) etat.peste = normaliserPeste(s.peste);
   etat.causes = s.causes ?? {};
   etat.morts = etat.morts.map(m => (etat.causes[m.acteurId] ? { ...m, cause: etat.causes[m.acteurId] } : m));
   return etat;

@@ -33,7 +33,9 @@
       "vote": "condemned by the village",
       "emporte": "dragged into the grave",
       "epie": "caught spying on the pack",
-      "narrateur": "mysterious death"
+      "narrateur": "mysterious death",
+      "peste": "taken by the black plague",
+      "panique": "hanged for spreading panic"
     },
     "Effets": {
       "aucun": "none (ruled by the narrator)",
@@ -67,7 +69,9 @@
       "village": "The village of Brumecombe wins: no wolf prowls the mist anymore.",
       "meute": "The pack wins: Brumecombe falls asleep, never to wake.",
       "amoureux": "The lovers {a} and {b} win, last survivors of the valley.",
-      "solitaire": "{nom} wins, alone against all."
+      "solitaire": "{nom} wins, alone against all.",
+      "peste": "Brumecombe fades away in fever: the black plague wins, and no one ever named it.",
+      "villagePeste": "The village named the black plague: Brumecombe drives the fever out and wins."
     },
     "Table": {
       "Titre": "Vigil table",
@@ -127,7 +131,8 @@
       "EnAttente": "waiting",
       "Reveiller": "Wake",
       "ReveillerTout": "Wake every role, in order",
-      "Personne": "No one"
+      "Personne": "No one",
+      "CrierPour": "{nom} cries \"It's the black plague!\""
     },
     "Choix": {
       "Titre": "In the night…",
@@ -278,7 +283,10 @@
       "MessageRecu": "The Messenger hands you a note from {nom}: “{texte}”",
       "MessageRemis": "You delivered {a}'s note to {b}.",
       "ProiesDeLaMeute": "Tonight, the pack attacked {noms}.",
-      "InviteMessager": "The Messenger knocks at your door tonight: write a sentence for {nom}. He will hand it over at dawn, from you."
+      "InviteMessager": "The Messenger knocks at your door tonight: write a sentence for {nom}. He will hand it over at dawn, from you.",
+      "PesteBredouille": "The plague found nobody at {nom}'s: they slept out of reach.",
+      "PestePont": "The plague could not cross the Bridge to reach {nom}.",
+      "PesteArretee": "The plague could not reach {nom} ({par})."
     },
     "Messages": {
       "Mort": "{nom} is dead: {cause}.",
@@ -330,12 +338,19 @@
         "Nom": "Automatic voice rooms",
         "Aide": "With Foundry built-in voice (A/V): at night only the wolves talk to each other; the dead speak only to the dead; a silenced player stays quiet during the debate and the vote. Each browser mutes what it must not hear, and its own microphone when it must stay quiet. The GM always hears everything. Unchecked: everyone talks to everyone."
       },
-      "RepartirAZero": { "Nom": "Start fresh every time the world is launched", "Aide": "A werewolf game is not resumed: when the world is launched, the game in progress is cleared (roles, trades, deaths, chat, secrets) and the village goes back to setup, its villagers ready to be dealt. The Chronicles and the hall of fame stay. Reloading the page (F5) resets nothing.", "Fait": "New vigil: the village starts fresh." },
+      "RepartirAZero": {
+        "Nom": "Start fresh every time the world is launched",
+        "Aide": "A werewolf game is never resumed: when the world is launched, the game in progress is erased (roles, trades, deaths, chat, secrets), the AI players leave the village and everyone gets the base token back; the village returns to setup, the players' villagers ready for the deal. The Chronicles and the hall of fame remain. Reloading the page (F5) resets nothing.",
+        "Fait": "New vigil: the village starts fresh."
+      },
       "PlateauInteractif": {
         "Nom": "Act on the map",
         "Aide": "Night choices, votes and day powers are made by clicking tokens, from the banner. Unchecked: the choice and vote windows open as before."
       },
-      "SignalTour": { "Nom": "Signal when it is my turn", "Aide": "A soft chime, for me only, when a night choice or a vote is waiting for me; if I am looking at another tab, its title blinks until I come back." }
+      "SignalTour": {
+        "Nom": "Signal when it is my turn",
+        "Aide": "A soft chime, for me only, when a night choice or a vote is waiting for me; if I am looking at another tab, its title blinks until I come back."
+      }
     },
     "Erreurs": {
       "PasMJ": "Only the active GM can run the game (lakour-loups).",
@@ -460,7 +475,8 @@
         "bandeauAnnuler": "Give up this power for now: nothing is used.",
         "bandeauVoter": "Open the list of the accused to vote (you can also click a token). You may change your mind while the vote is open.",
         "bandeauOuvrirVote": "Start the village vote: every living player names who they accuse, within the time set in the settings; at zero, it closes by itself.",
-        "bandeauCloreVote": "Stop the vote without waiting for the timer and count the votes; executing the chosen is asked next."
+        "bandeauCloreVote": "Stop the vote without waiting for the timer and count the votes; executing the chosen is asked next.",
+        "bandeauPeste": "Cry \"It's the black plague!\" to the village. If true, the game ends and the village wins; if false, you are hanged for spreading panic."
       },
       "Salon": {
         "nuit": "🔇 Night: silence",
@@ -493,7 +509,8 @@
       "Choisie": "chosen setup",
       "Generee": "generated setup, {verdict}",
       "Reprise": "same roles, reshuffled",
-      "Annonce": "New game! The roles of the {n} villagers are dealt in secret."
+      "Annonce": "New game! The roles of the {n} villagers are dealt in secret.",
+      "Peste": "BLACK PLAGUE (no wolf, secret)"
     },
     "Etapes": {
       "Prochaine": "Next step:",
@@ -516,7 +533,8 @@
         "juge": "The Justice of the Peace ({nom}) may still cancel this vote.",
         "emporter": "{nom} chooses whom to take along (or no one).",
         "sansSecrets": "This browser does not hold the night's secrets."
-      }
+      },
+      "LaPeste": "the plague"
     },
     "Preparation": {
       "Titre": "Prepare the game",
@@ -562,7 +580,10 @@
       "Mort": "died in round {tour}, {cause}",
       "IA": "AI player"
     },
-    "Signal": { "Choix": "Your turn to choose", "Vote": "The vote is open" },
+    "Signal": {
+      "Choix": "Your turn to choose",
+      "Vote": "The vote is open"
+    },
     "Chroniques": {
       "Titre": "Chronicles of Brumecombe",
       "Palmares": "Hall of fame",
@@ -570,7 +591,42 @@
       "Vide": "No player has finished a vigil yet.",
       "Veillee": "Vigil of {date}",
       "Lien": "Every vigil and the hall of fame: {lien}.",
-      "Colonnes": { "Joueur": "Player", "Veillees": "Vigils", "Victoires": "Wins", "Survies": "Alive on the last morning", "Meute": "In the pack" }
+      "Colonnes": {
+        "Joueur": "Player",
+        "Veillees": "Vigils",
+        "Victoires": "Wins",
+        "Survies": "Alive on the last morning",
+        "Meute": "In the pack"
+      }
+    },
+    "Peste": {
+      "Partie": "Black plague",
+      "PartieAide": "No wolf: the plague strikes every night, chosen first by the narrator, then by its latest victim. Secret: the players know nothing of it.",
+      "Preparation": "Black plague game",
+      "PreparationAide": "A game without any wolf: every night, the plague takes someone. The players don't know: they must find out and cry \"It's the black plague!\". Unchecked, a self-composed game rarely becomes one anyway.",
+      "Crier": "It's the black plague!",
+      "CrierAide": "If you are sure there are no wolves but a plague: the game ends and the village wins. If you are wrong, you are hanged for spreading panic.",
+      "Confirmer": "Cry \"It's the black plague!\"? If true, the village wins. If false, you will be hanged for spreading panic.",
+      "ConfirmerPour": "{nom} cries \"It's the black plague!\"? If false, {nom} will be hanged for spreading panic.",
+      "CriJuste": "{nom} cries: \"It's the black plague!\" The village falls silent, then understands: there were never any wolves in Brumecombe, only the fever passing from death to death. Sheets are burned, wells are shut, and the plague retreats.",
+      "CriFaux": "{nom} cries: \"It's the black plague!\" But the dead bear marks no fever leaves. For spreading panic, the village hangs {nom} on the spot.",
+      "InvitePorteur": "The fever took you, but it is not done: in secret, choose whom it will strike tonight.",
+      "InviteNarrateur": "The plague: whom does it strike tonight?",
+      "AuHasard": "At random",
+      "CarnetPorteur": "No wolf took you: it was the black plague. There is no wolf in Brumecombe. From next night on, you will secretly choose its next victim. The living must know nothing of it.",
+      "Porteur": "Plague: {nom} died of it; they will choose the next victim.",
+      "Hasard": "The plague strikes at random: {nom}.",
+      "Choisie": "The plague strikes: {nom}.",
+      "Journal": "{nom} cried \"It's the black plague!\".",
+      "Recit": "There were no wolves: the black plague prowled Brumecombe.",
+      "Chronique": "Black plague",
+      "Refus": {
+        "partie": "No game in progress.",
+        "absent": "This villager is not part of the vigil.",
+        "mort": "The dead keep silent.",
+        "phase": "One only cries out in broad daylight (dawn, debate, vote).",
+        "silence": "Silenced, you cannot cry out today."
+      }
     }
   }
 }

@@ -10,7 +10,12 @@
 // vote) ne passent pas par le socket : elles vont au résolveur fourni par le MJ IA (api.resolveurs.compagnon), appelé ici
 // même, chez le MJ actif. Leur carnet secret reste chez le MJ (secrets) et nourrit leur cerveau. Sans résolveur, s'il échoue
 // ou s'il tarde au-delà du délai, le compagnon passe : la partie n'attend jamais.
-import { ID, CLE_MEUTE, EFFETS, EFFETS_AUTOMATISES, EFFETS_NARRATEUR, causePublique } from "../logique/constantes.mjs";
+//
+// La composition n'est JAMAIS annoncée aux joueurs : ni rôles en jeu, ni nombre de loups, ni libellé de composition (la clé
+// de composition est un secret du MJ, le hook public de nouvelle partie n'en dit rien). Le MJ la voit (Table de jeu).
+// Peste noire (logique/peste.mjs) : le drapeau etat.peste est un secret du MJ ; l'étape « la peste » remplace la meute
+// (reveiller("peste")), le cri « C'est la peste noire ! » passe par crierPeste (socket « peste » pour un joueur).
+import { ID, CLE_MEUTE, CLE_PESTE, EFFETS, EFFETS_AUTOMATISES, EFFETS_NARRATEUR, causePublique } from "../logique/constantes.mjs";
 import * as L from "../logique/index.mjs";
 import { estMJActif, emettre, annoncer } from "./canal.mjs";
 import { reglage } from "./reglages.mjs";
@@ -226,7 +231,8 @@ function terminer(id, cibles, expire, texte = "") {
 export function recevoirReponse({ id, cibles, texte, userId }) {
   const p = enAttente.get(id);
   if (!p || p.demande.destinataire !== userId) return false;
-  if (game.actors.get(p.demande.acteurId)?.system.vivant === false) return terminer(id, [], false, "");
+  // Un mort ne répond plus, sauf à une demande faite à un mort (le porteur de la peste noire).
+  if (game.actors.get(p.demande.acteurId)?.system.vivant === false && !p.demande.posthume) return terminer(id, [], false, "");
   return terminer(id, cibles, false, texte);
 }
 
@@ -272,6 +278,35 @@ export function envoyerVote(cible) {
   noterMonVote({ partie: pub.partie, numero: pub.vote.numero, cible: cible ?? "" });   // affichage immédiat, confirmé par le MJ
   const mj = game.users.activeGM;
   if (mj) emettre(message, [mj.id]);
+}
+
+// ------------------------------------------------------------------ le cri « C'est la peste noire ! »
+// Un joueur crie depuis son bandeau ou sa Table : le message part au MJ actif seul, qui tranche (lui seul sait).
+export async function recevoirCri({ acteurId, userId }) {
+  if (!estMJActif()) return false;
+  const acteur = game.actors.get(acteurId), user = game.users.get(userId);
+  if (!acteur || !user || (!user.isGM && acteur.system.joueur !== userId)) return false;
+  try {
+    await api.crierPeste(acteurId);
+    return true;
+  } catch (e) {
+    avis(userId, e.message);
+    return false;
+  }
+}
+
+export function envoyerCri(acteurId) {
+  const message = { type: "peste", acteurId, userId: game.user.id };
+  if (estMJActif()) return recevoirCri(message);
+  const mj = game.users.activeGM;
+  if (!mj) return ui.notifications.warn(t("LAKOUR_LOUPS.Erreurs.PasDeMJ"));
+  emettre(message, [mj.id]);
+}
+
+// Peut-il crier maintenant ? D'après l'état PUBLIC seulement (le même dans chaque navigateur) : { ok, raison, raisonTexte }.
+export function peutCrier(acteurId) {
+  const v = L.verifierCri({ villageois: villageoisAPlat(), etat: lirePublic(), acteurId });
+  return { ...v, raisonTexte: v.ok ? "" : t(`LAKOUR_LOUPS.Peste.Refus.${v.raison}`) };
 }
 
 // ------------------------------------------------------------------ pouvoirs de jour reçus
@@ -322,7 +357,27 @@ function lignesDeFin(etat) {
 // le lien vers les Chroniques, où la veillée vient d'entrer.
 function recitDeFin(etat, lignes, chroniques = null) {
   const lien = chroniques ? `<p>${t("LAKOUR_LOUPS.Chroniques.Lien", { lien: `@UUID[${chroniques.uuid}]{${echapper(chroniques.name)}}` })}</p>` : "";
-  return `<h3>${t("LAKOUR_LOUPS.Recit.Titre")}</h3><p>${t("LAKOUR_LOUPS.Recit.Resume", { n: lignes.length, tours: etat.tour })}</p>${listeDuRecit(lignes)}${lien}`;
+  // La peste noire se dévoile enfin.
+  const peste = L.estPeste(etat) ? `<p><strong>${t("LAKOUR_LOUPS.Peste.Recit")}</strong></p>` : "";
+  return `<h3>${t("LAKOUR_LOUPS.Recit.Titre")}</h3>${peste}<p>${t("LAKOUR_LOUPS.Recit.Resume", { n: lignes.length, tours: etat.tour })}</p>${listeDuRecit(lignes)}${lien}`;
+}
+
+// Une demande de nuit faite à un MORT : le porteur de la peste noire désigne sa prochaine victime (joueur ou compagnon IA).
+// Comme demanderAction, sans le refus des morts ; la réponse d'un mort n'est acceptée que pour une telle demande (posthume).
+function demanderAuPorteur({ acteurId, invite, candidats, delai }) {
+  const acteur = acteurOuErreur(acteurId);
+  const compagnon = estCompagnon(acteur);
+  const user = compagnon ? null : game.users.get(acteur.system.joueur);
+  if (!compagnon && !user?.active) return Promise.resolve([]);
+  const demande = {
+    type: "demande", id: foundry.utils.randomID(), destinataire: user?.id ?? "", acteurId, acteurNom: acteur.name, invite, posthume: true,
+    candidats: candidats.map(id => {
+      const a = game.actors.get(id);
+      return { id, nom: a?.name ?? id, img: a?.img ?? "", maison: a?.system.maison ?? "" };
+    }),
+    nombre: 1, delai, finit: Date.now() + delai
+  };
+  return compagnon ? demanderAuCompagnon(demande) : ouvrirDemande(demande, user);
 }
 
 // Ce que fait un pouvoir de jour : la description de l'objet rôle, métier ou bâtiment, en texte brut (infobulles).
@@ -418,7 +473,9 @@ export const api = {
   // compagnons : les villageois tenus par des compagnons IA (sans joueur), en plus des joueurs : un nom (un compagnon d'une
   // partie précédente est repris et renommé, sinon un villageois est créé), ou l'id d'un villageois compagnon déjà là
   // (créé par le MJ IA, api.compagnons.creer : il garde son nom), ou { acteurId } / { nom }.
-  async distribuer({ roles = [], metiers = [], joueurs = [], compagnons = [], maisons = [], graine, composition = "", batiments = [] } = {}) {
+  // peste : une partie de peste noire (logique/peste.mjs) : aucun rôle de la meute (chacun devient un simple villageois) ; le
+  // drapeau reste un secret du MJ.
+  async distribuer({ roles = [], metiers = [], joueurs = [], compagnons = [], maisons = [], graine, composition = "", batiments = [], peste = false } = {}) {
     exigerMJ();
     const estPlaceCompagnon = id => { const a = game.actors.get(id); return a?.type === "villageois" && estCompagnon(a); };
     const placesIA = compagnons.map(n => {
@@ -434,6 +491,13 @@ export const api = {
       const doc = await fromUuid(uuid);
       if (!doc || doc.documentName !== "Item") throw new Error(t("LAKOUR_LOUPS.Erreurs.Introuvable", { uuid }));
       cache.set(uuid, doc);
+    }
+    // Peste noire : ni Meunière ni Moulin, qui compteraient « 0 loup » (logique/peste.mjs, HORS_PESTE).
+    if (peste) {
+      metiers = L.metiersSansIndice(metiers.map(uuid => ({ uuid, cle: cache.get(uuid)?.system?.cle ?? "" })));
+      const gardes = [];
+      for (const uuid of batiments) if (!L.HORS_PESTE.batiments.includes((await fromUuid(uuid))?.system?.cle)) gardes.push(uuid);
+      batiments = gardes;
     }
     const batimentsCles = [];
     for (const uuid of batiments) {
@@ -452,7 +516,8 @@ export const api = {
       const indexCompagnon = att.joueur.startsWith(PLACE_COMPAGNON) ? Number(att.joueur.slice(PLACE_COMPAGNON.length)) : -1;
       const compagnon = indexCompagnon >= 0;
       const user = compagnon ? null : game.users.get(att.joueur);
-      const roleData = att.role ? donneesObjet(cache.get(att.role)) : roleParDefaut();
+      const sansLoup = peste && cache.get(att.role)?.system?.camp === "meute";
+      const roleData = att.role && !sansLoup ? donneesObjet(cache.get(att.role)) : roleParDefaut();
       const metierData = att.metier ? donneesObjet(cache.get(att.metier)) : null;
       const system = { joueur: compagnon ? "" : att.joueur, compagnon, vivant: true, revele: false, camp: roleData.system?.camp ?? "village",
         maison: att.maison, amoureux: "", silence: false, protections: 0 };
@@ -486,6 +551,7 @@ export const api = {
       e.batiments = [...batiments];
       e.batimentsCles = batimentsCles;
       e.primes = L.designerPrimes(enJeu);
+      if (peste) e.peste = L.pesteInitiale();
       return L.journaliser(e, t("LAKOUR_LOUPS.Journal.Distribution", { n: sortie.length }));
     });
     for (const s of sortie) await envoyerRole(game.actors.get(s.acteurId));
@@ -517,11 +583,14 @@ export const api = {
   // la composition prête nommée, sinon une composition équilibrée générée (niveau, historique pour varier), et à
   // défaut d'équilibre, les rôles de la partie précédente rebattus.
   // -> { partie, joueurs: [{ userId, nom, acteurId }], compagnons: [{ nom, acteurId }],
-  //      composition: { cle, libelle, niveau, roles: [cle], batiments: [cle], somme?, verdict? } }
-  // Hook lakourLoups.nouvellePartie : chez le MJ ce résumé ; chez tous { partie, joueurs: n, compagnons: n, composition: { cle, libelle } }.
+  //      composition: { cle, libelle, niveau, roles: [cle], batiments: [cle], somme?, verdict?, peste } }
+  // Hook lakourLoups.nouvellePartie : chez le MJ ce résumé ; chez tous { partie, joueurs: n, compagnons: n } (jamais la
+  // composition : elle n'est pas annoncée aux joueurs).
   // joueurs : [userId] (au lieu des mêmes, ou des connectés) ; compagnons : [acteurId] des villageois compagnons à garder
   // (par défaut : tous ceux du village, mêmes noms).
-  async nouvellePartie({ memesJoueurs = true, joueurs = null, compagnons: ia = null, composition = "", roles = [], niveau = "", graine } = {}) {
+  // peste : true (le MJ la choisit : rôles de la meute retirés), false (jamais) ; non précisé, une composition générée devient
+  // une peste noire avec la chance CHANCE_PESTE (tirerPeste, reproductible avec la graine).
+  async nouvellePartie({ memesJoueurs = true, joueurs = null, compagnons: ia = null, composition = "", roles = [], niveau = "", graine, peste } = {}) {
     exigerMJ();
     const avant = lireEtat();
     const anciens = tousLesVillageois();
@@ -540,16 +609,19 @@ export const api = {
     const equilibreOk = Object.keys(contenu.equilibre.roles ?? {}).length > 0 && total >= 4;
     const genere = inclure => L.composer(total, contenu.equilibre, { niveau: niv, inclure, historique, graine });
     let compo;
+    // La peste noire : choisie (true), refusée (false), ou tirée au sort quand la composition se génère d'elle-même.
+    const genereeSeule = !roles.length && !(composition && contenu.compositions[composition]) && equilibreOk;
+    const enPeste = peste === true || (peste === undefined && genereeSeule && L.tirerPeste({ graine, chance: api.chancePeste() }));
     if (roles.length) {
       const cles = roles.map(r => cleDeRole(r, contenu));
       if (cles.some(c => !c)) throw new Error(t("LAKOUR_LOUPS.Erreurs.RolesInconnus", { roles: roles.filter((_, i) => !cles[i]).join(", ") }));
       const bat = equilibreOk ? genere(cles.filter(c => c !== "villageois" && c !== "loup-de-brumecombe")).batiments : avant.batimentsCles ?? [];
-      compo = { cle: "choisie", libelle: t("LAKOUR_LOUPS.NouvellePartie.Choisie"), niveau: niv, roles: cles, batiments: bat };
+      compo = { cle: "choisie", libelle: t("LAKOUR_LOUPS.NouvellePartie.Choisie"), niveau: niv, roles: enPeste ? L.sansMeute(cles, contenu.equilibre) : cles, batiments: bat };
     } else if (composition && contenu.compositions[composition]) {
       const c = contenu.compositions[composition];
-      compo = { cle: composition, libelle: c.libelle ?? composition, niveau: c.niveau ?? niv, roles: [...c.roles], batiments: [...(c.batiments ?? [])] };
+      compo = { cle: composition, libelle: c.libelle ?? composition, niveau: c.niveau ?? niv, roles: enPeste ? L.sansMeute(c.roles, contenu.equilibre) : [...c.roles], batiments: [...(c.batiments ?? [])] };
     } else if (equilibreOk) {
-      const g = genere([]);
+      const g = L.composer(total, contenu.equilibre, { niveau: niv, historique, graine, peste: enPeste });
       compo = { cle: "generee", libelle: t("LAKOUR_LOUPS.NouvellePartie.Generee", { verdict: g.verdict }), niveau: niv, roles: g.roles, batiments: g.batiments, somme: g.somme, verdict: g.verdict };
     } else {
       compo = { cle: avant.composition || "reprise", libelle: t("LAKOUR_LOUPS.NouvellePartie.Reprise"), niveau: niv, roles: precedents, batiments: avant.batimentsCles ?? [] };
@@ -557,6 +629,7 @@ export const api = {
     const cles = compo.roles.slice(0, total);
     while (cles.length < total) cles.push("villageois");
     compo.roles = cles;
+    if (enPeste) compo.libelle = `${compo.libelle} — ${t("LAKOUR_LOUPS.NouvellePartie.Peste")}`;
     const uuidsRoles = cles.map(c => contenu.roles.get(c));
     if (uuidsRoles.some(u => !u)) throw new Error(t("LAKOUR_LOUPS.Erreurs.RolesInconnus", { roles: cles.filter((_, i) => !uuidsRoles[i]).join(", ") }));
     const metiers = contenu.metiers.length ? Array.from({ length: total }, (_, i) => contenu.metiers[i % contenu.metiers.length]) : [];
@@ -566,7 +639,7 @@ export const api = {
     annulerDemandes();
     if (!memesJoueurs) for (const a of anciens.filter(x => x.system.joueur && !humains.includes(x.system.joueur))) await a.delete();
     const sortie = await api.distribuer({ roles: uuidsRoles, metiers, joueurs: humains, compagnons, maisons: L.maisonsDuVillage(total),
-      graine, composition: compo.cle, batiments });
+      graine, composition: compo.cle, batiments, peste: enPeste });
     try {
       await game.settings.set(ID, "historique", [...lireReglage("historique", []), { roles: [...cles], batiments: [...compo.batiments], niveau: compo.niveau, composition: compo.cle, quand: Date.now() }].slice(-10));
     } catch { /* réglage absent */ }
@@ -576,26 +649,47 @@ export const api = {
       joueurs: sortie.filter(x => !x.compagnon).map(x => ({ userId: x.userId, nom: game.users.get(x.userId)?.name ?? "", acteurId: x.acteurId })),
       compagnons: sortie.filter(x => x.compagnon).map(x => ({ nom: game.actors.get(x.acteurId)?.name ?? "", acteurId: x.acteurId })),
       composition: { cle: compo.cle, libelle: compo.libelle, niveau: compo.niveau, roles: [...cles], batiments: [...compo.batiments],
-        ...(compo.somme !== undefined ? { somme: compo.somme, verdict: compo.verdict } : {}) }
+        ...(compo.somme !== undefined ? { somme: compo.somme, verdict: compo.verdict } : {}), peste: enPeste }
     };
+    // Chez les joueurs : rien de la composition (ni rôles, ni libellé, ni peste).
     annoncer("lakourLoups.nouvellePartie", [foundry.utils.deepClone(resume)],
-      [{ partie, joueurs: resume.joueurs.length, compagnons: resume.compagnons.length, composition: { cle: compo.cle, libelle: compo.libelle } }]);
+      [{ partie, joueurs: resume.joueurs.length, compagnons: resume.compagnons.length }]);
     await annonceChat(echapper(t("LAKOUR_LOUPS.NouvellePartie.Annonce", { n: total })));
     return resume;
   },
 
-  // Le village vierge (lancement du monde) : aucune partie en cours, plus de rôles ni de métiers sur les villageois (ils
-  // restent, liés à leurs joueurs et aux compagnons, prêts pour la distribution), tous vivants et neutres, le chat vidé, les
-  // demandes de nuit closes, les secrets du MJ effacés. Les Chroniques, le palmarès et l'historique des compositions restent.
+  // Le village vierge (lancement du monde) : aucune partie en cours, plus de rôles ni de métiers sur les villageois des
+  // joueurs (ils restent, liés à leurs joueurs, prêts pour la distribution), tous vivants, le chat vidé, les demandes de nuit
+  // closes, les secrets du MJ effacés. Les compagnons IA quittent le village (leurs villageois et leurs jetons sont retirés,
+  // par le MJ IA s'il est là : api.compagnons.retirer). Chacun retrouve le jeton de base : l'image neutre (style plat ou
+  // relief, configurerPlateau), sur son prototype et sur ses jetons posés, sans crâne ni silence. Les Chroniques, le palmarès
+  // et l'historique des compositions restent.
   async remettreAZero() {
     exigerMJ();
     annulerDemandes();
+    const scenes = () => game.scenes?.contents ?? [...(game.scenes?.values?.() ?? [])];
+    const jetonsDe = (scene, acteurId) => (scene.tokens?.contents ?? [...(scene.tokens?.values?.() ?? [])]).filter(t => t.actorId === acteurId);
+    for (const a of tousLesVillageois().filter(estCompagnon)) {
+      for (const scene of scenes()) {
+        const ids = jetonsDe(scene, a.id).map(t => t.id);
+        if (ids.length) await scene.deleteEmbeddedDocuments("Token", ids);
+      }
+      if (typeof api.compagnons?.retirer === "function") { try { await api.compagnons.retirer(a.id); } catch { /* repli */ } }
+      if (game.actors.get(a.id)) await a.delete();
+    }
+    const neutre = imageNeutre();
     for (const a of tousLesVillageois()) {
       const objets = a.items.filter(i => i.type === "role" || i.type === "metier").map(i => i.id);
       if (objets.length) await a.deleteEmbeddedDocuments("Item", objets);
       await a.update({ "system.vivant": true, "system.revele": false, "system.camp": "village", "system.amoureux": "",
-        "system.silence": false, "system.protections": 0 });
-      try { if (a.statuses?.has("dead")) await a.toggleStatusEffect("dead", { active: false }); } catch { /* sans jeton */ }
+        "system.silence": false, "system.protections": 0, "prototypeToken.texture.src": neutre });
+      for (const statut of ["dead", "silence"]) {
+        try { if (a.statuses?.has(statut)) await a.toggleStatusEffect(statut, { active: false }); } catch { /* sans jeton */ }
+      }
+      for (const scene of scenes()) {
+        const majs = jetonsDe(scene, a.id).filter(t => t.texture?.src !== neutre).map(t => ({ _id: t.id, "texture.src": neutre }));
+        if (majs.length) await scene.updateEmbeddedDocuments("Token", majs, { lakourLoups: true });
+      }
     }
     if (game.messages?.size) await ChatMessage.implementation.deleteDocuments([], { deleteAll: true });
     const etat = await modifierEtat(() => L.etatInitial());
@@ -606,13 +700,16 @@ export const api = {
   // Réveille un rôle de la nuit (ou la meute) comme le ferait le narrateur : candidats du système (effets du jour compris),
   // demande secrète au joueur (ou au compagnon IA), mot du Messager, puis note l'action. Pour la Table de jeu du MJ humain.
   // -> { roleCle, acteurIds, cibles, texte }
-  async reveiller(roleCle, { delai } = {}) {
+  // La peste (roleCle "peste", peste noire) : son porteur choisit en secret (au délai, ou s'il passe : le hasard) ; sans
+  // porteur, cible (acteurId, le choix du narrateur) ou, à défaut, le hasard. -> { …, hasard: Boolean }
+  async reveiller(roleCle, { delai, cible = "" } = {}) {
     exigerMJ();
     const etat = lireEtat();
     const tour = Math.max(1, etat.tour);
-    const entree = L.ordreDeNuit(villageoisAPlat(), tour).find(e => e.roleCle === roleCle);
+    const entree = L.ordreDeNuit(villageoisAPlat(), tour, { peste: etat.peste }).find(e => e.roleCle === roleCle);
     if (!entree) throw new Error(t("LAKOUR_LOUPS.Erreurs.PersonneAReveiller", { role: String(roleCle) }));
     const ms = Number(delai) > 0 ? Number(delai) : reglage("delaiChoix") * 1000;
+    if (roleCle === CLE_PESTE) return reveillerLaPeste(entree, { delai: ms, cible });
     const acteurs = entree.acteurIds.map(id => game.actors.get(id));
     const roles = acteurs.map(a => roleDe(a));
     const meute = roleCle === CLE_MEUTE;
@@ -621,7 +718,7 @@ export const api = {
     const base = api.candidatsDeNuit({ acteurId: entree.acteurIds[0], roleCle });
     // Les proies de la meute cette nuit (pour la Louve mère et l'Herboriste).
     const rolesParCle = new Map(villageoisAPlat().filter(v => v.role).map(v => [v.role.cle, v.role]));
-    const proies = etat.nuit.actions.filter(a => a.roleCle === CLE_MEUTE
+    const proies = etat.nuit.actions.filter(a => a.roleCle === CLE_MEUTE || a.roleCle === CLE_PESTE
       || (rolesParCle.get(a.roleCle)?.camp === "meute" && rolesParCle.get(a.roleCle)?.effet === "tuer")).flatMap(a => a.cibles);
     let candidats = base;
     let invite = role?.system.nuit.invite || (meute ? "" : t("LAKOUR_LOUPS.Choix.InviteParDefaut"));
@@ -685,7 +782,8 @@ export const api = {
   },
 
   ordreDeNuit() {
-    return L.ordreDeNuit(villageoisAPlat(), Math.max(1, lireEtat().tour));
+    const etat = lireEtat();
+    return L.ordreDeNuit(villageoisAPlat(), Math.max(1, etat.tour), { peste: etat.peste });
   },
 
   // Qui ce rôle (ou la meute) peut désigner cette nuit, compte tenu des effets du jour (Passeur, Grange, Garde du guet,
@@ -825,14 +923,20 @@ export const api = {
     if (envoyer) for (const m of messages) await envoyerSecret(m.acteurId, { texte: m.texte });
 
     const noms = r.morts.map(id => game.actors.get(id)?.name ?? id).join(", ");
+    // Peste noire : la dernière victime morte de la peste devient le porteur ; elle l'apprend dans son carnet secret.
+    const porteur = r.deces.filter(d => d.cause === "peste").at(-1)?.acteurId ?? "";
+    if (porteur) narration.push(t("LAKOUR_LOUPS.Peste.Porteur", { nom: game.actors.get(porteur)?.name ?? porteur }));
     await modifierEtat(e => {
-      let x = L.cloreNuit(e, { asperges: r.asperges, fioles: r.fioles, bilan: r.bilan, pontFranchi: r.pontFranchi && cles.includes("pont") });
+      let x = L.suivrePeste(L.cloreNuit(e, { asperges: r.asperges, fioles: r.fioles, bilan: r.bilan, pontFranchi: r.pontFranchi && cles.includes("pont") }), r.deces);
       if (r.voteDouble) x.voteDoubleDemain = true;
       x.cimetiere = [...new Set([...x.cimetiere, ...aube.cimetiere])];
       for (const texte of narration) x = L.journaliserSecret(x, texte);
       for (const texte of annonces) x = L.journaliser(x, texte);
       return L.journaliser(x, noms ? t("LAKOUR_LOUPS.Journal.Aube", { tour: x.tour, noms }) : t("LAKOUR_LOUPS.Journal.AubeCalme", { tour: x.tour }));
     });
+    if (porteur && (game.actors.get(porteur)?.system.joueur || estCompagnon(game.actors.get(porteur)))) {
+      await envoyerSecret(porteur, { texte: t("LAKOUR_LOUPS.Peste.CarnetPorteur") });
+    }
     annoncer("lakourLoups.aube", [{ tour, morts: r.morts, annonces }]);
     return {
       morts: r.morts, revelations: r.revelations,
@@ -969,15 +1073,17 @@ export const api = {
   async verifierVictoire() {
     exigerMJ();
     const e = lireEtat();
-    const g = L.verifierVictoire({ villageois: villageoisAPlat(), morts: e.morts, primes: e.primes });
+    const g = L.verifierVictoire({ villageois: villageoisAPlat(), morts: e.morts, primes: e.primes, peste: e.peste });
     if (g && e.vainqueur !== g) {
-      const etat = await modifierEtat(x => L.journaliser(L.declarerVainqueur(x, g), libelleVainqueur(g)));
+      const libelle = libelleVainqueur(g, e);
+      const etat = await modifierEtat(x => L.journaliser(L.declarerVainqueur(x, g), libelle));
+      // La partie est finie : l'état public dévoile maintenant la peste noire, s'il y en avait une.
       annoncer("lakourLoups.victoire", [g, etat], [g, L.etatPublic(etat)]);
-      await annonceChat(`<strong>${echapper(libelleVainqueur(g))}</strong>`);
+      await annonceChat(`<strong>${echapper(libelle)}</strong>`);
       // La partie est finie : le récit retourne toutes les cartes (le plateau montre déjà chaque rôle sur son jeton), et
       // la veillée entre dans les Chroniques de Brumecombe (un échec n'empêche pas le récit).
       const lignes = lignesDeFin(etat);
-      const chroniques = await consignerVeillee({ quand: Date.now(), tours: etat.tour, vainqueur: libelleVainqueur(g), lignes })
+      const chroniques = await consignerVeillee({ quand: Date.now(), tours: etat.tour, vainqueur: libelle, lignes, ...(L.estPeste(etat) ? { peste: true } : {}) })
         .catch(e => { console.warn(`${ID} | chroniques`, e); return null; });
       await annonceChat(recitDeFin(etat, lignes, chroniques));
     }
@@ -1043,6 +1149,44 @@ export const api = {
     return { pouvoir, annonces };
   },
 
+  // ---------------------------------------------------------------- peste noire : le cri
+  // « C'est la peste noire ! » (un villageois vivant, pendant le jour ; le joueur depuis son bandeau ou sa Table, le narrateur
+  // pour celui qui le dit à voix haute). Juste : la partie s'arrête, le village gagne. Faux : le crieur est pendu pour avoir
+  // semé la panique (cause publique « panique »). Erreur claire si le cri n'est pas permis. -> { juste, annonces, vainqueur }
+  async crierPeste(acteurId) {
+    exigerMJ();
+    const acteur = acteurOuErreur(acteurId);
+    const villageois = villageoisAPlat();
+    const essai = L.verifierCri({ villageois, etat: lireEtat(), acteurId });
+    if (!essai.ok) throw new Error(t(`LAKOUR_LOUPS.Peste.Refus.${essai.raison}`));
+    let annonces = [];
+    const r = await modifierEtat(e => {
+      const x = L.crierPeste({ villageois, etat: e, acteurId });
+      if (!x.ok) throw new Error(t(`LAKOUR_LOUPS.Peste.Refus.${x.raison}`));
+      annonces = x.annonces.map(texteMessage);
+      let etat = L.journaliserSecret(x.etat, t("LAKOUR_LOUPS.Peste.Journal", { nom: acteur.name }));
+      for (const a of annonces) etat = L.journaliser(etat, a);
+      return { ...x, etat };
+    });
+    for (const a of annonces) await annonceChat(echapper(a));
+    // Après le verdict seulement (public : le crieur meurt, ou la partie s'achève).
+    annoncer("lakourLoups.cri", [{ acteurId, juste: r.juste }]);
+    if (r.mort) await api.eliminer(r.mort, { cause: "panique" });
+    const vainqueur = await api.verifierVictoire();
+    return { juste: r.juste, annonces, vainqueur };
+  },
+
+  // La chance qu'une partie composée d'elle-même soit une peste noire (réglage caché « chancePeste », CHANCE_PESTE par défaut).
+  chancePeste() {
+    const c = Number(lireReglage("chancePeste", L.CHANCE_PESTE));
+    return Number.isFinite(c) ? Math.min(1, Math.max(0, c)) : L.CHANCE_PESTE;
+  },
+
+  // Le cri est-il permis maintenant ? (tous les navigateurs, d'après l'état public) -> { ok, raison, raisonTexte }
+  peutCrier(acteurId) {
+    return peutCrier(acteurId);
+  },
+
   // ---------------------------------------------------------------- carnet secret
   // Remet un message secret au joueur de cet acteur (et à lui seul) ; le MJ en garde la trace (chronique secrète).
   envoyerSecret(acteurId, texte) {
@@ -1081,3 +1225,30 @@ export const api = {
     return envoyerRole(acteurOuErreur(acteurId));
   }
 };
+
+// L'étape « la peste » (reveiller("peste")) : le porteur choisit en secret (sans réponse : le hasard) ; sans porteur, le choix
+// du narrateur (cible) ou le hasard. La victime est notée comme une action de nuit (roleCle "peste").
+async function reveillerLaPeste(entree, { delai, cible = "" }) {
+  const candidats = api.candidatsDeNuit({ roleCle: CLE_PESTE });
+  const porteur = entree.acteurIds[0] ?? "";
+  reveilsEnCours.add(CLE_PESTE);
+  Hooks.callAll("lakourLoups.reveil", { roleCle: CLE_PESTE, enCours: true });
+  let cibles = [], hasard = false;
+  try {
+    if (candidats.length) {
+      if (porteur) cibles = await demanderAuPorteur({ acteurId: porteur, invite: t("LAKOUR_LOUPS.Peste.InvitePorteur"), candidats, delai });
+      else if (candidats.includes(cible)) cibles = [cible];
+      if (!cibles.length) {
+        cibles = [L.choisir(candidats)];
+        hasard = true;
+      }
+      const nom = game.actors.get(cibles[0])?.name ?? cibles[0];
+      await noterPourMJ(t(hasard ? "LAKOUR_LOUPS.Peste.Hasard" : "LAKOUR_LOUPS.Peste.Choisie", { nom }));
+    }
+    await api.noterAction({ acteurId: porteur, roleCle: CLE_PESTE, cibles });
+  } finally {
+    reveilsEnCours.delete(CLE_PESTE);
+    Hooks.callAll("lakourLoups.reveil", { roleCle: CLE_PESTE, enCours: false });
+  }
+  return { roleCle: CLE_PESTE, acteurIds: [...entree.acteurIds], cibles, texte: "", hasard };
+}

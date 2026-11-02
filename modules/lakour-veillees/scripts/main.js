@@ -7,7 +7,7 @@ const ID = "lakour-veillees";
 const SYSTEME = "lakour-loups";
 // 0.3.0 : plan du village avec son plateau (seuils, cercle, cimetière) ; 0.5.0 (aligné sur module.json) : carte épinglée
 // (une épingle par bâtiment vers sa page du guide du joueur, sons), journaux gardant leur identifiant et leur visibilité.
-const VERSION_CONTENU = "0.6.0";
+const VERSION_CONTENU = "0.7.0";
 
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 

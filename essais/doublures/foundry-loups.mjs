@@ -371,7 +371,7 @@ export function creerObjetMonde(name, type, system) {
 // Chaque joueur est un navigateur branché sur le socket « system.lakour-loups ». Comme le vrai serveur, la doublure ne
 // lui livre que ce qui lui est adressé (recipients) ; il répond au MJ actif avec l'identifiant que le serveur ajoute
 // (emetteur). Il reçoit ses demandes de nuit (choix, ou mot à écrire pour le Messager), son carnet secret, l'annonce du
-// vote (hook lakourLoups.phase), l'aube (lakourLoups.aube : il use alors de ses pouvoirs de jour), la clôture du vote
+// vote (hooks lakourLoups.phase et lakourLoups.voteOuvert), l'aube (lakourLoups.aube : il use alors de ses pouvoirs de jour), la clôture du vote
 // (lakourLoups.voteClos : un Juge de paix peut l'annuler) et les morts (lakourLoups.elimination : un mort parle au Puits).
 // Choix aléatoires mais reproductibles (graine). Il ne lit que ce que son joueur sait : l'état PUBLIC (réglage monde),
 // son rôle, sa meute s'il est loup, les rôles révélés, son carnet.
@@ -512,6 +512,8 @@ export function simulerJoueurs({ graine = "joueurs", canal = "system.lakour-loup
     } else if (m.type === "secret") {
       for (const u of recipients ?? []) journal.secrets.push({ userId: u, texte: m.entree?.texte ?? m.entree?.html ?? "", entree: m.entree });
     } else if (m.type === "hook" && m.nom === "lakourLoups.phase" && m.args?.[0] === "vote") voter(m.args[1]);
+    // L'élection du Bailli s'ouvre sans changer de phase : on vote à l'annonce du vote ouvert (une fois par vote).
+    else if (m.type === "hook" && m.nom === "lakourLoups.voteOuvert") voter(etatPublic());
     else if (m.type === "hook" && m.nom === "lakourLoups.aube") usePouvoirs(etatPublic());
     else if (m.type === "hook" && m.nom === "lakourLoups.voteClos") {
       const r = m.args?.[0];

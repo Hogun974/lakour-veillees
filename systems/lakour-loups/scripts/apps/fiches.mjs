@@ -81,6 +81,7 @@ export class FicheVillageois extends HandlebarsApplicationMixin(ActorSheetV2) {
       s.vivant ? insigne("vivant", "fa-heart-pulse", t("LAKOUR_LOUPS.Fiche.Vivant")) : insigne("mort", "fa-cross", t("LAKOUR_LOUPS.Table.Mort")),
       s.revele && insigne("revele", "fa-eye", t("LAKOUR_LOUPS.Fiche.Revele")),
       s.silence && insigne("silence", "fa-comment-slash", t("LAKOUR_LOUPS.Table.Silence")),
+      s.vivant && etat.bailli?.actif && etat.bailli.acteurId === a.id && insigne("bailli", "fa-stamp", t("LAKOUR_LOUPS.Bailli.Titre"), t("LAKOUR_LOUPS.Bailli.Aide")),
       gm && s.protections > 0 && insigne("protege", "fa-shield-halved", t("LAKOUR_LOUPS.Fiche.Protege", { n: s.protections }), t("LAKOUR_LOUPS.Fiche.Protections")),
       amoureuxNom && insigne("amoureux", "fa-heart", amoureuxNom, t("LAKOUR_LOUPS.Fiche.Amoureux"))
     ].filter(Boolean);

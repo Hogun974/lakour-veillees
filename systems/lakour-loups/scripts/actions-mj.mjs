@@ -1,6 +1,6 @@
 // Les actions du MJ HUMAIN, telles que les font les boutons de la Table de jeu, sans narrateur IA : préparer et
-// distribuer, mener la nuit rôle par rôle, résoudre l'aube, ouvrir le débat et le vote, exécuter, emporter, vérifier la
-// victoire, rejouer. La mise en scène (jetons, lumière, statuts, ambiances) suit d'elle-même chaque changement : elle est
+// distribuer, mener la nuit rôle par rôle, résoudre l'aube, ouvrir le débat, élire le Bailli, ouvrir le vote, exécuter, emporter,
+// vérifier la victoire, rejouer. La mise en scène (jetons, lumière, statuts, ambiances) suit d'elle-même chaque changement : elle est
 // branchée sur les hooks du système, pas sur le MJ IA. Ici, pas de boîte de dialogue : la Table les pose avant d'appeler.
 import { t, tousLesVillageois, lireEtat } from "./donnees.mjs";
 
@@ -127,6 +127,7 @@ export async function faireEtape(etape, { cible = "", delai } = {}) {
     case "emporter": return cible ? emporter(cible) : null;
     case "victoire": return api().verifierVictoire();
     case "voteChapelle": return api().ouvrirVote({ objet: "chapelle" });
+    case "voteBailli": return api().ouvrirVote({ objet: "bailli" });
     case "rejouer": return api().nouvellePartie({ memesJoueurs: true });
     default: return null;
   }

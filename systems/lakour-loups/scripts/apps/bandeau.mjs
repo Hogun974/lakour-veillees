@@ -6,6 +6,7 @@
 // vient que de ce navigateur : rien n'en sort, sinon le choix validé, au seul MJ actif.
 // Le jour, un vivant y trouve aussi « C'est la peste noire ! » (le cri de la variante Peste noire, logique/peste.mjs) : il
 // n'apprend rien avant de crier (le bouton est là dans toutes les parties), seul le MJ actif tranche.
+// Le Bailli (public) y paraît : « Bailli : X » (« Tu es le Bailli : ta voix compte double » pour lui) ; le MJ y ouvre son élection.
 // Avec la voix intégrée de Foundry (A/V) et les salons vocaux, il montre aussi le salon du joueur (« 🔇 La nuit, silence »,
 // « 🐺 Tanière : tu parles aux loups », « 👻 Tu parles aux morts », « 🔇 Réduit au silence ») : sa ligne, reçue du MJ actif.
 import { ID } from "../../logique/constantes.mjs";
@@ -21,6 +22,11 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 const nomDe = id => game.actors.get(id)?.name ?? "";
 const ICONES = { preparation: "fa-scroll", nuit: "fa-moon", aube: "fa-cloud-sun", jour: "fa-sun", vote: "fa-scale-balanced", fin: "fa-crown" };
 const ICONES_POUVOIR = { role: "fa-mask", metier: "fa-hammer", batiment: "fa-landmark" };
+
+// L'élection du Bailli est-elle due (le MJ l'ouvre avant le vote d'exécution) ?
+function electionDue() {
+  try { return Boolean(game.lakourLoups.bailli().election.ok); } catch { return false; }
+}
 
 // Mes pouvoirs de jour : rôle et métier toujours montrés (grisés, avec la raison, quand ce n'est pas le moment ou qu'ils
 // ont servi) ; les autres (bâtiments, Puits) seulement quand ils peuvent servir.
@@ -49,8 +55,14 @@ export function contexteBandeau() {
     gm, phase: etat.phase, phaseLibelle: libellePhase(etat.phase), icone: ICONES[etat.phase] ?? "fa-moon", tour: etat.tour,
     finit: 0, monRole: Boolean(moi), statut: null, consigne: "", detail: "", boutons: [], pouvoirs: [], annonce: local.annonceEnCours(),
     vainqueur: etat.phase === "fin" ? libelleVainqueur(etat.vainqueur, etat) : "",
-    salon: salonAffiche()
+    salon: salonAffiche(), bailli: null
   };
+  // Le Bailli en charge (public).
+  const bailliId = etat.bailli?.actif && etat.phase !== "fin" ? etat.bailli.acteurId : "";
+  if (bailliId && game.actors.get(bailliId)?.system.vivant) {
+    ctx.bailli = moi?.id === bailliId ? { moi: true, texte: t("LAKOUR_LOUPS.Bailli.TuEs"), aide: t("LAKOUR_LOUPS.Bailli.Aide") }
+      : { moi: false, texte: t("LAKOUR_LOUPS.Bailli.Bandeau", { nom: nomDe(bailliId) }), aide: t("LAKOUR_LOUPS.Bailli.Aide") };
+  }
   // Chaque bouton a son infobulle (LAKOUR_LOUPS.Bandeau.Aide.<action>) : ce qu'il fait.
   const bouton = (action, libelle, icone, { principal = false, data = {} } = {}) => ctx.boutons.push({ action, libelle, icone, principal,
     aide: t(`LAKOUR_LOUPS.Bandeau.Aide.${action}`), data: Object.entries(data).map(([k, val]) => ({ k, val })) });
@@ -80,7 +92,7 @@ export function contexteBandeau() {
   } else if (v.ouvert) {
     ctx.finit = v.finit ?? 0;
     const monChoix = !moi ? "" : gm ? v.votes?.[moi.id] ?? "" : monVote(v.numero);
-    ctx.consigne = t(v.objet === "chapelle" ? "LAKOUR_LOUPS.Bandeau.VoteChapelle" : "LAKOUR_LOUPS.Bandeau.Vote");
+    ctx.consigne = t({ chapelle: "LAKOUR_LOUPS.Bandeau.VoteChapelle", bailli: "LAKOUR_LOUPS.Bandeau.VoteBailli" }[v.objet] ?? "LAKOUR_LOUPS.Bandeau.Vote");
     ctx.detail = `${v.exprimes.length} / ${game.actors.filter(a => a.type === "villageois" && a.system.vivant).length} ${t("LAKOUR_LOUPS.Vote.OntVote")}`;
     if (l.mode === "vote") {
       ctx.detail += ` · ${t("LAKOUR_LOUPS.Vote.VotreVoix")} ${monChoix ? nomDe(monChoix) : t("LAKOUR_LOUPS.Vote.Personne")}`;
@@ -114,7 +126,12 @@ export function contexteBandeau() {
   }
   // Le MJ ouvre et clôt le vote depuis le bandeau, sans passer par la Table.
   if (gm && v.ouvert) bouton("bandeauCloreVote", t("LAKOUR_LOUPS.Table.CloreVote"), "fa-gavel", { principal: true });
-  else if (gm && etat.partie && etat.phase === "jour") bouton("bandeauOuvrirVote", t("LAKOUR_LOUPS.Table.OuvrirVote"), "fa-scale-balanced", { principal: true });
+  else if (gm && etat.partie && etat.phase === "jour") {
+    // Un jour sans Bailli : son élection d'abord (bouton principal) ; le vote d'exécution reste à portée.
+    const election = electionDue();
+    if (election) bouton("bandeauVoteBailli", t("LAKOUR_LOUPS.Table.VoteBailli"), "fa-stamp", { principal: true });
+    bouton("bandeauOuvrirVote", t("LAKOUR_LOUPS.Table.OuvrirVote"), "fa-scale-balanced", { principal: !election });
+  }
   if (gm && ctx.boutons.length && !l.mode) ctx.pret = true;
   return ctx;
 }
@@ -140,6 +157,9 @@ export class BandeauAction extends HandlebarsApplicationMixin(ApplicationV2) {
         try { await game.lakourLoups.ouvrirVote({}); } catch (e) { ui.notifications.error(e.message); }
       },
       bandeauCloreVote: () => cloreLeVote(),
+      bandeauVoteBailli: async () => {
+        try { await game.lakourLoups.ouvrirVote({ objet: "bailli" }); } catch (e) { ui.notifications.error(e.message); }
+      },
       bandeauPeste: () => crierALaPeste(monVillageois()?.id)
     }
   };

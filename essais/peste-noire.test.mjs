@@ -68,6 +68,8 @@ const VERIFICATIONS = {
     for (let i = 0; i < 6000; i++) if (L.tirerPeste({ graine: `veillee-${i}` })) n++;
     assert.ok(n / 6000 > 1 / 45 && n / 6000 < 1 / 20, `fréquence ${n}/6000`);
     for (const g of ["a", "b", "veillee-7", 42]) assert.equal(L.tirerPeste({ graine: g }), L.tirerPeste({ graine: g }), "même graine, même tirage");
+    // À une chance sur deux, un tirage au hasard se trahirait presque à coup sûr sur quarante graines.
+    for (let i = 0; i < 40; i++) assert.equal(L.tirerPeste({ graine: `r${i}`, chance: 0.5 }), L.tirerPeste({ graine: `r${i}`, chance: 0.5 }), "même graine, même tirage");
     // Une graine qui tombe sur la peste, et une qui n'y tombe pas : toujours les mêmes.
     const oui = Array.from({ length: 200 }, (_, i) => `g${i}`).find(g => L.tirerPeste({ graine: g }));
     assert.ok(oui && L.tirerPeste({ graine: oui }));

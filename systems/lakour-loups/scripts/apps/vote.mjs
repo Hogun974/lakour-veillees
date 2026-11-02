@@ -1,5 +1,5 @@
 // Fenêtre de vote : s'ouvre chez chaque joueur vivant quand le vote est ouvert, se ferme à la clôture.
-// On peut changer d'avis tant que le vote est ouvert ; les voix restent secrètes jusqu'à la clôture : l'état public ne dit que
+// Objet : l'exécution, l'asile de la Chapelle ou l'élection du Bailli. On peut changer d'avis tant que le vote est ouvert ; les voix restent secrètes jusqu'à la clôture : l'état public ne dit que
 // QUI a voté (vote.exprimes) ; son propre choix, le joueur le tient de lui-même et de l'accusé du MJ (prive.mjs).
 import { ID } from "../../logique/constantes.mjs";
 import { lireEtat, monVillageois, metierDe, t } from "../donnees.mjs";
@@ -27,7 +27,9 @@ export class FenetreVote extends HandlebarsApplicationMixin(ApplicationV2) {
     const monChoix = !moi ? "" : game.user.isGM ? v.votes[moi.id] ?? "" : monVote(v.numero);
     const vivants = game.actors.filter(a => a.type === "villageois" && a.system.vivant);
     return {
-      ouvert: v.ouvert, double: v.double, majoriteAbsolue: v.majoriteAbsolue, chapelle: v.objet === "chapelle",
+      ouvert: v.ouvert, double: v.double, majoriteAbsolue: v.majoriteAbsolue, chapelle: v.objet === "chapelle", bailli: v.objet === "bailli",
+      // Le Bailli vote : sa voix compte double au vote d'exécution (public).
+      voixDouble: v.objet === "execution" && Boolean(moi) && etat.bailli?.actif && etat.bailli.acteurId === moi.id,
       peutVoter: Boolean(moi?.system.vivant && v.ouvert),
       moi: moi?.name ?? "",
       aVote: Boolean(monChoix),

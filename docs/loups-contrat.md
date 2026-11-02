@@ -7,7 +7,7 @@ Foundry v14 (14.369). Tout en français, textes originaux (aucun texte, aucune c
 
 ## 1. Système `lakour-loups`
 
-`systems/lakour-loups/system.json` : `id: "lakour-loups"`, `version: "0.4.0"`, `compatibility { minimum: "14", verified: "14.369" }`,
+`systems/lakour-loups/system.json` : `id: "lakour-loups"`, `version: "0.6.0"`, `compatibility { minimum: "14", verified: "14.369" }`,
 `socket: true`, `esmodules: ["lakour-loups.mjs"]`, langues fr et en, `documentTypes` ci-dessous,
 `grid { type: 1, distance: 1.5, units: "m" }`, `primaryTokenAttribute: null`.
 
@@ -78,7 +78,7 @@ n'existe que chez le MJ actif ; il se range en deux morceaux (`logique/etat.mjs`
                                    //   absente de l'état public (pas même la clé) jusqu'à la phase "fin", où la partie se dévoile
   batiments: [String],             // uuid des bâtiments en jeu
   batimentsCles: [String],         // leurs clés (« chapelle », « pont »…)
-  vote: { ouvert, numero, objet: "execution" | "chapelle", candidats: [acteurId],
+  vote: { ouvert, numero, objet: "execution" | "chapelle" | "bailli", candidats: [acteurId],
           votes: { acteurIdVotant: acteurIdCible },   // SECRET jusqu'à la clôture
           exprimes: [acteurId],                        // public : QUI a voté, pas pour qui
           double, finit (horodatage ms, 0 = sans minuteur), duree, majoriteAbsolue,
@@ -93,7 +93,10 @@ n'existe que chez le MJ actif ; il se range en deux morceaux (`logique/etat.mjs`
   journalSecret: [ { tour, phase, texte } ],     // SECRET : chronique du MJ (actions de nuit, messages secrets envoyés)
   carnets: { acteurId: [ { id, texte | html, titre, tour, phase, quand } ] },   // SECRET : carnet secret de chaque joueur
   jour: { effets: [ { type, acteurId, cible, nuit } ], benis: [acteurId], rubans: [acteurId], puits, conteuse, appel },   // public
-  pont: { bloqueNuit: Number }, cimetiere: [acteurId]   // public
+  pont: { bloqueNuit: Number }, cimetiere: [acteurId],  // public
+  bailli: { actif, acteurId, depuis, succession: null | { de, tour }, election },   // public (0.6.0, §1 « Bailli, Registre, Masques »)
+  registre: [ { type, tour, phase, quand, … } ],        // public : le Registre du greffier
+  masques: [cle de rôle]                                 // SECRET : les Masques de veillée de la meute
 }
 ```
 `etat()` rend l'état complet chez le MJ actif, l'état public partout ailleurs.
@@ -220,6 +223,57 @@ ligne pour lui-même ; pour un autre, aucun camp connu, sauf la meute pour un lo
 Hook `lakourLoups.audibilite` (`{ phase }`, rien d'autre) à chaque changement de la matrice : chez tous pour ce qui est public
 (phase, aube, victoire, mort, silence, distribution, nouvelle partie, réglage), chez le MJ actif seul pour ce qui ne l'est pas
 (un villageois mordu qui rejoint la meute). Chez le joueur : `lakourLoups.salon` (local) quand sa ligne change.
+
+Ajouts 0.6.0 — le Bailli, le Registre du greffier, les Masques de veillée (§1 « Bailli, Registre, Masques ») :
+```
+ouvrirVote({ objet: "bailli" })   -> l'élection du Bailli, au débat SANS changer de phase (tous les vivants candidats, ni Gibet, ni cloche,
+                                    ni ruban) ; erreur claire si elle n'est pas due (Bailli hors jeu, Bailli vivant, succession en cours,
+                                    vote ouvert, déjà une élection ce jour, vote d'exécution déjà fait, fin)
+ouvrirVote(…), changerPhase(…)    -> erreur claire (Bailli.Refus.departage) tant qu'une égalité attend le départage du Bailli
+cloreVote()                       -> + poids ({ bailli: 2 } à un vote d'exécution), departage: null | { par, candidats, places, choix } ;
+                                    vote "bailli" -> + bailli: acteurId | "", sort: Boolean (égalité : le sort)
+bailli()                          -> { actif, acteurId, nom, depuis, succession: null | { de, nom, tour }, election: { ok, raison },
+                                       possible: { ok, raison, raisonTexte } }   (tous, d'après l'état public)
+nommerBailli(acteurId)            -> le narrateur remet le sceau à un vivant (correction, ou choix dicté à voix haute) ; ferme la demande
+                                    posthume encore ouverte
+trancher([acteurId])              -> le narrateur tranche à la place du Bailli ([] : personne) ; ferme sa demande ; -> le résultat final ;
+                                    erreur claire sans égalité en attente
+reprendre()                       -> au « ready » du MJ actif (lakour-loups.mjs) : relance le départage en attente et la succession (le reste
+                                    du délai des choix compté depuis sa mort, sinon vacance) -> { departage, succession }
+registre({ max, depuis })         -> [{ type: "vote" | "mort" | "bailli" | "declaration", tour, phase, quand, …, ligne }] (tous)
+registreTexte({ max = 30, depuis }) -> [ligne] : le Registre lisible, pour le contexte du narrateur et des compagnons IA
+declarer(acteurId, texte)         -> inscrit la déclaration d'un vivant (MJ actif) ; peutDeclarer(acteurId) -> { ok, raison, raisonTexte }
+masques()                         -> [{ cle, nom }] : les Masques de veillée de la meute (MJ actif seulement ; SECRET)
+```
+Socket : joueur -> MJ actif `{ type: "declaration", acteurId, texte }` (pour son propre villageois). Hooks publics :
+`lakourLoups.voteOuvert` (`{ objet, numero }`, à chaque vote ouvert ou rouvert ; l'élection du Bailli n'émet pas `lakourLoups.phase`),
+`lakourLoups.bailli` (`{ acteurId, comment: "election" | "sort" | "succession" | "nomme" | "vacance", de? }`), `lakourLoups.registre`
+(l'entrée inscrite). Demandes `type: "demande"` nouvelles, au seul Bailli (compagnon : `api.resolveurs.compagnon`) : `objet: "departage"`
+(`nombre` = places libres, candidats = ex aequo, il peut se désigner) et `objet: "succession"` (`posthume: true`, candidats = les vivants).
+Réglages monde : `bailli` et `masques` (vrais par défaut).
+
+### Bailli, Registre, Masques (logique/bailli.mjs, logique/registre.mjs, logique/masques.mjs)
+
+**Le Bailli** (public, `etat.bailli = { actif, acteurId, depuis, succession, election }`, `actif` pris du réglage à la distribution, peste
+noire comprise : son absence la trahirait). Un jour sans Bailli vivant, l'élection (`objet: "bailli"`) précède le vote d'exécution (étape
+`bailli` du MJ humain, bouton « Élire le Bailli » de la Table et du bandeau) ; une seule par jour ; égalité : le sort ; aucune voix : vacance.
+Sa voix pèse 2 au dépouillement d'un vote d'exécution (et dans le total du Gibet). Une égalité qui laisse une place vide est tranchée par lui :
+`resultat.departage.enAttente`, demande `departage`, `trancherVote` ; la clôture attend (délai des choix) ; s'il passe, personne ; avec le
+Gibet, seulement parmi ceux qui ont la majorité ; le Juge de paix attend le départage. À sa mort (`ajouterMort`), `succession = { de, tour, quand }`,
+puis, après toutes les morts de la nuit, demande `succession` posthume (le reste du délai des choix compté depuis `quand`) ; sans réponse :
+vacance, nouvelle élection au prochain jour. Étapes d'attente `departage` et `succession` ; tant que le départage attend, ni vote ni phase ;
+une page du MJ rechargée reprend les deux (`reprendre`) ; Table de jeu : « Trancher » (un bouton par ex aequo, ou « Personne ») et
+« Nommer le Bailli ». Un vote touché pendant le départage entre au Registre sans condamné ; la nuit tombée, aucun condamné.
+
+**Le Registre du greffier** (public, `etat.registre`, 300 entrées au plus) : chaque vote clos (`votes`, `decompte`, `elus`, `poids`,
+`departage`, `annule` si le Juge de paix l'a annulé), jamais un vote ouvert ou prolongé ; chaque mort avec sa cause PUBLIQUE (`causePublique`) ;
+le Bailli ; les déclarations (un vivant, phases `aube`/`jour`/`vote`, pas réduit au silence en `jour`/`vote`, trois par jour, une ligne de
+160 caractères sans balises ; le greffier ne vérifie rien). Table de jeu : section « Registre du greffier » et champ « Déclarer ».
+
+**Les Masques de veillée** (SECRET, `etat.masques` dans les secrets du MJ) : à la distribution d'une partie avec meute (jamais une peste
+noire ; réglage `masques`), 2 rôles (un loup seul) ou 3 (une meute) du camp du Village, ni distribués ni « villageois », remis au carnet
+secret de chaque loup (texte : nom et pouvoir) ; aussi à un villageois qui rejoint la meute (`changerCamp`, `echangerRoles`). Jamais dans
+l'état public, un hook ou un message adressé à un autre qu'un loup.
 
 ### Peste noire (logique/peste.mjs)
 

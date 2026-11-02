@@ -1,5 +1,5 @@
 // L'infobulle d'un jeton de villageois au survol (hook hoverToken, local) : nom, métier (public), état (vivant, mort,
-// réduit au silence, a voté) et rôle s'il est révélé. Le MJ voit aussi le rôle caché ; un joueur voit le sien.
+// réduit au silence, Bailli, a voté) et rôle s'il est révélé. Le MJ voit aussi le rôle caché ; un joueur voit le sien.
 import { ID } from "../logique/constantes.mjs";
 import { t, lireEtat, roleDe, metierDe, libelleCamp, libelleCause, monVillageois } from "./donnees.mjs";
 
@@ -19,6 +19,7 @@ export function contenuInfobulle(acteur) {
     etats.push({ cle: "mort", texte: mort ? `${t("LAKOUR_LOUPS.Table.Mort")} · ${libelleCause(mort.cause)}` : t("LAKOUR_LOUPS.Table.Mort") });
   } else etats.push({ cle: "vivant", texte: t("LAKOUR_LOUPS.Infobulle.Vivant") });
   if (acteur.system.vivant && acteur.system.silence) etats.push({ cle: "silence", texte: t("LAKOUR_LOUPS.Table.Silence") });
+  if (acteur.system.vivant && etat.bailli?.actif && etat.bailli.acteurId === acteur.id) etats.push({ cle: "bailli", texte: t("LAKOUR_LOUPS.Bailli.Titre") });
   if (etat.vote.ouvert && etat.vote.exprimes.includes(acteur.id)) etats.push({ cle: "vote", texte: t("LAKOUR_LOUPS.Vote.AVote") });
   let roleTexte = "", roleCache = false;
   if (role && (revele || soi || game.user.isGM)) {

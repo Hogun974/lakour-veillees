@@ -80,6 +80,19 @@ export function enregistrerReglages(quandEtatChange) {
   game.settings.register(ID, "chancePeste", { scope: "world", config: false, type: Number, default: CHANCE_PESTE });
   // Les veillées finies, racontées dans le journal des Chroniques (scripts/chroniques.mjs) : les 50 dernières.
   game.settings.register(ID, "chroniques", { scope: "world", config: false, type: Array, default: [] });
+  // Le Bailli (logique/bailli.mjs) : élu le premier jour, voix double, il tranche les égalités et désigne son successeur. Oui par
+  // défaut : une règle publique, sans secret, qui donne du poids au premier débat et règle les égalités sans revote ; sans
+  // narrateur qui l'organise (MJ IA), la charge reste simplement vacante. Lu à la distribution (etat.bailli.actif).
+  game.settings.register(ID, "bailli", {
+    name: "LAKOUR_LOUPS.Reglages.Bailli.Nom", hint: "LAKOUR_LOUPS.Reglages.Bailli.Aide",
+    scope: "world", config: true, type: Boolean, default: true
+  });
+  // Les Masques de veillée (logique/masques.mjs) : deux ou trois rôles du Village absents, remis en secret à la meute. Oui par
+  // défaut : la meute, qui doit mentir sans filet face aux rôles d'information, y gagne un alibi sûr ; rien n'en paraît au village.
+  game.settings.register(ID, "masques", {
+    name: "LAKOUR_LOUPS.Reglages.Masques.Nom", hint: "LAKOUR_LOUPS.Reglages.Masques.Aide",
+    scope: "world", config: true, type: Boolean, default: true
+  });
   game.settings.register(ID, "annoncesEnChat", {
     name: "LAKOUR_LOUPS.Reglages.AnnoncesEnChat.Nom", hint: "LAKOUR_LOUPS.Reglages.AnnoncesEnChat.Aide",
     scope: "world", config: true, type: Boolean, default: true

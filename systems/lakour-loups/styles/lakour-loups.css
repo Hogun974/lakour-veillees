@@ -755,3 +755,28 @@ body.theme-light .application.lakour-loups.loups-fiche:not(.theme-dark),
 .lakour-loups .loups-prep-nombre button { width: 22px; height: 22px; line-height: 1; padding: 0; }
 .lakour-loups .loups-prep-equilibre.verdict-equilibree { color: var(--loups-village); }
 .lakour-loups .loups-prep-equilibre.verdict-village, .lakour-loups .loups-prep-equilibre.verdict-meute { color: var(--loups-lanterne); }
+/* Le Bailli (public) : en tête de la Table, sur la carte, au bandeau, dans l'infobulle et sur la fiche. */
+.lakour-loups .loups-bailli-tete {
+  display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border-radius: 999px; font-size: 0.85em;
+  border: 1px solid var(--loups-lanterne); color: var(--loups-lanterne); background: rgba(0, 0, 0, 0.25); white-space: nowrap;
+}
+.lakour-loups .loups-bailli-tete.vacant { border-style: dashed; border-color: var(--loups-bord); color: var(--loups-terne); }
+.lakour-loups .loups-pastille.bailli { border-color: var(--loups-lanterne); color: var(--loups-lanterne); }
+.lakour-loups .loups-carte-etat .loups-sceau { color: var(--loups-lanterne); }
+.loups-bandeau-jeu .lb-bailli {
+  display: inline-flex; align-items: center; gap: 5px; padding: 1px 9px; border-radius: 999px; font-size: 12px; white-space: nowrap;
+  border: 1px solid var(--loups-bord); background: rgba(0, 0, 0, 0.3); color: var(--loups-terne);
+}
+.loups-bandeau-jeu .lb-bailli.moi { border-color: var(--loups-lanterne); color: var(--loups-lanterne); }
+.loups-infobulle .lib-etat.bailli { border-color: var(--loups-lanterne); color: var(--loups-lanterne); }
+.lakour-loups.loups-fiche .loups-insigne.bailli { border-color: var(--loups-lanterne); color: var(--loups-lanterne); }
+/* Le Registre du greffier : une ligne par vote, mort, Bailli ou déclaration, les plus récentes d'abord. */
+.lakour-loups .loups-registre .loups-journal { max-height: 18em; overflow-y: auto; }
+.lakour-loups .loups-registre li i { width: 1.1em; text-align: center; opacity: 0.75; }
+.lakour-loups .loups-registre li.registre-declaration { font-style: italic; }
+.lakour-loups .loups-registre li.registre-mort { color: #f0b3a8; }
+.lakour-loups .loups-registre li.annule { text-decoration: line-through; opacity: 0.7; }
+.lakour-loups .loups-declarer { display: flex; gap: 4px; margin-bottom: 0.4em; }
+.lakour-loups .loups-declarer input { flex: 1 1 auto; min-width: 0; }
+/* Un message secret sur plusieurs lignes (les Masques de veillée) : ses retours à la ligne sont gardés. */
+.lakour-loups .loups-carnet-texte p { white-space: pre-line; }

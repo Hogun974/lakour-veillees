@@ -121,6 +121,8 @@ Hooks.once("ready", () => {
     // vérifie que ce navigateur a bien ses secrets : sinon, on les reprend du coffre (parts de clé de deux joueurs).
     repartirAuLancement(api).then(async remis => {
       const pub = lirePublic();
+      // Ce qui attendait le Bailli (départage d'une égalité, succession) n'était qu'en mémoire : la page rechargée le reprend.
+      if (!remis) api.reprendre();
       if (remis || !secretsPerdus(pub)) return;
       if (!(await chercherSecrets(pub.partie, secretsRetrouves))) {
         ui.notifications.warn(t("LAKOUR_LOUPS.Table.SecretsPerdus"), { permanent: true });

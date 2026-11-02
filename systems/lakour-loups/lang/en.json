@@ -134,7 +134,10 @@
       "Reveiller": "Wake",
       "ReveillerTout": "Wake every role, in order",
       "Personne": "No one",
-      "CrierPour": "{nom} cries \"It's the black plague!\""
+      "CrierPour": "{nom} cries \"It's the black plague!\"",
+      "VoteBailli": "Elect the Bailiff",
+      "NommerBailli": "Name the Bailiff",
+      "TrancherPour": "Decide in place of the Bailiff ({nom}):"
     },
     "Choix": {
       "Titre": "In the night…",
@@ -146,7 +149,8 @@
       "InviteTexte": "Write your sentence.",
       "TexteAide": "One sentence, 200 characters at most.",
       "InviteVote": "Village vote: who should be executed?",
-      "InviteChapelle": "Chapel vote: who sleeps in shelter tonight?"
+      "InviteChapelle": "Chapel vote: who sleeps in shelter tonight?",
+      "InviteBailli": "Bailiff election: who will carry the village seal?"
     },
     "Vote": {
       "Titre": "The village vote",
@@ -168,7 +172,8 @@
       "Clos": "The vote is closed.",
       "TempsEcoule": "Too late: voting time is over.",
       "TempsEcouleCourt": "Time's up",
-      "QuestionChapelle": "Who will sleep in the shelter of the Chapel next night?"
+      "QuestionChapelle": "Who will sleep in the shelter of the Chapel next night?",
+      "QuestionBailli": "Whom does the village elect as Bailiff?"
     },
     "Fiche": {
       "Villageois": "Villager sheet",
@@ -306,7 +311,8 @@
       "VoteOuvert": "The vote is open.",
       "VoteClos": "The vote is closed: {noms} chosen.",
       "VoteNul": "The vote is closed: no one is chosen.",
-      "VoteChapelle": "The village chooses who will sleep in the Chapel."
+      "VoteChapelle": "The village chooses who will sleep in the Chapel.",
+      "VoteBailli": "The village elects its Bailiff."
     },
     "Reglages": {
       "RevelerALaMort": {
@@ -353,6 +359,14 @@
       "SignalTour": {
         "Nom": "Signal when it is my turn",
         "Aide": "A soft chime, for me only, when a night choice or a vote is waiting for me; if I am looking at another tab, its title blinks until I come back."
+      },
+      "Bailli": {
+        "Nom": "The Bailiff",
+        "Aide": "On the first day, the village elects a Bailiff: their vote counts double in the execution vote, they break ties and, upon death, name their successor. Applies from the next deal."
+      },
+      "Masques": {
+        "Nom": "Vigil masks",
+        "Aide": "When roles are dealt, the pack secretly receives two or three Village roles that are not in play, which it can safely claim. Never in a black plague game."
       }
     },
     "Erreurs": {
@@ -479,7 +493,8 @@
         "bandeauVoter": "Open the list of the accused to vote (you can also click a token). You may change your mind while the vote is open.",
         "bandeauOuvrirVote": "Start the village vote: every living player names who they accuse, within the time set in the settings; at zero, it closes by itself.",
         "bandeauCloreVote": "Stop the vote without waiting for the timer and count the votes; executing the chosen is asked next.",
-        "bandeauPeste": "Cry \"It's the black plague!\" to the village. If true, the game ends and the village wins; if false, you are hanged for spreading panic."
+        "bandeauPeste": "Cry \"It's the black plague!\" to the village. If true, the game ends and the village wins; if false, you are hanged for spreading panic.",
+        "bandeauVoteBailli": "Starts the Bailiff election, before the execution vote: each living villager names a candidate; the winner gets a double vote and breaks ties."
       },
       "Salon": {
         "nuit": "🔇 Night: silence",
@@ -497,7 +512,8 @@
         "jour": "The village debates on the square.",
         "vote": "The village votes.",
         "fin": "The vigil is over."
-      }
+      },
+      "VoteBailli": "Bailiff election: click your candidate's token."
     },
     "Infobulle": {
       "Vivant": "Alive",
@@ -537,7 +553,10 @@
         "emporter": "{nom} chooses whom to take along (or no one).",
         "sansSecrets": "This browser does not hold the night's secrets."
       },
-      "LaPeste": "the plague"
+      "LaPeste": "the plague",
+      "bailli": "Elect the Bailiff",
+      "departage": "Waiting: the Bailiff ({nom}) breaks the tie…",
+      "succession": "Waiting: {nom}, the late Bailiff, hands over the seal…"
     },
     "Preparation": {
       "Titre": "Prepare the game",
@@ -630,6 +649,93 @@
         "phase": "One only cries out in broad daylight (dawn, debate, vote).",
         "silence": "Silenced, you cannot cry out today."
       }
+    },
+    "Bailli": {
+      "Titre": "Bailiff",
+      "Aide": "The Bailiff, elected by the village: their vote counts double in the execution vote; on a tie, they decide; upon death, they name their successor.",
+      "TuEs": "You are the Bailiff: your vote counts double",
+      "Bandeau": "Bailiff: {nom}",
+      "Vacant": "No Bailiff",
+      "Sceau": "The seal waits: {nom} names a successor",
+      "VoixDouble": "Double vote: {nom} (Bailiff)",
+      "TaVoixDouble": "Bailiff: your vote counts double",
+      "InviteSuccession": "You are dead, Bailiff. To whom do you hand the village seal?",
+      "InviteDepartage": "The vote is tied. Bailiff, decide: whom does the village condemn? ({n} at most; pass: nobody)",
+      "Succession": "{de}, the late Bailiff, hands the village seal to {nom}.",
+      "Vacance": "{de} takes the seal to the grave: the office of Bailiff stays vacant, the village will elect a new one.",
+      "Elu": "{nom} is elected Bailiff of Brumecombe.",
+      "EluSort": "A tie: fate names {nom}, who becomes Bailiff of Brumecombe.",
+      "EluCourt": "Bailiff elected:",
+      "Personne": "Nobody is elected: the office of Bailiff stays vacant today.",
+      "Departage": "A tie between {noms}: the Bailiff, {nom}, decides.",
+      "Tranche": "The Bailiff, {nom}, decides: {noms}.",
+      "TranchePersonne": "The Bailiff, {nom}, did not decide: nobody is condemned.",
+      "Tranchera": "A tie: the Bailiff ({nom}) decides…",
+      "TrancheCourt": "Tie broken by the Bailiff, {nom}.",
+      "Nomme": "The narrator hands the village seal to {nom}, the new Bailiff.",
+      "Refus": {
+        "inactif": "The Bailiff is not in play in this game.",
+        "fin": "The game is over.",
+        "phase": "The Bailiff is elected during the day.",
+        "vote": "A vote is already open.",
+        "bailli": "The village already has a Bailiff.",
+        "succession": "The late Bailiff has not handed over the seal yet.",
+        "deja": "The village already voted for its Bailiff today.",
+        "execution": "Today's execution vote has already taken place.",
+        "nomme": "{nom} cannot become Bailiff (the Bailiff must be in play and the villager alive).",
+        "departage": "The Bailiff must first break the tie (the narrator can decide in their place, from the Game Table).",
+        "pasDeDepartage": "No tie is waiting for the Bailiff."
+      },
+      "SceauAttend": "The seal waits: {nom}, the late Bailiff, names a successor; the count follows.",
+      "ParLeSort": "named by fate",
+      "InviteNommer": "To whom does the narrator hand the village seal?"
+    },
+    "Registre": {
+      "Titre": "Clerk's register",
+      "Vide": "The clerk has written nothing yet.",
+      "Declarer": "Declare",
+      "DeclarerAide": "Have a statement written in the Register, readable by the whole village (what you claim to be, what you saw). The clerk checks nothing.",
+      "Exemple": "I claim to be the Ash Reader, I read…",
+      "Annonce": "In the clerk's register, {nom} has this written: “{texte}”",
+      "Vote": "Round {tour} — {objet}: {voix}. {issue}",
+      "VoixDouble": "{qui} (Bailiff, double vote) → {cible}",
+      "AucuneVoix": "no votes",
+      "Designe": "Named: {noms}.",
+      "IssueBailli": "Elected: {noms}.",
+      "Egalite": "Tie.",
+      "Personne": "Nobody is named.",
+      "Tranche": "The Bailiff, {nom}, decides: {noms}.",
+      "TranchePersonne": "The Bailiff, {nom}, did not decide.",
+      "Annule": "(vote cancelled by the Justice of the Peace)",
+      "Objets": {
+        "execution": "execution vote",
+        "chapelle": "Chapel vote",
+        "bailli": "Bailiff election"
+      },
+      "Mort": "Round {tour} — death of {nom}: {cause}.",
+      "Bailli": {
+        "election": "Round {tour} — {nom} is elected Bailiff.",
+        "sort": "Round {tour} — {nom} becomes Bailiff, named by fate.",
+        "succession": "Round {tour} — {de}, the late Bailiff, hands the seal to {nom}.",
+        "nomme": "Round {tour} — the narrator names {nom} Bailiff.",
+        "vacance": "Round {tour} — the office of Bailiff is vacant."
+      },
+      "Declaration": "Round {tour} — {nom} declares: “{texte}”",
+      "Refus": {
+        "absent": "Only a villager can write in the Register.",
+        "fin": "The game is over: the Register is closed.",
+        "mort": "The dead no longer write in the Register.",
+        "phase": "The Register is only open during the day.",
+        "silence": "Silenced, you cannot declare anything during the debate or the vote.",
+        "texte": "Write your statement first.",
+        "trop": "You have already had {n} statements written today."
+      }
+    },
+    "Masques": {
+      "Titre": "Vigil masks",
+      "Intro": "The pack has its masks: none of these Village roles is in play. You may claim to be one of them; nobody can claim the same.",
+      "Conseil": "Agree among yourselves before using them: two wolves claiming the same mask give themselves away.",
+      "Journal": "Vigil masks handed to the pack: {roles}."
     }
   }
 }

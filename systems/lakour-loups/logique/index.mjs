@@ -15,3 +15,6 @@ export * from "./parole.mjs";
 export * from "./etapes.mjs";
 export * from "./salons.mjs";
 export * from "./peste.mjs";
+export * from "./bailli.mjs";
+export * from "./registre.mjs";
+export * from "./masques.mjs";

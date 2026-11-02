@@ -240,9 +240,10 @@ function verifierScene(scene, ou) {
 // Les étapes permises par phase (cohérence de la ligne en pointillés).
 const ETAPES_DE_PHASE = {
   preparation: ["nuit", "distribuer"], nuit: ["reveiller", "aube", "debat", "emporter", "victoire"], aube: ["aube", "emporter", "victoire", "debat"],
-  jour: ["ouvrirVote", "emporter", "victoire"], vote: ["cloreVote", "executer", "emporter", "victoire", "chapelle", "nuit"], fin: ["rejouer"]
+  jour: ["bailli", "succession", "cloreVote", "ouvrirVote", "emporter", "victoire"], vote: ["cloreVote", "departage", "executer", "emporter", "victoire", "chapelle", "ouvrirVote", "nuit"],
+  fin: ["rejouer"]
 };
-const ACTIONS_DE_LA_TABLE = ["distribuer", "phase", "reveiller", "aube", "ouvrirVote", "cloreVote", "executer", "emporter", "victoire", "voteChapelle", "rejouer"];
+const ACTIONS_DE_LA_TABLE = ["distribuer", "phase", "reveiller", "aube", "voteBailli", "ouvrirVote", "cloreVote", "executer", "emporter", "victoire", "voteChapelle", "rejouer"];
 
 // Une partie menée par la Table, de la préparation à la victoire.
 async function partieHumaine(graine) {
@@ -301,7 +302,7 @@ async function partieHumaine(graine) {
   assert.equal(api.etat().phase, "fin");
   const vainqueur = api.etat().vainqueur;
   assert.ok(vainqueur);
-  for (const c of ["nuit", "reveiller", "aube", "debat", "ouvrirVote", "cloreVote", "rejouer"]) assert.ok(vues.has(c), `${graine} : étape jamais vue : ${c}`);
+  for (const c of ["nuit", "reveiller", "aube", "debat", "bailli", "ouvrirVote", "cloreVote", "rejouer"]) assert.ok(vues.has(c), `${graine} : étape jamais vue : ${c}`);
   // Les compagnons ont agi la nuit (résolveur) et voté.
   assert.ok(journalHooks.some(x => x.nom === "lakourLoups.action"), "des choix de nuit");
   // Rejouer : mêmes joueurs, mêmes joueurs IA.

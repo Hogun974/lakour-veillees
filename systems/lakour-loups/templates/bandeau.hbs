@@ -10,6 +10,7 @@
   <div class="lb-action">
     {{#if annonce}}<span class="lb-annonce"><i class="fa-solid fa-star"></i> {{annonce}}</span>{{/if}}
     {{#if salon}}<span class="lb-salon {{salon.cle}}" title="{{salon.aide}}">{{salon.texte}}</span>{{/if}}
+    {{#if bailli}}<span class="lb-bailli {{#if bailli.moi}}moi{{/if}}" data-tooltip="{{bailli.aide}}" data-tooltip-direction="DOWN"><i class="fa-solid fa-stamp"></i> {{bailli.texte}}</span>{{/if}}
     {{#if statut}}<span class="lb-statut {{statut.cle}}"><i class="fa-solid {{statut.icone}}"></i> {{statut.texte}}</span>{{/if}}
     {{#if consigne}}<span class="lb-consigne">{{consigne}}</span>{{/if}}
     {{#if detail}}<span class="lb-detail">{{detail}}</span>{{/if}}

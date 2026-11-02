@@ -751,6 +751,14 @@ test("loups_jour : lister puis utiliser un métier ; refus clair hors du moment 
   assert.match(r.contenu, new RegExp(`forge un verrou pour la maison de ${juge.name}`));
   assert.equal(metierDe(forgeron).system.usages.restant, 0);
   assert.ok((await outil("loups_jour").executer({ action: "utiliser", villageois: forgeron.name, pouvoir: "Forgeron", cibles: [juge.name], texte: "" })).erreur, "une fois par partie");
+  // Le premier jour, sans Bailli, le MJ IA refuse le vote d'exécution tant que l'élection est due (système 0.6.0) : le village
+  // élit d'abord son Bailli, au débat (ici le forgeron, à l'unanimité).
+  assert.ok((await outil("loups_vote").executer({ action: "ouvrir", candidats: [], duree_secondes: 0, double: false })).erreur, "l'élection d'abord");
+  const election = await outil("loups_vote").executer({ action: "ouvrir", candidats: [], duree_secondes: 0, double: false, objet: "bailli" });
+  assert.ok(!election.erreur, election.contenu);
+  for (const x of villageois()) await envoyerAuMJ("system.lakour-loups", { type: "vote", votant: x.id, cible: forgeron.id, userId: x.system.joueur }, { emetteur: x.system.joueur });
+  await calme();
+  assert.match((await outil("loups_vote").executer({ action: "clore", candidats: [], duree_secondes: 0, double: false })).contenu, new RegExp(`${forgeron.name} est le nouveau Bailli`));
   // Le vote : le Juge de paix annule juste après le dépouillement.
   await outil("loups_vote").executer({ action: "ouvrir", candidats: [], duree_secondes: 0, double: false });
   const cible = villageois().find(a => a.id !== juge.id);

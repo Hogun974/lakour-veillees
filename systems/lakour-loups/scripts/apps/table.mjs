@@ -5,12 +5,16 @@
 // Un joueur ne lit que l'état public : qui a voté (pas pour qui), son propre vote venant de son navigateur (prive.mjs).
 // La composition n'y paraît que chez le MJ (avec, s'il y a lieu, la marque « Peste noire » : un secret) ; le jour, chacun peut
 // y crier « C'est la peste noire ! » (le MJ, pour un villageois qui le dit à voix haute).
+// Le Bailli (public) : son nom en tête, son sceau sur sa carte, l'élection pour le MJ (« Élire le Bailli »), le départage.
+// Le Registre du greffier (public) : chaque vote clos, voix par voix, les morts et leur cause publique, le Bailli, et les
+// déclarations qu'un vivant y fait inscrire pendant le jour (champ « Déclarer au Registre »).
 import { ID, PHASES } from "../../logique/constantes.mjs";
+import { LONGUEUR_DECLARATION as LONGUEUR } from "../../logique/registre.mjs";
 import { diagnosticVoix } from "../../logique/salons.mjs";
 import {
   t, lireEtat, tousLesVillageois, monVillageois, roleDe, metierDe, roleVisible, libellePhase, libelleCamp, libelleCause, libelleVainqueur
 } from "../donnees.mjs";
-import { envoyerVote, envoyerJour, envoyerCri } from "../api.mjs";
+import { envoyerVote, envoyerJour, envoyerCri, envoyerDeclaration } from "../api.mjs";
 import { estMJActif } from "../canal.mjs";
 import { secretsPerdus } from "../secrets.mjs";
 import { monVote, mesSecrets } from "../prive.mjs";
@@ -23,6 +27,7 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 const api = () => game.lakourLoups;
 const nomDe = id => game.actors.get(id)?.name ?? id;
 const TYPES_EFFETS = ["verrou", "surveille", "gite", "traversee", "taverne", "lame", "cachette", "asile", "ecluse"];
+const ICONES_REGISTRE = { vote: "fa-scale-balanced", mort: "fa-cross", bailli: "fa-stamp", declaration: "fa-feather-pointed" };
 
 async function tenter(fn) {
   try { return await fn(); } catch (e) { ui.notifications.error(e.message); console.error(e); }
@@ -37,7 +42,9 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
     actions: {
       voter: TableDeJeu.#voter, abstenir: TableDeJeu.#abstenir, fiche: TableDeJeu.#fiche, batiment: TableDeJeu.#batiment,
       phase: TableDeJeu.#phase, aube: TableDeJeu.#aube, ouvrirVote: TableDeJeu.#ouvrirVote, cloreVote: TableDeJeu.#cloreVote,
-      voteChapelle: TableDeJeu.#voteChapelle, pouvoir: TableDeJeu.#pouvoir, carnet: () => ouvrirCarnet(),
+      voteChapelle: TableDeJeu.#voteChapelle, voteBailli: TableDeJeu.#voteBailli, declarer: TableDeJeu.#declarer,
+      trancher: TableDeJeu.#trancher, nommerBailli: TableDeJeu.#nommerBailli,
+      pouvoir: TableDeJeu.#pouvoir, carnet: () => ouvrirCarnet(),
       eliminer: TableDeJeu.#eliminer, reveler: TableDeJeu.#reveler, victoire: TableDeJeu.#victoire, rejouer: TableDeJeu.#rejouer,
       miseEnScene: () => tenter(() => api().plateau.mettreEnScene({ activer: true })),
       distribuer: TableDeJeu.#distribuer, reveiller: TableDeJeu.#reveiller, reveillerTout: TableDeJeu.#reveillerTout,
@@ -65,6 +72,9 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
     const fin = etat.phase === "fin";
     const resultat = !v.ouvert ? v.resultat : null;
     const monChoix = !moi ? "" : mjActif ? v.votes[moi.id] ?? "" : monVote(v.numero);
+    // Le Bailli (public) : celui en charge, vivant ; l'élection, si elle peut s'ouvrir.
+    const bailli = tenterSync(() => api().bailli(), null);
+    const bailliId = bailli?.acteurId ?? "";
 
     const fiche = a => {
       const role = roleDe(a), metier = metierDe(a);
@@ -76,7 +86,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
         voitRole, roleNom: voitRole ? role?.name ?? "" : "", roleImg: voitRole ? role?.img ?? "" : "",
         camp: voitRole ? libelleCamp(a.system.camp) : "", campCle: voitRole ? a.system.camp : "",
         revele: a.system.revele, silence: a.system.silence, moi: a.id === moi?.id,
-        benit: etat.jour.benis.includes(a.id), ruban: etat.jour.rubans.includes(a.id),
+        benit: etat.jour.benis.includes(a.id), ruban: etat.jour.rubans.includes(a.id), bailli: Boolean(bailliId) && a.id === bailliId,
         joueur: game.users.get(a.system.joueur)?.name ?? "",
         cause: mort ? libelleCause(mort.cause) : "", tourMort: mort?.tour ?? "",
         candidat: v.ouvert && v.candidats.includes(a.id),
@@ -182,7 +192,16 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
     // Le cri de la peste noire pour mon villageois (vivant, le jour). La composition et la peste noire : au MJ seul (un
     // joueur n'a ni l'une ni l'autre dans son état public).
     const cri = moi ? tenterSync(() => api().peutCrier(moi.id), null) : null;
+    // Le Registre du greffier (les plus récentes d'abord) et ma déclaration possible.
+    const registre = tenterSync(() => api().registre({ max: 80 }), []).reverse()
+      .map(x => ({ type: x.type, icone: ICONES_REGISTRE[x.type] ?? "fa-feather", texte: x.ligne, annule: Boolean(x.annule), tour: x.tour }));
+    const declaration = moi ? tenterSync(() => api().peutDeclarer(moi.id), null) : null;
+    // Le départage du Bailli : en attente, le MJ peut trancher à sa place (un bouton par ex aequo, ou « personne »).
+    const departage = resultat?.departage ? { nom: nomDe(resultat.departage.par), enAttente: Boolean(resultat.departage.enAttente),
+      choix: (resultat.departage.choix ?? []).map(nomDe).join(", "),
+      candidats: gm && resultat.departage.enAttente ? resultat.departage.candidats.map(id => ({ id, nom: nomDe(id) })) : [] } : null;
 
+    // L'élection quand elle est due (une par jour, avant le vote d'exécution) ; nommer le Bailli à la main quand la charge est vide.
     return {
       gm, phase: etat.phase, phaseLibelle: libellePhase(etat.phase), tour: etat.tour, fini: fin,
       composition: gm ? etat.composition : "", peste: gm && Boolean(etat.peste?.active),
@@ -191,14 +210,19 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
       phases: PHASES.map(p => ({ cle: p, libelle: libellePhase(p), active: p === etat.phase })),
       vivants, morts, batiments, effets, conteuse, appel, pouvoirs,
       chapelle: gm && (etat.batimentsCles ?? []).includes("chapelle"),
+      bailli: bailli?.actif ? { nom: bailli.nom, vacant: !bailliId, succession: bailli.succession?.nom ?? "", moi: Boolean(bailliId) && bailliId === moi?.id } : null,
+      voteBailli: gm && Boolean(bailli?.election?.ok),
+      nommerBailli: gm && Boolean(bailli?.actif) && !bailliId && !fin && Boolean(etat.partie),
+      registre, declaration: declaration ? { ok: declaration.ok, raison: declaration.raisonTexte, max: LONGUEUR } : null,
       secretsPerdus: mjActif && secretsPerdus(etat),
       carnet: Boolean(moi), carnetNombre: mesSecrets().entrees.length,
       moi: moi ? { nom: moi.name, vivant: moi.system.vivant, silence: moi.system.silence } : null,
       vote: {
-        ouvert: v.ouvert, double: v.double, majoriteAbsolue: v.majoriteAbsolue, chapelle: v.objet === "chapelle",
+        ouvert: v.ouvert, double: v.double, majoriteAbsolue: v.majoriteAbsolue, chapelle: v.objet === "chapelle", bailli: v.objet === "bailli",
+        voixDouble: v.objet === "execution" && bailliId ? nomDe(bailliId) : "",
         exprimes: v.exprimes.length, votants: vivants.length,
         peutVoter: Boolean(v.ouvert && moi?.system.vivant), minuteur: Boolean(v.finit),
-        resultat: resultat ? { lignes, egalite: resultat.egalite, personne: !resultat.elus?.length,
+        resultat: resultat ? { lignes, egalite: resultat.egalite, personne: !resultat.elus?.length, bailli: resultat.objet === "bailli", sort: Boolean(resultat.sort), departage,
           elus: (resultat.elus ?? []).map(nomDe).join(", "),
           condamnes: resultat.objet === "execution" && resultat.numero === v.numero
             ? (resultat.elus ?? []).filter(id => game.actors.get(id)?.system.vivant).map(id => ({ id, nom: nomDe(id) })) : [] } : null
@@ -258,6 +282,27 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
   }
   static #ouvrirVote() { return tenter(() => api().ouvrirVote({})); }
   static #voteChapelle() { return tenter(() => api().ouvrirVote({ objet: "chapelle" })); }
+  static #voteBailli() { return tenter(() => api().ouvrirVote({ objet: "bailli" })); }
+  // Le MJ tranche à la place du Bailli (data-id : l'ex aequo désigné ; vide : personne).
+  static #trancher(event, cible) { return tenter(() => api().trancher(cible.dataset.id ? [cible.dataset.id] : [])); }
+  // Le MJ remet le sceau à un vivant de son choix (charge vacante, ou succession qui traîne).
+  static async #nommerBailli() {
+    const options = tousLesVillageois().filter(a => a.system.vivant).map(a => `<option value="${a.id}">${foundry.utils.escapeHTML(a.name)}</option>`).join("");
+    const id = await foundry.applications.api.DialogV2.prompt({
+      window: { title: "LAKOUR_LOUPS.Table.NommerBailli" },
+      content: `<p>${foundry.utils.escapeHTML(t("LAKOUR_LOUPS.Bailli.InviteNommer"))}</p><select name="cible">${options}</select>`,
+      ok: { callback: (ev, bouton) => bouton.form.elements.cible.value }
+    }).catch(() => "");
+    if (id) await tenter(() => api().nommerBailli(id));
+  }
+  // Une déclaration au Registre du greffier : le texte du champ part au MJ actif, qui l'inscrit (ou dit pourquoi non).
+  static async #declarer() {
+    const champ = this.element.querySelector("input[name=declaration]");
+    const texte = champ?.value?.trim();
+    if (!texte) return;
+    await tenter(() => envoyerDeclaration(texte));
+    champ.value = "";
+  }
   static #cloreVote() { return cloreLeVote(); }
   static async #voixActiver() { await activerVoix(); this.render(); }
   static async #voixMicro() { await donnerMicro(); this.render(); }
@@ -385,6 +430,8 @@ export function cloreLeVote() {
   return tenter(async () => {
     const r = await api().cloreVote();
     if (r.prolonge) return ui.notifications.info(t("LAKOUR_LOUPS.Jour.RubanDefense", { nom: nomDe(r.prolonge) }));
+    // L'élection du Bailli : personne n'est exécuté.
+    if (r.objet === "bailli") return ui.notifications.info(r.bailli ? t("LAKOUR_LOUPS.Bailli.Elu", { nom: nomDe(r.bailli) }) : t("LAKOUR_LOUPS.Bailli.Personne"));
     if (r.objet === "chapelle") return ui.notifications.info(r.elu ? t("LAKOUR_LOUPS.Table.AsileDonne", { nom: nomDe(r.elu) }) : t("LAKOUR_LOUPS.Journal.VoteNul"));
     if (!r.elus.length) return ui.notifications.info(t("LAKOUR_LOUPS.Journal.VoteNul"));
     const noms = r.elus.map(nomDe).join(", ");

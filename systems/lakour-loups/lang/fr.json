@@ -134,7 +134,10 @@
       "Reveiller": "Réveiller",
       "ReveillerTout": "Réveiller tous les rôles, dans l'ordre",
       "Personne": "Personne",
-      "CrierPour": "{nom} crie « C'est la peste noire ! »"
+      "CrierPour": "{nom} crie « C'est la peste noire ! »",
+      "VoteBailli": "Élire le Bailli",
+      "NommerBailli": "Nommer le Bailli",
+      "TrancherPour": "Trancher à la place du Bailli ({nom}) :"
     },
     "Choix": {
       "Titre": "Dans la nuit…",
@@ -146,7 +149,8 @@
       "InviteTexte": "Écris ta phrase.",
       "TexteAide": "Une phrase, 200 caractères au plus.",
       "InviteVote": "Vote du village : qui faut-il exécuter ?",
-      "InviteChapelle": "Vote de la Chapelle : qui dormira à l'abri cette nuit ?"
+      "InviteChapelle": "Vote de la Chapelle : qui dormira à l'abri cette nuit ?",
+      "InviteBailli": "Élection du Bailli : qui portera le sceau du village ?"
     },
     "Vote": {
       "Titre": "Le vote du village",
@@ -168,7 +172,8 @@
       "Clos": "Le vote est clos.",
       "TempsEcoule": "Trop tard : le temps du vote est écoulé.",
       "TempsEcouleCourt": "Temps écoulé",
-      "QuestionChapelle": "Qui dormira à l'abri de la Chapelle la nuit prochaine ?"
+      "QuestionChapelle": "Qui dormira à l'abri de la Chapelle la nuit prochaine ?",
+      "QuestionBailli": "Qui le village élit-il Bailli ?"
     },
     "Fiche": {
       "Villageois": "Fiche de villageois",
@@ -306,7 +311,8 @@
       "VoteOuvert": "Le vote est ouvert.",
       "VoteClos": "Le vote est clos : {noms} désigné(s).",
       "VoteNul": "Le vote est clos : personne n'est désigné.",
-      "VoteChapelle": "Le village choisit qui dormira à la Chapelle."
+      "VoteChapelle": "Le village choisit qui dormira à la Chapelle.",
+      "VoteBailli": "Le village élit son Bailli."
     },
     "Reglages": {
       "RevelerALaMort": {
@@ -353,6 +359,14 @@
       "SignalTour": {
         "Nom": "Signal quand c'est à moi",
         "Aide": "Un tintement discret, chez moi seul, quand un choix de nuit ou un vote m'attend ; si je regarde un autre onglet, son titre clignote jusqu'à mon retour."
+      },
+      "Bailli": {
+        "Nom": "Le Bailli",
+        "Aide": "Le premier jour, le village élit un Bailli : sa voix compte double au vote d'exécution, il tranche les égalités et, à sa mort, désigne son successeur. Pris en compte à la prochaine distribution."
+      },
+      "Masques": {
+        "Nom": "Masques de veillée",
+        "Aide": "À la distribution, la meute reçoit en secret deux ou trois rôles du Village absents de la partie, qu'elle peut prétendre être sans risque. Jamais dans une peste noire."
       }
     },
     "Erreurs": {
@@ -479,7 +493,8 @@
         "bandeauVoter": "Ouvre la liste des accusés pour voter (tu peux aussi cliquer sur un jeton). Tu peux changer d'avis tant que le vote est ouvert.",
         "bandeauOuvrirVote": "Lance le vote du village : chaque vivant désigne qui il accuse, avec le temps fixé dans les réglages ; à zéro, il se clôt de lui-même.",
         "bandeauCloreVote": "Arrête le vote sans attendre la fin du minuteur et compte les voix ; l'exécution des élus est demandée ensuite.",
-        "bandeauPeste": "Crie « C'est la peste noire ! » au village. Si c'est vrai, la partie s'arrête et le village gagne ; si c'est faux, tu es pendu pour avoir semé la panique."
+        "bandeauPeste": "Crie « C'est la peste noire ! » au village. Si c'est vrai, la partie s'arrête et le village gagne ; si c'est faux, tu es pendu pour avoir semé la panique.",
+        "bandeauVoteBailli": "Lance l'élection du Bailli, avant le vote d'exécution : chaque vivant désigne son candidat ; l'élu aura la voix double et tranchera les égalités."
       },
       "Salon": {
         "nuit": "🔇 La nuit, silence",
@@ -497,7 +512,8 @@
         "jour": "Le village débat sur la place.",
         "vote": "Le village vote.",
         "fin": "La veillée est finie."
-      }
+      },
+      "VoteBailli": "Élection du Bailli : clique sur le jeton de ton candidat."
     },
     "Infobulle": {
       "Vivant": "Vivant",
@@ -537,7 +553,10 @@
         "emporter": "{nom} désigne qui il emporte (ou personne).",
         "sansSecrets": "Ce navigateur n'a pas les secrets de la nuit."
       },
-      "LaPeste": "la peste"
+      "LaPeste": "la peste",
+      "bailli": "Élire le Bailli",
+      "departage": "En attente : le Bailli ({nom}) tranche l'égalité…",
+      "succession": "En attente : {nom}, Bailli défunt, remet le sceau…"
     },
     "Preparation": {
       "Titre": "Préparer la partie",
@@ -630,6 +649,93 @@
         "phase": "On ne crie qu'au grand jour (aube, débat, vote).",
         "silence": "Réduit au silence, tu ne peux pas crier aujourd'hui."
       }
+    },
+    "Bailli": {
+      "Titre": "Bailli",
+      "Aide": "Le Bailli, élu par le village : sa voix compte double au vote d'exécution ; en cas d'égalité, il tranche ; à sa mort, il désigne son successeur.",
+      "TuEs": "Tu es le Bailli : ta voix compte double",
+      "Bandeau": "Bailli : {nom}",
+      "Vacant": "Pas de Bailli",
+      "Sceau": "Le sceau attend : {nom} désigne son successeur",
+      "VoixDouble": "Voix double : {nom} (Bailli)",
+      "TaVoixDouble": "Bailli : ta voix compte double",
+      "InviteSuccession": "Tu es mort, Bailli. À qui remets-tu le sceau du village ?",
+      "InviteDepartage": "Égalité au vote. Bailli, tranche : qui le village condamne-t-il ? ({n} au plus ; passer : personne)",
+      "Succession": "{de}, Bailli défunt, remet le sceau du village à {nom}.",
+      "Vacance": "{de} emporte le sceau dans la tombe : la charge de Bailli reste vacante, le village en élira un nouveau.",
+      "Elu": "{nom} est élu Bailli de Brumecombe.",
+      "EluSort": "Égalité : le sort désigne {nom}, qui devient Bailli de Brumecombe.",
+      "EluCourt": "Bailli élu :",
+      "Personne": "Personne n'est élu : la charge de Bailli reste vacante aujourd'hui.",
+      "Departage": "Égalité entre {noms} : le Bailli, {nom}, tranche.",
+      "Tranche": "Le Bailli, {nom}, tranche : {noms}.",
+      "TranchePersonne": "Le Bailli, {nom}, n'a pas tranché : personne n'est condamné.",
+      "Tranchera": "Égalité : le Bailli ({nom}) tranche…",
+      "TrancheCourt": "Égalité tranchée par le Bailli, {nom}.",
+      "Nomme": "Le narrateur remet le sceau du village à {nom}, nouveau Bailli.",
+      "Refus": {
+        "inactif": "Le Bailli n'est pas en jeu dans cette partie.",
+        "fin": "La partie est finie.",
+        "phase": "Le Bailli s'élit pendant le jour.",
+        "vote": "Un vote est déjà ouvert.",
+        "bailli": "Le village a déjà un Bailli.",
+        "succession": "Le Bailli défunt n'a pas encore remis son sceau.",
+        "deja": "Le village a déjà voté pour son Bailli aujourd'hui.",
+        "execution": "Le vote d'exécution du jour a déjà eu lieu.",
+        "nomme": "{nom} ne peut pas devenir Bailli (le Bailli doit être en jeu et le villageois vivant).",
+        "departage": "Le Bailli doit d'abord trancher l'égalité (le narrateur peut trancher à sa place, depuis la Table de jeu).",
+        "pasDeDepartage": "Aucune égalité n'attend le Bailli."
+      },
+      "SceauAttend": "Le sceau attend : {nom}, Bailli défunt, désigne son successeur ; le dépouillement suit.",
+      "ParLeSort": "désigné par le sort",
+      "InviteNommer": "À qui le narrateur remet-il le sceau du village ?"
+    },
+    "Registre": {
+      "Titre": "Registre du greffier",
+      "Vide": "Le greffier n'a encore rien écrit.",
+      "Declarer": "Déclarer",
+      "DeclarerAide": "Fais inscrire une déclaration au Registre, lisible par tout le village (ce que tu affirmes être, ce que tu as vu). Le greffier ne vérifie rien.",
+      "Exemple": "Je me dis Liseuse de cendres, j'ai lu…",
+      "Annonce": "Au Registre du greffier, {nom} fait inscrire : « {texte} »",
+      "Vote": "Tour {tour} — {objet} : {voix}. {issue}",
+      "VoixDouble": "{qui} (Bailli, voix double) → {cible}",
+      "AucuneVoix": "aucune voix",
+      "Designe": "Désigné : {noms}.",
+      "IssueBailli": "Élu : {noms}.",
+      "Egalite": "Égalité.",
+      "Personne": "Personne n'est désigné.",
+      "Tranche": "Le Bailli, {nom}, tranche : {noms}.",
+      "TranchePersonne": "Le Bailli, {nom}, n'a pas tranché.",
+      "Annule": "(vote annulé par le Juge de paix)",
+      "Objets": {
+        "execution": "vote d'exécution",
+        "chapelle": "vote de la Chapelle",
+        "bailli": "élection du Bailli"
+      },
+      "Mort": "Tour {tour} — mort de {nom} : {cause}.",
+      "Bailli": {
+        "election": "Tour {tour} — {nom} est élu Bailli.",
+        "sort": "Tour {tour} — {nom} devient Bailli, désigné par le sort.",
+        "succession": "Tour {tour} — {de}, Bailli défunt, remet le sceau à {nom}.",
+        "nomme": "Tour {tour} — le narrateur nomme {nom} Bailli.",
+        "vacance": "Tour {tour} — la charge de Bailli est vacante."
+      },
+      "Declaration": "Tour {tour} — {nom} déclare : « {texte} »",
+      "Refus": {
+        "absent": "Seul un villageois peut écrire au Registre.",
+        "fin": "La partie est finie : le Registre est clos.",
+        "mort": "Les morts n'écrivent plus au Registre.",
+        "phase": "Le Registre ne s'ouvre que pendant le jour.",
+        "silence": "Réduit au silence, tu ne peux rien déclarer pendant le débat ni le vote.",
+        "texte": "Écris ta déclaration d'abord.",
+        "trop": "Tu as déjà fait inscrire {n} déclarations aujourd'hui."
+      }
+    },
+    "Masques": {
+      "Titre": "Masques de veillée",
+      "Intro": "La meute a ses masques : aucun de ces rôles du Village n'est en jeu. Tu peux prétendre en être un, personne ne pourra se réclamer du même.",
+      "Conseil": "Accordez-vous avant de vous en servir : deux loups qui revendiquent le même masque se trahissent.",
+      "Journal": "Masques de veillée remis à la meute : {roles}."
     }
   }
 }

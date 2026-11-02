@@ -218,7 +218,9 @@ export function decorDe(acteurId) {
     monVote: v.ouvert && Boolean(monChoix) && monChoix === acteurId,
     aVote: v.ouvert && v.exprimes.includes(acteurId),
     bulle: local.bulles && Date.now() < local.bullesJusqua && acteurId in local.bulles ? local.bulles[acteurId] : null,
-    mort: acteur ? !acteur.system.vivant : false
+    mort: acteur ? !acteur.system.vivant : false,
+    // Le Bailli (public) : son sceau sur le jeton, chez chacun.
+    bailli: Boolean(acteur?.system.vivant) && etat.bailli?.actif === true && etat.bailli.acteurId === acteurId
   };
 }
 

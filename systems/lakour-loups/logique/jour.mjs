@@ -18,6 +18,7 @@ import { CLE_MEUTE, CLE_PESTE } from "./constantes.mjs";
 import { choisir } from "./hasard.mjs";
 import { normaliserEtat, ouvrirVote } from "./etat.mjs";
 import { numeroDeMaison, surLAutreRive } from "./distribution.mjs";
+import { marquerAnnule } from "./registre.mjs";
 
 export const MATIN = ["aube", "jour"];             // « au matin », « au début d'un débat »
 export const JOURNEE = ["aube", "jour", "vote"];   // « pendant le jour »
@@ -123,7 +124,7 @@ export function verifierPouvoir({ villageois = [], etat: e, acteurId = "", pouvo
     case "juge-de-paix": {
       const r = v.resultat;
       const parId = new Map(villageois.map(x => [x.id, x]));
-      if (v.ouvert || !r || r.objet !== "execution" || !r.elus?.length || r.numero !== v.numero || !r.elus.every(id => vivant(parId.get(id)))) return non("vote");
+      if (v.ouvert || !r || r.objet !== "execution" || r.departage?.enAttente || !r.elus?.length || r.numero !== v.numero || !r.elus.every(id => vivant(parId.get(id)))) return non("vote");
       break;
     }
     case "taverne": {
@@ -274,6 +275,7 @@ export function appliquerPouvoir({ villageois = [], etat: e, acteurId = "", pouv
     }
     case "juge-de-paix": {
       const ancien = etat.vote;
+      marquerAnnule(etat, ancien.numero);   // le vote annulé reste au Registre du greffier, marqué
       const x = ouvrirVote(etat, { candidats: ancien.candidats, duree: ancien.duree, double: ancien.double, majoriteAbsolue: ancien.majoriteAbsolue,
         objet: "execution", maintenant });
       Object.assign(etat, x);

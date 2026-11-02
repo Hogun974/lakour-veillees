@@ -12,7 +12,7 @@
 //     aucun document n'est modifié, seul l'état local du joueur change ;
 //   - refuse aux joueurs le HUD, la configuration et le glisser d'un jeton de villageois (le verrou fait le reste) ;
 //   - dessine par-dessus le jeton, CHEZ CE JOUEUR SEUL, le halo des candidats, la sélection, son vote, la coche « a voté »
-//     (publique : état public vote.exprimes) et les bulles du dépouillement.
+//     (publique : état public vote.exprimes), les bulles du dépouillement et le sceau du Bailli (public : état public bailli).
 import * as local from "./plateau-local.mjs";
 
 const COULEURS = { lanterne: 0xf0a742, choix: 0xffd27a, vote: 0xd2553c, mousse: 0x8fb06a, nuit: 0x15121a, bord: 0x4a3a33, parchemin: 0xeadfc8 };
@@ -96,18 +96,24 @@ export function classeJetonLoups(Base) {
         d.addChild(pastille(w - r * 0.22, r * 0.22, r * 0.3, couleur, decor.monVote ? "main" : "coche"));
       }
       if (decor.aVote) d.addChild(pastille(w - r * 0.22, h - r * 0.22, r * 0.26, COULEURS.mousse, "coche"));
+      if (decor.bailli) d.addChild(pastille(r * 0.22, r * 0.22, r * 0.28, COULEURS.lanterne, "sceau"));
       if (decor.bulle !== null && decor.bulle !== undefined) d.addChild(bulle(cx, -r * 0.35, String(decor.bulle), r));
     }
   };
 }
 
-// Une pastille ronde avec une coche ou une main levée (dessinées, sans police d'icônes).
+// Une pastille ronde avec une coche, une main levée ou le sceau du Bailli (dessinés, sans police d'icônes).
 function pastille(x, y, r, couleur, signe) {
   const g = new PIXI.Graphics();
   g.beginFill(COULEURS.nuit, 0.95).lineStyle(Math.max(2, r * 0.18), couleur, 1).drawCircle(x, y, r).endFill();
   g.lineStyle(Math.max(2, r * 0.22), couleur, 1);
   if (signe === "coche") {
     g.moveTo(x - r * 0.45, y + r * 0.02).lineTo(x - r * 0.1, y + r * 0.38).lineTo(x + r * 0.5, y - r * 0.35);
+  } else if (signe === "sceau") {
+    // Le sceau du Bailli : un pommeau, un manche et la semelle du tampon.
+    g.lineStyle(0).beginFill(couleur, 1).drawCircle(x, y - r * 0.38, r * 0.16).endFill();
+    g.beginFill(couleur, 1).drawRect(x - r * 0.08, y - r * 0.26, r * 0.16, r * 0.34).endFill();
+    g.beginFill(couleur, 1).drawRoundedRect(x - r * 0.42, y + r * 0.08, r * 0.84, r * 0.26, r * 0.06).endFill();
   } else {
     // Main levée : une paume et trois doigts.
     g.lineStyle(0).beginFill(couleur, 1).drawRoundedRect(x - r * 0.38, y - r * 0.05, r * 0.76, r * 0.5, r * 0.15).endFill();

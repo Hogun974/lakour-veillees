@@ -10,8 +10,8 @@
 //
 // Forme (contrat §1), plus quelques champs d'extension marqués « + » ([S] = secret) :
 // { +partie (id de la partie), phase, tour, composition, batiments: [uuid], +batimentsCles: [cle],
-//   vote: { ouvert, +numero, +objet ("execution" | "chapelle"), candidats, votes [S], +exprimes (qui a voté, sans le choix),
-//           double, finit, +duree, +majoriteAbsolue, +prolonge (porteur du ruban), +resultat },
+//   vote: { ouvert, +numero, +objet ("execution" | "chapelle" | "bailli"), candidats, votes [S], +exprimes (qui a voté, sans le choix),
+//           double, finit, +duree, +majoriteAbsolue, +prolonge (porteur du ruban), +resultat (+poids, +departage : bailli.mjs) },
 //   nuit [S]: { actions: [{ acteurId, roleCle, cibles, quand, +effet, +texte }] },
 //   morts: [{ acteurId, tour, phase, cause }] (cause publique masquée : voir causePublique), vainqueur,
 //   historique: [{ tour, phase, texte }],
@@ -19,10 +19,18 @@
 //   +causes [S]: { acteurId: vraie cause }, +journalSecret [S]: [{ tour, phase, texte }], +carnets [S]: { acteurId: [entrée] },
 //   +jour: pouvoirs de jour (voir jour.mjs), +pont: { bloqueNuit }, +cimetiere: [acteurId dont le camp a été annoncé],
 //   composition [S] (la clé de composition : elle trahirait les rôles en jeu ; le MJ seul la voit),
-//   +peste [S]: null | { active, porteur, victimes, decouverte, crieur } (la variante Peste noire, peste.mjs ; dévoilée à la fin) }
+//   +peste [S]: null | { active, porteur, victimes, decouverte, crieur } (la variante Peste noire, peste.mjs ; dévoilée à la fin),
+//   +bailli: { actif, acteurId, depuis, succession, election } (la charge publique du Bailli, bailli.mjs),
+//   +registre: [entrée] (le Registre du greffier, public : votes clos, morts et cause publique, Bailli, déclarations ; registre.mjs),
+//   +masques [S]: [cle de rôle] (les Masques de veillée de la meute, masques.mjs) }
 
 import { PHASES, causePublique } from "./constantes.mjs";
 import { decompterVotes } from "./votes.mjs";
+import { bailliInitial, normaliserBailli, bailliEnCharge, poidsDesVoix, ouvrirSuccession, entreeDeVote } from "./bailli.mjs";
+import { inscrire } from "./registre.mjs";
+
+// Les objets d'un vote : l'exécution du jour, l'asile de la Chapelle, l'élection du Bailli.
+export const OBJETS_DE_VOTE = ["execution", "chapelle", "bailli"];
 
 export function jourInitial() {
   // effets : [{ type, acteurId, cible, nuit }] posés de jour pour la nuit n° `nuit` (verrou, surveille, gite, traversee,
@@ -39,7 +47,8 @@ export function etatInitial() {
     morts: [], vainqueur: "", historique: [],
     nuitPrecedente: { actions: [], bilan: null }, asperges: [], primes: {}, fioles: {}, voteDoubleDemain: false, nuitResolue: 0,
     causes: {}, journalSecret: [], carnets: {},
-    jour: jourInitial(), pont: { bloqueNuit: 0 }, cimetiere: [], peste: null
+    jour: jourInitial(), pont: { bloqueNuit: 0 }, cimetiere: [], peste: null,
+    bailli: bailliInitial(), registre: [], masques: []
   };
 }
 
@@ -54,12 +63,13 @@ export function normaliserEtat(e) {
   etat.nuitPrecedente = { ...base.nuitPrecedente, ...(x.nuitPrecedente ?? {}) };
   etat.jour = { ...base.jour, ...(x.jour ?? {}) };
   etat.pont = { ...base.pont, ...(x.pont ?? {}) };
-  for (const cle of ["batiments", "batimentsCles", "morts", "historique", "asperges", "journalSecret", "cimetiere"]) if (!Array.isArray(etat[cle])) etat[cle] = [];
+  for (const cle of ["batiments", "batimentsCles", "morts", "historique", "asperges", "journalSecret", "cimetiere", "registre", "masques"]) if (!Array.isArray(etat[cle])) etat[cle] = [];
   for (const cle of ["effets", "benis", "rubans"]) if (!Array.isArray(etat.jour[cle])) etat.jour[cle] = [];
   for (const cle of ["primes", "fioles", "causes", "carnets"]) if (!etat[cle] || typeof etat[cle] !== "object") etat[cle] = {};
   if (!Array.isArray(etat.vote.exprimes)) etat.vote.exprimes = [];
   if (!PHASES.includes(etat.phase)) etat.phase = "preparation";
   etat.peste = normaliserPeste(etat.peste);
+  etat.bailli = normaliserBailli(etat.bailli);
   etat.tour = Number(etat.tour) || 0;
   return etat;
 }
@@ -80,12 +90,12 @@ export function separerEtat(e) {
   const secret = {
     partie: etat.partie, nuit: etat.nuit, nuitPrecedente: etat.nuitPrecedente, asperges: etat.asperges, primes: etat.primes,
     fioles: etat.fioles, journalSecret: etat.journalSecret, carnets: etat.carnets, votes: etat.vote.votes, causes: {},
-    composition: etat.composition, peste: etat.peste
+    composition: etat.composition, peste: etat.peste, masques: etat.masques
   };
   const pub = copie(etat);
   pub.nuit = base.nuit;
   pub.nuitPrecedente = base.nuitPrecedente;
-  for (const cle of ["asperges", "primes", "fioles", "journalSecret", "carnets", "causes", "composition"]) pub[cle] = base[cle];
+  for (const cle of ["asperges", "primes", "fioles", "journalSecret", "masques", "carnets", "causes", "composition"]) pub[cle] = base[cle];
   // La peste noire n'existe pas dans l'état public avant la fin (ni même la clé) ; à la fin, la partie se dévoile.
   delete pub.peste;
   if (etat.phase === "fin" && etat.peste) pub.peste = copie(etat.peste);
@@ -106,7 +116,7 @@ export function fusionnerEtat(pub, secret) {
   const s = copie(secret);
   if (s.nuit) etat.nuit = { ...etat.nuit, ...s.nuit };
   if (s.nuitPrecedente) etat.nuitPrecedente = { ...etat.nuitPrecedente, ...s.nuitPrecedente };
-  for (const cle of ["asperges", "journalSecret"]) if (Array.isArray(s[cle])) etat[cle] = s[cle];
+  for (const cle of ["asperges", "journalSecret", "masques"]) if (Array.isArray(s[cle])) etat[cle] = s[cle];
   for (const cle of ["primes", "fioles", "carnets"]) if (s[cle] && typeof s[cle] === "object") etat[cle] = s[cle];
   if (s.votes && typeof s.votes === "object") etat.vote.votes = s.votes;
   if (typeof s.composition === "string") etat.composition = s.composition;
@@ -173,19 +183,22 @@ export function cloreNuit(e, { asperges, fioles, bilan, pontFranchi = false } = 
   return etat;
 }
 
-// objet : "execution" (le vote du jour) ou "chapelle" (l'asile de la Chapelle, à main levée : ni Gibet ni cloche).
+// objet : "execution" (le vote du jour), "chapelle" (l'asile de la Chapelle, à main levée : ni Gibet ni cloche) ou "bailli"
+// (l'élection du Bailli : ni Gibet, ni cloche, ni ruban, ni voix double).
 export function ouvrirVote(e, { candidats = [], duree = 0, double, majoriteAbsolue = false, objet = "execution", maintenant = Date.now() } = {}) {
   const etat = normaliserEtat(e);
-  const execution = objet !== "chapelle";
+  const sujet = OBJETS_DE_VOTE.includes(objet) ? objet : "execution";
+  const execution = sujet === "execution";
   etat.vote = {
-    ouvert: true, numero: (Number(etat.vote.numero) || 0) + 1, objet: execution ? "execution" : "chapelle",
+    ouvert: true, numero: (Number(etat.vote.numero) || 0) + 1, objet: sujet,
     candidats: [...candidats], votes: {}, exprimes: [],
     double: execution ? (double ?? Boolean(etat.voteDoubleDemain)) : false,
     finit: duree > 0 ? maintenant + duree : 0, duree: duree > 0 ? duree : 0,
     majoriteAbsolue: execution && Boolean(majoriteAbsolue), prolonge: "", resultat: null
   };
   if (execution) etat.voteDoubleDemain = false;
-  etat.phase = "vote";
+  // L'élection du Bailli se tient au débat, sans changer de phase (les pouvoirs du matin restent permis, pas d'ambiance du vote).
+  if (sujet !== "bailli") etat.phase = "vote";
   return etat;
 }
 
@@ -205,11 +218,16 @@ export function enregistrerVote(e, { votant, cible, votants = null, maintenant =
 
 // Clôture. Le ruban de la Tisserande : si le plus désigné d'un vote d'exécution porte un ruban, le dépouillement est
 // suspendu — le vote reste ouvert une minute de plus (prolongation, en ms) pour sa défense, et le ruban est dénoué.
+// Le Bailli (bailli.mjs) : sa voix compte double à un vote d'exécution (votants : les vivants ; il doit en être) ; une égalité
+// qui laisse une place vide attend son départage (resultat.departage.enAttente, puis trancherVote). Le vote clos entre au
+// Registre (un vote à départager, une fois tranché).
 // -> { etat, resultat } ou { etat, resultat: null, prolonge: acteurId }.
 export function cloreVote(e, { votants = null, poids = {}, maintenant = Date.now(), prolongation = 60000 } = {}) {
   const etat = normaliserEtat(e);
   const v = etat.vote;
-  const r = decompterVotes({ votes: v.votes, candidats: v.candidats, votants, double: v.double, poids, majoriteAbsolue: v.majoriteAbsolue });
+  const pesees = { ...poidsDesVoix(etat, votants), ...poids };
+  const bailli = v.objet === "execution" ? bailliEnCharge(etat, votants) : "";
+  const r = decompterVotes({ votes: v.votes, candidats: v.candidats, votants, double: v.double, poids: pesees, majoriteAbsolue: v.majoriteAbsolue });
   if (v.objet === "execution") {
     const max = Math.max(0, ...Object.values(r.decompte));
     const porteur = max > 0 ? etat.jour.rubans.find(id => r.decompte[id] === max) : null;
@@ -221,16 +239,24 @@ export function cloreVote(e, { votants = null, poids = {}, maintenant = Date.now
     }
   }
   const resultat = { decompte: r.decompte, elu: r.elu, elus: r.elus, votes: r.votes, egalite: r.egalite,
-    objet: v.objet, numero: v.numero, tour: etat.tour };
+    objet: v.objet, numero: v.numero, tour: etat.tour,
+    poids: Object.fromEntries(Object.entries(pesees).filter(([id]) => id in r.votes)),
+    departage: bailli && r.departage ? { par: bailli, candidats: r.departage.candidats, places: r.departage.places, enAttente: true, choix: [] } : null };
   v.ouvert = false;
   v.exprimes = [];
   v.resultat = resultat;
+  if (!resultat.departage) inscrire(etat, entreeDeVote(resultat), maintenant);
   return { etat, resultat };
 }
 
-export function ajouterMort(e, { acteurId, cause = "" }) {
+// Une mort : au Registre avec sa cause PUBLIQUE ; le Bailli qui meurt laisse la charge à son successeur (bailli.mjs).
+export function ajouterMort(e, { acteurId, cause = "", quand = Date.now() }) {
   const etat = normaliserEtat(e);
-  if (!etat.morts.some(m => m.acteurId === acteurId)) etat.morts.push({ acteurId, tour: etat.tour, phase: etat.phase, cause });
+  if (!etat.morts.some(m => m.acteurId === acteurId)) {
+    etat.morts.push({ acteurId, tour: etat.tour, phase: etat.phase, cause });
+    inscrire(etat, { type: "mort", acteurId, cause }, quand);   // le Registre n'en garde que la cause publique (registre.mjs)
+    ouvrirSuccession(etat, acteurId, quand);
+  }
   return etat;
 }
 

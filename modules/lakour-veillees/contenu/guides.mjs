@@ -125,13 +125,23 @@ Le village **débat** : on accuse, on se défend, on ment ou l'on dit vrai. Le d
 
 Les **pouvoirs de jour** (ton métier, quelques rôles comme le Juge de paix ou la Conteuse, et certains bâtiments) se jouent pendant le jour : clique sur ton pouvoir dans la **Table de jeu**, ou annonce-le au narrateur à voix haute. Le système vérifie que c'est le bon moment, applique l'effet et l'annonce au village. Un pouvoir « une fois par partie » ne revient pas.
 
+# Le Bailli
+
+Le premier jour, avant le premier vote d'exécution, le village **élit son Bailli** par un vote à part : chacun désigne son candidat (on peut voter pour soi), le plus désigné prend le **sceau du village** ; à égalité, le sort choisit entre les ex æquo. Le Bailli est **public** : son nom est sur la Table de jeu et dans le bandeau, son sceau sur son jeton.
+
+- Au vote d'exécution, **sa voix compte double**.
+- En cas d'**égalité**, c'est **lui qui tranche** : une fenêtre s'ouvre chez lui seul, avec les ex æquo ; il désigne le condamné (même lui-même), ou passe, et alors personne n'est exécuté.
+- À **sa mort**, il **remet le sceau** à un vivant de son choix (une dernière fenêtre, depuis la tombe). S'il ne choisit personne, la charge reste vacante et le village élit un nouveau Bailli au jour suivant (le jour même, si l'on n'a pas encore voté).
+
+Un Bailli peut être un loup : le village l'a choisi, à lui de bien choisir.
+
 # Le vote
 
-Le narrateur ouvre le **vote** : chaque vivant clique sur un nom dans la fenêtre de vote (ou sur la Table de jeu). On peut changer d'avis jusqu'à la clôture. Les voix restent **secrètes jusqu'au dépouillement** : on voit seulement qui a déjà voté. Au dépouillement, le joueur qui a **le plus de voix est exécuté** et quitte la partie — sauf si le **Juge de paix** annule le vote (le village revote aussitôt) ou si le plus désigné porte le **ruban de la Tisserande** (une minute de défense de plus, le vote reste ouvert).
+Le narrateur ouvre le **vote** : chaque vivant clique sur un nom dans la fenêtre de vote (ou sur la Table de jeu). On peut changer d'avis jusqu'à la clôture. Les voix restent **secrètes jusqu'au dépouillement** : on voit seulement qui a déjà voté. Au dépouillement, le joueur qui a **le plus de voix est exécuté** et quitte la partie — sauf si le **Juge de paix** annule le vote (le village revote aussitôt) ou si le plus désigné porte le **ruban de la Tisserande** (une minute de défense de plus, le vote reste ouvert). Après la clôture, chacun peut relire **qui a voté pour qui** dans le Registre du greffier.
 
 Si la **Chapelle** est en jeu, un second vote, rapide, désigne ensuite qui dormira à l'abri la nuit suivante.
 
-**Égalité** : les ex æquo ont trente secondes chacun pour se défendre, puis le village revote **entre eux seulement**. Nouvelle égalité : personne n'est exécuté ce jour-là, et la nuit tombe.
+**Égalité** : s'il y a un **Bailli**, il tranche. Sans Bailli (charge vacante, ou Bailli absent de la partie), les ex æquo ont trente secondes chacun pour se défendre, puis le village revote **entre eux seulement** ; nouvelle égalité : personne n'est exécuté ce jour-là, et la nuit tombe.
 
 Puis la nuit revient, et ainsi de suite jusqu'à la victoire d'un camp.`
     },
@@ -141,12 +151,19 @@ Puis la nuit revient, et ainsi de suite jusqu'à la victoire d'un camp.`
 
 - **La carte du village** : chaque joueur a son jeton devant sa maison. Les jetons montrent un **villageois encapuchonné** tant que le rôle n'est pas révélé ; à la mort (si les rôles sont révélés), le jeton prend l'image du rôle.
 - **La Table de jeu** (bouton dans les contrôles du calque Jetons) : la phase, le tour, le minuteur, qui vit et qui est mort, les métiers, les bâtiments en jeu, **tes pouvoirs de jour** (un bouton par pouvoir, grisé quand ce n'est pas le moment), ce qui vaudra la nuit prochaine (verrous, Taverne, Grange…), et pendant un vote, les boutons de vote.
+- **Le Registre du greffier** (sur la Table de jeu) : la mémoire publique de la veillée (voir plus bas).
 - **Ta fiche** : ton rôle et ton pouvoir (toi seul et le narrateur les voyez), ton métier (public).
 - **La fenêtre de choix de nuit** : elle ne s'ouvre que chez toi, et rien n'apparaît chez les autres. Si le Messager te choisit comme expéditeur, elle te demande d'écrire ta phrase.
 
 # Les messages privés
 
 Le narrateur te parle en message privé pour tout ce qui est secret : ton rôle, ce que tu apprends la nuit, le mot que te porte le Messager. Tout arrive dans ton **carnet secret** (bouton de la Table de jeu), envoyé à toi seul. **Ne recopie jamais un message privé sur le canal commun** : dire ce que tu sais, c'est ton droit ; montrer la preuve, c'est interdit.
+
+# Le Registre du greffier
+
+Le greffier de Brumecombe note tout ce qui est public : **chaque vote clos, voix par voix** (la voix double du Bailli, son départage), **chaque mort** avec sa cause connue de tous (une mort de la nuit reste « tuée dans la nuit »), l'élection et la succession du Bailli. Tu le retrouves sur la Table de jeu, les entrées les plus récentes en haut.
+
+Pendant le jour, tant que tu es vivant et que tu peux parler, tu peux y **faire inscrire une déclaration** courte (trois par jour) : « Je me dis Liseuse de cendres, j'ai lu la Maison 4 : elle est du village. » Elle est lue par tout le village et annoncée au chat. **Le greffier ne vérifie rien** : une déclaration engage celui qui l'écrit, rien de plus. Les loups aussi écrivent au Registre.
 
 # Le savoir-vivre de la veillée
 
@@ -191,6 +208,8 @@ Quand il ne reste qu'un seul vivant, ou plus personne, **la peste l'emporte** : 
       texte: `# La Meute
 
 Les loups se reconnaissent dès la première nuit. Chaque nuit, **ils se réveillent ensemble** et désignent une victime. Certains loups ont en plus un pouvoir propre : ils se réveillent une seconde fois, seuls.
+
+**Les Masques de veillée** : à la distribution, la meute reçoit dans le carnet secret de chaque loup deux ou trois rôles du Village **absents de la partie**. Se dire l'un d'eux est sans risque : personne ne viendra se réclamer du même rôle. Accordez-vous avant de vous en servir. (Un villageois qui rejoint la meute reçoit les mêmes ; dans une veillée sans loups, il n'y en a pas.)
 
 ${rolesDu("meute").map(ligne).join("\n")}`
     },
@@ -271,7 +290,8 @@ Chaque composition indique ses bâtiments (4 à 6). Tu peux en changer un, en an
 - Distribue les rôles et les métiers au hasard (la Table de jeu s'en charge). Chaque joueur reçoit son rôle en message privé.
 - Attribue une maison à chacun, dans l'ordre (« Maison 1 », « Maison 2 »…). Avec le Pont en jeu, rappelle que les maisons 13 à 18 sont sur l'autre rive.
 - **Chasseur de primes** : tire sa cible au hasard parmi les autres joueurs (jamais un loup si possible, pour que la partie reste ouverte), et donne-la-lui la première nuit.
-- Annonce les **bâtiments en jeu** et les **variantes** choisies (révélation à la mort, durée du débat).
+- Annonce les **bâtiments en jeu** et les **variantes** choisies (révélation à la mort, durée du débat, **Bailli**).
+- **Masques de veillée** (réglage, par défaut oui) : le système remet en secret à chaque loup deux ou trois rôles du Village absents de la partie (trois pour une meute, deux pour un loup seul ; jamais dans une peste noire). Tu les vois dans ta chronique secrète ; ne les cite jamais, ne les confirme ni ne les démens.
 - Lis à voix haute une présentation du village (deux ou trois phrases, pas plus).`
     },
     {
@@ -371,6 +391,18 @@ Si **personne n'est mort**, dis-le avec la même gravité : « Le jour se lève 
 - Ce que disent les métiers d'information (Meunière, Chasseresse, Ramoneuse, Tanneur, Colporteur de nouvelles) est calculé par le système sur la vraie nuit : tu n'as rien à inventer. La Ramoneuse dit si une maison a **reçu de la visite** (un loup, ou un pouvoir qui la visait) ; la Chasseresse, si un joueur **est sorti**.
 - L'**Éclusière** ferme l'écluse pour la nuit suivante : la meute ne peut chasser aucune maison de l'autre rive (maisons 13 à 18), exactement comme quand le Pont est bloqué. Rappelle-le en ouvrant la nuit.
 
+# Le Bailli
+
+- **Réglage « Le Bailli »** (par défaut oui), pris à la distribution. Le premier jour, **avant le premier vote d'exécution**, ouvre l'élection : bouton **« Élire le Bailli »** de la Table de jeu ou du bandeau (la ligne « Prochaine étape » te le rappelle). L'élection se tient **pendant le débat**, sans passer à la phase du vote. Tous les vivants sont candidats ; égalité : le sort ; aucune voix : charge vacante jusqu'au lendemain (une seule élection par jour, jamais après le vote d'exécution).
+- Au vote d'exécution, la voix du Bailli **compte double** : le système l'applique au dépouillement.
+- **Égalité** : le système demande au Bailli, et à lui seul, de trancher parmi les ex æquo (fenêtre ou carte ; un compagnon IA tranche par son cerveau). La clôture attend son choix (au plus le délai des choix). S'il passe, personne pour cette place. Avec le Gibet, il ne choisit que parmi ceux qui ont la majorité absolue. Tant qu'il n'a pas tranché, ni nouveau vote ni changement de phase ; s'il tarde (absent, page rechargée), tranche à sa place depuis la Table de jeu (un bouton par ex æquo, ou « Personne »).
+- **À sa mort**, le système demande au défunt à qui il remet le sceau (une fenêtre posthume, après toutes les morts de la nuit). La « Prochaine étape » attend le sceau, au plus le délai des choix comptés depuis sa mort (même si ta page a été rechargée entre-temps). Sans réponse, la charge est vacante : le village élit un nouveau Bailli au jour suivant (ou le jour même, avant le vote d'exécution). Si un joueur dicte son choix à voix haute, ou si la charge reste vide, nomme le Bailli toi-même (bouton **« Nommer le Bailli »** de la Table de jeu).
+- Le Bailli est **public** : tu peux le nommer dans tes récits, rappeler sa voix double, le prendre à témoin.
+
+# Le Registre du greffier
+
+Le système y inscrit seul chaque vote clos (voix par voix), chaque mort avec sa **cause publique**, l'élection et la succession du Bailli. Un vivant peut y faire inscrire une **déclaration** pendant le jour (trois par jour, pas s'il est réduit au silence pendant le débat et le vote) : elle est annoncée au chat. Tu ne la commentes jamais, tu ne la confirmes ni ne la démens, même quand tu sais qu'elle ment. Le Registre sert de mémoire au village : appuie-toi dessus pour tes « Précédemment… ».
+
 # Le vote
 
 - Ouvre le vote avec les vivants comme candidats, une minute par défaut. Les voix restent secrètes jusqu'au dépouillement.
@@ -381,8 +413,9 @@ Si **personne n'est mort**, dis-le avec la même gravité : « Le jour se lève 
 
 # Les égalités
 
-- Première égalité : les ex æquo ont **trente secondes** chacun, puis revote **entre eux seulement**.
-- Seconde égalité : **personne n'est exécuté** ; la nuit tombe.
+- **Avec un Bailli vivant** : il tranche (le système le lui demande) ; pas de revote.
+- Sans Bailli, première égalité : les ex æquo ont **trente secondes** chacun, puis revote **entre eux seulement**.
+- Sans Bailli, seconde égalité : **personne n'est exécuté** ; la nuit tombe.
 - Un joueur seul en tête mais sans majorité (Gibet) : personne n'est exécuté.
 - Le **Loup déguisé** en tête d'un vote sans être exécuté perd son masque : note-le.
 
@@ -429,6 +462,9 @@ Pose sur la carte quelques **figurants** pour animer le village : le garde du gu
 - Si un joueur te demande en privé ce que fait un rôle, réponds avec le texte du rôle, sans dire qui l'a.
 - Ne cite jamais le nombre de loups vivants, sauf effet public (Meunière, Moulin), ni la composition, ni les rôles en jeu.
 - **Peste noire** : tu le sais (distribution secrète), tu ne le dis jamais, même par allusion. La première nuit, donne la victime à loups_nuit (peste_victime, ou « hasard ») ; ensuite, le porteur choisit. Quand un joueur crie « C'est la peste noire ! », loups_peste : le système tranche.
+
+- **Masques de veillée** : ils sont le secret de la meute. Ne les nomme jamais, ne dis jamais qu'un rôle « n'est pas en jeu », même quand un loup s'en réclame.
+- **Registre du greffier** : il est public (votes clos voix par voix, morts et cause publique, Bailli, déclarations). Tu peux t'en servir dans tes récits ; une déclaration n'est qu'une parole de joueur, jamais une vérité que tu confirmes.
 
 # Tenir le fil
 
@@ -477,6 +513,11 @@ Pose sur la carte quelques **figurants** pour animer le village : le garde du gu
 - **Éclusière et Pont** : les deux bloquent la même chose ; ils ne s'additionnent pas.
 - **Taverne et Loup** : si un loup y dort, la meute peut y tuer qui elle veut, sans protection possible.
 - **Herboriste sur elle-même, hors danger** : aucune fiole ne s'ouvre et elle garde ses deux usages.
+- **Bailli et Juge de paix** : le Juge ne peut annuler qu'après le départage du Bailli ; au revote, la voix du Bailli compte toujours double, et il tranche encore une égalité.
+- **Bailli et cloche du Sonneur** : vote double, voix double ; si l'égalité porte sur la seconde place, le Bailli ne choisit que pour elle.
+- **Bailli réduit au silence** : il ne parle pas, mais il vote (voix double) et tranche.
+- **Bailli loup** : rien ne change ; s'il tranche pour sauver un loup, c'est au village de s'en souvenir (le Registre le garde).
+- **Bailli mort avec son amant, ou dans la même nuit qu'un autre** : il ne remet le sceau qu'à un vivant, une fois toutes les morts tombées.
 
 # Changer de navigateur en pleine partie
 
@@ -505,6 +546,8 @@ const variantes = journal({
 - **Rôles autorisés** : le narrateur peut retirer un rôle d'une composition et le remplacer par un villageois, ou par un rôle du même camp.
 - **Composition secrète** (toujours) : le narrateur n'annonce ni les rôles en jeu, ni le nombre de loups.
 - **Peste noire** : le narrateur peut décider d'une partie sans loups (voir le guide du joueur) ; sinon, elle survient rarement d'elle-même.
+- **Le Bailli** (par défaut : oui) : un Bailli élu le premier jour, voix double, il tranche les égalités et désigne son successeur. Sans lui, les égalités se revotent entre ex æquo.
+- **Masques de veillée** (par défaut : oui) : la meute reçoit en secret deux ou trois rôles du Village absents qu'elle peut prétendre être. Sans eux, la partie est plus dure pour les loups.
 - **Ambiance** : gothique sérieux (par défaut) ou comique.`
     },
     {

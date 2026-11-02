@@ -7,8 +7,8 @@
 //   contexte : { villageois: [villageois à plat, rôles compris], attente: [roleCle] (réveils en cours : demandes
 //   envoyées aux joueurs, sans réponse), ignorer: [cle d'étape écartée par le MJ, ex. « emporter:<id> »] }.
 //
-// cle : distribuer | nuit | reveiller | attendre | aube | emporter | victoire | debat | ouvrirVote | cloreVote | executer
-//       | chapelle | rejouer
+// cle : distribuer | nuit | reveiller | attendre | aube | emporter | victoire | debat | bailli | ouvrirVote | cloreVote
+//       | departage | succession | executer | chapelle | rejouer
 // action : le data-action du bouton de la Table qui fait l'étape ("" = rien à presser, on attend les joueurs) ;
 // donnees : { phase, role, nom, id, n… } (pour le libellé et pour retrouver le bouton) ;
 // detail : { cle, donnees } facultatif (voix manquantes, Juge de paix, Braconnière…).
@@ -16,6 +16,7 @@ import { CLE_MEUTE, CLE_PESTE } from "./constantes.mjs";
 import { normaliserEtat, fusionnerEtat } from "./etat.mjs";
 import { ordreDeNuit } from "./nuit.mjs";
 import { verifierVictoire } from "./victoire.mjs";
+import { electionAttendue, voteExecutionDuJour } from "./bailli.mjs";
 
 const etape = (cle, action, donnees = {}, extra = {}) => ({ cle, action, donnees, attente: false, detail: null, ...extra });
 
@@ -32,6 +33,12 @@ export function emporteursEnAttente(etat, villageois = [], ignorer = []) {
     if (suivis <= avant && !ignorer.includes(`emporter:${m.acteurId}`)) enAttente.push(m.acteurId);
   });
   return enAttente;
+}
+
+// Un vote ouvert : le clore (avec les voix qui manquent encore).
+function cloture(v, vivants) {
+  const manquent = Math.max(0, vivants.length - v.exprimes.length);
+  return etape("cloreVote", "cloreVote", { n: manquent, objet: v.objet }, manquent ? { detail: { cle: "voixManquantes", donnees: { n: manquent } } } : {});
 }
 
 export function etapeSuivante(etatPublic, secretsMJ = null, { villageois = [], attente = [], ignorer = [] } = {}) {
@@ -72,16 +79,23 @@ export function etapeSuivante(etatPublic, secretsMJ = null, { villageois = [], a
       if (etat.nuitResolue !== Math.max(1, etat.tour)) return etape("aube", "aube");
       return apresUneMort() ?? etape("debat", "phase", { phase: "jour" });
     }
-    case "jour":
-      return apresUneMort() ?? etape("ouvrirVote", "ouvrirVote");
+    case "jour": {
+      // L'élection du Bailli se tient au débat, sans changer de phase : ouverte, on la clôt.
+      if (etat.vote.ouvert) return cloture(etat.vote, vivants);
+      const apres = apresUneMort();
+      if (apres) return apres;
+      // Le Bailli défunt remet le sceau (au plus le délai des choix) : on l'attend avant d'élire ou de voter.
+      const s = etat.bailli?.succession;
+      if (s) return etape("succession", "", { nom: nom(s.de) }, { attente: true });
+      // Un jour sans Bailli (bailli.mjs) : son élection d'abord, puis le vote d'exécution.
+      return electionAttendue({ etat, villageois }).ok ? etape("bailli", "voteBailli") : etape("ouvrirVote", "ouvrirVote");
+    }
     case "vote": {
       const v = etat.vote;
-      if (v.ouvert) {
-        const manquent = Math.max(0, vivants.length - v.exprimes.length);
-        return etape("cloreVote", "cloreVote", { n: manquent, objet: v.objet },
-          manquent ? { detail: { cle: "voixManquantes", donnees: { n: manquent } } } : {});
-      }
+      if (v.ouvert) return cloture(v, vivants);
       const r = v.resultat;
+      // Une égalité que le Bailli tranche : on attend son choix.
+      if (r?.departage?.enAttente) return etape("departage", "", { nom: nom(r.departage.par) }, { attente: true });
       if (r && r.numero === v.numero && r.objet === "execution") {
         const condamne = (r.elus ?? []).find(id => villageois.find(x => x.id === id)?.vivant !== false);
         if (condamne) {
@@ -92,6 +106,8 @@ export function etapeSuivante(etatPublic, secretsMJ = null, { villageois = [], a
       }
       const apres = apresUneMort();
       if (apres) return apres;
+      // Le Bailli vient d'être élu (ou non) : le vote d'exécution du jour suit.
+      if (r?.objet === "bailli" && r.tour === etat.tour && !voteExecutionDuJour(etat)) return etape("ouvrirVote", "ouvrirVote");
       // La Chapelle : un asile pour la nuit qui vient, s'il n'a pas encore été choisi.
       const enJeu = etat.batimentsCles ?? [];
       const asile = (etat.jour?.effets ?? []).some(x => x.type === "asile" && x.nuit === etat.tour + 1);

@@ -6,7 +6,9 @@
 // - égalité en tête -> personne n'est désigné ;
 // - vote double (la cloche du Sonneur) : deux villageois sont désignés, les deux premiers ; une égalité qui
 //   déborde la place restante laisse cette place vide (personne) ;
-// - majorité absolue (le Gibet) : il faut plus de la moitié des voix possibles des votants admis.
+// - majorité absolue (le Gibet) : il faut plus de la moitié des voix possibles des votants admis ;
+// - departage : l'égalité qui a laissé une place vide ({ candidats: les ex aequo, places }), que le Bailli peut trancher
+//   (bailli.mjs) ; null sinon.
 
 export function decompterVotes({ votes = {}, candidats = null, votants = null, double = false, poids = {}, majoriteAbsolue = false } = {}) {
   const admisCandidats = candidats?.length ? new Set(candidats) : null;
@@ -41,14 +43,30 @@ export function decompterVotes({ votes = {}, candidats = null, votants = null, d
     retenus = elus.filter(id => decompte[id] * 2 > total);
   }
 
+  // L'égalité qui a laissé une place vide : le groupe qui débordait, et les places qu'il laisse (le Bailli peut y trancher).
+  // Avec la majorité absolue, seulement parmi ceux qui l'ont.
+  let departage = null;
+  const suivant = groupes.find(g => !elus.includes(g[0]));
+  const reste = places - elus.length;
+  if (suivant && reste > 0 && suivant.length > reste) {
+    const candidats = suivant.filter(id => !majoriteAbsolue || decompte[id] * 2 > totalDesVoix(admisVotants, valides, poids));
+    if (candidats.length) departage = { candidats, places: reste };
+  }
+
   const tete = groupes[0] ?? [];
   return {
     decompte,
     votes: valides,
     elus: retenus,
     elu: retenus[0] ?? null,
-    egalite: tete.length > places
+    egalite: tete.length > places,
+    departage
   };
+}
+
+// Les voix possibles d'un vote (pour la majorité absolue) : celles des votants admis, à défaut celles exprimées.
+function totalDesVoix(admisVotants, valides, poids) {
+  return admisVotants ? [...admisVotants].reduce((s, v) => s + poidsDe(poids, v), 0) : Object.keys(valides).reduce((s, v) => s + poidsDe(poids, v), 0);
 }
 
 function poidsDe(poids, votant) {

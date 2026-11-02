@@ -299,4 +299,39 @@ La meute ne peut pas te tuer : quand elle entre chez toi, elle n'y trouve que de
   })
 ];
 
-export const ROLES = [...MEUTE, ...VILLAGE, ...SOLITAIRES];
+// ======================================================================= Les gens de passage
+// Pour un joueur qui arrive en cours de partie (réglage « gensDePassage » du système) : son rôle est PUBLIC, son camp SECRET
+// (tiré par le système : Village ou Meute) ; son pouvoir sert une fois, de jour. L'objet porte le camp « village » : c'est le
+// camp tiré, sur le villageois, qui compte.
+
+const PASSAGE = [
+  role({
+    cle: "remouleur", nom: "Rémouleur", camp: "village", usages: 1,
+    resume: "gens de passage : une fois, de jour, affûte la serrure d'une maison : la première attaque de loup la nuit suivante échoue.",
+    pouvoir: `Tu passes de village en village avec ta meule à pédale, et tu repars avant l'hiver.
+
+Ton rôle est **connu de tous**, ton camp **ne l'est pas** : le narrateur te l'a dit en secret (Village ou Meute).
+
+**Une fois**, pendant le jour, tu affûtes la serrure et le couteau d'une maison (la tienne comprise) : la nuit suivante, **la première attaque de loup contre elle échoue**, et si la meute la touche malgré tout, elle y laisse du sang.`
+  }),
+  role({
+    cle: "montreur-d-ours", nom: "Montreur d'ours", camp: "village", usages: 1,
+    resume: "gens de passage : une fois, de jour, couche son ours devant une porte : la meute n'y entre pas la nuit suivante.",
+    pouvoir: `Ton ours danse sur la place et dort en travers des seuils.
+
+Ton rôle est **connu de tous**, ton camp **ne l'est pas** : le narrateur te l'a dit en secret (Village ou Meute).
+
+**Une fois**, pendant le jour, tu couches ton ours devant la porte d'un joueur (toi compris) : **la meute n'entre pas** chez lui la nuit suivante.`
+  }),
+  role({
+    cle: "pelerine", nom: "Pèlerine", camp: "village", usages: 1,
+    resume: "gens de passage : une fois, de jour, prie sur un seuil et apprend en secret le camp de ce joueur.",
+    pouvoir: `Tu marches vers un sanctuaire lointain, et Brumecombe n'est qu'une étape.
+
+Ton rôle est **connu de tous**, ton camp **ne l'est pas** : le narrateur te l'a dit en secret (Village ou Meute).
+
+**Une fois**, pendant le jour, tu pries longuement sur le seuil d'un autre joueur : le village le voit, mais toi seule apprends **son camp** (tel que le voient les visions).`
+  })
+];
+
+export const ROLES = [...MEUTE, ...VILLAGE, ...SOLITAIRES, ...PASSAGE];

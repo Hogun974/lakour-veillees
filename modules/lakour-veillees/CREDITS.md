@@ -29,7 +29,7 @@ relief). Fichiers produits par `outils/fabriquer-jetons-veillees.mjs` ; les corr
 | [spinning-wheel](https://game-icons.net/1x1/caro-asercion/spinning-wheel.html) | Caro Asercion | Métier — Tisserande |
 | [nun-face](https://game-icons.net/1x1/cathelineau/nun-face.html) | Cathelineau | Figurant — Religieuse |
 | [hooded-figure](https://game-icons.net/1x1/darkzaitzev/hooded-figure.html) | DarkZaitzev | Figurant — Silhouette dans la brume |
-| [animal-hide](https://game-icons.net/1x1/delapouite/animal-hide.html) | Delapouite | Métier — Tanneur |
+| [animal-hide](https://game-icons.net/1x1/delapouite/animal-hide.html) | Delapouite | Rôle — Montreur d'ours ; Métier — Tanneur |
 | [baby-face](https://game-icons.net/1x1/delapouite/baby-face.html) | Delapouite | Figurant — Enfant |
 | [barn](https://game-icons.net/1x1/delapouite/barn.html) | Delapouite | Bâtiment — La Grange |
 | [bow-arrow](https://game-icons.net/1x1/delapouite/bow-arrow.html) | Delapouite | Métier — Chasseresse |
@@ -42,6 +42,7 @@ relief). Fichiers produits par `outils/fabriquer-jetons-veillees.mjs` ; les corr
 | [graveyard](https://game-icons.net/1x1/delapouite/graveyard.html) | Delapouite | Bâtiment — Le Cimetière |
 | [herbs-bundle](https://game-icons.net/1x1/delapouite/herbs-bundle.html) | Delapouite | Rôle — Herboriste |
 | [jewel-crown](https://game-icons.net/1x1/delapouite/jewel-crown.html) | Delapouite | Rôle — Rosière |
+| [pilgrim-hat](https://game-icons.net/1x1/delapouite/pilgrim-hat.html) | Delapouite | Rôle — Pèlerine |
 | [sitting-dog](https://game-icons.net/1x1/delapouite/sitting-dog.html) | Delapouite | Figurant — Chien de ferme |
 | [sniffing-dog](https://game-icons.net/1x1/delapouite/sniffing-dog.html) | Delapouite | Rôle — Loup flaireur |
 | [stone-bridge](https://game-icons.net/1x1/delapouite/stone-bridge.html) | Delapouite | Rôle — Garde du pont ; Bâtiment — Le Pont |
@@ -59,6 +60,7 @@ relief). Fichiers produits par `outils/fabriquer-jetons-veillees.mjs` ; les corr
 | [bestial-fangs](https://game-icons.net/1x1/lorc/bestial-fangs.html) | Lorc | Rôle — Loup affamé |
 | [candle-light](https://game-icons.net/1x1/lorc/candle-light.html) | Lorc | Rôle — Somnambule |
 | [cat](https://game-icons.net/1x1/lorc/cat.html) | Lorc | Figurant — Chat |
+| [circular-sawblade](https://game-icons.net/1x1/lorc/circular-sawblade.html) | Lorc | Rôle — Rémouleur |
 | [cowled](https://game-icons.net/1x1/lorc/cowled.html) | Lorc | Villageois (rôle caché) |
 | [crystal-ball](https://game-icons.net/1x1/lorc/crystal-ball.html) | Lorc | Rôle — Liseuse de cendres |
 | [cupidon-arrow](https://game-icons.net/1x1/lorc/cupidon-arrow.html) | Lorc | Rôle — Entremetteuse |

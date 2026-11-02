@@ -13,7 +13,9 @@
 //   jour       : effets posés pendant le jour pour cette nuit (effetsDeLaNuit, jour.mjs) : { verrous, surveilles, asiles,
 //                lames, horsDAtteinte, taverne, taverneEnJeu, benis, pontBloque, givre, etoiles }.
 //                givre (Almanach des brumes) : aucune protection ni verrou ne tient cette nuit ; etoiles : [acteurId] protégés en
-//                secret par le narrateur (la Bonne étoile, la première nuit).
+//                secret par le narrateur (la Bonne étoile, la première nuit) ; linceul (Glas du deuil) : rien n'arrête la meute.
+//   actions    : + { roleCle: "deuil", effet: "deuil", cibles: [id] } : la vision du Glas du deuil (le camp, à toute la meute) ;
+//                une action de groupe (ni le guet ni l'éloignement du loup noté ne l'arrêtent) ; délivrée : sortie.deuil = la cible.
 //   somnambules: [acteurId] qui rêvent leur rôle (somnambule.mjs) : leurs visions sont fausses ; rolesFactices : [nom de rôle]
 //                parmi lesquels un Fossoyeur rêvé lit un faux rôle.
 // -> { morts, deces, sauves, revelations, messages, changements, asperges, fioles, fiolesVides, voteDouble, enAttente, narrateur,
@@ -52,6 +54,7 @@ import { seReveille, agitAvecLaMeute } from "./nuit.mjs";
 import { victoireCleDe } from "./victoire.mjs";
 import { majoriteMeute } from "./votes.mjs";
 import { surLAutreRive } from "./distribution.mjs";
+import { CLE_DEUIL } from "./deuil.mjs";
 
 // Un mot porté par le Messager : une ligne, sans balises, 200 caractères au plus.
 export function nettoyerMot(texte, longueur = 200) {
@@ -96,7 +99,7 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
 
   const sortie = { morts: [], deces: [], sauves: [], revelations: [], messages: [], changements: [], asperges: [],
     fioles: JSON.parse(JSON.stringify(fioles ?? {})), fiolesVides: [], voteDouble: false, enAttente: [], narrateur: [],
-    annonces: [], bilan: null, pontFranchi: false };
+    annonces: [], bilan: null, pontFranchi: false, deuil: "" };
 
   // Les rôles sans cible réveillés cette nuit agissent d'office (l'Ermite guette, le Chasseur apprend sa cible).
   const toutes = [...actions];
@@ -112,14 +115,15 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
     const acteur = parId.get(a.acteurId);
     const deLaMeute = a.roleCle === CLE_MEUTE;
     const deLaPeste = a.roleCle === CLE_PESTE;   // son porteur est mort : il agit quand même
-    if (!deLaMeute && !deLaPeste && (!acteur || acteur.vivant === false)) continue;
-    if (deLaMeute && !vivantsMeute.length) continue;
+    const duDeuil = a.roleCle === CLE_DEUIL;     // la vision du Glas du deuil : toute la meute, quel que soit le loup noté
+    if (!deLaMeute && !deLaPeste && !duDeuil && (!acteur || acteur.vivant === false)) continue;
+    if ((deLaMeute || duDeuil) && !vivantsMeute.length) continue;
     const cibles = [...new Set((a.cibles ?? []).filter(id => parId.has(id)))];
     const passe = !cibles.length && !a.effet && (deLaMeute || deLaPeste || !sansCible(acteur?.role));
     if (passe) continue;
     const effet = effetDeLAction(a, acteur);
-    if (deLaPeste) {
-      // Ni loup à empêcher, ni porteur à retenir (gardé à l'œil, hors d'atteinte : il est mort).
+    if (deLaPeste || duDeuil) {
+      // Ni loup à empêcher, ni porteur à retenir (gardé à l'œil, hors d'atteinte : il est mort) ; la vision ne sort pas de chez soi.
     } else if (deLaMeute) {
       if (!peutChasser.length) {
         sortie.messages.push(msg("mj", "MeuteEmpechee", "Aucun loup n'a pu sortir cette nuit : la meute n'a pas chassé.", {}));
@@ -132,7 +136,7 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
       sortie.messages.push(msg(a.acteurId, "Surveille", "Le garde du guet vous avait à l'œil : vous n'avez pas pu quitter votre maison.", {}));
       continue;
     }
-    const absent = cibles.find(c => hors.has(c) && c !== a.acteurId && vivant(c));
+    const absent = duDeuil ? null : cibles.find(c => hors.has(c) && c !== a.acteurId && vivant(c));
     if (absent) {
       sortie.messages.push(deLaPeste ? msg("mj", "PesteBredouille", `La peste n'a trouvé personne chez ${nom(absent)} : il dormait hors d'atteinte.`, { nom: nom(absent) })
         : deLaMeute ? msg("mj", "MeuteBredouille", `La meute n'a trouvé personne chez ${nom(absent)} : il dormait hors d'atteinte.`, { nom: nom(absent) })
@@ -218,7 +222,10 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
   // (le premier seulement). Renvoie la raison, ou "".
   const verrousServis = new Set();
   const sansProtection = cible => taverne.has(cible) && loupATaverne;   // un loup dort à la Taverne : aucune protection ne joue
+  // Le linceul du Glas du deuil (deuil.mjs) : cette nuit, rien n'arrête la meute (ni porte, ni garde, ni remède).
+  const linceul = Boolean(jour.linceul);
   const bloqueeALaPorte = cible => {
+    if (linceul) return "";
     if (asiles.has(cible)) return "asile";
     if (taverne.has(cible) && !loupATaverne) return "taverne";
     if (verrous.has(cible) && !verrousServis.has(cible) && !sansProtection(cible)) { verrousServis.add(cible); return "verrou"; }
@@ -245,7 +252,7 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
     for (let i = attaques.length - 1; i >= 0; i--) if (attaques[i].meute && attaques[i].cible === cible) attaques.splice(i, 1);
     const porte = bloqueeALaPorte(cible);
     if (porte) noterBlocage(cible, porte);
-    else if (proteges.has(cible) && !sansProtection(cible)) {
+    else if (proteges.has(cible) && !sansProtection(cible) && !linceul) {
       sortie.sauves.push({ acteurId: cible, par: "proteger" });
       sortie.messages.push(msg("mj", "MorsureEvitee", `La morsure sur ${nom(cible)} a été repoussée.`, { nom: nom(cible) }));
     } else if (parId.get(cible).camp !== "meute") {
@@ -322,6 +329,7 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
       const porte = bloqueeALaPorte(x.cible);
       if (porte) { noterBlocage(x.cible, porte, x.peste); continue; }
     }
+    if (linceul && x.meute && !x.peste) { meurt(x.cible, x.cause); continue; }
     if (remedies.has(x.cible)) {
       sortie.sauves.push({ acteurId: x.cible, par: "remede" });
       sortie.messages.push(msg("mj", "SauveRemede", `${nom(x.cible)} a été sauvé par un remède.`, { nom: nom(x.cible) }));
@@ -379,6 +387,16 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
     } else {
       const camp = reve.has(a.acteurId) ? campInverse(parId.get(c)?.camp) : apparenceDe(parId.get(c));
       sortie.messages.push(msg(a.acteurId, "VoirCamp", `Les cendres parlent : ${nom(c)} est du camp « ${camp} ».`, { nom: nom(c), camp }));
+    }
+  }
+  // La vision du Glas du deuil (deuil.mjs) : chaque loup vivant apprend le camp du joueur désigné par la meute.
+  for (const a of parEffet("deuil")) {
+    const c = a.cibles[0];
+    if (!c) continue;
+    const camp = apparenceDe(parId.get(c));
+    sortie.deuil = c;
+    for (const loup of vivantsMeute) {
+      sortie.messages.push(msg(loup, "VisionDeuil", `Le glas vous souffle le camp de ${nom(c)} : « ${camp} ».`, { nom: nom(c), camp }));
     }
   }
   for (const a of parEffet("voir-role-mort")) {

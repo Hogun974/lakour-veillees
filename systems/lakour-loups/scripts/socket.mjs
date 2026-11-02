@@ -17,11 +17,13 @@
 //                        { type: "bonjour", userId }             « renvoie-moi mon carnet » (et ma ligne des salons)
 //                        { type: "peste", acteurId, userId }     « C'est la peste noire ! » (le MJ actif seul tranche)
 //                        { type: "declaration", acteurId, texte, userId }   une déclaration au Registre du greffier (pour soi)
+//                        { type: "accusation", acteurId, contre, userId }   une accusation au Banc des accusés (pour soi)
+//                        { type: "depart", acteurId, userId }    « je dois partir » : il quitte la veillée sans mourir (pour soi)
 //   joueur -> le MJ qui l'a demandée : { type: "partRendue", partie, x, y, userId }   sa part de clé
 //   MJ -> tous : { type: "hook", nom, args }  (arguments publics seulement)
 import { CANAL } from "../logique/constantes.mjs";
 import { estMJActif, auteur, vientDUnMJ } from "./canal.mjs";
-import { recevoirReponse, recevoirVote, recevoirJour, recevoirCri, recevoirDeclaration, envoyerCarnet } from "./api.mjs";
+import { recevoirReponse, recevoirVote, recevoirJour, recevoirCri, recevoirDeclaration, recevoirAccusation, recevoirDepart, envoyerCarnet } from "./api.mjs";
 import { recevoirSecret, recevoirCarnet, noterMonVote } from "./prive.mjs";
 import { fermerChoix } from "./apps/choix.mjs";
 import { recevoirDemande, oublierDemande } from "./plateau-local.mjs";
@@ -43,6 +45,8 @@ export function traiterMessage(message, emetteur) {
     case "jour": return estMJActif() && recevoirJour(pourMoi);
     case "peste": return estMJActif() && recevoirCri(pourMoi);
     case "declaration": return estMJActif() && recevoirDeclaration(pourMoi);
+    case "accusation": return estMJActif() && recevoirAccusation(pourMoi);
+    case "depart": return estMJActif() && recevoirDepart(pourMoi);
     case "partRendue": return estMJActif() && Boolean(emetteur) && recevoirPartRendue(pourMoi);
     case "bonjour":
       if (!estMJActif()) return false;

@@ -7,8 +7,10 @@
 //   contexte : { villageois: [villageois à plat, rôles compris], attente: [roleCle] (réveils en cours : demandes
 //   envoyées aux joueurs, sans réponse), ignorer: [cle d'étape écartée par le MJ, ex. « emporter:<id> »] }.
 //
-// cle : distribuer | nuit | reveiller | attendre | aube | emporter | victoire | debat | bailli | ouvrirVote | cloreVote
+// cle : distribuer | nuit | reveiller | attendre | aube | emporter | victoire | debat | bailli | ouvrirVote | juger | cloreVote
 //       | departage | succession | executer | chapelle | rejouer
+// Le Banc des accusés (banc.mjs) : « juger » (ouvrirVote : le prochain accusé) ; sans accusé, la nuit (detail « bancVide »).
+// La Nuit de la Saint-Martin (saintmartin.mjs) : sa fin tombe après son unique vote (verifierVictoire, saintMartin).
 // action : le data-action du bouton de la Table qui fait l'étape ("" = rien à presser, on attend les joueurs) ;
 // donnees : { phase, role, nom, id, n… } (pour le libellé et pour retrouver le bouton) ;
 // detail : { cle, donnees } facultatif (voix manquantes, Juge de paix, Braconnière…).
@@ -18,6 +20,9 @@ import { ordreDeNuit } from "./nuit.mjs";
 import { verifierVictoire } from "./victoire.mjs";
 import { electionAttendue, voteExecutionDuJour } from "./bailli.mjs";
 import { glasSonne } from "./calendrier.mjs";
+import { visionDuDeuilDue, CLE_DEUIL } from "./deuil.mjs";
+import { prochainAccuse } from "./banc.mjs";
+import { estSaintMartin, saintMartinFinie } from "./saintmartin.mjs";
 
 const etape = (cle, action, donnees = {}, extra = {}) => ({ cle, action, donnees, attente: false, detail: null, ...extra });
 
@@ -56,8 +61,22 @@ export function etapeSuivante(etatPublic, secretsMJ = null, { villageois = [], a
     const [emporteur] = emporteursEnAttente(etat, villageois, ignorer);
     if (emporteur) return etape("emporter", "emporter", { id: emporteur, nom: nom(emporteur) }, { detail: { cle: "emporter", donnees: { nom: nom(emporteur) } } });
     // Le Glas final (calendrier.mjs) : le jour N fini, la partie s'arrête.
-    if (!etat.vainqueur && verifierVictoire({ villageois, morts: etat.morts, glas: glasSonne(etat), primes: etat.primes ?? {}, peste: etat.peste })) return etape("victoire", "victoire");
+    if (!etat.vainqueur && verifierVictoire({ villageois, morts: etat.morts, glas: glasSonne(etat), primes: etat.primes ?? {}, peste: etat.peste,
+      saintMartin: estSaintMartin(etat) ? saintMartinFinie(etat, villageois) : null })) return etape("victoire", "victoire");
     return null;
+  };
+  // La Chapelle : un asile pour la nuit qui vient, s'il n'a pas encore été choisi aujourd'hui (l'ours du Montreur n'en est pas un).
+  const chapelleDue = () => (etat.batimentsCles ?? []).includes("chapelle")
+    && !(etat.jour?.effets ?? []).some(x => x.type === "asile" && !x.origine && x.nuit === etat.tour + 1)
+    && !(etat.registre ?? []).some(x => x.type === "vote" && x.objet === "chapelle" && x.tour === etat.tour);
+  // Le vote d'exécution du jour : avec le Banc des accusés, le jugement du prochain accusé ; sans accusé, la Chapelle si elle
+  // est due, puis la nuit peut tomber.
+  const voteDuJour = () => {
+    if (!etat.banc?.actif) return etape("ouvrirVote", "ouvrirVote");
+    const accuse = prochainAccuse(etat, villageois);
+    if (accuse) return etape("juger", "ouvrirVote", { id: accuse, nom: nom(accuse) });
+    const vide = { detail: { cle: "bancVide", donnees: {} } };
+    return chapelleDue() ? etape("chapelle", "voteChapelle", {}, vide) : etape("nuit", "phase", { phase: "nuit" }, vide);
   };
 
   switch (etat.phase) {
@@ -69,11 +88,12 @@ export function etapeSuivante(etatPublic, secretsMJ = null, { villageois = [], a
       if (!secretsMJ) return etape("aube", "aube", {}, { detail: { cle: "sansSecrets", donnees: {} } });
       const faits = new Set(etat.nuit.actions.map(a => a.roleCle));
       // Peste noire (secret du MJ) : l'étape « la peste », à la place de la meute ; qui : son porteur, s'il y en a un.
-      for (const e of ordreDeNuit(villageois, tour, { peste: etat.peste })) {
+      for (const e of ordreDeNuit(villageois, tour, { peste: etat.peste, deuil: visionDuDeuilDue(etat, villageois) })) {
         if (faits.has(e.roleCle)) continue;
-        const groupe = e.roleCle === CLE_MEUTE || e.roleCle === CLE_PESTE;
+        const groupe = e.roleCle === CLE_MEUTE || e.roleCle === CLE_PESTE || e.roleCle === CLE_DEUIL;
         const roleNom = groupe ? "" : villageois.find(v => v.id === e.acteurIds[0])?.role?.nom ?? e.roleCle;
-        const donnees = { role: e.roleCle, nom: roleNom, meute: e.roleCle === CLE_MEUTE, peste: e.roleCle === CLE_PESTE, qui: e.acteurIds.map(nom).join(", ") };
+        const donnees = { role: e.roleCle, nom: roleNom, meute: e.roleCle === CLE_MEUTE, peste: e.roleCle === CLE_PESTE, qui: e.acteurIds.map(nom).join(", "),
+          ...(e.roleCle === CLE_DEUIL ? { deuil: true } : {}) };
         if (attente.includes(e.roleCle)) return etape("attendre", "", donnees, { attente: true });
         return etape("reveiller", "reveiller", donnees);
       }
@@ -92,7 +112,7 @@ export function etapeSuivante(etatPublic, secretsMJ = null, { villageois = [], a
       const s = etat.bailli?.succession;
       if (s) return etape("succession", "", { nom: nom(s.de) }, { attente: true });
       // Un jour sans Bailli (bailli.mjs) : son élection d'abord, puis le vote d'exécution.
-      return electionAttendue({ etat, villageois }).ok ? etape("bailli", "voteBailli") : etape("ouvrirVote", "ouvrirVote");
+      return electionAttendue({ etat, villageois }).ok ? etape("bailli", "voteBailli") : voteDuJour();
     }
     case "vote": {
       const v = etat.vote;
@@ -110,13 +130,16 @@ export function etapeSuivante(etatPublic, secretsMJ = null, { villageois = [], a
       }
       const apres = apresUneMort();
       if (apres) return apres;
-      // Le Bailli vient d'être élu (ou non) : le vote d'exécution du jour suit.
-      if (r?.objet === "bailli" && r.tour === etat.tour && !voteExecutionDuJour(etat)) return etape("ouvrirVote", "ouvrirVote");
-      // La Chapelle : un asile pour la nuit qui vient, s'il n'a pas encore été choisi.
-      const enJeu = etat.batimentsCles ?? [];
-      const asile = (etat.jour?.effets ?? []).some(x => x.type === "asile" && x.nuit === etat.tour + 1);
+      // Le Bailli vient d'être élu (ou non), ou un vote d'exil : le vote d'exécution du jour suit, s'il n'a pas déjà eu lieu (le
+      // Registre le dit) ; après un exil, l'élection du Bailli d'abord, si elle est due.
+      if ((r?.objet === "bailli" || r?.objet === "exil") && r.tour === etat.tour && !voteExecutionDuJour(etat)) {
+        return electionAttendue({ etat, villageois }).ok ? etape("bailli", "voteBailli") : voteDuJour();
+      }
+      // Le Banc : un accusé acquitté, le suivant est jugé (tant que personne n'a été exécuté ce jour-là).
+      if (r?.banc && r.objet === "execution" && r.tour === etat.tour && prochainAccuse(etat, villageois)) return voteDuJour();
+      // La Chapelle, après le vote d'exécution du jour (même suivi d'un exil).
       const voteChapelle = r && r.objet === "chapelle" && r.tour === etat.tour;
-      if (enJeu.includes("chapelle") && !asile && !voteChapelle && r?.objet === "execution") return etape("chapelle", "voteChapelle");
+      if (chapelleDue() && !voteChapelle && voteExecutionDuJour(etat)) return etape("chapelle", "voteChapelle");
       return etape("nuit", "phase", { phase: "nuit" });
     }
     default:

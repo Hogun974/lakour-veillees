@@ -3,7 +3,7 @@
     <i class="fa-solid fa-scale-balanced"></i>
     <div>
       <div class="loups-etiquette">{{localize "LAKOUR_LOUPS.Vote.Place"}}</div>
-      <p class="loups-invite">{{#if chapelle}}{{localize "LAKOUR_LOUPS.Vote.QuestionChapelle"}}{{else if bailli}}{{localize "LAKOUR_LOUPS.Vote.QuestionBailli"}}{{else}}{{localize "LAKOUR_LOUPS.Vote.Question"}}{{/if}}</p>
+      <p class="loups-invite">{{#if chapelle}}{{localize "LAKOUR_LOUPS.Vote.QuestionChapelle"}}{{else if bailli}}{{localize "LAKOUR_LOUPS.Vote.QuestionBailli"}}{{else if exil}}{{localize "LAKOUR_LOUPS.Passage.QuestionExil"}}{{else if banc}}{{localize "LAKOUR_LOUPS.Banc.Question" nom=banc}}{{else}}{{localize "LAKOUR_LOUPS.Vote.Question"}}{{/if}}</p>
       <div class="loups-pastilles">
         {{#if double}}<span class="loups-pastille cloche"><i class="fa-solid fa-bell"></i> {{localize "LAKOUR_LOUPS.Vote.Double"}}</span>{{/if}}
         {{#if majoriteAbsolue}}<span class="loups-pastille gibet">{{localize "LAKOUR_LOUPS.Vote.MajoriteAbsolue"}}</span>{{/if}}

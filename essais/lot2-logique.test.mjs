@@ -233,7 +233,7 @@ const MUTATIONS = [
   ["somnambule.mjs", " && r.cle !== CLE_SOMNAMBULE).map(r => r.nom)", ").map(r => r.nom)", "faux rôle : pas Somnambule"],
   ["resolution.mjs", "const lu = reve.has(a.acteurId) && !mort.revele ? ", "const lu = reve.has(a.acteurId) ? ", "fossoyeur rêvé : un mort révélé se lit tel quel"],
   ["etat.mjs", "  if (execution && presageDuJour(etat) === \"glas\") etat.vote.double = true;\n", "", "glas : ce jour-là"],
-  ["etat.mjs", "\"bonneEtoile\", \"aConsigner\", \"carnets\"", "\"bonneEtoile\", \"carnets\"", "composition en cours secrète"],
+  ["etat.mjs", "\"bonneEtoile\", \"aConsigner\", \"pouvoirsDeuil\"", "\"bonneEtoile\", \"pouvoirsDeuil\"", "composition en cours secrète"],
   ["etat.mjs", "  if (s.aConsigner !== undefined) etat.aConsigner = s.aConsigner;\n", "", "composition en cours rendue au MJ"],
   ["souffle.mjs", "  if ((etat?.vote?.objet ?? \"execution\") !== \"execution\") return vivants;\n", "", "souffle : vote d'exécution seulement"],
   ["souffle.mjs", "Boolean(etat?.souffle?.actif) && mort(v)", "mort(v)", "souffle : le réglage"],

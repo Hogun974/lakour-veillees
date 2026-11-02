@@ -31,7 +31,7 @@
         "level": 1
       },
       "text": {
-        "content": "<h2>À annoncer avant la distribution</h2><ul><li><strong>Révélation à la mort</strong> (par défaut : oui) : le rôle d'un mort est montré à tous. Sans révélation, la partie est plus longue et plus trouble ; mettez le <strong>Cimetière</strong> en jeu pour garder un peu d'information.</li><li><strong>Nombre de loups</strong> : la composition le donne (2 à 5). Un loup de plus pour un groupe aguerri, un de moins pour un groupe qui débute.</li><li><strong>Temps de débat</strong> : 5 minutes par défaut ; 3 minutes pour une partie nerveuse ; 8 minutes pour une veillée bavarde.</li><li><strong>Rôles autorisés</strong> : le narrateur peut retirer un rôle d'une composition et le remplacer par un villageois, ou par un rôle du même camp.</li><li><strong>Composition secrète</strong> (toujours) : le narrateur n'annonce ni les rôles en jeu, ni le nombre de loups.</li><li><strong>Peste noire</strong> : le narrateur peut décider d'une partie sans loups (voir le guide du joueur) ; sinon, elle survient rarement d'elle-même.</li><li><strong>Le Bailli</strong> (par défaut : oui) : un Bailli élu le premier jour, voix double, il tranche les égalités et désigne son successeur. Sans lui, les égalités se revotent entre ex æquo.</li><li><strong>Masques de veillée</strong> (par défaut : oui) : la meute reçoit en secret deux ou trois rôles du Village absents qu'elle peut prétendre être. Sans eux, la partie est plus dure pour les loups.</li><li><strong>Dernier souffle</strong> (par défaut : oui) : chaque mort garde une voix, une seule fois, pour un vote d'exécution.</li><li><strong>Almanach des brumes</strong> (par défaut : non) : un présage par aube change la règle du jour (page suivante).</li><li><strong>Glas final</strong> et <strong>Bonne étoile</strong> : réglages du narrateur, à la Table de jeu (le jour où la partie s'arrête ; un débutant protégé en secret la première nuit).</li><li><strong>Somnambule</strong> et <strong>Rosière</strong> : rôles « sur demande », jamais tirés d'office ; le narrateur les ajoute à la main.</li><li><strong>Ambiance</strong> : gothique sérieux (par défaut) ou comique.</li></ul>",
+        "content": "<h2>À annoncer avant la distribution</h2><ul><li><strong>Révélation à la mort</strong> (par défaut : oui) : le rôle d'un mort est montré à tous. Sans révélation, la partie est plus longue et plus trouble ; mettez le <strong>Cimetière</strong> en jeu pour garder un peu d'information.</li><li><strong>Nombre de loups</strong> : la composition le donne (2 à 5). Un loup de plus pour un groupe aguerri, un de moins pour un groupe qui débute.</li><li><strong>Temps de débat</strong> : 5 minutes par défaut ; 3 minutes pour une partie nerveuse ; 8 minutes pour une veillée bavarde.</li><li><strong>Rôles autorisés</strong> : le narrateur peut retirer un rôle d'une composition et le remplacer par un villageois, ou par un rôle du même camp.</li><li><strong>Composition secrète</strong> (toujours) : le narrateur n'annonce ni les rôles en jeu, ni le nombre de loups.</li><li><strong>Peste noire</strong> : le narrateur peut décider d'une partie sans loups (voir le guide du joueur) ; sinon, elle survient rarement d'elle-même.</li><li><strong>Le Bailli</strong> (par défaut : oui) : un Bailli élu le premier jour, voix double, il tranche les égalités et désigne son successeur. Sans lui, les égalités se revotent entre ex æquo.</li><li><strong>Masques de veillée</strong> (par défaut : oui) : la meute reçoit en secret deux ou trois rôles du Village absents qu'elle peut prétendre être. Sans eux, la partie est plus dure pour les loups.</li><li><strong>Dernier souffle</strong> (par défaut : oui) : chaque mort garde une voix, une seule fois, pour un vote d'exécution.</li><li><strong>Almanach des brumes</strong> (par défaut : non) : un présage par aube change la règle du jour (page suivante).</li><li><strong>Gens de passage</strong> (par défaut : oui) : un joueur qui arrive en cours de partie entre avec un rôle public et un camp secret ; on peut quitter la veillée sans mourir.</li><li><strong>Banc des accusés</strong> et <strong>Glas du deuil</strong> (par défaut : non) : deux variantes du jour (page « Le Banc et le Glas »).</li><li><strong>Nuit de la Saint-Martin</strong> : le format court, à choisir à la préparation (même page).</li><li><strong>Glas final</strong> et <strong>Bonne étoile</strong> : réglages du narrateur, à la Table de jeu (le jour où la partie s'arrête ; un débutant protégé en secret la première nuit).</li><li><strong>Somnambule</strong> et <strong>Rosière</strong> : rôles « sur demande », jamais tirés d'office ; le narrateur les ajoute à la main.</li><li><strong>Ambiance</strong> : gothique sérieux (par défaut) ou comique.</li></ul>",
         "format": 1
       },
       "ownership": {
@@ -61,9 +61,28 @@
     {
       "_id": "sDVlIIAtX48gDFjR",
       "_key": "!journal.pages!PImyfSaT7Yt7S2ab.sDVlIIAtX48gDFjR",
-      "name": "Variantes de règles",
+      "name": "Le Banc et le Glas",
       "type": "text",
       "sort": 300,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Le Banc des accusés</h2><p>Chaque vivant accuse <strong>une fois par jour</strong> pendant le débat ; chacun ne peut être accusé qu'<strong>une fois par jour</strong>. Les accusés sont <strong>jugés un par un</strong>, dans l'ordre des accusations : pour ou contre. Il faut <strong>la moitié des voix des vivants</strong> pour exécuter ; dès qu'un accusé est exécuté, les autres sont libres jusqu'au lendemain. Le Bailli, le Gibet, le Juge de paix et le Dernier souffle jouent comme d'habitude.</p><h2>Le Glas du deuil</h2><p>Chaque innocent exécuté par le vote fait sonner le glas (« le glas sonne pour la 2e fois »), et la meute y gagne un pouvoir collectif qui grandit : d'abord une vision, puis une voix sans visage aux votes, puis une nuit où aucune protection ne tient. Le village n'apprend que le nombre de glas.</p><h2>La Nuit de la Saint-Martin</h2><p>Une partie d'une dizaine de minutes : trois rôles de plus que de joueurs, cachés sous l'autel de la Chapelle ; <strong>une nuit</strong> (échanges du Colporteur compris), <strong>un vote</strong>, et la fin. Exécuter un loup sauve le village ; épargner un loup le condamne ; et sans loup parmi vous, pendre un innocent laisse la brume l'emporter.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "PnFzfFn8mBCvj17B",
+      "_key": "!journal.pages!PImyfSaT7Yt7S2ab.PnFzfFn8mBCvj17B",
+      "name": "Variantes de règles",
+      "type": "text",
+      "sort": 400,
       "title": {
         "show": true,
         "level": 1
@@ -78,11 +97,11 @@
       "flags": {}
     },
     {
-      "_id": "PnFzfFn8mBCvj17B",
-      "_key": "!journal.pages!PImyfSaT7Yt7S2ab.PnFzfFn8mBCvj17B",
+      "_id": "p3RaXiiAP0fTuyJb",
+      "_key": "!journal.pages!PImyfSaT7Yt7S2ab.p3RaXiiAP0fTuyJb",
       "name": "Composer sa propre partie",
       "type": "text",
-      "sort": 400,
+      "sort": 500,
       "title": {
         "show": true,
         "level": 1

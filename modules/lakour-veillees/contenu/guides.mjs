@@ -144,6 +144,14 @@ Si la **Chapelle** est en jeu, un second vote, rapide, désigne ensuite qui dorm
 
 Si la **Rosière** est exécutée par le vote, le serment de Brumecombe est rompu : **le Village perd aussitôt**. Réfléchis avant de condamner quelqu'un qui s'en réclame… et souviens-toi qu'un loup peut mentir.
 
+Avec la variante **Banc des accusés**, on ne vote pas pour n'importe qui : pendant le débat, chaque vivant **accuse une fois** (champ « Accuser » de la Table de jeu), et chacun ne peut être accusé qu'une fois par jour. Les accusés sont **jugés un par un** : voter pour l'accusé, c'est le condamner ; s'abstenir, c'est l'acquitter. Il faut **la moitié des voix des vivants** (plus de la moitié avec le Gibet) ; dès qu'un accusé est exécuté, les autres sont tirés d'affaire pour la journée.
+
+Avec la variante **Glas du deuil**, chaque innocent exécuté par le vote fait sonner le glas sur Brumecombe (« le glas sonne pour la 2e fois »). Le village n'apprend rien de plus… mais la meute, elle, y gagne un pouvoir qui grandit à chaque glas. Méfiez-vous des votes hâtifs.
+
+**Arriver en cours de partie** : un joueur qui arrive après la distribution entre comme **gens de passage** (Rémouleur, Montreur d'ours ou Pèlerine) : son **rôle est connu de tous**, son **camp ne l'est pas** (le narrateur le lui dit en secret, et il peut être de la meute). Son pouvoir est fort mais ne sert **qu'une fois**, pendant le jour. Le village peut le chasser par un **vote d'exil** : il reprend la route sans mourir, son camp tu.
+
+**Partir avant la fin** : le bouton **Quitter la veillée** (Table de jeu) te fait quitter la partie sans mourir : ni ton rôle ni ton camp ne sont révélés, ta voix en cours est retirée, et la partie continue sans toi (tu ne gagnes ni ne perds).
+
 **Égalité** : s'il y a un **Bailli**, il tranche. Sans Bailli (charge vacante, ou Bailli absent de la partie), les ex æquo ont trente secondes chacun pour se défendre, puis le village revote **entre eux seulement** ; nouvelle égalité : personne n'est exécuté ce jour-là, et la nuit tombe.
 
 Puis la nuit revient, et ainsi de suite jusqu'à la victoire d'un camp.`
@@ -442,7 +450,18 @@ Le système y inscrit seul chaque vote clos (voix par voix), chaque mort avec sa
 - **Dernier souffle** (réglage, par défaut oui) : chaque mort garde une voix, une seule fois, pour un vote d'exécution (ni Chapelle, ni élection du Bailli). Le système la reçoit et la consomme au dépouillement ; le Gibet ne compte que les morts qui ont soufflé à ce vote, et les voix qui manquent sont celles des vivants. Tant qu'un mort garde son souffle, il ne voit pas les rôles cachés, n'entend pas la tanière et ne parle qu'aux morts qui le gardent aussi ; son souffle rendu, « les morts voient tout » s'applique. Ne lui dis rien des rôles avant.
 - **Somnambule** (rôle sur demande) : à la distribution, il reçoit la carte d'un rôle de vision (Liseuse de cendres, Fossoyeur ou Sourcier, de préférence absent de la partie) et le joue de bonne foi ; le système lui rend des visions **fausses** (camp inverse, « même camp » à l'envers, faux rôle d'un mort). Toi seul le sais (marque sur ta Table de jeu). À sa mort, et à la fin, il est révélé Somnambule. Ne le trahis jamais, même quand ses visions font exécuter un innocent.
 - **Bonne étoile** (Table de jeu, avant la première aube) : tu protèges en secret un joueur débutant la première nuit. Personne n'est prévenu ; une attaque contre lui échoue sans bruit.
-- **Glas final** (Table de jeu, ou à la préparation) : le jour où la partie s'arrêtera, annoncé à tous dès que tu le poses.`
+- **Glas final** (Table de jeu, ou à la préparation) : le jour où la partie s'arrêtera, annoncé à tous dès que tu le poses.
+
+# Gens de passage, Banc des accusés, Glas du deuil
+
+- **Gens de passage** (réglage, par défaut oui) : un joueur arrive en cours de partie ? Bouton **Accueillir un gens de passage** (Table de jeu), à l'aube ou pendant le débat, hors vote. Le système tire son rôle de passage (public, annoncé au chat) et son **camp secret**, pour ne pas déséquilibrer : la meute s'il lui manque des loups (le plus souvent), sinon le village (rarement la meute) ; jamais la meute dans une peste noire. Lui seul et la meute le savent ; ne le dis jamais. Son pouvoir ne sert qu'une fois, de jour : **Rémouleur** (la première attaque de loup contre une maison échoue la nuit suivante), **Montreur d'ours** (la meute n'entre pas dans cette maison la nuit suivante), **Pèlerine** (elle apprend en secret le camp d'un joueur).
+- **Départ et exil** : un joueur qui doit partir presse **Quitter la veillée** (ou toi, la porte sur sa carte) ; un **vote d'exil** (bouton du narrateur, au débat) chasse un gens de passage. Dans les deux cas : ni mort, ni rôle, ni camp annoncés ; sa voix en cours retirée (et celles qui le désignaient), son jeton retiré du plateau, sa demande de nuit close ; s'il était Bailli, la charge devient vacante. S'il était le seul candidat du vote (l'accusé jugé, le seul gens de passage d'un exil), le vote se clôt sans élu. La victoire est vérifiée comme après une mort ; « Rejouer » ne le redistribue pas.
+- **Banc des accusés** (variante) : pas de vote libre. Les joueurs accusent pendant le débat (une fois chacun ; chacun accusé une fois par jour) ; **Ouvrir le vote** juge le prochain accusé (un seul candidat, sans cloche ni départage). Condamné à **la moitié des voix des vivants** (le Bailli compte double, au total aussi ; plus de la moitié avec le Gibet ; le Dernier souffle compte pour, pas au total). Une exécution par jour : après elle, les autres accusés sont libres. Sans accusation, la nuit peut tomber. Le Juge de paix peut annuler un jugement : l'accusé est rejugé.
+- **Glas du deuil** (variante) : chaque innocent (hors meute) exécuté par le vote fait sonner le glas — annonce vague, au chat. La meute gagne en secret : au **1er glas**, une **vision** (la nuit suivante, réveil « la meute en deuil » : elle désigne un joueur, chaque loup apprend son camp) ; au **2e**, une **voix sans visage** à chaque vote d'exécution : à l'ouverture du vote, la meute désigne en secret le candidat qu'elle rejoindra (sans réponse : un candidat au hasard) ; le dépouillement la montre, jamais d'où elle vient, et rien ne la relie aux bulletins des loups ; au **3e**, le **linceul** : la nuit suivante, aucune protection ne tient contre la meute (ni garde, ni remède, ni verrou, ni asile, ni Taverne). Au-delà, le glas sonne sans rien de plus.
+
+# La Nuit de la Saint-Martin
+
+Le format court (une dizaine de minutes) : case **Nuit de la Saint-Martin** à la préparation. Le système compose **trois rôles de plus que de joueurs** (des loups, la Liseuse, le Colporteur et ses échanges, des rôles simples) ; ceux qui restent dorment **sous l'autel de la Chapelle** : toi seul sais lesquels. **Une nuit**, une aube, un débat, **un seul vote**, puis la fin : un loup exécuté, le village gagne ; le Revenant exécuté, lui ; sinon, un loup encore vivant, la meute ; sans loup en jeu, le village s'il n'a exécuté personne, sinon **la brume** l'emporte (personne). Ni Bailli, ni Almanach, ni Banc, ni Glas du deuil ; si la seconde nuit allait tomber sans vote, la partie finit.`
     },
     {
       titre: "Ambiance : un automne gothique",
@@ -566,6 +585,9 @@ const variantes = journal({
 - **Masques de veillée** (par défaut : oui) : la meute reçoit en secret deux ou trois rôles du Village absents qu'elle peut prétendre être. Sans eux, la partie est plus dure pour les loups.
 - **Dernier souffle** (par défaut : oui) : chaque mort garde une voix, une seule fois, pour un vote d'exécution.
 - **Almanach des brumes** (par défaut : non) : un présage par aube change la règle du jour (page suivante).
+- **Gens de passage** (par défaut : oui) : un joueur qui arrive en cours de partie entre avec un rôle public et un camp secret ; on peut quitter la veillée sans mourir.
+- **Banc des accusés** et **Glas du deuil** (par défaut : non) : deux variantes du jour (page « Le Banc et le Glas »).
+- **Nuit de la Saint-Martin** : le format court, à choisir à la préparation (même page).
 - **Glas final** et **Bonne étoile** : réglages du narrateur, à la Table de jeu (le jour où la partie s'arrête ; un débutant protégé en secret la première nuit).
 - **Somnambule** et **Rosière** : rôles « sur demande », jamais tirés d'office ; le narrateur les ajoute à la main.
 - **Ambiance** : gothique sérieux (par défaut) ou comique.`
@@ -577,6 +599,20 @@ const variantes = journal({
 Avec la variante **Almanach des brumes** (réglage du monde), chaque aube, après les morts de la nuit, le système tire un présage — jamais deux fois de suite le même —, l'annonce au village et l'applique lui-même. « Aujourd'hui » : jusqu'à la nuit ; « la nuit prochaine » : la nuit qui suit.
 
 ${ALMANACH.map(([, nom, texte]) => `- **${nom}** — ${texte}`).join("\n")}`
+    },
+    {
+      titre: "Le Banc et le Glas",
+      texte: `# Le Banc des accusés
+
+Chaque vivant accuse **une fois par jour** pendant le débat ; chacun ne peut être accusé qu'**une fois par jour**. Les accusés sont **jugés un par un**, dans l'ordre des accusations : pour ou contre. Il faut **la moitié des voix des vivants** pour exécuter ; dès qu'un accusé est exécuté, les autres sont libres jusqu'au lendemain. Le Bailli, le Gibet, le Juge de paix et le Dernier souffle jouent comme d'habitude.
+
+# Le Glas du deuil
+
+Chaque innocent exécuté par le vote fait sonner le glas (« le glas sonne pour la 2e fois »), et la meute y gagne un pouvoir collectif qui grandit : d'abord une vision, puis une voix sans visage aux votes, puis une nuit où aucune protection ne tient. Le village n'apprend que le nombre de glas.
+
+# La Nuit de la Saint-Martin
+
+Une partie d'une dizaine de minutes : trois rôles de plus que de joueurs, cachés sous l'autel de la Chapelle ; **une nuit** (échanges du Colporteur compris), **un vote**, et la fin. Exécuter un loup sauve le village ; épargner un loup le condamne ; et sans loup parmi vous, pendre un innocent laisse la brume l'emporter.`
     },
     {
       titre: "Variantes de règles",

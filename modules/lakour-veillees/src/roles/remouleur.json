@@ -1,0 +1,45 @@
+{
+  "_id": "qWN6uykkISufRaUz",
+  "_key": "!items!qWN6uykkISufRaUz",
+  "name": "Rémouleur",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/remouleur.svg",
+  "system": {
+    "cle": "remouleur",
+    "camp": "village",
+    "description": "<p>Tu passes de village en village avec ta meule à pédale, et tu repars avant l'hiver.</p><p>Ton rôle est <strong>connu de tous</strong>, ton camp <strong>ne l'est pas</strong> : le narrateur te l'a dit en secret (Village ou Meute).</p><p><strong>Une fois</strong>, pendant le jour, tu affûtes la serrure et le couteau d'une maison (la tienne comprise) : la nuit suivante, <strong>la première attaque de loup contre elle échoue</strong>, et si la meute la touche malgré tout, elle y laisse du sang.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": false,
+      "ordre": 50,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 0,
+      "soiMeme": false,
+      "invite": ""
+    },
+    "usages": {
+      "max": 1,
+      "restant": 1
+    },
+    "effet": "",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "remouleur"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

@@ -30,5 +30,8 @@
   "colporteur": "modules/lakour-veillees/assets/jetons/colporteur.svg",
   "chasseur-de-primes": "modules/lakour-veillees/assets/jetons/chasseur-de-primes.svg",
   "pyromane": "modules/lakour-veillees/assets/jetons/pyromane.svg",
-  "dame-du-gue": "modules/lakour-veillees/assets/jetons/dame-du-gue.svg"
+  "dame-du-gue": "modules/lakour-veillees/assets/jetons/dame-du-gue.svg",
+  "remouleur": "modules/lakour-veillees/assets/jetons/remouleur.svg",
+  "montreur-d-ours": "modules/lakour-veillees/assets/jetons/montreur-d-ours.svg",
+  "pelerine": "modules/lakour-veillees/assets/jetons/pelerine.svg"
 }

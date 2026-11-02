@@ -11,7 +11,9 @@ const echapper = s => foundry.utils.escapeHTML(String(s ?? ""));
 // La liste du récit : une ligne par villageois (lignes de L.bilanDePartie, avec le nom du joueur ; "" : un joueur IA).
 export function listeDuRecit(lignes) {
   const items = lignes.map(l => {
-    const sort = l.vivant ? t("LAKOUR_LOUPS.Recit.Survivant") : t("LAKOUR_LOUPS.Recit.Mort", { tour: l.mort?.tour || "?", cause: libelleCause(l.mort?.cause) });
+    // Un parti (départ, exil) : ni survivant ni mort, il a quitté la veillée.
+    const sort = l.parti ? t(l.parti.comment === "exil" ? "LAKOUR_LOUPS.Recit.Exile" : "LAKOUR_LOUPS.Recit.Parti", { tour: l.parti.tour || "?" })
+      : l.vivant ? t("LAKOUR_LOUPS.Recit.Survivant") : t("LAKOUR_LOUPS.Recit.Mort", { tour: l.mort?.tour || "?", cause: libelleCause(l.mort?.cause) });
     const qui = [l.role, libelleCamp(l.camp), l.metier].filter(Boolean).map(echapper).join(" · ");
     return `<li class="camp-${echapper(l.camp)}${l.gagnant ? " gagnant" : ""}${l.vivant ? "" : " mort"}">${l.gagnant ? "🏆 " : ""}<strong>${echapper(l.nom)}</strong> `
       + `<small>(${echapper(l.joueur || t("LAKOUR_LOUPS.Recit.IA"))})</small><br>${qui} — <em>${echapper(sort)}</em></li>`;

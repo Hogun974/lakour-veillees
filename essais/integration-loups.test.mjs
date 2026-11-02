@@ -23,7 +23,7 @@ installerFoundry({ contenu: true });
 const { api } = await import("../systems/lakour-loups/scripts/api.mjs");
 const { ecouterSocket } = await import("../systems/lakour-loups/scripts/socket.mjs");
 const { enregistrerReglages } = await import("../systems/lakour-loups/scripts/reglages.mjs");
-const { creerHasard, choisir, melanger, verifierVictoire, CAUSES_SECRETES, POUVOIRS_JOUR, effetsDeLaNuit, surLAutreRive } = await import("../systems/lakour-loups/logique/index.mjs");
+const { creerHasard, choisir, melanger, verifierVictoire, CAUSES_SECRETES, POUVOIRS_JOUR, effetsDeLaNuit, surLAutreRive, ROLES_DE_PASSAGE } = await import("../systems/lakour-loups/logique/index.mjs");
 const { OUTILS } = await import("../modules/lakour-mj-ia/scripts/outils.js");
 const { Compagnons, reinitialiserPrive, privesDe } = await import("../modules/lakour-mj-ia/scripts/compagnons-jeu.js");
 const { contexteCompagnon, texteBrut } = await import("../modules/lakour-mj-ia/scripts/compagnons.js");
@@ -580,7 +580,8 @@ test("bilan des parties (reproductibles : même graine, même partie) ; chaque p
   }
   console.log(`  couverture : ${JSON.stringify(Object.fromEntries([...couverture].sort()))}`);
   // Les parties simulées exercent vraiment les métiers de jour, les rôles de jour et les bâtiments.
-  for (const pouvoir of Object.keys(POUVOIRS_JOUR)) assert.ok(couverture.get(pouvoir) > 0, `pouvoir de jour jamais utilisé : ${pouvoir}`);
+  // (les Gens de passage n'entrent qu'en cours de partie : leurs pouvoirs sont éprouvés à part, essais/lot3-*.test.mjs)
+  for (const pouvoir of Object.keys(POUVOIRS_JOUR).filter(p => !ROLES_DE_PASSAGE.includes(p))) assert.ok(couverture.get(pouvoir) > 0, `pouvoir de jour jamais utilisé : ${pouvoir}`);
   for (const effet of ["mot du Messager remis", "ruban (prolongation)", "juge (revote)", "chapelle (vote)", "hors d'atteinte (nuit)", "Moulin (public)",
     "Moulin (Meunière)", "Lavoir", "Cimetière", "Forge (sang de bête)", "Pont (meute bloquée)", "verrou (attaque arrêtée)"]) {
     assert.ok(couverture.get(effet) > 0, `jamais exercé dans les parties simulées : ${effet}`);

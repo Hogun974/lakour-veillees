@@ -1,0 +1,45 @@
+{
+  "_id": "8ybiOVnPr6CdCI7C",
+  "_key": "!items!8ybiOVnPr6CdCI7C",
+  "name": "Pèlerine",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/pelerine.svg",
+  "system": {
+    "cle": "pelerine",
+    "camp": "village",
+    "description": "<p>Tu marches vers un sanctuaire lointain, et Brumecombe n'est qu'une étape.</p><p>Ton rôle est <strong>connu de tous</strong>, ton camp <strong>ne l'est pas</strong> : le narrateur te l'a dit en secret (Village ou Meute).</p><p><strong>Une fois</strong>, pendant le jour, tu pries longuement sur le seuil d'un autre joueur : le village le voit, mais toi seule apprends <strong>son camp</strong> (tel que le voient les visions).</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": false,
+      "ordre": 50,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 0,
+      "soiMeme": false,
+      "invite": ""
+    },
+    "usages": {
+      "max": 1,
+      "restant": 1
+    },
+    "effet": "",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "pelerine"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

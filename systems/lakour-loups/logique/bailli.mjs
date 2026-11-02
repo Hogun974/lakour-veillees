@@ -58,9 +58,11 @@ export function poidsDesVoix(etat, vivants = null) {
   return id ? { [id]: POIDS_DU_BAILLI } : {};
 }
 
-// Le vote d'exécution de ce tour a-t-il eu lieu (clos) ?
+// Le vote d'exécution de ce tour a-t-il eu lieu (clos) ? Le dernier vote, ou le Registre (un vote d'exil ou de la Chapelle a pu
+// le suivre) ; un vote annulé par le Juge de paix ne compte pas.
 export const voteExecutionDuJour = etat => Boolean(etat?.vote?.resultat && !etat.vote.ouvert
-  && etat.vote.resultat.objet === "execution" && etat.vote.resultat.tour === etat.tour);
+  && etat.vote.resultat.objet === "execution" && etat.vote.resultat.tour === etat.tour)
+  || (etat?.registre ?? []).some(x => x.type === "vote" && x.objet === "execution" && x.tour === etat?.tour && !x.annule);
 
 // Une égalité attend-elle le départage du Bailli ? (on ne rouvre pas de vote et on ne change pas de phase avant)
 export const departageEnAttente = etat => Boolean(!etat?.vote?.ouvert && etat?.vote?.resultat?.departage?.enAttente);
@@ -188,5 +190,6 @@ export function trancherVote(e, choix = [], { vivants = null } = {}) {
 export function entreeDeVote(r) {
   return { type: "vote", numero: r.numero, objet: r.objet, votes: { ...(r.votes ?? {}) }, decompte: { ...(r.decompte ?? {}) },
     elus: [...(r.elus ?? [])], egalite: Boolean(r.egalite), poids: { ...(r.poids ?? {}) }, souffles: [...(r.souffles ?? [])],
-    departage: r.departage ? { par: r.departage.par, choix: [...(r.departage.choix ?? [])] } : null };
+    departage: r.departage ? { par: r.departage.par, choix: [...(r.departage.choix ?? [])] } : null,
+    ...(r.banc ? { banc: { ...r.banc } } : {}), ...(r.deuil ? { deuil: r.deuil } : {}) };
 }

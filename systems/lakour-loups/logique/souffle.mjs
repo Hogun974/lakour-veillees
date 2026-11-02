@@ -20,7 +20,9 @@ export function normaliserSouffle(s) {
 const mort = v => Boolean(v) && v.vivant === false;
 
 // Ce mort a-t-il encore son dernier souffle ? (v : un villageois à plat, ou { id, vivant })
-export const aSonSouffle = (etat, v) => Boolean(etat?.souffle?.actif) && mort(v) && !(etat.souffle.utilises ?? []).includes(v.id);
+// Un parti (départ, exil : passage.mjs) n'est pas un mort : il n'a pas de souffle.
+export const aSonSouffle = (etat, v) => Boolean(etat?.souffle?.actif) && mort(v) && !(etat.souffle.utilises ?? []).includes(v.id)
+  && !(etat.partis ?? []).some(p => p.acteurId === v.id);
 
 // Les morts qui ont encore leur souffle.
 export const souffleurs = ({ etat, villageois = [] }) => villageois.filter(v => aSonSouffle(etat, v)).map(v => v.id);

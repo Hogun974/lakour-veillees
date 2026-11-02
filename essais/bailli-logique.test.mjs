@@ -309,7 +309,7 @@ const MUTATIONS = [
   ["etat.mjs", "\"journalSecret\", \"masques\", \"somnambules\"", "\"journalSecret\", \"somnambules\"", "masques secrets"],
   ["etat.mjs", "for (const cle of [\"asperges\", \"journalSecret\", \"masques\"])", "for (const cle of [\"asperges\", \"journalSecret\"])", "masques rendus au MJ"],
   ["etat.mjs", "departage: bailli && r.departage ?", "departage: r.departage ?", "départage sans Bailli"],
-  ["etat.mjs", "const bailli = v.objet === \"execution\" ? bailliEnCharge(etat, votants) : \"\";", "const bailli = bailliEnCharge(etat, votants);", "départage : l'exécution seulement"],
+  ["etat.mjs", "const bailli = v.objet === \"execution\" && !v.banc ? bailliEnCharge(etat, votants) : \"\";", "const bailli = !v.banc ? bailliEnCharge(etat, votants) : \"\";", "départage : l'exécution seulement"],
   ["votes.mjs", "!majoriteAbsolue || decompte[id] * 2 > totalDesVoix(admisVotants, valides, poids)", "true", "départage sous le Gibet"],
   ["votes.mjs", "const reste = places - elus.length;", "const reste = 1;", "départage : places restantes"],
   ["registre.mjs", "  if (e.type === \"mort\") e.cause = causePublique(e.cause);\n", "", "cause publique au Registre"],
@@ -328,9 +328,9 @@ const MUTATIONS = [
   ["masques.mjs", "r.cle !== \"villageois\"", "true", "pas le simple villageois"],
   ["masques.mjs", "(loups >= 2 ? MASQUES_MAX : MASQUES_MIN)", "MASQUES_MAX", "deux masques pour un loup seul"],
   ["masques.mjs", "  if (!(loups > 0)) return [];\n", "", "pas de masques sans loup"],
-  ["etapes.mjs", "electionAttendue({ etat, villageois }).ok ? etape(\"bailli\", \"voteBailli\") : etape(\"ouvrirVote\", \"ouvrirVote\");",
-    "etape(\"ouvrirVote\", \"ouvrirVote\");", "étape : élire le Bailli"],
-  ["etapes.mjs", "if (r?.objet === \"bailli\" && r.tour === etat.tour && !voteExecutionDuJour(etat)) return etape(\"ouvrirVote\", \"ouvrirVote\");", "", "étape : le vote après l'élection"],
+  ["etapes.mjs", "electionAttendue({ etat, villageois }).ok ? etape(\"bailli\", \"voteBailli\") : voteDuJour();",
+    "voteDuJour();", "étape : élire le Bailli"],
+  ["etapes.mjs", "if ((r?.objet === \"bailli\" || r?.objet === \"exil\") && r.tour === etat.tour && !voteExecutionDuJour(etat)) {", "if (false) {", "étape : le vote après l'élection"],
   ["etapes.mjs", "if (r?.departage?.enAttente) return etape(\"departage\", \"\", { nom: nom(r.departage.par) }, { attente: true });", "", "étape : attendre le départage"],
   ["etat.mjs", "  const sujet = OBJETS_DE_VOTE.includes(objet) ? objet : \"execution\";", "  const sujet = objet === \"chapelle\" ? objet : \"execution\";", "objet « bailli »"]
 ];

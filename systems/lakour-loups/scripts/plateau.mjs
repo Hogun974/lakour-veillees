@@ -110,7 +110,9 @@ export function voulu(scene = sceneDuVillage()) {
   const plateau = L.lirePlateau(planDeScene(scene));
   if (!plateau) return null;
   const etat = lireEtat();
-  const plan = L.miseEnScene({ plateau, phase: etat.phase, villageois: villageoisAPlat(), morts: etat.morts });
+  // Les partis (départ, exil : logique/passage.mjs) quittent le plateau : ni place, ni jeton.
+  const partis = new Set((etat.partis ?? []).map(p => p.acteurId));
+  const plan = L.miseEnScene({ plateau, phase: etat.phase, villageois: villageoisAPlat().filter(v => !partis.has(v.id)), morts: etat.morts });
   const g = grilleDe(scene);
   const jetons = new Map();
   for (const j of plan.jetons) {
@@ -122,23 +124,24 @@ export function voulu(scene = sceneDuVillage()) {
   return { scene, plateau, jetons, obscurite: plan.obscurite, phase: etat.phase };
 }
 
-// Un jeton par villageois sur la scène du village : crée ceux qui manquent (à leur place), retire les doublons et les jetons
-// d'acteurs disparus. Les autres jetons (figurants) ne sont pas touchés.
+// Un jeton par villageois sur la scène du village : crée ceux qui manquent (à leur place), retire les doublons, les jetons
+// d'acteurs disparus et ceux des partis (départ, exil). Les autres jetons (figurants) ne sont pas touchés.
 async function assurerJetons(scene, cible) {
   const parActeur = new Map();
   const aRetirer = [];
+  const partis = new Set((lireEtat().partis ?? []).map(p => p.acteurId));
   for (const t of scene.tokens.contents ?? [...scene.tokens.values()]) {
     const acteur = game.actors.get(t.actorId);
     if (!acteur) { if (t.actorId) aRetirer.push(t.id); continue; }
     if (acteur.type !== "villageois") continue;
-    if (parActeur.has(acteur.id)) aRetirer.push(t.id);
+    if (parActeur.has(acteur.id) || partis.has(acteur.id)) aRetirer.push(t.id);
     else parActeur.set(acteur.id, t);
   }
   if (aRetirer.length) await scene.deleteEmbeddedDocuments("Token", aRetirer);
   const nouveaux = [];
   const g = grilleDe(scene);
   for (const acteur of tousLesVillageois()) {
-    if (parActeur.has(acteur.id)) continue;
+    if (parActeur.has(acteur.id) || partis.has(acteur.id)) continue;
     const v = cible.jetons.get(acteur.id);
     const pos = v?.x !== null && v?.x !== undefined ? { x: v.x, y: v.y }
       : L.versPixels({ x: (cible.plateau.cercle?.x ?? 1), y: (cible.plateau.cercle?.y ?? 1) }, g);

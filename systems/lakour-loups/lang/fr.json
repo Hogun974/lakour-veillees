@@ -71,7 +71,8 @@
       "amoureux": "Les amoureux {a} et {b} l'emportent, seuls survivants de la vallée.",
       "solitaire": "{nom} l'emporte, seul contre tous.",
       "peste": "Brumecombe s'éteint dans la fièvre : la peste noire l'emporte, sans que personne l'ait reconnue.",
-      "villagePeste": "Le village a reconnu la peste noire : Brumecombe chasse la fièvre et l'emporte."
+      "villagePeste": "Le village a reconnu la peste noire : Brumecombe chasse la fièvre et l'emporte.",
+      "brume": "La brume l'emporte : à la Saint-Martin, Brumecombe a pendu un innocent et nul loup n'était parmi vous."
     },
     "Table": {
       "Titre": "Table de veillée",
@@ -295,7 +296,8 @@
       "InviteMessager": "Le Messager frappe à ta porte cette nuit : écris une phrase pour {nom}. Il la lui remettra à l'aube, de ta part.",
       "PesteBredouille": "La peste n'a trouvé personne chez {nom} : il dormait hors d'atteinte.",
       "PestePont": "La peste n'a pas pu traverser le Pont jusqu'à {nom}.",
-      "PesteArretee": "La peste n'a pas pu atteindre {nom} ({par})."
+      "PesteArretee": "La peste n'a pas pu atteindre {nom} ({par}).",
+      "VisionDeuil": "Le glas vous souffle le camp de {nom} : « {camp} »."
     },
     "Messages": {
       "Mort": "{nom} est mort : {cause}.",
@@ -376,6 +378,18 @@
       "Almanach": {
         "Nom": "L'Almanach des brumes (variante)",
         "Aide": "À chaque aube, un présage tiré change la règle du jour ou de la nuit suivante, annoncé à tous. Pris en compte à la prochaine distribution."
+      },
+      "GensDePassage": {
+        "Nom": "Gens de passage",
+        "Aide": "Un joueur qui arrive en cours de partie entre comme gens de passage (rôle public, camp secret) ; un joueur peut quitter la veillée sans mourir ; le village peut voter l'exil d'un gens de passage."
+      },
+      "Banc": {
+        "Nom": "Le Banc des accusés (variante)",
+        "Aide": "Chacun accuse une fois par jour ; les accusés sont jugés un par un (pour ou contre) ; il faut la moitié des voix des vivants pour exécuter. Pris en compte à la prochaine distribution."
+      },
+      "GlasDuDeuil": {
+        "Nom": "Le Glas du deuil (variante)",
+        "Aide": "Chaque innocent exécuté par le vote fait sonner le glas et donne à la meute un pouvoir collectif qui grandit (une vision, une voix sans visage, le linceul). Pris en compte à la prochaine distribution."
       }
     },
     "Erreurs": {
@@ -472,7 +486,11 @@
         "cibles": "Désignez {n} joueur(s) parmi ceux qui sont permis.",
         "texte": "Un dernier mot de {mots} mots au plus, et pas vide.",
         "personne": "Personne ne peut être désigné."
-      }
+      },
+      "Remouleur": "{qui} affûte la serrure et le couteau de {nom} : la nuit prochaine, la première attaque de loup contre sa maison échouera.",
+      "Ours": "{qui} couche son ours devant la porte de {nom} : la nuit prochaine, la meute n'osera pas y entrer.",
+      "Pelerine": "{qui} prie longuement sur le seuil de {nom}.",
+      "PelerinePrive": "Votre prière s'est fait entendre : {nom} est du camp « {camp} »."
     },
     "Plateau": {
       "ChoisisSurLaCarte": "À toi : choisis sur la carte (clique sur un jeton allumé), puis « Valider » dans le bandeau."
@@ -560,12 +578,15 @@
         "voixManquantes": "({n} voix manquent encore)",
         "juge": "Le Juge de paix ({nom}) peut encore annuler ce vote.",
         "emporter": "{nom} désigne qui il emporte (ou personne).",
-        "sansSecrets": "Ce navigateur n'a pas les secrets de la nuit."
+        "sansSecrets": "Ce navigateur n'a pas les secrets de la nuit.",
+        "bancVide": "(Personne n'est accusé : attendez les accusations du débat, ou laissez tomber la nuit.)"
       },
       "LaPeste": "la peste",
       "bailli": "Élire le Bailli",
       "departage": "En attente : le Bailli ({nom}) tranche l'égalité…",
-      "succession": "En attente : {nom}, Bailli défunt, remet le sceau…"
+      "succession": "En attente : {nom}, Bailli défunt, remet le sceau…",
+      "LeDeuil": "la meute en deuil",
+      "juger": "Juger l'accusé : {nom}"
     },
     "Preparation": {
       "Titre": "Préparer la partie",
@@ -609,7 +630,9 @@
       "Resume": "{n} villageois, {tours} tour(s) dans la brume. Les cartes se retournent :",
       "Survivant": "en vie au dernier matin",
       "Mort": "mort au tour {tour}, {cause}",
-      "IA": "joueur IA"
+      "IA": "joueur IA",
+      "Parti": "a quitté la veillée au tour {tour}",
+      "Exile": "exilé par le village au tour {tour}"
     },
     "Signal": {
       "Choix": "À toi de choisir",
@@ -720,7 +743,8 @@
       "Objets": {
         "execution": "vote d'exécution",
         "chapelle": "vote de la Chapelle",
-        "bailli": "élection du Bailli"
+        "bailli": "élection du Bailli",
+        "exil": "vote d'exil"
       },
       "Mort": "Tour {tour} — mort de {nom} : {cause}.",
       "Bailli": {
@@ -741,7 +765,16 @@
         "trop": "Tu as déjà fait inscrire {n} déclarations aujourd'hui.",
         "brouillard": "Brouillard épais : le greffier ne prend aucune déclaration aujourd'hui."
       },
-      "VoixSouffle": "{qui} (dernier souffle) → {cible}"
+      "VoixSouffle": "{qui} (dernier souffle) → {cible}",
+      "Passage": {
+        "arrivee": "Tour {tour} — {nom} arrive à Brumecombe : {role} (gens de passage).",
+        "depart": "Tour {tour} — {nom} quitte la veillée.",
+        "exil": "Tour {tour} — {nom} est exilé par le village."
+      },
+      "Accusation": "Tour {tour} — {nom} accuse {contre}.",
+      "Deuil": "Tour {tour} — le glas du deuil sonne pour la {n}e fois.",
+      "Banc": "Jugement de {nom} : {pour} voix pour sur {total}.",
+      "VoixDeuil": "Une voix sans visage s'est jointe à {cible}."
     },
     "Masques": {
       "Titre": "Masques de veillée",
@@ -819,6 +852,89 @@
       "Refus": {
         "etoile": "La Bonne étoile ne veille que sur la première nuit, avant son aube."
       }
+    },
+    "Passage": {
+      "Titre": "Gens de passage",
+      "Aide": "Un gens de passage : son rôle est connu de tous, son camp ne l'est pas.",
+      "Annonce": "{nom} arrive à Brumecombe : {role}, de passage.",
+      "AnnonceChat": "Un voyageur frappe à la porte de la veillée : <strong>{nom}</strong>, {role}, de passage à Brumecombe. Nul ne sait de quel côté penche son cœur.",
+      "CampSecret": "{nom} (gens de passage) est du camp « {camp} ».",
+      "NouveauLoup": "{nom}, gens de passage, est des vôtres : la meute compte un membre de plus.",
+      "Depart": "{nom} quitte la veillée et reprend la route.",
+      "Exil": "Le village chasse {nom} : le voyageur reprend la route, son secret avec lui.",
+      "Parti": "parti au tour {tour}",
+      "Exile": "exilé au tour {tour}",
+      "Quitter": "Quitter la veillée",
+      "QuitterAide": "Vous devez partir ? Vous quittez la partie sans mourir : votre rôle et votre camp ne sont pas révélés, la partie continue sans vous.",
+      "QuitterQuestion": "Quitter la veillée ? Vous ne pourrez plus jouer cette partie.",
+      "FaireQuitter": "Faire quitter la veillée",
+      "FaireQuitterQuestion": "{nom} quitte la veillée (sans mourir, rôle et camp tus) ?",
+      "Accueillir": "Accueillir un gens de passage",
+      "InviteAccueil": "Qui arrive à Brumecombe ? (un joueur connecté sans villageois en jeu)",
+      "Accueilli": "{nom} entre dans la veillée.",
+      "UnIA": "Un joueur IA",
+      "VoteExil": "Le village délibère : faut-il chasser un gens de passage ?",
+      "VoteExilBouton": "Vote d'exil",
+      "QuestionExil": "Quel gens de passage le village chasse-t-il ?",
+      "InviteExil": "Vote d'exil : quel gens de passage chasser du village (ou personne) ?",
+      "Refus": {
+        "inactif": "Les gens de passage ne sont pas admis dans cette partie.",
+        "fin": "Aucune partie en cours.",
+        "phase": "Un voyageur n'entre qu'à l'aube ou pendant le débat.",
+        "vote": "Attendez la fin du vote pour accueillir un voyageur.",
+        "joueur": "Personne à accueillir : il faut un joueur connecté sans villageois en jeu.",
+        "present": "{nom} est déjà de la partie.",
+        "contenu": "Aucun rôle de passage dans le contenu.",
+        "absent": "{nom} n'est plus à la veillée.",
+        "exil": "Aucun gens de passage à exiler."
+      },
+      "VoteSansObjet": "{nom} a quitté la veillée : le vote n'a plus d'objet, personne n'est désigné."
+    },
+    "Banc": {
+      "Titre": "Le Banc des accusés",
+      "Vide": "Personne n'est accusé aujourd'hui.",
+      "Ligne": "{nom} accuse {contre}",
+      "Juge": "jugé",
+      "Accuser": "Accuser",
+      "AccuserAide": "Une accusation par jour ; chacun ne peut être accusé qu'une fois par jour. Les accusés sont jugés un par un.",
+      "Accuse": "{nom} accuse {contre}.",
+      "Annonce": "<strong>{nom}</strong> se lève et accuse <strong>{contre}</strong>.",
+      "Jugement": "Le village juge {nom}.",
+      "Question": "Faut-il condamner {nom} ? (voter pour l'accusé le condamne ; s'abstenir l'acquitte)",
+      "Invite": "Jugement de {nom} : votez pour l'accusé pour le condamner, ne choisissez personne pour l'acquitter.",
+      "Condamne": "{nom} est condamné ({pour} voix sur {total}).",
+      "Acquitte": "{nom} est acquitté ({pour} voix sur {total}).",
+      "Refus": {
+        "inactif": "Le Banc des accusés n'est pas en jeu.",
+        "phase": "On n'accuse que pendant le débat.",
+        "absent": "Vous n'avez pas de villageois dans cette partie.",
+        "mort": "Les morts n'accusent plus.",
+        "silence": "Réduit au silence, vous ne pouvez pas accuser.",
+        "deja": "Vous avez déjà accusé quelqu'un aujourd'hui.",
+        "cible": "Accusez un autre villageois vivant.",
+        "accuse": "Ce villageois est déjà accusé aujourd'hui.",
+        "personne": "Personne à juger : aucun accusé en attente (ou une exécution a déjà eu lieu aujourd'hui)."
+      }
+    },
+    "Deuil": {
+      "Titre": "Le glas du deuil",
+      "Aide": "Le Glas du deuil : chaque innocent exécuté le fait sonner, et la meute en tire un pouvoir.",
+      "Compte": "Glas du deuil : {n}",
+      "Sonne": "Le glas du deuil sonne pour la {n}e fois sur Brumecombe.",
+      "Pouvoir1": "Le glas a sonné : à la nuit qui vient, la meute pourra désigner un villageois ; chaque loup apprendra son camp.",
+      "Pouvoir2": "Le glas a sonné une deuxième fois : à chaque vote d'exécution, une voix sans visage rejoindra le candidat que vous, les loups vivants, aurez le plus désigné.",
+      "Pouvoir3": "Le glas a sonné une troisième fois : la nuit qui vient, aucune protection ne tiendra contre la meute.",
+      "Invite": "Le glas vous prête ses yeux : quel villageois voulez-vous percer à jour ?",
+      "Voix": "Une voix sans visage s'est jointe à {nom}.",
+      "InviteVoix": "Le glas vous prête sa voix : à quel candidat de ce vote la voix sans visage ira-t-elle ?",
+      "VoixChoisie": "La meute place la voix sans visage sur {nom}."
+    },
+    "SaintMartin": {
+      "Titre": "Nuit de la Saint-Martin",
+      "Aide": "Une seule nuit, un seul vote, puis la fin. Trois rôles dorment sous l'autel de la Chapelle : nul ne sait lesquels.",
+      "Annonce": "C'est la nuit de la Saint-Martin : une seule nuit, un seul vote. {n} rôles dorment sous l'autel de la Chapelle, et nul ne sait lesquels.",
+      "Preparation": "Nuit de la Saint-Martin",
+      "PreparationAide": "Le format court (une dizaine de minutes) : une nuit, un vote, la fin ; trois rôles de plus que de joueurs, cachés sous l'autel."
     }
   }
 }

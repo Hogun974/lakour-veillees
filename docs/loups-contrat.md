@@ -7,7 +7,7 @@ Foundry v14 (14.369). Tout en français, textes originaux (aucun texte, aucune c
 
 ## 1. Système `lakour-loups`
 
-`systems/lakour-loups/system.json` : `id: "lakour-loups"`, `version: "0.7.0"`, `compatibility { minimum: "14", verified: "14.369" }`,
+`systems/lakour-loups/system.json` : `id: "lakour-loups"`, `version: "0.8.0"`, `compatibility { minimum: "14", verified: "14.369" }`,
 `socket: true`, `esmodules: ["lakour-loups.mjs"]`, langues fr et en, `documentTypes` ci-dessous,
 `grid { type: 1, distance: 1.5, units: "m" }`, `primaryTokenAttribute: null`.
 
@@ -268,6 +268,52 @@ Votes : un mort qui a encore son souffle est admis (socket `vote`, compagnon : d
 d'exécution seulement ; `resultat.souffles` (consommés) ; Registre « dernier souffle ». Hook public `lakourLoups.presage` (`{ cle, tour }`).
 Réglages monde : `dernierSouffle` (vrai par défaut), `almanach` (faux par défaut). Rôles « sur demande » (`equilibre.surDemande`) :
 jamais tirés par le générateur.
+
+Ajouts 0.8.0 — Gens de passage, départ et exil, Banc des accusés, Glas du deuil, Nuit de la Saint-Martin (§1 « Lot 0.8.0 ») :
+```
+accueillir({ userId | acteurId | nom, cle? }) -> { acteurId, nom, cle } (MJ actif) : un gens de passage entre (aube ou débat, hors vote)
+peutAccueillir()                  -> { ok, raison, raisonTexte } (tous)
+gensDePassage()                   -> [{ acteurId, nom, cle, role, tour, parti }] (tous : rôle PUBLIC, jamais le camp)
+partir(acteurId, { comment })     -> true (MJ actif) : "depart" (le joueur s'en va) ou "exil" (vote) ; ni mort ni révélation
+ouvrirVote({ objet: "exil" })     -> le vote d'exil : candidats = les gens de passage encore là ; l'élu part (partir, "exil")
+accuser(par, contre)              -> { par, contre } (MJ actif) : une accusation au Banc des accusés
+peutAccuser(acteurId, contre?)    -> { ok, raison, raisonTexte } (tous) ; banc() -> { actif, accusations, prochain, prochainNom } (tous)
+ouvrirVote()                      -> avec le Banc : juge le prochain accusé (vote.banc = { accuse }, un candidat) ; erreur sans accusé
+deuil()                           -> { actif, compte } (tous) ; pouvoirsDuDeuil() -> { visions, voix, linceul } (MJ actif ; SECRET)
+reveiller("deuil")                -> la vision du Glas du deuil : la meute désigne un joueur (demande comme la meute)
+nouvellePartie({ format: "saint-martin" }) / distribuer({ format, autel }) -> la Nuit de la Saint-Martin ; résumé du MJ + composition.autel
+nouvellePartie({ format })        -> format non précisé : celui de la partie précédente ("" : ordinaire) ; les partis ne sont pas repris
+partir(acteurId)                  -> false si déjà parti ; seul candidat du vote ouvert : le vote se clôt sans élu (resultat.depart, hook voteClos)
+autel()                           -> [{ cle, nom }] (MJ actif ; SECRET) : les rôles sous l'autel
+```
+Socket joueur -> MJ actif : `{ type: "accusation", acteurId, contre, userId }` et `{ type: "depart", acteurId, userId }` (pour soi).
+Hooks publics : `lakourLoups.passage` (`{ acteurId, cle, comment: "arrivee" }`), `lakourLoups.depart` (`{ acteurId, comment }`),
+`lakourLoups.accusation` (`{ par, contre }`), `lakourLoups.deuil` (`{ compte }`). Demande `type: "vote"` d'un compagnon : `+ banc`
+(l'accusé : voter pour lui le condamne, rien l'acquitte) ; `demanderAction({ objet })` : demandes de meute `objet: "deuil-vision"` (la nuit) et
+`"deuil-voix"` (à l'ouverture d'un vote d'exécution, après le 2e glas : le candidat que la voix sans visage rejoindra). `resultat` : `+ banc ({ accuse, pour, total })`, `+ deuil` (le candidat de la voix
+sans visage). Vainqueur `"brume"` (Saint-Martin : personne). Réglages monde : `gensDePassage` (vrai), `banc` et `glasDuDeuil` (faux).
+Étapes du MJ humain : `juger` (action `ouvrirVote`), détail `bancVide` ; l'étape `reveiller` du deuil porte `donnees.deuil`.
+
+### Lot 0.8.0 (logique/passage.mjs, banc.mjs, deuil.mjs, saintmartin.mjs)
+
+**Gens de passage** (public : `etat.passage = { actif, gens: { acteurId: { cle, tour } } }`, `etat.partis = [{ acteurId, tour, comment }]`) :
+rôles `remouleur` (verrou et lame sur une maison, nuit suivante), `montreur-d-ours` (asile), `pelerine` (le camp d'un joueur, en secret),
+une fois, de jour (`POUVOIRS_JOUR`, source « role »). Le camp (`campDePassage`) : la meute à 70 % si elle est sous son compte
+(`nombreDeLoups(n + 1)`), sinon 15 % ; jamais en peste noire. Il vit sur le DOCUMENT (`system.camp`, comme tout camp) et dans le journal
+SECRET ; le rôle de l'objet reste « village ». Un parti est `vivant: false` sur son document, dans `etat.partis`, jamais dans `etat.morts` :
+ni Dernier souffle, ni gagnant ni perdant (`bilanDePartie({ partis })`), jeton retiré, Bailli vacant, voix en cours retirée.
+**Banc des accusés** (public, `etat.banc = { actif, tour, accusations, juges }`) : `verifierAccusation`, `prochainAccuse`, `verdictDuBanc`
+(pour × 2 ≥ total pondéré des vivants ; Gibet : >) ; pas de cloche, pas de départage ; une exécution par jour.
+**Glas du deuil** (public `etat.deuil = { actif, compte }` ; SECRET `etat.pouvoirsDeuil = { visions, voix, linceul }`) : `sonnerDeuil` à
+chaque exécuté hors meute ; vision (étape `deuil`, ordre 41, effet `deuil` : action de toute la meute, ni guet ni éloignement ; `resoudreNuit().deuil` = la cible
+vue, seule une vision délivrée est consommée), voix (`choisirVoixDuDeuil` : le choix SECRET de la meute pour le vote n° numero,
+`pouvoirsDeuil.cible` ; `voixDuDeuil` : ce choix, sinon un candidat au hasard — jamais les bulletins ; pseudo-votant `VOIX_DU_DEUIL`,
+retiré des votes), linceul (`effetsDeLaNuit().linceul` : ni porte, ni protection, ni repousse de morsure contre la meute).
+Effets de jour `origine: "passage"` (ours, Rémouleur) : ni l'asile de la Chapelle, ni la lame de la Forge. `voteExecutionDuJour`
+lit aussi le Registre (un exil ou une Chapelle peuvent suivre l'exécution) ; la Saint-Martin finit après son dernier vote d'exécution.
+**Nuit de la Saint-Martin** (public `etat.format = "saint-martin"` ; SECRET `etat.autel`) : `composerSaintMartin(n)` (n + 3 rôles),
+`verifierVictoire({ saintMartin })` (null : partie ordinaire ; false : rien ; true : `victoireSaintMartin`), `saintMartinFinie` ; ni Bailli,
+ni Almanach, ni Banc, ni Glas du deuil ; la seconde nuit ne tombe pas (`changerPhase("nuit")` finit la partie).
 
 ### Lot 0.7.0 (logique/souffle.mjs, almanach.mjs, somnambule.mjs, calendrier.mjs)
 

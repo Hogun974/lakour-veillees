@@ -194,6 +194,30 @@
       "unique": true,
       "surDemande": true
     },
+    "remouleur": {
+      "camp": "village",
+      "poids": 0,
+      "niveau": "debutants",
+      "joueursMin": 4,
+      "unique": true,
+      "surDemande": true
+    },
+    "montreur-d-ours": {
+      "camp": "village",
+      "poids": 0,
+      "niveau": "debutants",
+      "joueursMin": 4,
+      "unique": true,
+      "surDemande": true
+    },
+    "pelerine": {
+      "camp": "village",
+      "poids": 0,
+      "niveau": "debutants",
+      "joueursMin": 4,
+      "unique": true,
+      "surDemande": true
+    },
     "villageois": {
       "camp": "village",
       "poids": 1,

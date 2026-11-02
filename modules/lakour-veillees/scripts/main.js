@@ -8,8 +8,9 @@ const SYSTEME = "lakour-loups";
 // 0.3.0 : plan du village avec son plateau (seuils, cercle, cimetière) ; 0.5.0 (aligné sur module.json) : carte épinglée
 // (une épingle par bâtiment vers sa page du guide du joueur, sons), journaux gardant leur identifiant et leur visibilité ;
 // 0.8.0 : guides du Bailli, du Registre du greffier et des Masques de veillée (système 0.6.0) ; 0.9.0 : Somnambule, Rosière,
-// Almanach des brumes, Dernier souffle et Saints du calendrier (système 0.7.0).
-const VERSION_CONTENU = "0.9.0";
+// Almanach des brumes, Dernier souffle et Saints du calendrier (système 0.7.0) ; 0.10.0 : Gens de passage (Rémouleur, Montreur
+// d'ours, Pèlerine), Banc des accusés, Glas du deuil, Nuit de la Saint-Martin (système 0.8.0).
+const VERSION_CONTENU = "0.10.0";
 
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 

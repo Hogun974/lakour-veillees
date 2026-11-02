@@ -29,6 +29,8 @@ export class FenetreVote extends HandlebarsApplicationMixin(ApplicationV2) {
     const vivants = game.actors.filter(a => a.type === "villageois" && a.system.vivant);
     return {
       ouvert: v.ouvert, double: v.double, majoriteAbsolue: v.majoriteAbsolue, chapelle: v.objet === "chapelle", bailli: v.objet === "bailli",
+      // L'exil d'un gens de passage ; un jugement du Banc des accusés (l'accusé, seul candidat).
+      exil: v.objet === "exil", banc: v.banc ? game.actors.get(v.banc.accuse)?.name ?? "" : "",
       // Le Bailli vote : sa voix compte double au vote d'exécution (public).
       voixDouble: v.objet === "execution" && Boolean(moi) && etat.bailli?.actif && etat.bailli.acteurId === moi.id
         && Boolean(L.poidsDesVoix(etat)[moi.id]),

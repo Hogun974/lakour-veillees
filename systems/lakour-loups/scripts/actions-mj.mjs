@@ -8,8 +8,9 @@ const api = () => game.lakourLoups;
 
 // ------------------------------------------------------------------ préparation (état local de la Table du MJ)
 // { coches: [userId] | null (null : tous les joueurs connectés), mode: "auto" | "manuel", niveau, roles: { cle: n },
-//   peste: partie de peste noire choisie par le MJ (sinon, une partie générée le devient rarement d'elle-même) }
-export const nouvellePreparation = () => ({ coches: null, mode: "auto", niveau: "classique", roles: {}, peste: false });
+//   peste: partie de peste noire choisie par le MJ (sinon, une partie générée le devient rarement d'elle-même),
+//   format: "" ou "saint-martin" (la Nuit de la Saint-Martin : sa propre composition, ni peste ni rôles choisis) }
+export const nouvellePreparation = () => ({ coches: null, mode: "auto", niveau: "classique", roles: {}, peste: false, format: "" });
 
 export const joueursConnectes = () => game.users.filter(u => !u.isGM && u.active);
 export const compagnonsDuVillage = () => tousLesVillageois().filter(a => a.system.compagnon && !a.system.joueur);
@@ -69,7 +70,8 @@ export async function distribuer(prep) {
   const joueurs = joueursCoches(prep);
   const compagnons = compagnonsDuVillage().map(a => a.id);
   const total = joueurs.length + compagnons.length;
-  return api().nouvellePartie({ memesJoueurs: false, joueurs, compagnons, niveau: prep.niveau,
+  if (prep.format === "saint-martin") return api().nouvellePartie({ memesJoueurs: false, joueurs, compagnons, niveau: prep.niveau, format: "saint-martin" });
+  return api().nouvellePartie({ memesJoueurs: false, joueurs, compagnons, niveau: prep.niveau, format: "",
     roles: prep.mode === "manuel" ? rolesManuels(prep, total) : [], ...(prep.peste ? { peste: true } : {}) });
 }
 

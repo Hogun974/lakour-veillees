@@ -79,6 +79,8 @@ export function libelleCause(c) {
 export function libelleVainqueur(v, etat = null) {
   if (!v) return "";
   if (v === "peste") return t("LAKOUR_LOUPS.Victoire.peste");
+  // La Nuit de la Saint-Martin : un innocent exécuté sans loup en jeu, personne ne gagne.
+  if (v === "brume") return t("LAKOUR_LOUPS.Victoire.brume");
   if (v === "village" && etat?.peste?.active) return t("LAKOUR_LOUPS.Victoire.villagePeste");
   if (v === "village" || v === "meute") return t(`LAKOUR_LOUPS.Victoire.${v}`);
   const a = game.actors.get(v);

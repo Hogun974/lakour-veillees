@@ -40,6 +40,10 @@ export const EQUILIBRE = {
   // par le narrateur (composition à la main, rôles imposés).
   "somnambule": { camp: "village", poids: -1, niveau: "chaos", joueursMin: 9, unique: true, surDemande: true },
   "rosiere": { camp: "village", poids: -1, niveau: "classique", joueursMin: 8, unique: true, surDemande: true },
+  // Les gens de passage : jamais distribués, seulement donnés à un joueur qui arrive en cours de partie (camp tiré à part).
+  "remouleur": { camp: "village", poids: 0, niveau: "debutants", joueursMin: 4, unique: true, surDemande: true },
+  "montreur-d-ours": { camp: "village", poids: 0, niveau: "debutants", joueursMin: 4, unique: true, surDemande: true },
+  "pelerine": { camp: "village", poids: 0, niveau: "debutants", joueursMin: 4, unique: true, surDemande: true },
   "villageois": { camp: "village", poids: 1, niveau: "debutants", joueursMin: 4, unique: false },
   // --- Solitaires
   "revenant": { camp: "solitaire", poids: -2, niveau: "classique", joueursMin: 9, unique: true },

@@ -22,3 +22,7 @@ export * from "./souffle.mjs";
 export * from "./almanach.mjs";
 export * from "./somnambule.mjs";
 export * from "./calendrier.mjs";
+export * from "./passage.mjs";
+export * from "./banc.mjs";
+export * from "./deuil.mjs";
+export * from "./saintmartin.mjs";

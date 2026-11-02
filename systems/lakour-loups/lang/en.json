@@ -71,7 +71,8 @@
       "amoureux": "The lovers {a} and {b} win, last survivors of the valley.",
       "solitaire": "{nom} wins, alone against all.",
       "peste": "Brumecombe fades away in fever: the black plague wins, and no one ever named it.",
-      "villagePeste": "The village named the black plague: Brumecombe drives the fever out and wins."
+      "villagePeste": "The village named the black plague: Brumecombe drives the fever out and wins.",
+      "brume": "The mist wins: on Saint Martin's night, Brumecombe hanged an innocent and no wolf was among you."
     },
     "Table": {
       "Titre": "Vigil table",
@@ -295,7 +296,8 @@
       "InviteMessager": "The Messenger knocks at your door tonight: write a sentence for {nom}. He will hand it over at dawn, from you.",
       "PesteBredouille": "The plague found nobody at {nom}'s: they slept out of reach.",
       "PestePont": "The plague could not cross the Bridge to reach {nom}.",
-      "PesteArretee": "The plague could not reach {nom} ({par})."
+      "PesteArretee": "The plague could not reach {nom} ({par}).",
+      "VisionDeuil": "The mourning bell whispers {nom}'s side to you: « {camp} »."
     },
     "Messages": {
       "Mort": "{nom} is dead: {cause}.",
@@ -376,6 +378,18 @@
       "Almanach": {
         "Nom": "The Almanac of mists (variant)",
         "Aide": "At each dawn, a drawn omen changes the rule of the day or of the next night, announced to all. Applies from the next deal."
+      },
+      "GensDePassage": {
+        "Nom": "Travellers",
+        "Aide": "A player arriving mid-game joins as a traveller (public role, secret side); a player can leave the vigil without dying; the village can vote to exile a traveller."
+      },
+      "Banc": {
+        "Nom": "The Dock (variant)",
+        "Aide": "Everyone accuses once a day; the accused are judged one by one (for or against); half of the living votes are needed to execute. Applies from the next deal."
+      },
+      "GlasDuDeuil": {
+        "Nom": "The Mourning Bell (variant)",
+        "Aide": "Each innocent executed by vote tolls the bell and gives the pack a growing collective power (a vision, a faceless vote, the shroud). Applies from the next deal."
       }
     },
     "Erreurs": {
@@ -472,7 +486,11 @@
         "cibles": "Choose {n} player(s) among those allowed.",
         "texte": "A last word of {mots} words at most, and not empty.",
         "personne": "Nobody can be chosen."
-      }
+      },
+      "Remouleur": "{qui} sharpens {nom}'s lock and knife: next night, the first wolf attack on that house will fail.",
+      "Ours": "{qui} lays the bear down at {nom}'s door: next night, the pack will not dare to enter.",
+      "Pelerine": "{qui} prays long on {nom}'s doorstep.",
+      "PelerinePrive": "Your prayer was heard: {nom} belongs to the « {camp} » side."
     },
     "Plateau": {
       "ChoisisSurLaCarte": "Your turn: choose on the map (click a glowing token), then \"Confirm\" in the banner."
@@ -560,12 +578,15 @@
         "voixManquantes": "({n} votes still missing)",
         "juge": "The Justice of the Peace ({nom}) may still cancel this vote.",
         "emporter": "{nom} chooses whom to take along (or no one).",
-        "sansSecrets": "This browser does not hold the night's secrets."
+        "sansSecrets": "This browser does not hold the night's secrets.",
+        "bancVide": "(Nobody is accused: wait for accusations during the debate, or let night fall.)"
       },
       "LaPeste": "the plague",
       "bailli": "Elect the Bailiff",
       "departage": "Waiting: the Bailiff ({nom}) breaks the tie…",
-      "succession": "Waiting: {nom}, the late Bailiff, hands over the seal…"
+      "succession": "Waiting: {nom}, the late Bailiff, hands over the seal…",
+      "LeDeuil": "the mourning pack",
+      "juger": "Judge the accused: {nom}"
     },
     "Preparation": {
       "Titre": "Prepare the game",
@@ -609,7 +630,9 @@
       "Resume": "{n} villagers, {tours} round(s) in the mist. The cards turn over:",
       "Survivant": "alive on the last morning",
       "Mort": "died in round {tour}, {cause}",
-      "IA": "AI player"
+      "IA": "AI player",
+      "Parti": "left the vigil on turn {tour}",
+      "Exile": "exiled by the village on turn {tour}"
     },
     "Signal": {
       "Choix": "Your turn to choose",
@@ -720,7 +743,8 @@
       "Objets": {
         "execution": "execution vote",
         "chapelle": "Chapel vote",
-        "bailli": "Bailiff election"
+        "bailli": "Bailiff election",
+        "exil": "exile vote"
       },
       "Mort": "Round {tour} — death of {nom}: {cause}.",
       "Bailli": {
@@ -741,7 +765,16 @@
         "trop": "You have already had {n} statements written today.",
         "brouillard": "Thick fog: the clerk takes no statement today."
       },
-      "VoixSouffle": "{qui} (last breath) → {cible}"
+      "VoixSouffle": "{qui} (last breath) → {cible}",
+      "Passage": {
+        "arrivee": "Turn {tour} — {nom} arrives in Brumecombe: {role} (traveller).",
+        "depart": "Turn {tour} — {nom} leaves the vigil.",
+        "exil": "Turn {tour} — {nom} is exiled by the village."
+      },
+      "Accusation": "Turn {tour} — {nom} accuses {contre}.",
+      "Deuil": "Turn {tour} — the mourning bell tolls for time {n}.",
+      "Banc": "Trial of {nom}: {pour} votes for out of {total}.",
+      "VoixDeuil": "A faceless vote joined {cible}."
     },
     "Masques": {
       "Titre": "Vigil masks",
@@ -819,6 +852,89 @@
       "Refus": {
         "etoile": "The Lucky star only watches over the first night, before its dawn."
       }
+    },
+    "Passage": {
+      "Titre": "Travellers",
+      "Aide": "A traveller: everyone knows their role, nobody knows their side.",
+      "Annonce": "{nom} arrives in Brumecombe: {role}, passing through.",
+      "AnnonceChat": "A traveller knocks at the vigil's door: <strong>{nom}</strong>, {role}, passing through Brumecombe. Nobody knows where their heart leans.",
+      "CampSecret": "{nom} (traveller) belongs to the « {camp} » side.",
+      "NouveauLoup": "{nom}, the traveller, is one of yours: the pack has one more member.",
+      "Depart": "{nom} leaves the vigil and takes to the road again.",
+      "Exil": "The village drives {nom} away: the traveller takes to the road, secret and all.",
+      "Parti": "left on turn {tour}",
+      "Exile": "exiled on turn {tour}",
+      "Quitter": "Leave the vigil",
+      "QuitterAide": "Must you go? You leave the game without dying: your role and side stay hidden, the game goes on without you.",
+      "QuitterQuestion": "Leave the vigil? You will not be able to play this game any more.",
+      "FaireQuitter": "Make leave the vigil",
+      "FaireQuitterQuestion": "{nom} leaves the vigil (without dying, role and side kept hidden)?",
+      "Accueillir": "Welcome a traveller",
+      "InviteAccueil": "Who arrives in Brumecombe? (a connected player without a villager in play)",
+      "Accueilli": "{nom} joins the vigil.",
+      "UnIA": "An AI player",
+      "VoteExil": "The village deliberates: should a traveller be driven away?",
+      "VoteExilBouton": "Exile vote",
+      "QuestionExil": "Which traveller does the village drive away?",
+      "InviteExil": "Exile vote: which traveller to drive away from the village (or nobody)?",
+      "Refus": {
+        "inactif": "Travellers are not admitted in this game.",
+        "fin": "No game in progress.",
+        "phase": "A traveller only arrives at dawn or during the debate.",
+        "vote": "Wait for the end of the vote to welcome a traveller.",
+        "joueur": "Nobody to welcome: a connected player without a villager in play is needed.",
+        "present": "{nom} is already in the game.",
+        "contenu": "No traveller role in the content.",
+        "absent": "{nom} is no longer at the vigil.",
+        "exil": "No traveller to exile."
+      },
+      "VoteSansObjet": "{nom} has left the vigil: the vote is moot, nobody is designated."
+    },
+    "Banc": {
+      "Titre": "The Dock",
+      "Vide": "Nobody is accused today.",
+      "Ligne": "{nom} accuses {contre}",
+      "Juge": "judged",
+      "Accuser": "Accuse",
+      "AccuserAide": "One accusation a day; each villager can only be accused once a day. The accused are judged one by one.",
+      "Accuse": "{nom} accuses {contre}.",
+      "Annonce": "<strong>{nom}</strong> stands up and accuses <strong>{contre}</strong>.",
+      "Jugement": "The village judges {nom}.",
+      "Question": "Should {nom} be condemned? (voting for the accused condemns; abstaining acquits)",
+      "Invite": "Trial of {nom}: vote for the accused to condemn, choose nobody to acquit.",
+      "Condamne": "{nom} is condemned ({pour} votes out of {total}).",
+      "Acquitte": "{nom} is acquitted ({pour} votes out of {total}).",
+      "Refus": {
+        "inactif": "The Dock is not in play.",
+        "phase": "Accusations are only made during the debate.",
+        "absent": "You have no villager in this game.",
+        "mort": "The dead accuse no more.",
+        "silence": "Silenced, you cannot accuse.",
+        "deja": "You already accused someone today.",
+        "cible": "Accuse another living villager.",
+        "accuse": "This villager is already accused today.",
+        "personne": "Nobody to judge: no accused waiting (or an execution already took place today)."
+      }
+    },
+    "Deuil": {
+      "Titre": "The mourning bell",
+      "Aide": "The Mourning Bell: each innocent executed tolls it, and the pack draws a power from it.",
+      "Compte": "Mourning bell: {n}",
+      "Sonne": "The mourning bell tolls over Brumecombe for time {n}.",
+      "Pouvoir1": "The bell has tolled: next night, the pack may name a villager; each wolf will learn their side.",
+      "Pouvoir2": "The bell has tolled a second time: at each execution vote, a faceless vote will join the candidate that you, the living wolves, named most.",
+      "Pouvoir3": "The bell has tolled a third time: next night, no protection will hold against the pack.",
+      "Invite": "The bell lends you its eyes: which villager do you want to see through?",
+      "Voix": "A faceless vote joined {nom}.",
+      "InviteVoix": "The bell lends you its voice: which candidate of this vote will the faceless vote join?",
+      "VoixChoisie": "The pack places the faceless vote on {nom}."
+    },
+    "SaintMartin": {
+      "Titre": "Saint Martin's Night",
+      "Aide": "One night, one vote, then the end. Three roles sleep under the Chapel altar: nobody knows which.",
+      "Annonce": "It is Saint Martin's night: one night, one vote. {n} roles sleep under the Chapel altar, and nobody knows which.",
+      "Preparation": "Saint Martin's Night",
+      "PreparationAide": "The short format (about ten minutes): one night, one vote, the end; three more roles than players, hidden under the altar."
     }
   }
 }

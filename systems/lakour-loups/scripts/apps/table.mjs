@@ -8,14 +8,18 @@
 // Le Bailli (public) : son nom en tête, son sceau sur sa carte, l'élection pour le MJ (« Élire le Bailli »), le départage.
 // Le Registre du greffier (public) : chaque vote clos, voix par voix, les morts et leur cause publique, le Bailli, et les
 // déclarations qu'un vivant y fait inscrire pendant le jour (champ « Déclarer au Registre »).
+// Les Gens de passage : leur rôle public sur leur carte (jamais leur camp) ; « Quitter la veillée » pour soi ; le MJ accueille un
+// arrivant, ouvre un vote d'exil, fait partir un joueur. Le Banc des accusés : les accusations du jour, et la mienne. Le Glas du
+// deuil : son compte (public). La Nuit de la Saint-Martin : sa marque, et sa case à la préparation.
 import { ID, PHASES } from "../../logique/constantes.mjs";
 import * as L from "../../logique/index.mjs";
 import { LONGUEUR_DECLARATION as LONGUEUR } from "../../logique/registre.mjs";
 import { diagnosticVoix } from "../../logique/salons.mjs";
 import {
-  t, lireEtat, tousLesVillageois, monVillageois, roleDe, metierDe, roleVisible, libellePhase, libelleCamp, libelleCause, libelleVainqueur
+  t, lireEtat, tousLesVillageois, monVillageois, roleDe, metierDe, roleVisible, libellePhase, libelleCamp, libelleCause, libelleVainqueur,
+  villageoisAPlat
 } from "../donnees.mjs";
-import { envoyerVote, envoyerJour, envoyerCri, envoyerDeclaration } from "../api.mjs";
+import { envoyerVote, envoyerJour, envoyerCri, envoyerDeclaration, envoyerAccusation, envoyerDepart } from "../api.mjs";
 import { estMJActif } from "../canal.mjs";
 import { secretsPerdus } from "../secrets.mjs";
 import { monVote, mesSecrets } from "../prive.mjs";
@@ -28,7 +32,8 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 const api = () => game.lakourLoups;
 const nomDe = id => game.actors.get(id)?.name ?? id;
 const TYPES_EFFETS = ["verrou", "surveille", "gite", "traversee", "taverne", "lame", "cachette", "asile", "ecluse"];
-const ICONES_REGISTRE = { vote: "fa-scale-balanced", mort: "fa-cross", bailli: "fa-stamp", declaration: "fa-feather-pointed" };
+const ICONES_REGISTRE = { vote: "fa-scale-balanced", mort: "fa-cross", bailli: "fa-stamp", declaration: "fa-feather-pointed",
+  passage: "fa-person-walking-luggage", accusation: "fa-hand-point-right", deuil: "fa-bell" };
 
 async function tenter(fn) {
   try { return await fn(); } catch (e) { ui.notifications.error(e.message); console.error(e); }
@@ -53,6 +58,8 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
       prepCocher: TableDeJeu.#prepCocher, prepIA: TableDeJeu.#prepIA, prepRetirerIA: TableDeJeu.#prepRetirerIA,
       prepMode: TableDeJeu.#prepMode, prepRole: TableDeJeu.#prepRole, prepPeste: TableDeJeu.#prepPeste,
       crier: (event, cible) => crierALaPeste(cible.dataset.id),
+      accuser: TableDeJeu.#accuser, quitter: TableDeJeu.#quitter, faireQuitter: TableDeJeu.#faireQuitter,
+      accueillir: TableDeJeu.#accueillir, voteExil: TableDeJeu.#voteExil, prepSaintMartin: TableDeJeu.#prepSaintMartin,
       voixActiver: TableDeJeu.#voixActiver, voixMicro: TableDeJeu.#voixMicro
     }
   };
@@ -79,11 +86,18 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
 
     // Le poids des voix d'aujourd'hui (Bailli : double, sauf le jour du sceau fêlé) : pour le décompte à main levée et la pastille.
     const pesees = L.poidsDesVoix(etat, tousLesVillageois().filter(a => a.system.vivant).map(a => a.id));
+    // Les gens de passage (rôle public, jamais le camp) et les partis (départ, exil : ni morts ni révélés).
+    const gens = tenterSync(() => api().gensDePassage(), []);
+    const partis = etat.partis ?? [];
     const fiche = a => {
       const role = roleDe(a), metier = metierDe(a);
       const voitRole = fin || roleVisible(a);
       const mort = etat.morts.find(m => m.acteurId === a.id);
+      const parti = partis.find(p => p.acteurId === a.id);
       return {
+        passage: gens.find(g => g.acteurId === a.id)?.role ?? "",
+        parti: parti ? t(parti.comment === "exil" ? "LAKOUR_LOUPS.Passage.Exile" : "LAKOUR_LOUPS.Passage.Parti", { tour: parti.tour }) : "",
+        faireQuitter: gm && a.system.vivant && Boolean(etat.partie) && !fin,
         id: a.id, nom: a.name, img: a.img, vivant: a.system.vivant, maison: a.system.maison,
         metier: metier?.name ?? "", metierImg: metier?.img ?? "",
         voitRole, roleNom: voitRole ? role?.name ?? "" : "", roleImg: voitRole ? role?.img ?? "" : "",
@@ -164,7 +178,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
     if (gm && mjActif) {
       try {
         const e = api().etapeSuivante({ ignorer: [...this.ignorer] });
-        const donnees = { ...e.donnees, nom: e.donnees.meute ? t("LAKOUR_LOUPS.Etapes.LaMeute") : e.donnees.peste ? t("LAKOUR_LOUPS.Etapes.LaPeste") : e.donnees.nom ?? "" };
+        const donnees = { ...e.donnees, nom: e.donnees.meute ? t("LAKOUR_LOUPS.Etapes.LaMeute") : e.donnees.peste ? t("LAKOUR_LOUPS.Etapes.LaPeste") : e.donnees.deuil ? t("LAKOUR_LOUPS.Etapes.LeDeuil") : e.donnees.nom ?? "" };
         etape = { ...e, texte: t(`LAKOUR_LOUPS.Etapes.${e.cle}`, donnees),
           detail: e.detail ? t(`LAKOUR_LOUPS.Etapes.Detail.${e.detail.cle}`, e.detail.donnees) : "" };
       } catch { etape = null; }
@@ -194,6 +208,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
         trop: p.mode === "manuel" && Object.values(p.roles).reduce((a, b) => a + b, 0) > total,
         peutDistribuer: total >= 1,
         peste: Boolean(p.peste),
+        saintMartin: p.format === L.FORMAT_SAINT_MARTIN,
         voix: voixDuMonde()
       };
     }
@@ -205,6 +220,20 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
     const registre = tenterSync(() => api().registre({ max: 80 }), []).reverse()
       .map(x => ({ type: x.type, icone: ICONES_REGISTRE[x.type] ?? "fa-feather", texte: x.ligne, annule: Boolean(x.annule), tour: x.tour }));
     const declaration = moi ? tenterSync(() => api().peutDeclarer(moi.id), null) : null;
+    // Le Banc des accusés (public) : les accusations du jour ; la mienne, si je peux encore accuser (un vivant pas encore accusé).
+    const banc = etat.banc?.actif ? tenterSync(() => api().banc(), null) : null;
+    let accusation = null;
+    if (banc && moi) {
+      const p = tenterSync(() => api().peutAccuser(moi.id), null);
+      const deja = new Set(banc.accusations.map(x => x.contre));
+      accusation = p ? { ok: p.ok, raison: p.raisonTexte,
+        cibles: tousLesVillageois().filter(a => a.system.vivant && a.id !== moi.id && !deja.has(a.id)).map(a => ({ id: a.id, nom: a.name })) } : null;
+    }
+    // Les Gens de passage (MJ) : accueillir un arrivant (un joueur connecté sans villageois en jeu, ou un joueur IA) ; l'exil.
+    const passage = gm && etat.passage?.actif && etat.partie && !fin ? {
+      accueil: tenterSync(() => api().peutAccueillir(), { ok: false, raisonTexte: "" }),
+      exil: !v.ouvert && etat.phase === "jour" && L.candidatsExil(etat, villageoisAPlat()).length > 0
+    } : null;
     // Le départage du Bailli : en attente, le MJ peut trancher à sa place (un bouton par ex aequo, ou « personne »).
     const departage = resultat?.departage ? { nom: nomDe(resultat.departage.par), enAttente: Boolean(resultat.departage.enAttente),
       choix: (resultat.departage.choix ?? []).map(nomDe).join(", "),
@@ -219,6 +248,8 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
       presage: presage?.cle ? presage : null, glas: etat.glas, saints,
       gm, phase: etat.phase, phaseLibelle: libellePhase(etat.phase), tour: etat.tour, fini: fin,
       composition: gm ? etat.composition : "", peste: gm && Boolean(etat.peste?.active),
+      deuil: etat.deuil?.actif ? { compte: etat.deuil.compte } : null, saintMartin: L.estSaintMartin(etat),
+      banc, accusation, passage, quitter: Boolean(moi?.system.vivant && etat.partie && !fin),
       vainqueur: libelleVainqueur(etat.vainqueur, etat), crier: Boolean(cri?.ok), moiId: moi?.id ?? "",
       estNuit: etat.phase === "nuit" || etat.phase === "aube",
       phases: PHASES.map(p => ({ cle: p, libelle: libellePhase(p), active: p === etat.phase })),
@@ -233,12 +264,15 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
       moi: moi ? { nom: moi.name, vivant: moi.system.vivant, silence: moi.system.silence } : null,
       vote: {
         ouvert: v.ouvert, double: v.double, majoriteAbsolue: v.majoriteAbsolue, chapelle: v.objet === "chapelle", bailli: v.objet === "bailli",
+        exil: v.objet === "exil", banc: v.banc ? nomDe(v.banc.accuse) : "",
         voixDouble: v.objet === "execution" && bailliId && pesees[bailliId] > 1 ? nomDe(bailliId) : "",
         exprimes: v.exprimes.filter(id => vivants.some(x => x.id === id)).length, votants: vivants.length,
         souffles: v.exprimes.filter(id => !vivants.some(x => x.id === id)).length,
         peutVoter: Boolean(v.ouvert && moi && (moi.system.vivant || tenterSync(() => api().peutSouffler(moi.id).ok, false))), minuteur: Boolean(v.finit),
         souffle: Boolean(v.ouvert && moi && !moi.system.vivant), mainLevee: Boolean(v.mainLevee),
         resultat: resultat ? { lignes, egalite: resultat.egalite, personne: !resultat.elus?.length, bailli: resultat.objet === "bailli", sort: Boolean(resultat.sort), departage,
+          banc: resultat.banc ? { nom: nomDe(resultat.banc.accuse), pour: resultat.banc.pour, total: resultat.banc.total, condamne: Boolean(resultat.elus?.length) } : null,
+          deuil: resultat.deuil ? nomDe(resultat.deuil) : "", exil: resultat.objet === "exil",
           elus: (resultat.elus ?? []).map(nomDe).join(", "),
           condamnes: resultat.objet === "execution" && resultat.numero === v.numero
             ? (resultat.elus ?? []).filter(id => game.actors.get(id)?.system.vivant).map(id => ({ id, nom: nomDe(id) })) : [] } : null
@@ -329,6 +363,46 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
     champ.value = "";
   }
   static #cloreVote() { return cloreLeVote(); }
+  // ---------------- le Banc des accusés, les Gens de passage, les départs
+  static async #accuser() {
+    const contre = this.element.querySelector("select[name=accuse]")?.value ?? "";
+    if (contre) await tenter(() => envoyerAccusation(contre));
+  }
+  static async #quitter() {
+    const ok = await foundry.applications.api.DialogV2.confirm({ window: { title: "LAKOUR_LOUPS.Passage.Quitter" },
+      content: `<p>${foundry.utils.escapeHTML(t("LAKOUR_LOUPS.Passage.QuitterQuestion"))}</p>` });
+    if (ok) await tenter(() => envoyerDepart());
+  }
+  static async #faireQuitter(event, cible) {
+    const a = game.actors.get(cible.dataset.id);
+    if (!a) return;
+    const ok = await foundry.applications.api.DialogV2.confirm({ window: { title: "LAKOUR_LOUPS.Passage.FaireQuitter" },
+      content: `<p>${foundry.utils.escapeHTML(t("LAKOUR_LOUPS.Passage.FaireQuitterQuestion", { nom: a.name }))}</p>` });
+    if (ok) await tenter(() => api().partir(a.id, { comment: "depart" }));
+  }
+  // Accueillir un gens de passage : un joueur connecté sans villageois en jeu, ou un joueur IA (module MJ IA).
+  static async #accueillir() {
+    const enJeu = new Set(tousLesVillageois().filter(a => roleDe(a)).map(a => a.system.joueur).filter(Boolean));
+    const joueurs = MJ.joueursConnectes().filter(u => !enJeu.has(u.id));
+    const options = [...joueurs.map(u => `<option value="${u.id}">${foundry.utils.escapeHTML(u.name)}</option>`),
+      ...(MJ.iaDisponible() ? [`<option value="ia">${foundry.utils.escapeHTML(t("LAKOUR_LOUPS.Passage.UnIA"))}</option>`] : [])].join("");
+    if (!options) return ui.notifications.warn(t("LAKOUR_LOUPS.Passage.Refus.joueur"));
+    const choix = await foundry.applications.api.DialogV2.prompt({
+      window: { title: "LAKOUR_LOUPS.Passage.Accueillir" },
+      content: `<p>${foundry.utils.escapeHTML(t("LAKOUR_LOUPS.Passage.InviteAccueil"))}</p><select name="qui">${options}</select>`,
+      ok: { callback: (ev, bouton) => bouton.form.elements.qui.value }
+    }).catch(() => "");
+    if (!choix) return;
+    await tenter(async () => {
+      const r = choix === "ia" ? await api().accueillir({ acteurId: (await api().compagnons.creer(1))[0] }) : await api().accueillir({ userId: choix });
+      ui.notifications.info(t("LAKOUR_LOUPS.Passage.Accueilli", { nom: r.nom }));
+    });
+  }
+  static #voteExil() { return tenter(() => api().ouvrirVote({ objet: "exil" })); }
+  static #prepSaintMartin() {
+    this.preparation.format = this.preparation.format === L.FORMAT_SAINT_MARTIN ? "" : L.FORMAT_SAINT_MARTIN;
+    this.render();
+  }
   static async #voixActiver() { await activerVoix(); this.render(); }
   static async #voixMicro() { await donnerMicro(); this.render(); }
   // Un pouvoir de jour : on choisit la cible (ou on écrit le dernier mot) ici, puis le MJ actif applique.

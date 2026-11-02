@@ -570,8 +570,8 @@ const VERIFICATIONS = {
 };
 
 const MUTATIONS = [
-  ["scripts/api.mjs", "e.bailli = L.bailliInitial(lireReglage(\"bailli\", true));", "e.bailli = L.bailliInitial(true);", "réglage du Bailli"],
-  ["scripts/api.mjs", "e.bailli = L.bailliInitial(lireReglage(\"bailli\", true));", "e.bailli = L.bailliInitial(false);", "Bailli en jeu"],
+  ["scripts/api.mjs", "e.bailli = L.bailliInitial(!court && lireReglage(\"bailli\", true));", "e.bailli = L.bailliInitial(!court && true);", "réglage du Bailli"],
+  ["scripts/api.mjs", "e.bailli = L.bailliInitial(!court && lireReglage(\"bailli\", true));", "e.bailli = L.bailliInitial(false);", "Bailli en jeu"],
   ["scripts/api.mjs", "    if (objet === \"bailli\") {\n      const p = L.electionAttendue", "    if (false) {\n      const p = L.electionAttendue", "élection permise"],
   ["scripts/api.mjs", "      if (c.resultat.objet === \"bailli\") {", "      if (false) {", "l'élu installé"],
   ["scripts/api.mjs", "    if (resultat.departage?.enAttente) resultat = await departageEnAttente(resultat);\n", "", "le Bailli tranche"],

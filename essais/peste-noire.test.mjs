@@ -239,8 +239,8 @@ const MUTATIONS = [
   ["victoire.mjs", "    if (peste.decouverte) return \"village\";\n", "", "victoire du cri"],
   ["victoire.mjs", "vivants.length <= 1 ? VAINQUEUR_PESTE", "vivants.length < 1 ? VAINQUEUR_PESTE", "extinction à un vivant"],
   ["victoire.mjs", "  if (peste?.active) {", "  if (false) {", "pas de victoire du village sans cri"],
-  ["etapes.mjs", "ordreDeNuit(villageois, tour, { peste: etat.peste })", "ordreDeNuit(villageois, tour)", "étape de la peste (MJ humain)"],
-  ["etapes.mjs", "primes: etat.primes ?? {}, peste: etat.peste }", "primes: etat.primes ?? {} }", "victoire de la peste (MJ humain)"]
+  ["etapes.mjs", "ordreDeNuit(villageois, tour, { peste: etat.peste, deuil", "ordreDeNuit(villageois, tour, { deuil", "étape de la peste (MJ humain)"],
+  ["etapes.mjs", "primes: etat.primes ?? {}, peste: etat.peste,", "primes: etat.primes ?? {},", "victoire de la peste (MJ humain)"]
 ];
 
 async function chargerMutant(fichier, avant, apres) {

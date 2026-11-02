@@ -14,6 +14,7 @@
 //   la suivante), ou [] tant qu'il n'y en a pas (le narrateur choisit).
 
 import { ORDRE_MEUTE, CLE_MEUTE, CLE_PESTE } from "./constantes.mjs";
+import { CLE_DEUIL, ORDRE_DEUIL } from "./deuil.mjs";
 
 export function seReveille(role, tour) {
   const n = role?.nuit;
@@ -32,7 +33,8 @@ export function agitAvecLaMeute(role) {
 // La meute et la peste passent avant les rôles de même ordre.
 const groupe = e => e.roleCle === CLE_MEUTE || e.roleCle === CLE_PESTE;
 
-export function ordreDeNuit(villageois = [], tour = 1, { peste = null } = {}) {
+// deuil (Glas du deuil, deuil.mjs) : la vision due cette nuit -> l'étape « deuil » (CLE_DEUIL, ordre 41), toute la meute réveillée.
+export function ordreDeNuit(villageois = [], tour = 1, { peste = null, deuil = false } = {}) {
   const vivants = villageois.filter(v => v.vivant !== false);
   const etapes = new Map();
 
@@ -42,6 +44,7 @@ export function ordreDeNuit(villageois = [], tour = 1, { peste = null } = {}) {
   } else {
     const meute = vivants.filter(v => v.camp === "meute").map(v => v.id);
     if (meute.length) etapes.set(CLE_MEUTE, { roleCle: CLE_MEUTE, acteurIds: meute, ordre: ORDRE_MEUTE, invite: "", cibles: 1, soiMeme: false });
+    if (meute.length && deuil) etapes.set(CLE_DEUIL, { roleCle: CLE_DEUIL, acteurIds: [...meute], ordre: ORDRE_DEUIL, invite: "", cibles: 1, soiMeme: false });
   }
 
   for (const v of vivants) {

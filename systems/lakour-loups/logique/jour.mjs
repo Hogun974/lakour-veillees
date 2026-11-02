@@ -21,6 +21,7 @@ import { numeroDeMaison, surLAutreRive } from "./distribution.mjs";
 import { marquerAnnule } from "./registre.mjs";
 import { presageDeLaNuit } from "./almanach.mjs";
 import { etoilesDeLaNuit } from "./calendrier.mjs";
+import { linceulDeLaNuit } from "./deuil.mjs";
 
 export const MATIN = ["aube", "jour"];             // « au matin », « au début d'un débat »
 export const JOURNEE = ["aube", "jour", "vote"];   // « pendant le jour »
@@ -52,6 +53,10 @@ export const POUVOIRS_JOUR = {
   eclusiere: { source: "metier", cibles: 0, phases: JOURNEE },
   "juge-de-paix": { source: "role", cibles: 0, phases: ["vote"], revele: true },
   conteuse: { source: "role", cibles: 1, soiMeme: false, phases: MATIN },
+  // Les Gens de passage (passage.mjs) : un pouvoir fort, une fois, de jour.
+  remouleur: { source: "role", cibles: 1, soiMeme: true, phases: JOURNEE },
+  "montreur-d-ours": { source: "role", cibles: 1, soiMeme: true, phases: JOURNEE },
+  pelerine: { source: "role", cibles: 1, soiMeme: false, phases: JOURNEE },
   taverne: { source: "batiment", cibles: 0, phases: JOURNEE },
   forge: { source: "batiment", cibles: 0, phases: JOURNEE },
   grange: { source: "batiment", cibles: 0, phases: JOURNEE },
@@ -91,7 +96,7 @@ export function candidatsDuPouvoir({ villageois = [], etat: e, acteurId = "", po
     case "apothicaire": return vivants.filter(v => v.silence).map(v => v.id);
     case "chasseresse": return villageois.filter(v => v.id !== acteurId).map(v => v.id);
     case "chapelle": {
-      const hier = effetsPour(etat, "asile", etat.tour).map(x => x.cible);
+      const hier = effetsPour(etat, "asile", etat.tour).filter(x => !x.origine).map(x => x.cible);
       return vivants.filter(v => !hier.includes(v.id)).map(v => v.id);
     }
     default: return vivants.filter(v => def.soiMeme || v.id !== acteurId).map(v => v.id);
@@ -143,7 +148,7 @@ export function verifierPouvoir({ villageois = [], etat: e, acteurId = "", pouvo
       }
       break;
     case "forge":
-      if (etat.jour.effets.some(x => x.type === "lame")) return non("deja");
+      if (etat.jour.effets.some(x => x.type === "lame" && !x.origine)) return non("deja");
       break;
     case "grange":
       if (etat.jour.effets.some(x => x.type === "cachette" && x.cible === acteurId)) return non("deja");
@@ -154,7 +159,7 @@ export function verifierPouvoir({ villageois = [], etat: e, acteurId = "", pouvo
       if (!etat.morts.some(m => m.acteurId === acteurId && m.tour === etat.tour)) return non("recent");
       break;
     case "chapelle":
-      if (effetsPour(etat, "asile", nuit).length) return non("deja");
+      if (effetsPour(etat, "asile", nuit).some(x => !x.origine)) return non("deja");
       break;
     case "eclusiere":
       if (effetsPour(etat, "ecluse", nuit).length) return non("deja");
@@ -199,7 +204,7 @@ export function appliquerPouvoir({ villageois = [], etat: e, acteurId = "", pouv
   const nuit = etat.tour + 1;
   const sortie = { ok: true, raison: "", etat, annonces: [], prives: [], changements: [], rouvrirVote: false };
   const annonce = (cle, t, d = {}) => sortie.annonces.push(msg("public", cle, t, d));
-  const poser = (type, cible = c ?? acteurId) => etat.jour.effets.push({ type, acteurId, cible, nuit });
+  const poser = (type, cible = c ?? acteurId, origine = "") => etat.jour.effets.push({ type, acteurId, cible, nuit, ...(origine ? { origine } : {}) });
   if (def.source === "metier" || def.source === "role") sortie.changements.push({ type: "usage", acteurId, objet: def.source });
   if (def.revele) sortie.changements.push({ type: "revele", acteurId });
 
@@ -279,10 +284,29 @@ export function appliquerPouvoir({ villageois = [], etat: e, acteurId = "", pouv
       const ancien = etat.vote;
       marquerAnnule(etat, ancien.numero);   // le vote annulé reste au Registre du greffier, marqué
       const x = ouvrirVote(etat, { candidats: ancien.candidats, duree: ancien.duree, double: ancien.double, majoriteAbsolue: ancien.majoriteAbsolue,
-        objet: "execution", maintenant });
+        objet: "execution", banc: ancien.banc?.accuse ?? "", maintenant });
       Object.assign(etat, x);
       sortie.rouvrirVote = true;
       annonce("Annule", `${qui}, Juge de paix, annule le vote : personne n'est exécuté, et le village revote aussitôt, sans nouveau débat.`, { qui });
+      break;
+    }
+    case "remouleur":
+      // La pierre du Rémouleur : verrou (la première attaque de loup échoue) et lame (la meute qui l'atteint y laisse du sang).
+      poser("verrou", c, "passage");
+      poser("lame", c, "passage");
+      annonce("Remouleur", `${qui} affûte la serrure et le couteau de ${n} : la nuit prochaine, la première attaque de loup contre sa maison échouera.`, { qui, nom: n });
+      break;
+    case "montreur-d-ours":
+      // L'ours couché devant la porte : la meute n'y entre pas la nuit prochaine (comme l'asile de la Chapelle).
+      poser("asile", c, "passage");
+      annonce("Ours", `${qui} couche son ours devant la porte de ${n} : la nuit prochaine, la meute n'osera pas y entrer.`, { qui, nom: n });
+      break;
+    case "pelerine": {
+      // La Pèlerine prie sur un seuil : elle apprend en secret le camp de ce joueur (tel que le voient les visions).
+      const v = parId.get(c);
+      const camp = v?.role?.apparence || v?.camp || "village";
+      annonce("Pelerine", `${qui} prie longuement sur le seuil de ${n}.`, { qui, nom: n });
+      sortie.prives.push(msg(acteurId, "PelerinePrive", `Votre prière s'est fait entendre : ${n} est du camp « ${camp} ».`, { nom: n, camp }));
       break;
     }
     case "conteuse":
@@ -330,7 +354,9 @@ export function effetsDeLaNuit(e, tour, { batiments } = {}) {
       || presageDeLaNuit(etat, tour) === "crue",
     // Almanach des brumes : le givre glace toute protection ; la Bonne étoile du narrateur, la première nuit.
     givre: presageDeLaNuit(etat, tour) === "givre",
-    etoiles: etoilesDeLaNuit(etat, tour)
+    etoiles: etoilesDeLaNuit(etat, tour),
+    // Le linceul du Glas du deuil : aucune protection ne tient contre la meute cette nuit.
+    linceul: linceulDeLaNuit(etat, tour)
   };
 }
 

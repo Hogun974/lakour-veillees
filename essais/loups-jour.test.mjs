@@ -43,7 +43,7 @@ test("pouvoirs possédés : métier, rôle de jour (Juge de paix, Conteuse), bâ
   const vs = village();
   assert.deepEqual(L.pouvoirsPossedes(vs.find(x => x.id === "j"), ["taverne", "chapelle"]), ["chasseresse", "juge-de-paix", "taverne"]);
   assert.deepEqual(L.pouvoirsPossedes(vs.find(x => x.id === "x"), []), ["aubergiste"]);
-  assert.equal(Object.keys(L.POUVOIRS_JOUR).length, 21, "14 métiers, 2 rôles, 5 bâtiments");
+  assert.equal(Object.keys(L.POUVOIRS_JOUR).length, 24, "14 métiers, 5 rôles (Juge de paix, Conteuse, 3 gens de passage), 5 bâtiments");
 });
 
 test("moments : jamais la nuit ni avant la partie ; « au matin » seulement après une nuit résolue ; un usage ; pas les morts", () => {

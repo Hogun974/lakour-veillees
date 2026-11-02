@@ -25,6 +25,7 @@
 
 import { VAINQUEUR_PESTE } from "./constantes.mjs";
 import { CLE_ROSIERE } from "./somnambule.mjs";
+import { victoireSaintMartin } from "./saintmartin.mjs";
 
 export function victoireCleDe(role) {
   if (!role) return "";
@@ -36,7 +37,10 @@ export function victoireCleDe(role) {
   return "";
 }
 
-export function verifierVictoire({ villageois = [], morts = [], primes = {}, peste = null, glas = false } = {}) {
+// saintMartin : null (partie ordinaire) ; false (Nuit de la Saint-Martin, avant la fin : rien ne tombe) ; true (sa fin :
+// victoireSaintMartin, saintmartin.mjs).
+export function verifierVictoire({ villageois = [], morts = [], primes = {}, peste = null, glas = false, saintMartin = null } = {}) {
+  if (saintMartin !== null) return saintMartin ? victoireSaintMartin({ villageois, morts }) : "";
   const executes = new Set(morts.filter(m => m.cause === "vote").map(m => m.acteurId));
 
   for (const v of villageois) {
@@ -96,7 +100,8 @@ export function palmares(chroniques = []) {
     || a.joueur.localeCompare(b.joueur));
 }
 
-export function bilanDePartie({ villageois = [], morts = [], causes = {}, vainqueur = "" } = {}) {
+// partis : etat.partis (passage.mjs) — un parti (départ, exil) ne gagne ni ne perd : ligne « parti », jamais gagnant.
+export function bilanDePartie({ villageois = [], morts = [], causes = {}, vainqueur = "", partis = [] } = {}) {
   const parId = new Map(villageois.map(v => [v.id, v]));
   const gagnants = new Set();
   if (vainqueur === "village" || vainqueur === "meute") {
@@ -110,10 +115,12 @@ export function bilanDePartie({ villageois = [], morts = [], causes = {}, vainqu
   const rang = new Map(morts.map((m, i) => [m.acteurId, i]));
   const lignes = villageois.map(v => {
     const m = rang.has(v.id) ? morts[rang.get(v.id)] : null;
+    const p = m ? null : partis.find(x => x.acteurId === v.id) ?? null;
     return {
       id: v.id, nom: v.nom ?? "", role: v.role?.nom ?? "", camp: v.camp ?? "", metier: v.metier?.nom ?? "", vivant: v.vivant !== false,
-      mort: v.vivant === false ? { tour: m?.tour ?? 0, phase: m?.phase ?? "", cause: causes[v.id] ?? m?.cause ?? "" } : null,
-      gagnant: gagnants.has(v.id)
+      mort: v.vivant === false && !p ? { tour: m?.tour ?? 0, phase: m?.phase ?? "", cause: causes[v.id] ?? m?.cause ?? "" } : null,
+      ...(p ? { parti: { tour: p.tour, comment: p.comment } } : {}),
+      gagnant: gagnants.has(v.id) && !p
     };
   });
   const ordre = l => (l.vivant ? -1 : rang.get(l.id) ?? -0.5);

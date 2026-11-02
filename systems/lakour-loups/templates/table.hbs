@@ -16,6 +16,8 @@
     {{/if}}
     {{#if presage}}<div class="loups-presage" data-tooltip="{{presage.effet}}"><i class="fa-solid fa-cloud-moon"></i> {{presage.nom}}</div>{{/if}}
     {{#if glas}}<div class="loups-glas" data-tooltip="{{localize 'LAKOUR_LOUPS.Calendrier.GlasAide'}}"><i class="fa-solid fa-bell"></i> {{localize "LAKOUR_LOUPS.Calendrier.Glas" n=glas}}</div>{{/if}}
+    {{#if deuil}}<div class="loups-glas loups-deuil" data-tooltip="{{localize 'LAKOUR_LOUPS.Deuil.Aide'}}"><i class="fa-solid fa-bell"></i> {{localize "LAKOUR_LOUPS.Deuil.Compte" n=deuil.compte}}</div>{{/if}}
+    {{#if saintMartin}}<div class="loups-presage loups-saint-martin" data-tooltip="{{localize 'LAKOUR_LOUPS.SaintMartin.Aide'}}"><i class="fa-solid fa-church"></i> {{localize "LAKOUR_LOUPS.SaintMartin.Titre"}}</div>{{/if}}
     <div class="loups-minuteur" aria-live="polite"></div>
     {{#if moi}}
     <div class="loups-moi">
@@ -23,6 +25,7 @@
       {{#unless moi.vivant}}<span class="loups-pastille mort">{{localize "LAKOUR_LOUPS.Table.Mort"}}</span>{{/unless}}
       {{#if moi.silence}}<span class="loups-pastille silence"><i class="fa-solid fa-comment-slash"></i> {{localize "LAKOUR_LOUPS.Table.Silence"}}</span>{{/if}}
       {{#if carnet}}<button type="button" class="loups-bouton discret" data-action="carnet"><i class="fa-solid fa-envelope-open-text"></i> {{localize "LAKOUR_LOUPS.Carnet.Titre"}} ({{carnetNombre}})</button>{{/if}}
+      {{#if quitter}}<button type="button" class="loups-bouton discret" data-action="quitter" data-tooltip="{{localize 'LAKOUR_LOUPS.Passage.QuitterAide'}}"><i class="fa-solid fa-door-open"></i> {{localize "LAKOUR_LOUPS.Passage.Quitter"}}</button>{{/if}}
     </div>
     {{/if}}
   </header>
@@ -63,6 +66,7 @@
       <button type="button" class="loups-bouton {{#unless preparation.manuel}}discret{{/unless}}" data-action="prepMode" data-mode="manuel">{{localize "LAKOUR_LOUPS.Preparation.Manuel"}}</button>
       <select name="prepNiveau">{{#each preparation.niveaux}}<option value="{{cle}}" {{#if choisi}}selected{{/if}}>{{libelle}}</option>{{/each}}</select>
       <label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.Peste.PreparationAide'}}"><input type="checkbox" data-action="prepPeste" {{#if preparation.peste}}checked{{/if}}> <i class="fa-solid fa-biohazard"></i> {{localize "LAKOUR_LOUPS.Peste.Preparation"}}</label>
+      <label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.SaintMartin.PreparationAide'}}"><input type="checkbox" data-action="prepSaintMartin" {{#if preparation.saintMartin}}checked{{/if}}> <i class="fa-solid fa-church"></i> {{localize "LAKOUR_LOUPS.SaintMartin.Preparation"}}</label>
     </div>
     {{#if preparation.manuel}}
     <ul class="loups-prep-roles">
@@ -103,7 +107,7 @@
       {{#if vote.ouvert}}
       <div class="loups-vote-bandeau">
         <i class="fa-solid fa-scale-balanced"></i>
-        <strong>{{#if vote.chapelle}}{{localize "LAKOUR_LOUPS.Vote.QuestionChapelle"}}{{else if vote.bailli}}{{localize "LAKOUR_LOUPS.Vote.QuestionBailli"}}{{else}}{{localize "LAKOUR_LOUPS.Vote.EnCours"}}{{/if}}</strong>
+        <strong>{{#if vote.chapelle}}{{localize "LAKOUR_LOUPS.Vote.QuestionChapelle"}}{{else if vote.bailli}}{{localize "LAKOUR_LOUPS.Vote.QuestionBailli"}}{{else if vote.exil}}{{localize "LAKOUR_LOUPS.Passage.QuestionExil"}}{{else if vote.banc}}{{localize "LAKOUR_LOUPS.Banc.Question" nom=vote.banc}}{{else}}{{localize "LAKOUR_LOUPS.Vote.EnCours"}}{{/if}}</strong>
         <span>{{vote.exprimes}} / {{vote.votants}} {{localize "LAKOUR_LOUPS.Vote.OntVote"}}{{#if vote.souffles}} · {{localize "LAKOUR_LOUPS.Souffle.Compte" n=vote.souffles}}{{/if}}</span>
         {{#if vote.double}}<span class="loups-pastille cloche"><i class="fa-solid fa-bell"></i> {{localize "LAKOUR_LOUPS.Vote.Double"}}</span>{{/if}}
         {{#if vote.majoriteAbsolue}}<span class="loups-pastille gibet">{{localize "LAKOUR_LOUPS.Vote.MajoriteAbsolue"}}</span>{{/if}}
@@ -124,6 +128,7 @@
             <div class="loups-detail">{{#if maison}}<i class="fa-solid fa-door-closed"></i> {{maison}}{{/if}}</div>
             {{#if metier}}<div class="loups-detail metier"><i class="fa-solid fa-hammer"></i> {{metier}}</div>{{/if}}
             {{#if voitRole}}{{#if roleNom}}<div class="loups-role {{#if revele}}revele{{/if}}"><i class="fa-solid fa-mask"></i> {{roleNom}} <span class="loups-camp">{{camp}}</span></div>{{/if}}{{/if}}
+            {{#unless voitRole}}{{#if passage}}<div class="loups-role passage" data-tooltip="{{localize 'LAKOUR_LOUPS.Passage.Aide'}}"><i class="fa-solid fa-person-walking-luggage"></i> {{passage}}</div>{{/if}}{{/unless}}
             {{#if amoureux}}<div class="loups-detail mj"><i class="fa-solid fa-heart"></i> {{amoureux}}</div>{{/if}}
             {{#if protections}}<div class="loups-detail mj"><i class="fa-solid fa-shield-halved"></i> {{protections}}</div>{{/if}}
           </div>
@@ -146,6 +151,7 @@
             <button type="button" data-action="reveler" data-id="{{id}}" title="{{localize 'LAKOUR_LOUPS.Table.Reveler'}}"><i class="fa-solid fa-eye"></i></button>
             <button type="button" data-action="eliminer" data-id="{{id}}" title="{{localize 'LAKOUR_LOUPS.Table.Eliminer'}}"><i class="fa-solid fa-skull"></i></button>
             {{#if crier}}<button type="button" data-action="crier" data-id="{{id}}" title="{{localize 'LAKOUR_LOUPS.Table.CrierPour' nom=nom}}"><i class="fa-solid fa-biohazard"></i></button>{{/if}}
+            {{#if faireQuitter}}<button type="button" data-action="faireQuitter" data-id="{{id}}" title="{{localize 'LAKOUR_LOUPS.Passage.FaireQuitter'}}"><i class="fa-solid fa-door-open"></i></button>{{/if}}
           </div>
           {{/if}}
         </li>
@@ -162,7 +168,7 @@
           <img class="loups-portrait" src="{{img}}" alt="" data-action="fiche" data-id="{{id}}">
           <div class="loups-carte-texte">
             <div class="loups-nom">{{nom}}</div>
-            <div class="loups-detail">{{cause}}{{#if tourMort}} · {{localize "LAKOUR_LOUPS.Table.Tour"}} {{tourMort}}{{/if}}{{#if souffle}} · <i class="fa-solid fa-wind" title="{{localize 'LAKOUR_LOUPS.Souffle.Garde'}}"></i>{{/if}}</div>
+            <div class="loups-detail">{{#if parti}}<i class="fa-solid fa-door-open"></i> {{parti}}{{else}}{{cause}}{{#if tourMort}} · {{localize "LAKOUR_LOUPS.Table.Tour"}} {{tourMort}}{{/if}}{{/if}}{{#if souffle}} · <i class="fa-solid fa-wind" title="{{localize 'LAKOUR_LOUPS.Souffle.Garde'}}"></i>{{/if}}</div>
             {{#if metier}}<div class="loups-detail metier"><i class="fa-solid fa-hammer"></i> {{metier}}</div>{{/if}}
             {{#if roleNom}}<div class="loups-role revele"><i class="fa-solid fa-mask"></i> {{roleNom}} <span class="loups-camp">{{camp}}</span></div>{{/if}}
           </div>
@@ -177,6 +183,20 @@
       {{#if crier}}
       <section class="loups-encart loups-cri">
         <button type="button" class="loups-bouton" data-action="crier" data-id="{{moiId}}" data-tooltip="{{localize 'LAKOUR_LOUPS.Peste.CrierAide'}}"><i class="fa-solid fa-biohazard"></i> {{localize "LAKOUR_LOUPS.Peste.Crier"}}</button>
+      </section>
+      {{/if}}
+      {{#if banc}}
+      <section class="loups-encart loups-banc">
+        <h3><i class="fa-solid fa-hand-point-right"></i> {{localize "LAKOUR_LOUPS.Banc.Titre"}}</h3>
+        {{#if banc.accusations.length}}
+        <ul class="loups-journal">{{#each banc.accusations}}<li class="{{#if juge}}fait{{/if}}">{{localize "LAKOUR_LOUPS.Banc.Ligne" nom=parNom contre=contreNom}}{{#if juge}} <small>({{localize "LAKOUR_LOUPS.Banc.Juge"}})</small>{{/if}}</li>{{/each}}</ul>
+        {{else}}<p class="loups-vide">{{localize "LAKOUR_LOUPS.Banc.Vide"}}</p>{{/if}}
+        {{#if accusation}}{{#if accusation.ok}}
+        <div class="loups-declarer">
+          <select name="accuse" aria-label="{{localize 'LAKOUR_LOUPS.Banc.Accuser'}}">{{#each accusation.cibles}}<option value="{{id}}">{{nom}}</option>{{/each}}</select>
+          <button type="button" class="loups-bouton discret" data-action="accuser" data-tooltip="{{localize 'LAKOUR_LOUPS.Banc.AccuserAide'}}"><i class="fa-solid fa-hand-point-right"></i> {{localize "LAKOUR_LOUPS.Banc.Accuser"}}</button>
+        </div>
+        {{else}}{{#if accusation.raison}}<p class="loups-vide"><small>{{accusation.raison}}</small></p>{{/if}}{{/if}}{{/if}}
       </section>
       {{/if}}
       {{#if pouvoirs.length}}
@@ -213,6 +233,8 @@
           {{else if vote.resultat.bailli}}{{localize "LAKOUR_LOUPS.Bailli.EluCourt"}} <strong>{{vote.resultat.elus}}</strong>{{#if vote.resultat.sort}} <small>({{localize "LAKOUR_LOUPS.Bailli.ParLeSort"}})</small>{{/if}}
           {{else}}{{localize "LAKOUR_LOUPS.Vote.Designe"}} <strong>{{vote.resultat.elus}}</strong>{{/if}}
           {{#if vote.resultat.departage.choix}}<br><small><i class="fa-solid fa-stamp"></i> {{localize "LAKOUR_LOUPS.Bailli.TrancheCourt" nom=vote.resultat.departage.nom}}</small>{{/if}}
+          {{#if vote.resultat.banc}}<br><small><i class="fa-solid fa-hand-point-right"></i> {{#if vote.resultat.banc.condamne}}{{localize "LAKOUR_LOUPS.Banc.Condamne" nom=vote.resultat.banc.nom pour=vote.resultat.banc.pour total=vote.resultat.banc.total}}{{else}}{{localize "LAKOUR_LOUPS.Banc.Acquitte" nom=vote.resultat.banc.nom pour=vote.resultat.banc.pour total=vote.resultat.banc.total}}{{/if}}</small>{{/if}}
+          {{#if vote.resultat.deuil}}<br><small><i class="fa-solid fa-bell"></i> {{localize "LAKOUR_LOUPS.Deuil.Voix" nom=vote.resultat.deuil}}</small>{{/if}}
         </p>
         {{#if vote.resultat.departage.candidats.length}}
         <div class="loups-actions loups-trancher">
@@ -268,7 +290,9 @@
           {{#if nommerBailli}}<button type="button" data-action="nommerBailli"><i class="fa-solid fa-stamp"></i> {{localize "LAKOUR_LOUPS.Table.NommerBailli"}}</button>{{/if}}
           <button type="button" data-action="ouvrirVote"><i class="fa-solid fa-scale-balanced"></i> {{localize "LAKOUR_LOUPS.Table.OuvrirVote"}}</button>
           {{#if chapelle}}<button type="button" data-action="voteChapelle"><i class="fa-solid fa-church"></i> {{localize "LAKOUR_LOUPS.Table.VoteChapelle"}}</button>{{/if}}
+          {{#if passage.exil}}<button type="button" data-action="voteExil"><i class="fa-solid fa-person-walking-arrow-right"></i> {{localize "LAKOUR_LOUPS.Passage.VoteExilBouton"}}</button>{{/if}}
           {{/if}}
+          {{#if passage}}<button type="button" data-action="accueillir" {{#unless passage.accueil.ok}}disabled data-tooltip="{{passage.accueil.raisonTexte}}"{{/unless}}><i class="fa-solid fa-person-walking-luggage"></i> {{localize "LAKOUR_LOUPS.Passage.Accueillir"}}</button>{{/if}}
           <button type="button" data-action="victoire"><i class="fa-solid fa-crown"></i> {{localize "LAKOUR_LOUPS.Table.VerifierVictoire"}}</button>
           {{#if emporteur}}<button type="button" data-action="emporter" data-id="{{emporteur.id}}"><i class="fa-solid fa-person-falling"></i> {{localize "LAKOUR_LOUPS.Etapes.emporter" nom=emporteur.nom}}</button>
           <button type="button" data-action="emporterPersonne" data-id="{{emporteur.id}}">{{localize "LAKOUR_LOUPS.Table.Personne"}}</button>{{/if}}

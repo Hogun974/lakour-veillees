@@ -105,6 +105,22 @@ export function enregistrerReglages(quandEtatChange) {
     name: "LAKOUR_LOUPS.Reglages.Almanach.Nom", hint: "LAKOUR_LOUPS.Reglages.Almanach.Aide",
     scope: "world", config: true, type: Boolean, default: false
   });
+  // Les Gens de passage (logique/passage.mjs) : un joueur qui arrive en cours de partie entre avec un rôle public et un camp
+  // secret. Oui par défaut : sans lui, un retardataire attend la partie suivante.
+  game.settings.register(ID, "gensDePassage", {
+    name: "LAKOUR_LOUPS.Reglages.GensDePassage.Nom", hint: "LAKOUR_LOUPS.Reglages.GensDePassage.Aide",
+    scope: "world", config: true, type: Boolean, default: true
+  });
+  // Le Banc des accusés (logique/banc.mjs, variante) : accusations, puis jugements un par un. Non par défaut.
+  game.settings.register(ID, "banc", {
+    name: "LAKOUR_LOUPS.Reglages.Banc.Nom", hint: "LAKOUR_LOUPS.Reglages.Banc.Aide",
+    scope: "world", config: true, type: Boolean, default: false
+  });
+  // Le Glas du deuil (logique/deuil.mjs, variante) : chaque innocent exécuté renforce la meute. Non par défaut.
+  game.settings.register(ID, "glasDuDeuil", {
+    name: "LAKOUR_LOUPS.Reglages.GlasDuDeuil.Nom", hint: "LAKOUR_LOUPS.Reglages.GlasDuDeuil.Aide",
+    scope: "world", config: true, type: Boolean, default: false
+  });
   game.settings.register(ID, "annoncesEnChat", {
     name: "LAKOUR_LOUPS.Reglages.AnnoncesEnChat.Nom", hint: "LAKOUR_LOUPS.Reglages.AnnoncesEnChat.Aide",
     scope: "world", config: true, type: Boolean, default: true

@@ -98,7 +98,9 @@ export function contexteBandeau() {
   } else if (v.ouvert) {
     ctx.finit = v.finit ?? 0;
     const monChoix = !moi ? "" : gm ? v.votes?.[moi.id] ?? "" : monVote(v.numero);
-    ctx.consigne = t({ chapelle: "LAKOUR_LOUPS.Bandeau.VoteChapelle", bailli: "LAKOUR_LOUPS.Bandeau.VoteBailli" }[v.objet] ?? "LAKOUR_LOUPS.Bandeau.Vote");
+    // Le Banc des accusés : un jugement (voter pour l'accusé le condamne) ; l'exil d'un gens de passage.
+    ctx.consigne = v.banc ? t("LAKOUR_LOUPS.Banc.Question", { nom: nomDe(v.banc.accuse) })
+      : t({ chapelle: "LAKOUR_LOUPS.Bandeau.VoteChapelle", bailli: "LAKOUR_LOUPS.Bandeau.VoteBailli", exil: "LAKOUR_LOUPS.Passage.QuestionExil" }[v.objet] ?? "LAKOUR_LOUPS.Bandeau.Vote");
     // Les vivants qui ont voté ; les souffles des morts, à part.
     const compte = L.compteDesVoix({ etat, villageois: game.actors.filter(a => a.type === "villageois").map(a => ({ id: a.id, vivant: a.system.vivant })) });
     ctx.detail = `${compte.exprimes} / ${compte.attendus} ${t("LAKOUR_LOUPS.Vote.OntVote")}`
@@ -130,7 +132,7 @@ export function contexteBandeau() {
   if (gm && !moi && !ctx.boutons.length && !v.ouvert) {
     try {
       const e = game.lakourLoups.etapeSuivante();
-      const nom = e.donnees.meute ? t("LAKOUR_LOUPS.Etapes.LaMeute") : e.donnees.peste ? t("LAKOUR_LOUPS.Etapes.LaPeste") : e.donnees.nom ?? "";
+      const nom = e.donnees.meute ? t("LAKOUR_LOUPS.Etapes.LaMeute") : e.donnees.peste ? t("LAKOUR_LOUPS.Etapes.LaPeste") : e.donnees.deuil ? t("LAKOUR_LOUPS.Etapes.LeDeuil") : e.donnees.nom ?? "";
       ctx.detail = `${t("LAKOUR_LOUPS.Etapes.Prochaine")} ${t(`LAKOUR_LOUPS.Etapes.${e.cle}`, { ...e.donnees, nom })}`;
     } catch { /* API pas encore prête */ }
   }

@@ -1,0 +1,45 @@
+{
+  "_id": "o3qDqkYhaiWnGFuF",
+  "_key": "!items!o3qDqkYhaiWnGFuF",
+  "name": "Montreur d'ours",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/montreur-d-ours.svg",
+  "system": {
+    "cle": "montreur-d-ours",
+    "camp": "village",
+    "description": "<p>Ton ours danse sur la place et dort en travers des seuils.</p><p>Ton rôle est <strong>connu de tous</strong>, ton camp <strong>ne l'est pas</strong> : le narrateur te l'a dit en secret (Village ou Meute).</p><p><strong>Une fois</strong>, pendant le jour, tu couches ton ours devant la porte d'un joueur (toi compris) : <strong>la meute n'entre pas</strong> chez lui la nuit suivante.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": false,
+      "ordre": 50,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 0,
+      "soiMeme": false,
+      "invite": ""
+    },
+    "usages": {
+      "max": 1,
+      "restant": 1
+    },
+    "effet": "",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "montreur-d-ours"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

@@ -388,7 +388,7 @@ const MUTATIONS = [
   ["scripts/plateau-local.mjs", "  if (moiSouffle()) return \"vote\";\n", "", "souffle : le plateau"],
   ["scripts/apps/bandeau.mjs", "t(souffle ? \"LAKOUR_LOUPS.Souffle.Bandeau\" : \"LAKOUR_LOUPS.Bandeau.Mort\")", "t(\"LAKOUR_LOUPS.Bandeau.Mort\")", "souffle : le bandeau"],
   ["scripts/api.mjs", "    const presage = await tirerLePresage(r.bilan);", "    const presage = \"\";", "almanach : tiré à l'aube"],
-  ["scripts/api.mjs", "e.presage = L.presageInitial(lireReglage(\"almanach\", false));", "e.presage = L.presageInitial(true);", "almanach : le réglage"],
+  ["scripts/api.mjs", "e.presage = L.presageInitial(!court && lireReglage(\"almanach\", false));", "e.presage = L.presageInitial(true);", "almanach : le réglage"],
   ["scripts/api.mjs", "  for (const c of r.changements) if (c.type === \"silence\") await game.actors.get(c.acteurId)?.update(", "  for (const c of []) if (c.type === \"silence\") await game.actors.get(c.acteurId)?.update(", "almanach : silences levés"],
   ["scripts/api.mjs", "  annoncer(\"lakourLoups.presage\", [{ cle, tour: r.etat.tour }]);\n", "", "almanach : hook public"],
   ["scripts/api.mjs", "  for (const a of annonces) await annonceChat(echapper(a));\n  annoncer(\"lakourLoups.presage\"", "  annoncer(\"lakourLoups.presage\"", "almanach : annoncé au chat"],

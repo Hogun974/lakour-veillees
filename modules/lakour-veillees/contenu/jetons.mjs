@@ -45,6 +45,10 @@ export const JETONS_ROLES = {
   "pecheur-de-nuit": "lorc/harpoon-trident",
   "somnambule": "lorc/candle-light",                  // il marche la nuit, une chandelle à la main
   "rosiere": "delapouite/jewel-crown",                // la couronne de l'année
+  // --- Les gens de passage
+  "remouleur": "lorc/circular-sawblade",              // la meule
+  "montreur-d-ours": "delapouite/animal-hide",        // la peau de l'ours
+  "pelerine": "delapouite/pilgrim-hat",
   // --- Les solitaires
   "revenant": "lorc/ghost",
   "colporteur": "lorc/swap-bag",

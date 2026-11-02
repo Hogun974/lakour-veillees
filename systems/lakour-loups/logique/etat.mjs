@@ -28,7 +28,11 @@
 //   (somnambule.mjs), +bonneEtoile [S]: acteurId (la Bonne étoile du narrateur, calendrier.mjs),
 //   +aConsigner [S]: null | { roles, batiments, niveau, composition, quand } (la composition de la partie en cours, versée au
 //   réglage monde « historique » seulement quand la partie est finie ou abandonnée : livré à tous, il la trahirait) ;
-//   vote : +mainLevee (le jour de foire de l'Almanach : les voix sont publiques pendant le vote), resultat : +souffles }
+//   vote : +mainLevee (le jour de foire de l'Almanach : les voix sont publiques pendant le vote), +banc ({ accuse } : un jugement du
+//   Banc des accusés), resultat : +souffles, +banc ({ accuse, pour, total }), +deuil (le candidat de la voix du deuil) ;
+//   +passage: { actif, gens } et +partis: [{ acteurId, tour, comment }] (les Gens de passage, départs et exils, passage.mjs),
+//   +banc: { actif, tour, accusations, juges } (banc.mjs), +deuil: { actif, compte } et +pouvoirsDeuil [S] (deuil.mjs),
+//   +format: "" | "saint-martin" et +autel [S]: [cle] (la Nuit de la Saint-Martin, saintmartin.mjs) }
 
 import { PHASES, causePublique } from "./constantes.mjs";
 import { decompterVotes } from "./votes.mjs";
@@ -37,9 +41,14 @@ import { inscrire } from "./registre.mjs";
 import { souffleInitial, normaliserSouffle } from "./souffle.mjs";
 import { presageInitial, normaliserPresage, presageDuJour } from "./almanach.mjs";
 import { normaliserGlas } from "./calendrier.mjs";
+import { passageInitial, normaliserPassage } from "./passage.mjs";
+import { bancInitial, normaliserBanc, verdictDuBanc } from "./banc.mjs";
+import { deuilInitial, pouvoirsDeuilInitiaux, normaliserDeuil, normaliserPouvoirsDeuil, voixDuDeuil } from "./deuil.mjs";
 
-// Les objets d'un vote : l'exécution du jour, l'asile de la Chapelle, l'élection du Bailli.
-export const OBJETS_DE_VOTE = ["execution", "chapelle", "bailli"];
+// Le votant fictif de la voix du deuil (jamais un acteur).
+export const VOIX_DU_DEUIL = "~deuil";
+// Les objets d'un vote : l'exécution du jour, l'asile de la Chapelle, l'élection du Bailli, l'exil d'un gens de passage.
+export const OBJETS_DE_VOTE = ["execution", "chapelle", "bailli", "exil"];
 
 export function jourInitial() {
   // effets : [{ type, acteurId, cible, nuit }] posés de jour pour la nuit n° `nuit` (verrou, surveille, gite, traversee,
@@ -58,7 +67,8 @@ export function etatInitial() {
     causes: {}, journalSecret: [], carnets: {},
     jour: jourInitial(), pont: { bloqueNuit: 0 }, cimetiere: [], peste: null,
     bailli: bailliInitial(), registre: [], masques: [],
-    souffle: souffleInitial(), presage: presageInitial(), glas: 0, somnambules: {}, bonneEtoile: "", aConsigner: null
+    souffle: souffleInitial(), presage: presageInitial(), glas: 0, somnambules: {}, bonneEtoile: "", aConsigner: null,
+    passage: passageInitial(), partis: [], banc: bancInitial(), deuil: deuilInitial(), pouvoirsDeuil: pouvoirsDeuilInitiaux(), format: "", autel: []
   };
 }
 
@@ -73,7 +83,7 @@ export function normaliserEtat(e) {
   etat.nuitPrecedente = { ...base.nuitPrecedente, ...(x.nuitPrecedente ?? {}) };
   etat.jour = { ...base.jour, ...(x.jour ?? {}) };
   etat.pont = { ...base.pont, ...(x.pont ?? {}) };
-  for (const cle of ["batiments", "batimentsCles", "morts", "historique", "asperges", "journalSecret", "cimetiere", "registre", "masques"]) if (!Array.isArray(etat[cle])) etat[cle] = [];
+  for (const cle of ["batiments", "batimentsCles", "morts", "historique", "asperges", "journalSecret", "cimetiere", "registre", "masques", "partis", "autel"]) if (!Array.isArray(etat[cle])) etat[cle] = [];
   for (const cle of ["effets", "benis", "rubans"]) if (!Array.isArray(etat.jour[cle])) etat.jour[cle] = [];
   for (const cle of ["primes", "fioles", "causes", "carnets", "somnambules"]) if (!etat[cle] || typeof etat[cle] !== "object") etat[cle] = {};
   if (!Array.isArray(etat.vote.exprimes)) etat.vote.exprimes = [];
@@ -84,6 +94,11 @@ export function normaliserEtat(e) {
   etat.presage = normaliserPresage(etat.presage);
   etat.glas = normaliserGlas(etat.glas);
   etat.bonneEtoile = String(etat.bonneEtoile ?? "");
+  etat.passage = normaliserPassage(etat.passage);
+  etat.banc = normaliserBanc(etat.banc);
+  etat.deuil = normaliserDeuil(etat.deuil);
+  etat.pouvoirsDeuil = normaliserPouvoirsDeuil(etat.pouvoirsDeuil);
+  etat.format = String(etat.format ?? "");
   etat.tour = Number(etat.tour) || 0;
   return etat;
 }
@@ -105,12 +120,12 @@ export function separerEtat(e) {
     partie: etat.partie, nuit: etat.nuit, nuitPrecedente: etat.nuitPrecedente, asperges: etat.asperges, primes: etat.primes,
     fioles: etat.fioles, journalSecret: etat.journalSecret, carnets: etat.carnets, votes: etat.vote.votes, causes: {},
     composition: etat.composition, peste: etat.peste, masques: etat.masques, somnambules: etat.somnambules, bonneEtoile: etat.bonneEtoile,
-    aConsigner: etat.aConsigner
+    aConsigner: etat.aConsigner, pouvoirsDeuil: etat.pouvoirsDeuil, autel: etat.autel
   };
   const pub = copie(etat);
   pub.nuit = base.nuit;
   pub.nuitPrecedente = base.nuitPrecedente;
-  for (const cle of ["asperges", "primes", "fioles", "journalSecret", "masques", "somnambules", "bonneEtoile", "aConsigner", "carnets", "causes", "composition"]) pub[cle] = base[cle];
+  for (const cle of ["asperges", "primes", "fioles", "journalSecret", "masques", "somnambules", "bonneEtoile", "aConsigner", "pouvoirsDeuil", "autel", "carnets", "causes", "composition"]) pub[cle] = base[cle];
   // La peste noire n'existe pas dans l'état public avant la fin (ni même la clé) ; à la fin, la partie se dévoile.
   delete pub.peste;
   if (etat.phase === "fin" && etat.peste) pub.peste = copie(etat.peste);
@@ -137,6 +152,8 @@ export function fusionnerEtat(pub, secret) {
   for (const cle of ["primes", "fioles", "carnets", "somnambules"]) if (s[cle] && typeof s[cle] === "object") etat[cle] = s[cle];
   if (typeof s.bonneEtoile === "string") etat.bonneEtoile = s.bonneEtoile;
   if (s.aConsigner !== undefined) etat.aConsigner = s.aConsigner;
+  if (s.pouvoirsDeuil) etat.pouvoirsDeuil = normaliserPouvoirsDeuil(s.pouvoirsDeuil);
+  if (Array.isArray(s.autel)) etat.autel = s.autel;
   if (s.votes && typeof s.votes === "object") etat.vote.votes = s.votes;
   if (typeof s.composition === "string") etat.composition = s.composition;
   if (s.peste !== undefined) etat.peste = normaliserPeste(s.peste);
@@ -204,10 +221,13 @@ export function cloreNuit(e, { asperges, fioles, bilan, pontFranchi = false } = 
 
 // objet : "execution" (le vote du jour), "chapelle" (l'asile de la Chapelle, à main levée : ni Gibet ni cloche) ou "bailli"
 // (l'élection du Bailli : ni Gibet, ni cloche, ni ruban, ni voix double).
-export function ouvrirVote(e, { candidats = [], duree = 0, double, majoriteAbsolue = false, objet = "execution", maintenant = Date.now() } = {}) {
+// banc : l'accusé d'un jugement du Banc des accusés (banc.mjs) : un vote d'exécution à un seul candidat, sans voix double.
+// "exil" : chasser un gens de passage (passage.mjs) : ni Gibet ni cloche.
+export function ouvrirVote(e, { candidats = [], duree = 0, double, majoriteAbsolue = false, objet = "execution", banc = "", maintenant = Date.now() } = {}) {
   const etat = normaliserEtat(e);
   const sujet = OBJETS_DE_VOTE.includes(objet) ? objet : "execution";
   const execution = sujet === "execution";
+  if (execution && banc) candidats = [banc];
   etat.vote = {
     ouvert: true, numero: (Number(etat.vote.numero) || 0) + 1, objet: sujet,
     candidats: [...candidats], votes: {}, exprimes: [],
@@ -219,6 +239,7 @@ export function ouvrirVote(e, { candidats = [], duree = 0, double, majoriteAbsol
   if (execution) etat.voteDoubleDemain = false;
   // Le glas de l'Almanach : ce jour-là seulement (pas reporté au lendemain si l'on ne vote pas).
   if (execution && presageDuJour(etat) === "glas") etat.vote.double = true;
+  if (execution && banc) Object.assign(etat.vote, { banc: { accuse: banc }, double: false });
   // L'élection du Bailli se tient au débat, sans changer de phase (les pouvoirs du matin restent permis, pas d'ambiance du vote).
   if (sujet !== "bailli") etat.phase = "vote";
   return etat;
@@ -245,12 +266,25 @@ export function enregistrerVote(e, { votant, cible, votants = null, maintenant =
 // Registre (un vote à départager, une fois tranché).
 // -> { etat, resultat } ou { etat, resultat: null, prolonge: acteurId }.
 // souffles : les morts qui ont encore leur Dernier souffle (souffle.mjs) ; leur voix rendue au dépouillement est consommée.
-export function cloreVote(e, { votants = null, poids = {}, maintenant = Date.now(), prolongation = 60000, souffles = [] } = {}) {
+// hasard : la voix du deuil (deuil.mjs) sans choix secret de la meute va à un candidat au hasard. Un jugement du Banc des accusés
+// (vote.banc) se tranche par verdictDuBanc : condamné si les « pour » pèsent la moitié des voix des vivants.
+export function cloreVote(e, { votants = null, poids = {}, maintenant = Date.now(), prolongation = 60000, souffles = [], hasard = Math.random } = {}) {
   const etat = normaliserEtat(e);
   const v = etat.vote;
   const pesees = { ...poidsDesVoix(etat, votants), ...poids };
-  const bailli = v.objet === "execution" ? bailliEnCharge(etat, votants) : "";
-  const r = decompterVotes({ votes: v.votes, candidats: v.candidats, votants, double: v.double, poids: pesees, majoriteAbsolue: v.majoriteAbsolue });
+  const bailli = v.objet === "execution" && !v.banc ? bailliEnCharge(etat, votants) : "";
+  // La voix du deuil : une voix sans visage, qui ne pèse qu'une fois.
+  const deuil = voixDuDeuil({ etat, candidats: v.candidats, hasard });
+  const votes = deuil ? { ...v.votes, [VOIX_DU_DEUIL]: deuil } : v.votes;
+  const admis = deuil && votants ? [...votants, VOIX_DU_DEUIL] : votants;
+  const r = decompterVotes({ votes, candidats: v.candidats, votants: admis, double: v.double, poids: pesees, majoriteAbsolue: v.majoriteAbsolue });
+  delete r.votes[VOIX_DU_DEUIL];
+  if (v.banc) {
+    const vivants = (votants ?? Object.keys(v.votes)).filter(id => !souffles.includes(id));
+    const vd = verdictDuBanc({ accuse: v.banc.accuse, votes: { ...r.votes, ...(deuil ? { [VOIX_DU_DEUIL]: deuil } : {}) }, vivants, poids: pesees, strict: v.majoriteAbsolue });
+    Object.assign(r, { elus: vd.condamne ? [v.banc.accuse] : [], elu: vd.condamne ? v.banc.accuse : null, egalite: false, departage: null,
+      banc: { accuse: v.banc.accuse, pour: vd.pour, total: vd.total } });
+  }
   if (v.objet === "execution") {
     const max = Math.max(0, ...Object.values(r.decompte));
     const porteur = max > 0 ? etat.jour.rubans.find(id => r.decompte[id] === max) : null;
@@ -264,10 +298,11 @@ export function cloreVote(e, { votants = null, poids = {}, maintenant = Date.now
   const souffle = v.objet === "execution" ? souffles.filter(id => id in r.votes) : [];
   etat.souffle.utilises = [...new Set([...etat.souffle.utilises, ...souffle])];
   const resultat = { decompte: r.decompte, elu: r.elu, elus: r.elus, votes: r.votes, egalite: r.egalite,
-    objet: v.objet, numero: v.numero, tour: etat.tour, souffles: souffle,
+    objet: v.objet, numero: v.numero, tour: etat.tour, souffles: souffle, ...(r.banc ? { banc: r.banc } : {}), ...(deuil ? { deuil } : {}),
     poids: Object.fromEntries(Object.entries(pesees).filter(([id]) => id in r.votes)),
     departage: bailli && r.departage ? { par: bailli, candidats: r.departage.candidats, places: r.departage.places, enAttente: true, choix: [] } : null };
   v.ouvert = false;
+  etat.pouvoirsDeuil.cible = null;
   v.exprimes = [];
   v.resultat = resultat;
   if (!resultat.departage) inscrire(etat, entreeDeVote(resultat), maintenant);

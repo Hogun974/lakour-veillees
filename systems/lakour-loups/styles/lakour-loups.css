@@ -788,3 +788,9 @@ body.theme-light .application.lakour-loups.loups-fiche:not(.theme-dark),
 .lakour-loups .loups-glas { border-color: var(--loups-rouille); color: #f3b190; }
 .lakour-loups .loups-saints { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0.4em 0; }
 .lakour-loups .loups-saints input[type="number"] { width: 4em; }
+/* Les Gens de passage (rôle public, sans camp), le Banc des accusés, le Glas du deuil et la Nuit de la Saint-Martin. */
+.lakour-loups .loups-role.passage { color: var(--loups-brume); font-style: italic; }
+.lakour-loups .loups-banc .loups-journal li.fait { opacity: 0.6; }
+.lakour-loups .loups-banc select { flex: 1 1 auto; min-width: 0; }
+.lakour-loups .loups-deuil { border-style: dashed; }
+.lakour-loups .loups-saint-martin { border-color: var(--loups-lanterne); color: var(--loups-lanterne); }

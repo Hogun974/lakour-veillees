@@ -19,6 +19,11 @@
 // règlent à la clôture, sa succession par une demande posthume. Le Registre du greffier (logique/registre.mjs) vit dans l'état
 // public ; un joueur y fait inscrire une déclaration par le socket (« declaration »). Les Masques de veillée
 // (logique/masques.mjs) sont un secret de la meute : dans les secrets du MJ et au carnet de chaque loup, nulle part ailleurs.
+// Les Gens de passage (logique/passage.mjs) : leur rôle est PUBLIC, leur camp un secret (leur document et le MJ) ; un départ
+// (socket « depart », pour soi) ou un exil voté les fait quitter la veillée sans mourir. Le Banc des accusés (logique/banc.mjs) :
+// un joueur accuse par le socket (« accusation »). Le Glas du deuil (logique/deuil.mjs) : le compte est public, les pouvoirs de
+// la meute un secret (secrets du MJ, carnets des loups). La Nuit de la Saint-Martin (logique/saintmartin.mjs) : l'autel est un
+// secret du MJ.
 import { ID, CLE_MEUTE, CLE_PESTE, EFFETS, EFFETS_AUTOMATISES, EFFETS_NARRATEUR, causePublique } from "../logique/constantes.mjs";
 import * as L from "../logique/index.mjs";
 import { estMJActif, emettre, annoncer } from "./canal.mjs";
@@ -202,14 +207,50 @@ function faireVoterLesCompagnons(etat) {
   const candidats = v.candidats.map(id => ({ id, nom: fiche(id)?.name ?? id, img: fiche(id)?.img ?? "", maison: fiche(id)?.system.maison ?? "" }));
   const max = reglage("delaiChoix") * 1000;
   const ms = v.duree > 0 ? Math.min(v.duree, max) : max;
-  const invite = t({ chapelle: "LAKOUR_LOUPS.Choix.InviteChapelle", bailli: "LAKOUR_LOUPS.Choix.InviteBailli" }[v.objet] ?? "LAKOUR_LOUPS.Choix.InviteVote");
+  // Un jugement du Banc : voter pour l'accusé le condamne, ne rien choisir l'acquitte (banc : l'accusé).
+  const invite = v.banc ? t("LAKOUR_LOUPS.Banc.Invite", { nom: fiche(v.banc.accuse)?.name ?? "" })
+    : t({ chapelle: "LAKOUR_LOUPS.Choix.InviteChapelle", bailli: "LAKOUR_LOUPS.Choix.InviteBailli", exil: "LAKOUR_LOUPS.Passage.InviteExil" }[v.objet] ?? "LAKOUR_LOUPS.Choix.InviteVote");
   const tache = Promise.all(compagnons.map(async a => {
     const [cible = ""] = await demanderAuCompagnon({ type: "vote", id: foundry.utils.randomID(), acteurId: a.id, acteurNom: a.name, invite,
-      candidats, nombre: 1, delai: ms, objet: v.objet, numero: v.numero, ...(a.system.vivant ? {} : { souffle: true }) });
+      candidats, nombre: 1, delai: ms, objet: v.objet, numero: v.numero, ...(v.banc ? { banc: v.banc.accuse } : {}), ...(a.system.vivant ? {} : { souffle: true }) });
     const maintenant = lireEtat().vote;
     if (maintenant.ouvert && maintenant.numero === v.numero) await recevoirVote({ votant: a.id, cible, userId: game.user.id });
   }));
   votesCompagnons = votesCompagnons.then(() => tache).catch(e => console.warn(`${ID} | votes des compagnons`, e));
+}
+
+// ------------------------------------------------------------------ le Glas du deuil : la meute choisit en secret
+// Une demande à TOUTE la meute vivante (pas seulement aux loups qui chassent : ni la vision ni la voix ne sortent de la maison),
+// à la majorité (majoriteMeute) ; candidats : les ids proposés (des loups compris : la meute peut brouiller les pistes).
+// objet : "deuil-vision" | "deuil-voix" (pour le cerveau d'un compagnon). -> [cible] ou []
+async function demanderALaMeute({ invite, candidats, delai, objet }) {
+  const loups = tousLesVillageois().filter(a => a.system.vivant && a.system.camp === "meute");
+  if (!loups.length || !candidats.length) return [];
+  const choix = await Promise.all(loups.map(async l => {
+    const c = await api.demanderAction({ acteurId: l.id, invite, candidats, nombre: 1, delai, objet });
+    return { votant: l.id, cible: c[0] ?? "", quand: Date.now() };
+  }));
+  const cible = L.majoriteMeute(choix);
+  return cible ? [cible] : [];
+}
+
+// La voix sans visage d'un vote d'exécution (2e glas) : la meute la place en secret, pendant le vote ; sans réponse, un candidat
+// au hasard (à la clôture). Rien ne la relie aux bulletins. cloreVote attend ce choix (au plus le délai des choix).
+let voixDuDeuil = Promise.resolve();
+function demanderVoixDuDeuil(etat) {
+  const v = etat?.vote;
+  if (!v?.ouvert || v.objet !== "execution" || !lireEtat().pouvoirsDeuil?.voix) return;
+  const max = reglage("delaiChoix") * 1000;
+  const delai = v.duree > 0 ? Math.min(v.duree, max) : max;
+  const tache = demanderALaMeute({ invite: t("LAKOUR_LOUPS.Deuil.InviteVoix"), candidats: [...v.candidats], delai, objet: "deuil-voix" })
+    .then(async ([cible = ""]) => {
+      const maintenant = lireEtat().vote;
+      if (cible && maintenant.ouvert && maintenant.numero === v.numero) {
+        await modifierEtat(e => L.journaliserSecret(L.choisirVoixDuDeuil(e, { numero: v.numero, cible }),
+          t("LAKOUR_LOUPS.Deuil.VoixChoisie", { nom: game.actors.get(cible)?.name ?? cible })));
+      }
+    });
+  voixDuDeuil = voixDuDeuil.then(() => tache).catch(e => console.warn(`${ID} | voix du deuil`, e));
 }
 
 // ------------------------------------------------------------------ choix secrets (socket)
@@ -336,6 +377,60 @@ export function envoyerDeclaration(texte, acteurId = monVillageois()?.id) {
   emettre(message, [mj.id]);
 }
 
+// ------------------------------------------------------------------ le Banc des accusés et les départs (socket)
+// Un joueur accuse (pour son villageois) ou quitte la veillée (pour lui-même) : le message part au MJ actif seul, qui vérifie.
+export async function recevoirAccusation({ acteurId, contre, userId }) {
+  if (!estMJActif()) return false;
+  const acteur = game.actors.get(acteurId), user = game.users.get(userId);
+  if (!acteur || !user || (!user.isGM && acteur.system.joueur !== userId)) return false;
+  try {
+    await api.accuser(acteurId, String(contre ?? ""));
+    return true;
+  } catch (e) {
+    avis(userId, e.message);
+    return false;
+  }
+}
+
+export function envoyerAccusation(contre, acteurId = monVillageois()?.id) {
+  if (!acteurId) return ui.notifications.warn(t("LAKOUR_LOUPS.Erreurs.PasDeVillageois"));
+  const message = { type: "accusation", acteurId, contre: String(contre ?? ""), userId: game.user.id };
+  if (estMJActif()) return recevoirAccusation(message);
+  const mj = game.users.activeGM;
+  if (!mj) return ui.notifications.warn(t("LAKOUR_LOUPS.Erreurs.PasDeMJ"));
+  emettre(message, [mj.id]);
+}
+
+export async function recevoirDepart({ acteurId, userId }) {
+  if (!estMJActif()) return false;
+  const acteur = game.actors.get(acteurId), user = game.users.get(userId);
+  if (!acteur || !user || (!user.isGM && acteur.system.joueur !== userId)) return false;
+  try {
+    await api.partir(acteurId, { comment: "depart" });
+    return true;
+  } catch (e) {
+    avis(userId, e.message);
+    return false;
+  }
+}
+
+export function envoyerDepart(acteurId = monVillageois()?.id) {
+  if (!acteurId) return ui.notifications.warn(t("LAKOUR_LOUPS.Erreurs.PasDeVillageois"));
+  const message = { type: "depart", acteurId, userId: game.user.id };
+  if (estMJActif()) return recevoirDepart(message);
+  const mj = game.users.activeGM;
+  if (!mj) return ui.notifications.warn(t("LAKOUR_LOUPS.Erreurs.PasDeMJ"));
+  emettre(message, [mj.id]);
+}
+
+// Peut-il accuser maintenant ? D'après l'état PUBLIC : { ok, raison, raisonTexte } (contre : "" pour la seule permission).
+export function peutAccuser(acteurId, contre = "") {
+  const villageois = villageoisAPlat();
+  const v = L.verifierAccusation({ villageois, etat: lirePublic(), par: acteurId, contre: contre || villageois.find(x => x.id !== acteurId && x.vivant)?.id || "" });
+  const ok = v.ok || (!contre && ["cible", "accuse"].includes(v.raison));
+  return { ok, raison: ok ? "" : v.raison, raisonTexte: ok ? "" : t(`LAKOUR_LOUPS.Banc.Refus.${v.raison}`) };
+}
+
 // Peut-il déclarer maintenant ? D'après l'état PUBLIC (le même partout) : { ok, raison, raisonTexte }.
 export function peutDeclarer(acteurId) {
   const v = L.verifierDeclaration({ villageois: villageoisAPlat(), etat: lirePublic(), acteurId, texte: "…" });
@@ -357,9 +452,16 @@ export function ligneDuRegistre(x) {
         ? (x.elus?.length ? t("LAKOUR_LOUPS.Registre.IssueBailli", { noms: x.elus.map(nom).join(", ") }) : t(x.egalite ? "LAKOUR_LOUPS.Registre.Egalite" : "LAKOUR_LOUPS.Registre.Personne"))
         : x.elus?.length ? t("LAKOUR_LOUPS.Registre.Designe", { noms: x.elus.map(nom).join(", ") }) : t(x.egalite ? "LAKOUR_LOUPS.Registre.Egalite" : "LAKOUR_LOUPS.Registre.Personne");
       const tranche = x.departage ? ` ${t(choix.length ? "LAKOUR_LOUPS.Registre.Tranche" : "LAKOUR_LOUPS.Registre.TranchePersonne", { nom: nom(x.departage.par), noms: choix.map(nom).join(", ") })}` : "";
+      // Le Banc : le verdict (« pour » sur le total) ; le Glas du deuil : une voix sans visage, jamais d'où elle vient.
+      const banc = x.banc ? ` ${t("LAKOUR_LOUPS.Registre.Banc", { nom: nom(x.banc.accuse), pour: x.banc.pour, total: x.banc.total })}` : "";
+      const deuil = x.deuil ? ` ${t("LAKOUR_LOUPS.Registre.VoixDeuil", { cible: nom(x.deuil) })}` : "";
       return t("LAKOUR_LOUPS.Registre.Vote", { tour, objet: t(`LAKOUR_LOUPS.Registre.Objets.${x.objet}`), voix: voix || t("LAKOUR_LOUPS.Registre.AucuneVoix"), issue })
-        + tranche + (x.annule ? ` ${t("LAKOUR_LOUPS.Registre.Annule")}` : "");
+        + tranche + banc + deuil + (x.annule ? ` ${t("LAKOUR_LOUPS.Registre.Annule")}` : "");
     }
+    case "passage": return t(`LAKOUR_LOUPS.Registre.Passage.${x.comment === "arrivee" ? "arrivee" : x.comment === "exil" ? "exil" : "depart"}`,
+      { tour, nom: nom(x.acteurId), role: x.cle ? nomDeRole(x.cle) : "" });
+    case "accusation": return t("LAKOUR_LOUPS.Registre.Accusation", { tour, nom: nom(x.acteurId), contre: nom(x.contre) });
+    case "deuil": return t("LAKOUR_LOUPS.Registre.Deuil", { tour, n: x.compte });
     case "mort": return t("LAKOUR_LOUPS.Registre.Mort", { tour, nom: nom(x.acteurId), cause: libelleCause(x.cause) });
     case "bailli": return t(`LAKOUR_LOUPS.Registre.Bailli.${x.comment}`, { tour, nom: nom(x.acteurId), de: x.de ? nom(x.de) : "" });
     case "declaration": return t("LAKOUR_LOUPS.Registre.Declaration", { tour, nom: nom(x.acteurId), texte: x.texte });
@@ -412,7 +514,7 @@ function nomDuPouvoir(pouvoir, acteur) {
 
 // Le bilan de la partie finie, avec le nom du joueur de chacun ("" : un joueur IA) : le récit au chat et les Chroniques.
 function lignesDeFin(etat) {
-  return L.bilanDePartie({ villageois: villageoisAPlat(), morts: etat.morts, causes: etat.causes, vainqueur: etat.vainqueur })
+  return L.bilanDePartie({ villageois: villageoisAPlat(), morts: etat.morts, causes: etat.causes, vainqueur: etat.vainqueur, partis: etat.partis })
     .map(({ id, ...l }) => ({ ...l, joueur: game.users.get(game.actors.get(id)?.system.joueur)?.name ?? "" }));
 }
 
@@ -545,6 +647,26 @@ function exigerSansDepartage() {
   if (L.departageEnAttente(lireEtat())) throw new Error(t("LAKOUR_LOUPS.Bailli.Refus.departage"));
 }
 
+// ------------------------------------------------------------------ le Glas du deuil (logique/deuil.mjs)
+// Un exécuté par le vote : innocent (hors meute), le glas sonne — public et vague (chat, Registre, hook lakourLoups.deuil :
+// { compte } seulement) ; chaque loup vivant apprend en secret, dans son carnet, le pouvoir que la meute vient de gagner.
+async function sonnerLeDeuil(acteur) {
+  let r = null;
+  await modifierEtat(e => {
+    r = L.sonnerDeuil(e, { camp: acteur.system.camp });
+    if (!r.sonne) return r.etat;
+    L.inscrire(r.etat, { type: "deuil", compte: r.compte });
+    return L.journaliser(r.etat, t("LAKOUR_LOUPS.Deuil.Sonne", { n: r.compte }));
+  });
+  if (!r?.sonne) return;
+  await annonceChat(echapper(t("LAKOUR_LOUPS.Deuil.Sonne", { n: r.compte })));
+  annoncer("lakourLoups.deuil", [{ compte: r.compte }]);
+  if (r.compte > 3) return;
+  for (const loup of tousLesVillageois().filter(a => a.system.vivant && a.system.camp === "meute")) {
+    await envoyerSecret(loup.id, { texte: t(["", "LAKOUR_LOUPS.Deuil.Pouvoir1", "LAKOUR_LOUPS.Deuil.Pouvoir2", "LAKOUR_LOUPS.Deuil.Pouvoir3"][r.compte]), titre: t("LAKOUR_LOUPS.Deuil.Titre") });
+  }
+}
+
 // ------------------------------------------------------------------ l'historique des compositions
 // La composition de la partie finie (ou abandonnée : nouvelle distribution, village remis à zéro) entre enfin au réglage monde
 // « historique », pour varier la suivante. Pas avant : livré à tous les navigateurs, il trahirait les rôles en jeu.
@@ -641,6 +763,7 @@ function descriptionDuPouvoir(pouvoir, acteur) {
 function annulerDemandes() {
   for (const id of [...enAttente.keys()]) terminer(id, [], true);
   votesCompagnons = Promise.resolve();
+  voixDuDeuil = Promise.resolve();
   succession = Promise.resolve();
   mortsDeLaNuit = false;
   departageEnCours = null;
@@ -730,7 +853,9 @@ export const api = {
   // drapeau reste un secret du MJ.
   // Le Somnambule (logique/somnambule.mjs) reçoit l'objet du rôle qu'il croit tenir ; son vrai rôle reste dans les secrets du MJ.
   // glas : le Glas final du narrateur (jour N, 0 : jamais ; public). Le Dernier souffle et l'Almanach suivent leurs réglages.
-  async distribuer({ roles = [], metiers = [], joueurs = [], compagnons = [], maisons = [], graine, composition = "", batiments = [], peste = false, glas = 0 } = {}) {
+  // format : "" ou "saint-martin" (la Nuit de la Saint-Martin, logique/saintmartin.mjs ; autel : les rôles sous l'autel, secret).
+  async distribuer({ roles = [], metiers = [], joueurs = [], compagnons = [], maisons = [], graine, composition = "", batiments = [], peste = false, glas = 0,
+    format = "", autel = [] } = {}) {
     exigerMJ();
     const estPlaceCompagnon = id => { const a = game.actors.get(id); return a?.type === "villageois" && estCompagnon(a); };
     const placesIA = compagnons.map(n => {
@@ -822,9 +947,16 @@ export const api = {
       e.batimentsCles = batimentsCles;
       e.primes = L.designerPrimes(enJeu);
       if (peste) e.peste = L.pesteInitiale();
-      e.bailli = L.bailliInitial(lireReglage("bailli", true));
+      // La Nuit de la Saint-Martin : une seule nuit, un seul vote — ni Bailli, ni Almanach, ni Banc (d'autres votes, d'autres jours).
+      const court = format === L.FORMAT_SAINT_MARTIN;
+      e.format = court ? L.FORMAT_SAINT_MARTIN : "";
+      e.autel = court ? [...autel] : [];
+      e.bailli = L.bailliInitial(!court && lireReglage("bailli", true));
       e.souffle = L.souffleInitial(lireReglage("dernierSouffle", true));
-      e.presage = L.presageInitial(lireReglage("almanach", false));
+      e.presage = L.presageInitial(!court && lireReglage("almanach", false));
+      e.passage = L.passageInitial(lireReglage("gensDePassage", true));
+      e.banc = L.bancInitial(!court && lireReglage("banc", false));
+      e.deuil = L.deuilInitial(!court && lireReglage("glasDuDeuil", false));
       e.glas = L.normaliserGlas(glas);
       e.somnambules = somnambules;
       return L.journaliser(e, t("LAKOUR_LOUPS.Journal.Distribution", { n: sortie.length }));
@@ -858,6 +990,8 @@ export const api = {
     if (phase === "nuit") {
       const e = lireEtat();
       if (e.glas && e.tour >= e.glas && !e.vainqueur && await api.verifierVictoire({ finDuJour: true })) return foundry.utils.deepClone(lireEtat());
+      // La Nuit de la Saint-Martin n'a qu'une nuit : la seconde ne tombe pas, la partie finit (même sans vote).
+      if (L.estSaintMartin(e) && e.tour >= 1 && !e.vainqueur && await api.verifierVictoire({ finDuJour: true })) return foundry.utils.deepClone(lireEtat());
     }
     if (phase === "nuit") {
       for (const a of tousLesVillageois().filter(a => a.system.silence)) await a.update({ "system.silence": false });
@@ -888,11 +1022,22 @@ export const api = {
   // peste : true (le MJ la choisit : rôles de la meute retirés), false (jamais) ; non précisé, une composition générée devient
   // une peste noire avec la chance CHANCE_PESTE (tirerPeste, reproductible avec la graine).
   // glas : le Glas final du narrateur (jour N ; 0 : jamais).
-  async nouvellePartie({ memesJoueurs = true, joueurs = null, compagnons: ia = null, composition = "", roles = [], niveau = "", graine, peste, glas = 0 } = {}) {
+  // format : "saint-martin" (la Nuit de la Saint-Martin, logique/saintmartin.mjs) : composition à part (trois rôles sous l'autel,
+  // secret du MJ), jamais de peste noire, aucun bâtiment ; le résumé du MJ porte autel. Non précisé : celui de la partie
+  // précédente (« Rejouer » après une Saint-Martin en rejoue une) ; "" : une partie ordinaire.
+  // Les partis de la partie précédente (départ, exil : etat.partis) ne sont pas repris : leurs villageois quittent le village.
+  async nouvellePartie({ memesJoueurs = true, joueurs = null, compagnons: ia = null, composition = "", roles = [], niveau = "", graine, peste, glas = 0,
+    format } = {}) {
     exigerMJ();
     await consignerComposition();
     const avant = lireEtat();
-    const anciens = tousLesVillageois();
+    format = format === undefined ? (L.estSaintMartin(avant) ? L.FORMAT_SAINT_MARTIN : "") : format;
+    const partis = new Set((avant.partis ?? []).map(p => p.acteurId));
+    const anciens = tousLesVillageois().filter(a => !partis.has(a.id));
+    for (const a of tousLesVillageois().filter(x => partis.has(x.id))) {
+      if (estCompagnon(a) && typeof api.compagnons?.retirer === "function") { try { await api.compagnons.retirer(a.id); } catch { /* repli */ } }
+      if (game.actors.get(a.id)) await a.delete();
+    }
     const humains = Array.isArray(joueurs) ? [...new Set(joueurs.filter(id => game.users.get(id) && !game.users.get(id).isGM))]
       : memesJoueurs ? [...new Set(anciens.map(a => a.system.joueur).filter(id => id && game.users.get(id)))]
         : game.users.filter(u => u.active && !u.isGM).map(u => u.id);
@@ -908,10 +1053,14 @@ export const api = {
     const equilibreOk = Object.keys(contenu.equilibre.roles ?? {}).length > 0 && total >= 4;
     const genere = inclure => L.composer(total, contenu.equilibre, { niveau: niv, inclure, historique, graine });
     let compo;
+    const court = format === L.FORMAT_SAINT_MARTIN;
     // La peste noire : choisie (true), refusée (false), ou tirée au sort quand la composition se génère d'elle-même.
-    const genereeSeule = !roles.length && !(composition && contenu.compositions[composition]) && equilibreOk;
-    const enPeste = peste === true || (peste === undefined && genereeSeule && L.tirerPeste({ graine, chance: api.chancePeste() }));
-    if (roles.length) {
+    const genereeSeule = !court && !roles.length && !(composition && contenu.compositions[composition]) && equilibreOk;
+    const enPeste = !court && (peste === true || (peste === undefined && genereeSeule && L.tirerPeste({ graine, chance: api.chancePeste() })));
+    if (court) {
+      const sm = L.composerSaintMartin(total, { disponibles: [...contenu.roles.keys()], graine });
+      compo = { cle: L.FORMAT_SAINT_MARTIN, libelle: t("LAKOUR_LOUPS.SaintMartin.Titre"), niveau: niv, roles: sm.joueurs, batiments: [], autel: sm.autel };
+    } else if (roles.length) {
       const cles = roles.map(r => cleDeRole(r, contenu));
       if (cles.some(c => !c)) throw new Error(t("LAKOUR_LOUPS.Erreurs.RolesInconnus", { roles: roles.filter((_, i) => !cles[i]).join(", ") }));
       const bat = equilibreOk ? genere(cles.filter(c => c !== "villageois" && c !== "loup-de-brumecombe")).batiments : avant.batimentsCles ?? [];
@@ -938,7 +1087,7 @@ export const api = {
     annulerDemandes();
     if (!memesJoueurs) for (const a of anciens.filter(x => x.system.joueur && !humains.includes(x.system.joueur))) await a.delete();
     const sortie = await api.distribuer({ roles: uuidsRoles, metiers, joueurs: humains, compagnons, maisons: L.maisonsDuVillage(total),
-      graine, composition: compo.cle, batiments, peste: enPeste, glas });
+      graine, composition: compo.cle, batiments, peste: enPeste, glas, ...(court ? { format: L.FORMAT_SAINT_MARTIN, autel: compo.autel } : {}) });
     // La composition n'entre au réglage monde « historique » (livré à tous) qu'à la fin de la partie : en attendant, le MJ la garde.
     await modifierEtat(e => { e.aConsigner = { roles: [...cles], batiments: [...compo.batiments], niveau: compo.niveau, composition: compo.cle, quand: Date.now() }; return e; });
     const partie = lireEtat().partie;
@@ -947,12 +1096,13 @@ export const api = {
       joueurs: sortie.filter(x => !x.compagnon).map(x => ({ userId: x.userId, nom: game.users.get(x.userId)?.name ?? "", acteurId: x.acteurId })),
       compagnons: sortie.filter(x => x.compagnon).map(x => ({ nom: game.actors.get(x.acteurId)?.name ?? "", acteurId: x.acteurId })),
       composition: { cle: compo.cle, libelle: compo.libelle, niveau: compo.niveau, roles: [...cles], batiments: [...compo.batiments],
-        ...(compo.somme !== undefined ? { somme: compo.somme, verdict: compo.verdict } : {}), peste: enPeste }
+        ...(compo.somme !== undefined ? { somme: compo.somme, verdict: compo.verdict } : {}), peste: enPeste, ...(court ? { autel: [...compo.autel] } : {}) }
     };
     // Chez les joueurs : rien de la composition (ni rôles, ni libellé, ni peste).
     annoncer("lakourLoups.nouvellePartie", [foundry.utils.deepClone(resume)],
       [{ partie, joueurs: resume.joueurs.length, compagnons: resume.compagnons.length }]);
     await annonceChat(echapper(t("LAKOUR_LOUPS.NouvellePartie.Annonce", { n: total })));
+    if (court) await annonceChat(echapper(t("LAKOUR_LOUPS.SaintMartin.Annonce", { n: L.AUTEL })));
     return resume;
   },
 
@@ -1005,10 +1155,11 @@ export const api = {
     exigerMJ();
     const etat = lireEtat();
     const tour = Math.max(1, etat.tour);
-    const entree = L.ordreDeNuit(villageoisAPlat(), tour, { peste: etat.peste }).find(e => e.roleCle === roleCle);
+    const entree = L.ordreDeNuit(villageoisAPlat(), tour, { peste: etat.peste, deuil: L.visionDuDeuilDue(etat, villageoisAPlat()) }).find(e => e.roleCle === roleCle);
     if (!entree) throw new Error(t("LAKOUR_LOUPS.Erreurs.PersonneAReveiller", { role: String(roleCle) }));
     const ms = Number(delai) > 0 ? Number(delai) : reglage("delaiChoix") * 1000;
     if (roleCle === CLE_PESTE) return reveillerLaPeste(entree, { delai: ms, cible });
+    if (roleCle === L.CLE_DEUIL) return reveillerLeDeuil(entree, { delai: ms });
     const acteurs = entree.acteurIds.map(id => game.actors.get(id));
     const roles = acteurs.map(a => roleDe(a));
     const meute = roleCle === CLE_MEUTE;
@@ -1095,7 +1246,7 @@ export const api = {
 
   ordreDeNuit() {
     const etat = lireEtat();
-    return L.ordreDeNuit(villageoisAPlat(), Math.max(1, etat.tour), { peste: etat.peste });
+    return L.ordreDeNuit(villageoisAPlat(), Math.max(1, etat.tour), { peste: etat.peste, deuil: L.visionDuDeuilDue(etat, villageoisAPlat()) });
   },
 
   // Qui ce rôle (ou la meute) peut désigner cette nuit, compte tenu des effets du jour (Passeur, Grange, Garde du guet,
@@ -1105,7 +1256,8 @@ export const api = {
     return L.candidatsDeNuit({ villageois: villageoisAPlat(), etat, acteurId, roleCle, tour: Math.max(1, etat.tour) });
   },
 
-  demanderAction({ acteurId, invite = "", candidats, nombre = 1, delai } = {}) {
+  // objet (facultatif) : ce que la demande décide, pour le cerveau d'un compagnon ("deuil-vision", "deuil-voix" : le Glas du deuil).
+  demanderAction({ acteurId, invite = "", candidats, nombre = 1, delai, objet = "" } = {}) {
     exigerMJ();
     const acteur = acteurOuErreur(acteurId);
     // Un rôle sans cible (nuit.cibles = 0 : Ermite, Chasseur de primes) n'a rien à choisir : pas de fenêtre.
@@ -1126,7 +1278,7 @@ export const api = {
         const a = game.actors.get(id);
         return { id, nom: a?.name ?? id, img: a?.img ?? "", maison: a?.system.maison ?? "" };
       }),
-      nombre: Math.max(1, Number(nombre) || 1), delai: ms, finit: Date.now() + ms
+      nombre: Math.max(1, Number(nombre) || 1), delai: ms, finit: Date.now() + ms, ...(objet ? { objet } : {})
     };
     return compagnon ? demanderAuCompagnon(demande) : ouvrirDemande(demande, user);
   },
@@ -1247,6 +1399,9 @@ export const api = {
     await modifierEtat(e => {
       let x = L.suivrePeste(L.cloreNuit(e, { asperges: r.asperges, fioles: r.fioles, bilan: r.bilan, pontFranchi: r.pontFranchi && cles.includes("pont") }), r.deces);
       if (r.voteDouble) x.voteDoubleDemain = true;
+      // Le Glas du deuil : la vision a servi (une cible désignée) ; le linceul de cette nuit est tombé.
+      if (r.deuil) x.pouvoirsDeuil.visions = Math.max(0, x.pouvoirsDeuil.visions - 1);
+      if (L.linceulDeLaNuit(x, tour)) x.pouvoirsDeuil.linceul = 0;
       x.cimetiere = [...new Set([...x.cimetiere, ...aube.cimetiere])];
       for (const texte of narration) x = L.journaliserSecret(x, texte);
       for (const texte of annonces) x = L.journaliser(x, texte);
@@ -1279,6 +1434,18 @@ export const api = {
       if (!p.ok) throw new Error(t(`LAKOUR_LOUPS.Bailli.Refus.${p.raison}`));
     }
     let ids = candidats ?? tousLesVillageois().filter(a => a.system.vivant).map(a => a.id);
+    // Le Banc des accusés (variante) : un vote d'exécution juge le prochain accusé, et lui seul ; sans accusé, pas de vote.
+    let banc = "";
+    if (objet === "execution" && lireEtat().banc.actif) {
+      banc = L.prochainAccuse(lireEtat(), villageoisAPlat());
+      if (!banc) throw new Error(t("LAKOUR_LOUPS.Banc.Refus.personne"));
+      ids = [banc];
+    }
+    // L'exil : les gens de passage encore là.
+    if (objet === "exil") {
+      ids = L.candidatsExil(lireEtat(), villageoisAPlat());
+      if (!ids.length) throw new Error(t("LAKOUR_LOUPS.Passage.Refus.exil"));
+    }
     // La Chapelle n'abrite jamais deux nuits de suite le même joueur : il n'est pas candidat.
     if (objet === "chapelle") {
       const permis = L.candidatsDuPouvoir({ villageois: villageoisAPlat(), etat: lireEtat(), pouvoir: "chapelle" });
@@ -1286,11 +1453,16 @@ export const api = {
     }
     const ms = duree === undefined ? reglage("dureeVote") * 1000 : enMs(duree);
     const gibet = majoriteAbsolue ?? clesDesBatiments().includes("gibet");
-    const etat = await modifierEtat(e => L.journaliser(L.ouvrirVote(e, { candidats: ids, duree: ms, double, majoriteAbsolue: gibet, objet }),
-      t({ chapelle: "LAKOUR_LOUPS.Journal.VoteChapelle", bailli: "LAKOUR_LOUPS.Journal.VoteBailli" }[objet] ?? "LAKOUR_LOUPS.Journal.VoteOuvert")));
+    const etat = await modifierEtat(e => {
+      const x = L.ouvrirVote(e, { candidats: ids, duree: ms, double, majoriteAbsolue: gibet, objet, banc });
+      if (banc) L.noterJugement(x, banc);
+      return L.journaliser(x, banc ? t("LAKOUR_LOUPS.Banc.Jugement", { nom: game.actors.get(banc)?.name ?? "" })
+        : t({ chapelle: "LAKOUR_LOUPS.Journal.VoteChapelle", bailli: "LAKOUR_LOUPS.Journal.VoteBailli", exil: "LAKOUR_LOUPS.Passage.VoteExil" }[objet] ?? "LAKOUR_LOUPS.Journal.VoteOuvert"));
+    });
     if (etat.vote.objet !== "bailli") annoncer("lakourLoups.phase", ["vote", etat], ["vote", L.etatPublic(etat)]);
     annoncer("lakourLoups.voteOuvert", [{ objet: etat.vote.objet, numero: etat.vote.numero }]);
     faireVoterLesCompagnons(etat);
+    demanderVoixDuDeuil(etat);
     return foundry.utils.deepClone(L.etatPublic(etat).vote);
   },
 
@@ -1303,6 +1475,7 @@ export const api = {
   async cloreVote() {
     exigerMJ();
     await votesCompagnons;   // les voix des compagnons encore en réflexion
+    await voixDuDeuil;       // le choix secret de la meute pour la voix du deuil
     // Le sceau d'un Bailli défunt, s'il est en train d'être remis (au plus le reste du délai des choix) : le MJ le sait.
     const sceau = lireEtat().bailli.succession;
     if (sceau) ui.notifications?.info(t("LAKOUR_LOUPS.Bailli.SceauAttend", { nom: game.actors.get(sceau.de)?.name ?? "" }));
@@ -1314,6 +1487,7 @@ export const api = {
       if (!e?.vote?.ouvert) throw new Error(t("LAKOUR_LOUPS.Erreurs.PasDeVote"));
       // Les morts qui soufflent à ce vote comptent parmi les votants (le Gibet ne compte qu'eux) ; leur souffle est rendu.
       const souffles = e.vote.objet === "execution" ? L.souffleurs({ etat: e, villageois: villageoisAPlat() }) : [];
+      // La voix du deuil va au choix secret de la meute pour ce vote (sinon au hasard) : jamais aux bulletins.
       const c = L.cloreVote(e, { votants: [...votants, ...souffles.filter(id => id in e.vote.votes)], souffles });
       if (c.prolonge) {
         return { etat: L.journaliser(c.etat, t("LAKOUR_LOUPS.Jour.RubanDefense", { nom: nom(c.prolonge) })), prolonge: c.prolonge };
@@ -1328,7 +1502,13 @@ export const api = {
         return { etat: L.journaliser(c.etat, annonce), resultat: c.resultat, annonce };
       }
       const noms = c.resultat.elus.map(nom).join(", ");
-      return { etat: L.journaliser(c.etat, noms ? t("LAKOUR_LOUPS.Journal.VoteClos", { noms }) : t("LAKOUR_LOUPS.Journal.VoteNul")), resultat: c.resultat };
+      // Le Banc : le verdict est dit (« pour » sur le total) ; la voix du deuil : « une voix sans visage » rejoint son candidat.
+      const b = c.resultat.banc;
+      const annonce = [b ? t(c.resultat.elus.length ? "LAKOUR_LOUPS.Banc.Condamne" : "LAKOUR_LOUPS.Banc.Acquitte", { nom: nom(b.accuse), pour: b.pour, total: b.total }) : "",
+        c.resultat.deuil ? t("LAKOUR_LOUPS.Deuil.Voix", { nom: nom(c.resultat.deuil) }) : ""].filter(Boolean).join(" ");
+      let x = L.journaliser(c.etat, noms ? t("LAKOUR_LOUPS.Journal.VoteClos", { noms }) : t("LAKOUR_LOUPS.Journal.VoteNul"));
+      if (annonce) x = L.journaliser(x, annonce);
+      return { etat: x, resultat: c.resultat, ...(annonce ? { annonce } : {}) };
     });
     if (r.prolonge) {
       await annonceChat(echapper(t("LAKOUR_LOUPS.Jour.RubanDefense", { nom: game.actors.get(r.prolonge)?.name ?? "" })));
@@ -1342,6 +1522,10 @@ export const api = {
       annoncer("lakourLoups.bailli", [{ acteurId: resultat.bailli, comment: resultat.bailli ? (resultat.sort ? "sort" : "election") : "vacance" }]);
     }
     annoncer("lakourLoups.voteClos", [resultat]);
+    // L'exil d'un gens de passage : l'élu quitte la veillée, sans mourir, son camp tu.
+    if (resultat.objet === "exil" && resultat.elu && game.actors.get(resultat.elu)?.system.vivant && !L.estParti(lireEtat(), resultat.elu)) {
+      await api.partir(resultat.elu, { comment: "exil" });
+    }
     if (resultat.objet === "chapelle" && resultat.elu) {
       try { await api.agirDeJour({ pouvoir: "chapelle", cibles: [resultat.elu] }); }
       catch (e) { await noterPourMJ(e.message, { notifier: true }); }
@@ -1369,6 +1553,8 @@ export const api = {
     if (role?.system.effet === "emporter" && cause !== "emporte") {
       await noterPourMJ(t("LAKOUR_LOUPS.Messages.Emporter", { nom: acteur.name }), { notifier: true });
     }
+    // Le Glas du deuil (variante) : un innocent exécuté par le vote fait sonner le glas.
+    if (cause === "vote") await sonnerLeDeuil(acteur);
     const morts = [acteurId];
     const lie = acteur.system.amoureux ? game.actors.get(acteur.system.amoureux) : null;
     if (lie?.system.vivant) morts.push(...await api.eliminer(lie.id, { cause: "chagrin", reveler }));
@@ -1444,7 +1630,9 @@ export const api = {
     exigerMJ();
     const e = lireEtat();
     const glas = L.glasSonne(e) || (finDuJour && e.glas > 0 && e.tour >= e.glas && !e.vainqueur);
-    const g = L.verifierVictoire({ villageois: villageoisAPlat(), glas, morts: e.morts, primes: e.primes, peste: e.peste });
+    // La Nuit de la Saint-Martin : rien ne tombe avant son unique vote (et ses exécutions), ou avant que la seconde nuit tombe.
+    const saintMartin = L.estSaintMartin(e) ? (L.saintMartinFinie(e, villageoisAPlat()) || (finDuJour && e.tour >= 1)) : null;
+    const g = L.verifierVictoire({ villageois: villageoisAPlat(), glas, morts: e.morts, primes: e.primes, peste: e.peste, saintMartin });
     if (g && e.vainqueur !== g) {
       // Les cartes se retournent : chaque Somnambule est découvert avant le récit et les jetons de la fin.
       for (const id of L.reveurs(e.somnambules)) await devoilerSomnambule(id);
@@ -1517,6 +1705,7 @@ export const api = {
       annoncer("lakourLoups.phase", ["vote", r.etat], ["vote", L.etatPublic(r.etat)]);
       annoncer("lakourLoups.voteOuvert", [{ objet: r.etat.vote.objet, numero: r.etat.vote.numero }]);
       faireVoterLesCompagnons(r.etat);
+      demanderVoixDuDeuil(r.etat);
     }
     // La Conteuse n'est pas nommée chez les autres.
     const publicInfos = { pouvoir, annonces, ...(L.POUVOIRS_JOUR[pouvoir].source === "role" && pouvoir !== "juge-de-paix" ? {} : { acteurId }) };
@@ -1629,6 +1818,166 @@ export const api = {
     }
     suivreSuccession();
     return { departage, succession: Boolean(e.bailli.succession) };
+  },
+
+  // ---------------------------------------------------------------- les Gens de passage, les départs, l'exil (logique/passage.mjs)
+  // Accueille un joueur arrivé en cours de partie (à l'aube ou au débat, hors vote) : un rôle de passage PUBLIC (cle : l'un de
+  // L.ROLES_DE_PASSAGE ; à défaut, tiré), un camp SECRET tiré pour ne pas déséquilibrer (jamais la meute dans une peste noire).
+  // Qui : userId (un joueur humain sans villageois en jeu), acteurId (un villageois compagnon IA, ex. créé par le MJ IA :
+  // api.compagnons.creer) ou nom (un compagnon IA créé ici). Il reçoit sa carte de rôle (et, loup, ses Masques ; la meute
+  // apprend son nom en secret). Public : chat, Registre, hook lakourLoups.passage ({ acteurId, cle, comment: "arrivee" }).
+  // -> { acteurId, nom, cle }
+  async accueillir({ userId = "", acteurId = "", nom = "", cle = "" } = {}) {
+    exigerMJ();
+    const avant = lireEtat();
+    const v = L.verifierArrivee(avant);
+    if (!v.ok) throw new Error(t(`LAKOUR_LOUPS.Passage.Refus.${v.raison}`));
+    const user = userId ? game.users.get(userId) : null;
+    if (userId && (!user || user.isGM)) throw new Error(t("LAKOUR_LOUPS.Passage.Refus.joueur"));
+    const deja = user ? tousLesVillageois().find(a => a.system.joueur === userId) : acteurId ? acteurOuErreur(acteurId) : null;
+    // Un villageois qui a déjà un rôle est de la partie (vivant, mort ou parti) : on ne revient pas en gens de passage.
+    if (deja && roleDe(deja)) {
+      throw new Error(t("LAKOUR_LOUPS.Passage.Refus.present", { nom: deja.name }));
+    }
+    if (!user && !deja && !String(nom).trim()) throw new Error(t("LAKOUR_LOUPS.Passage.Refus.joueur"));
+    const contenu = await contenuDisponible();
+    const disponibles = [...contenu.roles.keys()];
+    const choisie = L.ROLES_DE_PASSAGE.includes(cle) && disponibles.includes(cle) ? cle : L.roleDePassage({ etat: avant, disponibles });
+    if (!choisie) throw new Error(t("LAKOUR_LOUPS.Passage.Refus.contenu"));
+    const doc = await fromUuid(contenu.roles.get(choisie));
+    if (!doc) throw new Error(t("LAKOUR_LOUPS.Erreurs.Introuvable", { uuid: contenu.roles.get(choisie) }));
+    const camp = L.campDePassage({ villageois: villageoisAPlat().filter(x => x.vivant !== false), peste: L.estPeste(avant) });
+    // Une maison libre du village agrandi.
+    const prises = new Set(tousLesVillageois().map(a => a.system.maison).filter(Boolean));
+    const maison = L.maisonsDuVillage(prises.size + 1).find(m => !prises.has(m)) ?? `Maison ${prises.size + 1}`;
+    const compagnon = !user;
+    const system = { joueur: user ? userId : "", compagnon, vivant: true, revele: false, camp, maison, amoureux: "", silence: false, protections: 0 };
+    const ownership = user ? { default: NIVEAUX().LIMITED, [userId]: NIVEAUX().OWNER } : { default: NIVEAUX().LIMITED };
+    let acteur = deja;
+    if (acteur) {
+      const anciens = acteur.items.filter(i => i.type === "role" || i.type === "metier").map(i => i.id);
+      if (anciens.length) await acteur.deleteEmbeddedDocuments("Item", anciens);
+      await acteur.update({ system, ownership });
+    } else {
+      const n = user?.name ?? String(nom).trim();
+      acteur = await Actor.implementation.create({ name: n, type: "villageois", system, ownership,
+        prototypeToken: { name: n, actorLink: true, disposition: CONST.TOKEN_DISPOSITIONS.NEUTRAL } });
+    }
+    await acteur.createEmbeddedDocuments("Item", [donneesObjet(doc)]);
+    const roleNom = doc.name;
+    await modifierEtat(e => {
+      const x = L.accueillir(e, { acteurId: acteur.id, cle: choisie });
+      return L.journaliserSecret(L.journaliser(x, t("LAKOUR_LOUPS.Passage.Annonce", { nom: acteur.name, role: roleNom })),
+        t("LAKOUR_LOUPS.Passage.CampSecret", { nom: acteur.name, camp: libelleCamp(camp) }));
+    });
+    await envoyerRole(acteur);
+    if (camp === "meute") {
+      await envoyerMasques(acteur, lireEtat().masques, contenu);
+      for (const loup of tousLesVillageois().filter(a => a.id !== acteur.id && a.system.vivant && a.system.camp === "meute")) {
+        await envoyerSecret(loup.id, { texte: t("LAKOUR_LOUPS.Passage.NouveauLoup", { nom: acteur.name }), titre: t("LAKOUR_LOUPS.Passage.Titre") });
+      }
+    }
+    await annonceChat(t("LAKOUR_LOUPS.Passage.AnnonceChat", { nom: echapper(acteur.name), role: echapper(roleNom) }));
+    annoncer("lakourLoups.passage", [{ acteurId: acteur.id, cle: choisie, comment: "arrivee" }]);
+    planifierMiseEnScene();
+    return { acteurId: acteur.id, nom: acteur.name, cle: choisie };
+  },
+
+  // Un villageois quitte la veillée sans mourir (comment : "depart" — le joueur doit partir — ou "exil" — le vote d'exil) :
+  // ni mort, ni rôle révélé, ni camp annoncé ; sa voix en cours retirée, ses demandes closes, son jeton retiré du plateau ; le
+  // Bailli laisse la charge vacante. La victoire est vérifiée comme après une mort. Public : chat, Registre, hook
+  // lakourLoups.depart ({ acteurId, comment }). Les bulletins qui le désignaient sont retirés ; seul candidat du vote ouvert
+  // (l'accusé du Banc, le seul gens de passage d'un exil), le vote se clôt sans élu (resultat.depart ; hook lakourLoups.voteClos).
+  // Déjà parti : sans effet (-> false). -> true
+  async partir(acteurId, { comment = "depart" } = {}) {
+    exigerMJ();
+    const acteur = acteurOuErreur(acteurId);
+    const avant = lireEtat();
+    if (!avant.partie || avant.phase === "fin" || avant.vainqueur) throw new Error(t("LAKOUR_LOUPS.Passage.Refus.fin"));
+    if (L.estParti(avant, acteurId)) return false;
+    if (!acteur.system.vivant) throw new Error(t("LAKOUR_LOUPS.Passage.Refus.absent", { nom: acteur.name }));
+    const sorte = comment === "exil" ? "exil" : "depart";
+    const bailli = avant.bailli?.acteurId === acteurId;
+    const apres = await modifierEtat(e => L.journaliser(L.partir(e, { acteurId, comment: sorte }), t(`LAKOUR_LOUPS.Passage.${sorte === "exil" ? "Exil" : "Depart"}`, { nom: acteur.name })));
+    const clos = avant.vote.ouvert && !apres.vote.ouvert ? apres.vote.resultat : null;
+    await acteur.update({ "system.vivant": false });
+    for (const [id, p] of [...enAttente.entries()]) if (p.demande.acteurId === acteurId) terminer(id, [], true);
+    for (const scene of game.scenes?.contents ?? [...(game.scenes?.values?.() ?? [])]) {
+      const ids = (scene.tokens?.contents ?? [...(scene.tokens?.values?.() ?? [])]).filter(x => x.actorId === acteurId).map(x => x.id);
+      if (ids.length) await scene.deleteEmbeddedDocuments("Token", ids);
+    }
+    await annonceChat(echapper(t(`LAKOUR_LOUPS.Passage.${sorte === "exil" ? "Exil" : "Depart"}`, { nom: acteur.name })));
+    annoncer("lakourLoups.depart", [{ acteurId, comment: sorte }]);
+    if (bailli) annoncer("lakourLoups.bailli", [{ acteurId: "", comment: "vacance", de: acteurId }]);
+    if (clos) {
+      await annonceChat(echapper(t("LAKOUR_LOUPS.Passage.VoteSansObjet", { nom: acteur.name })));
+      annoncer("lakourLoups.voteClos", [foundry.utils.deepClone(clos)]);
+    }
+    planifierMiseEnScene();
+    await api.verifierVictoire();
+    return true;
+  },
+
+  // Les gens de passage de la partie (public) : [{ acteurId, nom, cle, role, tour, parti }].
+  gensDePassage() {
+    const e = lirePublic();
+    return Object.entries(e.passage.gens).map(([acteurId, g]) => ({ acteurId, nom: game.actors.get(acteurId)?.name ?? acteurId, cle: g.cle,
+      role: nomDeRole(g.cle), tour: g.tour, parti: L.estParti(e, acteurId) }));
+  },
+  // Peut-on accueillir un gens de passage maintenant ? -> { ok, raison, raisonTexte }
+  peutAccueillir() {
+    const v = L.verifierArrivee(lirePublic());
+    return { ...v, raisonTexte: v.ok ? "" : t(`LAKOUR_LOUPS.Passage.Refus.${v.raison}`) };
+  },
+
+  // ---------------------------------------------------------------- le Banc des accusés (logique/banc.mjs, public)
+  // par accuse contre (un vivant, une fois par jour ; chacun n'est accusé qu'une fois par jour) : le joueur par le socket, le
+  // narrateur pour un compagnon ou un joueur qui le dit à voix haute. Erreur claire si c'est refusé. Public : chat, Registre,
+  // hook lakourLoups.accusation ({ par, contre }). -> { par, contre }
+  async accuser(par, contre) {
+    exigerMJ();
+    const a = acteurOuErreur(par);
+    const c = game.actors.get(contre);
+    const essai = L.verifierAccusation({ villageois: villageoisAPlat(), etat: lireEtat(), par, contre });
+    if (!essai.ok) throw new Error(t(`LAKOUR_LOUPS.Banc.Refus.${essai.raison}`));
+    await modifierEtat(e => {
+      const x = L.accuser({ villageois: villageoisAPlat(), etat: e, par, contre });
+      if (!x.ok) throw new Error(t(`LAKOUR_LOUPS.Banc.Refus.${x.raison}`));
+      L.inscrire(x.etat, { type: "accusation", acteurId: par, contre });
+      return L.journaliser(x.etat, t("LAKOUR_LOUPS.Banc.Accuse", { nom: a.name, contre: c?.name ?? contre }));
+    });
+    await annonceChat(t("LAKOUR_LOUPS.Banc.Annonce", { nom: echapper(a.name), contre: echapper(c?.name ?? contre) }));
+    annoncer("lakourLoups.accusation", [{ par, contre }]);
+    return { par, contre };
+  },
+  peutAccuser(acteurId, contre = "") {
+    return peutAccuser(acteurId, contre);
+  },
+  // Le banc du jour (public) : { actif, accusations: [{ par, parNom, contre, contreNom, juge }], prochain, prochainNom }.
+  banc() {
+    const e = lirePublic();
+    const nom = id => game.actors.get(id)?.name ?? id;
+    const duJour = e.banc.tour === e.tour ? e.banc : { accusations: [], juges: [] };
+    const prochain = L.prochainAccuse(e, villageoisAPlat());
+    return { actif: e.banc.actif, accusations: duJour.accusations.map(x => ({ ...x, parNom: nom(x.par), contreNom: nom(x.contre), juge: duJour.juges.includes(x.contre) })),
+      prochain, prochainNom: prochain ? nom(prochain) : "" };
+  },
+
+  // ---------------------------------------------------------------- le Glas du deuil (public : le compte seul)
+  // -> { actif, compte } ; les pouvoirs de la meute restent au MJ (pouvoirsDuDeuil, MJ actif seulement).
+  deuil() {
+    return { ...lirePublic().deuil };
+  },
+  pouvoirsDuDeuil() {
+    exigerMJ();
+    return { ...lireEtat().pouvoirsDeuil };
+  },
+
+  // ---------------------------------------------------------------- la Nuit de la Saint-Martin
+  // Les rôles sous l'autel de la Chapelle (SECRET : MJ actif seulement) : [{ cle, nom }].
+  autel() {
+    exigerMJ();
+    return lireEtat().autel.map(cle => ({ cle, nom: nomDeRole(cle) }));
   },
 
   // ---------------------------------------------------------------- le Registre du greffier (public, tous les navigateurs)
@@ -1753,6 +2102,23 @@ export const api = {
     return envoyerRole(acteurOuErreur(acteurId));
   }
 };
+
+// La vision du Glas du deuil (reveiller("deuil")) : les loups libres désignent un joueur à la majorité ; chacun apprendra son camp
+// à l'aube (resolution.mjs). La vision n'est consommée que si elle a servi (resoudreNuit).
+async function reveillerLeDeuil(entree, { delai }) {
+  reveilsEnCours.add(L.CLE_DEUIL);
+  Hooks.callAll("lakourLoups.reveil", { roleCle: L.CLE_DEUIL, enCours: true });
+  let cibles = [];
+  try {
+    const candidats = tousLesVillageois().filter(a => a.system.vivant && a.system.camp !== "meute").map(a => a.id);
+    cibles = await demanderALaMeute({ invite: t("LAKOUR_LOUPS.Deuil.Invite"), candidats, delai, objet: "deuil-vision" });
+    await api.noterAction({ acteurId: entree.acteurIds[0], roleCle: L.CLE_DEUIL, cibles, effet: "deuil" });
+  } finally {
+    reveilsEnCours.delete(L.CLE_DEUIL);
+    Hooks.callAll("lakourLoups.reveil", { roleCle: L.CLE_DEUIL, enCours: false });
+  }
+  return { roleCle: L.CLE_DEUIL, acteurIds: [...entree.acteurIds], cibles, texte: "" };
+}
 
 // L'étape « la peste » (reveiller("peste")) : le porteur choisit en secret (sans réponse : le hasard) ; sans porteur, le choix
 // du narrateur (cible) ou le hasard. La victime est notée comme une action de nuit (roleCle "peste").

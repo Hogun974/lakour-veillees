@@ -13,7 +13,8 @@ const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applicat
 
 // ---------- Style visuel (plat / relief) : réglage du module MJ IA s'il est actif, sinon plat.
 // Chaque image du module existe en deux versions : assets/<x>/<f>.svg (plat) et assets/<x>/3d/<f>.svg (relief).
-const styleVisuel = () => (game.modules.get("lakour-mj-ia")?.active ? game.settings.get("lakour-mj-ia", "styleVisuel") : "2d");
+// Si le moteur n'a pas pu enregistrer son réglage (module inactif, ou erreur au chargement), style plat : rien ne bloque.
+const styleVisuel = () => (game.settings.settings?.has?.("lakour-mj-ia.styleVisuel") ? game.settings.get("lakour-mj-ia", "styleVisuel") : "2d");
 
 export function cheminSelonStyle(src, style) {
   if (!src?.startsWith(`modules/${ID}/assets/`)) return src;
@@ -112,7 +113,7 @@ export function installer() {
   installationEnCours ??= installerContenu()
     .catch(erreur => {
       console.error(`${ID} | installation`, erreur);
-      globalThis.ui?.notifications?.error(`Les Veillées : installation interrompue (${erreur.message}). Le détail est dans la console (F12).`, { permanent: true });
+      globalThis.ui?.notifications?.error?.(`Les Veillées : installation interrompue (${erreur.message}). Le détail est dans la console (F12).`, { permanent: true });
     })
     .finally(() => { installationEnCours = null; });
   return installationEnCours;

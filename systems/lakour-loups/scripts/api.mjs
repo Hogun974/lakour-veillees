@@ -20,6 +20,7 @@ import * as L from "../logique/index.mjs";
 import { estMJActif, emettre, annoncer } from "./canal.mjs";
 import { reglage } from "./reglages.mjs";
 import { garderSecrets, secretsMJ } from "./secrets.mjs";
+import { joueurArrive } from "./coffre.mjs";
 import { noterMonVote } from "./prive.mjs";
 import {
   t, texteBrut, tousLesVillageois, roleDe, metierDe, villageoisAPlat, lireEtat, lirePublic, monVillageois, clesDesBatiments,
@@ -117,6 +118,7 @@ export function envoyerCarnet(userId) {
     emettre({ type: "carnet", partie: etat.partie, acteurId: a.id, entrees: etat.carnets[a.id] ?? [], prime: etat.primes[a.id] ?? "",
       vote: { numero: etat.vote.numero, cible: etat.vote.ouvert ? etat.vote.votes[a.id] ?? "" : "" } }, [userId]);
   }
+  joueurArrive(userId, etat.partie);   // sa part de la clé du coffre des secrets (et la sienne demandée, si on la cherche)
   return true;
 }
 

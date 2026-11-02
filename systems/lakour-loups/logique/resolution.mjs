@@ -16,7 +16,7 @@
 //      annonces, bilan, pontFranchi }
 //    annonces : [msg] publiques (la lame de la Forge) ; bilan : { visites, sorties, victime, loup, sauves, attaques } pour les
 //    pouvoirs du matin (Chasseresse, Colporteur de nouvelles, Lavoir) ; pontFranchi : la meute a tué sur l'autre rive.
-//    fiolesVides : herboristes qui ont tendu une fiole déjà vide (rien ne se passe ; l'usage leur est rendu).
+//    fiolesVides : herboristes dont aucune fiole n'a rien versé (fiole déjà vide, ou soi-même hors danger) : l'usage leur est rendu.
 //    messages : [{ destinataire: acteurId | "mj", cle, texte, donnees }]
 //
 // Conventions tirées des rôles de lakour-veillees (un seul `effet` par rôle) :
@@ -261,7 +261,13 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
         : msg(a.acteurId, "FioleVidePoison", "Votre fiole de poison est vide : rien ne se passe.", {}));
       continue;
     }
-    if (fiole) (sortie.fioles[a.acteurId] ??= {})[fiole] = true;
+    if (!fiole) {
+      // Sur soi, hors danger : aucune fiole ne s'ouvre, l'usage lui est rendu (comme une fiole vide).
+      sortie.fiolesVides.push(a.acteurId);
+      sortie.messages.push(msg(a.acteurId, "FiolesBouchees", "Vous n'étiez pas en danger cette nuit : vos fioles restent bouchées.", {}));
+      continue;
+    }
+    (sortie.fioles[a.acteurId] ??= {})[fiole] = true;
     if (victimes.has(c)) remedies.add(c);
     else if (c !== a.acteurId) {
       attaques.push({ cible: c, cause: CAUSES.poison, traverse: true });

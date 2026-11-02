@@ -8,6 +8,7 @@ import { ecouterSocket } from "./scripts/socket.mjs";
 import { lireEtat, lirePublic, monVillageois, t } from "./scripts/donnees.mjs";
 import { estMJActif, versMJ } from "./scripts/canal.mjs";
 import { secretsPerdus } from "./scripts/secrets.mjs";
+import { chercherSecrets, enAttenteDeParts } from "./scripts/coffre.mjs";
 import { chargerPrive, mesSecrets } from "./scripts/prive.mjs";
 import { carnetSecret } from "./scripts/apps/carnet.mjs";
 import { tableDeJeu, ouvrirTable, cloreLeVote } from "./scripts/apps/table.mjs";
@@ -117,9 +118,17 @@ Hooks.once("ready", () => {
   if (!game.user.isGM) versMJ({ type: "bonjour" });
   else if (estMJActif()) {
     // Un nouveau lancement du monde remet le village à zéro ; sinon (simple rechargement), la partie en cours reste et l'on
-    // vérifie que ce navigateur a bien ses secrets.
-    repartirAuLancement(api).then(remis => {
-      if (!remis && secretsPerdus(lirePublic())) ui.notifications.warn(t("LAKOUR_LOUPS.Table.SecretsPerdus"), { permanent: true });
+    // vérifie que ce navigateur a bien ses secrets : sinon, on les reprend du coffre (parts de clé de deux joueurs).
+    repartirAuLancement(api).then(async remis => {
+      const pub = lirePublic();
+      if (remis || !secretsPerdus(pub)) return;
+      if (!(await chercherSecrets(pub.partie, secretsRetrouves))) {
+        ui.notifications.warn(t("LAKOUR_LOUPS.Table.SecretsPerdus"), { permanent: true });
+        return;
+      }
+      setTimeout(() => {
+        if (enAttenteDeParts()) ui.notifications.warn(t("LAKOUR_LOUPS.Table.SecretsEnAttente"), { permanent: true });
+      }, 15000);
     }).catch(e => console.error(`${ID} | village remis à zéro`, e));
   }
   voteEtaitOuvert = false;
@@ -132,6 +141,13 @@ Hooks.once("ready", () => {
   if (estMJActif()) rafraichirSalons({ forcer: true });
   Hooks.callAll("lakourLoups.pret", api);
 });
+
+// Les secrets de la partie, repris du coffre : la Table, les fiches et les salons vocaux les retrouvent.
+function secretsRetrouves() {
+  ui.notifications.info(t("LAKOUR_LOUPS.Table.SecretsRetrouves"));
+  quandEtatChange();
+  rafraichirSalons({ forcer: true });
+}
 
 // Le canevas est prêt (ou change de scène) : le bandeau sait si l'on agit par la carte ; les halos respirent.
 Hooks.on("canvasReady", () => {

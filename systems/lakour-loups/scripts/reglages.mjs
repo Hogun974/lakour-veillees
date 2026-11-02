@@ -4,9 +4,11 @@ import { etatInitial } from "../logique/etat.mjs";
 import { oublierSecrets } from "./secrets.mjs";
 import { oublierPrive } from "./prive.mjs";
 import { oublierSalons, quandReglageSalons } from "./salons.mjs";
+import { oublierCoffre } from "./coffre.mjs";
 
 export function enregistrerReglages(quandEtatChange) {
   oublierSecrets();
+  oublierCoffre();
   oublierPrive();
   oublierSalons();
   // L'état de la partie (contrat §1). Écrit seulement par le MJ actif.
@@ -25,6 +27,11 @@ export function enregistrerReglages(quandEtatChange) {
   game.settings.register(ID, "lancementTraite", { scope: "world", config: false, type: String, default: "" });
   game.settings.register(ID, "secrets", { scope: "client", config: false, type: Object, default: {} });
   game.settings.register(ID, "carnet", { scope: "client", config: false, type: Object, default: {} });
+  // Le coffre des secrets (coffre.mjs) : chiffré, livré à tous, illisible sans la clé ; la clé chez le MJ actif, une part
+  // de clé chez chaque joueur.
+  game.settings.register(ID, "coffre", { scope: "world", config: false, type: Object, default: {} });
+  game.settings.register(ID, "cleCoffre", { scope: "client", config: false, type: Object, default: {} });
+  game.settings.register(ID, "partCoffre", { scope: "client", config: false, type: Object, default: {} });
   game.settings.register(ID, "revelerALaMort", {
     name: "LAKOUR_LOUPS.Reglages.RevelerALaMort.Nom", hint: "LAKOUR_LOUPS.Reglages.RevelerALaMort.Aide",
     scope: "world", config: true, type: Boolean, default: true

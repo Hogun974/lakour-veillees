@@ -368,6 +368,9 @@ test("nuit : Herboriste (effet remede) — sur la victime, remède ; sur un autr
   assert.ok(poison.messages.some(m => m.destinataire === "mj" && m.cle.endsWith("Poison")));
   const soi = L.resoudreNuit({ villageois: vs, actions: [{ acteurId: "l1", roleCle: "meute", cibles: ["x"] }, { acteurId: "h", roleCle: "herboriste", cibles: ["h"] }] });
   assert.deepEqual(soi.morts, ["x"]);
+  assert.deepEqual(soi.fioles, {}, "sur soi hors danger : aucune fiole ouverte");
+  assert.deepEqual(soi.fiolesVides, ["h"], "et l'usage lui est rendu");
+  assert.ok(soi.messages.some(m => m.destinataire === "h" && m.cle.endsWith("FiolesBouchees")));
   const soiVictime = L.resoudreNuit({ villageois: vs, actions: [{ acteurId: "l1", roleCle: "meute", cibles: ["h"] }, { acteurId: "h", roleCle: "herboriste", cibles: ["h"] }] });
   assert.deepEqual(soiVictime.morts, [], "il peut se sauver lui-même");
 });

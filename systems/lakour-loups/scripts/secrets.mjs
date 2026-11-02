@@ -4,11 +4,18 @@
 // de chat, chuchotements compris) : rien de secret ne peut y être rangé en clair. Les secrets (choix de la nuit, bilan
 // de la nuit, primes, fioles, maisons aspergées, votes en cours, vraies causes des morts, carnets des joueurs) vivent
 // donc dans la mémoire du MJ actif, recopiés dans un réglage de portée « client » : il est rangé dans le navigateur
-// du MJ (localStorage) et n'est jamais envoyé au serveur. Recharger la page du MJ les retrouve ; un autre navigateur,
-// ou un autre MJ, ne les a pas (la partie continue, sans les choix déjà faits : voir secretsPerdus).
+// du MJ (localStorage) et n'est jamais envoyé au serveur en clair. Recharger la page du MJ les retrouve ; un autre
+// navigateur, ou un autre MJ, les reprend du coffre chiffré (coffre.mjs), avec les parts de clé de deux joueurs connectés ;
+// sans elles, la partie continue sans les choix déjà faits (voir secretsPerdus).
 import { ID } from "../logique/constantes.mjs";
 
 let memoire = null;
+let surGarde = null;
+
+// Le coffre (coffre.mjs) suit chaque garde des secrets.
+export function quandSecretsGardes(fn) {
+  surGarde = fn;
+}
 
 export function oublierSecrets() {
   memoire = null;
@@ -23,6 +30,7 @@ export function secretsMJ() {
 export async function garderSecrets(secret) {
   memoire = secret;
   try { await game.settings.set(ID, "secrets", secret); } catch (e) { console.warn(`${ID} | secrets non enregistrés dans ce navigateur`, e); }
+  surGarde?.(secret);
 }
 
 // Une partie en cours dont ce navigateur n'a pas les secrets (autre MJ, autre navigateur, stockage effacé).

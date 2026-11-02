@@ -476,6 +476,11 @@ Pose sur la carte quelques **figurants** pour animer le village : le garde du gu
 - **Harpon ou noyade sur un loup** : le loup meurt, sans traces de crocs (le Tanneur le dira). Sur un amant : l'autre meurt de chagrin.
 - **Éclusière et Pont** : les deux bloquent la même chose ; ils ne s'additionnent pas.
 - **Taverne et Loup** : si un loup y dort, la meute peut y tuer qui elle veut, sans protection possible.
+- **Herboriste sur elle-même, hors danger** : aucune fiole ne s'ouvre et elle garde ses deux usages.
+
+# Changer de navigateur en pleine partie
+
+Les secrets de la partie (choix de la nuit, primes, fioles, peste noire…) vivent dans le navigateur du MJ, et dans un **coffre chiffré** sur le serveur. Chaque joueur connecté garde un morceau de la clé, inutilisable seul. Si tu reprends la partie depuis un autre navigateur ou un autre ordinateur, **deux joueurs connectés** suffisent pour rouvrir le coffre : les secrets reviennent d'eux-mêmes, en quelques secondes. Sans eux, un message te prévient, et le coffre s'ouvrira dès que deux joueurs seront là.
 
 # Si un joueur se trompe
 

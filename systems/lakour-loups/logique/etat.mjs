@@ -5,7 +5,7 @@
 // - le réglage monde « lakour-loups.partie », PUBLIC : Foundry l'envoie à tous les navigateurs (code serveur v14 :
 //   tous les réglages du monde sont livrés à chaque joueur), il ne contient donc aucun secret ;
 // - les SECRETS, gardés par le MJ actif seul (mémoire + réglage « client » de son navigateur, jamais envoyé au
-//   serveur) : choix de la nuit, nuit précédente et son bilan, maisons aspergées, primes, fioles, votes en cours,
+//   serveur en clair : seulement chiffré, dans le coffre, voir coffre.mjs) : choix de la nuit, nuit précédente et son bilan, maisons aspergées, primes, fioles, votes en cours,
 //   vraies causes des morts de la nuit, chronique secrète, carnets secrets des joueurs.
 //
 // Forme (contrat §1), plus quelques champs d'extension marqués « + » ([S] = secret) :

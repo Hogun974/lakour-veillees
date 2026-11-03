@@ -4,22 +4,24 @@
 // Lancer : npm run essais
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { fabriquer, verifierDocuments } from "../outils/fabriquer-veillees.mjs";
 import { ordreDeReveil } from "../modules/lakour-veillees/contenu/guides.mjs";
+import { FETES_VEILLEES, imageDeFete } from "../modules/lakour-veillees/scripts/fetes.js";
+import { identifiant } from "../modules/lakour-veillees/contenu/aides.mjs";
 
 const M = "lakour-veillees";
 const docs = fabriquer();
 const journal = cle => docs.find(d => d.pack === "journaux" && d.doc.flags[M].cle === cle);
-const texte = d => d.doc.pages.map(p => `${p.name} ${p.text.content}`).join(" ").replace(/<[^>]+>/g, " ");
+const texte = d => d.doc.pages.map(p => `${p.name} ${p.text?.content ?? ""}`).join(" ").replace(/<[^>]+>/g, " ");
 const attendre = (liste, motif) => {
   const erreurs = verifierDocuments(liste);
   assert.ok(erreurs.some(e => motif.test(e)), `${motif} attendu, obtenu : ${erreurs.join(" ; ") || "aucune erreur"}`);
 };
 
-test("trois journaux : guide du joueur visible, guide du narrateur caché, variantes visibles", () => {
-  assert.equal(docs.filter(d => d.pack === "journaux").length, 3);
+test("sept journaux : guide du joueur visible, guide du narrateur caché, variantes visibles, une veillée de fête illustrée par fête", () => {
+  assert.equal(docs.filter(d => d.pack === "journaux").length, 3 + FETES_VEILLEES.length);
   assert.equal(journal("guide-du-joueur").doc.ownership.default, 2);
   assert.equal(journal("guide-du-narrateur").doc.ownership.default, 0);
   assert.equal(journal("regles-des-variantes").doc.ownership.default, 2);
@@ -71,6 +73,29 @@ test("textes originaux : aucune référence au jeu édité dans le module ni dan
   }
 });
 
+test("veillées de fête : un journal visible par fête, l'illustration en tête, la fête puis ses règles ; guides et variantes en parlent", () => {
+  assert.deepEqual(FETES_VEILLEES.map(f => f.fete).sort(), ["carnaval", "halloween", "noel", "saint-valentin"]);
+  for (const f of FETES_VEILLEES) {
+    const j = journal(f.journal.cle);
+    assert.ok(j, f.journal.cle);
+    assert.equal(j.doc._id, identifiant(`journaux:${f.journal.cle}`), "l'identifiant de scripts/fetes.js est celui du compendium");
+    assert.equal(j.doc._id, f.journal.id);
+    assert.equal(j.doc.ownership.default, 2, "visible des joueurs");
+    assert.equal(j.doc.pages[0].type, "image");
+    assert.equal(j.doc.pages[0].src, `modules/lakour-veillees/assets/fetes/${f.fete}.jpg`);
+    assert.equal(j.doc.pages[0].src, imageDeFete(f.fete));
+    assert.ok(existsSync(j.doc.pages[0].src), "image provisoire présente");
+    assert.deepEqual(j.doc.pages.slice(1).map(p => p.name), ["La fête à Brumecombe", "Les règles de la veillée"]);
+    assert.ok(texte(j).includes("narrateur ne"), "le narrateur ne confirme jamais un secret de fête");
+    assert.ok(f.description.length <= 600 && f.consigne.length <= 300, "limites du moteur");
+    assert.match(f.consigne, /ne dis jamais/, "la consigne garde les secrets");
+  }
+  const joueur = texte(journal("guide-du-joueur")), narrateur = texte(journal("guide-du-narrateur")), variantes = texte(journal("regles-des-variantes"));
+  for (const f of FETES_VEILLEES) for (const t of [joueur, narrateur]) assert.ok(t.includes(f.nom), f.nom);
+  assert.match(variantes, /Veillées de fête/);
+  assert.match(narrateur, /ne les confirme ni ne les démens/);
+});
+
 // ---------------------------------------------------------------- Mutations
 
 test("mutation : guide du narrateur rendu visible, guide du joueur caché, page vide, rôle oublié du guide", () => {
@@ -84,6 +109,12 @@ test("mutation : guide du narrateur rendu visible, guide du joueur caché, page 
   attendre(avec("regles-des-variantes", d => { d.pages[0].text.content = "<p> </p>"; }), /page vide/);
   attendre(avec("guide-du-joueur", d => { for (const p of d.pages) p.text.content = p.text.content.replaceAll("Herboriste", "Guérisseuse"); }), /ne cite pas « Herboriste »/);
   attendre(docs.filter(d => d.cle !== "journaux:guide-du-narrateur"), /journal guide-du-narrateur absent/);
+  attendre(docs.filter(d => d.cle !== "journaux:fete-nuit-des-ames"), /journal fete-nuit-des-ames absent/);
+  attendre(avec("fete-veillee-d-hiver", d => { d.pages[0].src = "modules/lakour-veillees/assets/monde/fond.jpg"; }), /illustration .* au lieu de modules\/lakour-veillees\/assets\/fetes\/noel\.jpg/);
+  attendre(avec("fete-carnaval-des-masques", d => { d.pages[0].src = "modules/lakour-veillees/assets/fetes/absente.jpg"; }), /illustration/);
+  attendre(avec("fete-fete-des-promis", d => { d.ownership.default = 0; }), /visibilité 0 au lieu de 2/);
+  attendre(avec("fete-nuit-des-ames", d => { d.pages[2].text.content = "<p> </p>"; }), /page vide/);
+  attendre(avec("fete-nuit-des-ames", d => { d._id = "autreIdentifian"; d._key = "!journal!autreIdentifian"; }), /identifiant autreIdentifian/);
 });
 
 test("mutation : table trop courte ou mal numérotée", () => {

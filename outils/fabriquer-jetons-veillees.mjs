@@ -122,6 +122,12 @@ reproduit.
 La carte (\`assets/cartes/\`) est dessinée par programme : rendu commun des cartes La Kour
 (\`lakour-mj-ia/scripts/cartes-rendu.js\`) et décor propre au village (\`contenu/village.mjs\`). Aucune image extérieure.
 
+## Illustrations
+
+L'illustration de l'écran d'accueil (\`assets/monde/\`) et celles des veillées de fête (\`assets/fetes/<fête>.jpg\` : halloween, noel,
+carnaval, saint-valentin) ont été générées localement avec ComfyStudio (FLUX.2 klein 9B), sans service distant, pour l'usage
+privé de la table.
+
 ## Icônes des jetons
 
 Les silhouettes des jetons (\`assets/jetons/\`) sont des icônes de **[game-icons.net](https://game-icons.net)**,

@@ -18,6 +18,7 @@
     {{#if glas}}<div class="loups-glas" data-tooltip="{{localize 'LAKOUR_LOUPS.Calendrier.GlasAide'}}"><i class="fa-solid fa-bell"></i> {{localize "LAKOUR_LOUPS.Calendrier.Glas" n=glas}}</div>{{/if}}
     {{#if deuil}}<div class="loups-glas loups-deuil" data-tooltip="{{localize 'LAKOUR_LOUPS.Deuil.Aide'}}"><i class="fa-solid fa-bell"></i> {{localize "LAKOUR_LOUPS.Deuil.Compte" n=deuil.compte}}</div>{{/if}}
     {{#if saintMartin}}<div class="loups-presage loups-saint-martin" data-tooltip="{{localize 'LAKOUR_LOUPS.SaintMartin.Aide'}}"><i class="fa-solid fa-church"></i> {{localize "LAKOUR_LOUPS.SaintMartin.Titre"}}</div>{{/if}}
+    {{#if fete}}<div class="loups-presage loups-fete" data-tooltip="{{fete.aide}}"><i class="fa-solid fa-star"></i> {{fete.nom}}{{#if fete.neige}} · <i class="fa-solid fa-snowflake"></i> {{localize "LAKOUR_LOUPS.Fetes.Neige"}}{{/if}}{{#if fete.defile}} · <i class="fa-solid fa-masks-theater"></i> {{localize "LAKOUR_LOUPS.Fetes.Defile" role=fete.defile}}{{/if}}{{#if fete.secrets}} · <small class="loups-mj-seul">{{fete.secrets}}</small>{{/if}}</div>{{/if}}
     <div class="loups-minuteur" aria-live="polite"></div>
     {{#if moi}}
     <div class="loups-moi">
@@ -68,6 +69,13 @@
       <label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.Peste.PreparationAide'}}"><input type="checkbox" data-action="prepPeste" {{#if preparation.peste}}checked{{/if}}> <i class="fa-solid fa-biohazard"></i> {{localize "LAKOUR_LOUPS.Peste.Preparation"}}</label>
       <label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.SaintMartin.PreparationAide'}}"><input type="checkbox" data-action="prepSaintMartin" {{#if preparation.saintMartin}}checked{{/if}}> <i class="fa-solid fa-church"></i> {{localize "LAKOUR_LOUPS.SaintMartin.Preparation"}}</label>
     </div>
+    {{#if preparation.fetes}}{{#unless preparation.fetes.saintMartin}}
+    <div class="loups-prep-ligne loups-prep-fete">
+      <span class="loups-etiquette"><i class="fa-solid fa-star"></i> {{localize "LAKOUR_LOUPS.Fetes.Preparation"}}</span>
+      <select name="prepFete" data-tooltip="{{preparation.fetes.aide}}">{{#each preparation.fetes.options}}<option value="{{cle}}" {{#if choisie}}selected{{/if}}>{{nom}}</option>{{/each}}</select>
+      <small>{{preparation.fetes.aide}}</small>
+    </div>
+    {{/unless}}{{/if}}
     {{#if preparation.manuel}}
     <ul class="loups-prep-roles">
       {{#each preparation.roles}}

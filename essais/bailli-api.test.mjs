@@ -596,7 +596,7 @@ const MUTATIONS = [
   ["scripts/api.mjs", "          e.masques = masques;\n", "", "masques gardés par le MJ"],
   ["scripts/api.mjs", "enJeu: sortie.map(s => s.roleCle),", "enJeu: [],", "masques absents de la partie"],
   ["scripts/api.mjs", "[cle, equilibre?.roles?.[cle]?.camp || campsDesDocs.get(cle) || \"village\"]", "[cle, \"village\"]", "camps des rôles"],
-  ["scripts/api.mjs", "    if (camp === \"meute\" && avant !== \"meute\") await envoyerMasques(a);\n", "", "masques du mordu"],
+  ["scripts/api.mjs", "    if (camp === \"meute\" && avant !== \"meute\") { await envoyerMasques(a); await envoyerSecretsDeMeute(a); }\n", "", "masques du mordu"],
   ["scripts/api.mjs", "if (!acteur || !user || (!user.isGM && acteur.system.joueur !== userId)) return false;\n  try {\n    await api.declarer",
     "if (!acteur || !user) return false;\n  try {\n    await api.declarer", "on ne déclare que pour soi"],
   ["scripts/api.mjs", "    annoncer(\"lakourLoups.registre\", [entree]);\n", "", "hook du Registre"],

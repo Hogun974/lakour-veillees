@@ -794,3 +794,8 @@ body.theme-light .application.lakour-loups.loups-fiche:not(.theme-dark),
 .lakour-loups .loups-banc select { flex: 1 1 auto; min-width: 0; }
 .lakour-loups .loups-deuil { border-style: dashed; }
 .lakour-loups .loups-saint-martin { border-color: var(--loups-lanterne); color: var(--loups-lanterne); }
+/* Les Veillées de fête (0.10.0) : la fête en jeu, la neige du matin, le masque du défilé ; ses secrets, chez le MJ seul. */
+.lakour-loups .loups-fete { border-color: var(--loups-lanterne); color: var(--loups-lanterne); white-space: normal; flex-wrap: wrap; }
+.lakour-loups .loups-fete .loups-mj-seul { color: var(--loups-brume); font-style: italic; }
+.lakour-loups .loups-prep-fete select { flex: 0 1 auto; }
+.lakour-loups .loups-prep-fete small { flex: 1 1 100%; opacity: 0.8; }

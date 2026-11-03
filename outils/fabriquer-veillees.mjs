@@ -4,7 +4,8 @@
 // Les vérificateurs (verifierDocuments, verifierCompositions, verifierCarte) servent aussi aux essais (essais/veillees-*.test.mjs).
 // Usage : npm run fabriquer-veillees        (option --sans-compiler pour vérifier seulement)
 import { compilePack } from "@foundryvtt/foundryvtt-cli";
-import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { FETES_VEILLEES, imageDeFete } from "../modules/lakour-veillees/scripts/fetes.js";
 import { APPARENCES, CAMPS, EFFETS, MODULE, VICTOIRES, ORDRE_MEUTE, cheminJeton, cleJetonBatiment, cleJetonMetier } from "../modules/lakour-veillees/contenu/aides.mjs";
 import { DOCUMENTS } from "../modules/lakour-veillees/contenu/index.mjs";
 import { compositions, MIN_JOUEURS, MAX_JOUEURS } from "../modules/lakour-veillees/contenu/compositions.mjs";
@@ -147,6 +148,20 @@ export function verifierDocuments(docs) {
     if (!j) { erreurs.push(`journal ${cle} absent`); continue; }
     if (j.doc.ownership?.default !== niveau) err(j, `visibilité ${j.doc.ownership?.default} au lieu de ${niveau}`);
     if (!j.doc.pages?.length || j.doc.pages.some(p => !sansBalises(p.text?.content))) err(j, "page vide");
+    for (const p of j.doc.pages ?? []) if (p._key !== `!journal.pages!${j.doc._id}.${p._id}`) err(j, `clé de page ${p._key}`);
+  }
+  // Journaux des veillées de fête : visibles, l'identifiant de scripts/fetes.js (le moteur les lie par lui), l'illustration en tête
+  // (assets/fetes/<fête du calendrier>.jpg, présente), puis des pages de texte non vides.
+  for (const f of FETES_VEILLEES) {
+    const j = journaux[f.journal.cle];
+    if (!j) { erreurs.push(`journal ${f.journal.cle} absent`); continue; }
+    if (j.doc._id !== f.journal.id) err(j, `identifiant ${j.doc._id} au lieu de ${f.journal.id} (scripts/fetes.js)`);
+    if (j.doc.name !== f.journal.nom) err(j, `nom différent de celui de scripts/fetes.js (${f.journal.nom})`);
+    if (j.doc.ownership?.default !== 2) err(j, `visibilité ${j.doc.ownership?.default} au lieu de 2`);
+    const [tete, ...reste] = j.doc.pages ?? [];
+    if (tete?.type !== "image" || tete.src !== imageDeFete(f.fete)) err(j, `illustration ${tete?.src} au lieu de ${imageDeFete(f.fete)}`);
+    else if (!existsSync(new URL(`../${tete.src}`, import.meta.url))) err(j, `image ${tete.src} absente`);
+    if (!reste.length || reste.some(p => p.type !== "text" || !sansBalises(p.text?.content))) err(j, "page vide");
     for (const p of j.doc.pages ?? []) if (p._key !== `!journal.pages!${j.doc._id}.${p._id}`) err(j, `clé de page ${p._key}`);
   }
   if (journaux["guide-du-joueur"]) {

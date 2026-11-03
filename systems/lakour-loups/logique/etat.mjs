@@ -37,6 +37,8 @@
 //   documents n'en gardent rien avant la révélation publique), +secretsIncomplets [S] (une partie reprise sans tous ses secrets) }
 // 0.9.0 : pont [S] (le Pont bloqué la nuit suivante trahirait la vraie cause d'une mort de nuit sur l'autre rive) et
 // voteDoubleDemain [S] (la cloche du Sonneur : publique seulement quand le vote s'ouvre, vote.double).
+// 0.10.0 : +fete: { cle, neige, defile } (la veillée de fête en jeu, publique ; fetes.mjs) et +secretsDeFete [S]: { masque, present,
+// presentOuvert, promis } (qui porte le masque du Carnaval, qui a reçu le présent d'hiver, qui sont les promis).
 
 import { PHASES, causePublique } from "./constantes.mjs";
 import { decompterVotes } from "./votes.mjs";
@@ -48,6 +50,7 @@ import { normaliserGlas } from "./calendrier.mjs";
 import { passageInitial, normaliserPassage } from "./passage.mjs";
 import { bancInitial, normaliserBanc, verdictDuBanc } from "./banc.mjs";
 import { deuilInitial, pouvoirsDeuilInitiaux, normaliserDeuil, normaliserPouvoirsDeuil, voixDuDeuil } from "./deuil.mjs";
+import { feteInitiale, normaliserFete, secretsDeFeteInitiaux, normaliserSecretsDeFete } from "./fetes.mjs";
 
 // Le votant fictif de la voix du deuil (jamais un acteur).
 export const VOIX_DU_DEUIL = "~deuil";
@@ -73,7 +76,7 @@ export function etatInitial() {
     bailli: bailliInitial(), registre: [], masques: [],
     souffle: souffleInitial(), presage: presageInitial(), glas: 0, somnambules: {}, bonneEtoile: "", aConsigner: null,
     passage: passageInitial(), partis: [], banc: bancInitial(), deuil: deuilInitial(), pouvoirsDeuil: pouvoirsDeuilInitiaux(), format: "", autel: [],
-    fiches: {}, secretsIncomplets: false
+    fiches: {}, secretsIncomplets: false, fete: feteInitiale(), secretsDeFete: secretsDeFeteInitiaux()
   };
 }
 
@@ -106,6 +109,8 @@ export function normaliserEtat(e) {
   etat.deuil = normaliserDeuil(etat.deuil);
   etat.pouvoirsDeuil = normaliserPouvoirsDeuil(etat.pouvoirsDeuil);
   etat.format = String(etat.format ?? "");
+  etat.fete = normaliserFete(etat.fete);
+  etat.secretsDeFete = normaliserSecretsDeFete(etat.secretsDeFete);
   etat.tour = Number(etat.tour) || 0;
   return etat;
 }
@@ -128,13 +133,14 @@ export function separerEtat(e) {
     fioles: etat.fioles, journalSecret: etat.journalSecret, carnets: etat.carnets, votes: etat.vote.votes, causes: {},
     composition: etat.composition, peste: etat.peste, masques: etat.masques, somnambules: etat.somnambules, bonneEtoile: etat.bonneEtoile,
     aConsigner: etat.aConsigner, pouvoirsDeuil: etat.pouvoirsDeuil, autel: etat.autel,
-    fiches: etat.fiches, pont: etat.pont, voteDoubleDemain: etat.voteDoubleDemain, secretsIncomplets: etat.secretsIncomplets
+    fiches: etat.fiches, pont: etat.pont, voteDoubleDemain: etat.voteDoubleDemain, secretsIncomplets: etat.secretsIncomplets,
+    secretsDeFete: etat.secretsDeFete
   };
   const pub = copie(etat);
   pub.nuit = base.nuit;
   pub.nuitPrecedente = base.nuitPrecedente;
   for (const cle of ["asperges", "primes", "fioles", "journalSecret", "masques", "somnambules", "bonneEtoile", "aConsigner", "pouvoirsDeuil", "autel", "carnets", "causes", "composition",
-    "fiches", "pont", "voteDoubleDemain", "secretsIncomplets"]) pub[cle] = base[cle] && typeof base[cle] === "object" ? copie(base[cle]) : base[cle];
+    "fiches", "pont", "voteDoubleDemain", "secretsIncomplets", "secretsDeFete"]) pub[cle] = base[cle] && typeof base[cle] === "object" ? copie(base[cle]) : base[cle];
   // La peste noire n'existe pas dans l'état public avant la fin (ni même la clé) ; à la fin, la partie se dévoile.
   delete pub.peste;
   if (etat.phase === "fin" && etat.peste) pub.peste = copie(etat.peste);
@@ -170,6 +176,7 @@ export function fusionnerEtat(pub, secret) {
   // Secrets d'avant 0.9.0 : le Pont et la cloche étaient publics ; ils restent tels que l'état public les a, jusqu'à la prochaine écriture.
   if (s.pont && typeof s.pont === "object") etat.pont = { bloqueNuit: Number(s.pont.bloqueNuit) || 0 };
   if (typeof s.voteDoubleDemain === "boolean") etat.voteDoubleDemain = s.voteDoubleDemain;
+  if (s.secretsDeFete) etat.secretsDeFete = normaliserSecretsDeFete(s.secretsDeFete);
   etat.secretsIncomplets = Boolean(s.secretsIncomplets);
   etat.causes = s.causes ?? {};
   etat.morts = etat.morts.map(m => (etat.causes[m.acteurId] ? { ...m, cause: etat.causes[m.acteurId] } : m));

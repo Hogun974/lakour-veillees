@@ -6,6 +6,8 @@ import { ROLES } from "./roles.mjs";
 import { METIERS } from "./metiers.mjs";
 import { BATIMENTS } from "./batiments.mjs";
 import { ALMANACH } from "./tables.mjs";
+import { JOURNAUX_DE_FETE, RESUMES_DE_FETE } from "./fetes.mjs";
+import { FETES_VEILLEES } from "../scripts/fetes.js";
 
 const ligne = d => `- **${d.name}** — ${d.__resume}`;
 const rolesDu = camp => ROLES.filter(r => r.system.camp === camp);
@@ -261,7 +263,17 @@ Chaque partie met **4 à 6 bâtiments** en jeu : le narrateur les annonce au dé
 ${BATIMENTS.map(b => `- **${b.name}** — ${b.__resume} ${b.system.regle.replace(/<[^>]+>/g, "")}`).join("\n")}`
     },
     ...BATIMENTS.map(pageDuBatiment),
-    pageDesNouveaux()
+    pageDesNouveaux(),
+    {
+      titre: "Les veillées de fête",
+      texte: `# Quand Brumecombe fait la fête
+
+Aux grandes fêtes de l'année, le narrateur peut proposer une **veillée de fête** : une variante de saison, annoncée au début de la partie et rappelée sur la Table de jeu. Il n'y en a jamais qu'une à la fois, et jamais d'office : c'est le narrateur qui décide, même le jour de la fête.
+
+${FETES_VEILLEES.map(f => `- **${f.nom}** — ${RESUMES_DE_FETE[f.id]}`).join("\n")}
+
+Chacune a son journal, « ${FETES_VEILLEES[0].journal.nom.split(" — ")[0]} — … », avec ses règles complètes. Ce qu'une veillée vous apprend en secret arrive dans votre carnet secret, comme le reste ; le narrateur ne confirme jamais un secret de fête, même quand quelqu'un s'en réclame.`
+    }
   ]
 });
 
@@ -562,6 +574,37 @@ Les secrets de la partie (les rôles et les camps de chacun, les choix de la nui
 
 - Un joueur révèle par erreur un message privé : rappelle la règle ; pas de sanction la première fois.
 - Un mort parle : rappelle la règle ; s'il donne une information décisive, annule-la (« le village n'a rien entendu »).`
+    },
+    {
+      titre: "Les veillées de fête",
+      texte: `# Une variante de saison, jamais imposée
+
+Quatre veillées de fête, une par fête du calendrier du MJ IA : ${FETES_VEILLEES.map(f => `**${f.nom}**`).join(", ")}. Chacune est une **variante** que tu choisis à la distribution ; la date ne fait que la proposer.
+
+- **À la Table de jeu**, préparation : la liste « Veillée de fête ». La veillée de la fête du jour (s'il y en a une) y est pré-sélectionnée et marquée « proposée par le calendrier ». Choisis « Aucune veillée de fête » si la table n'en veut pas, ou une autre veillée hors saison. Rien dans une Nuit de la Saint-Martin.
+- **Sans la Table** (le MJ IA qui distribue, « Rejouer ») : le réglage du monde « Veillée de fête » décide — aucune d'office (une partie rejouée garde celle de la précédente), selon le calendrier, ou une veillée nommée.
+- Le système l'annonce lui-même au chat et au Registre du greffier, tire les secrets, prévient en secret chacun des concernés et applique les règles. Tu n'as rien à arbitrer.
+
+# Ce qui est public, ce qui est secret
+
+- **Public** : la veillée en jeu, la neige du matin (Veillée d'hiver), le masque du défilé (Carnaval). Rappelle-les quand c'est utile.
+- **Secret** : qui a reçu un murmure et ce qu'il dit (Nuit des âmes), qui porte le présent et s'il s'est ouvert (Veillée d'hiver), qui porte le masque (Carnaval), qui sont les promis (Fête des promis). Tu les lis sur ta Table (ligne de la veillée, chez toi seul) et dans ta chronique secrète. **Ne les dis jamais**, ne les confirme ni ne les démens, même quand un joueur s'en réclame : ce sont des paroles de joueur, comme une déclaration au Registre. Le récit de fin les dévoile.
+
+# Les quatre veillées
+
+${FETES_VEILLEES.map(f => `- **${f.nom}** — ${RESUMES_DE_FETE[f.id]}`).join("\n")}
+
+# Raconter
+
+- **Nuit des âmes** : une nuit meurtrière, laisse entendre qu'une âme est passée (« une chandelle s'est éteinte quelque part »), jamais chez qui. Plusieurs morts dans la nuit : une seule âme parle, celle du premier.
+- **Veillée d'hiver** : un présent qui s'ouvre sauve quelqu'un sans bruit ; au matin, raconte une nuit sans mort comme les autres. La neige, elle, se raconte : pas de traces, un lavoir gelé, des pouvoirs du matin qui attendent.
+- **Carnaval des masques** : une vision trompée par le masque se raconte comme une vraie ; ne corrige jamais, même quand le village s'apprête à exécuter le masqué (comme pour le Louvetier). Le masque ne trompe qu'une vision du Village, puis tombe sans bruit (ta chronique secrète le note) ; un regard de la meute n'est jamais trompé.
+- **Fête des promis** sans promis (moins de deux joueurs du Village) : l'annonce le dit, il n'y a rien d'autre.
+- **Fête des promis** : deux promis ne meurent pas ensemble ; si la meute en dévore un, raconte une mort ordinaire.
+
+# Pour un MJ IA
+
+Ton état du jeu porte une ligne de fête. Quand une veillée est en jeu dans la partie (le Registre porte « la veillée de fête commence »), cette ligne vient d'elle, même hors saison : son nom, ses règles, ce qu'elle a annoncé à tous (neige, défilé) et la consigne de garder ses secrets. Sans veillée en jeu, la fête du calendrier n'est qu'une ambiance, sans règle de plus.`
     }
   ]
 });
@@ -588,6 +631,7 @@ const variantes = journal({
 - **Gens de passage** (par défaut : oui) : un joueur qui arrive en cours de partie entre avec un rôle public et un camp secret ; on peut quitter la veillée sans mourir.
 - **Banc des accusés** et **Glas du deuil** (par défaut : non) : deux variantes du jour (page « Le Banc et le Glas »).
 - **Nuit de la Saint-Martin** : le format court, à choisir à la préparation (même page).
+- **Veillées de fête** (par défaut : aucune) : une variante de saison par fête — Nuit des âmes, Veillée d'hiver, Carnaval des masques, Fête des promis. La fête du jour la propose à la préparation, le narrateur décide (page « Les veillées de fête » du guide du joueur, et un journal par veillée).
 - **Glas final** et **Bonne étoile** : réglages du narrateur, à la Table de jeu (le jour où la partie s'arrête ; un débutant protégé en secret la première nuit).
 - **Somnambule** et **Rosière** : rôles « sur demande », jamais tirés d'office ; le narrateur les ajoute à la main.
 - **Ambiance** : gothique sérieux (par défaut) ou comique.`
@@ -640,4 +684,4 @@ Une partie d'une dizaine de minutes : trois rôles de plus que de joueurs, cach�
   ]
 });
 
-export const GUIDES = [guideJoueur, guideNarrateur, variantes];
+export const GUIDES = [guideJoueur, guideNarrateur, variantes, ...JOURNAUX_DE_FETE];

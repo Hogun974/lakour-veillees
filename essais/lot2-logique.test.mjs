@@ -263,7 +263,7 @@ const MUTATIONS = [
   ["somnambule.mjs", "noms.filter(n => n && n !== vrai)", "noms.filter(n => n)", "somnambule : un autre rôle"],
   ["resolution.mjs", "reve.has(a.acteurId) ? parId.get(c)?.camp !== parId.get(d)?.camp : ", "", "somnambule : sourcier à l'envers"],
   ["resolution.mjs", "reve.has(a.acteurId) ? parId.get(c)?.camp !== parId.get(d)?.camp", "reve.has(a.acteurId) ? apparenceDe(parId.get(c)) !== apparenceDe(parId.get(d))", "sourcier rêvé : les vrais camps"],
-  ["resolution.mjs", "const camp = reve.has(a.acteurId) ? campInverse(parId.get(c)?.camp) : apparenceDe(parId.get(c));", "const camp = apparenceDe(parId.get(c));", "somnambule : liseuse rêvée"],
+  ["resolution.mjs", "const camp = reve.has(a.acteurId) ? campInverse(parId.get(c)?.camp) : vu(c, a.acteurId);", "const camp = vu(c, a.acteurId);", "somnambule : liseuse rêvée"],
   ["resolution.mjs", "campInverse(parId.get(c)?.camp)", "campInverse(apparenceDe(parId.get(c)))", "liseuse rêvée : le vrai camp"],
   ["resolution.mjs", "? roleFactice(vrai, rolesFactices, hasard) : vrai;", "? vrai : vrai;", "somnambule : fossoyeur rêvé"],
   ["etat.mjs", "\"masques\", \"somnambules\", \"bonneEtoile\", \"aConsigner\"", "\"masques\", \"aConsigner\"", "somnambule et étoile secrets"],

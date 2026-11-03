@@ -133,6 +133,7 @@ export function villageois({ cle, nom, jeton, maison = "", notes = "" }) {
 }
 
 // ---------- Journaux
+// Une page { titre, texte } est une page de texte ; { titre, image, legende? } une page d'image (l'illustration d'une veillée de fête).
 
 export function journal({ cle, nom, pages, visible = true }) {
   const _id = identifiant(`journaux:${cle}`);
@@ -142,6 +143,12 @@ export function journal({ cle, nom, pages, visible = true }) {
     ownership: { default: visible ? 2 : 0 }, flags: { [MODULE]: { cle, visible } }, _stats: STATS,
     pages: pages.map((p, i) => {
       const pid = identifiant(`journaux:${cle}:${i}`);
+      if (p.image) {
+        return {
+          _id: pid, _key: `!journal.pages!${_id}.${pid}`, name: p.titre, type: "image", sort: (i + 1) * 100,
+          title: { show: false, level: 1 }, src: p.image, image: { caption: p.legende ?? "" }, ownership: { default: -1 }, flags: {}
+        };
+      }
       return {
         _id: pid, _key: `!journal.pages!${_id}.${pid}`, name: p.titre, type: "text", sort: (i + 1) * 100,
         title: { show: true, level: 1 }, text: { content: html(p.texte), format: 1 }, ownership: { default: -1 }, flags: {}

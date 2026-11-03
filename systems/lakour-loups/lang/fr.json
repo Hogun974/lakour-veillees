@@ -298,7 +298,10 @@
       "PesteBredouille": "La peste n'a trouvé personne chez {nom} : il dormait hors d'atteinte.",
       "PestePont": "La peste n'a pas pu traverser le Pont jusqu'à {nom}.",
       "PesteArretee": "La peste n'a pas pu atteindre {nom} ({par}).",
-      "VisionDeuil": "Le glas vous souffle le camp de {nom} : « {camp} »."
+      "VisionDeuil": "Le glas vous souffle le camp de {nom} : « {camp} ».",
+      "PresentOuvert": "Votre présent s'est ouvert cette nuit : un coup mortel vous a manqué. Vous êtes encore en vie.",
+      "PresentMj": "Le présent de {nom} s'est ouvert : il a survécu à un coup mortel.",
+      "MasqueTombe": "Le masque du Carnaval de {nom} a trompé une vision, puis il est tombé."
     },
     "Messages": {
       "Mort": "{nom} est mort : {cause}.",
@@ -391,6 +394,12 @@
       "GlasDuDeuil": {
         "Nom": "Le Glas du deuil (variante)",
         "Aide": "Chaque innocent exécuté par le vote fait sonner le glas et donne à la meute un pouvoir collectif qui grandit (une vision, une voix sans visage, le linceul). Pris en compte à la prochaine distribution."
+      },
+      "VeilleeDeFete": {
+        "Nom": "Veillée de fête (variante)",
+        "Aide": "La veillée de fête d'une partie distribuée sans choix (par le MJ IA, ou « Rejouer ») : aucune d'office, celle que propose le calendrier ce jour-là, ou une veillée nommée. La Table de jeu propose celle du calendrier ; le narrateur décide. Pris en compte à la prochaine distribution.",
+        "Aucune": "Aucune d'office (la partie précédente garde la sienne)",
+        "Date": "Selon le calendrier (la fête du jour, s'il y en a une)"
       }
     },
     "Erreurs": {
@@ -490,12 +499,14 @@
         "recent": "Le Puits n'écoute que ceux qui viennent de mourir.",
         "cibles": "Désignez {n} joueur(s) parmi ceux qui sont permis.",
         "texte": "Un dernier mot de {mots} mots au plus, et pas vide.",
-        "personne": "Personne ne peut être désigné."
+        "personne": "Personne ne peut être désigné.",
+        "neige": "La neige a recouvert les traces : rien à lire ce matin."
       },
       "Remouleur": "{qui} affûte la serrure et le couteau de {nom} : la nuit prochaine, la première attaque de loup contre sa maison échouera.",
       "Ours": "{qui} couche son ours devant la porte de {nom} : la nuit prochaine, la meute n'osera pas y entrer.",
       "Pelerine": "{qui} prie longuement sur le seuil de {nom}.",
-      "PelerinePrive": "Votre prière s'est fait entendre : {nom} est du camp « {camp} »."
+      "PelerinePrive": "Votre prière s'est fait entendre : {nom} est du camp « {camp} ».",
+      "LavoirNeige": "Le lavoir est gelé : on n'y parle que de la neige, qui a tout recouvert."
     },
     "Plateau": {
       "ChoisisSurLaCarte": "À toi : choisis sur la carte (clique sur un jeton allumé), puis « Valider » dans le bandeau."
@@ -783,7 +794,12 @@
       "Accusation": "Tour {tour} — {nom} accuse {contre}.",
       "Deuil": "Tour {tour} — le glas du deuil sonne pour la {n}e fois.",
       "Banc": "Jugement de {nom} : {pour} voix pour sur {total}.",
-      "VoixDeuil": "Une voix sans visage s'est jointe à {cible}."
+      "VoixDeuil": "Une voix sans visage s'est jointe à {cible}.",
+      "Fete": {
+        "ouverture": "Tour {tour} — la veillée de fête commence : {fete}.",
+        "neige": "Tour {tour} — la neige est tombée : les traces sont effacées.",
+        "defile": "Tour {tour} — au défilé du Carnaval, le masque de {role}, que personne ne porte."
+      }
     },
     "Masques": {
       "Titre": "Masques de veillée",
@@ -944,6 +960,67 @@
       "Annonce": "C'est la nuit de la Saint-Martin : une seule nuit, un seul vote. {n} rôles dorment sous l'autel de la Chapelle, et nul ne sait lesquels.",
       "Preparation": "Nuit de la Saint-Martin",
       "PreparationAide": "Le format court (une dizaine de minutes) : une nuit, un vote, la fin ; trois rôles de plus que de joueurs, cachés sous l'autel."
+    },
+    "Fetes": {
+      "Titre": "Veillée de fête",
+      "Aucune": "Aucune veillée de fête",
+      "Proposee": "proposée par le calendrier",
+      "Preparation": "Veillée de fête",
+      "PreparationAide": "Une variante de saison, choisie pour cette partie : la fête du calendrier la propose (pré-sélectionnée), le narrateur décide. Rien dans une Nuit de la Saint-Martin.",
+      "Neige": "Neige ce matin : les traces sont effacées",
+      "Defile": "Masque du défilé : {role}",
+      "Journal": {
+        "Masque": "Veillée de fête (secret) : le masque du Carnaval est porté par {nom}.",
+        "Present": "Veillée de fête (secret) : le présent de la Dame aux grelots va à {nom}.",
+        "Promis": "Veillée de fête (secret) : {a} et {b} sont promis ; la meute le sait."
+      },
+      "Secrets": {
+        "Masque": "Masque : {nom}",
+        "Present": "Présent : {nom}",
+        "PresentOuvert": "Présent : {nom} (ouvert)",
+        "Promis": "Promis : {a} et {b}",
+        "MasqueTombe": "Masque : {nom} (tombé)"
+      },
+      "Recit": {
+        "Masque": "Le masque du Carnaval était porté par {nom}.",
+        "Present": "Le présent de la Dame aux grelots était pour {nom} ; il ne s'est jamais ouvert.",
+        "PresentOuvert": "Le présent de la Dame aux grelots était pour {nom} ; il lui a sauvé la vie.",
+        "Promis": "{a} et {b} étaient promis."
+      },
+      "Ames": {
+        "MurmureMeme": "L'âme de {ame} s'est assise au pied de votre lit. Elle murmure que {a} et {b} sont du même camp.",
+        "MurmureAutre": "L'âme de {ame} s'est assise au pied de votre lit. Elle murmure que {a} et {b} ne sont pas du même camp.",
+        "Porte": "Cette nuit, une âme a frappé à la porte de {nom}.",
+        "MjMeme": "Nuit des âmes : l'âme de {ame} a murmuré à {nom} que {a} et {b} sont du même camp.",
+        "MjAutre": "Nuit des âmes : l'âme de {ame} a murmuré à {nom} que {a} et {b} ne sont pas du même camp."
+      },
+      "nuit-des-ames": {
+        "Nom": "La Nuit des âmes",
+        "Aide": "Après chaque nuit meurtrière, l'âme du premier mort murmure à un vivant tiré au hasard si deux autres vivants sont du même camp. Mais la meute entend à quelle porte l'âme a frappé.",
+        "Annonce": "C'est la Nuit des âmes : après chaque nuit meurtrière, l'âme du premier mort viendra murmurer un secret à un vivant… et les loups entendront à quelle porte elle frappe."
+      },
+      "veillee-d-hiver": {
+        "Nom": "La Veillée d'hiver",
+        "Aide": "Un joueur tiré au hasard a reçu en secret un présent : le premier coup qui devait le tuer la nuit échoue. À chaque aube, la neige peut tomber (une chance sur trois, jamais deux aubes de suite) : ce jour-là, elle recouvre les traces (Chasseresse, Ramoneuse, Tanneur, Colporteur de nouvelles et Lavoir n'apprennent rien).",
+        "Annonce": "C'est la Veillée d'hiver : la Dame aux grelots a laissé un présent sur un seuil de Brumecombe. Il sauvera, une fois, quelqu'un d'un coup mortel. Et quand la neige tombe, elle efface les traces.",
+        "Carnet": "La Dame aux grelots a laissé un présent sur ton seuil : la première fois qu'un coup mortel te visera la nuit, il échouera. Une seule fois. À toi de décider si tu le dis.",
+        "Neige": "La neige est tombée cette nuit sur Brumecombe : elle a recouvert toutes les traces."
+      },
+      "carnaval-des-masques": {
+        "Nom": "Le Carnaval des masques",
+        "Aide": "Un joueur tiré au hasard porte en secret le masque du Carnaval : la première vision du Village qui se pose sur lui le voit du camp opposé, puis le masque tombe ; un regard de la meute n'est jamais trompé. Le défilé a montré un masque que personne au village ne porte : qui s'en réclame ment.",
+        "Annonce": "C'est le Carnaval des masques : quelqu'un parmi vous porte un masque qui trompe les visions, et lui seul le sait.",
+        "Carnet": "Au Carnaval, le masque s'est posé sur ton visage : la première vision du Village qui se posera sur toi (cendres, sourcier, prière) te verra du camp « {camp} », puis le masque tombera, sans bruit. La meute, elle, ne s'y trompe jamais. Toi seul le sais.",
+        "Defile": "Au défilé du Carnaval, on a vu passer le masque de {role} : personne au village ne le porte."
+      },
+      "fete-des-promis": {
+        "Nom": "La Fête des promis",
+        "Aide": "Deux joueurs du Village tirés au hasard sont promis l'un à l'autre : chacun connaît le nom de l'autre, un allié sûr. Mais les promis s'affichent : la meute connaît leurs deux noms.",
+        "Annonce": "C'est la Fête des promis : deux cœurs du Village se sont trouvés en secret. La meute, elle, les a vus s'embrasser.",
+        "Carnet": "Pour la Fête des promis, ton cœur s'est lié à celui de {nom} : vous êtes tous deux du Village à l'heure de la distribution. Toi seul le sais… et la meute, qui vous a vus.",
+        "Meute": "Les promis de la fête s'affichent sans pudeur : {a} et {b}, tous deux du Village.",
+        "AnnonceSans": "C'est la Fête des promis, mais cette année aucun cœur du Village ne s'est trouvé : personne n'est promis."
+      }
     }
   }
 }

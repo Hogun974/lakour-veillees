@@ -248,6 +248,7 @@ async function chargerMutant(avant, apres) {
   const texte = readFileSync(MAIN, "utf8");
   assert.ok(texte.includes(avant), `mutation introuvable dans main.js : ${avant}`);
   writeFileSync(join(dossier, "main.js"), texte.replace(avant, apres));
+  writeFileSync(join(dossier, "fetes.js"), readFileSync(join(MAIN, "..", "fetes.js"), "utf8"));   // importé par main.js
   try { return await charger(join(dossier, "main.js")); }
   finally { rmSync(dossier, { recursive: true, force: true }); }
 }

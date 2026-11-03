@@ -399,6 +399,25 @@
         "default": -1
       },
       "flags": {}
+    },
+    {
+      "_id": "JG8lSOeKmFHkMC80",
+      "_key": "!journal.pages!IWLvmKtjvzPRJYr5.JG8lSOeKmFHkMC80",
+      "name": "Les veillées de fête",
+      "type": "text",
+      "sort": 2100,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Quand Brumecombe fait la fête</h2><p>Aux grandes fêtes de l'année, le narrateur peut proposer une <strong>veillée de fête</strong> : une variante de saison, annoncée au début de la partie et rappelée sur la Table de jeu. Il n'y en a jamais qu'une à la fois, et jamais d'office : c'est le narrateur qui décide, même le jour de la fête.</p><ul><li><strong>La Nuit des âmes</strong> — après chaque nuit meurtrière, l'âme du premier mort murmure à un vivant tiré au hasard si deux autres vivants sont du même camp ; la meute apprend à quelle porte elle a frappé.</li><li><strong>La Veillée d'hiver</strong> — un joueur tiré au hasard reçoit en secret un présent qui fait échouer le premier coup mortel de la nuit ; à chaque aube, la neige peut tomber (une fois sur trois, jamais deux aubes de suite) et recouvrir les traces (Chasseresse, Ramoneuse, Tanneur, Colporteur de nouvelles, Lavoir).</li><li><strong>Le Carnaval des masques</strong> — un joueur tiré au hasard porte en secret le masque du Carnaval (la première vision du Village qui le perce le voit du camp opposé, puis le masque tombe ; la meute n'est jamais trompée) ; le défilé montre à tous un rôle du Village que personne ne porte.</li><li><strong>La Fête des promis</strong> — deux joueurs du Village tirés au hasard se savent promis l'un à l'autre (un allié sûr) ; la meute connaît leurs deux noms.</li></ul><p>Chacune a son journal, « Veillée de fête — … », avec ses règles complètes. Ce qu'une veillée vous apprend en secret arrive dans votre carnet secret, comme le reste ; le narrateur ne confirme jamais un secret de fête, même quand quelqu'un s'en réclame.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
     }
   ]
 }

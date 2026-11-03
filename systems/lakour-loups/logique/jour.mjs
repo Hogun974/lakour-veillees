@@ -22,6 +22,8 @@ import { marquerAnnule } from "./registre.mjs";
 import { presageDeLaNuit } from "./almanach.mjs";
 import { etoilesDeLaNuit } from "./calendrier.mjs";
 import { linceulDeLaNuit } from "./deuil.mjs";
+import { aveuglePar, masqueDuCarnaval, presentDeLaNuit, neigeDuJour } from "./fetes.mjs";
+import { campInverse } from "./somnambule.mjs";
 
 export const MATIN = ["aube", "jour"];             // « au matin », « au début d'un débat »
 export const JOURNEE = ["aube", "jour", "vote"];   // « pendant le jour »
@@ -124,6 +126,8 @@ export function verifierPouvoir({ villageois = [], etat: e, acteurId = "", pouvo
     if (objet && Number(objet.usages?.max) > 0 && Number(objet.usages?.restant) <= 0) return non("usage");
   }
   if (def.apresNuit && !(etat.tour >= 1 && etat.nuitResolue === etat.tour)) return non("nuit");
+  // La neige de la Veillée d'hiver a recouvert les traces : ces pouvoirs du matin attendent un autre jour (l'usage n'est pas pris).
+  if (aveuglePar(etat, pouvoir)) return non("neige");
 
   const nuit = etat.tour + 1;
   const v = etat.vote;
@@ -304,7 +308,11 @@ export function appliquerPouvoir({ villageois = [], etat: e, acteurId = "", pouv
     case "pelerine": {
       // La Pèlerine prie sur un seuil : elle apprend en secret le camp de ce joueur (tel que le voient les visions).
       const v = parId.get(c);
-      const camp = v?.role?.apparence || v?.camp || "village";
+      const vrai = v?.role?.apparence || v?.camp || "village";
+      // Le masque du Carnaval trompe aussi la prière, d'une Pèlerine qui n'est pas de la meute, une fois : puis il tombe.
+      const trompe = c === masqueDuCarnaval(etat) && parId.get(acteurId)?.camp !== "meute";
+      const camp = trompe ? campInverse(vrai) : vrai;
+      if (trompe) etat.secretsDeFete = { ...etat.secretsDeFete, masqueTombe: true };
       annonce("Pelerine", `${qui} prie longuement sur le seuil de ${n}.`, { qui, nom: n });
       sortie.prives.push(msg(acteurId, "PelerinePrive", `Votre prière s'est fait entendre : ${n} est du camp « ${camp} ».`, { nom: n, camp }));
       break;
@@ -356,7 +364,10 @@ export function effetsDeLaNuit(e, tour, { batiments } = {}) {
     givre: presageDeLaNuit(etat, tour) === "givre",
     etoiles: etoilesDeLaNuit(etat, tour),
     // Le linceul du Glas du deuil : aucune protection ne tient contre la meute cette nuit.
-    linceul: linceulDeLaNuit(etat, tour)
+    linceul: linceulDeLaNuit(etat, tour),
+    // Les veillées de fête (fetes.mjs ; secrets du MJ) : le présent d'hiver qui veille encore, le porteur du masque du Carnaval.
+    present: presentDeLaNuit(etat),
+    masque: masqueDuCarnaval(etat)
   };
 }
 
@@ -443,7 +454,10 @@ export function annoncesDeLAube({ villageois = [], etat: e, tour, bilan = null, 
       sortie.annonces.push(msg("public", "MoulinPublic", `Les ailes du Moulin ont compté : ${loups} loup(s) vivent encore à Brumecombe.`, { n: loups }));
     }
   }
-  if (enJeu.includes("lavoir")) {
+  if (enJeu.includes("lavoir") && neigeDuJour(etat, n)) {
+    // La neige de la Veillée d'hiver : au lavoir gelé, on ne parle que du froid.
+    sortie.annonces.push(msg("public", "LavoirNeige", "Le lavoir est gelé : on n'y parle que de la neige, qui a tout recouvert."));
+  } else if (enJeu.includes("lavoir")) {
     const indice = indiceFlou({ bilan, villageois, hasard });
     sortie.annonces.push(msg("public", "Lavoir", `Au lavoir, on raconte que ${indice.texte}`, { indice }));
   }

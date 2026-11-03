@@ -27,3 +27,4 @@ export * from "./banc.mjs";
 export * from "./deuil.mjs";
 export * from "./saintmartin.mjs";
 export * from "./fiches.mjs";
+export * from "./fetes.mjs";

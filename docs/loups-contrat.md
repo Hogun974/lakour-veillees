@@ -7,7 +7,7 @@ Foundry v14 (14.369). Tout en français, textes originaux (aucun texte, aucune c
 
 ## 1. Système `lakour-loups`
 
-`systems/lakour-loups/system.json` : `id: "lakour-loups"`, `version: "0.9.0"`, `compatibility { minimum: "14", verified: "14.369" }`,
+`systems/lakour-loups/system.json` : `id: "lakour-loups"`, `version: "0.10.0"`, `compatibility { minimum: "14", verified: "14.369" }`,
 `socket: true`, `esmodules: ["lakour-loups.mjs"]`, langues fr et en, `documentTypes` ci-dessous,
 `grid { type: 1, distance: 1.5, units: "m" }`, `primaryTokenAttribute: null`.
 
@@ -110,7 +110,11 @@ n'existe que chez le MJ actif ; il se range en deux morceaux (`logique/etat.mjs`
   cimetiere: [acteurId],         // public
   bailli: { actif, acteurId, depuis, succession: null | { de, tour }, election },   // public (0.6.0, §1 « Bailli, Registre, Masques »)
   registre: [ { type, tour, phase, quand, … } ],        // public : le Registre du greffier
-  masques: [cle de rôle]                                 // SECRET : les Masques de veillée de la meute
+  masques: [cle de rôle],                                // SECRET : les Masques de veillée de la meute
+  fete: { cle, neige, defile, defileNom },               // public (0.10.0) : la veillée de fête en jeu ("" : aucune), le dernier matin
+                                                         //   de neige (n° du tour), le masque du défilé (clé et nom d'un rôle absent)
+  secretsDeFete: { masque, masqueTombe, present, presentOuvert, promis }   // SECRET (0.10.0) : qui porte le masque du Carnaval (tombé ?), qui a reçu le présent
+                                                         //   d'hiver (et s'il s'est ouvert), qui sont les promis
 }
 ```
 `etat()` rend l'état complet chez le MJ actif, l'état public partout ailleurs.
@@ -338,6 +342,53 @@ cherché. Une nouvelle partie (autre id) envoie TOUTES les fiches à leurs joueu
 Chez le MJ actif seulement, hook local `lakourLoups.fiches` (une fiche a changé). Garde `preUpdateActor`, `preDeleteActor`,
 `preCreateItem`, `preUpdateItem`, `preDeleteItem` (scripts/garde.mjs) : un non-MJ ne modifie ni un villageois ni ses objets.
 
+Ajouts 0.10.0 — les Veillées de fête (§1 « Veillées de fête ») :
+```
+distribuer({ …, fete }) / nouvellePartie({ …, fete })
+                                  -> fete : clé de veillée ("" : aucune) ; non précisée : le réglage monde « veilleeDeFete » (une veillée
+                                     nommée, « date » : celle que propose la fête du calendrier du moteur, "" : aucune d'office, sinon
+                                     celle de la partie précédente) ; jamais dans une Nuit de la Saint-Martin. nouvellePartie -> + fete
+fete()                            -> { cle, nom, aide, fete (id du calendrier), neige (ce matin), defile: { cle, nom } | null } (tous)
+secretsDeFete()                   -> { masque, masqueTombe, present, presentOuvert, promis } avec { id, nom } (MJ actif ; SECRET)
+veilleesDeFete()                  -> { proposee, calendrier, veillees: [{ cle, nom, aide, fete }] } (tous) : la Table pré-sélectionne
+                                     `proposee` (le réglage s'il nomme une veillée, sinon celle de la fête du calendrier ce jour-là)
+resoudreNuit()                    -> + neige (Boolean) ; messages : + le murmure des âmes ; narration : + murmure, présent ouvert
+```
+Hook public `lakourLoups.fete` (`{ cle, quoi: "ouverture" | "neige", tour }`). Registre : entrée `{ type: "fete", quoi: "ouverture" |
+"neige" | "defile", cle, role?, nom? }`. Refus de pouvoir de jour `neige`. Réglage monde `veilleeDeFete` ("" par défaut). Préparation de la
+Table : liste « Veillée de fête » (`preparation.fete` : null tant que rien n'est choisi, puis "" ou une clé).
+
+### Veillées de fête (logique/fetes.mjs, 0.10.0)
+
+Une variante par fête du calendrier du moteur (`lakour-mj-ia`, `docs/fetes.md`) : `nuit-des-ames` (halloween), `veillee-d-hiver` (noel),
+`carnaval-des-masques` (carnaval), `fete-des-promis` (saint-valentin). Une à la fois, choisie à la distribution ; la date ne fait que la
+PROPOSER (pré-sélection de la Table, réglage « date »), jamais l'imposer. Tous les tirages se font à la distribution ou à l'aube, chez le
+MJ actif ; aucune étape de nuit nouvelle (le MJ IA et le MJ humain mènent la nuit comme d'habitude).
+- **Nuit des âmes** : à l'aube d'une nuit meurtrière (au moins trois vivants), l'âme du premier mort (hors chagrin) murmure à un vivant
+  tiré au hasard si deux autres vivants tirés au hasard sont du même camp (`apparenceMasquee` : un receveur loup n'est pas trompé par
+  un masque) — message secret au receveur ; chaque loup vivant apprend en secret à quelle porte elle a frappé, le nom du receveur seul
+  (`murmureDesAmes`, `messagesDuMurmure`).
+- **Veillée d'hiver** : un joueur tiré au hasard (tous camps) reçoit le présent (`secretsDeFete.present`, carnet) : dans `resoudreNuit`
+  (`jour.present`, d'`effetsDeLaNuit`), la première attaque qui allait le tuer échoue (après hors d'atteinte, immunité, porte, remède,
+  protection ; pas contre le linceul, ni le chagrin), une fois (`presentOuvert`, sortie `presentOuvert`). À chaque aube, `tirerNeige`
+  (`CHANCE_NEIGE` = 1/3, jamais deux aubes de suite) : `fete.neige = tour`, annoncée ; ce jour-là `verifierPouvoir` refuse (`neige`, sans prendre l'usage)
+  `POUVOIRS_DE_TRACES` (Chasseresse, Ramoneuse, Tanneur, Colporteur de nouvelles), le Lavoir se tait (`LavoirNeige`).
+- **Carnaval des masques** : un joueur tiré au hasard porte le masque (`secretsDeFete.masque` ; son carnet dit le camp que le masque
+  montrera, `apparenceMasquee`) : `jour.masque` retourne le camp vu par la PREMIÈRE vision du Village qui le perce (Liseuse, Sourcier,
+  prière de la Pèlerine), puis le masque tombe (`masqueTombe`, sortie `masqueTombe`, note au MJ) ; un regard de la meute (Loup flaireur,
+  loup mordu qui lit pour elle, vision du Glas du deuil, receveur loup d'un murmure) n'est jamais trompé : la meute reconnaîtrait le
+  porteur. Le défilé (`choisirDefile`) annonce à tous un rôle du Village absent : un des Masques de veillée de la meute si elle en a au
+  moins deux (jamais le dernier), sinon un autre absent (ni villageois, ni Somnambule, ni Rosière, ni rôle sur demande).
+- **Fête des promis** : deux joueurs du camp Village tirés au hasard apprennent chacun le nom de l'autre (carnet) ; chaque loup apprend
+  les deux noms, et chaque nouveau loup aussi (mordu, échange de rôles, gens de passage de la meute). Aucun lien de mort. Moins de deux
+  joueurs du Village : pas de promis, et l'annonce le dit (`AnnonceSans`).
+Hook public `lakourLoups.fete` : `{ cle, quoi, tour }`, jamais rien d'autre. Équilibre : la neige (une aube sur trois au plus) et le masque
+(une vision trompée, puis il tombe) ont été bridés pour ne pas trop servir la meute ; le présent et le défilé servent le Village.
+Secrets : `secretsDeFete` dans les secrets du MJ (`separerEtat`), au coffre ; au carnet des seuls concernés ; dévoilés au récit de fin.
+Le contenu (`lakour-veillees`, `scripts/fetes.js`) décline chaque fête auprès du moteur (`api.fetes.enregistrer`, au crochet
+`lakour-mj-ia.pret`) : nom, description (carte publique), consigne (le narrateur IA ne trahit aucun secret), décor, et le journal de la
+veillée (`contenu` : le journal installé du monde, à défaut celui du compendium).
+
 ### Lot 0.8.0 (logique/passage.mjs, banc.mjs, deuil.mjs, saintmartin.mjs)
 
 **Gens de passage** (public : `etat.passage = { actif, gens: { acteurId: { cle, tour } } }`, `etat.partis = [{ acteurId, tour, comment }]`) :
@@ -551,6 +602,10 @@ Même contrat que lakour-40k et lakour-warcraft (`modules/lakour-mj-ia/scripts/c
 - `assets/compositions.json` : `{ "<cle>": { "libelle", "joueurs": [min, max], "niveau": "debutants|classique|chaos",
   "roles": ["<cle de rôle>", …] (autant que de joueurs ; « villageois » pour compléter), "batiments": [cle…] } }` ;
 - installateur (`scripts/main.js`, monde `lakour-loups` seulement) : importe guides et la scène du village, recopie les plans.
+- veillées de fête (contenu 0.12.0) : un journal visible par veillée (`fete-<clé>`), une page d'image en tête
+  (`assets/fetes/<id de la fête du calendrier>.jpg` : halloween, noel, carnaval, saint-valentin), puis la fête et ses règles ; le guide du
+  joueur et celui du narrateur ont une page « Les veillées de fête ». `scripts/fetes.js` (données sans dépendance, identifiant de chaque
+  journal vérifié à la fabrication) sert à `main.js`, qui les décline auprès du moteur au crochet `lakour-mj-ia.pret`.
 - La carte du village : une maison par joueur (jusqu'à 18, repères « Maison 1 »… « Maison 18 »), la place du village (où l'on
   vote), et les 10 bâtiments (Chapelle, Moulin, Taverne, Gibet, Puits, Forge, Cimetière, Pont, Lavoir, Grange) comme éléments
   nommés, pour que le MJ IA pose les jetons (« devant la chapelle »).
@@ -561,6 +616,12 @@ Même contrat que lakour-40k et lakour-warcraft (`modules/lakour-mj-ia/scripts/c
 lève une erreur claire ; `resumer` donne nom, vivant/mort, métier, rôle) ; outils de narrateur qui appellent `game.lakourLoups`.
 Le MJ IA ne révèle jamais un rôle secret en dehors d'un message privé au joueur concerné. Ce que les rôles apprennent la nuit, il
 le remet par `envoyerSecret` (carnet secret), jamais par un chuchotement du chat.
+
+MJ IA 0.36.1 (avec le système 0.10.0) : le socle des fêtes (`docs/fetes.md`). Aux Veillées, sa ligne de contexte vient de la veillée EN
+JEU (`game.lakourLoups.fete()`, état public), même hors saison : son nom, ses règles (`aide`), la neige et le défilé annoncés, la consigne
+de la déclinaison de sa fête et la garde de ses secrets (`fetes-logique.js`, `ligneVeillee`) ; sans veillée en jeu, la fête du calendrier
+reste une ambiance (« la date seule ne change rien »). Rien d'autre ne change pour lui : la veillée vient du réglage « veilleeDeFete » quand `loups_distribuer` distribue, ses messages secrets lui sont rendus comme
+les autres par `resoudreNuit` (`messages`, `narration`).
 
 MJ IA 0.35.0 (avec le système 0.9.0) :
 - il lit rôles et camps par l'API du système (`roleDe`, `campDe`, `fiche` ; `utilitaires.js`, `roleLoups` / `campLoups`), chez le
@@ -684,9 +745,9 @@ choix ni secret d'autrui n'y figure avant sa révélation publique.
 | | Qui le reçoit | Ce qu'il contient |
 | --- | --- | --- |
 | Documents `villageois` | tous | nom, image, maison, vivant, révélé, silence, joueur, compagnon, notes ; le **métier** (objet et usages : les métiers sont publics, leur usage est annoncé) ; l'**objet `role` et `system.camp` seulement une fois révélés** (et pour tous à la fin, avec `amoureux`). Propriété : LIMITED pour tous, OBSERVER pour son joueur ; personne d'autre que le MJ ne le modifie (serveur, plus `scripts/garde.mjs`). |
-| Réglage monde `partie` | tous | l'état PUBLIC (§1) : phase, tour, qui a voté (pas pour qui), résultats des votes clos, morts et cause publique, effets du jour annoncés, Bailli, Registre, présage, gens de passage (rôle public), Banc, compte du deuil, chronique publique. Récrit seulement s'il change : jamais par un choix de nuit. |
+| Réglage monde `partie` | tous | l'état PUBLIC (§1) : phase, tour, qui a voté (pas pour qui), résultats des votes clos, morts et cause publique, effets du jour annoncés, Bailli, Registre, présage, gens de passage (rôle public), Banc, compte du deuil, veillée de fête (sa clé, la neige, le masque du défilé), chronique publique. Récrit seulement s'il change : jamais par un choix de nuit. |
 | Réglage monde `coffre` | tous, chiffré | TOUS les secrets de la partie, scellés avec la clé du coffre du MJ IA. Écrit aux moments publics (phase, aube résolue, vote clos, mort, arrivée, départ, distribution, victoire), au battement (une fois par minute pendant une partie, même sans changement, vecteur neuf) et avant de quitter la page ; jamais au rythme de la nuit. |
-| Réglages client du MJ (`secrets`, par [monde][userId]) et sa mémoire | le MJ actif | l'état complet : fiches (rôle, camp, amoureux, protections), choix de la nuit et bilan, votes en cours, primes, fioles, aspergés, vraies causes, carnets, composition, peste, masques, rêves, Bonne étoile, autel, pouvoirs du deuil, Pont bloqué, cloche à venir. |
+| Réglages client du MJ (`secrets`, par [monde][userId]) et sa mémoire | le MJ actif | l'état complet : fiches (rôle, camp, amoureux, protections), choix de la nuit et bilan, votes en cours, primes, fioles, aspergés, vraies causes, carnets, composition, peste, masques, rêves, Bonne étoile, autel, pouvoirs du deuil, Pont bloqué, cloche à venir, secrets de fête (masque, présent, promis). |
 | Socket, à un seul (`recipients`) | son joueur | sa fiche (`fiche`), sa carte de rôle et son carnet (`secret`, `carnet`), ses demandes (`demande`, `annuler`), son vote (`monVote`), ses refus (`avis`), sa ligne des salons (`salon` : la meute à un loup seulement, la nuit), les mots relayés (`parole`), mort qui voit tout : les rôles des autres (`vus`) ; ses parts de clé (canal du MJ IA). |
 | Réglage client du joueur (`carnet`, par [monde][userId]) | lui | ce qu'il a reçu par le socket (carnet, fiche, prime, vote, vue de mort). |
 | Chat | tous | annonces publiques, récit de fin ; aucun chuchotement du système ni du MJ IA aux Veillées ; pendant une partie, un joueur ne chuchote plus (relais du MJ, ou refus). |
@@ -720,8 +781,12 @@ le MJ IA, par `api.ecritureBloquee()`, se met en pause).
 **Ce qui reste visible, et pourquoi**
 - **Ce qui est public par la règle** : qui a voté (pas pour qui, sauf un jour de foire), le résultat d'un vote clos et le Registre,
   les morts et leur cause publique (« dans la nuit » pour toute mort de nuit), les effets du jour annoncés, le Bailli, les présages,
-  le rôle d'un gens de passage (pas son camp), la chronique publique ; les rôles révélés ; à la fin, tout (rôles, camps, liens
-  d'amour, peste noire, composition à l'historique).
+  le rôle d'un gens de passage (pas son camp), la chronique publique ; les rôles révélés ; la veillée de fête en jeu, la neige du matin
+  et le masque du défilé (un rôle que personne ne tient) ; à la fin, tout (rôles, camps, liens d'amour, peste noire, composition à
+  l'historique, secrets de la veillée de fête).
+- **Les veillées de fête** : le masque, le présent et les promis vivent dans les secrets du MJ (coffre) et au carnet des seuls
+  concernés ; la meute apprend, au carnet de chaque loup, les promis et la porte où frappe une âme — jamais ce que l'âme a murmuré.
+  Rien de nouveau n'est écrit la nuit : les tirages se font à la distribution et à l'aube.
 - **Le rythme public** : l'instant des changements de phase, des votes, des morts annoncées est vu de tous (c'est le jeu) ; pendant
   la nuit, rien n'est écrit au monde (ni l'état public, ni le coffre hors battement, ni les coûts du MJ IA), donc ni le nombre de
   réveils, ni l'instant d'un choix, ni le nombre de loups IA ne se lisent. Le battement du coffre est régulier, chiffré, de taille

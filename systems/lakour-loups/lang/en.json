@@ -298,7 +298,10 @@
       "PesteBredouille": "The plague found nobody at {nom}'s: they slept out of reach.",
       "PestePont": "The plague could not cross the Bridge to reach {nom}.",
       "PesteArretee": "The plague could not reach {nom} ({par}).",
-      "VisionDeuil": "The mourning bell whispers {nom}'s side to you: « {camp} »."
+      "VisionDeuil": "The mourning bell whispers {nom}'s side to you: « {camp} ».",
+      "PresentOuvert": "Your gift opened tonight: a deadly blow missed you. You are still alive.",
+      "PresentMj": "The gift of {nom} opened: they survived a deadly blow.",
+      "MasqueTombe": "The Carnival mask of {nom} fooled a vision, then it fell."
     },
     "Messages": {
       "Mort": "{nom} is dead: {cause}.",
@@ -391,6 +394,12 @@
       "GlasDuDeuil": {
         "Nom": "The Mourning Bell (variant)",
         "Aide": "Each innocent executed by vote tolls the bell and gives the pack a growing collective power (a vision, a faceless vote, the shroud). Applies from the next deal."
+      },
+      "VeilleeDeFete": {
+        "Nom": "Holiday vigil (variant)",
+        "Aide": "The holiday vigil of a game dealt without an explicit choice (by the AI GM, or « Replay »): none by default, the one the calendar suggests that day, or a named vigil. The Game Table suggests the calendar's one; the narrator decides. Applied at the next deal.",
+        "Aucune": "None by default (the previous game keeps its own)",
+        "Date": "By the calendar (today's holiday, if any)"
       }
     },
     "Erreurs": {
@@ -490,12 +499,14 @@
         "recent": "The Well only listens to those who just died.",
         "cibles": "Choose {n} player(s) among those allowed.",
         "texte": "A last word of {mots} words at most, and not empty.",
-        "personne": "Nobody can be chosen."
+        "personne": "Nobody can be chosen.",
+        "neige": "Snow covered the tracks: nothing to read this morning."
       },
       "Remouleur": "{qui} sharpens {nom}'s lock and knife: next night, the first wolf attack on that house will fail.",
       "Ours": "{qui} lays the bear down at {nom}'s door: next night, the pack will not dare to enter.",
       "Pelerine": "{qui} prays long on {nom}'s doorstep.",
-      "PelerinePrive": "Your prayer was heard: {nom} belongs to the « {camp} » side."
+      "PelerinePrive": "Your prayer was heard: {nom} belongs to the « {camp} » side.",
+      "LavoirNeige": "The wash-house is frozen: people only talk about the snow, which covered everything."
     },
     "Plateau": {
       "ChoisisSurLaCarte": "Your turn: choose on the map (click a glowing token), then \"Confirm\" in the banner."
@@ -783,7 +794,12 @@
       "Accusation": "Turn {tour} — {nom} accuses {contre}.",
       "Deuil": "Turn {tour} — the mourning bell tolls for time {n}.",
       "Banc": "Trial of {nom}: {pour} votes for out of {total}.",
-      "VoixDeuil": "A faceless vote joined {cible}."
+      "VoixDeuil": "A faceless vote joined {cible}.",
+      "Fete": {
+        "ouverture": "Round {tour} — the holiday vigil begins: {fete}.",
+        "neige": "Round {tour} — snow fell: the tracks are gone.",
+        "defile": "Round {tour} — at the Carnival parade, the mask of {role}, which nobody wears."
+      }
     },
     "Masques": {
       "Titre": "Vigil masks",
@@ -944,6 +960,67 @@
       "Annonce": "It is Saint Martin's night: one night, one vote. {n} roles sleep under the Chapel altar, and nobody knows which.",
       "Preparation": "Saint Martin's Night",
       "PreparationAide": "The short format (about ten minutes): one night, one vote, the end; three more roles than players, hidden under the altar."
+    },
+    "Fetes": {
+      "Titre": "Holiday vigil",
+      "Aucune": "No holiday vigil",
+      "Proposee": "suggested by the calendar",
+      "Preparation": "Holiday vigil",
+      "PreparationAide": "A seasonal variant chosen for this game: the calendar holiday suggests it (pre-selected), the narrator decides. Never in a Saint Martin's Night.",
+      "Neige": "Snow this morning: the tracks are gone",
+      "Defile": "Mask of the parade: {role}",
+      "Journal": {
+        "Masque": "Holiday vigil (secret): the Carnival mask is worn by {nom}.",
+        "Present": "Holiday vigil (secret): the gift of the Lady of Bells goes to {nom}.",
+        "Promis": "Holiday vigil (secret): {a} and {b} are betrothed; the pack knows."
+      },
+      "Secrets": {
+        "Masque": "Mask: {nom}",
+        "Present": "Gift: {nom}",
+        "PresentOuvert": "Gift: {nom} (opened)",
+        "Promis": "Betrothed: {a} and {b}",
+        "MasqueTombe": "Mask: {nom} (fallen)"
+      },
+      "Recit": {
+        "Masque": "The Carnival mask was worn by {nom}.",
+        "Present": "The gift of the Lady of Bells was for {nom}; it never opened.",
+        "PresentOuvert": "The gift of the Lady of Bells was for {nom}; it saved their life.",
+        "Promis": "{a} and {b} were betrothed."
+      },
+      "Ames": {
+        "MurmureMeme": "The soul of {ame} sat at the foot of your bed. It whispers that {a} and {b} are on the same side.",
+        "MurmureAutre": "The soul of {ame} sat at the foot of your bed. It whispers that {a} and {b} are not on the same side.",
+        "Porte": "Tonight, a soul knocked at the door of {nom}.",
+        "MjMeme": "Night of Souls: the soul of {ame} whispered to {nom} that {a} and {b} are on the same side.",
+        "MjAutre": "Night of Souls: the soul of {ame} whispered to {nom} that {a} and {b} are not on the same side."
+      },
+      "nuit-des-ames": {
+        "Nom": "The Night of Souls",
+        "Aide": "After each deadly night, the soul of the first dead whispers to a random living player whether two other living players are on the same side. But the pack hears at which door the soul knocked.",
+        "Annonce": "It is the Night of Souls: after each deadly night, the soul of the first dead will whisper a secret to someone alive… and the wolves will hear at which door it knocks."
+      },
+      "veillee-d-hiver": {
+        "Nom": "The Winter Vigil",
+        "Aide": "A random player secretly received a gift: the first blow that should kill them at night fails. At each dawn, snow may fall (one chance in three, never two dawns in a row): that day it covers the tracks (Huntress, Chimney Sweep, Tanner, News Peddler and Wash-house learn nothing).",
+        "Annonce": "It is the Winter Vigil: the Lady of Bells left a gift on a doorstep of Brumecombe. Once, it will save someone from a deadly blow. And when snow falls, it erases the tracks.",
+        "Carnet": "The Lady of Bells left a gift on your doorstep: the first time a deadly blow aims at you at night, it will fail. Only once. It is up to you whether to say so.",
+        "Neige": "Snow fell on Brumecombe tonight: it covered every track."
+      },
+      "carnaval-des-masques": {
+        "Nom": "The Carnival of Masks",
+        "Aide": "A random player secretly wears the Carnival mask: the first Village vision that falls on them sees them on the opposite side, then the mask falls; the pack's eyes are never fooled. The parade showed a mask nobody in the village wears: whoever claims it lies.",
+        "Annonce": "It is the Carnival of Masks: someone among you wears a mask that fools visions, and only they know it.",
+        "Carnet": "At the Carnival, the mask settled on your face: the first Village vision that falls on you (ashes, dowser, prayer) will see you on the « {camp} » side, then the mask will silently fall. The pack is never fooled. Only you know it.",
+        "Defile": "At the Carnival parade, the mask of {role} went by: nobody in the village wears it."
+      },
+      "fete-des-promis": {
+        "Nom": "The Feast of the Betrothed",
+        "Aide": "Two random Village players are betrothed: each knows the other's name, a sure ally. But the betrothed show off: the pack knows both names.",
+        "Annonce": "It is the Feast of the Betrothed: two Village hearts found each other in secret. The pack saw them kiss.",
+        "Carnet": "For the Feast of the Betrothed, your heart is bound to {nom}'s: you were both of the Village when the roles were dealt. Only you know it… and the pack, who saw you.",
+        "Meute": "The betrothed of the feast show off shamelessly: {a} and {b}, both of the Village.",
+        "AnnonceSans": "It is the Feast of the Betrothed, but this year no Village hearts found each other: nobody is betrothed."
+      }
     }
   }
 }

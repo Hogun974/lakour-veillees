@@ -23,7 +23,7 @@ installerFoundry({ contenu: true });
 const { api } = await import("../systems/lakour-loups/scripts/api.mjs");
 const { ecouterSocket } = await import("../systems/lakour-loups/scripts/socket.mjs");
 const { enregistrerReglages } = await import("../systems/lakour-loups/scripts/reglages.mjs");
-const { creerHasard, choisir, melanger, verifierVictoire, CAUSES_SECRETES, POUVOIRS_JOUR, effetsDeLaNuit, surLAutreRive, ROLES_DE_PASSAGE } = await import("../systems/lakour-loups/logique/index.mjs");
+const { creerHasard, choisir, melanger, verifierVictoire, CAUSES_SECRETES, POUVOIRS_JOUR, effetsDeLaNuit, surLAutreRive, ROLES_DE_PASSAGE, CLES_DE_FETE } = await import("../systems/lakour-loups/logique/index.mjs");
 const { OUTILS } = await import("../modules/lakour-mj-ia/scripts/outils.js");
 const { Compagnons, reinitialiserPrive, privesDe } = await import("../modules/lakour-mj-ia/scripts/compagnons-jeu.js");
 const { contexteCompagnon, texteBrut } = await import("../modules/lakour-mj-ia/scripts/compagnons.js");
@@ -274,8 +274,10 @@ function verifierSavoirDesCompagnons(ou) {
 }
 
 // ------------------------------------------------------------------ une partie, menée par les outils du MJ IA
-async function jouerPartie({ n, niveau, graine, nbCompagnons = 0 }) {
+// fete : une veillée de fête (0.10.0), choisie par le réglage « veilleeDeFete » (le MJ IA distribue sans la choisir lui-même).
+async function jouerPartie({ n, niveau, graine, nbCompagnons = 0, fete = "" }) {
   const joueurs = monde(n, graine);
+  if (fete) await game.settings.set("lakour-loups", "veilleeDeFete", fete);
   // Une graine sur cinq sans révélation à la mort, avec ou sans compagnons : le Cimetière parle alors (s'il est tiré).
   if (graine.split("-")[0] === "cendres") await game.settings.set("lakour-loups", "revelerALaMort", false);
   const hasardOrigine = Math.random;
@@ -357,6 +359,14 @@ async function jouerPartie({ n, niveau, graine, nbCompagnons = 0 }) {
     assert.equal(villageois().length, total);
     assert.equal(villageois().filter(a => a.system.compagnon && !a.system.joueur).length, nbCompagnons, "compagnons sans joueur");
     assert.equal(api.etat().composition, "generee");
+    assert.equal(api.etat().fete.cle, fete, "la veillée de fête du réglage (aucune d'office)");
+    if (fete) {
+      const s = api.etat().secretsDeFete;
+      couvert("fête : défilé", api.etat().fete.defile ? 1 : 0);
+      couvert("fête : promis", s.promis.length === 2 ? 1 : 0);
+      couvert("fête : masque", s.masque ? 1 : 0);
+      couvert("fête : présent", s.present ? 1 : 0);
+    }
     // Composition générée : bon nombre de loups, équilibre des poids proche de zéro.
     const equilibre = JSON.parse(readFileSync(new URL("../modules/lakour-veillees/assets/equilibre.json", import.meta.url), "utf8"));
     const distribues = villageois().map(a => roleDe(a).system.cle);
@@ -446,6 +456,9 @@ async function jouerPartie({ n, niveau, graine, nbCompagnons = 0 }) {
         }
       }
       couvert("verrou (attaque arrêtée)", fx.verrous.length && /verrou du Forgeron a tenu/.test(nuit) ? 1 : 0);
+      couvert("fête : neige", /La neige est tombée cette nuit/.test(nuit) ? 1 : 0);
+      couvert("fête : présent ouvert", /Le présent de .* s'est ouvert/.test(nuit) ? 1 : 0);
+      couvert("fête : murmure des âmes", /Nuit des âmes : l'âme de/.test(nuit) ? 1 : 0);
       couvert("hors d'atteinte (nuit)", fx.horsDAtteinte.length);
       couvert("mot du Messager remis", secretsEmis(nbDemandes).filter(e => /Le Messager vous remet un mot/.test(e.entree.texte)).length);
       fioles.poison += (nuit.match(/a versé son poison/g) ?? []).length;
@@ -593,6 +606,35 @@ test("bilan des parties (reproductibles : même graine, même partie) ; chaque p
   const encore = await jouerPartie({ n: 10, niveau: "chaos", graine: "brume" });
   const premiere = bilan.find(b => b.niveau === "chaos" && b.n === 10 && b.graine === "brume");
   assert.deepEqual({ vainqueur: encore.camp, tours: encore.tours }, { vainqueur: premiere.camp, tours: premiere.tours });
+});
+
+// ------------------------------------------------------------------ les veillées de fête (0.10.0)
+// Les mêmes parties complètes, menées par les outils du MJ IA, avec chaque veillée de fête : elles vont au bout sans erreur ni fuite,
+// et leurs effets sont exercés. La part des victoires de la meute est comparée à celle des parties ordinaires, mais les joueurs
+// simulés votent et choisissent au hasard : cette comparaison ne mesure que les effets MÉCANIQUES (le présent qui sauve, la neige
+// qui grise des pouvoirs). Elle ne dit RIEN de l'équilibre des veillées d'information (murmure des âmes, masque, défilé, promis),
+// qui tient à ce que des joueurs font de leurs secrets : celles-là ne sont pas mesurées ici.
+const TAILLES_FETE = [6, 10, 15];
+const bilanFetes = [];
+test(`parties complètes avec chaque veillée de fête (${TAILLES_FETE.join(", ")} joueurs × ${NIVEAUX.length} niveaux × ${GRAINES.length} graines) ; équilibre MÉCANIQUE seulement (joueurs au hasard)`, async () => {
+  const ordinaires = [];
+  for (const niveau of NIVEAUX) for (const n of TAILLES_FETE) for (const graine of GRAINES) {
+    ordinaires.push(bilan.find(b => b.niveau === niveau && b.n === n && b.graine === graine) ?? { niveau, n, graine, ...await jouerPartie({ n, niveau, graine }) });
+  }
+  const part = l => l.filter(b => b.camp === "meute").length / l.length;
+  const tours = l => (l.reduce((x, b) => x + b.tours, 0) / l.length).toFixed(1);
+  const parCamp = l => { const c = {}; for (const b of l) c[b.camp] = (c[b.camp] ?? 0) + 1; return JSON.stringify(c); };
+  console.log(`Veillées de fête — ordinaires : ${parCamp(ordinaires)} ; ${tours(ordinaires)} tours`);
+  for (const fete of CLES_DE_FETE) {
+    const l = [];
+    for (const niveau of NIVEAUX) for (const n of TAILLES_FETE) for (const graine of GRAINES) l.push({ fete, niveau, n, graine, ...await jouerPartie({ n, niveau, graine, fete }) });
+    bilanFetes.push(...l);
+    console.log(`  ${fete} : ${parCamp(l)} ; ${tours(l)} tours ; meute ${Math.round(part(l) * 100)} % (ordinaires : ${Math.round(part(ordinaires) * 100)} %)${["veillee-d-hiver"].includes(fete) ? "" : " — veillée d'information : non mesurée par des joueurs au hasard"}`);
+    assert.ok(Math.abs(part(l) - part(ordinaires)) <= 0.2, `${fete} : ses effets mécaniques déséquilibrent la partie : meute ${part(l)} contre ${part(ordinaires)}`);
+  }
+  for (const effet of ["fête : neige", "fête : présent", "fête : présent ouvert", "fête : murmure des âmes", "fête : défilé", "fête : masque", "fête : promis"]) {
+    assert.ok(couverture.get(effet) > 0, `jamais exercé : ${effet}`);
+  }
 });
 
 // ------------------------------------------------------------------ bogues trouvés par l'intégration (essais ciblés)

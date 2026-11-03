@@ -13,7 +13,10 @@
 //   jour       : effets posés pendant le jour pour cette nuit (effetsDeLaNuit, jour.mjs) : { verrous, surveilles, asiles,
 //                lames, horsDAtteinte, taverne, taverneEnJeu, benis, pontBloque, givre, etoiles }.
 //                givre (Almanach des brumes) : aucune protection ni verrou ne tient cette nuit ; etoiles : [acteurId] protégés en
-//                secret par le narrateur (la Bonne étoile, la première nuit) ; linceul (Glas du deuil) : rien n'arrête la meute.
+//                secret par le narrateur (la Bonne étoile, la première nuit) ; linceul (Glas du deuil) : rien n'arrête la meute ;
+//                present (Veillée d'hiver, fetes.mjs) : acteurId dont le premier coup mortel de la nuit échoue (sortie.presentOuvert) ;
+//                masque (Carnaval des masques) : acteurId que la première vision du Village (pas un regard de la meute) voit
+//                du camp opposé ; le masque tombe alors (sortie.masqueTombe).
 //   actions    : + { roleCle: "deuil", effet: "deuil", cibles: [id] } : la vision du Glas du deuil (le camp, à toute la meute) ;
 //                une action de groupe (ni le guet ni l'éloignement du loup noté ne l'arrêtent) ; délivrée : sortie.deuil = la cible.
 //   somnambules: [acteurId] qui rêvent leur rôle (somnambule.mjs) : leurs visions sont fausses ; rolesFactices : [nom de rôle]
@@ -82,6 +85,16 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
   somnambules = [], rolesFactices = [] } = {}) {
   const reve = new Set(somnambules);
   const parId = new Map(villageois.map(v => [v.id, v]));
+  // Le camp que voit une vision : l'apparence, retournée pour le porteur du masque du Carnaval.
+  // par : celui qui regarde ; un loup (Loup flaireur, mordu qui lit pour la meute) n'est jamais trompé : il reconnaîtrait le porteur.
+  // Le masque ne trompe qu'une vision : la première qui le perce le fait tomber.
+  const vu = (id, par) => {
+    const a = apparenceDe(parId.get(id));
+    if (!id || id !== jour.masque || sortie.masqueTombe || parId.get(par)?.camp === "meute") return a;
+    sortie.masqueTombe = true;
+    sortie.messages.push(msg("mj", "MasqueTombe", `Le masque du Carnaval de ${nom(id)} a trompé une vision, puis il est tombé.`, { nom: nom(id) }));
+    return campInverse(a);
+  };
   const nom = id => parId.get(id)?.nom ?? id;
   const vivant = id => parId.get(id)?.vivant !== false && parId.has(id);
   const vivantsMeute = villageois.filter(v => v.vivant !== false && v.camp === "meute").map(v => v.id);
@@ -99,7 +112,7 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
 
   const sortie = { morts: [], deces: [], sauves: [], revelations: [], messages: [], changements: [], asperges: [],
     fioles: JSON.parse(JSON.stringify(fioles ?? {})), fiolesVides: [], voteDouble: false, enAttente: [], narrateur: [],
-    annonces: [], bilan: null, pontFranchi: false, deuil: "" };
+    annonces: [], bilan: null, pontFranchi: false, deuil: "", presentOuvert: false, masqueTombe: false };
 
   // Les rôles sans cible réveillés cette nuit agissent d'office (l'Ermite guette, le Chasseur apprend sa cible).
   const toutes = [...actions];
@@ -340,6 +353,14 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
       sortie.messages.push(msg("mj", "SauveProtection", `${nom(x.cible)} était protégé cette nuit.`, { nom: nom(x.cible) }));
       continue;
     }
+    // Le présent de la Veillée d'hiver : le premier coup qui devait tuer son porteur échoue, une fois (rien d'autre ne l'a arrêté).
+    if (jour.present && x.cible === jour.present && !sortie.presentOuvert) {
+      sortie.presentOuvert = true;
+      sortie.sauves.push({ acteurId: x.cible, par: "present" });
+      sortie.messages.push(msg(x.cible, "PresentOuvert", "Votre présent s'est ouvert cette nuit : un coup mortel vous a manqué. Vous êtes encore en vie.", {}));
+      sortie.messages.push(msg("mj", "PresentMj", `Le présent de ${nom(x.cible)} s'est ouvert : il a survécu à un coup mortel.`, { nom: nom(x.cible) }));
+      continue;
+    }
     meurt(x.cible, x.cause);
   }
 
@@ -381,11 +402,11 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
     // Un Somnambule rêve sa vision : elle est fausse, tirée du VRAI camp (inversé ; « même camp » à l'envers) : jamais mieux
     // qu'une vraie vision (ni Loup déguisé démasqué, ni Louvetier blanchi).
     if (d) {   // deux cibles (le Sourcier) : même camp ou non
-      const meme = reve.has(a.acteurId) ? parId.get(c)?.camp !== parId.get(d)?.camp : apparenceDe(parId.get(c)) === apparenceDe(parId.get(d));
+      const meme = reve.has(a.acteurId) ? parId.get(c)?.camp !== parId.get(d)?.camp : vu(c, a.acteurId) === vu(d, a.acteurId);
       sortie.messages.push(msg(a.acteurId, meme ? "MemeCamp" : "PasMemeCamp",
         meme ? `${nom(c)} et ${nom(d)} sont du même camp.` : `${nom(c)} et ${nom(d)} ne sont pas du même camp.`, { a: nom(c), b: nom(d) }));
     } else {
-      const camp = reve.has(a.acteurId) ? campInverse(parId.get(c)?.camp) : apparenceDe(parId.get(c));
+      const camp = reve.has(a.acteurId) ? campInverse(parId.get(c)?.camp) : vu(c, a.acteurId);
       sortie.messages.push(msg(a.acteurId, "VoirCamp", `Les cendres parlent : ${nom(c)} est du camp « ${camp} ».`, { nom: nom(c), camp }));
     }
   }
@@ -393,7 +414,7 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
   for (const a of parEffet("deuil")) {
     const c = a.cibles[0];
     if (!c) continue;
-    const camp = apparenceDe(parId.get(c));
+    const camp = apparenceDe(parId.get(c));   // un regard de la meute : le masque ne la trompe pas
     sortie.deuil = c;
     for (const loup of vivantsMeute) {
       sortie.messages.push(msg(loup, "VisionDeuil", `Le glas vous souffle le camp de ${nom(c)} : « ${camp} ».`, { nom: nom(c), camp }));

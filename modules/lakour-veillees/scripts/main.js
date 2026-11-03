@@ -3,16 +3,42 @@
 // style visuel plat ou relief. Rôles, métiers, bâtiments, tables et villageois non joués restent dans les compendiums :
 // la Table de jeu du système et le MJ IA les y lisent. Le plateau du système (jetons posés et mis en scène à chaque phase)
 // reçoit d'ici le jeton NEUTRE des Veillées (« villageois », qui cache le rôle) et le style visuel des images.
+import { FETES_VEILLEES } from "./fetes.js";
+
 const ID = "lakour-veillees";
 const SYSTEME = "lakour-loups";
 // 0.3.0 : plan du village avec son plateau (seuils, cercle, cimetière) ; 0.5.0 (aligné sur module.json) : carte épinglée
 // (une épingle par bâtiment vers sa page du guide du joueur, sons), journaux gardant leur identifiant et leur visibilité ;
 // 0.8.0 : guides du Bailli, du Registre du greffier et des Masques de veillée (système 0.6.0) ; 0.9.0 : Somnambule, Rosière,
 // Almanach des brumes, Dernier souffle et Saints du calendrier (système 0.7.0) ; 0.10.0 : Gens de passage (Rémouleur, Montreur
-// d'ours, Pèlerine), Banc des accusés, Glas du deuil, Nuit de la Saint-Martin (système 0.8.0).
-const VERSION_CONTENU = "0.11.0";
+// d'ours, Pèlerine), Banc des accusés, Glas du deuil, Nuit de la Saint-Martin (système 0.8.0) ; 0.11.0 : secrets hors des
+// documents (système 0.9.0) ; 0.12.0 : les Veillées de fête (système 0.10.0), un journal illustré par veillée, déclinées auprès du
+// socle des fêtes du moteur (lakour-mj-ia, api.fetes).
+const VERSION_CONTENU = "0.12.0";
 
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
+
+// ---------- Les Veillées de fête (scripts/fetes.js) : chaque fête que Brumecombe célèbre, déclinée auprès du socle des fêtes du
+// moteur (lakour-mj-ia, docs/fetes.md) — dans CHAQUE navigateur (le registre vit en mémoire), au crochet « lakour-mj-ia.pret ». La
+// carte du jour (publique) n'en dit que l'ambiance ; la VARIANTE de règles, elle, reste un choix du narrateur à la distribution
+// (système lakour-loups : la Table la pré-sélectionne, le réglage « veilleeDeFete » sert sans la Table). Le lien de la carte vise
+// le journal du monde (installé, lisible des joueurs), à défaut celui du compendium.
+export function declinaisonsDeFete(journaux = globalThis.game?.journal) {
+  return FETES_VEILLEES.map(f => {
+    const monde = journaux?.find?.(j => j.getFlag?.(ID, "cle") === f.journal.cle);
+    return { id: f.id, fete: f.fete, nom: f.nom, description: f.description, consigne: f.consigne, decor: f.decor,
+      contenu: [{ uuid: monde?.uuid ?? `Compendium.${ID}.journaux.JournalEntry.${f.journal.id}`, nom: f.journal.nom }] };
+  });
+}
+export function enregistrerFetes(api) {
+  if (game.system.id !== SYSTEME || typeof api?.fetes?.enregistrer !== "function") return 0;
+  let n = 0;
+  for (const d of declinaisonsDeFete()) {
+    try { api.fetes.enregistrer(d); n++; } catch (erreur) { console.warn(`${ID} | fête ${d.id}`, erreur); }
+  }
+  return n;
+}
+Hooks.once("lakour-mj-ia.pret", api => enregistrerFetes(api));
 
 // ---------- Style visuel (plat / relief) : réglage du module MJ IA s'il est actif, sinon plat.
 // Chaque image du module existe en deux versions : assets/<x>/<f>.svg (plat) et assets/<x>/3d/<f>.svg (relief).

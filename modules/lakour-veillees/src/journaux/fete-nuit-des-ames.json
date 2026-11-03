@@ -1,0 +1,81 @@
+{
+  "_id": "BmG4Y4VZkG7WKJvi",
+  "_key": "!journal!BmG4Y4VZkG7WKJvi",
+  "name": "Veillée de fête — La Nuit des âmes",
+  "folder": null,
+  "sort": 0,
+  "categories": [],
+  "ownership": {
+    "default": 2
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "fete-nuit-des-ames",
+      "visible": true
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  },
+  "pages": [
+    {
+      "_id": "UHj00sDteGA6CbcJ",
+      "_key": "!journal.pages!BmG4Y4VZkG7WKJvi.UHj00sDteGA6CbcJ",
+      "name": "La Nuit des âmes",
+      "type": "image",
+      "sort": 100,
+      "title": {
+        "show": false,
+        "level": 1
+      },
+      "src": "modules/lakour-veillees/assets/fetes/halloween.jpg",
+      "image": {
+        "caption": "Lanternes de navet sur les rebords des fenêtres de Brumecombe, la nuit des âmes."
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "fO7n9sdWH6cH3z8S",
+      "_key": "!journal.pages!BmG4Y4VZkG7WKJvi.fO7n9sdWH6cH3z8S",
+      "name": "La fête à Brumecombe",
+      "type": "text",
+      "sort": 200,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Quand les morts reviennent veiller</h2><p>La dernière nuit d'octobre, Brumecombe laisse ses portes entrebâillées. On creuse des navets, on y pose une chandelle, on les aligne sur les rebords des fenêtres pour que les morts de l'année retrouvent le chemin du coin du feu. On ne leur parle pas : on les écoute.</p><p>Les vieilles disent que les âmes ne mentent jamais. Elles disent aussi qu'elles frappent fort, et que dans la brume, les loups entendent toutes les portes.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "iwBzuvvMaFUHSofN",
+      "_key": "!journal.pages!BmG4Y4VZkG7WKJvi.iwBzuvvMaFUHSofN",
+      "name": "Les règles de la veillée",
+      "type": "text",
+      "sort": 300,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Le murmure des âmes</h2><p>Après chaque nuit où quelqu'un est mort, l'âme du <strong>premier mort de la nuit</strong> s'assoit au pied du lit d'un <strong>vivant tiré au hasard</strong> (de n'importe quel camp). Elle lui murmure, dans son carnet secret, si <strong>deux autres vivants, tirés au hasard,</strong> sont <strong>du même camp</strong> ou non — tels que les voient les visions : le Loup déguisé y passe pour un homme du Village, le Louvetier pour un loup.</p><h2>Les loups entendent</h2><p>Chaque loup vivant apprend, en secret, <strong>à quelle porte</strong> l'âme a frappé — jamais ce qu'elle a murmuré.</p><h2>En pratique</h2><ul><li>Une seule âme par nuit, même si plusieurs sont morts ; aucune après une nuit calme, ni quand il reste moins de trois vivants.</li><li>Ce que l'âme murmure est vrai ; ce que vous en répétez ne l'est pas forcément. Un loup qui reçoit un murmure peut le travestir.</li><li>Celui qui a reçu un murmure devient une proie de choix : à lui de choisir quand le dire.</li><li>Le narrateur ne confirme jamais un murmure, ni qui l'a reçu.</li></ul>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    }
+  ]
+}

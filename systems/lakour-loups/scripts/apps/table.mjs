@@ -34,7 +34,7 @@ const api = () => game.lakourLoups;
 const nomDe = id => game.actors.get(id)?.name ?? id;
 const TYPES_EFFETS = ["verrou", "surveille", "gite", "traversee", "taverne", "lame", "cachette", "asile", "ecluse"];
 const ICONES_REGISTRE = { vote: "fa-scale-balanced", mort: "fa-cross", bailli: "fa-stamp", declaration: "fa-feather-pointed",
-  passage: "fa-person-walking-luggage", accusation: "fa-hand-point-right", deuil: "fa-bell" };
+  passage: "fa-person-walking-luggage", accusation: "fa-hand-point-right", deuil: "fa-bell", fete: "fa-star" };
 
 async function tenter(fn) {
   try { return await fn(); } catch (e) { ui.notifications.error(e.message); console.error(e); }
@@ -210,6 +210,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
         peutDistribuer: total >= 1,
         peste: Boolean(p.peste),
         saintMartin: p.format === L.FORMAT_SAINT_MARTIN,
+        fetes: veilleesAPreparer(p),
         voix: voixDuMonde()
       };
     }
@@ -244,10 +245,12 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
     const presage = tenterSync(() => api().presage(), null);
     const saints = gm ? { etoileOuverte: Boolean(etat.partie) && etat.tour <= 1 && etat.nuitResolue < 1, etoile: etat.bonneEtoile ? nomDe(etat.bonneEtoile) : "",
       vivants: tousLesVillageois().filter(a => a.system.vivant).map(a => ({ id: a.id, nom: a.name, choisi: a.id === etat.bonneEtoile })) } : null;
+    // La veillée de fête (publique : son nom, la neige du matin, le masque du défilé) ; ses secrets au MJ actif seul.
+    const fete = etat.partie ? feteDeLaTable(mjActif) : null;
     // L'élection quand elle est due (une par jour, avant le vote d'exécution) ; nommer le Bailli à la main quand la charge est vide.
     // secretsPerdus : secrets absents ou plus vieux que le coffre ou parts attendues : rien de la partie ne s'écrit (coffre.mjs).
     return {
-      presage: presage?.cle ? presage : null, glas: etat.glas, saints,
+      presage: presage?.cle ? presage : null, glas: etat.glas, saints, fete,
       gm, phase: etat.phase, phaseLibelle: libellePhase(etat.phase), tour: etat.tour, fini: fin,
       composition: gm ? etat.composition : "", peste: gm && Boolean(etat.peste?.active),
       deuil: etat.deuil?.actif ? { compte: etat.deuil.compte } : null, saintMartin: L.estSaintMartin(etat),
@@ -297,6 +300,10 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
     }
     this.element.querySelector("select[name=prepNiveau]")?.addEventListener("change", ev => {
       this.preparation.niveau = ev.currentTarget.value;
+      this.render();
+    });
+    this.element.querySelector("select[name=prepFete]")?.addEventListener("change", ev => {
+      this.preparation.fete = L.cleDeFete(ev.currentTarget.value);
       this.render();
     });
     clearInterval(this._minuterie);
@@ -546,6 +553,32 @@ export function cloreLeVote() {
     for (const id of r.elus) await api().eliminer(id, { cause: "vote" });
     await api().verifierVictoire();
   });
+}
+
+// ---------------- les veillées de fête
+// À la préparation : la liste des veillées, celle que le calendrier propose marquée ; la première fois, elle est pré-sélectionnée
+// (prep.fete null : rien de choisi encore) ; le MJ décide (« Aucune »). Rien pour une Nuit de la Saint-Martin.
+function veilleesAPreparer(p) {
+  const v = tenterSync(() => api().veilleesDeFete(), null);
+  if (!v) return null;
+  if (p.fete === null) p.fete = v.proposee;
+  return {
+    saintMartin: p.format === L.FORMAT_SAINT_MARTIN,
+    options: [{ cle: "", nom: t("LAKOUR_LOUPS.Fetes.Aucune"), choisie: !p.fete },
+      ...v.veillees.map(x => ({ cle: x.cle, nom: x.cle === v.calendrier ? `${x.nom} (${t("LAKOUR_LOUPS.Fetes.Proposee")})` : x.nom, choisie: x.cle === p.fete }))],
+    aide: p.fete ? v.veillees.find(x => x.cle === p.fete)?.aide ?? "" : t("LAKOUR_LOUPS.Fetes.PreparationAide")
+  };
+}
+
+// La veillée de fête en jeu : public (nom, aide, neige du matin, masque du défilé) ; ses secrets, au MJ actif seul.
+function feteDeLaTable(mjActif) {
+  const f = tenterSync(() => api().fete(), null);
+  if (!f?.cle) return null;
+  const s = mjActif ? tenterSync(() => api().secretsDeFete(), null) : null;
+  const secrets = s ? [s.masque ? t(s.masqueTombe ? "LAKOUR_LOUPS.Fetes.Secrets.MasqueTombe" : "LAKOUR_LOUPS.Fetes.Secrets.Masque", { nom: s.masque.nom }) : "",
+    s.present ? t(s.presentOuvert ? "LAKOUR_LOUPS.Fetes.Secrets.PresentOuvert" : "LAKOUR_LOUPS.Fetes.Secrets.Present", { nom: s.present.nom }) : "",
+    s.promis.length === 2 ? t("LAKOUR_LOUPS.Fetes.Secrets.Promis", { a: s.promis[0].nom, b: s.promis[1].nom }) : ""].filter(Boolean).join(" · ") : "";
+  return { nom: f.nom, aide: f.aide, neige: f.neige, defile: f.defile?.nom ?? "", secrets };
 }
 
 // ---------------- la peste noire

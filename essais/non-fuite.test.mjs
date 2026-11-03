@@ -10,6 +10,7 @@
 // - aucun chuchotement au chat ; une fiche, un carnet, une demande ne vont qu'à leur joueur ; la meute (« loups » des salons) à un
 //   loup seulement ;
 // - pendant la nuit, aucun réglage monde n'est écrit (ni l'état public, ni le coffre, ni les compteurs du MJ IA).
+// Les veillées de fête (0.10.0) aussi : leurs secrets (masque, présent, promis, murmure des âmes) ne vont qu'aux concernés.
 // Et la migration d'une partie d'avant 0.9.0 (rôles sur les fiches, joueurs propriétaires) les retire des documents.
 // Lancer : npm run essais
 import { test } from "node:test";
@@ -18,7 +19,7 @@ import { cpSync, mkdtempSync, readFileSync, writeFileSync, rmSync } from "node:f
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { pathToFileURL, fileURLToPath } from "node:url";
-import { installerFoundry, simulerJoueurs, emissions, messages, reglages, calme, livreA } from "./doublures/foundry-loups.mjs";
+import { installerFoundry, simulerJoueurs, emissions, messages, reglages, calme, livreA, FR } from "./doublures/foundry-loups.mjs";
 
 installerFoundry({ joueurs: 8, contenu: true });
 const SYSTEME = fileURLToPath(new URL("../systems/lakour-loups/", import.meta.url));
@@ -44,6 +45,13 @@ const documents = () => villageois().map(a => ({ id: a.id, name: a.name, system:
 // Les réglages du monde (système et MJ IA) : livrés à tous.
 const reglagesMonde = () => [...reglages.entries()].filter(([, r]) => r.conf?.scope === "world").map(([k, r]) => [k, r.valeur]);
 
+// Les lignes que les veillées de fête n'écrivent que pour le MJ (chronique secrète, narration) : leur forme, d'après les traductions.
+const modele = texte => new RegExp(texte.replace(/[.*+?^$()|[\]\\]/g, "\\$&").replace(/\{\w+\}/g, ".+?"));
+const F = FR.LAKOUR_LOUPS;
+const LIGNES_SECRETES_DE_FETE = [...Object.values(F.Fetes.Journal), F.Fetes.Ames.MjMeme, F.Fetes.Ames.MjAutre, F.Nuit.PresentMj, F.Nuit.MasqueTombe].map(modele);
+// Ce que le chat montre, entités HTML décodées (une apostrophe échappée ne doit pas cacher une fuite).
+const decoder = t => String(t).replace(/<[^>]+>/g, " ").replace(/&#0?39;|&#x27;|&apos;/gi, "'").replace(/&quot;/g, "\"").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+
 // ------------------------------------------------------------------ le crible
 function crible(etat) {
   const fuites = [];
@@ -68,8 +76,20 @@ function crible(etat) {
   if (!fin && (p.composition || "peste" in p)) fuite("*", "composition ou peste publiques avant la fin");
   if (Number(p.pont?.bloqueNuit) || p.voteDoubleDemain) fuite("*", "Pont bloqué ou cloche à venir publics");
   if ((p.masques ?? []).length || Object.keys(p.somnambules ?? {}).length || (p.journalSecret ?? []).length) fuite("*", "masques, rêves ou chronique secrète publics");
+  if (Object.values(p.secretsDeFete ?? {}).some(x => (Array.isArray(x) ? x.length : x))) fuite("*", "secrets de fête publics");
+  const fete = api.etat().secretsDeFete ?? {};
   // Le chat : aucun chuchotement pendant une partie (il serait livré à tous).
   for (const m of nouveauxMessages) if (m.whisper?.length) fuite("*", `chuchotement au chat : ${String(m.content).slice(0, 80)}`);
+  // Les veillées de fête : leurs lignes secrètes ni au chat, ni dans un réglage monde, ni dans un message diffusé sans destinataire ;
+  // le hook public de la veillée ne porte que { cle, quoi, tour }.
+  const diffuses = emissions.slice(etat.vusDiffusion ?? 0).filter(e => !e.recipients);
+  etat.vusDiffusion = emissions.length;
+  for (const [ou, texte] of [["chat", nouveauxMessages.map(m => decoder(m.content)).join("\n")], ["réglages monde", monde], ["socket sans destinataire", JSON.stringify(diffuses)]]) {
+    for (const m of LIGNES_SECRETES_DE_FETE) if (m.test(texte)) fuite("*", `une ligne secrète de la veillée de fête (${m.source.slice(0, 50)}) dans ${ou}`);
+  }
+  for (const e of diffuses.filter(e => e.type === "hook" && e.nom === "lakourLoups.fete")) {
+    if (JSON.stringify(Object.keys(e.args?.[0] ?? {}).sort()) !== JSON.stringify(["cle", "quoi", "tour"])) fuite("*", `hook public de la veillée trop bavard : ${JSON.stringify(e.args)}`);
+  }
   // Les documents : rien de secret sur un villageois non révélé.
   for (const a of villageois()) {
     if (publies.has(a.id)) continue;
@@ -114,6 +134,13 @@ function crible(etat) {
       if (m.type === "demande" && m.destinataire !== u) fuite(u, "la demande d'un autre");
       if (m.type === "vus" && Object.keys(m.vus ?? {}).length && !voitTout) fuite(u, "les rôles des autres sans y avoir droit");
       if (m.type === "salon" && (m.ligne?.loups ?? []).length && !loup) fuite(u, "la meute dans la ligne d'un non-loup");
+      // Les veillées de fête : chaque secret à ses seuls destinataires.
+      const t = m.type === "secret" ? String(m.entree?.texte ?? "") : "";
+      if (/le masque s'est posé sur ton visage/.test(t) && moi?.id !== fete.masque) fuite(u, "le masque du Carnaval d'un autre");
+      if (/présent sur ton seuil/.test(t) && moi?.id !== fete.present) fuite(u, "le présent d'un autre");
+      if (/ton cœur s'est lié/.test(t) && !(fete.promis ?? []).includes(moi?.id)) fuite(u, "une promesse qui n'est pas la sienne");
+      if (/(une âme a frappé à la porte|Les promis de la fête s'affichent)/.test(t) && !loup) fuite(u, "ce que la meute entend, à un non-loup");
+      if (/s'est assise au pied de votre lit/.test(t) && etat.murmures) etat.murmures.push(u);
     }
   }
   return fuites;
@@ -129,7 +156,7 @@ function espionnerEcritures(etat) {
 }
 
 // ------------------------------------------------------------------ une partie complète
-async function partie({ graine, peste = false, gens = false, compagnons = 0, revelerALaMort = true, joueurs = 7, roles = [] } = {}) {
+async function partie({ graine, peste = false, gens = false, compagnons = 0, revelerALaMort = true, joueurs = 7, roles = [], fete = "" } = {}) {
   installerFoundry({ joueurs: 8, contenu: true });
   enregistrerReglages(() => {});
   ecouterSocket();
@@ -138,7 +165,7 @@ async function partie({ graine, peste = false, gens = false, compagnons = 0, rev
   await game.settings.set("lakour-loups", "gensDePassage", gens);
   // Les compagnons IA : un cerveau simple (le premier candidat ; un mot quelconque).
   api.resolveurs.compagnon = d => (d.mode === "texte" ? "Rien vu." : [d.candidats.find(c => c.id !== d.acteurId)?.id].filter(Boolean));
-  const etat = { etape: "début", vusMessages: 0, vusSockets: {}, connues: {}, enNuit: false, ecrituresNocturnes: [] };
+  const etat = { etape: "début", vusMessages: 0, vusSockets: {}, connues: {}, enNuit: false, ecrituresNocturnes: [], murmures: [] };
   espionnerEcritures(etat);
   const humains = Array.from({ length: joueurs }, (_, i) => `u${i + 1}`);
   const ia = Array.from({ length: compagnons }, (_, i) => `Compagnon ${i + 1}`);
@@ -146,7 +173,7 @@ async function partie({ graine, peste = false, gens = false, compagnons = 0, rev
   // Les compagnons d'abord créés (comme par le MJ IA), puis la partie.
   const ids = [];
   for (const nom of ia) ids.push((await Actor.implementation.create({ name: nom, type: "villageois", system: { joueur: "", compagnon: true } })).id);
-  await api.nouvellePartie({ memesJoueurs: false, joueurs: humains, compagnons: ids, graine, peste, niveau: "chaos", roles });
+  await api.nouvellePartie({ memesJoueurs: false, joueurs: humains, compagnons: ids, graine, peste, niveau: "chaos", roles, fete });
   await calme();
   await rangement();
   const fuites = [];
@@ -190,7 +217,8 @@ async function partie({ graine, peste = false, gens = false, compagnons = 0, rev
     if (await api.verifierVictoire()) break;
   }
   await etape("fin");
-  return { fuites, nocturnes: etat.ecrituresNocturnes, vainqueur: api.etat().vainqueur, morts: api.etat().morts.length,
+  return { fuites, nocturnes: etat.ecrituresNocturnes, vainqueur: api.etat().vainqueur, morts: api.etat().morts.length, fete: api.etat().fete.cle,
+    secretsDeFete: api.etat().secretsDeFete, murmures: etat.murmures,
     cles: villageois().map(a => secretDuMJ.role(a)?.system.cle) };
 }
 
@@ -201,17 +229,31 @@ const PARTIES = [
   { graine: "cendres", joueurs: 7, revelerALaMort: false, roles: ["loup-deguise", "loup-des-roseaux", "louvetier", "somnambule", "chasseur-de-primes", "juge-de-paix", "sonneur"] },
   { graine: "fievre", joueurs: 7, peste: true },
   { graine: "passage", joueurs: 7, gens: true, roles: ["loup-de-brumecombe", "loup-hurleur", "veilleuse-de-lanterne", "pyromane", "ermite", "sourcier", "garde-du-pont"] },
-  { graine: "roseaux", joueurs: 5, compagnons: 3, roles: ["loup-affame", "loup-flaireur", "dame-du-gue", "pecheur-de-nuit", "braconniere", "gardienne-des-cles", "rosiere", "conteuse"] }
+  { graine: "roseaux", joueurs: 5, compagnons: 3, roles: ["loup-affame", "loup-flaireur", "dame-du-gue", "pecheur-de-nuit", "braconniere", "gardienne-des-cles", "rosiere", "conteuse"] },
+  // Les veillées de fête (0.10.0), dont une avec des compagnons IA et une en peste noire.
+  { graine: "ames", joueurs: 7, fete: "nuit-des-ames" },
+  { graine: "hiver", joueurs: 6, compagnons: 2, fete: "veillee-d-hiver" },
+  { graine: "masques", joueurs: 7, fete: "carnaval-des-masques", roles: ["loup-de-brumecombe", "loup-deguise", "liseuse-de-cendres", "sourcier", "colporteur", "herboriste", "garde-du-pont"] },
+  { graine: "promis", joueurs: 7, fete: "fete-des-promis" },
+  { graine: "fievre-promis", joueurs: 7, peste: true, fete: "fete-des-promis" }
 ];
 
 for (const p of PARTIES) {
-  test(`non-fuite : partie « ${p.graine} » (${p.joueurs} joueurs${p.compagnons ? `, ${p.compagnons} IA` : ""}${p.peste ? ", peste noire" : ""}${p.gens ? ", gens de passage" : ""}${p.revelerALaMort === false ? ", morts non révélés" : ""})`, async () => {
+  test(`non-fuite : partie « ${p.graine} » (${p.joueurs} joueurs${p.compagnons ? `, ${p.compagnons} IA` : ""}${p.peste ? ", peste noire" : ""}${p.gens ? ", gens de passage" : ""}${p.revelerALaMort === false ? ", morts non révélés" : ""}${p.fete ? `, ${p.fete}` : ""})`, async () => {
     const r = await partie(p);
     assert.ok(r.morts > 0, "la partie a eu lieu");
     assert.ok(r.vainqueur, "jusqu'à la victoire");
     for (const cle of p.roles ?? []) if (!p.peste) assert.ok(r.cles.includes(cle) || cle === "somnambule", `${cle} distribué`);
     assert.deepEqual(r.fuites.slice(0, 15), [], `${r.fuites.length} fuite(s)`);
     assert.deepEqual(r.nocturnes, [], "aucun réglage monde écrit pendant la nuit");
+    if (p.fete) {
+      assert.equal(r.fete, p.fete, "la veillée de fête est en jeu");
+      const s = r.secretsDeFete;
+      if (p.fete === "veillee-d-hiver") assert.ok(s.present, "un présent");
+      if (p.fete === "carnaval-des-masques") assert.ok(s.masque, "un masque");
+      if (p.fete === "fete-des-promis") assert.equal(s.promis.length, 2, "deux promis");
+      if (p.fete === "nuit-des-ames") assert.ok(r.murmures.length > 0, "au moins un murmure des âmes");
+    }
   });
 }
 
@@ -233,6 +275,10 @@ test("non-fuite : le crible attrape un rôle au document, un chuchotement, une f
   assert.ok(crible(etat).some(f => f.includes("chuchotement")), "un chuchotement");
   game.socket.emit("system.lakour-loups", { type: "fiche", partie: "x", acteurId: b.id, fiche: { camp: "village", amoureux: "", role: { name: secretDuMJ.role(b).name, system: structuredClone(secretDuMJ.role(b).system) } } }, { recipients: [a.system.joueur] });
   assert.ok(crible(etat).some(f => f.includes("la fiche d'un autre")), "une fiche mal adressée");
+  await ChatMessage.implementation.create({ content: `<div>${F.Fetes.Journal.Present.replace("{nom}", a.name)}</div>` });
+  assert.ok(crible(etat).some(f => f.includes("ligne secrète de la veillée")), "une ligne secrète de fête au chat");
+  game.socket.emit("system.lakour-loups", { type: "hook", nom: "lakourLoups.fete", args: [{ cle: "veillee-d-hiver", quoi: "ouverture", tour: 0, present: a.id }] });
+  assert.ok(crible(etat).some(f => f.includes("hook public de la veillée trop bavard")), "un hook public bavard");
   espionnerEcritures(etat);
   etat.enNuit = true;
   await game.settings.set("lakour-loups", "coffre", { essai: 1 });
@@ -292,8 +338,18 @@ const MUTATIONS = [
   ["scripts/api.mjs", "      await modifierEtat(e => majFiche(majFiche(e, c.a, f => ({ ...f, amoureux: c.b })), c.b, f => ({ ...f, amoureux: c.a })));",
     "      await game.actors.get(c.a)?.update({ \"system.amoureux\": c.b });", "lien d'amour secret"],
   ["scripts/api.mjs", "    if (!L.egaux(pub, brut)) await game.settings.set(ID, \"partie\", pub);", "    await game.settings.set(ID, \"partie\", pub);", "rien d'écrit la nuit"],
-  ["logique/etat.mjs", "    \"fiches\", \"pont\", \"voteDoubleDemain\", \"secretsIncomplets\"]) pub[cle]", "    \"pont\", \"voteDoubleDemain\", \"secretsIncomplets\"]) pub[cle]", "fiches hors de l'état public"],
-  ["logique/fiches.mjs", "  return { camp: x.camp, amoureux: x.amoureux, role: x.role ? copie(x.role) : null };", "  return { ...x, role: x.role ? copie(x.role) : null };", "protections hors de la fiche du joueur"]
+  ["logique/etat.mjs", "    \"fiches\", \"pont\", \"voteDoubleDemain\", \"secretsIncomplets\", \"secretsDeFete\"]) pub[cle]", "    \"pont\", \"voteDoubleDemain\", \"secretsIncomplets\", \"secretsDeFete\"]) pub[cle]", "fiches hors de l'état public"],
+  ["logique/fiches.mjs", "  return { camp: x.camp, amoureux: x.amoureux, role: x.role ? copie(x.role) : null };", "  return { ...x, role: x.role ? copie(x.role) : null };", "protections hors de la fiche du joueur"],
+  // Les veillées de fête (rejouées sur leur partie : l'indice dans PARTIES).
+  ["logique/etat.mjs", "\"secretsIncomplets\", \"secretsDeFete\"]) pub[cle]", "\"secretsIncomplets\"]) pub[cle]", "secrets de fête hors de l'état public", PARTIES.findIndex(p => p.graine === "hiver")],
+  ["scripts/api.mjs", "    for (const loup of tousLesVillageois().filter(x => x.system.vivant && campDe(x) === \"meute\")) {\n      await prevenir(loup.id",
+    "    for (const loup of tousLesVillageois().filter(x => x.system.vivant)) {\n      await prevenir(loup.id", "les promis : à la meute seule", PARTIES.findIndex(p => p.graine === "promis")],
+  ["logique/fetes.mjs", "  const loups = vivants.filter(v => v.camp === \"meute\").map(v => v.id);", "  const loups = vivants.map(v => v.id);", "la porte des âmes : aux loups seuls", PARTIES.findIndex(p => p.graine === "ames")],
+  ["scripts/api.mjs", "    await prevenir(secrets.masque, t(\"LAKOUR_LOUPS.Fetes.carnaval-des-masques.Carnet\"", "    for (const a of acteurs) await prevenir(a.id, t(\"LAKOUR_LOUPS.Fetes.carnaval-des-masques.Carnet\"", "le masque : à son seul porteur", PARTIES.findIndex(p => p.graine === "masques")],
+  // M1 (relecture 10) : les secrets de la veillée dans le hook PUBLIC d'ouverture ; M2 : les lignes secrètes du MJ postées au chat.
+  ["scripts/api.mjs", "annoncer(\"lakourLoups.fete\", [{ cle, quoi: \"ouverture\", tour: lireEtat().tour }]);", "annoncer(\"lakourLoups.fete\", [{ cle, quoi: \"ouverture\", tour: lireEtat().tour, ...secrets }]);", "M1 : le hook public sans secret", PARTIES.findIndex(p => p.graine === "hiver")],
+  ["scripts/api.mjs", "  for (const texte of annonces) await annonceChat(echapper(texte));\n  annoncer(\"lakourLoups.fete\"", "  for (const texte of [...annonces, ...pourMJ]) await annonceChat(echapper(texte));\n  annoncer(\"lakourLoups.fete\"", "M2 : les lignes du MJ hors du chat", PARTIES.findIndex(p => p.graine === "hiver")],
+  ["scripts/api.mjs", "    for (const texte of annonces) await annonceChat(echapper(texte));\n    if (envoyer)", "    for (const texte of [...annonces, ...narration]) await annonceChat(echapper(texte));\n    if (envoyer)", "la narration de l'aube hors du chat", PARTIES.findIndex(p => p.graine === "ames")]
 ];
 
 async function chargerMutant(fichier, avant, apres) {
@@ -311,10 +367,10 @@ async function chargerMutant(fichier, avant, apres) {
 test("non-fuite : chaque règle cassée est détectée par une partie complète", async () => {
   const passees = [];
   try {
-    for (const [fichier, avant, apres, regle] of MUTATIONS) {
+    for (const [fichier, avant, apres, regle, indice = 1] of MUTATIONS) {
       await chargerMutant(fichier, avant, apres);
       let r;
-      try { r = await partie(PARTIES[1]); } catch { continue; }
+      try { r = await partie(PARTIES[indice]); } catch { continue; }
       if (!r.fuites.length && !r.nocturnes.length) passees.push(`${regle} (${fichier})`);
     }
   } finally { await charger(); }

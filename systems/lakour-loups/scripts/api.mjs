@@ -23,7 +23,8 @@
 // départ (socket « depart », pour soi) ou un exil voté les fait quitter la veillée sans mourir. Le Banc des accusés (logique/banc.mjs) :
 // un joueur accuse par le socket (« accusation »). Le Glas du deuil (logique/deuil.mjs) : le compte est public, les pouvoirs de
 // la meute un secret (secrets du MJ, carnets des loups). La Nuit de la Saint-Martin (logique/saintmartin.mjs) : l'autel est un
-// secret du MJ.
+// secret du MJ. Les Veillées de fête (logique/fetes.mjs, 0.10.0) : la fête en jeu, la neige et le défilé sont publics ; le masque,
+// le présent et les promis vivent dans les secrets du MJ (etat.secretsDeFete) et au carnet des seuls concernés.
 //
 // Les FICHES (0.9.0, logique/fiches.mjs) : le rôle, le camp, l'amoureux et les protections de chaque villageois vivent dans les
 // secrets du MJ actif (etat.fiches), jamais dans les documents que Foundry livre à tous. Chaque joueur reçoit SA fiche par le
@@ -590,6 +591,8 @@ export function ligneDuRegistre(x) {
       { tour, nom: nom(x.acteurId), role: x.cle ? nomDeRole(x.cle) : "" });
     case "accusation": return t("LAKOUR_LOUPS.Registre.Accusation", { tour, nom: nom(x.acteurId), contre: nom(x.contre) });
     case "deuil": return t("LAKOUR_LOUPS.Registre.Deuil", { tour, n: x.compte });
+    case "fete": return t(`LAKOUR_LOUPS.Registre.Fete.${["neige", "defile"].includes(x.quoi) ? x.quoi : "ouverture"}`,
+      { tour, fete: L.cleDeFete(x.cle) ? nomDeFete(x.cle) : "", role: x.nom || (x.role ? nomDeRole(x.role) : "") });
     case "mort": return t("LAKOUR_LOUPS.Registre.Mort", { tour, nom: nom(x.acteurId), cause: libelleCause(x.cause) });
     case "bailli": return t(`LAKOUR_LOUPS.Registre.Bailli.${x.comment}`, { tour, nom: nom(x.acteurId), de: x.de ? nom(x.de) : "" });
     case "declaration": return t("LAKOUR_LOUPS.Registre.Declaration", { tour, nom: nom(x.acteurId), texte: x.texte });
@@ -653,7 +656,7 @@ function recitDeFin(etat, lignes, chroniques = null) {
   const lien = chroniques ? `<p>${t("LAKOUR_LOUPS.Chroniques.Lien", { lien: `@UUID[${chroniques.uuid}]{${echapper(chroniques.name)}}` })}</p>` : "";
   // La peste noire se dévoile enfin.
   const peste = L.estPeste(etat) ? `<p><strong>${t("LAKOUR_LOUPS.Peste.Recit")}</strong></p>` : "";
-  return `<h3>${t("LAKOUR_LOUPS.Recit.Titre")}</h3>${peste}<p>${t("LAKOUR_LOUPS.Recit.Resume", { n: lignes.length, tours: etat.tour })}</p>${listeDuRecit(lignes)}${lien}`;
+  return `<h3>${t("LAKOUR_LOUPS.Recit.Titre")}</h3>${peste}<p>${t("LAKOUR_LOUPS.Recit.Resume", { n: lignes.length, tours: etat.tour })}</p>${recitDeLaFete(etat)}${listeDuRecit(lignes)}${lien}`;
 }
 
 // Une demande hors du réveil des rôles, par le même mécanisme (fenêtre ou carte chez son seul joueur, résolveur pour un
@@ -875,6 +878,117 @@ async function envoyerMasques(acteur, cles = lireEtat().masques, contenu = null)
   return envoyerSecret(acteur.id, { texte, titre: t("LAKOUR_LOUPS.Masques.Titre") });
 }
 
+// ------------------------------------------------------------------ Veillées de fête (logique/fetes.mjs)
+// La veillée que propose la fête du calendrier du moteur (lakour-mj-ia, api.fetes.active) dans CE navigateur ("" : aucune).
+export function veilleeDuCalendrier() {
+  try { return L.veilleeDuCalendrier(game.modules?.get?.("lakour-mj-ia")?.api?.fetes?.active?.()?.fete ?? ""); } catch { return ""; }
+}
+
+// La veillée de fête d'une partie qui commence. fete : une clé ("" : aucune), choisie par le MJ (Table, outil) ; non précisée :
+// le réglage monde « veilleeDeFete » — une veillée nommée, « date » (celle que propose le calendrier ce jour-là), ou "" : aucune
+// d'office, sinon celle de la partie précédente (« Rejouer » la garde, comme le format). La date ne l'impose jamais d'elle-même.
+function feteVoulue(fete, precedente = "") {
+  if (typeof fete === "string") return L.cleDeFete(fete);
+  const r = lireReglage("veilleeDeFete", "");
+  if (r === "date") return veilleeDuCalendrier();
+  return L.cleDeFete(r) || L.cleDeFete(precedente);
+}
+const nomDeFete = cle => (cle ? t(`LAKOUR_LOUPS.Fetes.${cle}.Nom`) : "");
+
+// La veillée de fête qui s'ouvre (après la distribution et les Masques de veillée) : les tirages secrets (masque, présent, promis)
+// dans les secrets du MJ ; chacun des concernés prévenu à lui seul (carnet) ; la meute apprend les promis ; la fête annoncée à tous
+// (chat, Registre), et le défilé du Carnaval. sortie : celle de distribuer.
+async function ouvrirLaFete(cle, { sortie, graine }) {
+  if (!cle) return;
+  const hasard = L.creerHasard(graine === undefined || graine === null || graine === "" ? undefined : `fete|${graine}`);
+  const acteurs = sortie.map(s => game.actors.get(s.acteurId)).filter(Boolean);
+  const secrets = L.tirerSecretsDeFete(cle, { joueurs: acteurs.map(a => ({ id: a.id, camp: campDe(a) })), hasard });
+  let defile = "", defileNom = "";
+  if (cle === L.CARNAVAL_DES_MASQUES) {
+    const c = await contenuDisponible();
+    const distribues = sortie.map(s => s.roleCle);
+    defile = L.choisirDefile({ masques: lireEtat().masques, enJeu: distribues, hasard,
+      roles: [...c.camps].map(([r, camp]) => ({ cle: r, camp, surDemande: Boolean(c.equilibre.roles?.[r]?.surDemande) })) });
+    defileNom = defile ? c.noms.get(defile) ?? nomDeRole(defile) : "";
+  }
+  const nom = id => game.actors.get(id)?.name ?? id;
+  // La Fête des promis sans promis (moins de deux joueurs du Village) : l'annonce ne promet rien.
+  const sansPromis = cle === L.FETE_DES_PROMIS && secrets.promis.length < 2;
+  const annonces = [t(`LAKOUR_LOUPS.Fetes.${cle}.${sansPromis ? "AnnonceSans" : "Annonce"}`), ...(defile ? [t("LAKOUR_LOUPS.Fetes.carnaval-des-masques.Defile", { role: defileNom })] : [])];
+  const pourMJ = [secrets.masque ? t("LAKOUR_LOUPS.Fetes.Journal.Masque", { nom: nom(secrets.masque) }) : "",
+    secrets.present ? t("LAKOUR_LOUPS.Fetes.Journal.Present", { nom: nom(secrets.present) }) : "",
+    secrets.promis.length === 2 ? t("LAKOUR_LOUPS.Fetes.Journal.Promis", { a: nom(secrets.promis[0]), b: nom(secrets.promis[1]) }) : ""].filter(Boolean);
+  await modifierEtat(e => {
+    e.fete = { ...L.normaliserFete(e.fete), defile, defileNom };   // la clé : posée à la distribution
+    e.secretsDeFete = secrets;
+    L.inscrire(e, { type: "fete", quoi: "ouverture", cle });
+    if (defile) L.inscrire(e, { type: "fete", quoi: "defile", cle, role: defile, nom: defileNom });
+    let x = e;
+    for (const texte of pourMJ) x = L.journaliserSecret(x, texte);
+    for (const texte of annonces) x = L.journaliser(x, texte);
+    return x;
+  });
+  for (const texte of annonces) await annonceChat(echapper(texte));
+  annoncer("lakourLoups.fete", [{ cle, quoi: "ouverture", tour: lireEtat().tour }]);
+  // Les secrets, au carnet des seuls concernés (un compagnon IA : son carnet, chez le MJ).
+  const prevenir = (id, texte) => {
+    const a = game.actors.get(id);
+    return a && (a.system.joueur || estCompagnon(a)) ? envoyerSecret(id, { texte, titre: nomDeFete(cle) }) : null;
+  };
+  // Le porteur du masque apprend le camp que le masque montrera à la première vision du Village (son apparence retournée : un Loup
+  // déguisé masqué paraît loup, un Louvetier masqué paraît du Village).
+  if (secrets.masque) {
+    const vu = L.apparenceMasquee(villageoisAPlat().find(v => v.id === secrets.masque), secrets.masque);
+    await prevenir(secrets.masque, t("LAKOUR_LOUPS.Fetes.carnaval-des-masques.Carnet", { camp: libelleCamp(vu) }));
+  }
+  if (secrets.present) await prevenir(secrets.present, t("LAKOUR_LOUPS.Fetes.veillee-d-hiver.Carnet"));
+  if (secrets.promis.length === 2) {
+    const [a, b] = secrets.promis;
+    await prevenir(a, t("LAKOUR_LOUPS.Fetes.fete-des-promis.Carnet", { nom: nom(b) }));
+    await prevenir(b, t("LAKOUR_LOUPS.Fetes.fete-des-promis.Carnet", { nom: nom(a) }));
+    for (const loup of tousLesVillageois().filter(x => x.system.vivant && campDe(x) === "meute")) {
+      await prevenir(loup.id, t("LAKOUR_LOUPS.Fetes.fete-des-promis.Meute", { a: nom(a), b: nom(b) }));
+    }
+  }
+}
+
+// Un nouveau loup (mordu, échange de rôles, gens de passage de la meute) apprend ce que la meute sait de la veillée : les promis.
+async function envoyerSecretsDeMeute(acteur) {
+  const etat = lireEtat();
+  const s = L.normaliserSecretsDeFete(etat.secretsDeFete);
+  if (!acteur || !L.estFete(etat, L.FETE_DES_PROMIS) || s.promis.length !== 2 || (!acteur.system.joueur && !estCompagnon(acteur))) return null;
+  const nom = id => game.actors.get(id)?.name ?? id;
+  return envoyerSecret(acteur.id, { texte: t("LAKOUR_LOUPS.Fetes.fete-des-promis.Meute", { a: nom(s.promis[0]), b: nom(s.promis[1]) }),
+    titre: nomDeFete(L.FETE_DES_PROMIS) });
+}
+
+// À l'aube de la Veillée d'hiver, la neige tombe-t-elle ? (avant que les bâtiments parlent : le Lavoir se tait sous la neige)
+// -> le texte de l'annonce, ou ""
+async function faireNeiger() {
+  const avant = lireEtat();
+  if (!L.tirerNeige(avant)) return "";
+  const texte = t("LAKOUR_LOUPS.Fetes.veillee-d-hiver.Neige");
+  await modifierEtat(e => {
+    e.fete = { ...L.normaliserFete(e.fete), neige: e.tour };
+    L.inscrire(e, { type: "fete", quoi: "neige", cle: L.VEILLEE_D_HIVER });
+    return e;
+  });
+  annoncer("lakourLoups.fete", [{ cle: L.VEILLEE_D_HIVER, quoi: "neige", tour: avant.tour }]);
+  return texte;
+}
+
+// Ce que les veillées de fête dévoilent au récit de fin (tout devient public) : le masque, le présent, les promis.
+function recitDeLaFete(etat) {
+  const cle = L.feteEnJeu(etat);
+  if (!cle) return "";
+  const s = L.normaliserSecretsDeFete(etat.secretsDeFete);
+  const nom = id => echapper(game.actors.get(id)?.name ?? id);
+  const lignes = [s.masque ? t("LAKOUR_LOUPS.Fetes.Recit.Masque", { nom: nom(s.masque) }) : "",
+    s.present ? t(s.presentOuvert ? "LAKOUR_LOUPS.Fetes.Recit.PresentOuvert" : "LAKOUR_LOUPS.Fetes.Recit.Present", { nom: nom(s.present) }) : "",
+    s.promis.length === 2 ? t("LAKOUR_LOUPS.Fetes.Recit.Promis", { a: nom(s.promis[0]), b: nom(s.promis[1]) }) : ""].filter(Boolean);
+  return `<p><strong>${echapper(nomDeFete(cle))}</strong>${lignes.length ? ` — ${lignes.join(" ")}` : ""}</p>`;
+}
+
 // Ce que fait un pouvoir de jour : la description de l'objet rôle, métier ou bâtiment, en texte brut (infobulles).
 function descriptionDuPouvoir(pouvoir, acteur) {
   const source = L.POUVOIRS_JOUR[pouvoir]?.source;
@@ -979,9 +1093,12 @@ export const api = {
   // Le Somnambule (logique/somnambule.mjs) reçoit l'objet du rôle qu'il croit tenir ; son vrai rôle reste dans les secrets du MJ.
   // glas : le Glas final du narrateur (jour N, 0 : jamais ; public). Le Dernier souffle et l'Almanach suivent leurs réglages.
   // format : "" ou "saint-martin" (la Nuit de la Saint-Martin, logique/saintmartin.mjs ; autel : les rôles sous l'autel, secret).
+  // fete : la veillée de fête (logique/fetes.mjs) — une clé, "" (aucune) ; non précisée : feteVoulue (réglage « veilleeDeFete »,
+  // sinon celle de la partie précédente). Jamais dans une Nuit de la Saint-Martin.
   async distribuer({ roles = [], metiers = [], joueurs = [], compagnons = [], maisons = [], graine, composition = "", batiments = [], peste = false, glas = 0,
-    format = "", autel = [] } = {}) {
+    format = "", autel = [], fete } = {}) {
     exigerMJ();
+    const cleFete = format === L.FORMAT_SAINT_MARTIN ? "" : feteVoulue(fete, lireEtat().fete?.cle);
     // Les secrets de la partie se scellent avec le coffre du MJ IA : sans lui, ils ne survivraient pas à ce navigateur.
     if (!coffreDisponible()) throw new Error(t("LAKOUR_LOUPS.Erreurs.SansCoffre"));
     const estPlaceCompagnon = id => { const a = game.actors.get(id); return a?.type === "villageois" && estCompagnon(a); };
@@ -1092,6 +1209,7 @@ export const api = {
       e.banc = L.bancInitial(!court && lireReglage("banc", false));
       e.deuil = L.deuilInitial(!court && lireReglage("glasDuDeuil", false));
       e.glas = L.normaliserGlas(glas);
+      e.fete = L.feteInitiale(cleFete);
       e.somnambules = somnambules;
       return L.journaliser(e, t("LAKOUR_LOUPS.Journal.Distribution", { n: sortie.length }));
     }, { sansSecrets: true });   // une partie neuve : elle ne doit rien aux secrets d'avant
@@ -1111,6 +1229,8 @@ export const api = {
         for (const a of loups) await envoyerMasques(a, masques, contenu);
       }
     }
+    // La veillée de fête : ses tirages secrets, son annonce, le défilé du Carnaval (après les Masques : il en montre un).
+    await ouvrirLaFete(cleFete, { sortie, graine });
     annoncer("lakourLoups.phase", ["preparation", etat], ["preparation", L.etatPublic(etat)]);
     if (etat.glas) await annonceChat(echapper(t("LAKOUR_LOUPS.Calendrier.GlasAnnonce", { n: etat.glas })));
     await sceller();
@@ -1161,8 +1281,10 @@ export const api = {
   // secret du MJ), jamais de peste noire, aucun bâtiment ; le résumé du MJ porte autel. Non précisé : celui de la partie
   // précédente (« Rejouer » après une Saint-Martin en rejoue une) ; "" : une partie ordinaire.
   // Les partis de la partie précédente (départ, exil : etat.partis) ne sont pas repris : leurs villageois quittent le village.
+  // fete : la veillée de fête (logique/fetes.mjs ; "" : aucune) ; non précisée : le réglage « veilleeDeFete », sinon celle de la
+  // partie précédente (distribuer). Le résumé la porte (publique, comme son annonce).
   async nouvellePartie({ memesJoueurs = true, joueurs = null, compagnons: ia = null, composition = "", roles = [], niveau = "", graine, peste, glas = 0,
-    format } = {}) {
+    format, fete } = {}) {
     exigerMJ();
     await consignerComposition();
     const avant = lireEtat();
@@ -1222,12 +1344,13 @@ export const api = {
     annulerDemandes();
     if (!memesJoueurs) for (const a of anciens.filter(x => x.system.joueur && !humains.includes(x.system.joueur))) await a.delete();
     const sortie = await api.distribuer({ roles: uuidsRoles, metiers, joueurs: humains, compagnons, maisons: L.maisonsDuVillage(total),
-      graine, composition: compo.cle, batiments, peste: enPeste, glas, ...(court ? { format: L.FORMAT_SAINT_MARTIN, autel: compo.autel } : {}) });
+      graine, composition: compo.cle, batiments, peste: enPeste, glas, ...(court ? { format: L.FORMAT_SAINT_MARTIN, autel: compo.autel } : {}),
+      ...(typeof fete === "string" ? { fete } : {}) });
     // La composition n'entre au réglage monde « historique » (livré à tous) qu'à la fin de la partie : en attendant, le MJ la garde.
     await modifierEtat(e => { e.aConsigner = { roles: [...cles], batiments: [...compo.batiments], niveau: compo.niveau, composition: compo.cle, quand: Date.now() }; return e; });
     const partie = lireEtat().partie;
     const resume = {
-      partie,
+      partie, fete: lireEtat().fete.cle,
       joueurs: sortie.filter(x => !x.compagnon).map(x => ({ userId: x.userId, nom: game.users.get(x.userId)?.name ?? "", acteurId: x.acteurId })),
       compagnons: sortie.filter(x => x.compagnon).map(x => ({ nom: game.actors.get(x.acteurId)?.name ?? "", acteurId: x.acteurId })),
       composition: { cle: compo.cle, libelle: compo.libelle, niveau: compo.niveau, roles: [...cles], batiments: [...compo.batiments],
@@ -1516,13 +1639,21 @@ export const api = {
       return e;
     });
 
+    // Les veillées de fête : la neige d'hiver tombe (ou non) avant que les bâtiments parlent ; l'âme du premier mort de la Nuit des
+    // âmes murmure à un vivant (et la meute entend à quelle porte).
+    const neige = await faireNeiger();
+    const nomActeur = id => game.actors.get(id)?.name ?? id;
+    const murmure = L.estFete(avant, L.NUIT_DES_AMES)
+      ? L.messagesDuMurmure(L.murmureDesAmes({ villageois: villageoisAPlat(), deces: r.deces, masque: L.masqueDuCarnaval(avant) }), nomActeur) : [];
     // Les bâtiments parlent à l'aube, sur l'état d'après la nuit.
     const aube = L.annoncesDeLAube({ villageois: villageoisAPlat(), etat: lireEtat(), tour, bilan: r.bilan, batiments: cles,
       revelerALaMort: reglage("revelerALaMort") });
-    const messages = [...r.messages.filter(m => m.destinataire !== "mj"), ...aube.prives].map(m => ({ acteurId: m.destinataire, texte: texteMessage(m) }));
-    const annonces = [...r.annonces, ...aube.annonces].map(texteMessage);
+    const messages = [...r.messages.filter(m => m.destinataire !== "mj"), ...aube.prives, ...murmure.filter(m => m.destinataire !== "mj")]
+      .map(m => ({ acteurId: m.destinataire, texte: texteMessage(m) }));
+    const annonces = [...(neige ? [neige] : []), ...[...r.annonces, ...aube.annonces].map(texteMessage)];
     const narration = [
       ...r.messages.filter(m => m.destinataire === "mj").map(texteMessage),
+      ...murmure.filter(m => m.destinataire === "mj").map(texteMessage),
       ...r.narrateur.map(n => t("LAKOUR_LOUPS.Nuit.ANarrer", {
         qui: game.actors.get(n.acteurId)?.name ?? n.acteurId, effet: n.effet || "—",
         cibles: n.cibles.map(id => game.actors.get(id)?.name ?? id).join(", ") || "—"
@@ -1542,6 +1673,10 @@ export const api = {
       // Le Glas du deuil : la vision a servi (une cible désignée) ; le linceul de cette nuit est tombé.
       if (r.deuil) x.pouvoirsDeuil.visions = Math.max(0, x.pouvoirsDeuil.visions - 1);
       if (L.linceulDeLaNuit(x, tour)) x.pouvoirsDeuil.linceul = 0;
+      // Le présent de la Veillée d'hiver ne s'ouvre qu'une fois.
+      if (r.presentOuvert) x.secretsDeFete = { ...L.normaliserSecretsDeFete(x.secretsDeFete), presentOuvert: true };
+      // Le masque du Carnaval a trompé une vision : il tombe.
+      if (r.masqueTombe) x.secretsDeFete = { ...L.normaliserSecretsDeFete(x.secretsDeFete), masqueTombe: true };
       x.cimetiere = [...new Set([...x.cimetiere, ...aube.cimetiere])];
       for (const texte of narration) x = L.journaliserSecret(x, texte);
       for (const texte of annonces) x = L.journaliser(x, texte);
@@ -1555,7 +1690,7 @@ export const api = {
     const presage = await tirerLePresage(r.bilan);
     await sceller();   // la nuit est finie : ses choix entrent au coffre
     return {
-      presage,
+      presage, neige: Boolean(neige),
       morts: r.morts, revelations: r.revelations,
       messages, narration, annonces,
       deces: r.deces, sauves: r.sauves, changements: r.changements, enAttente: r.enAttente, narrateur: r.narrateur, voteDouble: r.voteDouble,
@@ -1741,7 +1876,7 @@ export const api = {
     });
     // Rien au document, même pour un rôle révélé (relecture 7) : une morsure, un camp changé restent secrets jusqu'à sa mort.
     // Un villageois qui rejoint la meute (morsure) reçoit ses Masques de veillée.
-    if (camp === "meute" && avant !== "meute") await envoyerMasques(a);
+    if (camp === "meute" && avant !== "meute") { await envoyerMasques(a); await envoyerSecretsDeMeute(a); }
     return camp;
   },
 
@@ -1770,8 +1905,8 @@ export const api = {
     await envoyerRole(A);
     await envoyerRole(B);
     // Celui qui devient loup par l'échange reçoit les Masques de veillée de sa nouvelle meute.
-    if (db.system.camp === "meute" && da.system.camp !== "meute") await envoyerMasques(A);
-    if (da.system.camp === "meute" && db.system.camp !== "meute") await envoyerMasques(B);
+    if (db.system.camp === "meute" && da.system.camp !== "meute") { await envoyerMasques(A); await envoyerSecretsDeMeute(A); }
+    if (da.system.camp === "meute" && db.system.camp !== "meute") { await envoyerMasques(B); await envoyerSecretsDeMeute(B); }
     return true;
   },
 
@@ -2038,6 +2173,7 @@ export const api = {
     await envoyerRole(acteur);
     if (camp === "meute") {
       await envoyerMasques(acteur, lireEtat().masques, contenu);
+      await envoyerSecretsDeMeute(acteur);
       for (const loup of tousLesVillageois().filter(a => a.id !== acteur.id && a.system.vivant && campDe(a) === "meute")) {
         await envoyerSecret(loup.id, { texte: t("LAKOUR_LOUPS.Passage.NouveauLoup", { nom: acteur.name }), titre: t("LAKOUR_LOUPS.Passage.Titre") });
       }
@@ -2206,6 +2342,32 @@ export const api = {
     const cle = L.presageDuJour(e) || L.presageDeLaNuit(e, e.phase === "nuit" ? e.tour : e.tour + 1);
     return { actif: e.presage.actif, cle, tour: e.presage.tour,
       nom: cle ? t(`LAKOUR_LOUPS.Almanach.Presages.${cle}.Nom`) : "", effet: cle ? t(`LAKOUR_LOUPS.Almanach.Presages.${cle}.Effet`) : "" };
+  },
+
+  // ---------------------------------------------------------------- les Veillées de fête (logique/fetes.mjs)
+  // La veillée de fête en jeu, d'après l'état PUBLIC (tous) : { cle ("" : aucune), nom, aide, fete (la fête du calendrier),
+  // neige (ce matin), defile: { cle, nom } | null (le masque du défilé) }.
+  fete() {
+    const e = lirePublic();
+    const f = L.normaliserFete(e.fete);
+    return { cle: f.cle, nom: nomDeFete(f.cle), aide: f.cle ? t(`LAKOUR_LOUPS.Fetes.${f.cle}.Aide`) : "", fete: L.VEILLEES_DE_FETE[f.cle]?.fete ?? "",
+      neige: L.neigeDuJour(e), defile: f.defile ? { cle: f.defile, nom: f.defileNom || nomDeRole(f.defile) } : null };
+  },
+  // Ses secrets (MJ actif ; SECRET) : { masque, masqueTombe, present, presentOuvert, promis } avec les noms.
+  secretsDeFete() {
+    exigerMJ();
+    const s = L.normaliserSecretsDeFete(lireEtat().secretsDeFete);
+    const qui = id => (id ? { id, nom: game.actors.get(id)?.name ?? id } : null);
+    return { masque: qui(s.masque), masqueTombe: s.masqueTombe, present: qui(s.present), presentOuvert: s.presentOuvert, promis: s.promis.map(qui) };
+  },
+  // Les veillées que l'on peut choisir à la préparation, et celle que la Table propose (pré-sélectionnée) : le réglage
+  // « veilleeDeFete » s'il en nomme une, sinon celle de la fête du calendrier (moteur) ce jour-là. Jamais imposée.
+  // -> { proposee: cle | "", calendrier: cle | "", veillees: [{ cle, nom, aide, fete }] }
+  veilleesDeFete() {
+    const r = lireReglage("veilleeDeFete", "");
+    const calendrier = veilleeDuCalendrier();
+    return { proposee: L.cleDeFete(r) || calendrier, calendrier,
+      veillees: L.CLES_DE_FETE.map(cle => ({ cle, nom: nomDeFete(cle), aide: t(`LAKOUR_LOUPS.Fetes.${cle}.Aide`), fete: L.VEILLEES_DE_FETE[cle].fete })) };
   },
 
   // ---------------------------------------------------------------- les Saints du calendrier (MJ actif)

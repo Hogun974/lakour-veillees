@@ -489,7 +489,7 @@ const MUTATIONS = [
   ["victoire.mjs", "mort: v.vivant === false && !p ?", "mort: v.vivant === false ?", "parti : ni mort"],
   ["jour.mjs", "      poser(\"verrou\", c, \"passage\");\n      poser(\"lame\", c, \"passage\");", "      poser(\"lame\", c, \"passage\");", "Rémouleur : le verrou"],
   ["jour.mjs", "      poser(\"asile\", c, \"passage\");\n      annonce(\"Ours\"", "      annonce(\"Ours\"", "Montreur d'ours : l'asile"],
-  ["jour.mjs", "const camp = v?.role?.apparence || v?.camp || \"village\";", "const camp = v?.role?.camp || \"village\";", "Pèlerine : le vrai camp"],
+  ["jour.mjs", "const vrai = v?.role?.apparence || v?.camp || \"village\";", "const vrai = v?.role?.camp || \"village\";", "Pèlerine : le vrai camp"],
   ["jour.mjs", "  pelerine: { source: \"role\", cibles: 1, soiMeme: false, phases: JOURNEE },", "  pelerine: { source: \"role\", cibles: 1, soiMeme: true, phases: JOURNEE },", "Pèlerine : pas soi-même"],
   // le Banc des accusés
   ["banc.mjs", "  if (!etat.banc.actif) return non(\"inactif\");\n", "", "banc : la variante"],

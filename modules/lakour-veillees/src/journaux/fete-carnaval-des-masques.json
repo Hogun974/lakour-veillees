@@ -1,0 +1,81 @@
+{
+  "_id": "BkKcHUvFdizeWTno",
+  "_key": "!journal!BkKcHUvFdizeWTno",
+  "name": "Veillée de fête — Le Carnaval des masques",
+  "folder": null,
+  "sort": 0,
+  "categories": [],
+  "ownership": {
+    "default": 2
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "fete-carnaval-des-masques",
+      "visible": true
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  },
+  "pages": [
+    {
+      "_id": "bghDqnJBKJydiRnF",
+      "_key": "!journal.pages!BkKcHUvFdizeWTno.bghDqnJBKJydiRnF",
+      "name": "Le Carnaval des masques",
+      "type": "image",
+      "sort": 100,
+      "title": {
+        "show": false,
+        "level": 1
+      },
+      "src": "modules/lakour-veillees/assets/fetes/carnaval.jpg",
+      "image": {
+        "caption": "Le défilé masqué de Brumecombe derrière le mannequin de paille."
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "4EL8lxbYVh6kXIx3",
+      "_key": "!journal.pages!BkKcHUvFdizeWTno.4EL8lxbYVh6kXIx3",
+      "name": "La fête à Brumecombe",
+      "type": "text",
+      "sort": 200,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Le défilé derrière le mannequin</h2><p>Au Mardi gras, Brumecombe défile masquée derrière le mannequin de paille qu'on brûlera au soir. Crécelles, beignets, farine jetée aux passants : pour un jour, le village marche sur la tête et personne n'est tout à fait soi.</p><p>On raconte qu'un masque de trop circule chaque année, et que celui qui le porte trompe jusqu'aux devins. Le défilé, lui, montre toujours un visage que personne au village ne porte.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "PftAJvlEVBduU3nK",
+      "_key": "!journal.pages!BkKcHUvFdizeWTno.PftAJvlEVBduU3nK",
+      "name": "Les règles de la veillée",
+      "type": "text",
+      "sort": 300,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Le masque du Carnaval</h2><p>À la distribution, <strong>un joueur tiré au hasard</strong> (de n'importe quel camp) porte, en secret, le masque du Carnaval ; lui seul le sait (carnet), avec le camp que le masque montrera. <strong>La première vision du Village qui se pose sur lui le voit du camp opposé</strong> à celui qu'elle verrait — la Liseuse de cendres, le Sourcier (« du même camp ? »), la prière de la Pèlerine —, puis le masque tombe, sans bruit : les visions suivantes voient juste. Un homme du Village masqué paraît loup ; un loup masqué paraît du Village.</p><p>Le regard de la meute n'est jamais trompé (Loup flaireur, vision du Glas du deuil, loup qui lit pour elle) : elle connaît les siens.</p><p>Le masque est sur le visage, pas sur la carte : un échange de rôles ne le déplace pas.</p><h2>Le défilé</h2><p>À la distribution, le narrateur annonce le masque du défilé : <strong>un rôle du Village que personne ne porte</strong>. Si la meute a reçu au moins deux Masques de veillée, c'est l'un d'eux : elle perd cet alibi, jamais le dernier. Quiconque se réclame de ce rôle ment.</p><h2>En pratique</h2><ul><li>« Je suis masqué ! » est la défense de celui qu'une vision accuse… vraie une fois, peut-être : il n'y a qu'un masque, et il ne trompe qu'une vision.</li><li>Le narrateur ne dit jamais qui porte le masque.</li></ul>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    }
+  ]
+}

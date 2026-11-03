@@ -1,6 +1,7 @@
 // Réglages du système.
 import { ID, CHANCE_PESTE } from "../logique/constantes.mjs";
 import { etatInitial } from "../logique/etat.mjs";
+import { CLES_DE_FETE } from "../logique/fetes.mjs";
 import { oublierSecrets } from "./secrets.mjs";
 import { oublierPrive } from "./prive.mjs";
 import { oublierSalons, quandReglageSalons } from "./salons.mjs";
@@ -124,6 +125,15 @@ export function enregistrerReglages(quandEtatChange) {
   game.settings.register(ID, "glasDuDeuil", {
     name: "LAKOUR_LOUPS.Reglages.GlasDuDeuil.Nom", hint: "LAKOUR_LOUPS.Reglages.GlasDuDeuil.Aide",
     scope: "world", config: true, type: Boolean, default: false
+  });
+  // Les Veillées de fête (logique/fetes.mjs, variantes) : la veillée d'une partie distribuée sans choix explicite (MJ IA, « Rejouer »).
+  // "" par défaut : aucune d'office (la partie précédente garde la sienne) ; « date » : celle que propose la fête du calendrier du
+  // moteur ce jour-là ; ou une veillée nommée. La Table de jeu, elle, pré-sélectionne la veillée du calendrier : le MJ décide.
+  game.settings.register(ID, "veilleeDeFete", {
+    name: "LAKOUR_LOUPS.Reglages.VeilleeDeFete.Nom", hint: "LAKOUR_LOUPS.Reglages.VeilleeDeFete.Aide",
+    scope: "world", config: true, type: String, default: "",
+    choices: Object.fromEntries([["", "LAKOUR_LOUPS.Reglages.VeilleeDeFete.Aucune"], ["date", "LAKOUR_LOUPS.Reglages.VeilleeDeFete.Date"],
+      ...CLES_DE_FETE.map(c => [c, `LAKOUR_LOUPS.Fetes.${c}.Nom`])])
   });
   game.settings.register(ID, "annoncesEnChat", {
     name: "LAKOUR_LOUPS.Reglages.AnnoncesEnChat.Nom", hint: "LAKOUR_LOUPS.Reglages.AnnoncesEnChat.Aide",

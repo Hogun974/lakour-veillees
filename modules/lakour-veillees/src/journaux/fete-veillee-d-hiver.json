@@ -1,0 +1,81 @@
+{
+  "_id": "a8RAYEHwiH28vEHH",
+  "_key": "!journal!a8RAYEHwiH28vEHH",
+  "name": "Veillée de fête — La Veillée d'hiver",
+  "folder": null,
+  "sort": 0,
+  "categories": [],
+  "ownership": {
+    "default": 2
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "fete-veillee-d-hiver",
+      "visible": true
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  },
+  "pages": [
+    {
+      "_id": "ciIVk0dSxmYUFEpE",
+      "_key": "!journal.pages!a8RAYEHwiH28vEHH.ciIVk0dSxmYUFEpE",
+      "name": "La Veillée d'hiver",
+      "type": "image",
+      "sort": 100,
+      "title": {
+        "show": false,
+        "level": 1
+      },
+      "src": "modules/lakour-veillees/assets/fetes/noel.jpg",
+      "image": {
+        "caption": "Le grand feu de la place de Brumecombe, une nuit de neige."
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "Lo3T8wzaQyF6l7yN",
+      "_key": "!journal.pages!a8RAYEHwiH28vEHH.Lo3T8wzaQyF6l7yN",
+      "name": "La fête à Brumecombe",
+      "type": "text",
+      "sort": 200,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Le feu de la place</h2><p>Au plus froid de l'hiver, Brumecombe allume le grand feu sur la place et veille jusqu'au premier chant du coq. On y boit le vin chaud aux épices, on y chante les complaintes de la rivière gelée.</p><p>Cette nuit-là passe la Dame aux grelots. Personne ne l'a jamais vue ; on entend seulement ses grelots dans la neige, et au matin, sur un seul seuil du village, il y a un présent. Celui qui le trouve ne le dit pas toujours.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "qzuw31ffv3BZSBCH",
+      "_key": "!journal.pages!a8RAYEHwiH28vEHH.qzuw31ffv3BZSBCH",
+      "name": "Les règles de la veillée",
+      "type": "text",
+      "sort": 300,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Le présent de la Dame aux grelots</h2><p>À la distribution, <strong>un joueur tiré au hasard</strong> (de n'importe quel camp) reçoit un présent, en secret, dans son carnet. <strong>La première fois qu'un coup mortel le vise la nuit, ce coup échoue</strong> : la meute, la peste, le poison, le feu, la lame d'un tueur. Une seule fois ; il l'apprend au matin, dans son carnet.</p><p>Le présent ne protège ni du chagrin d'un amant, ni du vote du village, ni du linceul du Glas du deuil. Et il ne s'ouvre que si rien d'autre ne l'a déjà sauvé : une protection, un remède, un verrou, la Taverne ou la Chapelle passent avant lui.</p><h2>La neige efface les traces</h2><p>À chaque aube, la neige peut tomber (une chance sur trois, jamais deux aubes de suite) ; elle est annoncée à tous. Ce jour-là, elle a recouvert les traces de la nuit :</p><ul><li>la <strong>Chasseresse</strong>, la <strong>Ramoneuse</strong>, le <strong>Tanneur</strong> et le <strong>Colporteur de nouvelles</strong> ne peuvent rien lire (leur pouvoir n'est pas perdu : il attend un matin sans neige) ;</li><li>le <strong>Lavoir</strong> gelé se tait.</li></ul><h2>En pratique</h2><ul><li>Celui qui se dit gardé par le présent dit peut-être vrai… ou c'est un loup qui veut détourner la meute d'une autre maison.</li><li>La neige ne change rien à la nuit elle-même : seulement à ce qu'on en apprend au matin.</li><li>Le narrateur ne dit jamais qui a reçu le présent, ni s'il s'est ouvert.</li></ul>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    }
+  ]
+}

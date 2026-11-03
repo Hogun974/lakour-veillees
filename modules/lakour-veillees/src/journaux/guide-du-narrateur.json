@@ -190,6 +190,25 @@
         "default": -1
       },
       "flags": {}
+    },
+    {
+      "_id": "wFqcYaGHDcGvxNZ8",
+      "_key": "!journal.pages!VSEGGbjvJbxzmJrH.wFqcYaGHDcGvxNZ8",
+      "name": "Les veillées de fête",
+      "type": "text",
+      "sort": 1000,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Une variante de saison, jamais imposée</h2><p>Quatre veillées de fête, une par fête du calendrier du MJ IA : <strong>La Nuit des âmes</strong>, <strong>La Veillée d'hiver</strong>, <strong>Le Carnaval des masques</strong>, <strong>La Fête des promis</strong>. Chacune est une <strong>variante</strong> que tu choisis à la distribution ; la date ne fait que la proposer.</p><ul><li><strong>À la Table de jeu</strong>, préparation : la liste « Veillée de fête ». La veillée de la fête du jour (s'il y en a une) y est pré-sélectionnée et marquée « proposée par le calendrier ». Choisis « Aucune veillée de fête » si la table n'en veut pas, ou une autre veillée hors saison. Rien dans une Nuit de la Saint-Martin.</li><li><strong>Sans la Table</strong> (le MJ IA qui distribue, « Rejouer ») : le réglage du monde « Veillée de fête » décide — aucune d'office (une partie rejouée garde celle de la précédente), selon le calendrier, ou une veillée nommée.</li><li>Le système l'annonce lui-même au chat et au Registre du greffier, tire les secrets, prévient en secret chacun des concernés et applique les règles. Tu n'as rien à arbitrer.</li></ul><h2>Ce qui est public, ce qui est secret</h2><ul><li><strong>Public</strong> : la veillée en jeu, la neige du matin (Veillée d'hiver), le masque du défilé (Carnaval). Rappelle-les quand c'est utile.</li><li><strong>Secret</strong> : qui a reçu un murmure et ce qu'il dit (Nuit des âmes), qui porte le présent et s'il s'est ouvert (Veillée d'hiver), qui porte le masque (Carnaval), qui sont les promis (Fête des promis). Tu les lis sur ta Table (ligne de la veillée, chez toi seul) et dans ta chronique secrète. <strong>Ne les dis jamais</strong>, ne les confirme ni ne les démens, même quand un joueur s'en réclame : ce sont des paroles de joueur, comme une déclaration au Registre. Le récit de fin les dévoile.</li></ul><h2>Les quatre veillées</h2><ul><li><strong>La Nuit des âmes</strong> — après chaque nuit meurtrière, l'âme du premier mort murmure à un vivant tiré au hasard si deux autres vivants sont du même camp ; la meute apprend à quelle porte elle a frappé.</li><li><strong>La Veillée d'hiver</strong> — un joueur tiré au hasard reçoit en secret un présent qui fait échouer le premier coup mortel de la nuit ; à chaque aube, la neige peut tomber (une fois sur trois, jamais deux aubes de suite) et recouvrir les traces (Chasseresse, Ramoneuse, Tanneur, Colporteur de nouvelles, Lavoir).</li><li><strong>Le Carnaval des masques</strong> — un joueur tiré au hasard porte en secret le masque du Carnaval (la première vision du Village qui le perce le voit du camp opposé, puis le masque tombe ; la meute n'est jamais trompée) ; le défilé montre à tous un rôle du Village que personne ne porte.</li><li><strong>La Fête des promis</strong> — deux joueurs du Village tirés au hasard se savent promis l'un à l'autre (un allié sûr) ; la meute connaît leurs deux noms.</li></ul><h2>Raconter</h2><ul><li><strong>Nuit des âmes</strong> : une nuit meurtrière, laisse entendre qu'une âme est passée (« une chandelle s'est éteinte quelque part »), jamais chez qui. Plusieurs morts dans la nuit : une seule âme parle, celle du premier.</li><li><strong>Veillée d'hiver</strong> : un présent qui s'ouvre sauve quelqu'un sans bruit ; au matin, raconte une nuit sans mort comme les autres. La neige, elle, se raconte : pas de traces, un lavoir gelé, des pouvoirs du matin qui attendent.</li><li><strong>Carnaval des masques</strong> : une vision trompée par le masque se raconte comme une vraie ; ne corrige jamais, même quand le village s'apprête à exécuter le masqué (comme pour le Louvetier). Le masque ne trompe qu'une vision du Village, puis tombe sans bruit (ta chronique secrète le note) ; un regard de la meute n'est jamais trompé.</li><li><strong>Fête des promis</strong> sans promis (moins de deux joueurs du Village) : l'annonce le dit, il n'y a rien d'autre.</li><li><strong>Fête des promis</strong> : deux promis ne meurent pas ensemble ; si la meute en dévore un, raconte une mort ordinaire.</li></ul><h2>Pour un MJ IA</h2><p>Ton état du jeu porte une ligne de fête. Quand une veillée est en jeu dans la partie (le Registre porte « la veillée de fête commence »), cette ligne vient d'elle, même hors saison : son nom, ses règles, ce qu'elle a annoncé à tous (neige, défilé) et la consigne de garder ses secrets. Sans veillée en jeu, la fête du calendrier n'est qu'une ambiance, sans règle de plus.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
     }
   ]
 }

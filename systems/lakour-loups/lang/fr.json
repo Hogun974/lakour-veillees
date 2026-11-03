@@ -395,6 +395,10 @@
         "Nom": "Le Glas du deuil (variante)",
         "Aide": "Chaque innocent exécuté par le vote fait sonner le glas et donne à la meute un pouvoir collectif qui grandit (une vision, une voix sans visage, le linceul). Pris en compte à la prochaine distribution."
       },
+      "PetiteTablee": {
+        "Nom": "Petite tablée par défaut",
+        "Aide": "Le mode pour 1 à 4 humains complétés par 2 à 8 joueurs IA (4 à 12 places) : meute courte (dès deux loups : première nuit blanche, et la meute doit être plus nombreuse que les autres pour gagner), les humains jamais tous loups ni tous du même camp, le tirage favorise (sans garantie) une lanterne chez un humain et l'ombre des deux côtés de la table, le sort tranche les égalités, le glas final posé d'office. Se souvient du dernier niveau choisi à la Table de jeu ; coché, « Rejouer » et le MJ IA composent une petite tablée."
+      },
       "VeilleeDeFete": {
         "Nom": "Veillée de fête (variante)",
         "Aide": "La veillée de fête d'une partie distribuée sans choix (par le MJ IA, ou « Rejouer ») : aucune d'office, celle que propose le calendrier ce jour-là, ou une veillée nommée. La Table de jeu propose celle du calendrier ; le narrateur décide. Pris en compte à la prochaine distribution.",
@@ -623,7 +627,8 @@
       "Niveaux": {
         "debutants": "Débutants",
         "classique": "Classique",
-        "chaos": "Chaos"
+        "chaos": "Chaos",
+        "petite-tablee": "Petite tablée (peu d'humains, des joueurs IA)"
       },
       "Equilibre": {
         "equilibree": "Équilibrée ({somme})",
@@ -954,6 +959,23 @@
       "Voix": "Une voix sans visage s'est jointe à {nom}.",
       "InviteVoix": "Le glas vous prête sa voix : à quel candidat de ce vote la voix sans visage ira-t-elle ?",
       "VoixChoisie": "La meute place la voix sans visage sur {nom}."
+    },
+    "Tablee": {
+      "Nom": "Petite tablée",
+      "AnnonceTete": "Petite tablée : {humains} joueur(s) et {compagnons} compagnon(s) IA. La meute est courte.",
+      "RegleLoups": "Les joueurs humains ne sont jamais tous loups.",
+      "RegleCamps": "À trois humains ou plus, ils ne sont jamais tous du même camp.",
+      "RegleTirage": "Le tirage favorise, sans le garantir, une lanterne du Village chez un humain.",
+      "RegleTirageOmbre": "Le tirage favorise, sans le garantir, une lanterne du Village chez un humain et l'ombre (loups et solitaires) des deux côtés de la table.",
+      "RegleRythme": "Le sort tranche les égalités du vote, et le glas final sonnera au soir du jour {n}.",
+      "NuitBlanche": "Deux loups ou plus : la première nuit est blanche (la meute se reconnaît, mais ne chasse pas), et la meute doit être plus nombreuse que les autres pour l'emporter.",
+      "Sort": "Égalité : le sort tranche et désigne {noms}.",
+      "PreparationAide": "Petite tablée : 1 à 4 humains, 2 à 8 joueurs IA, 4 à 12 places. Garanti : les humains ne sont jamais tous loups (ni tous du même camp à trois ou plus) ; favorisé sans garantie : une lanterne chez un humain, l'ombre des deux côtés de la table. Le sort tranche les égalités ; glas final au soir du jour {n} (0 = d'office).",
+      "Avis": {
+        "places": "Une petite tablée compte 4 à 12 places : au-delà, la composition retombe sur le niveau classique, sans le mode.",
+        "humains": "Une petite tablée est pensée pour 1 à 4 humains ; au-delà, préférez un niveau classique.",
+        "compagnons": "Une petite tablée est pensée pour 2 à 8 joueurs IA : ajoutez-en (bouton « + Joueur IA »)."
+      }
     },
     "SaintMartin": {
       "Titre": "Nuit de la Saint-Martin",

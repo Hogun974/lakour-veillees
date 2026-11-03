@@ -156,7 +156,11 @@ test("un villageois compagnon ne voit pas l'état secret de la nuit : ni qui la 
 
 test("la vue suit l'état PUBLIC : un mort ou un muet ne parle pas, la nuit personne ne parle ; le prompt ne contient que la vue", async () => {
   const v = compagnons.vue(B);
-  assert.deepEqual(Object.keys(v).sort(), ["allies", "autres", "fiche", "id", "jeu", "monde", "nom", "peutParler", "personnalite", "prive", "public", "scene", "suspects", "tour", "vivant"].sort());
+  assert.deepEqual(Object.keys(v).sort(), ["allies", "autres", "fiche", "id", "jeu", "monde", "nom", "peutParler", "personnalite", "prive", "public", "scene", "suspects", "tour", "vivant", "humains", "petiteTablee"].sort());
+  // La Petite tablée (0.11.0) : les humains (public : system.joueur) et le mode (public : etat.petiteTablee), pour la parole seulement.
+  assert.deepEqual([...v.humains].sort(), villageois().filter(a => a.system.joueur && a.id !== B.id).map(a => a.id).sort());
+  assert.equal(v.petiteTablee, false);
+  for (const a of v.autres) assert.equal(a.humain, Boolean(game.actors.get(a.id).system.joueur));
   await api.changerPhase("nuit");
   assert.equal(compagnons.vue(B).peutParler, false, "la nuit, le village dort");
   await api.changerPhase("jour");

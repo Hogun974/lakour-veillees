@@ -11,7 +11,9 @@ const api = () => game.lakourLoups;
 //   peste: partie de peste noire choisie par le MJ (sinon, une partie générée le devient rarement d'elle-même),
 //   format: "" ou "saint-martin" (la Nuit de la Saint-Martin : sa propre composition, ni peste ni rôles choisis),
 //   fete: null (pas encore choisie : la Table pré-sélectionne la veillée proposée, veilleeProposee) | "" (aucune) | clé de veillée }
-export const nouvellePreparation = () => ({ coches: null, mode: "auto", niveau: "classique", roles: {}, peste: false, format: "", fete: null });
+// Le niveau pré-sélectionné : la Petite tablée si le réglage monde s'en souvient (0.11.0), sinon classique.
+const niveauParDefaut = () => { try { return game.settings.get("lakour-loups", "petiteTablee") ? "petite-tablee" : "classique"; } catch { return "classique"; } };
+export const nouvellePreparation = () => ({ coches: null, mode: "auto", niveau: niveauParDefaut(), roles: {}, peste: false, format: "", fete: null });
 
 // La veillée de fête que la Table propose au MJ (pré-sélectionnée, jamais imposée) : celle du réglage s'il en nomme une, sinon
 // celle de la fête du calendrier du moteur ce jour-là ("" : aucune).

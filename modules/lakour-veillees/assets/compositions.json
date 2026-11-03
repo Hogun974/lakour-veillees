@@ -1130,5 +1130,224 @@
       "grange",
       "lavoir"
     ]
+  },
+  "petite-tablee-04": {
+    "libelle": "Petite tablée — 4 places",
+    "joueurs": [
+      4,
+      4
+    ],
+    "niveau": "petite-tablee",
+    "roles": [
+      "conteuse",
+      "enfant-de-la-brume",
+      "liseuse-de-cendres",
+      "loup-de-brumecombe"
+    ],
+    "batiments": [
+      "forge",
+      "moulin",
+      "taverne",
+      "cimetiere"
+    ]
+  },
+  "petite-tablee-05": {
+    "libelle": "Petite tablée — 5 places",
+    "joueurs": [
+      5,
+      5
+    ],
+    "niveau": "petite-tablee",
+    "roles": [
+      "enfant-de-la-brume",
+      "fossoyeur",
+      "juge-de-paix",
+      "loup-de-brumecombe",
+      "pecheur-de-nuit"
+    ],
+    "batiments": [
+      "grange",
+      "taverne",
+      "cimetiere",
+      "puits"
+    ]
+  },
+  "petite-tablee-06": {
+    "libelle": "Petite tablée — 6 places",
+    "joueurs": [
+      6,
+      6
+    ],
+    "niveau": "petite-tablee",
+    "roles": [
+      "colporteur",
+      "conteuse",
+      "fossoyeur",
+      "garde-du-pont",
+      "loup-de-brumecombe",
+      "villageois"
+    ],
+    "batiments": [
+      "lavoir",
+      "grange",
+      "moulin",
+      "cimetiere"
+    ]
+  },
+  "petite-tablee-07": {
+    "libelle": "Petite tablée — 7 places",
+    "joueurs": [
+      7,
+      7
+    ],
+    "niveau": "petite-tablee",
+    "roles": [
+      "colporteur",
+      "ermite",
+      "garde-du-pont",
+      "loup-de-brumecombe",
+      "messager",
+      "sonneur",
+      "villageois"
+    ],
+    "batiments": [
+      "forge",
+      "cimetiere",
+      "moulin",
+      "grange"
+    ]
+  },
+  "petite-tablee-08": {
+    "libelle": "Petite tablée — 8 places",
+    "joueurs": [
+      8,
+      8
+    ],
+    "niveau": "petite-tablee",
+    "roles": [
+      "braconniere",
+      "conteuse",
+      "enfant-de-la-brume",
+      "gardienne-des-cles",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "veilleuse-de-lanterne",
+      "villageois"
+    ],
+    "batiments": [
+      "cimetiere",
+      "lavoir",
+      "forge",
+      "taverne"
+    ]
+  },
+  "petite-tablee-09": {
+    "libelle": "Petite tablée — 9 places",
+    "joueurs": [
+      9,
+      9
+    ],
+    "niveau": "petite-tablee",
+    "roles": [
+      "colporteur",
+      "conteuse",
+      "ermite",
+      "garde-du-pont",
+      "loup-de-brumecombe",
+      "loup-flaireur",
+      "louvetier",
+      "messager",
+      "villageois"
+    ],
+    "batiments": [
+      "lavoir",
+      "cimetiere",
+      "taverne",
+      "moulin"
+    ]
+  },
+  "petite-tablee-10": {
+    "libelle": "Petite tablée — 10 places",
+    "joueurs": [
+      10,
+      10
+    ],
+    "niveau": "petite-tablee",
+    "roles": [
+      "colporteur",
+      "enfant-de-la-brume",
+      "ermite",
+      "garde-du-pont",
+      "gardienne-des-cles",
+      "loup-de-brumecombe",
+      "loup-flaireur",
+      "messager",
+      "sonneur",
+      "villageois"
+    ],
+    "batiments": [
+      "cimetiere",
+      "moulin",
+      "forge",
+      "chapelle",
+      "lavoir"
+    ]
+  },
+  "petite-tablee-11": {
+    "libelle": "Petite tablée — 11 places",
+    "joueurs": [
+      11,
+      11
+    ],
+    "niveau": "petite-tablee",
+    "roles": [
+      "colporteur",
+      "gardienne-des-cles",
+      "herboriste",
+      "liseuse-de-cendres",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "louvetier",
+      "pecheur-de-nuit",
+      "veilleuse-de-lanterne",
+      "villageois"
+    ],
+    "batiments": [
+      "chapelle",
+      "cimetiere",
+      "moulin",
+      "forge",
+      "puits"
+    ]
+  },
+  "petite-tablee-12": {
+    "libelle": "Petite tablée — 12 places",
+    "joueurs": [
+      12,
+      12
+    ],
+    "niveau": "petite-tablee",
+    "roles": [
+      "colporteur",
+      "fossoyeur",
+      "herboriste",
+      "liseuse-de-cendres",
+      "loup-affame",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "pecheur-de-nuit",
+      "sonneur",
+      "sourcier",
+      "veilleuse-de-lanterne",
+      "villageois"
+    ],
+    "batiments": [
+      "cimetiere",
+      "grange",
+      "forge",
+      "lavoir",
+      "moulin"
+    ]
   }
 }

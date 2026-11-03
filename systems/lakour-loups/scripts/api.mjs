@@ -712,7 +712,7 @@ async function menerSuccession() {
   const avant = lireEtat();
   const s = avant.bailli.succession;
   if (!s || avant.vainqueur) return;
-  if (L.verifierVictoire({ villageois: villageoisAPlat(), morts: avant.morts, primes: avant.primes, peste: avant.peste })) return;
+  if (L.verifierVictoire({ villageois: villageoisAPlat(), morts: avant.morts, primes: avant.primes, peste: avant.peste, strict: pariteStricte(avant) })) return;
   const candidats = L.candidatsSuccession(avant, villageoisAPlat());
   const reste = L.resteDeSuccession(avant, reglage("delaiChoix") * 1000);
   const de = game.actors.get(s.de)?.name ?? s.de;
@@ -767,6 +767,8 @@ async function appliquerDepartage(resultat, choix) {
     texte = final.departage.choix.length
       ? t("LAKOUR_LOUPS.Bailli.Tranche", { nom: bailli, noms: final.departage.choix.map(id => game.actors.get(id)?.name ?? id).join(", ") })
       : t("LAKOUR_LOUPS.Bailli.TranchePersonne", { nom: bailli });
+    // Petite tablée : les places laissées vides par le Bailli, le sort les a tranchées.
+    if (final.departage.sort?.length) texte += ` ${t("LAKOUR_LOUPS.Tablee.Sort", { noms: final.departage.sort.map(id => game.actors.get(id)?.name ?? id).join(", ") })}`;
     return { etat: L.journaliser(x, texte), resultat: final };
   });
   if (texte) await annonceChat(echapper(texte));
@@ -1040,6 +1042,29 @@ async function contenuDisponible() {
 }
 
 const lireReglage = (cle, defaut) => { try { return game.settings.get(ID, cle) ?? defaut; } catch { return defaut; } };
+
+// ------------------------------------------------------------------ la Petite tablée (logique/tablee.mjs)
+// La parité stricte (la meute doit être plus nombreuse) : en petite tablée, au régime des deux loups (8 places et plus).
+const pariteStricte = e => Boolean(e?.petiteTablee) && L.pariteStricteTablee(e.places || villageoisAPlat().length);
+// Une composition prête du contenu est-elle de la Petite tablée (son niveau) ?
+async function compositionDeTablee(composition) {
+  if (!composition || composition === "generee" || composition === "choisie") return false;
+  try { return (await contenuDisponible()).compositions[composition]?.niveau === L.NIVEAU_PETITE_TABLEE; } catch { return false; }
+}
+// Le tirage contraint d'une petite tablée (distribuerTablee) : chaque rôle décrit par son camp et s'il informe (équilibre du
+// contenu), les loups d'une peste noire comptés comme de simples villageois. humains : les places des joueurs humains.
+async function tirageDeTablee({ roles, metiers, places, maisons, graine, cache, peste, humains }) {
+  let equilibre = { roles: {} };
+  try { ({ equilibre } = await contenuDisponible()); } catch { /* sans équilibre : le camp des documents suffit */ }
+  const decrire = uuid => {
+    const s = cache.get(uuid)?.system ?? {};
+    const camp = peste && s.camp === "meute" ? "village" : s.camp || "village";
+    return { camp, information: Boolean(equilibre.roles?.[s.cle]?.information) };
+  };
+  const r = L.distribuerTablee({ roles, metiers, joueurs: places, maisons, humains: new Set(humains), decrire, graine });
+  if (r.manques.length) console.warn(`${ID} | petite tablée : partage des camps impossible avec ces rôles (${r.manques.join(", ")})`);
+  return r;
+}
 // L'historique des parties (rôles et bâtiments en jeu, jamais qui avait quoi), pour varier les compositions ; celui du
 // MJ IA (lakour-mj-ia.historiqueLoups) s'y ajoute s'il existe.
 function historiqueDesParties() {
@@ -1070,7 +1095,11 @@ export const api = {
     Hooks.callAll("lakourLoups.compagnons", pointCompagnons);
   },
 
-  logique: L,
+  // La logique pure, pour les autres modules (MJ IA). Son `composer` suit le réglage « petiteTablee » (0.11.0) : tant que le monde
+  // se souvient d'une Petite tablée, une composition générée de 12 places au plus est une petite tablée, quel que soit le
+  // niveau demandé (le MJ IA, qui ne connaît que les trois niveaux, suit ainsi le choix du MJ ; nouvellePartie l'écrit).
+  logique: { ...L, composer: (n, equilibre, options = {}) => L.composer(n, equilibre,
+    lireReglage("petiteTablee", false) && n <= L.TABLEE.placesMax && !options?.peste ? { ...options, niveau: L.NIVEAU_PETITE_TABLEE } : options) },
   // Résolveurs fournis par d'autres modules. compagnon(demande) -> [acteurId] (choix de nuit, vote) ou texte (mode "texte") :
   // le MJ IA y branche le cerveau de ses compagnons. demande : { type: "demande" | "vote", mode?, id, acteurId, acteurNom,
   // invite, candidats: [{ id, nom, img, maison }], nombre, max?, delai, objet?, numero? }.
@@ -1095,10 +1124,20 @@ export const api = {
   // format : "" ou "saint-martin" (la Nuit de la Saint-Martin, logique/saintmartin.mjs ; autel : les rôles sous l'autel, secret).
   // fete : la veillée de fête (logique/fetes.mjs) — une clé, "" (aucune) ; non précisée : feteVoulue (réglage « veilleeDeFete »,
   // sinon celle de la partie précédente). Jamais dans une Nuit de la Saint-Martin.
+  // tablee (0.11.0, logique/tablee.mjs) : la Petite tablée — true, false, ou non précisée : une composition prête de ce niveau
+  // (« petite-tablee-07 ») la choisit, sinon le réglage monde « petiteTablee » (qui se souvient du dernier choix explicite). Le
+  // tirage des rôles est alors contraint (distribuerTablee : l'ombre des deux côtés de la table, une lanterne chez un humain…),
+  // le Glas final posé d'office (glasTablee) s'il n'est pas donné, et etat.petiteTablee (public) l'annonce. Jamais dans une
+  // Nuit de la Saint-Martin.
   async distribuer({ roles = [], metiers = [], joueurs = [], compagnons = [], maisons = [], graine, composition = "", batiments = [], peste = false, glas = 0,
-    format = "", autel = [], fete } = {}) {
+    format = "", autel = [], fete, tablee } = {}) {
     exigerMJ();
     const cleFete = format === L.FORMAT_SAINT_MARTIN ? "" : feteVoulue(fete, lireEtat().fete?.cle);
+    // Une Nuit de la Saint-Martin n'est jamais une petite tablée, et ne touche pas au réglage (il se souvient du dernier choix ordinaire).
+    const court = format === L.FORMAT_SAINT_MARTIN;
+    const tableeVoulue = court ? undefined : tablee ?? (await compositionDeTablee(composition) ? true : undefined);
+    const enTablee = !court && (tableeVoulue ?? Boolean(lireReglage("petiteTablee", false)));
+    if (tableeVoulue !== undefined && tableeVoulue !== Boolean(lireReglage("petiteTablee", false))) await game.settings.set(ID, "petiteTablee", tableeVoulue);
     // Les secrets de la partie se scellent avec le coffre du MJ IA : sans lui, ils ne survivraient pas à ce navigateur.
     if (!coffreDisponible()) throw new Error(t("LAKOUR_LOUPS.Erreurs.SansCoffre"));
     const estPlaceCompagnon = id => { const a = game.actors.get(id); return a?.type === "villageois" && estCompagnon(a); };
@@ -1129,10 +1168,13 @@ export const api = {
       const d = await fromUuid(uuid);
       if (d?.system?.cle) batimentsCles.push(d.system.cle);
     }
-    // Les compagnons tiennent des places comme les joueurs (mêmes tirages de rôle, de métier et de maison).
+    // Les compagnons tiennent des places comme les joueurs (mêmes tirages de rôle, de métier et de maison). Petite tablée : le
+    // tirage des rôles est contraint (humains et compagnons se partagent l'ombre, une lanterne chez un humain du Village).
     const places = [...joueurs, ...nomsCompagnons.map((_, i) => `${PLACE_COMPAGNON}${i}`)];
     const lesMaisons = maisons.length ? maisons : L.maisonsDuVillage(places.length);
-    const tirage = L.distribuer({ roles, metiers, joueurs: places, maisons: lesMaisons, graine });
+    const tirage = enTablee ? (await tirageDeTablee({ roles, metiers, places, maisons: lesMaisons, graine, cache, peste, humains: joueurs })).tirage
+      : L.distribuer({ roles, metiers, joueurs: places, maisons: lesMaisons, graine });
+    if (enTablee && !glas) glas = L.glasTablee(places.length);
     // Les compagnons d'une partie précédente sont repris (renommés) ; ceux qui restent sont retirés du village.
     const reserves = new Set(placesIA.map(c => c.acteurId).filter(Boolean));
     const anciensCompagnons = tousLesVillageois().filter(a => a.system.compagnon && !a.system.joueur && !reserves.has(a.id));
@@ -1211,6 +1253,8 @@ export const api = {
       e.glas = L.normaliserGlas(glas);
       e.fete = L.feteInitiale(cleFete);
       e.somnambules = somnambules;
+      e.petiteTablee = enTablee;
+      e.places = sortie.length;
       return L.journaliser(e, t("LAKOUR_LOUPS.Journal.Distribution", { n: sortie.length }));
     }, { sansSecrets: true });   // une partie neuve : elle ne doit rien aux secrets d'avant
     for (const s of sortie) await envoyerRole(game.actors.get(s.acteurId));
@@ -1232,6 +1276,16 @@ export const api = {
     // La veillée de fête : ses tirages secrets, son annonce, le défilé du Carnaval (après les Masques : il en montre un).
     await ouvrirLaFete(cleFete, { sortie, graine });
     annoncer("lakourLoups.phase", ["preparation", etat], ["preparation", L.etatPublic(etat)]);
+    // La Petite tablée s'annonce (sa règle est publique : des nombres, jamais un nom), exactement ce qui vaut pour cette table ;
+    // puis le Glas final.
+    if (enTablee) {
+      const h = joueurs.length;
+      const morceaux = [t("LAKOUR_LOUPS.Tablee.AnnonceTete", { humains: h, compagnons: nomsCompagnons.length }),
+        h >= 2 ? t("LAKOUR_LOUPS.Tablee.RegleLoups") : "", h >= 3 ? t("LAKOUR_LOUPS.Tablee.RegleCamps") : "",
+        h >= 1 ? t(h >= 3 ? "LAKOUR_LOUPS.Tablee.RegleTirageOmbre" : "LAKOUR_LOUPS.Tablee.RegleTirage") : "",
+        t("LAKOUR_LOUPS.Tablee.RegleRythme", { n: etat.glas }), L.nuitBlancheTablee(etat.places) ? t("LAKOUR_LOUPS.Tablee.NuitBlanche") : ""];
+      await annonceChat(echapper(morceaux.filter(Boolean).join(" ")));
+    }
     if (etat.glas) await annonceChat(echapper(t("LAKOUR_LOUPS.Calendrier.GlasAnnonce", { n: etat.glas })));
     await sceller();
     return sortie;
@@ -1305,8 +1359,14 @@ export const api = {
     const contenu = await contenuDisponible();
     const precedents = anciens.map(a => L.normaliserFiche(avant.fiches?.[a.id]).role?.system.cle ?? roleRevele(a)?.system?.cle).filter(Boolean);
     const historique = [...historiqueDesParties(), ...(precedents.length ? [{ roles: precedents, batiments: avant.batimentsCles ?? [], quand: Date.now() }] : [])];
+    // Le niveau : celui demandé ; sinon la Petite tablée si le réglage s'en souvient ; sinon celui de la partie précédente.
     const niveauPrecedent = [...historique].reverse().find(h => h.niveau)?.niveau ?? contenu.compositions[avant.composition]?.niveau ?? "classique";
-    const niv = L.NIVEAUX.includes(niveau) ? niveau : niveauPrecedent;
+    let niv = L.NIVEAUX.includes(niveau) ? niveau : lireReglage("petiteTablee", false) && total <= L.TABLEE.placesMax ? L.NIVEAU_PETITE_TABLEE : niveauPrecedent;
+    // Une petite tablée compte 12 places au plus : au-delà, la composition retombe sur le niveau classique (un avis au MJ).
+    if (niv === L.NIVEAU_PETITE_TABLEE && (total > L.TABLEE.placesMax || format === L.FORMAT_SAINT_MARTIN)) {
+      if (total > L.TABLEE.placesMax) ui.notifications?.warn(t("LAKOUR_LOUPS.Tablee.Avis.places"));
+      niv = "classique";
+    }
     const equilibreOk = Object.keys(contenu.equilibre.roles ?? {}).length > 0 && total >= 4;
     const genere = inclure => L.composer(total, contenu.equilibre, { niveau: niv, inclure, historique, graine });
     let compo;
@@ -1335,6 +1395,9 @@ export const api = {
     while (cles.length < total) cles.push("villageois");
     compo.roles = cles;
     if (enPeste) compo.libelle = `${compo.libelle} — ${t("LAKOUR_LOUPS.NouvellePartie.Peste")}`;
+    // La Petite tablée : le niveau choisi, ou une composition prête de ce niveau (jamais une Nuit de la Saint-Martin).
+    const tablee = !court && (niv === L.NIVEAU_PETITE_TABLEE || compo.niveau === L.NIVEAU_PETITE_TABLEE);
+    if (tablee && !compo.libelle.includes(t("LAKOUR_LOUPS.Tablee.Nom"))) compo.libelle = `${t("LAKOUR_LOUPS.Tablee.Nom")} — ${compo.libelle}`;
     const uuidsRoles = cles.map(c => contenu.roles.get(c));
     if (uuidsRoles.some(u => !u)) throw new Error(t("LAKOUR_LOUPS.Erreurs.RolesInconnus", { roles: cles.filter((_, i) => !uuidsRoles[i]).join(", ") }));
     const metiers = contenu.metiers.length ? Array.from({ length: total }, (_, i) => contenu.metiers[i % contenu.metiers.length]) : [];
@@ -1344,13 +1407,13 @@ export const api = {
     annulerDemandes();
     if (!memesJoueurs) for (const a of anciens.filter(x => x.system.joueur && !humains.includes(x.system.joueur))) await a.delete();
     const sortie = await api.distribuer({ roles: uuidsRoles, metiers, joueurs: humains, compagnons, maisons: L.maisonsDuVillage(total),
-      graine, composition: compo.cle, batiments, peste: enPeste, glas, ...(court ? { format: L.FORMAT_SAINT_MARTIN, autel: compo.autel } : {}),
+      graine, composition: compo.cle, batiments, peste: enPeste, glas, ...(court ? { format: L.FORMAT_SAINT_MARTIN, autel: compo.autel } : { tablee }),
       ...(typeof fete === "string" ? { fete } : {}) });
     // La composition n'entre au réglage monde « historique » (livré à tous) qu'à la fin de la partie : en attendant, le MJ la garde.
     await modifierEtat(e => { e.aConsigner = { roles: [...cles], batiments: [...compo.batiments], niveau: compo.niveau, composition: compo.cle, quand: Date.now() }; return e; });
     const partie = lireEtat().partie;
     const resume = {
-      partie, fete: lireEtat().fete.cle,
+      partie, fete: lireEtat().fete.cle, tablee: lireEtat().petiteTablee, glas: lireEtat().glas,
       joueurs: sortie.filter(x => !x.compagnon).map(x => ({ userId: x.userId, nom: game.users.get(x.userId)?.name ?? "", acteurId: x.acteurId })),
       compagnons: sortie.filter(x => x.compagnon).map(x => ({ nom: game.actors.get(x.acteurId)?.name ?? "", acteurId: x.acteurId })),
       composition: { cle: compo.cle, libelle: compo.libelle, niveau: compo.niveau, roles: [...cles], batiments: [...compo.batiments],
@@ -1778,10 +1841,12 @@ export const api = {
         return { etat: L.journaliser(c.etat, annonce), resultat: c.resultat, annonce };
       }
       const noms = c.resultat.elus.map(nom).join(", ");
-      // Le Banc : le verdict est dit (« pour » sur le total) ; la voix du deuil : « une voix sans visage » rejoint son candidat.
+      // Le Banc : le verdict est dit (« pour » sur le total) ; la voix du deuil : « une voix sans visage » rejoint son candidat ;
+      // la Petite tablée : le sort a tranché l'égalité.
       const b = c.resultat.banc;
       const annonce = [b ? t(c.resultat.elus.length ? "LAKOUR_LOUPS.Banc.Condamne" : "LAKOUR_LOUPS.Banc.Acquitte", { nom: nom(b.accuse), pour: b.pour, total: b.total }) : "",
-        c.resultat.deuil ? t("LAKOUR_LOUPS.Deuil.Voix", { nom: nom(c.resultat.deuil) }) : ""].filter(Boolean).join(" ");
+        c.resultat.deuil ? t("LAKOUR_LOUPS.Deuil.Voix", { nom: nom(c.resultat.deuil) }) : "",
+        c.resultat.sort?.length ? t("LAKOUR_LOUPS.Tablee.Sort", { noms: c.resultat.sort.map(nom).join(", ") }) : ""].filter(Boolean).join(" ");
       let x = L.journaliser(c.etat, noms ? t("LAKOUR_LOUPS.Journal.VoteClos", { noms }) : t("LAKOUR_LOUPS.Journal.VoteNul"));
       if (annonce) x = L.journaliser(x, annonce);
       return { etat: x, resultat: c.resultat, ...(annonce ? { annonce } : {}) };
@@ -1922,7 +1987,8 @@ export const api = {
     const glas = L.glasSonne(e) || (finDuJour && e.glas > 0 && e.tour >= e.glas && !e.vainqueur);
     // La Nuit de la Saint-Martin : rien ne tombe avant son unique vote (et ses exécutions), ou avant que la seconde nuit tombe.
     const saintMartin = L.estSaintMartin(e) ? (L.saintMartinFinie(e, villageoisAPlat()) || (finDuJour && e.tour >= 1)) : null;
-    const g = L.verifierVictoire({ villageois: villageoisAPlat(), glas, morts: e.morts, primes: e.primes, peste: e.peste, saintMartin });
+    // Petite tablée, régime des deux loups : la meute doit être plus nombreuse que les autres (strict).
+    const g = L.verifierVictoire({ villageois: villageoisAPlat(), glas, morts: e.morts, primes: e.primes, peste: e.peste, saintMartin, strict: pariteStricte(e) });
     if (g && e.vainqueur !== g) {
       // Les cartes se retournent : chaque Somnambule est découvert avant le récit et les jetons de la fin.
       for (const id of L.reveurs(e.somnambules)) await devoilerSomnambule(id);

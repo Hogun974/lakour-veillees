@@ -135,6 +135,13 @@ export function enregistrerReglages(quandEtatChange) {
     choices: Object.fromEntries([["", "LAKOUR_LOUPS.Reglages.VeilleeDeFete.Aucune"], ["date", "LAKOUR_LOUPS.Reglages.VeilleeDeFete.Date"],
       ...CLES_DE_FETE.map(c => [c, `LAKOUR_LOUPS.Fetes.${c}.Nom`])])
   });
+  // La Petite tablée (logique/tablee.mjs, 0.11.0) : le mode pour peu d'humains et des compagnons IA. Le réglage se souvient du
+  // dernier choix (nouvellePartie l'écrit d'après le niveau choisi) : sans niveau précisé (« Rejouer », MJ IA), la veillée
+  // suivante est une petite tablée tant qu'il est coché. Publique : une règle de la veillée.
+  game.settings.register(ID, "petiteTablee", {
+    name: "LAKOUR_LOUPS.Reglages.PetiteTablee.Nom", hint: "LAKOUR_LOUPS.Reglages.PetiteTablee.Aide",
+    scope: "world", config: true, type: Boolean, default: false
+  });
   game.settings.register(ID, "annoncesEnChat", {
     name: "LAKOUR_LOUPS.Reglages.AnnoncesEnChat.Nom", hint: "LAKOUR_LOUPS.Reglages.AnnoncesEnChat.Aide",
     scope: "world", config: true, type: Boolean, default: true

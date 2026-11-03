@@ -211,6 +211,11 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
         peste: Boolean(p.peste),
         saintMartin: p.format === L.FORMAT_SAINT_MARTIN,
         fetes: veilleesAPreparer(p),
+        // La Petite tablée (0.11.0) : un rappel de ses règles, et un avis si la table sort de ses clous (1 à 4 humains, 2 à 8 IA).
+        tablee: p.niveau === L.NIVEAU_PETITE_TABLEE ? (() => {
+          const v = L.verifierTablee({ humains: coches.size, compagnons: ia.length });
+          return { aide: t("LAKOUR_LOUPS.Tablee.PreparationAide", { n: L.glasTablee(total) }), avis: v.ok ? "" : t(`LAKOUR_LOUPS.Tablee.Avis.${v.raison}`) };
+        })() : null,
         voix: voixDuMonde()
       };
     }
@@ -252,7 +257,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
     return {
       presage: presage?.cle ? presage : null, glas: etat.glas, saints, fete,
       gm, phase: etat.phase, phaseLibelle: libellePhase(etat.phase), tour: etat.tour, fini: fin,
-      composition: gm ? etat.composition : "", peste: gm && Boolean(etat.peste?.active),
+      composition: gm ? etat.composition : "", peste: gm && Boolean(etat.peste?.active), tablee: Boolean(etat.petiteTablee),
       deuil: etat.deuil?.actif ? { compte: etat.deuil.compte } : null, saintMartin: L.estSaintMartin(etat),
       banc, accusation, passage, quitter: Boolean(moi?.system.vivant && etat.partie && !fin),
       vainqueur: libelleVainqueur(etat.vainqueur, etat), crier: Boolean(cri?.ok), moiId: moi?.id ?? "",

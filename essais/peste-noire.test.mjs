@@ -41,7 +41,8 @@ function partie(L, phase = "jour", p = PESTE) {
 const VERIFICATIONS = {
   // ---------------- composition
   "composition de peste : aucun rôle de la meute, autant de rôles que de joueurs, une information": L => {
-    for (const niveau of L.NIVEAUX) for (const n of [6, 8, 10, 13, 15, 18]) {
+    // (La Petite tablée, 0.11.0, compte 12 places au plus : ses pestes noires sont composées sur ses tailles.)
+    for (const niveau of L.NIVEAUX) for (const n of (niveau === L.NIVEAU_PETITE_TABLEE ? [6, 8, 10, 12] : [6, 8, 10, 13, 15, 18])) {
       const c = L.composer(n, EQUILIBRE, { niveau, graine: `${niveau}-${n}`, peste: true, essais: 200 });
       assert.equal(c.roles.length, n);
       assert.ok(c.roles.every(cle => EQUILIBRE.roles[cle].camp !== "meute"), `${niveau}/${n} : ${c.roles.join(", ")}`);

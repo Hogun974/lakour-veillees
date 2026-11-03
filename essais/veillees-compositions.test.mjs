@@ -7,7 +7,7 @@ import { readFileSync } from "node:fs";
 import {
   fabriquer, verifierCompositions, rolesPourCompositions, batimentsPourCompositions, FICHIER_COMPOSITIONS
 } from "../outils/fabriquer-veillees.mjs";
-import { compositions, composer, nombreDeLoups } from "../modules/lakour-veillees/contenu/compositions.mjs";
+import { compositions, composer, nombreDeLoups, composerTablee, nombreDeLoupsTablee, NIVEAU_PETITE_TABLEE, MIN_TABLEE, MAX_TABLEE } from "../modules/lakour-veillees/contenu/compositions.mjs";
 
 const docs = fabriquer();
 const roles = rolesPourCompositions(docs), batiments = batimentsPourCompositions(docs);
@@ -26,7 +26,7 @@ test("compositions.json est à jour et conforme", () => {
 test("chaque composition : forme du contrat, autant de rôles que de joueurs pour chaque taille, rôles qui existent", () => {
   for (const [cle, c] of Object.entries(surDisque)) {
     assert.deepEqual(Object.keys(c).sort(), ["batiments", "joueurs", "libelle", "niveau", "roles"], cle);
-    assert.ok(["debutants", "classique", "chaos"].includes(c.niveau), cle);
+    assert.ok(["debutants", "classique", "chaos", NIVEAU_PETITE_TABLEE].includes(c.niveau), cle);
     const [min, max] = c.joueurs;
     for (let n = min; n <= max; n++) {
       const completes = [...c.roles, ...Array(Math.max(0, n - c.roles.length)).fill("villageois")];
@@ -53,7 +53,7 @@ test("dosage : les loups selon le nombre de joueurs, jamais la moitié ; débuta
   for (const c of Object.values(surDisque)) {
     const n = c.joueurs[0];
     const meute = c.roles.filter(r => camp[r] === "meute");
-    assert.equal(meute.length, nombreDeLoups(n), c.libelle);
+    assert.equal(meute.length, c.niveau === NIVEAU_PETITE_TABLEE ? nombreDeLoupsTablee(n) : nombreDeLoups(n), c.libelle);
     assert.ok(meute.includes("loup-de-brumecombe"), `${c.libelle} : au moins un loup simple`);
     assert.ok(meute.length * 2 < n);
     if (c.niveau === "debutants") {
@@ -68,6 +68,24 @@ test("dosage : les loups selon le nombre de joueurs, jamais la moitié ; débuta
   assert.ok(grand.includes("loup-affame"));
   assert.equal(grand.filter(r => camp[r] === "solitaire").length, 2);
   assert.equal(grand.filter(r => r === "villageois").length, 3);
+});
+
+// La Petite tablée (système 0.11.0) : 4 à 12 places, meute courte, l'ombre dès 6 places, une lanterne, un village actif, ni Gibet ni Pont.
+test("petite tablée : une composition prête de 4 à 12 places, même barème que le générateur du système", () => {
+  for (let n = MIN_TABLEE; n <= MAX_TABLEE; n++) {
+    const c = surDisque[`${NIVEAU_PETITE_TABLEE}-${String(n).padStart(2, "0")}`];
+    assert.ok(c, `petite-tablee-${n}`);
+    assert.deepEqual(c, composerTablee(n));
+    assert.equal(c.roles.length, n);
+    assert.equal(c.roles.filter(r => camp[r] === "meute").length, nombreDeLoupsTablee(n));
+    if (n >= 6) assert.ok(c.roles.filter(r => camp[r] !== "village").length >= 2, `${c.libelle} : deux rôles de l'ombre`);
+    assert.ok(c.roles.some(r => ["liseuse-de-cendres", "sourcier", "veilleuse-de-lanterne", "fossoyeur", "ermite", "enfant-de-la-brume", "louvetier"].includes(r)), `${c.libelle} : une lanterne`);
+    assert.ok(c.roles.filter(r => r === "villageois").length <= Math.floor(n / 6), `${c.libelle} : village actif`);
+    assert.ok(!c.roles.includes("loup-deguise") && !c.roles.includes("pyromane") && !c.roles.includes("dame-du-gue"), c.libelle);
+    assert.ok(!c.batiments.includes("gibet") && !c.batiments.includes("pont"), c.libelle);
+  }
+  assert.throws(() => composerTablee(13), /4 à 12 places/);
+  assert.ok(!Object.values(surDisque).some(c => c.niveau !== NIVEAU_PETITE_TABLEE && c.joueurs[0] < 6), "les niveaux classiques commencent à 6");
 });
 
 // ---------------------------------------------------------------- Mutations

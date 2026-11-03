@@ -24,6 +24,7 @@ import { choisir } from "./hasard.mjs";
 import { normaliserEtat } from "./etat.mjs";
 import { inscrire } from "./registre.mjs";
 import { presageDuJour } from "./almanach.mjs";
+import { sortTranche } from "./tablee.mjs";
 
 export const POIDS_DU_BAILLI = 2;
 // Les phases où l'élection est proposée (le débat, ou le vote quand celui d'exécution n'a pas encore eu lieu).
@@ -172,16 +173,20 @@ export function nommerBailli(e, acteurId, { villageois = [] } = {}) {
 // Le Bailli (ou le narrateur à sa place) tranche une égalité (vote d'exécution clos, departage en attente) : choix parmi les ex
 // aequo encore vivants (vivants : [acteurId] ; null = sans vérifier), autant que de places. Un vote rouvert ou déjà tranché n'est
 // pas touché ; la nuit tombée, plus personne n'est condamné pour ce vote (il entre au Registre sans condamné).
-export function trancherVote(e, choix = [], { vivants = null } = {}) {
+// Petite tablée (tablee.mjs) : les places que le Bailli laisse vides (il passe, ou ne tranche qu'en partie) sont tranchées par le
+// sort parmi les autres ex æquo vivants (departage.sort = les désignés par le sort ; hasard : le tirage).
+export function trancherVote(e, choix = [], { vivants = null, hasard = Math.random } = {}) {
   const etat = normaliserEtat(e);
   const r = etat.vote.resultat;
   if (etat.vote.ouvert || !r?.departage?.enAttente) return etat;
   const d = r.departage;
   const permis = id => d.candidats.includes(id) && (!vivants || vivants.includes(id));
   const admis = etat.phase === "nuit" ? [] : [...new Set(choix)].filter(permis).slice(0, d.places);
-  r.elus = [...r.elus, ...admis];
+  const sort = etat.petiteTablee && etat.phase !== "nuit" && admis.length < d.places
+    ? sortTranche({ candidats: d.candidats.filter(id => permis(id) && !admis.includes(id)), places: d.places - admis.length, hasard }) : [];
+  r.elus = [...r.elus, ...admis, ...sort];
   r.elu = r.elus[0] ?? null;
-  r.departage = { ...d, enAttente: false, choix: admis };
+  r.departage = { ...d, enAttente: false, choix: admis, ...(sort.length ? { sort } : {}) };
   inscrire(etat, entreeDeVote(r));
   return etat;
 }

@@ -395,6 +395,10 @@
         "Nom": "The Mourning Bell (variant)",
         "Aide": "Each innocent executed by vote tolls the bell and gives the pack a growing collective power (a vision, a faceless vote, the shroud). Applies from the next deal."
       },
+      "PetiteTablee": {
+        "Nom": "Small table by default",
+        "Aide": "The mode for 1 to 4 humans completed by 2 to 8 AI players (4 to 12 seats): a short pack (from two wolves on: a white first night, and the pack must outnumber the others to win), humans never all wolves nor all in the same camp, a deal that favours (without guarantee) a lantern with a human and the shadow on both sides of the table, ties settled by lot, the final bell set automatically. Remembers the last level chosen at the Game Table; when checked, « Replay » and the AI GM compose a small table."
+      },
       "VeilleeDeFete": {
         "Nom": "Holiday vigil (variant)",
         "Aide": "The holiday vigil of a game dealt without an explicit choice (by the AI GM, or « Replay »): none by default, the one the calendar suggests that day, or a named vigil. The Game Table suggests the calendar's one; the narrator decides. Applied at the next deal.",
@@ -623,7 +627,8 @@
       "Niveaux": {
         "debutants": "Beginners",
         "classique": "Classic",
-        "chaos": "Chaos"
+        "chaos": "Chaos",
+        "petite-tablee": "Small table (few humans, AI players)"
       },
       "Equilibre": {
         "equilibree": "Balanced ({somme})",
@@ -954,6 +959,23 @@
       "Voix": "A faceless vote joined {nom}.",
       "InviteVoix": "The bell lends you its voice: which candidate of this vote will the faceless vote join?",
       "VoixChoisie": "The pack places the faceless vote on {nom}."
+    },
+    "Tablee": {
+      "Nom": "Small table",
+      "AnnonceTete": "Small table: {humains} player(s) and {compagnons} AI companion(s). The pack is short.",
+      "RegleLoups": "The human players are never all wolves.",
+      "RegleCamps": "With three humans or more, they are never all in the same camp.",
+      "RegleTirage": "The deal favours, without guaranteeing it, a Village lantern in a human's hands.",
+      "RegleTirageOmbre": "The deal favours, without guaranteeing it, a Village lantern in a human's hands and the shadow (wolves and loners) on both sides of the table.",
+      "RegleRythme": "Ties at the vote are settled by lot, and the final bell will toll at the end of day {n}.",
+      "NuitBlanche": "Two wolves or more: the first night is a white night (the pack meets, but does not hunt), and the pack must outnumber the others to win.",
+      "Sort": "Tie: the lot settles it and names {noms}.",
+      "PreparationAide": "Small table: 1 to 4 humans, 2 to 8 AI players, 4 to 12 seats. Guaranteed: humans are never all wolves (nor all in the same camp with three or more); favoured without guarantee: a lantern with a human, the shadow on both sides of the table. Ties settled by lot; final bell at the end of day {n} (0 = automatic).",
+      "Avis": {
+        "places": "A small table has 4 to 12 seats: beyond that, the setup falls back to the classic level, without the mode.",
+        "humains": "A small table is meant for 1 to 4 humans; beyond that, prefer a classic level.",
+        "compagnons": "A small table is meant for 2 to 8 AI players: add some (« + AI player » button)."
+      }
     },
     "SaintMartin": {
       "Titre": "Saint Martin's Night",

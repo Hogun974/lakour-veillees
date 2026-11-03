@@ -273,7 +273,7 @@ const MUTATIONS = [
   ["scripts/api.mjs", "let x = L.suivrePeste(L.cloreNuit(e, { asperges: r.asperges, fioles: r.fioles, bilan: r.bilan, pontFranchi: r.pontFranchi && cles.includes(\"pont\") }), r.deces);",
     "let x = L.cloreNuit(e, { asperges: r.asperges, fioles: r.fioles, bilan: r.bilan, pontFranchi: r.pontFranchi && cles.includes(\"pont\") });", "le porteur suit la victime"],
   ["scripts/api.mjs", "      await envoyerSecret(porteur, { texte: t(\"LAKOUR_LOUPS.Peste.CarnetPorteur\") });\n", "", "carnet du porteur"],
-  ["scripts/api.mjs", "morts: e.morts, primes: e.primes, peste: e.peste, saintMartin });", "morts: e.morts, primes: e.primes, saintMartin });", "victoire de la peste"],
+  ["scripts/api.mjs", "morts: e.morts, primes: e.primes, peste: e.peste, saintMartin, strict: pariteStricte(e) });", "morts: e.morts, primes: e.primes, saintMartin, strict: pariteStricte(e) });", "victoire de la peste"],
   ["scripts/api.mjs", "    if (r.mort) await api.eliminer(r.mort, { cause: \"panique\" });\n", "", "crieur pendu"],
   ["scripts/api.mjs", "if (!acteur || !user || (!user.isGM && acteur.system.joueur !== userId)) return false;\n  try {\n    await api.crierPeste",
     "if (!acteur || !user) return false;\n  try {\n    await api.crierPeste", "on ne crie que pour soi"],

@@ -7,7 +7,7 @@ Foundry v14 (14.369). Tout en français, textes originaux (aucun texte, aucune c
 
 ## 1. Système `lakour-loups`
 
-`systems/lakour-loups/system.json` : `id: "lakour-loups"`, `version: "0.10.0"`, `compatibility { minimum: "14", verified: "14.369" }`,
+`systems/lakour-loups/system.json` : `id: "lakour-loups"`, `version: "0.11.0"`, `compatibility { minimum: "14", verified: "14.369" }`,
 `socket: true`, `esmodules: ["lakour-loups.mjs"]`, langues fr et en, `documentTypes` ci-dessous,
 `grid { type: 1, distance: 1.5, units: "m" }`, `primaryTokenAttribute: null`.
 
@@ -113,8 +113,10 @@ n'existe que chez le MJ actif ; il se range en deux morceaux (`logique/etat.mjs`
   masques: [cle de rôle],                                // SECRET : les Masques de veillée de la meute
   fete: { cle, neige, defile, defileNom },               // public (0.10.0) : la veillée de fête en jeu ("" : aucune), le dernier matin
                                                          //   de neige (n° du tour), le masque du défilé (clé et nom d'un rôle absent)
-  secretsDeFete: { masque, masqueTombe, present, presentOuvert, promis }   // SECRET (0.10.0) : qui porte le masque du Carnaval (tombé ?), qui a reçu le présent
+  secretsDeFete: { masque, masqueTombe, present, presentOuvert, promis },  // SECRET (0.10.0) : qui porte le masque du Carnaval (tombé ?), qui a reçu le présent
                                                          //   d'hiver (et s'il s'est ouvert), qui sont les promis
+  petiteTablee: Boolean,          // public (0.11.0) : la Petite tablée (§1 « Petite tablée ») — une règle de la veillée, jamais un secret
+  places: Number                  // public (0.11.0) : les places distribuées (humains + compagnons), annoncées
 }
 ```
 `etat()` rend l'état complet chez le MJ actif, l'état public partout ailleurs.
@@ -357,6 +359,76 @@ resoudreNuit()                    -> + neige (Boolean) ; messages : + le murmure
 Hook public `lakourLoups.fete` (`{ cle, quoi: "ouverture" | "neige", tour }`). Registre : entrée `{ type: "fete", quoi: "ouverture" |
 "neige" | "defile", cle, role?, nom? }`. Refus de pouvoir de jour `neige`. Réglage monde `veilleeDeFete` ("" par défaut). Préparation de la
 Table : liste « Veillée de fête » (`preparation.fete` : null tant que rien n'est choisi, puis "" ou une clé).
+
+Ajouts 0.11.0 — la Petite tablée (§1 « Petite tablée ») :
+```
+nouvellePartie({ niveau: "petite-tablee" }) / distribuer({ …, tablee })
+                                  -> tablee : true, false ; non précisé : une composition prête de ce niveau (« petite-tablee-07 ») la
+                                     choisit, sinon le réglage monde « petiteTablee ». Jamais dans une Nuit de la Saint-Martin. nouvellePartie
+                                     sans niveau : « petite-tablee » si le réglage est coché (12 places au plus), sinon le niveau précédent ;
+                                     le réglage est RÉCRIT à chaque choix explicite (niveau, composition prête, tablee) : il se souvient.
+                                     Résumé du MJ : + tablee, glas ; composition.niveau "petite-tablee", libellé « Petite tablée — … ».
+logique.composer(n, equilibre, { niveau, … })  -> tant que le réglage « petiteTablee » est coché, une composition de 12 places au plus
+                                     (hors peste voulue) est une petite tablée quel que soit le niveau demandé : le MJ IA, qui ne connaît
+                                     que les trois niveaux, suit ainsi le choix du MJ (loups_composer, loups_distribuer auto, loups_rejouer)
+contenu()                         -> niveaux : + "petite-tablee" ; compositions : + « petite-tablee-04 » … « petite-tablee-12 »
+cloreVote()                       -> + sort: [acteurId] (petite tablée : l'égalité en tête tranchée par le sort, sans Bailli en charge) ;
+                                     departage.sort: [acteurId] quand le Bailli passe (trancherVote complète par le sort)
+verifierVictoire()                -> au régime des deux loups (8 places et plus), la meute doit être PLUS nombreuse (victoire.mjs, strict)
+candidatsDeNuit({ roleCle: "meute" }) -> [] la première nuit au régime des deux loups (nuit blanche)
+```
+Logique pure `logique/tablee.mjs` : `NIVEAU_PETITE_TABLEE`, `TABLEE` (bornes), `nombreDeLoupsTablee`, `ombresTablee`, `deuxLoupsTablee`
+(= `nuitBlancheTablee` = `pariteStricteTablee`), `glasTablee`, `verifierTablee({ humains, compagnons })` -> { ok, raison }, `contraintesTablee(places)`
+-> [règles violées], `distribuerTablee({ roles, metiers, joueurs, maisons, humains, decrire, graine })` -> { tirage, manques, essais },
+`sortTranche({ candidats, places, hasard })`. Réglage monde `petiteTablee` (faux par défaut). Chat : annonce assemblée (`Tablee.AnnonceTete`…, des
+nombres, jamais un nom, et seulement les règles qui valent pour la table) + `Tablee.NuitBlanche` au régime des deux loups ; `Tablee.Sort`
+à chaque égalité tranchée. Glas : 0 à la distribution = posé d'office (`glasTablee`), un jour donné est gardé. Plus de 12 places au niveau
+petite-tablee : la composition retombe sur le niveau classique (avis au MJ), sans le mode. Une Saint-Martin ne touche pas au réglage. Table de jeu : niveau « Petite
+tablée » (pré-sélectionné si le réglage s'en souvient), rappel des règles et avis hors des clous (1 à 4 humains, 2 à 8 IA), pastille
+« Petite tablée » pendant la partie.
+
+### Petite tablée (logique/tablee.mjs, 0.11.0)
+
+Le mode pour peu d'humains (1 à 4) complétés par des compagnons IA (2 à 8), de 4 à 12 places. Ses règles sont PUBLIQUES (guide du
+joueur, page « La petite tablée ») ; ce qu'elles contraignent, c'est le tirage, jamais ce qui s'annonce : la composition reste secrète,
+et rien de qui tient quoi ne sort du tirage (l'annonce du chat ne porte que des nombres).
+- **Composition** (niveau `petite-tablee` du générateur, `tirerTablee` ; compositions prêtes du contenu « petite-tablee-04 » à « -12 ») :
+  1 loup jusqu'à 7 places, 2 de 8 à 10, 3 à 11 et 12 (`nombreDeLoupsTablee`) ; dès 6 places, au moins deux rôles de l'OMBRE (loups et
+  solitaires : `ombresTablee` ; quatre à 11 et 12 places : trois loups et le Colporteur), le solitaire étant le Colporteur (le Chasseur de primes et le Revenant gagnaient une partie sur quatre ou
+  cinq à si peu de votes) ; un loup à pouvoir au plus, une fois sur deux dès 7 places ; une lanterne (deux dès 8), une protection dès 6 ;
+  un simple villageois au plus, dès six places (`villageoisTablee`) ; ni Loup déguisé, ni Pyromane, ni Dame du gué (`HORS_TABLEE`) ; ni Gibet ni
+  Pont (`HORS_TABLEE_BATIMENTS`) ; les rôles du niveau classique sans leur minimum de joueurs ; cible d'équilibre `cibleTablee(n)`.
+- **Partage des camps** (`contraintesTablee(places, regles)`, `reglesTablee`, `distribuerTablee` : règles favorisées tirées en secret,
+  puis rôles rebattus jusqu'à satisfaire, 400 essais, sinon le moins mauvais et un avertissement). GARANTI : les humains ne sont jamais
+  tous loups (2 et plus) ; à 3 humains ou plus, jamais tous du même camp. FAVORISÉ, tiré en secret à chaque distribution (jamais
+  stocké, jamais annoncé) : une lanterne (rôle d'information) chez un humain du Village (`CHANCE_LANTERNE` = 1/2) ; à 3 humains ou
+  plus, l'ombre des deux côtés de la table (`CHANCE_OMBRE` = 1/2). Un seul humain : aucune règle de côté. Le reste au hasard ; peste
+  noire : les loups comptent comme villageois. Pourquoi pas plus : une règle de côté garantie rend une déduction certaine (à deux
+  humains, « l'ombre des deux côtés » dirait au villageois que son ami est de l'ombre). Mesuré (relecture 14, `deduction.mjs`, 12
+  compositions × 400 tirages par configuration) : plus aucune déduction « si je suis X, l'autre humain est Y » n'atteint 100 %, sauf
+  à 4 places (un seul rôle de l'ombre : le loup sait par la règle que tout le reste est Village) ; à 2 humains, « A village → B ombre »
+  22–33 % (tirage libre 25–39 %), « A ombre → B village » 66–93 % (libre 66–86 %) ; à 3 humains, « A village → B ombre » 53–57 % (libre
+  33–40 %, la règle garantie « jamais tous du même camp »), « A ombre → B village » 82–93 %. L'annonce du chat ne dit que ce qui
+  vaut pour la table (`Tablee.AnnonceTete`, `RegleLoups` dès 2 humains, `RegleCamps` dès 3, `RegleTirage` / `RegleTirageOmbre`,
+  `RegleRythme`, `NuitBlanche`). `etat.places` (public) : les places distribuées, sur lesquelles se comptent la nuit blanche et la
+  parité stricte (jamais les figurants ni les arrivants).
+- **Rythme** : Glas final posé d'office (`glasTablee` : jour 3 jusqu'à 6 places, puis un jour de plus par deux places) si `glas` n'est pas
+  donné ; au vote d'exécution, une égalité en tête que le Bailli ne tranche pas (pas de Bailli en charge : `cloreVote`, `resultat.sort` ;
+  le Bailli passe : `trancherVote`, `departage.sort`) est tranchée par le sort parmi les ex æquo ; jamais pour la Chapelle, le Bailli,
+  l'exil ou le Banc. **Régime des deux loups** (`deuxLoupsTablee`, 8 places et plus) : la première nuit est blanche (la meute ne chasse
+  pas, `candidatsDeNuit` -> []) et la meute doit être PLUS nombreuse que les autres vivants pour l'emporter (`verifierVictoire({ strict })`) ;
+  à un seul loup, les règles ordinaires.
+- **Compagnons** : ils parlent d'abord aux humains (MJ IA, `compagnons.js` : `CONSIGNE_PETITE_TABLEE` dans la consigne de parole,
+  `repliReplique` nomme un humain quatre fois sur cinq ; `compagnons-jeu.js`, vue : `humains` (public : `system.joueur`) et
+  `petiteTablee` (public)). Un biais de PAROLE seulement : ni les votes ni les choix de nuit ne lisent cette liste.
+- **Équilibre mesuré** (essais/integration-loups.test.mjs, joueurs simulés qui votent au hasard sauf un loup lu ou démasqué, 45 parties par
+  configuration, dernière mesure, 315 parties) : 2 h + 2 IA 53 %, 2 h + 4 IA 38 %, 3 h + 5 IA 40 %, 3 h + 7 IA 62 %, 4 h + 8 IA 53 % de victoires de
+  la meute, compositions prêtes petite-tablee-06 53 % et petite-tablee-08 60 % (51 % en tout ; d'un passage à l'autre, une table bouge de
+  quelques points : les réponses des joueurs simulés et des compagnons s'ordonnent dans le temps) ; la borne
+  de l'essai est 30–72 % par configuration, 38–67 % en tout. Une mesure MÉCANIQUE : de vrais joueurs lisent leurs lanternes et parlent.
+- **Secrets** : rien de neuf n'est secret ; `petiteTablee` est public (état, hook de phase), le réglage aussi. L'essai `non-fuite` passe
+  trois parties de petite tablée au crible et vérifie que l'annonce ne nomme personne (mutation : l'annonce qui nomme les humains de
+  l'ombre). `essais/petite-tablee.test.mjs` : logique, API, 18 mutations.
 
 ### Veillées de fête (logique/fetes.mjs, 0.10.0)
 
@@ -602,6 +674,10 @@ Même contrat que lakour-40k et lakour-warcraft (`modules/lakour-mj-ia/scripts/c
 - `assets/compositions.json` : `{ "<cle>": { "libelle", "joueurs": [min, max], "niveau": "debutants|classique|chaos",
   "roles": ["<cle de rôle>", …] (autant que de joueurs ; « villageois » pour compléter), "batiments": [cle…] } }` ;
 - installateur (`scripts/main.js`, monde `lakour-loups` seulement) : importe guides et la scène du village, recopie les plans.
+- Petite tablée (contenu 0.13.0, système 0.11.0) : compositions prêtes « petite-tablee-04 » à « petite-tablee-12 » (niveau
+  `petite-tablee`, tirées par le générateur du système à graine fixe — `composerTablee` de `contenu/compositions.mjs` importe
+  `composer` —, donc à la cible d'équilibre du mode ; mesurées dans l'essai d'intégration comme les générées) ; page « La petite tablée » du guide du
+  joueur, section du guide du narrateur (« Préparer la partie », « Conseils pour un MJ IA »), ligne des Variantes.
 - veillées de fête (contenu 0.12.0) : un journal visible par veillée (`fete-<clé>`), une page d'image en tête
   (`assets/fetes/<id de la fête du calendrier>.jpg` : halloween, noel, carnaval, saint-valentin), puis la fête et ses règles ; le guide du
   joueur et celui du narrateur ont une page « Les veillées de fête ». `scripts/fetes.js` (données sans dépendance, identifiant de chaque
@@ -643,6 +719,12 @@ MJ IA 0.35.0 (avec le système 0.9.0) :
 - le coût des IA (`seance`, `compagnonsHorsSeance`, réglages monde) reste en mémoire pendant une partie des Veillées et s'écrit d'un
   coup quand elle est finie ou abandonnée, à l'arrêt de la séance et avant de quitter la page : une écriture par décision d'un
   compagnon dirait, la nuit, combien de loups IA se réveillent.
+
+Petite tablée (système 0.11.0, MJ IA inchangé hors compagnons) : le MJ IA la choisit par le réglage monde « petiteTablee » (la Table du
+MJ le coche quand le MJ choisit ce niveau ; `api.logique.composer` suit alors le réglage pour toute composition de 12 places au plus :
+`loups_composer`, `loups_distribuer` en mode auto, `loups_rejouer`), ou par `loups_distribuer` en mode « composition » avec une
+composition prête « petite-tablee-<n> » (le système reconnaît son niveau et applique le mode). Le guide du narrateur le lui dit. Les
+compagnons (`compagnons.js`, `compagnons-jeu.js`) parlent d'abord aux humains quand `etat.petiteTablee` (public) est vrai.
 
 Outils `loups_*` (section « Narrateur des Veillées » de `modules/lakour-mj-ia/scripts/outils.js`, `systemes: ["lakour-loups"]`) :
 `loups_composer`, `loups_distribuer` (maisons sur les deux rives), `loups_nuit` (candidats de `candidatsDeNuit`, mot du Messager
@@ -745,7 +827,7 @@ choix ni secret d'autrui n'y figure avant sa révélation publique.
 | | Qui le reçoit | Ce qu'il contient |
 | --- | --- | --- |
 | Documents `villageois` | tous | nom, image, maison, vivant, révélé, silence, joueur, compagnon, notes ; le **métier** (objet et usages : les métiers sont publics, leur usage est annoncé) ; l'**objet `role` et `system.camp` seulement une fois révélés** (et pour tous à la fin, avec `amoureux`). Propriété : LIMITED pour tous, OBSERVER pour son joueur ; personne d'autre que le MJ ne le modifie (serveur, plus `scripts/garde.mjs`). |
-| Réglage monde `partie` | tous | l'état PUBLIC (§1) : phase, tour, qui a voté (pas pour qui), résultats des votes clos, morts et cause publique, effets du jour annoncés, Bailli, Registre, présage, gens de passage (rôle public), Banc, compte du deuil, veillée de fête (sa clé, la neige, le masque du défilé), chronique publique. Récrit seulement s'il change : jamais par un choix de nuit. |
+| Réglage monde `partie` | tous | l'état PUBLIC (§1) : phase, tour, qui a voté (pas pour qui), résultats des votes clos, morts et cause publique, effets du jour annoncés, Bailli, Registre, présage, gens de passage (rôle public), Banc, compte du deuil, veillée de fête (sa clé, la neige, le masque du défilé), la Petite tablée (le mode, une règle : jamais de quel côté l'ombre est tombée), chronique publique. Récrit seulement s'il change : jamais par un choix de nuit. |
 | Réglage monde `coffre` | tous, chiffré | TOUS les secrets de la partie, scellés avec la clé du coffre du MJ IA. Écrit aux moments publics (phase, aube résolue, vote clos, mort, arrivée, départ, distribution, victoire), au battement (une fois par minute pendant une partie, même sans changement, vecteur neuf) et avant de quitter la page ; jamais au rythme de la nuit. |
 | Réglages client du MJ (`secrets`, par [monde][userId]) et sa mémoire | le MJ actif | l'état complet : fiches (rôle, camp, amoureux, protections), choix de la nuit et bilan, votes en cours, primes, fioles, aspergés, vraies causes, carnets, composition, peste, masques, rêves, Bonne étoile, autel, pouvoirs du deuil, Pont bloqué, cloche à venir, secrets de fête (masque, présent, promis). |
 | Socket, à un seul (`recipients`) | son joueur | sa fiche (`fiche`), sa carte de rôle et son carnet (`secret`, `carnet`), ses demandes (`demande`, `annuler`), son vote (`monVote`), ses refus (`avis`), sa ligne des salons (`salon` : la meute à un loup seulement, la nuit), les mots relayés (`parole`), mort qui voit tout : les rôles des autres (`vus`) ; ses parts de clé (canal du MJ IA). |

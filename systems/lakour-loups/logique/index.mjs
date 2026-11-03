@@ -28,3 +28,4 @@ export * from "./deuil.mjs";
 export * from "./saintmartin.mjs";
 export * from "./fiches.mjs";
 export * from "./fetes.mjs";
+export * from "./tablee.mjs";

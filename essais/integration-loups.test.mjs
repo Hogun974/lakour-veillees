@@ -23,7 +23,7 @@ installerFoundry({ contenu: true });
 const { api } = await import("../systems/lakour-loups/scripts/api.mjs");
 const { ecouterSocket } = await import("../systems/lakour-loups/scripts/socket.mjs");
 const { enregistrerReglages } = await import("../systems/lakour-loups/scripts/reglages.mjs");
-const { creerHasard, choisir, melanger, verifierVictoire, CAUSES_SECRETES, POUVOIRS_JOUR, effetsDeLaNuit, surLAutreRive, ROLES_DE_PASSAGE, CLES_DE_FETE } = await import("../systems/lakour-loups/logique/index.mjs");
+const { creerHasard, choisir, melanger, verifierVictoire, CAUSES_SECRETES, POUVOIRS_JOUR, effetsDeLaNuit, surLAutreRive, ROLES_DE_PASSAGE, CLES_DE_FETE, voteExecutionDuJour } = await import("../systems/lakour-loups/logique/index.mjs");
 const { OUTILS } = await import("../modules/lakour-mj-ia/scripts/outils.js");
 const { Compagnons, reinitialiserPrive, privesDe } = await import("../modules/lakour-mj-ia/scripts/compagnons-jeu.js");
 const { contexteCompagnon, texteBrut } = await import("../modules/lakour-mj-ia/scripts/compagnons.js");
@@ -226,15 +226,22 @@ function verifierVictoireFinale(texte) {
     assert.equal(meute.length, 0, "le village gagne : plus aucun loup vivant");
     assert.ok(!vivants.some(a => ROLES[roleDe(a).system.cle]?.system.victoireCle === "dernier-survivant"), "ni pyromane vivant");
   } else if (e.vainqueur === "meute") {
-    assert.ok(meute.length > 0 && meute.length >= vivants.length - meute.length, "la meute gagne : au moins autant de loups que d'autres");
+    // La meute gagne à parité, ou au Glas final (petite tablée : posé d'office) si un loup vit encore.
+    const strict = e.petiteTablee && api.logique.pariteStricteTablee(villageois().length);
+    const parite = strict ? meute.length > vivants.length - meute.length : meute.length >= vivants.length - meute.length;
+    assert.ok(meute.length > 0 && (parite || glasAFini(e)), "la meute gagne : au moins autant de loups que d'autres (plus nombreuse en petite tablée), ou le glas a sonné");
+    couvert("tablée : le glas sonne", e.petiteTablee && meute.length < vivants.length - meute.length ? 1 : 0);
   } else {
     assert.ok(game.actors.get(e.vainqueur), "solitaire ou amoureux vainqueur");
   }
   // Le vainqueur est celui que dicte la règle sur l'état final.
   const aPlat = villageois().map(a => ({ id: a.id, vivant: a.system.vivant, camp: secretDuMJ.camp(a), amoureux: secretDuMJ.amoureux(a),
     role: { cle: roleDe(a).system.cle, victoireCle: roleDe(a).system.victoireCle } }));
-  assert.equal(verifierVictoire({ villageois: aPlat, morts: e.morts, primes: e.primes }), e.vainqueur);
+  assert.equal(verifierVictoire({ villageois: aPlat, morts: e.morts, primes: e.primes, glas: glasAFini(e), strict: e.petiteTablee && api.logique.pariteStricteTablee(villageois().length) }), e.vainqueur);
 }
+
+// Le Glas final a-t-il fini la partie (phase « fin » comprise : glasSonne ne regarde qu'une partie en cours) ?
+const glasAFini = e => e.glas > 0 && (e.tour > e.glas || (e.tour === e.glas && voteExecutionDuJour(e)));
 
 // Ce que les parties ont réellement exercé, toutes ensemble (vérifié dans le bilan).
 const couverture = new Map();
@@ -275,9 +282,13 @@ function verifierSavoirDesCompagnons(ou) {
 
 // ------------------------------------------------------------------ une partie, menée par les outils du MJ IA
 // fete : une veillée de fête (0.10.0), choisie par le réglage « veilleeDeFete » (le MJ IA distribue sans la choisir lui-même).
-async function jouerPartie({ n, niveau, graine, nbCompagnons = 0, fete = "" }) {
+// tablee : la Petite tablée (0.11.0) : le réglage monde « petiteTablee » est coché (comme le fait la Table du MJ), et le narrateur
+// distribue au niveau « petite-tablee » ; le tirage contraint, le glas d'office et le sort qui tranche sont vérifiés en chemin.
+// composition : une composition prête du contenu (clé), au lieu de la composition générée.
+async function jouerPartie({ n, niveau, graine, nbCompagnons = 0, fete = "", tablee = false, composition = "" }) {
   const joueurs = monde(n, graine);
   if (fete) await game.settings.set("lakour-loups", "veilleeDeFete", fete);
+  if (tablee) await game.settings.set("lakour-loups", "petiteTablee", true);
   // Une graine sur cinq sans révélation à la mort, avec ou sans compagnons : le Cimetière parle alors (s'il est tiré).
   if (graine.split("-")[0] === "cendres") await game.settings.set("lakour-loups", "revelerALaMort", false);
   const hasardOrigine = Math.random;
@@ -322,7 +333,15 @@ async function jouerPartie({ n, niveau, graine, nbCompagnons = 0, fete = "" }) {
     if (!possibles.length || h() > 0.6) return;
     const { a, p } = choisir(possibles, h);
     const cibles = melanger(p.candidats, h).slice(0, p.cibles).map(c => c.nom);
-    await appeler("loups_jour", { action: "utiliser", villageois: a.name, pouvoir: p.nom, cibles, texte: "" });
+    // Un refus qui tient à la cible choisie (l'Aubergiste loge quelqu'un qui dort déjà à la Taverne) est un refus légitime, pas une erreur.
+    const r = await outil("loups_jour").executer({ action: "utiliser", villageois: a.name, pouvoir: p.nom, cibles, texte: "" });
+    if (r.erreur && /déjà fait/.test(r.contenu)) { couvert("pouvoir de jour refusé (cible déjà servie)"); return; }
+    textes.push(`loups_jour ${JSON.stringify({ villageois: a.name, pouvoir: p.nom, cibles })}
+${r.contenu}`);
+    assert.ok(!r.erreur, `loups_jour en erreur : ${r.contenu}`);
+    verifierTexte(r.contenu, "loups_jour");
+    verifierSecrets("loups_jour");
+    await verifierPlateau("loups_jour");
   };
   // Le vote d'exécution : ruban de la Tisserande (prolongation) et Juge de paix (revote) compris.
   const voterLeJour = async () => {
@@ -351,14 +370,14 @@ async function jouerPartie({ n, niveau, graine, nbCompagnons = 0, fete = "" }) {
   try {
     // Sans composition nommée : composition générée, équilibrée pour ce nombre de joueurs (compagnons IA compris).
     const total = n + nbCompagnons;
-    const depart = await appeler("loups_distribuer", { joueurs: [], composition: "", niveau, ...(nbCompagnons ? { compagnons: nbCompagnons } : {}) });
-    assert.match(depart, new RegExp(`composition « générée, [^»]+ » \\(${total} joueurs${nbCompagnons ? `, dont ${nbCompagnons} compagnons IA` : ""}\\)`));
+    const depart = await appeler("loups_distribuer", { joueurs: [], composition, niveau, ...(nbCompagnons ? { compagnons: nbCompagnons } : {}) });
+    assert.match(depart, new RegExp(`composition « ${composition ? "[^»]+" : "générée, [^»]+"} » \\(${total} joueurs${nbCompagnons ? `, dont ${nbCompagnons} compagnons IA` : ""}\\)`));
     // La composition, pour le narrateur seul : elle ne s'annonce plus aux joueurs.
     assert.match(depart, /Composition, pour toi seul \(ne l'annonce JAMAIS, ni le nombre de loups\) : Meute : /);
     assert.doesNotMatch(depart, /PESTE NOIRE/, "une partie ordinaire ne parle pas de peste au narrateur");
     assert.equal(villageois().length, total);
     assert.equal(villageois().filter(a => a.system.compagnon && !a.system.joueur).length, nbCompagnons, "compagnons sans joueur");
-    assert.equal(api.etat().composition, "generee");
+    assert.equal(api.etat().composition, composition || "generee");
     assert.equal(api.etat().fete.cle, fete, "la veillée de fête du réglage (aucune d'office)");
     if (fete) {
       const s = api.etat().secretsDeFete;
@@ -367,11 +386,23 @@ async function jouerPartie({ n, niveau, graine, nbCompagnons = 0, fete = "" }) {
       couvert("fête : masque", s.masque ? 1 : 0);
       couvert("fête : présent", s.present ? 1 : 0);
     }
-    // Composition générée : bon nombre de loups, équilibre des poids proche de zéro.
+    // Composition générée : bon nombre de loups, équilibre des poids proche de zéro (de sa cible, en petite tablée).
     const equilibre = JSON.parse(readFileSync(new URL("../modules/lakour-veillees/assets/equilibre.json", import.meta.url), "utf8"));
     const distribues = villageois().map(a => roleDe(a).system.cle);
-    assert.equal(distribues.filter(c => equilibre.roles[c].camp === "meute").length, api.logique.nombreDeLoups(total));
-    assert.ok(Math.abs(distribues.reduce((s, c) => s + equilibre.roles[c].poids, 0)) <= 3, `déséquilibrée : ${distribues.join(", ")}`);
+    assert.equal(distribues.filter(c => equilibre.roles[c].camp === "meute").length, tablee ? api.logique.nombreDeLoupsTablee(total) : api.logique.nombreDeLoups(total));
+    assert.ok(Math.abs(distribues.reduce((s, c) => s + equilibre.roles[c].poids, 0) - (tablee ? api.logique.cibleTablee(total) : 0)) <= 3, `déséquilibrée : ${distribues.join(", ")}`);
+    // La Petite tablée : publique, glas d'office, tirage contraint (le partage des camps), annonce sans nom.
+    assert.equal(api.etat().petiteTablee, tablee);
+    assert.equal(reglages.get("lakour-loups.partie").valeur.petiteTablee, tablee);
+    if (tablee) {
+      assert.equal(api.etat().glas, api.logique.glasTablee(total), "le glas final d'office");
+      const places = villageois().map(a => ({ humain: Boolean(a.system.joueur), role: { camp: secretDuMJ.camp(a), information: Boolean(equilibre.roles[roleDe(a).system.cle]?.information) } }));
+      assert.deepEqual(api.logique.contraintesTablee(places), [], `le partage des camps : ${villageois().map(a => `${a.name} ${roleDe(a).system.cle}`).join(", ")}`);
+      const annonce = messages.map(m => sansHTML(m.content)).find(t => t.includes(FR.LAKOUR_LOUPS.Tablee.Nom));
+      assert.ok(annonce, "la petite tablée annoncée");
+      for (const a of villageois()) assert.ok(!annonce.includes(a.name), `l'annonce nomme ${a.name}`);
+      couvert("tablée : humain de l'ombre", places.filter(p => p.humain && p.role.camp !== "village").length);
+    } else assert.equal(api.etat().glas, 0);
     // Les rôles et les primes partent au carnet de chaque joueur, à lui seul.
     for (const a of villageois().filter(x => x.system.joueur)) assert.ok(secretsEmis().some(e => e.recipients[0] === a.system.joueur && e.entree.html?.includes(roleDe(a).name)), `${a.name} sans carte de rôle`);
     // Un compagnon reçoit la sienne dans son carnet, gardé chez le MJ : rien ne part par le socket, ni son nom de joueur (aucun).
@@ -392,7 +423,10 @@ async function jouerPartie({ n, niveau, graine, nbCompagnons = 0, fete = "" }) {
       const fx = effetsDeLaNuit(api.etat(), api.etat().tour + 1);
       const nbDemandes = emissions.length;
       const carnetsAvant = new Map(villageois().filter(a => a.system.compagnon).map(a => [a.id, api.carnet(a.id).length]));
+      const tourAvant = api.etat().tour;
       const nuit = await appeler("loups_nuit", { delai_secondes: 20 });
+      // Le Glas final (petite tablée : posé d'office) : la nuit ne tombe pas, la partie s'arrête au soir — rien de la nuit à vérifier.
+      if (/VICTOIRE/.test(nuit) && api.etat().tour === tourAvant) { couvert("tablée : le glas sonne"); fin = nuit; break; }
       const etatNuit = api.etat();
       if (nbCompagnons) {
         verifierSavoirDesCompagnons(`nuit ${tour}`);
@@ -502,6 +536,9 @@ async function jouerPartie({ n, niveau, graine, nbCompagnons = 0, fete = "" }) {
       const max = Math.max(0, ...Object.values(attendu));
       for (const elu of resultat.elus) assert.ok(api.etat().vote.majoriteAbsolue || resultat.decompte[elu] === max, "l'élu a le plus de voix");
       for (const [id, nb] of Object.entries(resultat.decompte)) assert.ok(clos.includes(`${game.actors.get(id).name} : ${nb}`), `décompte annoncé : ${clos}`);
+      // Petite tablée : pas de jour sans verdict — une voix au moins, un condamné au moins (le sort tranche les égalités).
+      if (tablee && Object.keys(resultat.decompte).length) assert.ok(resultat.elus.length >= 1, `petite tablée : égalité sans verdict : ${clos}`);
+      if (tablee) couvert("tablée : le sort tranche", (resultat.sort?.length ?? 0) + (resultat.departage?.sort?.length ?? 0));
       if (!resultat.elus.length) {
         const raison = !Object.keys(resultat.decompte).length ? /Aucun vote :/ : resultat.egalite ? /Égalité :/
           : api.etat().vote.majoriteAbsolue ? /Pas de majorité absolue/ : /personne n'est désigné/;
@@ -562,6 +599,38 @@ for (const niveau of NIVEAUX) {
     for (const n of TAILLES) for (const graine of GRAINES) bilan.push({ niveau, n, graine, ...await jouerPartie({ n, niveau, graine }) });
   });
 }
+
+// La Petite tablée (0.11.0) : 2 à 4 humains simulés et des compagnons IA (repli sans IA), au moins 45 parties par configuration,
+// jusqu'à la victoire ; l'équilibre mesuré (part des victoires de la meute par configuration). Les joueurs simulés votent au
+// hasard sauf un loup lu dans les cendres ou démasqué : une mesure MÉCANIQUE, plus sévère pour le village que de vrais joueurs.
+// (TABLEE_CONFIG='{"h":4,"ia":8}' et TABLEE_GRAINES=15,16 : rejouer une configuration ou une graine seules, avec TRACE_LOUPS.)
+// Les deux dernières : les compositions PRÊTES du contenu (petite-tablee-06, -08), mesurées comme les générées.
+const TABLEES = process.env.TABLEE_CONFIG ? [JSON.parse(process.env.TABLEE_CONFIG)] : [{ h: 2, ia: 2 }, { h: 2, ia: 4 }, { h: 3, ia: 5 }, { h: 3, ia: 7 }, { h: 4, ia: 8 },
+  { h: 2, ia: 4, compo: "petite-tablee-06" }, { h: 3, ia: 5, compo: "petite-tablee-08" }];
+const PARTIES_PAR_TABLEE = 45;
+const GRAINES_TABLEE = process.env.TABLEE_GRAINES ? process.env.TABLEE_GRAINES.split(",").map(Number) : Array.from({ length: PARTIES_PAR_TABLEE }, (_, i) => i);
+const bilanTablee = [];
+test(`petite tablée : parties complètes, ${TABLEES.map(c => `${c.h} humains + ${c.ia} IA`).join(", ")} × ${PARTIES_PAR_TABLEE} graines ; équilibre mesuré`, async () => {
+  for (const c of TABLEES) for (const i of GRAINES_TABLEE) {
+    const graine = `tablee-${i}`;
+    bilanTablee.push({ ...c, graine, ...await jouerPartie({ n: c.h, niveau: "petite-tablee", graine: `${graine}-h${c.h}-ia${c.ia}${c.compo ? "-prete" : ""}`, nbCompagnons: c.ia, tablee: true, composition: c.compo ?? "" }) });
+  }
+  const part = l => l.filter(b => b.camp === "meute").length / l.length;
+  const parCamp = l => { const x = {}; for (const b of l) x[b.camp] = (x[b.camp] ?? 0) + 1; return JSON.stringify(x); };
+  const tours = l => (l.reduce((x, b) => x + b.tours, 0) / l.length).toFixed(1);
+  console.log(`Petite tablée : ${bilanTablee.length} parties ; vainqueurs ${parCamp(bilanTablee)} ; meute ${Math.round(part(bilanTablee) * 100)} % ; ${tours(bilanTablee)} tours`);
+  for (const c of TABLEES) {
+    const l = bilanTablee.filter(b => b.h === c.h && b.ia === c.ia && (b.compo ?? "") === (c.compo ?? ""));
+    console.log(`  ${c.h} humains + ${c.ia} IA (${c.h + c.ia} places${c.compo ? `, composition prête ${c.compo}` : ""}) : ${parCamp(l)} ; meute ${Math.round(part(l) * 100)} % ; ${tours(l)} tours`);
+    assert.ok(part(l) >= 0.3 && part(l) <= 0.72, `${c.h} humains + ${c.ia} IA${c.compo ? ` (${c.compo})` : ""} : meute ${Math.round(part(l) * 100)} %, hors de la fourchette`);
+  }
+  assert.ok(part(bilanTablee) >= 0.38 && part(bilanTablee) <= 0.67, `petite tablée : meute ${Math.round(part(bilanTablee) * 100)} % en tout`);
+  for (const effet of ["tablée : le sort tranche", "tablée : humain de l'ombre", "compagnons : répliques au débat"]) assert.ok(couverture.get(effet) > 0, `jamais exercé : ${effet}`);
+  // Reproductible.
+  const encore = await jouerPartie({ n: 3, niveau: "petite-tablee", graine: "tablee-0-h3-ia5", nbCompagnons: 5, tablee: true });
+  const premiere = bilanTablee.find(b => b.h === 3 && b.ia === 5 && !b.compo && b.graine === "tablee-0");
+  assert.deepEqual({ vainqueur: encore.camp, tours: encore.tours }, { vainqueur: premiere.camp, tours: premiere.tours });
+});
 
 // 3 humains simulés et des compagnons IA (repli sans IA), jusqu'à la victoire.
 const COMPAGNONS = [3, 6, 11];

@@ -343,14 +343,16 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
       if (porte) { noterBlocage(x.cible, porte, x.peste); continue; }
     }
     if (linceul && x.meute && !x.peste) { meurt(x.cible, x.cause); continue; }
+    // Deux attaques sur la même maison (la meute et le Pêcheur de nuit, à une petite table) : un seul remède, un seul mot au MJ.
+    const dejaSauve = par => sortie.sauves.some(s => s.acteurId === x.cible && s.par === par);
     if (remedies.has(x.cible)) {
+      if (!dejaSauve("remede")) sortie.messages.push(msg("mj", "SauveRemede", `${nom(x.cible)} a été sauvé par un remède.`, { nom: nom(x.cible) }));
       sortie.sauves.push({ acteurId: x.cible, par: "remede" });
-      sortie.messages.push(msg("mj", "SauveRemede", `${nom(x.cible)} a été sauvé par un remède.`, { nom: nom(x.cible) }));
       continue;
     }
     if (proteges.has(x.cible) && !x.traverse && !(x.meute && sansProtection(x.cible))) {
+      if (!dejaSauve("proteger")) sortie.messages.push(msg("mj", "SauveProtection", `${nom(x.cible)} était protégé cette nuit.`, { nom: nom(x.cible) }));
       sortie.sauves.push({ acteurId: x.cible, par: "proteger" });
-      sortie.messages.push(msg("mj", "SauveProtection", `${nom(x.cible)} était protégé cette nuit.`, { nom: nom(x.cible) }));
       continue;
     }
     // Le présent de la Veillée d'hiver : le premier coup qui devait tuer son porteur échoue, une fois (rien d'autre ne l'a arrêté).

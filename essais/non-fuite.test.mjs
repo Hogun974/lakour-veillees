@@ -11,6 +11,8 @@
 //   loup seulement ;
 // - pendant la nuit, aucun réglage monde n'est écrit (ni l'état public, ni le coffre, ni les compteurs du MJ IA).
 // Les veillées de fête (0.10.0) aussi : leurs secrets (masque, présent, promis, murmure des âmes) ne vont qu'aux concernés.
+// La Petite tablée (0.11.0) : son annonce publique ne nomme personne (le tirage contraint — qui est de l'ombre, qui tient la
+// lanterne — ne sort que par ses nombres) ; ses parties (2 à 4 humains, des compagnons IA) passent au même crible.
 // Et la migration d'une partie d'avant 0.9.0 (rôles sur les fiches, joueurs propriétaires) les retire des documents.
 // Lancer : npm run essais
 import { test } from "node:test";
@@ -77,6 +79,12 @@ function crible(etat) {
   if (Number(p.pont?.bloqueNuit) || p.voteDoubleDemain) fuite("*", "Pont bloqué ou cloche à venir publics");
   if ((p.masques ?? []).length || Object.keys(p.somnambules ?? {}).length || (p.journalSecret ?? []).length) fuite("*", "masques, rêves ou chronique secrète publics");
   if (Object.values(p.secretsDeFete ?? {}).some(x => (Array.isArray(x) ? x.length : x))) fuite("*", "secrets de fête publics");
+  // La Petite tablée : son annonce (chat) ne porte que des nombres, jamais un nom de villageois.
+  for (const m of nouveauxMessages) {
+    const t = decoder(m.content);
+    if (!t.includes(F.Tablee.Nom)) continue;
+    for (const a of villageois()) if (t.includes(a.name)) fuite("*", `l'annonce de la petite tablée nomme ${a.name}`);
+  }
   const fete = api.etat().secretsDeFete ?? {};
   // Le chat : aucun chuchotement pendant une partie (il serait livré à tous).
   for (const m of nouveauxMessages) if (m.whisper?.length) fuite("*", `chuchotement au chat : ${String(m.content).slice(0, 80)}`);
@@ -121,8 +129,9 @@ function crible(etat) {
     const sockets = JSON.stringify(recus);
     for (const cle of secretes) {
       for (const [ou, texte] of [["documents", docs], ["réglages monde", monde], ["chat", chat], ["socket", sockets]]) {
-        // Une valeur (pas un nom de champ : « conteuse » est aussi une clé de l'état public, jour.conteuse).
-        if (new RegExp(`"${cle}"(?!\\s*:)`).test(texte) || texte.includes(`|${cle}|`)) fuite(u, `la clé de rôle « ${cle} » (un autre villageois) dans ${ou}`);
+        // Une valeur (pas un nom de champ : « conteuse » est aussi une clé de l'état public, jour.conteuse), hors le pouvoir de jour
+        // annoncé à tous sans son acteur (« pouvoir »: « conteuse » — la règle : on sait qu'une Conteuse a parlé, pas qui).
+        if (new RegExp(`(?<!"pouvoir":)"${cle}"(?!\\s*:)`).test(texte) || texte.includes(`|${cle}|`)) fuite(u, `la clé de rôle « ${cle} » (un autre villageois) dans ${ou}`);
       }
     }
     // Ce qui lui est adressé est bien à lui.
@@ -156,7 +165,7 @@ function espionnerEcritures(etat) {
 }
 
 // ------------------------------------------------------------------ une partie complète
-async function partie({ graine, peste = false, gens = false, compagnons = 0, revelerALaMort = true, joueurs = 7, roles = [], fete = "" } = {}) {
+async function partie({ graine, peste = false, gens = false, compagnons = 0, revelerALaMort = true, joueurs = 7, roles = [], fete = "", niveau = "chaos" } = {}) {
   installerFoundry({ joueurs: 8, contenu: true });
   enregistrerReglages(() => {});
   ecouterSocket();
@@ -173,7 +182,7 @@ async function partie({ graine, peste = false, gens = false, compagnons = 0, rev
   // Les compagnons d'abord créés (comme par le MJ IA), puis la partie.
   const ids = [];
   for (const nom of ia) ids.push((await Actor.implementation.create({ name: nom, type: "villageois", system: { joueur: "", compagnon: true } })).id);
-  await api.nouvellePartie({ memesJoueurs: false, joueurs: humains, compagnons: ids, graine, peste, niveau: "chaos", roles, fete });
+  await api.nouvellePartie({ memesJoueurs: false, joueurs: humains, compagnons: ids, graine, peste, niveau, roles, fete });
   await calme();
   await rangement();
   const fuites = [];
@@ -217,7 +226,7 @@ async function partie({ graine, peste = false, gens = false, compagnons = 0, rev
     if (await api.verifierVictoire()) break;
   }
   await etape("fin");
-  return { fuites, nocturnes: etat.ecrituresNocturnes, vainqueur: api.etat().vainqueur, morts: api.etat().morts.length, fete: api.etat().fete.cle,
+  return { fuites, nocturnes: etat.ecrituresNocturnes, vainqueur: api.etat().vainqueur, morts: api.etat().morts.length, fete: api.etat().fete.cle, tablee: api.etat().petiteTablee,
     secretsDeFete: api.etat().secretsDeFete, murmures: etat.murmures,
     cles: villageois().map(a => secretDuMJ.role(a)?.system.cle) };
 }
@@ -235,14 +244,19 @@ const PARTIES = [
   { graine: "hiver", joueurs: 6, compagnons: 2, fete: "veillee-d-hiver" },
   { graine: "masques", joueurs: 7, fete: "carnaval-des-masques", roles: ["loup-de-brumecombe", "loup-deguise", "liseuse-de-cendres", "sourcier", "colporteur", "herboriste", "garde-du-pont"] },
   { graine: "promis", joueurs: 7, fete: "fete-des-promis" },
-  { graine: "fievre-promis", joueurs: 7, peste: true, fete: "fete-des-promis" }
+  { graine: "fievre-promis", joueurs: 7, peste: true, fete: "fete-des-promis" },
+  // La Petite tablée (0.11.0) : 2, 3 et 4 humains avec des compagnons IA, au niveau « petite-tablee ».
+  { graine: "tablee-deux", joueurs: 2, compagnons: 4, niveau: "petite-tablee" },
+  { graine: "tablee-trois", joueurs: 3, compagnons: 5, niveau: "petite-tablee" },
+  { graine: "tablee-quatre", joueurs: 4, compagnons: 8, niveau: "petite-tablee" }
 ];
 
 for (const p of PARTIES) {
-  test(`non-fuite : partie « ${p.graine} » (${p.joueurs} joueurs${p.compagnons ? `, ${p.compagnons} IA` : ""}${p.peste ? ", peste noire" : ""}${p.gens ? ", gens de passage" : ""}${p.revelerALaMort === false ? ", morts non révélés" : ""}${p.fete ? `, ${p.fete}` : ""})`, async () => {
+  test(`non-fuite : partie « ${p.graine} » (${p.joueurs} joueurs${p.compagnons ? `, ${p.compagnons} IA` : ""}${p.peste ? ", peste noire" : ""}${p.gens ? ", gens de passage" : ""}${p.revelerALaMort === false ? ", morts non révélés" : ""}${p.fete ? `, ${p.fete}` : ""}${p.niveau === "petite-tablee" ? ", petite tablée" : ""})`, async () => {
     const r = await partie(p);
     assert.ok(r.morts > 0, "la partie a eu lieu");
     assert.ok(r.vainqueur, "jusqu'à la victoire");
+    assert.equal(r.tablee, p.niveau === "petite-tablee", "le mode public de la petite tablée");
     for (const cle of p.roles ?? []) if (!p.peste) assert.ok(r.cles.includes(cle) || cle === "somnambule", `${cle} distribué`);
     assert.deepEqual(r.fuites.slice(0, 15), [], `${r.fuites.length} fuite(s)`);
     assert.deepEqual(r.nocturnes, [], "aucun réglage monde écrit pendant la nuit");
@@ -349,7 +363,12 @@ const MUTATIONS = [
   // M1 (relecture 10) : les secrets de la veillée dans le hook PUBLIC d'ouverture ; M2 : les lignes secrètes du MJ postées au chat.
   ["scripts/api.mjs", "annoncer(\"lakourLoups.fete\", [{ cle, quoi: \"ouverture\", tour: lireEtat().tour }]);", "annoncer(\"lakourLoups.fete\", [{ cle, quoi: \"ouverture\", tour: lireEtat().tour, ...secrets }]);", "M1 : le hook public sans secret", PARTIES.findIndex(p => p.graine === "hiver")],
   ["scripts/api.mjs", "  for (const texte of annonces) await annonceChat(echapper(texte));\n  annoncer(\"lakourLoups.fete\"", "  for (const texte of [...annonces, ...pourMJ]) await annonceChat(echapper(texte));\n  annoncer(\"lakourLoups.fete\"", "M2 : les lignes du MJ hors du chat", PARTIES.findIndex(p => p.graine === "hiver")],
-  ["scripts/api.mjs", "    for (const texte of annonces) await annonceChat(echapper(texte));\n    if (envoyer)", "    for (const texte of [...annonces, ...narration]) await annonceChat(echapper(texte));\n    if (envoyer)", "la narration de l'aube hors du chat", PARTIES.findIndex(p => p.graine === "ames")]
+  ["scripts/api.mjs", "    for (const texte of annonces) await annonceChat(echapper(texte));\n    if (envoyer)", "    for (const texte of [...annonces, ...narration]) await annonceChat(echapper(texte));\n    if (envoyer)", "la narration de l'aube hors du chat", PARTIES.findIndex(p => p.graine === "ames")],
+  // La Petite tablée (0.11.0) : l'annonce publique qui nommerait les humains de l'ombre, ou le mode retiré de l'état public (il est
+  // public par la règle, et la partie doit le porter).
+  ["scripts/api.mjs", "      const morceaux = [t(\"LAKOUR_LOUPS.Tablee.AnnonceTete\", { humains: h, compagnons: nomsCompagnons.length }),",
+    "      const morceaux = [t(\"LAKOUR_LOUPS.Tablee.AnnonceTete\", { humains: h, compagnons: nomsCompagnons.length }) + \" \" + sortie.filter(s => !s.compagnon && campDe(game.actors.get(s.acteurId)) !== \"village\").map(s => game.actors.get(s.acteurId).name).join(\", \"),",
+    "petite tablée : l'annonce nomme les humains de l'ombre", PARTIES.findIndex(p => p.graine === "tablee-trois")]
 ];
 
 async function chargerMutant(fichier, avant, apres) {

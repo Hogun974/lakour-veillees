@@ -1,11 +1,12 @@
 // Conditions de victoire. Logique pure.
 //
-// verifierVictoire({ villageois, morts, primes, peste, glas }) -> "village" | "meute" | "peste" | <acteurId> | ""
+// verifierVictoire({ villageois, morts, primes, peste, glas, strict }) -> "village" | "meute" | "peste" | <acteurId> | ""
 //   villageois : [{ id, vivant, camp, amoureux, role: { cle, victoireCle } }]
 //   morts      : etat.morts ([{ acteurId, tour, phase, cause }]) — cause "vote" = exécuté par le village
 //   primes     : { <id du chasseur de primes>: <id de sa cible> }
 //   peste      : etat.peste (secret du MJ ; null pour une partie ordinaire)
 //   glas       : le Glas final a sonné (glasSonne : le jour N du narrateur est passé) -> la partie doit finir
+//   strict     : la Petite tablée (tablee.mjs) : la meute doit être PLUS nombreuse que les autres vivants (à égalité, rien)
 //
 // Dans l'ordre :
 // 1. solitaire « exécuté » (le Revenant) : gagne s'il a été exécuté par le vote ;
@@ -19,7 +20,7 @@
 // 4. « dernier-survivant » (le Pyromane) : il gagne seul s'il est le dernier vivant, ou le dernier avec un seul autre
 //    joueur qui n'est pas un loup ;
 // 5. plus de loup ni de tueur solitaire en vie : le village gagne ;
-// 6. la meute est au moins aussi nombreuse que tous les autres vivants : la meute gagne ;
+// 6. la meute est au moins aussi nombreuse que tous les autres vivants : la meute gagne (strict : plus nombreuse) ;
 // 7. le Glas final a sonné sans autre vainqueur : la meute si un loup vit encore, sinon le tueur solitaire qui vit encore
 //    (le premier), sinon le village ; dans une peste noire, la peste.
 
@@ -39,7 +40,7 @@ export function victoireCleDe(role) {
 
 // saintMartin : null (partie ordinaire) ; false (Nuit de la Saint-Martin, avant la fin : rien ne tombe) ; true (sa fin :
 // victoireSaintMartin, saintmartin.mjs).
-export function verifierVictoire({ villageois = [], morts = [], primes = {}, peste = null, glas = false, saintMartin = null } = {}) {
+export function verifierVictoire({ villageois = [], morts = [], primes = {}, peste = null, glas = false, saintMartin = null, strict = false } = {}) {
   if (saintMartin !== null) return saintMartin ? victoireSaintMartin({ villageois, morts }) : "";
   const executes = new Set(morts.filter(m => m.cause === "vote").map(m => m.acteurId));
 
@@ -72,7 +73,7 @@ export function verifierVictoire({ villageois = [], morts = [], primes = {}, pes
 
   const meute = vivants.filter(v => v.camp === "meute").length;
   if (meute === 0 && tueurs.length === 0) return "village";
-  if (meute > 0 && meute >= vivants.length - meute) return "meute";
+  if (meute > 0 && (strict ? meute > vivants.length - meute : meute >= vivants.length - meute)) return "meute";
   if (glas) return meute > 0 ? "meute" : tueurs[0]?.id ?? "village";
   return "";
 }

@@ -273,6 +273,29 @@ Aux grandes fêtes de l'année, le narrateur peut proposer une **veillée de fê
 ${FETES_VEILLEES.map(f => `- **${f.nom}** — ${RESUMES_DE_FETE[f.id]}`).join("\n")}
 
 Chacune a son journal, « ${FETES_VEILLEES[0].journal.nom.split(" — ")[0]} — … », avec ses règles complètes. Ce qu'une veillée vous apprend en secret arrive dans votre carnet secret, comme le reste ; le narrateur ne confirme jamais un secret de fête, même quand quelqu'un s'en réclame.`
+    },
+    // La petite tablée (0.11.0), en dernière page : les pages précédentes gardent leur identifiant (épingles de la carte).
+    {
+      titre: "La petite tablée",
+      texte: `# Une veillée à peu d'humains
+
+Vous n'êtes que deux ou trois autour du narrateur ? La **petite tablée** est faite pour vous : de **1 à 4 joueurs humains**, complétés par **2 à 8 joueurs IA** (les compagnons, qui tiennent une place comme n'importe quel villageois : ils agissent la nuit, parlent au débat et votent), pour **4 à 12 places** en tout. Le narrateur la choisit à la préparation (niveau **« Petite tablée »**), et la Table de jeu l'annonce à tous : ses règles sont publiques. Ce qui ne l'est pas, c'est qui tient quoi.
+
+# Ses règles
+
+- **La meute est courte** : un seul loup jusqu'à sept places, deux jusqu'à dix, trois au-delà. Mais le village n'a presque **pas de simples villageois** : chacun ou presque a un pouvoir, et quelque chose à faire la nuit.
+- **Le régime des deux loups** (huit places et plus) : la **première nuit est blanche** (la meute se reconnaît, mais ne chasse pas : le village a un débat avant le premier sang), et la meute ne l'emporte que lorsqu'elle est **plus nombreuse** que tous les autres vivants réunis — à égalité (deux loups, deux autres), la veillée continue et le village a encore un vote. À un seul loup, les règles ordinaires : la meute gagne dès qu'elle égale les autres.
+- **Le partage des camps, ce qui est garanti.** Les joueurs humains ne sont **jamais tous loups** ; à trois humains ou plus, ils ne sont **jamais tous du même camp** (ni tous du Village, ni tous de l'ombre). Dès six places, il y a toujours **au moins deux rôles de l'ombre** en jeu (les loups, et un solitaire qui ne tue pas : le Colporteur ; quatre à onze et douze places), parfois un de plus.
+- **Le partage des camps, ce qui est favorisé sans être garanti.** À chaque distribution, le narrateur (le système) tire en secret s'il impose ou non deux penchants : **une lanterne chez un humain** (un rôle d'information — Liseuse de cendres, Sourcier, Veilleuse de lanterne, Fossoyeur, Ermite, Enfant de la brume, Louvetier — tenu par un humain du Village, une fois sur deux) et, à trois humains ou plus, **l'ombre des deux côtés de la table** (un rôle de l'ombre chez les humains ET chez les compagnons, une fois sur deux). Le reste du tirage est libre : les rôles vont au hasard, aux humains comme aux compagnons.
+- **Pas de jour sans verdict.** Au vote d'exécution, une **égalité** en tête que le Bailli ne tranche pas (pas de Bailli, ou il passe) est tranchée **par le sort** parmi les ex æquo. On vote chaque jour, et chaque vote compte.
+- **Le glas final est posé d'office** : la veillée s'arrête au soir du jour 3 jusqu'à six places, puis un jour de plus par deux places (jour 4 à huit places, jour 6 à douze). Si un loup vit encore à ce soir-là, la meute l'emporte : le village n'a pas le temps de tergiverser.
+- **Les compagnons vous parlent.** Les joueurs IA s'adressent d'abord aux humains : ils vous accusent, vous défendent, vous questionnent, plutôt que de discuter entre eux.
+
+Ni Loup déguisé (il rendrait la seule lanterne aveugle), ni Pyromane ni Dame du gué (trop pour une tablée de six), ni Gibet ni Pont. Le reste est une veillée ordinaire : métiers publics, bâtiments, Bailli, Masques de veillée, Dernier souffle si le réglage le veut.
+
+# Ce qu'on en déduit, et ce qu'on n'en déduit pas
+
+Ce que la règle garantit, tu peux t'en servir : si tu es loup, ton ami humain n'est pas loup (à deux) ; à trois humains ou plus, si tu es du Village, **l'un de tes amis au moins n'en est pas** — sans savoir lequel, ni s'il est loup ou Colporteur (qui, s'il a échangé son rôle, gagne avec son nouveau camp) — et si tu es de l'ombre, l'un d'eux au moins est du Village. Rien de plus n'est certain : à deux humains, vous pouvez être tous deux du Village ; l'ombre peut être toute entière chez les compagnons, ou toute entière chez les humains ; la lanterne peut être chez un compagnon, et celui qui jure n'avoir rien vu peut être celui qui a tout vu. Un loup peut se réclamer de la lanterne : rien ne le contredit.`
     }
   ]
 });
@@ -309,6 +332,12 @@ Les compositions toutes prêtes vont de 6 à 18 joueurs, en trois niveaux :
 - **Chaos** : loups spéciaux, solitaires, pouvoirs qui se croisent. Pour un groupe qui connaît bien le jeu, et un narrateur sûr de lui.
 
 Chaque composition indique ses bâtiments (4 à 6). Tu peux en changer un, en annonçant la liste avant la distribution.
+
+# La petite tablée
+
+Pour **1 à 4 humains et 2 à 8 compagnons IA** (4 à 12 places) : le niveau **« Petite tablée »** de la Table de jeu (ou les compositions prêtes « Petite tablée — n places »). Ses règles sont **publiques** (page « La petite tablée » du guide du joueur) : meute courte (1 loup jusqu'à 7 places, 2 jusqu'à 10, 3 au-delà), au régime des deux loups dès 8 places (première nuit blanche, et la meute doit être PLUS nombreuse que les autres pour l'emporter), au moins deux rôles de l'ombre dès 6 places (quatre à 11 et 12 : trois loups et le Colporteur), presque pas de simples villageois, ni Loup déguisé ni tueur solitaire, ni Gibet ni Pont ; le **tirage est contraint** (garanti : les humains jamais tous loups, ni tous du même camp à trois ou plus ; favorisé sans garantie, tiré en secret à chaque partie : une lanterne chez un humain du Village, l'ombre des deux côtés de la table à trois humains ou plus — jamais une déduction certaine) ; **le sort tranche** les égalités que le Bailli ne tranche pas ; le **glas final** est posé d'office (jour 3 jusqu'à 6 places, puis un jour de plus par deux places). Le réglage du monde « Petite tablée par défaut » se souvient du dernier niveau choisi : « Rejouer » et le MJ IA composent alors une petite tablée.
+
+Ce que tu dis : la règle, et rien d'autre. **Jamais** de qui l'ombre est tombée chez les humains, ni qui tient la lanterne, ni si les penchants favorisés ont été appliqués cette fois : le tirage contraint ne s'annonce que par ses nombres (le système le fait pour toi, en n'annonçant que ce qui vaut pour cette table). Le Glas final : 0 à la distribution veut dire « posé d'office » ; un jour donné est gardé tel quel. Les compagnons IA y parlent d'abord aux humains : laisse-les faire, ne les relance pas pour un humain silencieux.
 
 **Ne révèle jamais la composition** : ni les rôles en jeu, ni le nombre de loups. Les bâtiments, eux, sont publics. Une partie peut même n'avoir aucun loup (la **peste noire**, page suivante) : rien ne doit le laisser deviner.
 
@@ -534,6 +563,7 @@ Pose sur la carte quelques **figurants** pour animer le village : le garde du gu
 
 - loups_distribuer avec compagnons : n ajoute n places tenues par des compagnons IA (noms tirés de la table « Noms de villageois », personnalité au hasard). Ils répondent seuls à leurs réveils de nuit et aux votes, et prennent la parole après tes récits du jour.
 - Traite-les exactement comme des joueurs : ne leur souffle jamais un rôle ni ce qui s'est passé la nuit. Ce que leur rôle apprend leur est remis, comme aux autres, dans leur carnet secret.
+- **Petite tablée** (1 à 4 humains, 2 à 8 compagnons) : quand le réglage du monde « Petite tablée par défaut » est coché (la Table de jeu le coche quand le MJ choisit ce niveau), toute composition que tu génères de 12 places au plus en est une (loups_composer, loups_distribuer en mode auto, loups_rejouer), et la distribution suit ses règles d'elle-même ; sinon, loups_distribuer en mode « composition » avec la composition prête « petite-tablee-<n> » (n places, 4 à 12). Le système annonce lui-même la règle au chat (des nombres, jamais un nom) : ne dis rien de plus, surtout pas de quel côté de la table l'ombre est tombée ni qui tient la lanterne.
 
 # Délais
 
@@ -631,6 +661,7 @@ const variantes = journal({
 - **Gens de passage** (par défaut : oui) : un joueur qui arrive en cours de partie entre avec un rôle public et un camp secret ; on peut quitter la veillée sans mourir.
 - **Banc des accusés** et **Glas du deuil** (par défaut : non) : deux variantes du jour (page « Le Banc et le Glas »).
 - **Nuit de la Saint-Martin** : le format court, à choisir à la préparation (même page).
+- **Petite tablée** (niveau de la préparation ; réglage « Petite tablée par défaut » qui s'en souvient) : la veillée pour 1 à 4 humains et 2 à 8 joueurs IA — meute courte (dès deux loups : première nuit blanche, et la meute doit être plus nombreuse pour gagner), les humains jamais tous loups ni tous du même camp, le tirage favorise (sans garantie) une lanterne chez un humain et l'ombre des deux côtés de la table, le sort tranche les égalités, glas final posé d'office (page « La petite tablée » du guide du joueur).
 - **Veillées de fête** (par défaut : aucune) : une variante de saison par fête — Nuit des âmes, Veillée d'hiver, Carnaval des masques, Fête des promis. La fête du jour la propose à la préparation, le narrateur décide (page « Les veillées de fête » du guide du joueur, et un journal par veillée).
 - **Glas final** et **Bonne étoile** : réglages du narrateur, à la Table de jeu (le jour où la partie s'arrête ; un débutant protégé en secret la première nuit).
 - **Somnambule** et **Rosière** : rôles « sur demande », jamais tirés d'office ; le narrateur les ajoute à la main.

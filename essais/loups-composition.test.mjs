@@ -3,15 +3,17 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { composer, equilibreDe, nombreDeLoups, NIVEAUX } from "../systems/lakour-loups/logique/composition.mjs";
+import { composer, equilibreDe, nombreDeLoups, NIVEAUX, HORS_TABLEE, HORS_TABLEE_BATIMENTS, SOLITAIRES_TABLEE, villageoisTablee, cibleTablee } from "../systems/lakour-loups/logique/composition.mjs";
+import { NIVEAU_PETITE_TABLEE, nombreDeLoupsTablee, ombresTablee } from "../systems/lakour-loups/logique/tablee.mjs";
+const CLASSIQUES = NIVEAUX.filter(n => n !== NIVEAU_PETITE_TABLEE);
 
 const EQ = JSON.parse(readFileSync(new URL("../modules/lakour-veillees/assets/equilibre.json", import.meta.url), "utf8"));
 const camp = c => EQ.roles[c].camp;
 const speciaux = roles => roles.filter(c => camp(c) === "meute" && c !== "loup-de-brumecombe");
 const solitaires = roles => roles.filter(c => camp(c) === "solitaire");
 
-test("toute taille de 6 à 18, tout niveau : bon nombre de rôles et de loups, équilibre à ±2, rôles uniques", () => {
-  for (const niveau of NIVEAUX) for (let n = 6; n <= 18; n++) for (let g = 0; g < 8; g++) {
+test("toute taille de 6 à 18, tout niveau classique : bon nombre de rôles et de loups, équilibre à ±2, rôles uniques", () => {
+  for (const niveau of CLASSIQUES) for (let n = 6; n <= 18; n++) for (let g = 0; g < 8; g++) {
     const c = composer(n, EQ, { niveau, graine: `${niveau}/${n}/${g}` });
     const ou = `${niveau}, ${n} joueurs, graine ${g}`;
     assert.equal(c.roles.length, n, ou);
@@ -26,6 +28,38 @@ test("toute taille de 6 à 18, tout niveau : bon nombre de rôles et de loups, �
     }
     assert.ok(c.roles.some(r => EQ.roles[r].information), `${ou} : aucun rôle d'information`);
   }
+});
+
+// La Petite tablée (0.11.0, tablee.mjs) : 4 à 12 places, sa meute courte, l'ombre dès 6 places, une lanterne, presque pas de simples
+// villageois, ni Loup déguisé ni tueur solitaire, ni Gibet ni Pont ; équilibre proche de sa cible.
+test("petite tablée : 4 à 12 places, loups selon son barème, deux rôles de l'ombre dès 6, lanterne, village actif", () => {
+  for (let n = 4; n <= 12; n++) for (let g = 0; g < 10; g++) {
+    const c = composer(n, EQ, { niveau: NIVEAU_PETITE_TABLEE, graine: `tablee/${n}/${g}` });
+    const ou = `petite tablée, ${n} places, graine ${g}`;
+    assert.equal(c.roles.length, n, ou);
+    assert.equal(c.niveau, NIVEAU_PETITE_TABLEE);
+    assert.equal(c.roles.filter(r => camp(r) === "meute").length, nombreDeLoupsTablee(n), `${ou} : loups`);
+    assert.ok(c.roles.filter(r => camp(r) !== "village").length >= ombresTablee(n), `${ou} : rôles de l'ombre`);
+    assert.ok(c.roles.some(r => EQ.roles[r].information), `${ou} : aucune lanterne`);
+    if (n >= 8) assert.ok(c.roles.filter(r => EQ.roles[r].information).length >= 2, `${ou} : une seule lanterne`);
+    if (n >= 6) assert.ok(c.roles.some(r => EQ.roles[r].protection), `${ou} : aucune protection`);
+    assert.ok(c.roles.filter(r => r === "villageois").length <= villageoisTablee(n), `${ou} : trop de simples villageois`);
+    assert.ok(speciaux(c.roles).length <= 1, `${ou} : plus d'un loup à pouvoir`);
+    for (const r of c.roles) {
+      assert.ok(!HORS_TABLEE.includes(r), `${ou} : ${r} n'a pas sa place`);
+      if (camp(r) === "solitaire") assert.ok(SOLITAIRES_TABLEE.includes(r), `${ou} : solitaire ${r}`);
+      assert.ok(NIVEAUX.indexOf(EQ.roles[r].niveau) <= 1 || SOLITAIRES_TABLEE.includes(r), `${ou} : ${r} hors niveau classique`);
+      if (EQ.roles[r].unique) assert.equal(c.roles.filter(x => x === r).length, 1, `${ou} : ${r} en double`);
+    }
+    assert.ok(Math.abs(c.somme - cibleTablee(n)) <= 3, `${ou} : équilibre ${c.somme} loin de la cible ${cibleTablee(n)}`);
+    for (const b of c.batiments) assert.ok(!HORS_TABLEE_BATIMENTS.includes(b), `${ou} : bâtiment ${b}`);
+    assert.ok(c.batiments.length >= 4);
+  }
+  assert.throws(() => composer(13, EQ, { niveau: NIVEAU_PETITE_TABLEE }), /12 places au plus/);
+  // Une petite tablée de peste noire : aucun loup, le reste comme d'habitude.
+  const p = composer(8, EQ, { niveau: NIVEAU_PETITE_TABLEE, graine: "peste", peste: true });
+  assert.equal(p.roles.filter(r => camp(r) === "meute").length, 0);
+  assert.equal(p.roles.length, 8);
 });
 
 test("niveaux : débutants sans loup spécial ni solitaire ; chaos avec au moins un loup spécial et un solitaire dès 10 joueurs", () => {

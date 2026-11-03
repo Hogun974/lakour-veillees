@@ -24,6 +24,7 @@ import { etoilesDeLaNuit } from "./calendrier.mjs";
 import { linceulDeLaNuit } from "./deuil.mjs";
 import { aveuglePar, masqueDuCarnaval, presentDeLaNuit, neigeDuJour } from "./fetes.mjs";
 import { campInverse } from "./somnambule.mjs";
+import { nuitBlancheTablee } from "./tablee.mjs";
 
 export const MATIN = ["aube", "jour"];             // « au matin », « au début d'un débat »
 export const JOURNEE = ["aube", "jour", "vote"];   // « pendant le jour »
@@ -395,6 +396,8 @@ export function candidatsDeNuit({ villageois = [], etat: e, acteurId = "", roleC
     if (fx.horsDAtteinte.includes(acteurId)) return [];
     if (fx.surveilles.includes(acteurId)) return vivants.some(v => v.id === acteurId) ? [acteurId] : [];
   }
+  // Petite tablée (tablee.mjs) : la première nuit est blanche dès qu'il y a deux loups — la meute ne chasse personne.
+  if (chasse && roleCle !== CLE_PESTE && etat.petiteTablee && n === 1 && nuitBlancheTablee(etat.places || villageois.length)) return [];
   let ids = vivants.filter(v => !fx.horsDAtteinte.includes(v.id) || v.id === acteurId).map(v => v.id);
   if (chasse) {
     const loupATaverne = fx.taverneEnJeu && fx.taverne.some(id => vivant(parId.get(id)) && parId.get(id).camp === "meute");

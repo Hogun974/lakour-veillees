@@ -4,7 +4,7 @@
       <span class="loups-phase-icone"><i class="fa-solid {{#if estNuit}}fa-moon{{else}}fa-sun{{/if}}"></i></span>
       <div>
         <div class="loups-phase-nom">{{phaseLibelle}}</div>
-        <div class="loups-phase-tour">{{localize "LAKOUR_LOUPS.Table.Tour"}} {{tour}}{{#if composition}} · {{composition}}{{/if}}{{#if peste}} · <span class="loups-pastille peste" data-tooltip="{{localize 'LAKOUR_LOUPS.Peste.PartieAide'}}"><i class="fa-solid fa-biohazard"></i> {{localize "LAKOUR_LOUPS.Peste.Partie"}}</span>{{/if}}</div>
+        <div class="loups-phase-tour">{{localize "LAKOUR_LOUPS.Table.Tour"}} {{tour}}{{#if composition}} · {{composition}}{{/if}}{{#if tablee}} · <span class="loups-pastille tablee"><i class="fa-solid fa-chair"></i> {{localize "LAKOUR_LOUPS.Tablee.Nom"}}</span>{{/if}}{{#if peste}} · <span class="loups-pastille peste" data-tooltip="{{localize 'LAKOUR_LOUPS.Peste.PartieAide'}}"><i class="fa-solid fa-biohazard"></i> {{localize "LAKOUR_LOUPS.Peste.Partie"}}</span>{{/if}}</div>
       </div>
     </div>
     {{#if bailli}}
@@ -69,6 +69,12 @@
       <label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.Peste.PreparationAide'}}"><input type="checkbox" data-action="prepPeste" {{#if preparation.peste}}checked{{/if}}> <i class="fa-solid fa-biohazard"></i> {{localize "LAKOUR_LOUPS.Peste.Preparation"}}</label>
       <label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.SaintMartin.PreparationAide'}}"><input type="checkbox" data-action="prepSaintMartin" {{#if preparation.saintMartin}}checked{{/if}}> <i class="fa-solid fa-church"></i> {{localize "LAKOUR_LOUPS.SaintMartin.Preparation"}}</label>
     </div>
+    {{#if preparation.tablee}}
+    <div class="loups-prep-ligne loups-prep-tablee">
+      <small>{{preparation.tablee.aide}}</small>
+      {{#if preparation.tablee.avis}}<p class="loups-alerte">{{preparation.tablee.avis}}</p>{{/if}}
+    </div>
+    {{/if}}
     {{#if preparation.fetes}}{{#unless preparation.fetes.saintMartin}}
     <div class="loups-prep-ligne loups-prep-fete">
       <span class="loups-etiquette"><i class="fa-solid fa-star"></i> {{localize "LAKOUR_LOUPS.Fetes.Preparation"}}</span>

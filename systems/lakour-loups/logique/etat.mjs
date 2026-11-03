@@ -51,6 +51,7 @@ import { passageInitial, normaliserPassage } from "./passage.mjs";
 import { bancInitial, normaliserBanc, verdictDuBanc } from "./banc.mjs";
 import { deuilInitial, pouvoirsDeuilInitiaux, normaliserDeuil, normaliserPouvoirsDeuil, voixDuDeuil } from "./deuil.mjs";
 import { feteInitiale, normaliserFete, secretsDeFeteInitiaux, normaliserSecretsDeFete } from "./fetes.mjs";
+import { sortTranche } from "./tablee.mjs";
 
 // Le votant fictif de la voix du deuil (jamais un acteur).
 export const VOIX_DU_DEUIL = "~deuil";
@@ -76,7 +77,12 @@ export function etatInitial() {
     bailli: bailliInitial(), registre: [], masques: [],
     souffle: souffleInitial(), presage: presageInitial(), glas: 0, somnambules: {}, bonneEtoile: "", aConsigner: null,
     passage: passageInitial(), partis: [], banc: bancInitial(), deuil: deuilInitial(), pouvoirsDeuil: pouvoirsDeuilInitiaux(), format: "", autel: [],
-    fiches: {}, secretsIncomplets: false, fete: feteInitiale(), secretsDeFete: secretsDeFeteInitiaux()
+    fiches: {}, secretsIncomplets: false, fete: feteInitiale(), secretsDeFete: secretsDeFeteInitiaux(),
+    // 0.11.0 : la Petite tablée (tablee.mjs), publique : une règle de la veillée, jamais un secret (qui tient quoi n'en sort pas).
+    petiteTablee: false,
+    // 0.11.0 : les places distribuées (public, annoncé) : le régime des deux loups de la Petite tablée se compte sur elles, jamais
+    // sur les figurants ni les arrivants.
+    places: 0
   };
 }
 
@@ -111,6 +117,8 @@ export function normaliserEtat(e) {
   etat.format = String(etat.format ?? "");
   etat.fete = normaliserFete(etat.fete);
   etat.secretsDeFete = normaliserSecretsDeFete(etat.secretsDeFete);
+  etat.petiteTablee = Boolean(etat.petiteTablee);
+  etat.places = Math.max(0, Math.floor(Number(etat.places) || 0));
   etat.tour = Number(etat.tour) || 0;
   return etat;
 }
@@ -322,6 +330,14 @@ export function cloreVote(e, { votants = null, poids = {}, maintenant = Date.now
     objet: v.objet, numero: v.numero, tour: etat.tour, souffles: souffle, ...(r.banc ? { banc: r.banc } : {}), ...(deuil ? { deuil } : {}),
     poids: Object.fromEntries(Object.entries(pesees).filter(([id]) => id in r.votes)),
     departage: bailli && r.departage ? { par: bailli, candidats: r.departage.candidats, places: r.departage.places, enAttente: true, choix: [] } : null };
+  // Petite tablée (tablee.mjs) : pas de jour sans verdict. Une égalité en tête d'un vote d'exécution que personne ne tranche
+  // (pas de Bailli en charge) est tranchée par le sort, parmi les ex æquo ; resultat.sort = les désignés par le sort.
+  if (etat.petiteTablee && v.objet === "execution" && !v.banc && !resultat.departage && r.departage) {
+    const tires = sortTranche({ candidats: r.departage.candidats, places: r.departage.places, hasard });
+    resultat.elus = [...resultat.elus, ...tires];
+    resultat.elu = resultat.elus[0] ?? null;
+    resultat.sort = tires;
+  }
   v.ouvert = false;
   etat.pouvoirsDeuil.cible = null;
   v.exprimes = [];

@@ -8,7 +8,7 @@ import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { FETES_VEILLEES, imageDeFete } from "../modules/lakour-veillees/scripts/fetes.js";
 import { APPARENCES, CAMPS, EFFETS, MODULE, VICTOIRES, ORDRE_MEUTE, cheminJeton, cleJetonBatiment, cleJetonMetier } from "../modules/lakour-veillees/contenu/aides.mjs";
 import { DOCUMENTS } from "../modules/lakour-veillees/contenu/index.mjs";
-import { compositions, MIN_JOUEURS, MAX_JOUEURS } from "../modules/lakour-veillees/contenu/compositions.mjs";
+import { compositions, MIN_JOUEURS, MAX_JOUEURS, MIN_TABLEE, MAX_TABLEE, NIVEAU_PETITE_TABLEE } from "../modules/lakour-veillees/contenu/compositions.mjs";
 import { EQUILIBRE, EQUILIBRE_BATIMENTS } from "../modules/lakour-veillees/contenu/equilibre.mjs";
 
 const RACINE = `modules/${MODULE}`;
@@ -224,14 +224,17 @@ export function verifierCompositions(compos, roles, batiments) {
   const erreurs = [];
   const camp = Object.fromEntries(roles.map(r => [r.cle, r.camp]));
   const niveaux = new Set();
-  const couvert = { debutants: new Set(), classique: new Set(), chaos: new Set() };
+  // Les niveaux classiques couvrent 6 à 18 joueurs ; la Petite tablée (système 0.11.0), 4 à 12 places.
+  const plages = { debutants: [MIN_JOUEURS, MAX_JOUEURS], classique: [MIN_JOUEURS, MAX_JOUEURS], chaos: [MIN_JOUEURS, MAX_JOUEURS], [NIVEAU_PETITE_TABLEE]: [MIN_TABLEE, MAX_TABLEE] };
+  const couvert = Object.fromEntries(Object.keys(plages).map(n => [n, new Set()]));
   for (const [cle, c] of Object.entries(compos)) {
     const e = m => erreurs.push(`${cle} : ${m}`);
     if (!c.libelle) e("sans libellé");
     if (!(c.niveau in couvert)) { e(`niveau « ${c.niveau} » inconnu`); continue; }
     niveaux.add(c.niveau);
     const [min, max] = c.joueurs ?? [];
-    if (!Number.isInteger(min) || !Number.isInteger(max) || min > max || min < MIN_JOUEURS || max > MAX_JOUEURS) { e(`plage de joueurs ${c.joueurs}`); continue; }
+    const [plageMin, plageMax] = plages[c.niveau];
+    if (!Number.isInteger(min) || !Number.isInteger(max) || min > max || min < plageMin || max > plageMax) { e(`plage de joueurs ${c.joueurs}`); continue; }
     for (const r of c.roles) if (!(r in camp)) e(`rôle « ${r} » inconnu`);
     // Pour chaque taille de la plage : exactement autant de rôles que de joueurs, en complétant par des villageois
     // (une liste plus longue que la taille ne se raccourcit qu'en retirant des villageois).
@@ -251,7 +254,7 @@ export function verifierCompositions(compos, roles, batiments) {
     if (new Set(c.batiments).size !== c.batiments?.length) e("bâtiment en double");
   }
   for (const [niveau, tailles] of Object.entries(couvert)) {
-    for (let n = MIN_JOUEURS; n <= MAX_JOUEURS; n++) if (!tailles.has(n)) erreurs.push(`niveau ${niveau} : aucune composition pour ${n} joueurs`);
+    for (let n = plages[niveau][0]; n <= plages[niveau][1]; n++) if (!tailles.has(n)) erreurs.push(`niveau ${niveau} : aucune composition pour ${n} joueurs`);
   }
   return erreurs;
 }

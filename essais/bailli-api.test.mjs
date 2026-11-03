@@ -44,7 +44,7 @@ async function recharger(M) {
 const sansFin = p => { p.catch(() => {}); return p; };
 
 // Un monde : six joueurs simulés à la main, des rôles du monde (dont des rôles du Village qui ne seront pas distribués).
-async function monde(M, { bailli = true, masques = true } = {}) {
+async function monde(M, { bailli = true, masques = true, delai = 2 } = {}) {
   installerFoundry({ joueurs: 6 });
   M.reglages.enregistrerReglages(() => {});
   M.socket.ecouterSocket();
@@ -52,7 +52,9 @@ async function monde(M, { bailli = true, masques = true } = {}) {
   M.api.resolveurs.compagnon = null;
   M.local.remettreAZero();
   delete globalThis.canvas;
-  await game.settings.set("lakour-loups", "delaiChoix", 2);   // une demande oubliée ne tient pas l'essai longtemps
+  // Court, pour qu'une demande oubliée ne tienne pas l'essai longtemps ; plus long dans les essais de rechargement, où la
+  // copie et l'import des fichiers peuvent prendre plusieurs secondes sur une machine chargée.
+  await game.settings.set("lakour-loups", "delaiChoix", delai);
   await game.settings.set("lakour-loups", "bailli", bailli);
   await game.settings.set("lakour-loups", "masques", masques);
   const role = (nom, system) => creerObjetMonde(nom, "role", system);
@@ -465,7 +467,7 @@ const VERIFICATIONS = {
   },
 
   async "rechargement de la page du MJ : le départage reprend ; un vote touché entre-temps entre au Registre sans condamné"(M) {
-    const U = await monde(M);
+    const U = await monde(M, { delai: 8 });
     const { loups, autres } = await partie(M, U);
     const [bailli, x, y] = autres;
     await M.api.changerPhase("jour");
@@ -510,7 +512,7 @@ const VERIFICATIONS = {
   },
 
   async "rechargement : la succession reprend (le reste du délai) ; trop vieille, elle devient vacante ; le MJ peut nommer à la main"(M) {
-    const U = await monde(M);
+    const U = await monde(M, { delai: 8 });
     const { autres } = await partie(M, U, [U.loup, U.garde, U.villageois, U.villageois, U.villageois, U.villageois]);
     const [bailli, x, y, z] = autres;
     await M.api.changerPhase("jour");
@@ -519,10 +521,14 @@ const VERIFICATIONS = {
     await M.api.eliminer(bailli.id, { cause: "vote" });
     await attendre(() => demandeDe(bailli, n), "la demande posthume");
     const M2 = await recharger(M);
+    // Le rechargement (copie et import des fichiers) peut prendre plusieurs secondes sur une machine chargée : la mort est
+    // replacée 300 ms avant la reprise, pour qu'il reste un délai entamé mais suffisant.
+    const mort = publicBrut();
+    await game.settings.set("lakour-loups", "partie", { ...mort, bailli: { ...mort.bailli, succession: { ...mort.bailli.succession, quand: Date.now() - 300 } } });
     n = emissions.length;
     assert.deepEqual(M2.api.reprendre(), { departage: false, succession: true });
     await attendre(() => demandeDe(bailli, n), "la demande reprise");
-    assert.ok(demandeDe(bailli, n).delai < 2000, "seulement le reste du délai");
+    assert.ok(demandeDe(bailli, n).delai < 8000, "seulement le reste du délai");
     repondre(demandeDe(bailli, n), [x]);
     await attendre(() => publicBrut().bailli.acteurId === x.id, "le successeur");
     // Le MJ nomme à la main pendant que le défunt hésite : sa fenêtre se ferme.

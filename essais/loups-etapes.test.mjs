@@ -85,6 +85,12 @@ const VERIFS_ETAPES = {
     const deux = [v("a1", "loup"), v("a6", "villageois"), v("a7", "villageois", { vivant: false })];
     x = partie(L, e => { e.phase = "aube"; e.tour = 2; e.nuitResolue = 2; });
     assert.equal(L.etapeSuivante(x.public, x.secret, { villageois: deux }).cle, "victoire");
+    // Petite tablée au régime des deux loups (8 places) : deux loups contre deux autres, la meute n'a pas gagné ; à trois contre deux, si.
+    const quatre = [v("a1", "loup"), v("a2", "loup"), v("a6", "villageois"), v("a7", "villageois")];
+    x = partie(L, e => { e.phase = "aube"; e.tour = 2; e.nuitResolue = 2; e.petiteTablee = true; e.places = 8; });
+    assert.notEqual(L.etapeSuivante(x.public, x.secret, { villageois: quatre }).cle, "victoire", "parité stricte : pas de victoire proposée");
+    const cinq = [...quatre, v("a8", "loup")];
+    assert.equal(L.etapeSuivante(x.public, x.secret, { villageois: cinq }).cle, "victoire");
   },
   "jour : ouvrir le vote ; vote ouvert : clore, avec les voix qui manquent": L => {
     const vil = village();
@@ -133,6 +139,7 @@ const MUTATIONS_ETAPES = [
   ["if (emporteur) return etape(", "if (false) return etape(", "Braconnière"],
   ["if (suivis <= avant && !ignorer.includes(`emporter:${m.acteurId}`)) enAttente.push(m.acteurId);", "enAttente.push(m.acteurId);", "Braconnière servie"],
   ["if (!etat.vainqueur && verifierVictoire(", "if (false && verifierVictoire(", "victoire"],
+  ["const strict = Boolean(etat.petiteTablee) && pariteStricteTablee(", "const strict = false && pariteStricteTablee(", "parité stricte de la petite tablée"],
   ["const manquent = Math.max(0, vivants.length - v.exprimes.filter(id => ids.has(id)).length);", "const manquent = 0;", "voix manquantes"],
   ["if (condamne) {", "if (false) {", "exécuter le désigné"],
   ["const juge = vivants.find(x => x.role?.effet === \"annuler-vote\" && !x.revele", "const juge = vivants.find(x => x.role?.effet === \"annuler-vote\"", "Juge révélé"],

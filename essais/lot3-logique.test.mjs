@@ -544,7 +544,7 @@ const MUTATIONS = [
   ["victoire.mjs", "if (saintMartin !== null) return saintMartin ? victoireSaintMartin({ villageois, morts }) : \"\";", "if (saintMartin) return victoireSaintMartin({ villageois, morts });", "saint-martin : rien avant le vote"],
   ["etat.mjs", "\"pouvoirsDeuil\", \"autel\", \"carnets\"", "\"pouvoirsDeuil\", \"carnets\"", "saint-martin : l'autel secret"],
   // les étapes
-  ["etapes.mjs", "\n      saintMartin: estSaintMartin(etat) ? saintMartinFinie(etat, villageois) : null", "", "étape : la fin de la Saint-Martin"],
+  ["etapes.mjs", "\n      saintMartin: estSaintMartin(etat) ? saintMartinFinie(etat, villageois) : null, ", "", "étape : la fin de la Saint-Martin"],
   ["etapes.mjs", "    if (!etat.banc?.actif) return etape(\"ouvrirVote\", \"ouvrirVote\");\n", "", "étape : sans le Banc"],
   ["etapes.mjs", "    if (accuse) return etape(\"juger\", \"ouvrirVote\", { id: accuse, nom: nom(accuse) });\n", "", "étape : juger"],
   ["etapes.mjs", "      if (r?.banc && r.objet === \"execution\" && r.tour === etat.tour && prochainAccuse(etat, villageois)) return voteDuJour();\n", "", "étape : l'accusé suivant"]

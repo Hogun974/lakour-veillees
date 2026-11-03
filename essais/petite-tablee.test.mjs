@@ -230,6 +230,14 @@ test("nouvellePartie({ niveau: petite-tablee }) : composition du mode, tirage co
   assert.equal(api.etat().petiteTablee, false);
   assert.equal(api.etat().glas, 0);
   assert.equal(game.settings.get("lakour-loups", "petiteTablee"), false);
+  // Le réglage décoché prime : après une petite tablée, « Rejouer » sans niveau retombe sur le classique et ne recoche pas le réglage.
+  await api.nouvellePartie({ memesJoueurs: true, graine: "tablée-bis", niveau: "petite-tablee" });
+  await calme();
+  await game.settings.set("lakour-loups", "petiteTablee", false);
+  const rejouee = await api.nouvellePartie({ memesJoueurs: true, graine: "rejouer-decoche" });
+  await calme();
+  assert.equal(rejouee.composition.niveau, "classique", "réglage décoché : plus de petite tablée au Rejouer");
+  assert.equal(game.settings.get("lakour-loups", "petiteTablee"), false, "le réglage n'est pas recoché");
   assert.equal(nouvellePreparation().niveau, "classique");
 });
 
@@ -343,6 +351,7 @@ test("vote : en petite tablée, l'égalité d'un vote d'exécution est tranchée
 
 // ------------------------------------------------------------------ mutations : chaque règle cassée est attrapée
 const MUTATIONS = [
+  ["scripts/api.mjs", `: niveauPrecedent === L.NIVEAU_PETITE_TABLEE && !tableeVoulueParReglage ? "classique" : niveauPrecedent;`, `: niveauPrecedent;`, "réglage décoché ignoré au Rejouer"],
   ["logique/tablee.mjs", `if (humains.length >= 2 && humains.every(p => camp(p) === "meute")) manques.push("humains-tous-loups");`, "", "deux humains loups"],
   ["logique/tablee.mjs", `if (!humains.some(p => estOmbre(camp(p)))) manques.push("ombre-sans-humain");`, "", "l'ombre favorisée n'est plus appliquée chez les humains"],
   ["logique/tablee.mjs", `if (regles?.lanterne && infos && humainsDuVillage.length && !humainsDuVillage.some(p => p.role?.information)) manques.push("lanterne-sans-humain");`, "", "la lanterne favorisée n'est plus appliquée"],
@@ -360,8 +369,8 @@ const MUTATIONS = [
   ["scripts/api.mjs", `    const tirage = enTablee ? (await tirageDeTablee({ roles, metiers, places, maisons: lesMaisons, graine, cache, peste, humains: joueurs })).tirage
       : L.distribuer({ roles, metiers, joueurs: places, maisons: lesMaisons, graine });`, `    const tirage = L.distribuer({ roles, metiers, joueurs: places, maisons: lesMaisons, graine });`, "tirage libre"],
   ["scripts/api.mjs", `    if (tableeVoulue !== undefined && tableeVoulue !== Boolean(lireReglage("petiteTablee", false))) await game.settings.set(ID, "petiteTablee", tableeVoulue);`, ``, "le réglage ne se souvient plus"],
-  ["scripts/api.mjs", `    let niv = L.NIVEAUX.includes(niveau) ? niveau : lireReglage("petiteTablee", false) && total <= L.TABLEE.placesMax ? L.NIVEAU_PETITE_TABLEE : niveauPrecedent;`,
-    `    let niv = L.NIVEAUX.includes(niveau) ? niveau : niveauPrecedent;`, "« Rejouer » oublie le mode"],
+  ["scripts/api.mjs", `      : tableeVoulueParReglage && total <= L.TABLEE.placesMax ? L.NIVEAU_PETITE_TABLEE`,
+    `      : false ? L.NIVEAU_PETITE_TABLEE`, "« Rejouer » oublie le mode"],
   ["scripts/api.mjs", `    lireReglage("petiteTablee", false) && n <= L.TABLEE.placesMax && !options?.peste ? { ...options, niveau: L.NIVEAU_PETITE_TABLEE } : options) },`,
     `    options) },`, "api.logique.composer ignore le réglage"],
   ["scripts/api.mjs", `      const morceaux = [t("LAKOUR_LOUPS.Tablee.AnnonceTete", { humains: h, compagnons: nomsCompagnons.length }),`,
@@ -474,6 +483,12 @@ async function batterie() {
     const encore = await api.nouvellePartie({ memesJoueurs: true, graine: "encore" });
     await calme();
     assert.equal(encore.composition.niveau, "petite-tablee");
+    // Le réglage décoché prime sur le niveau de la partie précédente : « Rejouer » retombe sur le classique, sans recocher.
+    await game.settings.set("lakour-loups", "petiteTablee", false);
+    const decochee = await api.nouvellePartie({ memesJoueurs: true, graine: "décochée" });
+    await calme();
+    assert.equal(decochee.composition.niveau, "classique", "réglage décoché : plus de petite tablée au Rejouer");
+    assert.equal(game.settings.get("lakour-loups", "petiteTablee"), false, "le réglage n'est pas recoché");
     // Au régime des deux loups (8 places) : deux loups contre deux autres, la veillée continue (parité stricte), par l'API.
     const grande = monde({ joueurs: 3, compagnons: 5 });
     await api.nouvellePartie({ memesJoueurs: false, joueurs: grande.humains, compagnons: await creerCompagnons(grande.ia), graine: "parité", niveau: "petite-tablee" });

@@ -295,7 +295,7 @@ Ni Loup déguisé (il rendrait la seule lanterne aveugle), ni Pyromane ni Dame d
 
 # Ce qu'on en déduit, et ce qu'on n'en déduit pas
 
-Ce que la règle garantit, tu peux t'en servir : si tu es loup, ton ami humain n'est pas loup (à deux) ; à trois humains ou plus, si tu es du Village, **l'un de tes amis au moins n'en est pas** — sans savoir lequel, ni s'il est loup ou Colporteur (qui, s'il a échangé son rôle, gagne avec son nouveau camp) — et si tu es de l'ombre, l'un d'eux au moins est du Village. Rien de plus n'est certain : à deux humains, vous pouvez être tous deux du Village ; l'ombre peut être toute entière chez les compagnons, ou toute entière chez les humains ; la lanterne peut être chez un compagnon, et celui qui jure n'avoir rien vu peut être celui qui a tout vu. Un loup peut se réclamer de la lanterne : rien ne le contredit.`
+Ce que la règle garantit, tu peux t'en servir : si tu es loup, ton ami humain n'est pas loup (à deux) ; à trois humains ou plus, si tu es du Village, **l'un de tes amis au moins n'en est pas** — sans savoir lequel, ni s'il est loup ou Colporteur (qui, s'il a échangé son rôle, gagne avec son nouveau camp) — et si tu es de l'ombre, l'un d'eux au moins est du Village. Mais dès qu'un camp humain se dévoile (un mort révélé, une lanterne lue), la règle fait le reste : à trois humains, si tu es du Village et qu'un ami l'est aussi, le troisième est de l'ombre. Rien de plus n'est certain : à deux humains, vous pouvez être tous deux du Village ; l'ombre peut être toute entière chez les compagnons, ou toute entière chez les humains ; la lanterne peut être chez un compagnon, et celui qui jure n'avoir rien vu peut être celui qui a tout vu. Un loup peut se réclamer de la lanterne : rien ne le contredit.`
     }
   ]
 });

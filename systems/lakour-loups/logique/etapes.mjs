@@ -23,6 +23,7 @@ import { glasSonne } from "./calendrier.mjs";
 import { visionDuDeuilDue, CLE_DEUIL } from "./deuil.mjs";
 import { prochainAccuse } from "./banc.mjs";
 import { estSaintMartin, saintMartinFinie } from "./saintmartin.mjs";
+import { pariteStricteTablee } from "./tablee.mjs";
 
 const etape = (cle, action, donnees = {}, extra = {}) => ({ cle, action, donnees, attente: false, detail: null, ...extra });
 
@@ -61,8 +62,10 @@ export function etapeSuivante(etatPublic, secretsMJ = null, { villageois = [], a
     const [emporteur] = emporteursEnAttente(etat, villageois, ignorer);
     if (emporteur) return etape("emporter", "emporter", { id: emporteur, nom: nom(emporteur) }, { detail: { cle: "emporter", donnees: { nom: nom(emporteur) } } });
     // Le Glas final (calendrier.mjs) : le jour N fini, la partie s'arrête.
+    // En petite tablée, au régime des deux loups, la meute doit être plus nombreuse (même règle que api.pariteStricte).
+    const strict = Boolean(etat.petiteTablee) && pariteStricteTablee(etat.places || villageois.filter(v => v.vivant !== false).length);
     if (!etat.vainqueur && verifierVictoire({ villageois, morts: etat.morts, glas: glasSonne(etat), primes: etat.primes ?? {}, peste: etat.peste,
-      saintMartin: estSaintMartin(etat) ? saintMartinFinie(etat, villageois) : null })) return etape("victoire", "victoire");
+      saintMartin: estSaintMartin(etat) ? saintMartinFinie(etat, villageois) : null, strict })) return etape("victoire", "victoire");
     return null;
   };
   // La Chapelle : un asile pour la nuit qui vient, s'il n'a pas encore été choisi aujourd'hui (l'ours du Montreur n'en est pas un).

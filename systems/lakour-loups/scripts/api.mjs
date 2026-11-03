@@ -1062,7 +1062,7 @@ async function tirageDeTablee({ roles, metiers, places, maisons, graine, cache, 
     return { camp, information: Boolean(equilibre.roles?.[s.cle]?.information) };
   };
   const r = L.distribuerTablee({ roles, metiers, joueurs: places, maisons, humains: new Set(humains), decrire, graine });
-  if (r.manques.length) console.warn(`${ID} | petite tablée : partage des camps impossible avec ces rôles (${r.manques.join(", ")})`);
+  if (r.manques.length) console.warn(`${ID} | petite tablée : partage des camps impossible avec ces rôles (${r.manques.length} règle(s))`);
   return r;
 }
 // L'historique des parties (rôles et bâtiments en jeu, jamais qui avait quoi), pour varier les compositions ; celui du
@@ -1361,7 +1361,11 @@ export const api = {
     const historique = [...historiqueDesParties(), ...(precedents.length ? [{ roles: precedents, batiments: avant.batimentsCles ?? [], quand: Date.now() }] : [])];
     // Le niveau : celui demandé ; sinon la Petite tablée si le réglage s'en souvient ; sinon celui de la partie précédente.
     const niveauPrecedent = [...historique].reverse().find(h => h.niveau)?.niveau ?? contenu.compositions[avant.composition]?.niveau ?? "classique";
-    let niv = L.NIVEAUX.includes(niveau) ? niveau : lireReglage("petiteTablee", false) && total <= L.TABLEE.placesMax ? L.NIVEAU_PETITE_TABLEE : niveauPrecedent;
+    // Le réglage (dernier choix explicite) prime : décoché, un « Rejouer » après une petite tablée retombe sur le niveau classique.
+    const tableeVoulueParReglage = lireReglage("petiteTablee", false);
+    let niv = L.NIVEAUX.includes(niveau) ? niveau
+      : tableeVoulueParReglage && total <= L.TABLEE.placesMax ? L.NIVEAU_PETITE_TABLEE
+        : niveauPrecedent === L.NIVEAU_PETITE_TABLEE && !tableeVoulueParReglage ? "classique" : niveauPrecedent;
     // Une petite tablée compte 12 places au plus : au-delà, la composition retombe sur le niveau classique (un avis au MJ).
     if (niv === L.NIVEAU_PETITE_TABLEE && (total > L.TABLEE.placesMax || format === L.FORMAT_SAINT_MARTIN)) {
       if (total > L.TABLEE.placesMax) ui.notifications?.warn(t("LAKOUR_LOUPS.Tablee.Avis.places"));

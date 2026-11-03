@@ -53,6 +53,8 @@ let rappelParDefaut = null;  // le rappel de lakour-loups.mjs (Table, fiches et 
 let minuterie = null;
 let rappelsPoses = null;     // l'API du moteur où les rappels (renouvellement, clé revenue) sont posés : une fois par API
 let ecrituresEnCours = () => Promise.resolve();   // la file des écritures de la partie (api.mjs)
+let avertiSansCle = "";      // la partie pour laquelle le MJ a été averti que la clé du moteur manque
+const t = cle => globalThis.game?.i18n?.localize?.(cle) ?? cle;
 
 const lire = nom => { try { return game.settings.get(ID, nom) ?? {}; } catch { return {}; } };
 const objet = v => (v && typeof v === "object" && !Array.isArray(v) ? v : {});
@@ -72,6 +74,7 @@ export function oublierCoffre() {
   file = Promise.resolve();
   attendue = "";
   retrouves = null;
+  avertiSansCle = "";
   if (minuterie) clearInterval(minuterie);
   minuterie = null;
 }
@@ -88,6 +91,7 @@ export function changementDePartie(partie) {
   if (!attendue || attendue === partie) return;
   attendue = "";
   retrouves = null;
+  avertiSansCle = "";
   signaler();
 }
 
@@ -175,7 +179,14 @@ async function scellerDansFile({ passation = false } = {}) {
   if (!c) return;
   const rev = (coffre.partie === partie && !estAncien(coffre) ? revDe(coffre) ?? 0 : 0) + 1;
   const scelle = passation ? await c.scellerEnPartant?.({ ...s, revCoffre: rev }) : await c.sceller({ ...s, revCoffre: rev });
-  if (!scelle) return;   // la clé du moteur manque à ce navigateur (parts attendues) : rien n'est écrit
+  if (!scelle) {
+    // La clé du moteur manque à ce navigateur (parts attendues) : rien n'est écrit, et le MJ le sait une fois par partie.
+    if (!passation && avertiSansCle !== partie) {
+      avertiSansCle = partie;
+      globalThis.ui?.notifications?.warn?.(t("LAKOUR_LOUPS.Erreurs.SansCleCoffre"), { permanent: true });
+    }
+    return;
+  }
   // Relu juste avant d'écrire : changé pendant le scellement (un autre MJ), on n'écrase pas, on le rouvre.
   const maintenant = lire("coffre");
   if (maintenant.iv !== coffre.iv || maintenant.partie !== coffre.partie || revDe(maintenant) !== revDe(coffre)) {
@@ -283,6 +294,7 @@ async function reprendre(secret, { rev = 0, iv = "" } = {}) {
   await garderSecrets(fusion);
   const rappel = retrouves;
   retrouves = null;
+  avertiSansCle = "";
   signaler();
   await rappel?.(fusion);
   return true;

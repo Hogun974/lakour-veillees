@@ -364,7 +364,10 @@ const VERIFICATIONS = {
     assert.equal(M.coffre.enAttenteDeParts(), true);
     assert.equal(M.api.ecritureBloquee(), true, "le MJ IA le sait (il se met en pause)");
     const n = emissions.length;
+    const avis = [];
+    ui.notifications.warn = m => avis.push(String(m));
     const b = await distribuer(M, "coffre-B");   // le MJ abandonne la partie : « Rejouer »
+    assert.ok(avis.some(m => m.includes("SansCleCoffre") || /clé/.test(m)), "le MJ est averti que la clé manque à ce navigateur");
     assert.notEqual(b, a);
     assert.equal(M.coffre.enAttenteDeParts(), false, "les parts de l'ancienne partie ne sont plus attendues");
     assert.equal(M.api.ecritureBloquee(), false);
@@ -470,6 +473,7 @@ const VERIFICATIONS = {
 };
 
 const MUTATIONS = [
+  ["scripts/coffre.mjs", "    if (!passation && avertiSansCle !== partie) {", "    if (false) {", "averti sans la clé du moteur"],
   ["scripts/coffre.mjs", "  if (attendue === partie) return;   // ses parts sont attendues : surtout ne pas l'écraser\n", "", "coffre jamais écrasé en attente"],
   ["scripts/coffre.mjs", "  if (!secretsAJour(partie)) {\n    // Des secrets périmés", "  if (false) {\n    // Des secrets périmés", "coffre récent jamais écrasé"],
   ["scripts/coffre.mjs", "  return rev !== null && (Number(s.revCoffre) || 0) > rev;", "  return true;", "révision comparée"],

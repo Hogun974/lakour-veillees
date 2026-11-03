@@ -417,6 +417,7 @@
       "PersonneAReveiller": "Personne à réveiller pour « {role} » cette nuit.",
       "PasDeVote": "Aucun vote n'est ouvert.",
       "SansCoffre": "Le module MJ IA (lakour-mj-ia) doit être actif : son coffre garde les secrets de la partie (rôles, camps, choix de nuit). Active-le, puis distribue.",
+      "SansCleCoffre": "Coffre du MJ IA fermé dans ce navigateur : sa clé est restée dans le navigateur où le monde a été préparé. La partie se joue, mais ses secrets ne restent que dans ce navigateur tant que la clé n'est pas revenue : ne change pas de navigateur en cours de partie. Pour la rendre, réimporte la clé de secours (Réglages › MJ IA › Coffre) ou attends les parts des joueurs.",
       "FicheVerrouillee": "Les villageois de la partie ne se modifient que par le MJ.",
       "SecretsAbsents": "Ce navigateur n'a pas (encore) les secrets à jour de la partie en cours : rien n'est écrit. Le coffre est rouvert dès que possible (parts des joueurs, autre MJ, clé de secours).",
       "MJInactif": "Seul le MJ actif tient les secrets de la partie : rôle, camp, amoureux et « Révélé » se règlent chez lui."

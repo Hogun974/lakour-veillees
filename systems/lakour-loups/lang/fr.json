@@ -25,17 +25,17 @@
       "solitaire": "Solitaire"
     },
     "Causes": {
-      "meute": "dévoré par la meute",
-      "nuit": "tué dans la nuit",
-      "poison": "empoisonné",
-      "feu": "emporté par les flammes",
-      "chagrin": "mort de chagrin",
-      "vote": "condamné par le village",
-      "emporte": "emporté dans la tombe",
-      "epie": "surpris à épier la meute",
+      "meute": "victime de la meute",
+      "nuit": "victime de la nuit",
+      "poison": "victime du poison",
+      "feu": "victime des flammes",
+      "chagrin": "victime du chagrin",
+      "vote": "condamnation du village",
+      "emporte": "entraînement dans la tombe",
+      "epie": "prise sur le fait à épier la meute",
       "narrateur": "mort mystérieuse",
-      "peste": "emporté par la peste noire",
-      "panique": "pendu pour avoir semé la panique"
+      "peste": "victime de la peste noire",
+      "panique": "pendaison pour avoir semé la panique"
     },
     "Effets": {
       "aucun": "aucun (arbitré par le narrateur)",
@@ -304,8 +304,8 @@
       "MasqueTombe": "Le masque du Carnaval de {nom} a trompé une vision, puis il est tombé."
     },
     "Messages": {
-      "Mort": "{nom} est mort : {cause}.",
-      "MortRevele": "{nom} est mort : {cause}. Il était <strong>{role}</strong>.",
+      "Mort": "{nom} n’est plus : {cause}.",
+      "MortRevele": "{nom} n’est plus : {cause}. Son rôle : <strong>{role}</strong>.",
       "Silence": "Une ombre vous a pris la voix : vous ne parlerez pas au prochain débat.",
       "Emporter": "{nom} meurt et peut emporter quelqu'un dans la tombe : demandez-lui son choix."
     },
@@ -650,7 +650,7 @@
       "Titre": "Le récit de la veillée",
       "Resume": "{n} villageois, {tours} tour(s) dans la brume. Les cartes se retournent :",
       "Survivant": "en vie au dernier matin",
-      "Mort": "mort au tour {tour}, {cause}",
+      "Mort": "au tour {tour}, {cause}",
       "IA": "joueur IA",
       "Parti": "a quitté la veillée au tour {tour}",
       "Exile": "exilé par le village au tour {tour}"
@@ -689,7 +689,7 @@
       "InviteNarrateur": "La peste : qui frappe-t-elle cette nuit ?",
       "AuHasard": "Au hasard",
       "CarnetPorteur": "Ce ne sont pas des loups qui t'ont emporté : c'est la peste noire. Il n'y a aucun loup à Brumecombe. Dès la nuit prochaine, c'est toi qui désigneras en secret sa prochaine victime. Les vivants ne doivent rien en savoir.",
-      "Porteur": "Peste : {nom} en est mort ; c'est lui qui désignera la prochaine victime.",
+      "Porteur": "Peste : la maladie a emporté {nom}, qui désignera la prochaine victime.",
       "Hasard": "La peste frappe au hasard : {nom}.",
       "Choisie": "La peste frappe : {nom}.",
       "Journal": "{nom} a crié « C'est la peste noire ! ».",

@@ -261,7 +261,7 @@ test("vote : ouvrir, voter (votes forgés et morts refusés), clore, exécuter, 
     assert.ok(recit.includes(a.name), `${a.name} est dans le récit`);
     assert.ok(recit.includes(secretDuMJ.role(a).name), `le rôle de ${a.name} est dévoilé`);
   }
-  assert.match(recit, /mort de chagrin/, "la vraie cause");
+  assert.match(recit, /victime du chagrin/, "la vraie cause");
   assert.equal(await api.verifierVictoire(), "village");
   assert.equal(messages.filter(m => /loups-recit/.test(m.content)).length, 1, "un seul récit, même si l'on revérifie");
   // Les Chroniques : la veillée entre au journal, lisible par tous, et le récit y renvoie.

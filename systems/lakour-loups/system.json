@@ -2,7 +2,7 @@
   "id": "lakour-loups",
   "title": "Les Veillées de Brumecombe",
   "description": "Jeu original de déduction sociale de la famille du loup-garou : un village de vallée pris dans la brume d'automne, des loups cachés, des nuits secrètes et des votes au grand jour. Système de jeu La Kour, mené par un narrateur humain ou par le MJ IA.",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "compatibility": {
     "minimum": "14",
     "verified": "14.369"

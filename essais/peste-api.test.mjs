@@ -40,7 +40,7 @@ function monde(M, { joueurs = 6, contenu = false, chancePeste = 0 } = {}) {
   };
 }
 const villageois = () => game.actors.filter(a => a.type === "villageois");
-const roleDe = a => a.items.find(i => i.type === "role");
+const roleDe = a => secretDuMJ.role(a);
 const commeJoueur = id => { game.user = game.users.get(id); };
 const commeMJ = () => { game.user = game.users.get("mj"); };
 const publicBrut = () => reglages.get("lakour-loups.partie").valeur;
@@ -71,7 +71,7 @@ const VERIFICATIONS = {
   async "distribution de peste : aucun loup, drapeau et composition secrets, carte de rôle sans meute"(M) {
     const U = monde(M);
     await pesteDistribuee(M, U);
-    assert.ok(villageois().every(a => roleDe(a).system.camp !== "meute" && a.system.camp !== "meute"), "le loup est retiré");
+    assert.ok(villageois().every(a => secretDuMJ.camp(roleDe(a)) !== "meute" && secretDuMJ.camp(a) !== "meute"), "le loup est retiré");
     assert.equal(villageois().filter(a => roleDe(a).system.cle === "villageois").length, 5);
     assert.equal(M.api.etat().peste.active, true);
     assert.equal(M.api.etat().composition, "essai", "le MJ garde la composition");
@@ -88,11 +88,11 @@ const VERIFICATIONS = {
     await M.api.distribuer({ roles: [], joueurs: ["u1", "u2", "u3", "u4", "u5", "u6"], graine: "a", batiments: [] });
     let r = await M.api.nouvellePartie({ graine: "sans" });
     assert.equal(r.composition.peste, false);
-    assert.ok(villageois().some(a => a.system.camp === "meute"));
+    assert.ok(villageois().some(a => secretDuMJ.camp(a) === "meute"));
     const n = emissions.length;
     r = await M.api.nouvellePartie({ peste: true, graine: "choisie" });
     assert.equal(r.composition.peste, true);
-    assert.ok(villageois().every(a => a.system.camp !== "meute"), "peste choisie : aucun loup");
+    assert.ok(villageois().every(a => secretDuMJ.camp(a) !== "meute"), "peste choisie : aucun loup");
     assert.match(r.composition.libelle, /PESTE NOIRE/, "le MJ le voit");
     const h = emissions.slice(n).find(e => e.type === "hook" && e.nom === "lakourLoups.nouvellePartie");
     assert.deepEqual(Object.keys(h.args[0]).sort(), ["compagnons", "joueurs", "partie"], "aucune composition annoncée");
@@ -214,7 +214,7 @@ const VERIFICATIONS = {
     await M.api.distribuer({ roles: [U.loup, U.garde, U.villageois, U.villageois, U.villageois, U.villageois], metiers: [U.forgeron],
       joueurs: ["u1", "u2", "u3", "u4", "u5", "u6"], graine: "ordinaire", composition: "essai", batiments: [] });
     await M.api.changerPhase("jour");
-    const crieur = villageois().find(a => a.system.camp !== "meute");
+    const crieur = villageois().find(a => secretDuMJ.camp(a) !== "meute");
     const autre = villageois().find(a => a.id !== crieur.id && a.system.joueur);
     // Un joueur ne crie pas pour un autre.
     envoyerAuMJ(CANAL, { type: "peste", acteurId: crieur.id, userId: autre.system.joueur }, { emetteur: autre.system.joueur });

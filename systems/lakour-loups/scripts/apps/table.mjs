@@ -16,12 +16,13 @@ import * as L from "../../logique/index.mjs";
 import { LONGUEUR_DECLARATION as LONGUEUR } from "../../logique/registre.mjs";
 import { diagnosticVoix } from "../../logique/salons.mjs";
 import {
-  t, lireEtat, tousLesVillageois, monVillageois, roleDe, metierDe, roleVisible, libellePhase, libelleCamp, libelleCause, libelleVainqueur,
+  t, lireEtat, tousLesVillageois, monVillageois, roleDe, campDe, amoureuxDe, protectionsDe, metierDe, roleVisible, libellePhase, libelleCamp, libelleCause, libelleVainqueur,
   villageoisAPlat
 } from "../donnees.mjs";
 import { envoyerVote, envoyerJour, envoyerCri, envoyerDeclaration, envoyerAccusation, envoyerDepart } from "../api.mjs";
 import { estMJActif } from "../canal.mjs";
 import { secretsPerdus } from "../secrets.mjs";
+import { ecritureBloquee } from "../coffre.mjs";
 import { monVote, mesSecrets } from "../prive.mjs";
 import { ouvrirChoixLocal } from "./choix.mjs";
 import { ouvrirCarnet } from "./carnet.mjs";
@@ -101,7 +102,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
         id: a.id, nom: a.name, img: a.img, vivant: a.system.vivant, maison: a.system.maison,
         metier: metier?.name ?? "", metierImg: metier?.img ?? "",
         voitRole, roleNom: voitRole ? role?.name ?? "" : "", roleImg: voitRole ? role?.img ?? "" : "",
-        camp: voitRole ? libelleCamp(a.system.camp) : "", campCle: voitRole ? a.system.camp : "",
+        camp: voitRole ? libelleCamp(campDe(a)) : "", campCle: voitRole ? campDe(a) : "",
         revele: a.system.revele, silence: a.system.silence, moi: a.id === moi?.id,
         benit: etat.jour.benis.includes(a.id), ruban: etat.jour.rubans.includes(a.id), bailli: Boolean(bailliId) && a.id === bailliId,
         // Le MJ seul sait qui rêve son rôle (secret : l'objet porté est le rôle rêvé).
@@ -117,8 +118,8 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
           : v.mainLevee ? Object.entries(v.votes ?? {}).filter(([, c]) => c === a.id).reduce((s, [votant]) => s + (pesees[votant] ?? 1), 0) : null,
         montreVoix: Boolean(resultat) || Boolean(v.ouvert && v.mainLevee),
         elu: Boolean(resultat?.elus?.includes(a.id)),
-        amoureux: gm && a.system.amoureux ? game.actors.get(a.system.amoureux)?.name ?? "" : "",
-        protections: gm ? a.system.protections : 0,
+        amoureux: gm && amoureuxDe(a) ? game.actors.get(amoureuxDe(a))?.name ?? "" : "",
+        protections: gm ? protectionsDe(a) : 0,
         // Le MJ crie pour un villageois qui le dit à voix haute.
         crier: gm && a.system.vivant && Boolean(tenterSync(() => api().peutCrier(a.id).ok, false))
       };
@@ -244,6 +245,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
     const saints = gm ? { etoileOuverte: Boolean(etat.partie) && etat.tour <= 1 && etat.nuitResolue < 1, etoile: etat.bonneEtoile ? nomDe(etat.bonneEtoile) : "",
       vivants: tousLesVillageois().filter(a => a.system.vivant).map(a => ({ id: a.id, nom: a.name, choisi: a.id === etat.bonneEtoile })) } : null;
     // L'élection quand elle est due (une par jour, avant le vote d'exécution) ; nommer le Bailli à la main quand la charge est vide.
+    // secretsPerdus : secrets absents ou plus vieux que le coffre ou parts attendues : rien de la partie ne s'écrit (coffre.mjs).
     return {
       presage: presage?.cle ? presage : null, glas: etat.glas, saints,
       gm, phase: etat.phase, phaseLibelle: libellePhase(etat.phase), tour: etat.tour, fini: fin,
@@ -259,7 +261,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
       voteBailli: gm && Boolean(bailli?.election?.ok),
       nommerBailli: gm && Boolean(bailli?.actif) && !bailliId && !fin && Boolean(etat.partie),
       registre, declaration: declaration ? { ok: declaration.ok, raison: declaration.raisonTexte, max: LONGUEUR } : null,
-      secretsPerdus: mjActif && secretsPerdus(etat),
+      secretsPerdus: mjActif && (secretsPerdus(etat) || ecritureBloquee()),
       carnet: Boolean(moi), carnetNombre: mesSecrets().entrees.length,
       moi: moi ? { nom: moi.name, vivant: moi.system.vivant, silence: moi.system.silence } : null,
       vote: {
@@ -382,7 +384,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
   }
   // Accueillir un gens de passage : un joueur connecté sans villageois en jeu, ou un joueur IA (module MJ IA).
   static async #accueillir() {
-    const enJeu = new Set(tousLesVillageois().filter(a => roleDe(a)).map(a => a.system.joueur).filter(Boolean));
+    const enJeu = new Set(tousLesVillageois().filter(a => roleDe(a) || !a.system.vivant).map(a => a.system.joueur).filter(Boolean));
     const joueurs = MJ.joueursConnectes().filter(u => !enJeu.has(u.id));
     const options = [...joueurs.map(u => `<option value="${u.id}">${foundry.utils.escapeHTML(u.name)}</option>`),
       ...(MJ.iaDisponible() ? [`<option value="ia">${foundry.utils.escapeHTML(t("LAKOUR_LOUPS.Passage.UnIA"))}</option>`] : [])].join("");

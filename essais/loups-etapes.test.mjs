@@ -171,7 +171,7 @@ const plateau = await import("../systems/lakour-loups/scripts/plateau.mjs");
 const local = await import("../systems/lakour-loups/scripts/plateau-local.mjs");
 const MJ = await import("../systems/lakour-loups/scripts/actions-mj.mjs");
 const villageois = () => game.actors.filter(a => a.type === "villageois");
-const roleDe = a => a.items.find(i => i.type === "role");
+const roleDe = a => secretDuMJ.role(a);
 
 // Le point d'enregistrement des compagnons, tel que le MJ IA le dépose (doublure : noms tirés d'une liste).
 function pointCompagnons() {

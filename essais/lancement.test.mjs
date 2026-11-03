@@ -50,7 +50,7 @@ async function partieEntamee(M, lance = "lancement-1") {
   await M.api.distribuer({ roles: [role("loup"), role("villageois"), role("villageois"), role("villageois")], metiers: [metier, metier, metier, metier],
     joueurs: ["u1", "u2", "u3", "u4"], compagnons: ["Ysoline", "Barnabé"], graine: "lancement", composition: "essai-4", batiments: [] });
   await M.api.changerPhase("jour");
-  const victime = game.actors.contents.find(a => a.system.joueur && a.system.camp !== "meute");
+  const victime = game.actors.contents.find(a => a.system.joueur && secretDuMJ.camp(a) !== "meute");
   await M.api.eliminer(victime.id, { cause: "vote", reveler: true });
   const muet = game.actors.contents.find(a => a.system.joueur && a.system.vivant);
   await M.api.reduireAuSilence(muet.id);
@@ -144,7 +144,7 @@ const MUTATIONS = [
   ["scripts/api.mjs", "        if (majs.length) await scene.updateEmbeddedDocuments(\"Token\", majs, { lakourLoups: true });\n", "", "jetons posés neutres"],
   ["scripts/api.mjs", "      for (const statut of [\"dead\", \"silence\"]) {", "      for (const statut of [\"dead\"]) {", "plus de silence"],
   ["scripts/api.mjs", "    const neutre = imageNeutre();\n", "    const neutre = \"icons/svg/mystery-man.svg\";\n", "image neutre au style choisi"],
-  ["scripts/api.mjs", "    const etat = await modifierEtat(() => L.etatInitial());\n    annoncer(\"lakourLoups.phase\", [\"preparation\", etat]", "    const etat = lireEtat();\n    annoncer(\"lakourLoups.phase\", [\"preparation\", etat]", "état de la partie effacé"]
+  ["scripts/api.mjs", "    const etat = await modifierEtat(() => L.etatInitial(), { sansSecrets: true });\n    annoncer(\"lakourLoups.phase\", [\"preparation\", etat]", "    const etat = lireEtat();\n    annoncer(\"lakourLoups.phase\", [\"preparation\", etat]", "état de la partie effacé"]
 ];
 
 async function chargerMutant(fichier, avant, apres) {

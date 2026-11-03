@@ -41,8 +41,8 @@ beforeEach(() => {
 const joueurs = ["u1", "u2", "u3", "u4", "u5", "u6"];
 const distribuer = () => api.distribuer({ roles: [U.loup, U.loup, U.garde, U.chasseur, U.juge, U.villageois], metiers: [U.forgeron, U.tisserande],
   joueurs, graine: "secrets", composition: "essai", batiments: [U.chapelle, U.taverne] });
-const acteurDe = cle => game.actors.find(a => a.items.find(i => i.type === "role")?.system.cle === cle);
-const tous = cle => game.actors.filter(a => a.items.find(i => i.type === "role")?.system.cle === cle);
+const acteurDe = cle => game.actors.find(a => secretDuMJ.role(a)?.system.cle === cle);
+const tous = cle => game.actors.filter(a => secretDuMJ.role(a)?.system.cle === cle);
 const metierDe = cle => game.actors.find(a => a.items.find(i => i.type === "metier")?.system.cle === cle);
 const publicEtat = () => reglages.get("lakour-loups.partie").valeur;
 const commeJoueur = id => { game.user = game.users.get(id); };
@@ -62,8 +62,12 @@ test("l'état public ne contient ni choix de nuit, ni primes, ni fioles, ni aspe
   assert.equal(JSON.stringify(pub).includes(vil.id) && JSON.stringify(pub.nuit).includes(vil.id), false);
   const secret = reglages.get("lakour-loups.secrets");
   assert.equal(secret.conf.scope, "client", "portée client : jamais envoyé au serveur");
-  assert.equal(secret.valeur.nuit.actions.length, 2);
-  assert.ok(secret.valeur.primes[chasseur.id], "la prime du Chasseur est chez le MJ");
+  // Rangés par [monde][userId] : un autre monde, un autre compte du même navigateur n'y lisent rien.
+  assert.deepEqual(Object.keys(secret.valeur), ["brumecombe"]);
+  assert.deepEqual(Object.keys(secret.valeur.brumecombe), ["mj"]);
+  assert.equal(secret.valeur.brumecombe.mj.nuit.actions.length, 2);
+  assert.ok(secret.valeur.brumecombe.mj.primes[chasseur.id], "la prime du Chasseur est chez le MJ");
+  assert.ok(secret.valeur.brumecombe.mj.fiches[garde.id]?.role, "le rôle de chacun est chez le MJ");
   assert.equal(api.etat().nuit.actions.length, 2, "le MJ actif voit tout");
   commeJoueur("u1");
   assert.deepEqual(api.etat().nuit.actions, [], "un joueur ne voit que l'état public");
@@ -82,9 +86,22 @@ test("le MJ recharge sa page : les secrets reviennent de son navigateur ; un aut
   assert.equal(api.etat().nuit.actions.length, 0);
   assert.equal(secretsPerdus(lirePublic()), true, "la Table de jeu prévient le MJ");
   // Des secrets d'une autre partie ne se mélangent pas à celle-ci.
-  reglages.get("lakour-loups.secrets").valeur = { partie: "ancienne", nuit: { actions: [{ acteurId: "x", roleCle: "y", cibles: ["z"] }] } };
+  reglages.get("lakour-loups.secrets").valeur = { brumecombe: { mj: { partie: "ancienne", nuit: { actions: [{ acteurId: "x", roleCle: "y", cibles: ["z"] }] } } } };
   oublierSecrets();
   assert.equal(api.etat().nuit.actions.length, 0);
+  // Ceux d'un autre compte (même navigateur) ou d'un autre monde : jamais lus.
+  const partie = lirePublic().partie;
+  reglages.get("lakour-loups.secrets").valeur = { brumecombe: { u1: { partie, nuit: { actions: [{ acteurId: "x", roleCle: "y", cibles: ["z"] }] } } },
+    autreMonde: { mj: { partie, nuit: { actions: [{ acteurId: "x", roleCle: "y", cibles: ["z"] }] } } } };
+  oublierSecrets();
+  assert.equal(api.etat().nuit.actions.length, 0);
+  // Un joueur ne lit jamais ce réglage, même le sien.
+  commeJoueur("u1");
+  oublierSecrets();
+  const { secretsMJ } = await import("../systems/lakour-loups/scripts/secrets.mjs");
+  assert.deepEqual(secretsMJ(), {});
+  commeMJ();
+  oublierSecrets();
 });
 
 test("socket : la demande de nuit ne va qu'au joueur visé, l'annulation aussi ; sa réponse ne va qu'au MJ actif", async () => {

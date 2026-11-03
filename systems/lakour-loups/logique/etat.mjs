@@ -32,7 +32,11 @@
 //   Banc des accusés), resultat : +souffles, +banc ({ accuse, pour, total }), +deuil (le candidat de la voix du deuil) ;
 //   +passage: { actif, gens } et +partis: [{ acteurId, tour, comment }] (les Gens de passage, départs et exils, passage.mjs),
 //   +banc: { actif, tour, accusations, juges } (banc.mjs), +deuil: { actif, compte } et +pouvoirsDeuil [S] (deuil.mjs),
-//   +format: "" | "saint-martin" et +autel [S]: [cle] (la Nuit de la Saint-Martin, saintmartin.mjs) }
+//   +format: "" | "saint-martin" et +autel [S]: [cle] (la Nuit de la Saint-Martin, saintmartin.mjs),
+//   +fiches [S]: { acteurId: { camp, amoureux, protections, role } } (fiches.mjs : tout ce qui est secret d'un villageois ; ses
+//   documents n'en gardent rien avant la révélation publique), +secretsIncomplets [S] (une partie reprise sans tous ses secrets) }
+// 0.9.0 : pont [S] (le Pont bloqué la nuit suivante trahirait la vraie cause d'une mort de nuit sur l'autre rive) et
+// voteDoubleDemain [S] (la cloche du Sonneur : publique seulement quand le vote s'ouvre, vote.double).
 
 import { PHASES, causePublique } from "./constantes.mjs";
 import { decompterVotes } from "./votes.mjs";
@@ -68,7 +72,8 @@ export function etatInitial() {
     jour: jourInitial(), pont: { bloqueNuit: 0 }, cimetiere: [], peste: null,
     bailli: bailliInitial(), registre: [], masques: [],
     souffle: souffleInitial(), presage: presageInitial(), glas: 0, somnambules: {}, bonneEtoile: "", aConsigner: null,
-    passage: passageInitial(), partis: [], banc: bancInitial(), deuil: deuilInitial(), pouvoirsDeuil: pouvoirsDeuilInitiaux(), format: "", autel: []
+    passage: passageInitial(), partis: [], banc: bancInitial(), deuil: deuilInitial(), pouvoirsDeuil: pouvoirsDeuilInitiaux(), format: "", autel: [],
+    fiches: {}, secretsIncomplets: false
   };
 }
 
@@ -85,7 +90,9 @@ export function normaliserEtat(e) {
   etat.pont = { ...base.pont, ...(x.pont ?? {}) };
   for (const cle of ["batiments", "batimentsCles", "morts", "historique", "asperges", "journalSecret", "cimetiere", "registre", "masques", "partis", "autel"]) if (!Array.isArray(etat[cle])) etat[cle] = [];
   for (const cle of ["effets", "benis", "rubans"]) if (!Array.isArray(etat.jour[cle])) etat.jour[cle] = [];
-  for (const cle of ["primes", "fioles", "causes", "carnets", "somnambules"]) if (!etat[cle] || typeof etat[cle] !== "object") etat[cle] = {};
+  for (const cle of ["primes", "fioles", "causes", "carnets", "somnambules", "fiches"]) if (!etat[cle] || typeof etat[cle] !== "object" || Array.isArray(etat[cle])) etat[cle] = {};
+  etat.secretsIncomplets = Boolean(etat.secretsIncomplets);
+  etat.voteDoubleDemain = Boolean(etat.voteDoubleDemain);
   if (!Array.isArray(etat.vote.exprimes)) etat.vote.exprimes = [];
   if (!PHASES.includes(etat.phase)) etat.phase = "preparation";
   etat.peste = normaliserPeste(etat.peste);
@@ -120,12 +127,14 @@ export function separerEtat(e) {
     partie: etat.partie, nuit: etat.nuit, nuitPrecedente: etat.nuitPrecedente, asperges: etat.asperges, primes: etat.primes,
     fioles: etat.fioles, journalSecret: etat.journalSecret, carnets: etat.carnets, votes: etat.vote.votes, causes: {},
     composition: etat.composition, peste: etat.peste, masques: etat.masques, somnambules: etat.somnambules, bonneEtoile: etat.bonneEtoile,
-    aConsigner: etat.aConsigner, pouvoirsDeuil: etat.pouvoirsDeuil, autel: etat.autel
+    aConsigner: etat.aConsigner, pouvoirsDeuil: etat.pouvoirsDeuil, autel: etat.autel,
+    fiches: etat.fiches, pont: etat.pont, voteDoubleDemain: etat.voteDoubleDemain, secretsIncomplets: etat.secretsIncomplets
   };
   const pub = copie(etat);
   pub.nuit = base.nuit;
   pub.nuitPrecedente = base.nuitPrecedente;
-  for (const cle of ["asperges", "primes", "fioles", "journalSecret", "masques", "somnambules", "bonneEtoile", "aConsigner", "pouvoirsDeuil", "autel", "carnets", "causes", "composition"]) pub[cle] = base[cle];
+  for (const cle of ["asperges", "primes", "fioles", "journalSecret", "masques", "somnambules", "bonneEtoile", "aConsigner", "pouvoirsDeuil", "autel", "carnets", "causes", "composition",
+    "fiches", "pont", "voteDoubleDemain", "secretsIncomplets"]) pub[cle] = base[cle] && typeof base[cle] === "object" ? copie(base[cle]) : base[cle];
   // La peste noire n'existe pas dans l'état public avant la fin (ni même la clé) ; à la fin, la partie se dévoile.
   delete pub.peste;
   if (etat.phase === "fin" && etat.peste) pub.peste = copie(etat.peste);
@@ -157,6 +166,11 @@ export function fusionnerEtat(pub, secret) {
   if (s.votes && typeof s.votes === "object") etat.vote.votes = s.votes;
   if (typeof s.composition === "string") etat.composition = s.composition;
   if (s.peste !== undefined) etat.peste = normaliserPeste(s.peste);
+  if (s.fiches && typeof s.fiches === "object" && !Array.isArray(s.fiches)) etat.fiches = s.fiches;
+  // Secrets d'avant 0.9.0 : le Pont et la cloche étaient publics ; ils restent tels que l'état public les a, jusqu'à la prochaine écriture.
+  if (s.pont && typeof s.pont === "object") etat.pont = { bloqueNuit: Number(s.pont.bloqueNuit) || 0 };
+  if (typeof s.voteDoubleDemain === "boolean") etat.voteDoubleDemain = s.voteDoubleDemain;
+  etat.secretsIncomplets = Boolean(s.secretsIncomplets);
   etat.causes = s.causes ?? {};
   etat.morts = etat.morts.map(m => (etat.causes[m.acteurId] ? { ...m, cause: etat.causes[m.acteurId] } : m));
   return etat;

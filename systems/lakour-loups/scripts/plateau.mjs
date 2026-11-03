@@ -12,7 +12,7 @@
 import { ID } from "../logique/constantes.mjs";
 import * as L from "../logique/index.mjs";
 import { estMJActif } from "./canal.mjs";
-import { lireEtat, tousLesVillageois, villageoisAPlat, roleDe } from "./donnees.mjs";
+import { lireEtat, tousLesVillageois, villageoisAPlat, roleDe, roleRevele } from "./donnees.mjs";
 import { ambiancePourPhase } from "./ambiance.mjs";
 
 // ------------------------------------------------------------------ configuration (fournie par le module de contenu)
@@ -28,8 +28,10 @@ export function configurerPlateau({ jetonNeutre, styliser } = {}) {
 export const imageNeutre = () => config.styliser(config.jetonNeutre || "icons/svg/mystery-man.svg");
 
 // L'image publique du jeton d'un acteur : celle de son rôle s'il est révélé (ou à la fin), l'image neutre sinon.
+// L'image d'un rôle révélé est celle de son objet PUBLIC (le document) : chez le MJ, la fiche secrète a pu changer depuis (échange du
+// Colporteur) et le jeton, vu de tous, la trahirait. À la fin, le vrai rôle.
 export function imageDuJeton(acteur, phase = lireEtat().phase) {
-  const role = roleDe(acteur);
+  const role = phase === "fin" ? roleDe(acteur) ?? roleRevele(acteur) : roleRevele(acteur);
   if (L.imageDuJeton({ revele: acteur?.system?.revele }, phase) === "role" && role?.img) return config.styliser(role.img);
   return imageNeutre();
 }

@@ -26,7 +26,7 @@ const { reinitialiserPrive } = await import("../modules/lakour-mj-ia/scripts/com
 const outil = nom => OUTILS.find(o => o.nom === nom);
 const ID = "lakour-mj-ia";
 const villageois = () => game.actors.filter(a => a.type === "villageois");
-const roleDe = a => a?.items.find(i => i.type === "role") ?? null;
+const roleDe = a => secretDuMJ.role(a);
 
 // ------------------------------------------------------------------ le narrateur doublure (il « joue » chaque consigne)
 // Il répond à la consigne d'une étape par les appels d'outils qu'elle demande, puis « — » après les résultats (sauf l'aube, le
@@ -105,7 +105,7 @@ async function monde(graine, { compagnons = 6, reglages = {} } = {}) {
   game.lakourLoups = api;
   ecouterSocket();
   Object.assign(game, { world: { id: "brumecombe", title: "Brumecombe" }, system: { id: "lakour-loups", title: "Les Veillées", version: "1" },
-    combats: { active: null }, journal: [], paused: false, messages: { get contents() { return messages; } }, modules: new Map([[ID, { api: {} }]]) });
+    combats: { active: null }, journal: [], paused: false, messages: { get contents() { return messages; } } });
   foundry.applications.apps = { FilePicker: { implementation: { createDirectory: async () => {}, upload: async (_s, d, f) => ({ path: `${d}/${f.name}` }) } } };
   reinitialiserPrive();
   const hasardOrigine = Math.random;
@@ -113,7 +113,7 @@ async function monde(graine, { compagnons = 6, reglages = {} } = {}) {
   const joueurs = simulerJoueurs({ graine: `${graine}-joueurs`, fraude: false, pouvoirs: 0 });
   // Le moteur du MJ IA, branché comme au « ready » : résolveur des compagnons, messages du chat proposés au moteur.
   const moteur = new MoteurMJ();
-  game.modules.get(ID).api = { moteur };
+  game.modules.get(ID).api = { ...game.modules.get(ID).api, moteur };   // le coffre du MJ IA y est déjà (doublure)
   api.resolveurs.compagnon = d => moteur.compagnons.resoudreLoups(d);
   const mj = narrateur();
   const ia = cerveaux();
@@ -139,8 +139,8 @@ async function monde(graine, { compagnons = 6, reglages = {} } = {}) {
   // La partie : 2 humains (villageois, pas loups) et des compagnons, distribution par l'outil du narrateur.
   const depart = await outil("loups_distribuer").executer({ joueurs: [], mode: "auto", niveau: "debutants", roles: [], batiments: [], inclure: [], exclure: [], composition: "", compagnons });
   assert.ok(!depart.erreur, depart.contenu);
-  for (const h of villageois().filter(a => a.system.joueur && a.system.camp === "meute")) {
-    const autre = villageois().find(a => a.system.compagnon && a.system.camp !== "meute");
+  for (const h of villageois().filter(a => a.system.joueur && secretDuMJ.camp(a) === "meute")) {
+    const autre = villageois().find(a => a.system.compagnon && secretDuMJ.camp(a) !== "meute");
     await api.echangerRoles(h.id, autre.id);
   }
   await moteur.chaine;   // fil neuf de la nouvelle partie

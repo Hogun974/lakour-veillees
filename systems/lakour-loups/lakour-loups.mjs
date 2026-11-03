@@ -7,8 +7,12 @@ import { api, envoyerCarnet } from "./scripts/api.mjs";
 import { ecouterSocket } from "./scripts/socket.mjs";
 import { lireEtat, lirePublic, monVillageois, t } from "./scripts/donnees.mjs";
 import { estMJActif, versMJ } from "./scripts/canal.mjs";
-import { secretsPerdus } from "./scripts/secrets.mjs";
-import { chercherSecrets, enAttenteDeParts } from "./scripts/coffre.mjs";
+import { secretsPerdus, migrerSecretsAnciens, garderSecrets } from "./scripts/secrets.mjs";
+import {
+  chercherSecrets, enAttenteDeParts, battre, surCoffreRouvert, oublierAnciennePart, coffreDisponible, secretsAJour, ecritureBloquee,
+  devenirMJActif, perdreLaMain, surSecretsRetrouves
+} from "./scripts/coffre.mjs";
+import { brancherGarde } from "./scripts/garde.mjs";
 import { chargerPrive, mesSecrets } from "./scripts/prive.mjs";
 import { carnetSecret } from "./scripts/apps/carnet.mjs";
 import { tableDeJeu, ouvrirTable, cloreLeVote } from "./scripts/apps/table.mjs";
@@ -68,8 +72,10 @@ function rafraichirPlateauLocal() {
   rafraichirJetons();
 }
 
-// Ce que le MJ a envoyé à ce seul navigateur (carnet, prime, accusé de vote) : on rafraîchit ce qui l'affiche.
-Hooks.on("lakourLoups.prive", () => {
+// Ce que le MJ a envoyé à ce seul navigateur (carnet, fiche, prime, accusé de vote) : on rafraîchit ce qui l'affiche. Chez le MJ
+// actif, une fiche secrète changée (lakourLoups.fiches, local) fait de même, et l'attente des secrets qui commence ou finit
+// (lakourLoups.secrets, local : l'alerte de la Table).
+for (const crochet of ["lakourLoups.prive", "lakourLoups.fiches", "lakourLoups.secrets"]) Hooks.on(crochet, () => {
   if (!game.ready) return;
   rafraichirPlateauLocal();
   if (carnetSecret().rendered) carnetSecret().render();
@@ -100,6 +106,7 @@ Hooks.once("init", () => {
   enregistrerReglages(quandEtatChange);
   brancherPlateau();
   brancherParole();
+  brancherGarde();   // aucun joueur ne modifie un villageois ni ses objets (défense en profondeur : il n'en est qu'observateur)
   brancherInfobulle();
   brancherSalons();
   brancherImmersion();   // brume, lueurs, tremblement (v14), chez chaque client
@@ -117,16 +124,29 @@ Hooks.once("ready", () => {
   // Secrets : le joueur relit son carnet (localStorage) et demande au MJ actif de le compléter ; le MJ actif vérifie
   // qu'il a bien les secrets de la partie en cours (ils ne vivent que dans SON navigateur).
   chargerPrive(lirePublic().partie);
-  if (!game.user.isGM) versMJ({ type: "bonjour" });
-  else if (estMJActif()) {
+  if (!game.user.isGM) {
+    versMJ({ type: "bonjour" });
+    oublierAnciennePart();   // la part de l'ancien coffre (avant 0.9.0) ne sert plus
+  } else if (estMJActif()) {
+    // Le coffre est celui du MJ IA : il se branche à son propre « ready » (après celui du système).
+    const quandCoffre = fn => (coffreDisponible() ? fn() : Hooks.once("lakour-mj-ia.pret", () => fn()));
     // Un nouveau lancement du monde remet le village à zéro ; sinon (simple rechargement), la partie en cours reste et l'on
-    // vérifie que ce navigateur a bien ses secrets : sinon, on les reprend du coffre (parts de clé de deux joueurs).
+    // vérifie que ce navigateur a bien ses secrets : sinon, on les reprend (anciens secrets de ce navigateur, coffre).
     repartirAuLancement(api).then(async remis => {
       const pub = lirePublic();
-      // Ce qui attendait le Bailli (départage d'une égalité, succession) n'était qu'en mémoire : la page rechargée le reprend.
-      if (!remis) api.reprendre();
-      if (remis || !secretsPerdus(pub)) return;
-      if (!(await chercherSecrets(pub.partie, secretsRetrouves))) {
+      if (!remis) {
+        // Une partie commencée avant 0.9.0 : ses secrets rangés à l'ancienne dans ce navigateur, puis les fiches des documents.
+        const anciens = await migrerSecretsAnciens(pub.partie);
+        if (anciens && secretsPerdus(pub)) await garderSecrets(anciens);
+        // Pas de secrets, ou plus vieux que le coffre (un autre MJ a scellé depuis) : on rouvre le coffre.
+        if (pub.partie && pub.phase !== "fin" && !secretsAJour(pub.partie)) await quandCoffreAsync(quandCoffre, () => chercherSecrets(pub.partie, secretsRetrouves));
+        const m = await api.migrer();
+        if (m.fiches || m.documents) ui.notifications.info(t("LAKOUR_LOUPS.Table.Migration", { n: m.fiches }));
+        // Ce qui attendait le Bailli (départage d'une égalité, succession) n'était qu'en mémoire : la page rechargée le reprend.
+        api.reprendre();
+      }
+      if (remis || (!secretsPerdus(lirePublic()) && !ecritureBloquee())) return;
+      if (!enAttenteDeParts()) {
         ui.notifications.warn(t("LAKOUR_LOUPS.Table.SecretsPerdus"), { permanent: true });
         return;
       }
@@ -134,6 +154,27 @@ Hooks.once("ready", () => {
         if (enAttenteDeParts()) ui.notifications.warn(t("LAKOUR_LOUPS.Table.SecretsEnAttente"), { permanent: true });
       }, 15000);
     }).catch(e => console.error(`${ID} | village remis à zéro`, e));
+  }
+  if (game.user.isGM) {
+    // Le coffre ne bat qu'au rythme public : à chaque moment public (api.mjs) et une fois par minute pendant une partie, chez le MJ
+    // actif (vérifié à chaque battement : un autre MJ qui le devient prend le relais).
+    battre();
+    surSecretsRetrouves(secretsRetrouves);
+    Hooks.on("lakour-mj-ia.coffreRouvert", () => { surCoffreRouvert().catch(e => console.warn(`${ID} | coffre`, e)); });
+    // Le MJ actif change (un MJ se connecte ou part) : celui qui prend la main relit son navigateur et rouvre le coffre s'il n'est pas
+    // à jour ; celui qui la perd scelle une dernière fois puis oublie ses secrets (ils seraient périmés à son retour).
+    let etaisActif = estMJActif();
+    Hooks.on("userConnected", () => {
+      const actif = estMJActif();
+      if (actif && !etaisActif) {
+        devenirMJActif(secretsRetrouves).then(aJour => {
+          if (!aJour) ui.notifications.warn(t(enAttenteDeParts() ? "LAKOUR_LOUPS.Table.SecretsEnAttente" : "LAKOUR_LOUPS.Table.SecretsPerdus"));
+          quandEtatChange();
+          rafraichirSalons({ forcer: true });
+        }).catch(e => console.warn(`${ID} | coffre`, e));
+      } else if (!actif && etaisActif) perdreLaMain().catch(e => console.warn(`${ID} | coffre`, e));
+      etaisActif = actif;
+    });
   }
   voteEtaitOuvert = false;
   // Le plateau local : la fenêtre de secours qui répond éteint la carte ; tout changement local redessine bandeau et jetons.
@@ -145,6 +186,14 @@ Hooks.once("ready", () => {
   if (estMJActif()) rafraichirSalons({ forcer: true });
   Hooks.callAll("lakourLoups.pret", api);
 });
+
+// Attendre le coffre du MJ IA (au plus quelques secondes : sans lui, on n'attend pas pour rien).
+function quandCoffreAsync(quandCoffre, fn) {
+  return new Promise(resolve => {
+    const minuterie = setTimeout(() => resolve(false), 10000);
+    quandCoffre(async () => { clearTimeout(minuterie); try { resolve(await fn()); } catch (e) { console.warn(`${ID} | coffre`, e); resolve(false); } });
+  });
+}
 
 // Les secrets de la partie, repris du coffre : la Table, les fiches et les salons vocaux les retrouvent.
 function secretsRetrouves() {

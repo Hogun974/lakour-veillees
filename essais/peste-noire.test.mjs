@@ -212,7 +212,7 @@ const MUTATIONS = [
   ["constantes.mjs", "export const CAUSES_SECRETES = [\"meute\", \"poison\", \"feu\", \"epie\", \"peste\"];", "export const CAUSES_SECRETES = [\"meute\", \"poison\", \"feu\", \"epie\"];", "cause secrète"],
   ["etat.mjs", "  delete pub.peste;\n", "", "drapeau public"],
   ["etat.mjs", "if (etat.phase === \"fin\" && etat.peste) pub.peste", "if (etat.peste) pub.peste", "dévoilé avant la fin"],
-  ["etat.mjs", "\"carnets\", \"causes\", \"composition\"]) pub[cle]", "\"carnets\", \"causes\"]) pub[cle]", "composition publique"],
+  ["etat.mjs", "\"carnets\", \"causes\", \"composition\",\n", "\"carnets\", \"causes\",\n", "composition publique"],
   ["etat.mjs", "  if (s.peste !== undefined) etat.peste = normaliserPeste(s.peste);\n", "", "secret rendu au MJ"],
   ["composition.mjs", "essais = 1200, peste = false } = {}) {", "essais = 1200, peste: _peste = false } = {}) {\n  const peste = false;", "composition de peste ignorée"],
   ["composition.mjs", "export const sansMeute = (roles, equilibre) => roles.map(cle => (equilibre.roles?.[cle]?.camp === \"meute\" ? BASE_VILLAGE : cle));",

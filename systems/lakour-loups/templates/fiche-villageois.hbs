@@ -11,7 +11,7 @@
       <div class="loups-pilules">
         {{#if voitRole}}
           {{#if role}}
-          <a class="loups-pilule role" data-action="ouvrirObjet" data-item-id="{{role.id}}" {{#if role.bulle}}data-tooltip-html="{{role.bulle}}" data-tooltip-class="lakour-loups loups-bulle"{{/if}}>
+          <a class="loups-pilule role" data-action="ouvrirObjet" data-item-id="{{role.id}}" data-uuid="{{role.uuid}}" {{#if role.secret}}data-secret="1"{{/if}} {{#if role.bulle}}data-tooltip-html="{{role.bulle}}" data-tooltip-class="lakour-loups loups-bulle"{{/if}}>
             <span class="loups-pilule-cle"><i class="fa-solid fa-mask"></i> {{localize "LAKOUR_LOUPS.Fiche.Role"}}</span>
             <span class="loups-pilule-val"><img src="{{role.img}}" alt=""> {{role.nom}}</span>
           </a>
@@ -61,10 +61,10 @@
           {{#if role}}
           <article class="loups-atout role {{#if campCle}}camp-{{campCle}}{{/if}}">
             <div class="loups-atout-tete" {{#if role.bulle}}data-tooltip-html="{{role.bulle}}" data-tooltip-class="lakour-loups loups-bulle"{{/if}}>
-              <img class="loups-atout-icone" src="{{role.img}}" alt="" data-action="ouvrirObjet" data-item-id="{{role.id}}">
+              <img class="loups-atout-icone" src="{{role.img}}" alt="" data-action="ouvrirObjet" data-item-id="{{role.id}}" data-uuid="{{role.uuid}}" {{#if role.secret}}data-secret="1"{{/if}}>
               <div class="loups-atout-titre">
                 <div class="loups-atout-type"><i class="fa-solid fa-mask"></i> {{localize "LAKOUR_LOUPS.Fiche.Role"}}</div>
-                <a class="loups-atout-nom" data-action="ouvrirObjet" data-item-id="{{role.id}}">{{role.nom}}</a>
+                <a class="loups-atout-nom" data-action="ouvrirObjet" data-item-id="{{role.id}}" data-uuid="{{role.uuid}}" {{#if role.secret}}data-secret="1"{{/if}}>{{role.nom}}</a>
               </div>
               {{#if role.usages}}
               <div class="loups-jauge" data-tooltip-text="{{localize 'LAKOUR_LOUPS.Role.UsagesRestant'}}">
@@ -72,7 +72,7 @@
                 <small>{{role.usages}} {{localize "LAKOUR_LOUPS.Fiche.Usages"}}</small>
               </div>
               {{/if}}
-              {{#if gm}}<button type="button" class="loups-icone" data-action="retirerObjet" data-item-id="{{role.id}}" data-tooltip-text="{{localize 'LAKOUR_LOUPS.Fiche.Retirer'}}"><i class="fa-solid fa-trash"></i></button>{{/if}}
+              {{#if gm}}<button type="button" class="loups-icone" data-action="retirerObjet" data-item-id="{{role.id}}" data-uuid="{{role.uuid}}" {{#if role.secret}}data-secret="1"{{/if}} data-tooltip-text="{{localize 'LAKOUR_LOUPS.Fiche.Retirer'}}"><i class="fa-solid fa-trash"></i></button>{{/if}}
             </div>
             {{#unless system.revele}}<div class="loups-atout-secret"><i class="fa-solid fa-user-secret"></i> {{localize "LAKOUR_LOUPS.Fiche.Secret"}}</div>{{/unless}}
             <div class="loups-marques">
@@ -132,10 +132,14 @@
       <h3><i class="fa-solid fa-hat-wizard"></i> {{localize "LAKOUR_LOUPS.Fiche.Etat"}}</h3>
       <div class="loups-champs">
         <label>{{localize "LAKOUR_LOUPS.Fiche.Joueur"}} <select name="system.joueur">{{selectOptions joueurs selected=system.joueur}}</select></label>
-        <label>{{localize "LAKOUR_LOUPS.Fiche.CampActuel"}} <select name="system.camp">{{selectOptions camps selected=system.camp}}</select></label>
+        {{#if secret}}
+        <label>{{localize "LAKOUR_LOUPS.Fiche.CampActuel"}} <select name="secret.camp">{{selectOptions camps selected=secret.camp}}</select></label>
+        {{/if}}
         <label>{{localize "LAKOUR_LOUPS.Fiche.Maison"}} <input type="text" name="system.maison" value="{{system.maison}}"></label>
-        <label>{{localize "LAKOUR_LOUPS.Fiche.Amoureux"}} <select name="system.amoureux">{{selectOptions autres selected=system.amoureux}}</select></label>
-        <label>{{localize "LAKOUR_LOUPS.Fiche.Protections"}} <input type="number" name="system.protections" value="{{system.protections}}" min="0" step="1"></label>
+        {{#if secret}}
+        <label>{{localize "LAKOUR_LOUPS.Fiche.Amoureux"}} <select name="secret.amoureux">{{selectOptions autres selected=secret.amoureux}}</select></label>
+        <label>{{localize "LAKOUR_LOUPS.Fiche.Protections"}} <input type="number" name="secret.protections" value="{{secret.protections}}" min="0" step="1"></label>
+        {{/if}}
         <label class="case"><input type="checkbox" name="system.vivant" {{checked system.vivant}}> {{localize "LAKOUR_LOUPS.Fiche.Vivant"}}</label>
         <label class="case"><input type="checkbox" name="system.revele" {{checked system.revele}}> {{localize "LAKOUR_LOUPS.Fiche.Revele"}}</label>
         <label class="case"><input type="checkbox" name="system.silence" {{checked system.silence}}> {{localize "LAKOUR_LOUPS.Table.Silence"}}</label>

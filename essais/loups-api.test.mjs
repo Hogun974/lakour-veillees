@@ -12,6 +12,7 @@ let U;   // uuid des objets du monde
 beforeEach(() => {
   installerFoundry();
   enregistrerReglages(() => {});
+  game.lakourLoups = api;
   U = {
     loup: creerObjetMonde("Loup de Brumecombe", "role", { cle: "loup-de-brumecombe", camp: "meute", effet: "tuer", nuit: { actif: true, ordre: 40 } }),
     garde: creerObjetMonde("Garde du pont", "role", { cle: "garde-du-pont", effet: "proteger", nuit: { actif: true, ordre: 20 } }),
@@ -26,8 +27,8 @@ beforeEach(() => {
 const joueurs = ["u1", "u2", "u3", "u4", "u5", "u6"];
 const distribuer = () => api.distribuer({ roles: [U.loup, U.loup, U.garde, U.veilleuse, U.sonneur, U.villageois], metiers: [U.forgeron, U.meuniere],
   joueurs, graine: "essai", composition: "essai-6", batiments: [] });
-const acteurDe = cle => game.actors.find(a => a.items.find(i => i.type === "role")?.system.cle === cle);
-const tous = cle => game.actors.filter(a => a.items.find(i => i.type === "role")?.system.cle === cle);
+const acteurDe = cle => game.actors.find(a => secretDuMJ.role(a)?.system.cle === cle);
+const tous = cle => game.actors.filter(a => secretDuMJ.role(a)?.system.cle === cle);
 
 // ------------------------------------------------------------------ essais
 test("API : toutes les fonctions du contrat sont là", () => {
@@ -53,10 +54,18 @@ test("distribuer : un villageois par joueur, rôle et métier, propriété, rôl
   for (const x of r) {
     const a = game.actors.get(x.acteurId);
     assert.equal(a.system.joueur, x.userId);
-    assert.equal(a.ownership[x.userId], 3);
+    // Le joueur OBSERVE son villageois (0.9.0) : il ne peut plus le modifier (se mettre « meute », se donner un rôle).
+    assert.equal(a.ownership[x.userId], CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER);
     assert.equal(a.ownership.default, 1);
-    assert.equal(a.items.filter(i => i.type === "role").length, 1);
-    assert.equal(a.system.camp, x.roleCle.startsWith("loup") ? "meute" : "village");
+    // Le rôle et le camp : dans les secrets du MJ, pas sur le document (Foundry le livre à tous).
+    assert.equal(a.items.filter(i => i.type === "role").length, 0, "aucun objet de rôle avant la révélation");
+    assert.equal(a.system.camp, "", "aucun camp au document");
+    assert.equal(secretDuMJ.role(a).system.cle, x.roleCle);
+    assert.equal(secretDuMJ.camp(a), x.roleCle.startsWith("loup") ? "meute" : "village");
+    // Sa fiche part à lui seul.
+    const f = emissions.findLast(e => e.type === "fiche" && e.acteurId === x.acteurId);
+    assert.deepEqual(f.recipients, [x.userId]);
+    assert.equal(f.fiche.role.system.cle, x.roleCle);
     assert.match(a.system.maison, /^Maison (\d|1[3-8])$/);
     // Le rôle part dans le carnet secret, par le socket, à ce seul joueur (jamais par le chat, livré à tous).
     const m = emissions.find(e => e.type === "secret" && e.entree.acteurId === x.acteurId);
@@ -78,7 +87,7 @@ test("distribuer : un villageois par joueur, rôle et métier, propriété, rôl
   // Redistribuer recycle les mêmes acteurs.
   await distribuer();
   assert.equal(game.actors.size, 6);
-  assert.ok(game.actors.filter(a => true).every(a => a.items.filter(i => i.type === "role").length === 1));
+  assert.ok(game.actors.filter(a => true).every(a => secretDuMJ.role(a) && a.items.filter(i => i.type === "role").length === 0));
 });
 
 test("changerPhase : tour + 1 la nuit, hooks ici et chez les autres sans les secrets", async () => {
@@ -132,7 +141,9 @@ test("demanderAction : nombre 0 -> [] sans fenêtre ; soi-même seulement si le 
   const tous = game.actors.map(a => a.id);
   api.demanderAction({ acteurId: garde.id, candidats: tous, delai: 20 });
   assert.ok(!emissions.at(-1).candidats.some(c => c.id === garde.id), "le garde (soiMeme false) ne se voit pas");
-  await veilleuse.items.find(i => i.type === "role").update({ "system.nuit.soiMeme": true });
+  const reglee = secretDuMJ.role(veilleuse).toObject();
+  reglee.system.nuit.soiMeme = true;
+  await api.donnerRole(veilleuse.id, reglee);   // le rôle vit dans la fiche secrète : le MJ l'y règle
   api.demanderAction({ acteurId: veilleuse.id, candidats: tous, delai: 20 });
   assert.ok(emissions.at(-1).candidats.some(c => c.id === veilleuse.id), "la veilleuse (soiMeme) se voit");
   await new Promise(res => setTimeout(res, 40));
@@ -163,12 +174,12 @@ test("nuit complète : noterAction, resoudreNuit (protection, lanterne, mort), m
   await api.noterAction({ acteurId: veilleuse.id, cibles: [vil.id] });
   await api.noterAction({ acteurId: l1.id, roleCle: "meute", cibles: [vil.id] });
   await api.noterAction({ acteurId: sonneur.id, cibles: [] });   // il passe
-  assert.equal(sonneur.items.find(i => i.type === "role").system.usages.restant, 1, "passer ne coûte rien");
+  assert.equal(secretDuMJ.role(sonneur).system.usages.restant, 1, "passer ne coûte rien");
   await api.noterAction({ acteurId: sonneur.id, cibles: [sonneur.id], effet: "vote-double" });
   assert.equal(api.etat().nuit.actions.length, 5);
-  assert.equal(sonneur.items.find(i => i.type === "role").system.usages.restant, 0, "usage consommé");
+  assert.equal(secretDuMJ.role(sonneur).system.usages.restant, 0, "usage consommé");
   await api.proteger(garde.id);
-  assert.equal(garde.system.protections, 1);
+  assert.equal(secretDuMJ.protections(garde), 1);
 
   await api.changerPhase("aube");
   const nbAvant = messages.length;
@@ -177,7 +188,7 @@ test("nuit complète : noterAction, resoudreNuit (protection, lanterne, mort), m
   assert.equal(vil.system.vivant, false);
   assert.equal(vil.system.revele, true, "révélé à la mort (réglage par défaut)");
   assert.equal(l1.system.revele, true, "démasqué par la lanterne");
-  assert.equal(garde.system.protections, 0, "protections remises à 0");
+  assert.equal(secretDuMJ.protections(garde), 0, "protections remises à 0");
   assert.equal(r.voteDouble, true);
   const e = api.etat();
   assert.deepEqual(e.morts.map(m => [m.acteurId, m.cause, m.tour]), [[vil.id, "meute", 1]]);
@@ -230,8 +241,9 @@ test("vote : ouvrir, voter (votes forgés et morts refusés), clore, exécuter, 
   assert.equal(await api.verifierVictoire(), "");
 
   // Lien d'amour : l2 et le garde ; la mort de l2 emporte le garde.
-  await l2.update({ "system.amoureux": garde.id });
-  await garde.update({ "system.amoureux": l2.id });
+  await api.reglerFiche(l2.id, { amoureux: garde.id });
+  await api.reglerFiche(garde.id, { amoureux: l2.id });
+  assert.equal(l2.system.amoureux, "", "le lien d'amour reste secret (fiche du MJ)");
   const morts = await api.eliminer(l2.id, { cause: "vote", reveler: false });
   assert.deepEqual(morts, [l2.id, garde.id]);
   assert.equal(l2.system.revele, false);
@@ -247,7 +259,7 @@ test("vote : ouvrir, voter (votes forgés et morts refusés), clore, exécuter, 
   assert.ok(recit, "le récit de fin est posté");
   for (const a of game.actors.filter(x => x.type === "villageois")) {
     assert.ok(recit.includes(a.name), `${a.name} est dans le récit`);
-    assert.ok(recit.includes(a.items.find(i => i.type === "role").name), `le rôle de ${a.name} est dévoilé`);
+    assert.ok(recit.includes(secretDuMJ.role(a).name), `le rôle de ${a.name} est dévoilé`);
   }
   assert.match(recit, /mort de chagrin/, "la vraie cause");
   assert.equal(await api.verifierVictoire(), "village");
@@ -288,10 +300,9 @@ test("Chroniques : une veillée de plus récrit le journal (palmarès, la plus r
 test("resoudreNuit : Herboriste — un second poison ne verse rien, l'usage est rendu, le remède reste", async () => {
   await distribuer();
   const h = acteurDe("villageois"), garde = acteurDe("garde-du-pont"), veilleuse = acteurDe("veilleuse-de-lanterne"), [l1] = tous("loup-de-brumecombe");
-  await h.deleteEmbeddedDocuments("Item", [h.items.find(i => i.type === "role").id]);
-  await h.createEmbeddedDocuments("Item", [{ name: "Herboriste", type: "role",
-    system: { cle: "herboriste", effet: "remede", nuit: { actif: true, ordre: 50, cibles: 1, soiMeme: true }, usages: { max: 2, restant: 2 } } }]);
-  const usages = () => h.items.find(i => i.type === "role").system.usages.restant;
+  await api.donnerRole(h.id, { name: "Herboriste", type: "role",
+    system: { cle: "herboriste", effet: "remede", nuit: { actif: true, ordre: 50, cibles: 1, soiMeme: true }, usages: { max: 2, restant: 2 } } });
+  const usages = () => secretDuMJ.role(h).system.usages.restant;
   await api.changerPhase("nuit");
   await api.noterAction({ acteurId: h.id, cibles: [garde.id] });
   assert.deepEqual((await api.resoudreNuit()).morts, [garde.id], "premier poison");
@@ -314,7 +325,7 @@ test("resoudreNuit : Herboriste — un second poison ne verse rien, l'usage est 
 test("resoudreNuit : fiole vide rendue AVANT l'échange — le Colporteur qui prend le rôle de l'Herboriste reste épuisé", async () => {
   await distribuer();
   const h = acteurDe("villageois"), garde = acteurDe("garde-du-pont"), veilleuse = acteurDe("veilleuse-de-lanterne");
-  const remplacer = async (a, d) => { await a.deleteEmbeddedDocuments("Item", [a.items.find(i => i.type === "role").id]); await a.createEmbeddedDocuments("Item", [d]); };
+  const remplacer = (a, d) => api.donnerRole(a.id, d);
   await remplacer(h, { name: "Herboriste", type: "role", system: { cle: "herboriste", effet: "remede", nuit: { actif: true, ordre: 50, cibles: 1, soiMeme: true }, usages: { max: 2, restant: 2 } } });
   await remplacer(garde, { name: "Colporteur", type: "role", system: { cle: "colporteur", camp: "solitaire", effet: "echanger-role", nuit: { actif: true, ordre: 8, cibles: 1 }, usages: { max: 1, restant: 1 } } });
   // Nuit 1 : premier poison (la fiole de poison est vidée).
@@ -327,7 +338,7 @@ test("resoudreNuit : fiole vide rendue AVANT l'échange — le Colporteur qui pr
   await api.noterAction({ acteurId: h.id, cibles: [acteurDe("villageois")?.id ?? garde.id] });
   const r = await api.resoudreNuit();
   assert.deepEqual(r.fiolesVides, [h.id]);
-  const roleDeH = h.items.find(i => i.type === "role"), roleDuGarde = garde.items.find(i => i.type === "role");
+  const roleDeH = secretDuMJ.role(h), roleDuGarde = secretDuMJ.role(garde);
   assert.equal(roleDeH.system.cle, "colporteur", "l'échange a eu lieu");
   assert.equal(roleDeH.system.usages.restant, 0, "le Colporteur reste épuisé : l'usage rendu ne lui revient pas");
   assert.equal(roleDuGarde.system.cle, "herboriste");
@@ -342,13 +353,13 @@ test("silence, changement de camp, échange de rôles", async () => {
   await api.changerPhase("nuit");
   assert.equal(vil.system.silence, false, "le silence ne dure qu'un débat");
   await api.changerCamp(vil.id, "meute");
-  assert.equal(vil.system.camp, "meute");
+  assert.equal(secretDuMJ.camp(vil), "meute");
   await assert.rejects(() => api.changerCamp(vil.id, "lune"), /Camp inconnu/);
   await api.echangerRoles(garde.id, l1.id);
-  assert.equal(garde.items.find(i => i.type === "role").system.cle, "loup-de-brumecombe");
-  assert.equal(garde.system.camp, "meute");
-  assert.equal(l1.items.find(i => i.type === "role").system.cle, "garde-du-pont");
-  assert.equal(l1.system.camp, "village");
+  assert.equal(secretDuMJ.role(garde).system.cle, "loup-de-brumecombe");
+  assert.equal(secretDuMJ.camp(garde), "meute");
+  assert.equal(secretDuMJ.role(l1).system.cle, "garde-du-pont");
+  assert.equal(secretDuMJ.camp(l1), "village");
 });
 
 test("etat() d'un joueur : sans les choix secrets de la nuit", async () => {

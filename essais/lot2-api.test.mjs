@@ -47,7 +47,7 @@ async function monde(M, { souffle = true, almanach = false } = {}) {
   };
 }
 const villageois = () => game.actors.filter(a => a.type === "villageois");
-const roleDe = a => a.items.find(i => i.type === "role");
+const roleDe = a => secretDuMJ.role(a);
 const commeJoueur = id => { game.user = game.users.get(id); };
 const commeMJ = () => { game.user = game.users.get("mj"); };
 const publicBrut = () => reglages.get("lakour-loups.partie").valeur;
@@ -79,8 +79,8 @@ const VERIFICATIONS = {
   async "Dernier souffle : un mort vote une fois, au vote d'exécution ; bandeau et plateau le lui offrent"(M) {
     const U = await monde(M);
     await partie(M, [U.loup, U.villageois, U.villageois, U.villageois, U.villageois, U.villageois]);
-    const [x, y, z] = villageois().filter(a => a.system.camp !== "meute");
-    const loup = villageois().find(a => a.system.camp === "meute");
+    const [x, y, z] = villageois().filter(a => secretDuMJ.camp(a) !== "meute");
+    const loup = villageois().find(a => secretDuMJ.camp(a) === "meute");
     await M.api.changerPhase("jour");
     await M.api.eliminer(x.id, { cause: "narrateur" });
     commeJoueur(x.system.joueur);
@@ -117,7 +117,7 @@ const VERIFICATIONS = {
   async "Dernier souffle coupé : un mort ne vote plus"(M) {
     const U = await monde(M, { souffle: false });
     await partie(M, [U.loup, U.villageois, U.villageois, U.villageois, U.villageois, U.villageois]);
-    const [x, y] = villageois().filter(a => a.system.camp !== "meute");
+    const [x, y] = villageois().filter(a => secretDuMJ.camp(a) !== "meute");
     await M.api.eliminer(x.id, { cause: "narrateur" });
     await M.api.changerPhase("jour");
     await M.api.ouvrirVote({ duree: 0 });
@@ -128,7 +128,7 @@ const VERIFICATIONS = {
   async "Almanach : un présage à l'aube, annoncé à tous, appliqué (le vent du nord lève les silences)"(M) {
     const U = await monde(M, { almanach: true });
     await partie(M, [U.loup, U.villageois, U.villageois, U.villageois, U.villageois, U.villageois]);
-    const muet = villageois().find(a => a.system.camp !== "meute");
+    const muet = villageois().find(a => secretDuMJ.camp(a) !== "meute");
     await M.api.changerPhase("nuit");
     await M.api.reduireAuSilence(muet.id);
     await M.api.changerPhase("aube");
@@ -156,7 +156,7 @@ const VERIFICATIONS = {
   async "Almanach, jour de foire : les voix sont publiques pendant le vote, la Table les compte"(M) {
     const U = await monde(M, { almanach: true });
     await partie(M, [U.loup, U.villageois, U.villageois, U.villageois, U.villageois, U.villageois]);
-    const [x, y] = villageois().filter(a => a.system.camp !== "meute");
+    const [x, y] = villageois().filter(a => secretDuMJ.camp(a) !== "meute");
     await M.api.changerPhase("jour");
     await game.settings.set("lakour-loups", "partie", { ...publicBrut(), presage: { actif: true, cle: "foire", tour: publicBrut().tour } });
     await M.api.ouvrirVote({ duree: 0 });
@@ -180,7 +180,7 @@ const VERIFICATIONS = {
     assert.match(carte.entree.html, /Liseuse de cendres/);
     secretsTenus({ somnambule: somn }, n0);
     // La nuit : il lit le loup… « du Village ».
-    const loup = villageois().find(a => a.system.camp === "meute");
+    const loup = villageois().find(a => secretDuMJ.camp(a) === "meute");
     await M.api.changerPhase("nuit");
     await M.api.noterAction({ acteurId: somn.id, roleCle: "liseuse-de-cendres", cibles: [loup.id] });
     await M.api.changerPhase("aube");
@@ -206,10 +206,10 @@ const VERIFICATIONS = {
     const U = await monde(M);
     await partie(M, [U.loup, U.somnambule, U.villageois, U.villageois, U.villageois, U.villageois]);
     const somn = game.actors.get(M.api.somnambules()[0].acteurId);
-    const autre = villageois().find(a => a.id !== somn.id && a.system.camp !== "meute");
+    const autre = villageois().find(a => a.id !== somn.id && secretDuMJ.camp(a) !== "meute");
     await M.api.echangerRoles(somn.id, autre.id);
     assert.deepEqual(M.api.somnambules().map(s => s.acteurId), [autre.id], "le rêve suit l'objet");
-    const loup = villageois().find(a => a.system.camp === "meute");
+    const loup = villageois().find(a => secretDuMJ.camp(a) === "meute");
     await M.api.eliminer(loup.id, { cause: "vote" });
     assert.equal(await M.api.verifierVictoire(), "village");
     assert.equal(roleDe(autre).system.cle, "somnambule", "découvert à la fin");
@@ -255,8 +255,8 @@ const VERIFICATIONS = {
   async "Bonne étoile : secrète, la première nuit seulement ; la meute la manque"(M) {
     const U = await monde(M);
     await partie(M, [U.loup, U.villageois, U.villageois, U.villageois, U.villageois, U.villageois]);
-    const debutant = villageois().find(a => a.system.camp !== "meute");
-    const loup = villageois().find(a => a.system.camp === "meute");
+    const debutant = villageois().find(a => secretDuMJ.camp(a) !== "meute");
+    const loup = villageois().find(a => secretDuMJ.camp(a) === "meute");
     const n = emissions.length;
     await M.api.bonneEtoile(debutant.id);
     secretsTenus({ etoile: debutant.id }, n);
@@ -273,8 +273,8 @@ const VERIFICATIONS = {
   async "souffle et « les morts voient tout » : il ne voit pas les loups tant qu'il garde sa voix ; les voix vivantes comptées à part"(M) {
     const U = await monde(M);
     await partie(M, [U.loup, U.villageois, U.villageois, U.villageois, U.villageois, U.villageois]);
-    const [x, y] = villageois().filter(a => a.system.camp !== "meute");
-    const loup = villageois().find(a => a.system.camp === "meute");
+    const [x, y] = villageois().filter(a => secretDuMJ.camp(a) !== "meute");
+    const loup = villageois().find(a => secretDuMJ.camp(a) === "meute");
     await M.api.changerPhase("jour");
     await M.api.eliminer(x.id, { cause: "narrateur", reveler: false });
     commeJoueur(x.system.joueur);
@@ -299,7 +299,7 @@ const VERIFICATIONS = {
     await M.api.nouvellePartie({ memesJoueurs: false, joueurs: JOUEURS, roles: ["loup-de-brumecombe", "rosiere", "villageois", "villageois", "villageois", "villageois"], peste: false });
     assert.deepEqual(reglages.get("lakour-loups.historique").valeur, [], "rien de la partie en cours");
     assert.ok(!JSON.stringify(publicBrut()).includes("rosiere"));
-    const loup = villageois().find(a => a.system.camp === "meute");
+    const loup = villageois().find(a => secretDuMJ.camp(a) === "meute");
     await M.api.eliminer(loup.id, { cause: "vote" });
     assert.equal(await M.api.verifierVictoire(), "village");
     assert.ok(reglages.get("lakour-loups.historique").valeur.at(-1).roles.includes("rosiere"), "versée à la fin");
@@ -346,7 +346,7 @@ const VERIFICATIONS = {
     const U = await monde(M, { almanach: true });
     await game.settings.set("lakour-loups", "bailli", true);
     await partie(M, [U.loup, U.villageois, U.villageois, U.villageois, U.villageois, U.villageois]);
-    const [b, x] = villageois().filter(a => a.system.camp !== "meute");
+    const [b, x] = villageois().filter(a => secretDuMJ.camp(a) !== "meute");
     await M.api.changerPhase("jour");
     await M.api.nommerBailli(b.id);
     const tour = publicBrut().tour;
@@ -393,7 +393,7 @@ const MUTATIONS = [
   ["scripts/api.mjs", "  annoncer(\"lakourLoups.presage\", [{ cle, tour: r.etat.tour }]);\n", "", "almanach : hook public"],
   ["scripts/api.mjs", "  for (const a of annonces) await annonceChat(echapper(a));\n  annoncer(\"lakourLoups.presage\"", "  annoncer(\"lakourLoups.presage\"", "almanach : annoncé au chat"],
   ["scripts/apps/table.mjs", ": v.mainLevee ? Object.entries(v.votes ?? {}).filter(([, c]) => c === a.id).reduce((s, [votant]) => s + (pesees[votant] ?? 1), 0) : null,", ": null,", "foire : la Table compte"],
-  ["scripts/api.mjs", "        if (doc) { reve = { croit, vrai: att.role }; roleData = donneesObjet(doc); }", "        if (false) { reve = { croit, vrai: att.role }; roleData = donneesObjet(doc); }", "somnambule : le rôle rêvé"],
+  ["scripts/api.mjs", "        if (doc) { reve = { croit, vrai: att.role }; roleData = donneesObjet(doc); source = doc.uuid ?? \"\"; }", "        if (false) { reve = { croit, vrai: att.role }; roleData = donneesObjet(doc); source = doc.uuid ?? \"\"; }", "somnambule : le rôle rêvé"],
   ["scripts/api.mjs", "enJeu: [...rolesTires, ...Object.values(somnambules).map(x => x.croit)],", "enJeu: [],", "somnambule : un rêve absent"],
   ["scripts/api.mjs", "      e.somnambules = somnambules;\n", "", "somnambule : gardé par le MJ"],
   ["scripts/api.mjs", "jour: L.effetsDeLaNuit(avant, tour, { batiments: cles }), somnambules, rolesFactices", "jour: L.effetsDeLaNuit(avant, tour, { batiments: cles }), rolesFactices", "somnambule : il voit faux"],

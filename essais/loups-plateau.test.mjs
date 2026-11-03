@@ -61,7 +61,7 @@ function monde(M, { contenu = false, joueurs = 6 } = {}) {
 }
 
 const villageois = () => game.actors.filter(a => a.type === "villageois");
-const roleDe = a => a.items.find(i => i.type === "role");
+const roleDe = a => secretDuMJ.role(a);
 const acteurDe = cle => villageois().find(a => roleDe(a)?.system.cle === cle);
 const jetonsDe = (scene, a) => scene.tokens.filter(t => t.actorId === a.id);
 const centre = (M, t) => M.L.versCases(t, { size: 100, sceneX: 0, sceneY: 0 });
@@ -215,21 +215,35 @@ const VERIFICATIONS = {
     assert.equal(M.L.modificationPermise({ mj: true, villageois: true, changements: { x: 10 } }), true);
     assert.equal(M.L.modificationPermise({ mj: false, villageois: false, changements: { x: 10 } }), true, "un figurant n'est pas concerné");
   },
-  "parole (logique) : mort refusé ou chuchoté aux morts, vivant accepté, silence en journée seulement, MJ jamais bloqué": M => {
+  "parole (logique) : mort relayé aux morts, vivant accepté, silence en journée seulement, aucun chuchotement entre joueurs, MJ jamais bloqué": M => {
     const base = { mjs: ["mj"], morts: ["u5", "u6"], canalDesMorts: true };
     const mort = { vivant: false, silence: false }, vivant = { vivant: true, silence: false }, muet = { vivant: true, silence: true };
     assert.deepEqual(M.L.decisionParole({ ...base, moi: vivant, phase: "jour" }), { ok: true });
     assert.deepEqual(M.L.decisionParole({ ...base, moi: mort, phase: "jour", canalDesMorts: false }), { ok: false, raison: "mort" });
-    const d = M.L.decisionParole({ ...base, moi: mort, phase: "nuit" });
-    assert.ok(d.ok && d.chuchoter.includes("mj") && d.chuchoter.includes("u5") && !d.chuchoter.includes("u1"), "canal des morts : morts et MJ seulement");
+    // Le canal des morts : jamais un message de chat (un chuchotement serait livré à tous) ; le relais du MJ actif.
+    assert.deepEqual(M.L.decisionParole({ ...base, moi: mort, phase: "nuit" }), { ok: false, relais: "morts" });
+    assert.deepEqual(M.L.decisionParole({ ...base, moi: mort, phase: "nuit", chuchote: ["u5"] }), { ok: false, relais: "morts" });
+    assert.deepEqual(M.L.destinatairesDuRelais({ ...base, canal: "morts", auteur: "u6", moi: mort }).sort(), ["mj", "u5"], "morts et MJ seulement, jamais l'auteur");
+    assert.equal(M.L.destinatairesDuRelais({ ...base, canal: "morts", auteur: "u1", moi: vivant }), null, "un vivant n'écrit pas aux morts");
+    assert.equal(M.L.destinatairesDuRelais({ ...base, canal: "morts", auteur: "u6", moi: mort, canalDesMorts: false }), null);
+    assert.deepEqual(M.L.destinatairesDuRelais({ ...base, canal: "mj", auteur: "u1", moi: vivant }), ["mj"]);
     assert.deepEqual(M.L.decisionParole({ ...base, moi: mort, phase: "jour", chuchote: ["u1"], canalDesMorts: false }), { ok: false, raison: "mort" }, "un mort ne chuchote pas aux vivants");
-    assert.deepEqual(M.L.decisionParole({ ...base, moi: mort, phase: "jour", chuchote: ["mj"], canalDesMorts: false }), { ok: true }, "un mort peut chuchoter au MJ");
+    assert.deepEqual(M.L.decisionParole({ ...base, moi: mort, phase: "jour", chuchote: ["mj"], canalDesMorts: false }), { ok: false, relais: "mj" }, "un mort écrit au MJ, relayé");
     for (const phase of ["jour", "vote"]) assert.deepEqual(M.L.decisionParole({ ...base, moi: muet, phase }), { ok: false, raison: "silence" });
-    for (const phase of ["nuit", "aube", "preparation", "fin"]) assert.deepEqual(M.L.decisionParole({ ...base, moi: muet, phase }), { ok: true }, `silence la ${phase}`);
-    assert.deepEqual(M.L.decisionParole({ ...base, moi: muet, phase: "jour", chuchote: ["mj"] }), { ok: true });
-    for (const moi of [mort, muet, vivant]) assert.deepEqual(M.L.decisionParole({ ...base, mj: true, moi, phase: "vote" }), { ok: true }, "MJ jamais bloqué");
-    assert.equal(M.L.messageARetirer({ ...base, moi: mort, phase: "jour", chuchote: ["mj", "u5", "u6"] }), false, "le canal des morts passe la garde");
+    for (const phase of ["nuit", "aube", "preparation"]) assert.deepEqual(M.L.decisionParole({ ...base, moi: muet, phase }), { ok: true }, `silence la ${phase}`);
+    assert.deepEqual(M.L.decisionParole({ ...base, moi: muet, phase: "jour", chuchote: ["mj"] }), { ok: false, relais: "mj" });
+    // Pendant une partie, aucun chuchotement de joueur : au MJ, relayé ; à un autre joueur, refusé (spectateur compris).
+    assert.deepEqual(M.L.decisionParole({ ...base, moi: vivant, phase: "jour", chuchote: ["u2"] }), { ok: false, raison: "chuchotement" });
+    assert.deepEqual(M.L.decisionParole({ ...base, moi: null, phase: "nuit", chuchote: ["u2"] }), { ok: false, raison: "chuchotement" });
+    assert.deepEqual(M.L.decisionParole({ ...base, moi: vivant, phase: "nuit", chuchote: ["mj"] }), { ok: false, relais: "mj" });
+    assert.deepEqual(M.L.decisionParole({ ...base, moi: null, phase: "nuit" }), { ok: true }, "un spectateur parle à tous");
+    // Hors partie (rien de distribué, ou partie finie) : le chat est libre.
+    for (const moi of [mort, muet, vivant]) assert.deepEqual(M.L.decisionParole({ ...base, moi, phase: "jour", chuchote: ["u2"], enPartie: false }), { ok: true });
+    for (const moi of [mort, muet, vivant]) assert.deepEqual(M.L.decisionParole({ ...base, mj: true, moi, phase: "vote", chuchote: ["u2"] }), { ok: true }, "MJ jamais bloqué");
+    assert.equal(M.L.messageARetirer({ ...base, moi: mort, phase: "jour", chuchote: ["mj", "u5", "u6"] }), true, "un chuchotement aux morts passé outre est retiré");
     assert.equal(M.L.messageARetirer({ ...base, moi: mort, phase: "jour" }), true);
+    assert.equal(M.L.messageARetirer({ ...base, moi: vivant, phase: "jour" }), false);
+    assert.equal(M.L.texteDuRelais(`<b>Bou</b>  ${"x".repeat(2000)}`).length, M.L.LONGUEUR_RELAIS);
   },
 
   // ---------------- le plateau chez le MJ actif (doublure)
@@ -471,19 +485,55 @@ const VERIFICATIONS = {
     const mort = villageois().find(a => a.system.joueur === "u6");
     const muet = villageois().find(a => a.system.joueur === "u5");
     await M.api.eliminer(mort.id, { cause: "narrateur" });
+    // Un second mort (hors meute, pour que la partie continue) : le canal des morts a un destinataire.
+    const second = villageois().find(a => a.system.vivant && a.system.joueur && !["u1", "u5", "u6"].includes(a.system.joueur) && secretDuMJ.camp(a) !== "meute");
+    await M.api.eliminer(second.id, { cause: "narrateur" });
     await M.api.reduireAuSilence(muet.id);
-    const message = (whisper = []) => ({ whisper, maj: null, updateSource(c) { this.maj = c; if (c.whisper) this.whisper = c.whisper; } });
+    const message = (whisper = [], content = "Je sais qui c'est.") => ({ whisper, content, maj: null, updateSource(c) { this.maj = c; if (c.whisper) this.whisper = c.whisper; } });
+    // Ce qu'affiche chaque navigateur (localement, aucun document) : ui.chat.postOne d'un message jamais créé.
+    const affiches = [];
+    ui.chat = { postOne: m => { affiches.push({ chez: game.user.id, contenu: m.content }); } };
+    globalThis.ChatMessage.implementation = Object.assign(class { constructor(d) { Object.assign(this, d); } }, { create: globalThis.ChatMessage.implementation.create });
     await M.api.changerPhase("jour");
     commeJoueur("u1");
     assert.equal(M.parole.avantMessage(message(), {}, {}, "u1"), undefined, "un vivant parle");
     commeJoueur("u6");
-    const m = message();
-    assert.equal(M.parole.avantMessage(m, {}, {}, "u6"), undefined, "le canal des morts est ouvert : le message est changé");
-    assert.ok(m.whisper.includes("u6") && m.whisper.includes("mj") && !m.whisper.includes("u1"), "chuchoté aux seuls morts et au MJ");
+    const n = emissions.length;
+    assert.equal(M.parole.avantMessage(message([], "CANARI-DES-MORTS"), {}, {}, "u6"), false, "un mort : aucun message de chat (relayé)");
+    const envoi = emissions.slice(n).find(e => e.type === "paroleEnvoi");
+    assert.deepEqual(envoi?.recipients, ["mj"], "au MJ actif seul");
+    assert.ok(affiches.some(a => a.chez === "u6" && a.contenu.includes("CANARI-DES-MORTS")), "affiché chez son auteur");
+    // Le MJ actif relaie : aux seuls morts (et MJ), jamais à un vivant, jamais par le chat.
+    commeMJ();
+    const m0 = emissions.length;
+    assert.equal(M.socket.traiterMessage({ type: "paroleEnvoi", texte: "CANARI-DES-MORTS", canal: "morts", userId: "u6" }, "u6"), true);
+    const relais = emissions.slice(m0).filter(e => e.type === "parole");
+    assert.equal(relais.length, 1);
+    const morts = villageois().filter(a => !a.system.vivant).map(a => a.system.joueur).filter(u => u !== "u6");
+    assert.deepEqual([...relais[0].recipients].sort(), morts.sort(), "aux seuls autres morts");
+    assert.ok(affiches.some(a => a.chez === "mj" && a.contenu.includes("CANARI-DES-MORTS")), "le MJ le lit");
+    // Un vivant qui se fait passer pour le canal des morts : refusé (l'émetteur du serveur fait foi).
+    assert.equal(M.socket.traiterMessage({ type: "paroleEnvoi", texte: "triche", canal: "morts", userId: "u1" }, "u1"), false);
+    assert.equal(M.socket.traiterMessage({ type: "paroleEnvoi", texte: "triche", canal: "morts", userId: "u6" }, "u1"), false);
+    assert.equal(M.socket.traiterMessage({ type: "paroleEnvoi", texte: "triche", canal: "morts", userId: "u6" }), false, "sans émetteur donné par le serveur : rien");
+    // Chez un destinataire : le mot relayé ne vient que du MJ actif.
+    commeJoueur(morts[0] ?? "u6");
+    assert.equal(M.socket.traiterMessage({ type: "parole", canal: "morts", nom: "x", texte: "faux" }, "u1"), false, "d'un joueur : refusé");
+    game.users.set("assist", { id: "assist", name: "Assistant", isGM: true, active: true });
+    assert.equal(M.socket.traiterMessage({ type: "parole", canal: "morts", nom: "x", texte: "faux" }, "assist"), false, "d'un MJ qui n'est pas l'actif : refusé");
+    game.users.delete("assist");
+    commeJoueur("u6");
     await game.settings.set("lakour-loups", "canalDesMorts", false);
     assert.equal(M.parole.avantMessage(message(), {}, {}, "u6"), false, "sans canal : refusé");
     assert.ok(avis.length >= 1, "un avis dit pourquoi");
-    assert.equal(M.parole.avantMessage(message(["mj"]), {}, {}, "u6"), undefined, "chuchoter au MJ reste permis");
+    const m1 = emissions.length;
+    assert.equal(M.parole.avantMessage(message(["mj"]), {}, {}, "u6"), false, "au MJ : relayé, pas chuchoté");
+    assert.deepEqual(emissions.slice(m1).find(e => e.type === "paroleEnvoi")?.recipients, ["mj"]);
+    // Un chuchotement de joueur à joueur, pendant la partie : refusé.
+    commeJoueur("u1");
+    const m2 = emissions.length;
+    assert.equal(M.parole.avantMessage(message(["u2"]), {}, {}, "u1"), false, "joueur à joueur : refusé");
+    assert.equal(emissions.slice(m2).filter(e => e.type === "paroleEnvoi").length, 0);
     commeJoueur("u5");
     assert.equal(M.parole.avantMessage(message(), {}, {}, "u5"), false, "réduit au silence pendant le débat");
     commeMJ();
@@ -507,6 +557,7 @@ const VERIFICATIONS = {
     commeJoueur("u5");
     assert.equal(M.parole.avantMessage(message(), {}, {}, "u5"), undefined);
     commeMJ();
+    delete ui.chat;
   },
   "bandeau : phase, tour, minuteur, « Mon rôle », action du moment, pouvoir de jour, mort et silence": async M => {
     const { scene, U } = monde(M);
@@ -585,7 +636,7 @@ const VERIFICATIONS = {
     const { U } = monde(M);
     await distribuer(M, U);
     const loup = acteurDe("loup-de-brumecombe");
-    commeJoueur(villageois().find(a => a.id !== loup.id && a.system.joueur && roleDe(a).system.camp !== "meute").system.joueur);
+    commeJoueur(villageois().find(a => a.id !== loup.id && a.system.joueur && secretDuMJ.camp(roleDe(a)) !== "meute").system.joueur);
     let c = M.infobulle.contenuInfobulle(loup);
     assert.equal(c.nom, loup.name);
     assert.equal(c.role, "", "rôle caché");
@@ -650,7 +701,10 @@ const VERIFICATIONS = {
       assert.equal(a.system.vivant, true);
       assert.equal(a.system.revele, false);
       assert.equal(a.system.silence, false);
-      assert.equal(a.items.filter(i => i.type === "role").length, 1);
+      // Le rôle neuf : dans les secrets du MJ ; l'objet révélé de l'ancienne partie a quitté le document.
+      assert.equal(a.items.filter(i => i.type === "role").length, 0);
+      assert.ok(secretDuMJ.role(a), `${a.name} : un rôle (secrets du MJ)`);
+      assert.equal(a.system.camp, "");
       assert.equal(a.items.filter(i => i.type === "metier").length, 1);
       assert.ok(!a.statuses.has("dead") && !a.statuses.has("silence"));
     }
@@ -700,10 +754,12 @@ const MUTATIONS = [
   ["logique/plateau.mjs", "return { x: s.x + n, y: s.y };", "return { x: s.x, y: s.y + 3 };", "devant sa maison"],
   ["logique/selection.mjs", "else if (choisis.length < sel.nombre) choisis.push(acteurId);", "else choisis.push(acteurId);", "nombre de cibles"],
   ["logique/selection.mjs", "if (!estCandidat(sel, acteurId) || sel.nombre === 0) return sel;", "if (sel.nombre === 0) return sel;", "candidats seulement"],
-  ["logique/parole.mjs", "if (moi.vivant === false) {", "if (false) {", "un mort se tait"],
-  ["logique/parole.mjs", "if (moi.silence && PHASES_DU_SILENCE.includes(phase)) {", "if (moi.silence) {", "silence en journée seulement"],
-  ["logique/parole.mjs", "if (mj || !moi) return { ok: true };", "if (!moi) return { ok: true };", "MJ jamais bloqué"],
-  ["logique/parole.mjs", "const permis = [...mjs, ...(canalDesMorts ? morts : [])];", "const permis = [...mjs, ...morts, ...chuchote];", "un mort ne chuchote pas aux vivants"],
+  ["logique/parole.mjs", "if (moi && moi.vivant === false) {", "if (false) {", "un mort se tait"],
+  ["logique/parole.mjs", "if (moi?.silence && PHASES_DU_SILENCE.includes(phase)) {", "if (moi?.silence) {", "silence en journée seulement"],
+  ["logique/parole.mjs", "if (mj || !enPartie) return { ok: true };", "if (!enPartie) return { ok: true };", "MJ jamais bloqué"],
+  ["logique/parole.mjs", "if (chuchote.length) return auMJ ? { ok: false, relais: \"mj\" } : { ok: false, raison: \"chuchotement\" };", "", "aucun chuchotement pendant la partie"],
+  ["logique/parole.mjs", "const liste = canal === \"morts\" ? [...mjs, ...morts.filter(memeCanal)] : [...mjs];", "const liste = canal === \"morts\" ? [...mjs, ...morts.filter(memeCanal), auteur] : [...mjs, ...morts];", "relais aux seuls destinataires"],
+  ["logique/parole.mjs", "if (canal === \"morts\" && !(canalDesMorts && moi && moi.vivant === false)) return null;", "", "seul un mort écrit aux morts"],
   ["scripts/plateau.mjs", "if (t.texture?.src !== v.src) m[\"texture.src\"] = v.src;", "", "image du rôle à la révélation"],
   ["scripts/plateau.mjs", "if (a.has(\"dead\") !== mort) await acteur.toggleStatusEffect(\"dead\", { active: mort, overlay: true });", "", "crâne d'un mort"],
   ["scripts/plateau.mjs", "if (a.has(\"silence\") !== silence) await acteur.toggleStatusEffect(\"silence\", { active: silence });", "", "icône du silence"],
@@ -711,7 +767,8 @@ const MUTATIONS = [
   ["scripts/plateau.mjs", "await scene.update({ \"environment.darknessLevel\": cible.obscurite }, { animateDarkness: delais.lumiere });", "", "lumière de la phase"],
   ["scripts/plateau.mjs", "if (nouveaux.length) await scene.createEmbeddedDocuments(\"Token\", nouveaux);", "", "jetons posés"],
   ["scripts/plateau.mjs", "    planifierMiseEnScene({ activer: true });\n    ambiancePourPhase(phase);", "    ambiancePourPhase(phase);", "mise en scène à chaque phase"],
-  ["scripts/plateau.mjs", "Hooks.on(\"lakourLoups.victoire\", () => { planifierMiseEnScene(); ", "Hooks.on(\"lakourLoups.victoire\", () => { ", "révélés à la victoire"],
+  // (0.9.0 : « révélés à la victoire » ne se casse plus en retirant le hook de victoire du plateau : à la victoire, les rôles
+  // entrent aux documents — api.mjs, revelerPubliquement — et chaque mise à jour d'un villageois remet déjà la scène en ordre.)
   ["scripts/plateau.mjs", "...(j.mort ? APPARENCE.mort : APPARENCE.vivant)", "...APPARENCE.vivant", "mort grisé"],
   ["scripts/plateau.mjs", "constrainOptions: { ignoreWalls: true, ignoreCost: true }", "constrainOptions: {}", "marche à travers les murs"],
   ["scripts/plateau-local.mjs", "if (v.ouvert && moiVivant()) return \"vote\";", "if (v.ouvert) return \"vote\";", "un mort ne vote pas"],
@@ -724,7 +781,10 @@ const MUTATIONS = [
   ["scripts/api.mjs", "    annulerDemandes();\n", "", "rejouer : demandes closes"],
   ["scripts/api.mjs", "const historique = [...historiqueDesParties(), ...(precedents.length ? [{ roles: precedents, batiments: avant.batimentsCles ?? [], quand: Date.now() }] : [])];", "const historique = [];", "rejouer : autre composition"],
   ["scripts/parole.mjs", "try { await message.delete(); }", "try { void message; }", "garde du MJ"],
-  ["scripts/parole.mjs", "message.updateSource({ whisper: d.chuchoter, [`flags.${ID}.canal`]: \"morts\" });", "", "canal des morts"]
+  ["scripts/parole.mjs", "    if (texte) envoyerParole(texte, d.relais, { aveugle: Boolean(resume && (message.blind ?? donnees?.blind)) });\n", "", "canal des morts relayé"],
+  ["scripts/parole.mjs", "  emettre(message, destinataires);", "  emettre(message);", "relais avec destinataires"],
+  ["scripts/socket.mjs", "    case \"paroleEnvoi\": return estMJActif() && Boolean(emetteur) && relayer(pourMoi);", "    case \"paroleEnvoi\": return estMJActif() && relayer({ ...message, userId: message.userId });", "relais : l'émetteur fait foi"],
+  ["scripts/socket.mjs", "      if (!deMJActif(emetteur)) return false;\n      afficherParole(message);", "      afficherParole(message);", "mot relayé du seul MJ actif"]
 ];
 
 async function chargerMutant(fichier, avant, apres) {

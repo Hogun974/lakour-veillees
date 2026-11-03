@@ -52,7 +52,7 @@ async function monde(M, { banc = false, deuil = false, passage = true } = {}) {
   };
 }
 const villageois = () => game.actors.filter(a => a.type === "villageois");
-const roleDe = a => a.items.find(i => i.type === "role");
+const roleDe = a => secretDuMJ.role(a);
 const avecRole = cle => villageois().filter(a => roleDe(a)?.system.cle === cle);
 const commeJoueur = id => { game.user = game.users.get(id); };
 const commeMJ = () => { game.user = game.users.get("mj"); };
@@ -92,7 +92,7 @@ const VERIFICATIONS = {
     assert.equal(r.cle, "pelerine");
     assert.equal(x.system.joueur, "u7");
     assert.equal(x.system.vivant, true);
-    assert.equal(x.system.camp, "meute", "la meute manquait (hasard 0)");
+    assert.equal(secretDuMJ.camp(x), "meute", "la meute manquait (hasard 0)");
     assert.equal(roleDe(x).system.cle, "pelerine");
     assert.ok(x.system.maison && !villageois().some(a => a.id !== x.id && a.system.maison === x.system.maison), "une maison libre");
     // Public : le rôle et le tour, jamais le camp.
@@ -135,7 +135,7 @@ const VERIFICATIONS = {
     await partie(M, V);
     await M.api.changerPhase("jour");
     const r = await avecHasard(0.5, () => M.api.accueillir({ userId: "u7" }));
-    assert.equal(game.actors.get(r.acteurId).system.camp, "meute", "la meute manque : 70 %");
+    assert.equal(secretDuMJ.camp(game.actors.get(r.acteurId)), "meute", "la meute manque : 70 %");
     assert.ok(M.L.ROLES_DE_PASSAGE.includes(r.cle));
   },
   async "Départ : par le socket, pour soi ; sans mourir ; voix retirée, demande close, jeton retiré"(M) {
@@ -360,7 +360,7 @@ const VERIFICATIONS = {
     await M.api.ouvrirVote({ duree: 0 });
     await M.api.cloreVote();
     const g = await M.api.verifierVictoire();
-    const loups = villageois().filter(a => a.system.camp === "meute");
+    const loups = villageois().filter(a => secretDuMJ.camp(a) === "meute");
     assert.equal(g, loups.length ? "meute" : "village");
     assert.equal(publicBrut().phase, "fin");
     // Sans vote, la seconde nuit ne tombe pas : la partie finit.
@@ -387,16 +387,17 @@ const MUTATIONS = [
   ["scripts/api.mjs", "    if (camp === \"meute\") {\n      await envoyerMasques(", "    if (false) {\n      await envoyerMasques(", "arrivée : la meute prévenue"],
   ["scripts/api.mjs", "return L.journaliserSecret(L.journaliser(x, t(\"LAKOUR_LOUPS.Passage.Annonce\"", "return L.journaliser(L.journaliser(x, t(\"LAKOUR_LOUPS.Passage.Annonce\"", "arrivée : le camp au MJ seul"],
   ["scripts/api.mjs", "annoncer(\"lakourLoups.passage\", [{ acteurId: acteur.id, cle: choisie, comment: \"arrivee\" }]);", "annoncer(\"lakourLoups.passage\", [{ acteurId: acteur.id, cle: choisie, comment: \"arrivee\", camp }]);", "arrivée : hook sans camp"],
-  ["scripts/api.mjs", "    if (deja && roleDe(deja)) {", "    if (false) {", "arrivée : une fois"],
+  ["scripts/api.mjs", "    if (deja && (avant.fiches?.[deja.id] || roleRevele(deja))) {", "    if (false) {", "arrivée : une fois"],
   ["scripts/api.mjs", "    await envoyerRole(acteur);\n    if (camp === \"meute\")", "    if (camp === \"meute\")", "arrivée : sa carte"],
   ["scripts/api.mjs", "const maison = L.maisonsDuVillage(prises.size + 1).find(m => !prises.has(m))", "const maison = L.maisonsDuVillage(prises.size + 1).find(() => true)", "arrivée : une maison libre"],
   ["scripts/apps/table.mjs", "        passage: gens.find(g => g.acteurId === a.id)?.role ?? \"\",", "        passage: \"\",", "Table : le rôle de passage"],
-  ["scripts/apps/table.mjs", "      const voitRole = fin || roleVisible(a);", "      const voitRole = fin || roleVisible(a) || Boolean(etat.passage?.gens?.[a.id]);", "Table : jamais le camp"],
+  // (0.9.0 : « Table : jamais le camp » ne se casse plus par la Table : le camp d'un gens de passage n'est dans aucun document ni
+  // réglage livré au joueur — le non-fuite de essais/non-fuite.test.mjs le vérifie sur tout ce qu'il reçoit.)
   // départ et exil
   ["scripts/api.mjs", "    await acteur.update({ \"system.vivant\": false });\n    for (const [id, p]", "    for (const [id, p]", "départ : il quitte la partie"],
   ["scripts/api.mjs", "    for (const [id, p] of [...enAttente.entries()]) if (p.demande.acteurId === acteurId) terminer(id, [], true);\n", "", "départ : ses demandes closes"],
   ["scripts/api.mjs", ".filter(x => x.actorId === acteurId).map(x => x.id);", ".filter(() => false).map(x => x.id);", "départ : son jeton retiré"],
-  ["scripts/api.mjs", "    await api.verifierVictoire();\n    return true;\n  },", "    return true;\n  },", "départ : la victoire vérifiée"],
+  ["scripts/api.mjs", "    await api.verifierVictoire();\n    await sceller();\n    return true;\n  },", "    await sceller();\n    return true;\n  },", "départ : la victoire vérifiée"],
   ["scripts/api.mjs", "  if (!acteur || !user || (!user.isGM && acteur.system.joueur !== userId)) return false;\n  try {\n    await api.partir(", "  if (!acteur || !user) return false;\n  try {\n    await api.partir(", "départ : pour soi"],
   ["scripts/api.mjs", "    annoncer(\"lakourLoups.depart\", [{ acteurId, comment: sorte }]);\n", "", "départ : hook public"],
   ["scripts/api.mjs", "      await api.partir(resultat.elu, { comment: \"exil\" });\n", "", "exil : l'élu part"],
@@ -416,13 +417,13 @@ const MUTATIONS = [
   // le Glas du deuil
   ["scripts/api.mjs", "    if (cause === \"vote\") await sonnerLeDeuil(acteur);\n", "", "deuil : sonné à l'exécution"],
   ["scripts/api.mjs", "  annoncer(\"lakourLoups.deuil\", [{ compte: r.compte }]);", "  annoncer(\"lakourLoups.deuil\", [{ compte: r.compte, pouvoirs: r.etat.pouvoirsDeuil }]);", "deuil : hook vague"],
-  ["scripts/api.mjs", "  for (const loup of tousLesVillageois().filter(a => a.system.vivant && a.system.camp === \"meute\")) {\n    await envoyerSecret(loup.id, { texte: t([", "  for (const loup of tousLesVillageois().filter(a => a.system.vivant)) {\n    await envoyerSecret(loup.id, { texte: t([", "deuil : aux loups seuls"],
+  ["scripts/api.mjs", "  for (const loup of tousLesVillageois().filter(a => a.system.vivant && campDe(a) === \"meute\")) {\n    await envoyerSecret(loup.id, { texte: t([", "  for (const loup of tousLesVillageois().filter(a => a.system.vivant)) {\n    await envoyerSecret(loup.id, { texte: t([", "deuil : aux loups seuls"],
   ["scripts/api.mjs", "  await annonceChat(echapper(t(\"LAKOUR_LOUPS.Deuil.Sonne\", { n: r.compte })));\n", "", "deuil : annoncé"],
   ["scripts/api.mjs", "      if (r.deuil) x.pouvoirsDeuil.visions = Math.max(0, x.pouvoirsDeuil.visions - 1);\n", "", "deuil : la vision consommée"],
   ["scripts/api.mjs", "      if (r.deuil) x.pouvoirsDeuil.visions", "      if (true) x.pouvoirsDeuil.visions", "deuil : consommée si délivrée"],
   ["scripts/api.mjs", "    demanderVoixDuDeuil(etat);\n    return foundry.utils.deepClone(L.etatPublic(etat).vote);", "    return foundry.utils.deepClone(L.etatPublic(etat).vote);", "voix : demandée à la meute"],
   ["scripts/api.mjs", "L.choisirVoixDuDeuil(e, { numero: v.numero, cible })", "L.choisirVoixDuDeuil(e, { numero: 0, cible })", "voix : le choix de CE vote"],
-  ["scripts/api.mjs", "const loups = tousLesVillageois().filter(a => a.system.vivant && a.system.camp === \"meute\");\n  if (!loups.length || !candidats.length) return [];", "const loups = tousLesVillageois().filter(a => a.system.vivant);\n  if (!loups.length || !candidats.length) return [];", "voix : à la meute seule"],
+  ["scripts/api.mjs", "const loups = tousLesVillageois().filter(a => a.system.vivant && campDe(a) === \"meute\");\n  if (!loups.length || !candidats.length) return [];", "const loups = tousLesVillageois().filter(a => a.system.vivant);\n  if (!loups.length || !candidats.length) return [];", "voix : à la meute seule"],
   ["scripts/api.mjs", "finit: Date.now() + ms, ...(objet ? { objet } : {})", "finit: Date.now() + ms", "voix : l'objet de la demande"],
   ["scripts/api.mjs", "    if (L.estParti(avant, acteurId)) return false;\n", "", "départ : déjà parti, sans effet"],
   ["scripts/api.mjs", "    if (clos) {\n", "    if (false) {\n", "départ : le vote clos annoncé"],

@@ -107,7 +107,7 @@
       "AsileDonne": "{nom} dormira à la Chapelle.",
       "VoteAnnule": "Ce vote a été annulé ou se rejoue : personne n'est exécuté.",
       "TempsEcoule": "Le temps du vote est écoulé : dépouillement.",
-      "SecretsEnAttente": "Les secrets de la partie en cours sont dans le coffre, mais il faut deux joueurs connectés pour le rouvrir : ils seront repris dès que deux joueurs seront là.",
+      "SecretsEnAttente": "Les secrets de la partie en cours sont dans le coffre du MJ IA, mais il faut la majorité des joueurs connectés (ou la clé de secours) pour le rouvrir : ils seront repris dès qu'ils seront là.",
       "SecretsRetrouves": "Secrets de la partie retrouvés dans le coffre : la partie reprend là où elle en était.",
       "SecretsPerdus": "Ce navigateur n'a pas les secrets de la partie en cours (autre MJ ou autre navigateur) : les choix déjà faits cette nuit, les primes et les fioles sont perdus.",
       "Benit": "Béni par le Curé",
@@ -138,7 +138,8 @@
       "CrierPour": "{nom} crie « C'est la peste noire ! »",
       "VoteBailli": "Élire le Bailli",
       "NommerBailli": "Nommer le Bailli",
-      "TrancherPour": "Trancher à la place du Bailli ({nom}) :"
+      "TrancherPour": "Trancher à la place du Bailli ({nom}) :",
+      "Migration": "Partie d'avant la version 0.9.0 reprise : {n} rôle(s) rangé(s) dans les secrets du MJ, retirés des fiches des villageois."
     },
     "Choix": {
       "Titre": "Dans la nuit…",
@@ -344,7 +345,7 @@
       },
       "CanalDesMorts": {
         "Nom": "Canal des morts",
-        "Aide": "Les morts peuvent parler entre eux : leurs messages deviennent des chuchotements aux seuls morts et au MJ. Sinon, ils ne peuvent plus que chuchoter au MJ."
+        "Aide": "Les morts peuvent parler entre eux : le MJ actif relaie leurs messages aux seuls morts et MJ (aucun message de chat, que Foundry livrerait à tous). Sinon, ils ne peuvent plus qu'écrire au MJ."
       },
       "SalonsAutomatiques": {
         "Nom": "Salons vocaux automatiques",
@@ -405,7 +406,11 @@
       "PasDeMJ": "Aucun MJ n'est connecté : le pouvoir ne peut pas être appliqué.",
       "RolesInconnus": "Rôles inconnus ou absents du contenu : {roles}.",
       "PersonneAReveiller": "Personne à réveiller pour « {role} » cette nuit.",
-      "PasDeVote": "Aucun vote n'est ouvert."
+      "PasDeVote": "Aucun vote n'est ouvert.",
+      "SansCoffre": "Le module MJ IA (lakour-mj-ia) doit être actif : son coffre garde les secrets de la partie (rôles, camps, choix de nuit). Active-le, puis distribue.",
+      "FicheVerrouillee": "Les villageois de la partie ne se modifient que par le MJ.",
+      "SecretsAbsents": "Ce navigateur n'a pas (encore) les secrets à jour de la partie en cours : rien n'est écrit. Le coffre est rouvert dès que possible (parts des joueurs, autre MJ, clé de secours).",
+      "MJInactif": "Seul le MJ actif tient les secrets de la partie : rôle, camp, amoureux et « Révélé » se règlent chez lui."
     },
     "Batiments": {
       "taverne": "La Taverne",
@@ -547,9 +552,13 @@
       "Toi": "toi"
     },
     "Parole": {
-      "Mort": "Tu es mort : les vivants ne t'entendent plus. Tu peux chuchoter au narrateur.",
-      "Silence": "Tu es réduit au silence : tu ne peux pas parler pendant le débat et le vote d'aujourd'hui (chuchoter au narrateur reste possible).",
-      "CanalDesMorts": "Tu es mort : tes messages ne vont plus qu'aux autres morts et au narrateur."
+      "Mort": "Tu es mort : les vivants ne t'entendent plus. Tu peux écrire au narrateur (chuchoter au MJ : le mot lui parvient à lui seul).",
+      "Silence": "Tu es réduit au silence : tu ne peux pas parler pendant le débat et le vote d'aujourd'hui (un mot chuchoté au MJ lui parvient à lui seul).",
+      "CanalDesMorts": "Tu es mort : tes messages ne vont plus qu'aux autres morts et au narrateur (relayés par le MJ, sans passer par le chat de Foundry).",
+      "Chuchotement": "Pendant une partie, pas de chuchotement entre joueurs : Foundry le livrerait à tous les navigateurs. Parle à voix haute, ou écris au seul MJ.",
+      "TitreMorts": "[Morts]",
+      "TitreMJ": "[Au MJ]",
+      "JetAveugle": "🎲 Jet aveugle envoyé au MJ."
     },
     "NouvellePartie": {
       "Choisie": "composition choisie",

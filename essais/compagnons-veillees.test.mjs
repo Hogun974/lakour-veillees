@@ -22,7 +22,7 @@ const J = await import("../modules/lakour-mj-ia/scripts/compagnons-jeu.js");
 const { contexteCompagnon, texteBrut } = await import("../modules/lakour-mj-ia/scripts/compagnons.js");
 const outil = nom => OUTILS.find(o => o.nom === nom);
 
-const roleDe = a => a?.items.find(i => i.type === "role") ?? null;
+const roleDe = a => secretDuMJ.role(a);
 const metierDe = a => a?.items.find(i => i.type === "metier") ?? null;
 const villageois = () => game.actors.filter(a => a.type === "villageois");
 const USAGE = { entree: 1500, cacheLecture: 0, cacheEcriture: 0, sortie: 40 };
@@ -67,8 +67,8 @@ assert.ok(!depart.erreur, depart.contenu);
 const lesCompagnons = villageois().filter(a => a.system.compagnon);
 // Le loup compagnon (A) et le villageois compagnon (B) : arrangés par échange de rôles (les cartes repartent aux carnets).
 const A = lesCompagnons[0];
-if (A.system.camp !== "meute") await api.echangerRoles(A.id, villageois().find(a => a.system.camp === "meute").id);
-const B = lesCompagnons.find(a => a.id !== A.id && a.system.camp !== "meute");
+if (secretDuMJ.camp(A) !== "meute") await api.echangerRoles(A.id, villageois().find(a => secretDuMJ.camp(a) === "meute").id);
+const B = lesCompagnons.find(a => a.id !== A.id && secretDuMJ.camp(a) !== "meute");
 if (roleDe(B).system.cle !== "villageois") await api.echangerRoles(B.id, villageois().find(a => a.id !== A.id && a.id !== B.id && roleDe(a).system.cle === "villageois").id);
 const humain = villageois().find(a => a.system.joueur);
 // Des canaris : un secret dans le carnet d'un humain, dans celui de chaque compagnon, un chuchotement, un message public.
@@ -131,7 +131,7 @@ test("la partie a vraiment interrogé les compagnons par le modèle (fournisseur
 });
 
 test("un loup compagnon ne voit pas le rôle des autres, ni le carnet d'un autre, ni un chuchotement, ni la chronique secrète", () => {
-  assert.equal(A.system.camp, "meute");
+  assert.equal(secretDuMJ.camp(A), "meute");
   const envois = recuPar(A);
   assert.deepEqual(fuites(A, envois), []);
   const dernier = contexteCompagnon(compagnons.vue(A));
@@ -148,7 +148,7 @@ test("un villageois compagnon ne voit pas l'état secret de la nuit : ni qui la 
   assert.deepEqual(fuites(B, envois), []);
   const tout = envois.join("\n");
   assert.ok(!/la meute a attaqué/.test(tout), "l'invite de l'Herboriste (qui la meute a attaqué) ne lui parvient pas");
-  for (const loup of villageois().filter(a => a.system.camp === "meute" && !a.system.revele)) {
+  for (const loup of villageois().filter(a => secretDuMJ.camp(a) === "meute" && !a.system.revele)) {
     assert.ok(!tout.split(/\n| ; /).some(m => m.includes(loup.name) && m.includes("Loup de Brumecombe")), `il sait que ${loup.name} est un loup`);
   }
   assert.ok(tout.includes("CANARI-MOI-B") && !tout.includes("CANARI-MOI-A"), "son carnet, pas celui du loup");
@@ -192,7 +192,10 @@ const MUTATIONS = {
     "pub.historique?.length ? `Annonces publiques récentes :\\n${pub.historique.slice(-12)", "pub.historique?.length ? `Annonces publiques récentes :\\n${[...pub.historique, ...(pub.journalSecret ?? [])].slice(-40)"],
   "carnets de tout le village": ["const entrees = api.carnet(acteur.id) ?? [];", "const entrees = tous.flatMap(a => api.carnet(a.id) ?? []);"],
   "chuchotements dans le chat public": ["if (m.whisper?.length || m.blind) continue;", "if (m.blind) continue;"],
-  "rôles de tous affichés, révélés ou non": ["${a.system.revele && roleDe(a) ? `, rôle révélé : ${roleDe(a).name}` : \"\"}", "${roleDe(a) ? `, rôle : ${roleDe(a).name}` : \"\"}"]
+  // Système 0.9.0 : un rôle non révélé n'est dans aucun document ; la vue le lirait dans les secrets du MJ (roleLoups) pour tous.
+  "rôles de tous affichés, révélés ou non": [
+    "const roleDe = a => (a?.id === acteur.id ? roleLoups(a, api) : a?.items?.find?.(i => i.type === \"role\") ?? null);", "const roleDe = a => roleLoups(a, api);",
+    "${a.system.revele && roleDe(a) ? `, rôle révélé : ${roleDe(a).name}` : \"\"}", "${roleDe(a) ? `, rôle : ${roleDe(a).name}` : \"\"}"]
 };
 
 async function charger(mutation) {

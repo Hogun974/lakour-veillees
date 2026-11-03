@@ -7,7 +7,7 @@ Foundry v14 (14.369). Tout en français, textes originaux (aucun texte, aucune c
 
 ## 1. Système `lakour-loups`
 
-`systems/lakour-loups/system.json` : `id: "lakour-loups"`, `version: "0.8.0"`, `compatibility { minimum: "14", verified: "14.369" }`,
+`systems/lakour-loups/system.json` : `id: "lakour-loups"`, `version: "0.9.0"`, `compatibility { minimum: "14", verified: "14.369" }`,
 `socket: true`, `esmodules: ["lakour-loups.mjs"]`, langues fr et en, `documentTypes` ci-dessous,
 `grid { type: 1, distance: 1.5, units: "m" }`, `primaryTokenAttribute: null`.
 
@@ -20,15 +20,22 @@ system: {
   compagnon: Boolean = false, // tenu par un compagnon IA (joueur "" ; ses choix passent par api.resolveurs.compagnon)
   vivant: Boolean = true,
   revele: Boolean = false,   // rôle montré à tous (mort révélée, ou pouvoir qui révèle)
-  camp: String = "village",  // "village" | "meute" | "solitaire" — camp ACTUEL (peut changer : morsure, échange)
+  camp: String = "",         // camp PUBLIC : "" tant que le rôle est caché ; le camp actuel une fois révélé (0.9.0)
   maison: String = "",       // repère de la carte où il dort (« Maison 3 », « Taverne »…)
-  amoureux: String = "",     // id de l'acteur lié (lien d'amour), "" sinon
+  amoureux: String = "",     // publié à la fin de la partie seulement (0.9.0 ; avant : fiche secrète)
   silence: Boolean = false,  // ne peut pas parler au prochain débat
-  protections: Number = 0,   // protections actives cette nuit (remises à 0 à l'aube)
+  protections: Number = 0,   // inutilisé depuis 0.9.0 (fiche secrète) : toujours 0
   notes: HTML                // notes publiques (métier, ce qu'il a dit)
 }
 ```
-Son rôle est l'objet `role` qu'il possède (un seul) ; son métier, l'objet `metier` (un seul, public).
+Depuis 0.9.0, le document ne porte que le PUBLIC. Ce qui est secret d'un villageois vit dans sa **fiche secrète**, dans les secrets du
+MJ actif (`etat.fiches`, `logique/fiches.mjs`) : `{ camp ("village" | "meute" | "solitaire", camp ACTUEL : morsure, échange), amoureux,
+protections (de la nuit, remises à 0 au jour), role: { name, img, source, system: <le system d'un Item role> } }`. Son rôle n'entre au
+document (objet `role`, un seul, et `system.camp`) qu'à sa **révélation publique** : mort révélée, Juge de paix, case « Révélé » du MJ,
+fin de partie (tous les rôles, camps et liens d'amour). Révélé de son vivant, il montre le camp de son RÔLE (la lanterne : « meute »),
+jamais son camp actuel : une morsure ou un échange restent secrets, rien n'est récrit au document, et un rôle déjà publié n'est pas
+remplacé (rôle échangé ou donné ensuite) ; à sa mort révélée et à la fin, son vrai rôle et son vrai camp. Son métier reste l'objet `metier` (un seul, public). Le joueur est
+**observateur** (OBSERVER) de son villageois, plus propriétaire : il voit sa fiche, il ne la modifie pas.
 
 **Item `role`**
 ```
@@ -64,9 +71,13 @@ chuchotements compris) et chaque modification. Rien de secret ne peut donc y êt
 n'existe que chez le MJ actif ; il se range en deux morceaux (`logique/etat.mjs`, `separerEtat` / `fusionnerEtat`) :
 
 - réglage monde **`lakour-loups.partie`** (Object), écrit seulement par le MJ actif (`game.users.activeGM`) : l'état **public** ;
-- réglage **`lakour-loups.secrets`**, de portée **`client`** (localStorage du navigateur du MJ, jamais envoyé au serveur) et mémoire
-  du MJ actif : les **secrets**. Un rechargement du MJ les retrouve ; un autre navigateur ou un autre MJ ne les a pas (la Table de
-  jeu le signale, la partie continue sans les choix déjà faits, les primes ni les fioles).
+- réglage **`lakour-loups.secrets`**, de portée **`client`** (localStorage du navigateur du MJ, jamais envoyé au serveur), rangé par
+  **[monde][userId]** et lu seulement par un MJ, pour lui-même (0.9.0), et mémoire du MJ actif : les **secrets**. Un rechargement du MJ
+  les retrouve ; un autre navigateur ou un autre MJ les reprend du **coffre** (ci-dessous) ; sans lui, la Table de jeu le signale et la
+  partie continue sans eux ;
+- réglage monde **`lakour-loups.coffre`** : les secrets SCELLÉS avec la clé du coffre du MJ IA (`{ partie, chiffre: 1, id, iv,
+  donnees }`, AES-GCM 256, bourrage par blocs de 4 Kio ; §6 « Le coffre »). Écrit seulement aux moments publics et au battement :
+  jamais au rythme des choix de nuit. Le réglage monde `partie` n'est récrit que s'il change (un choix de nuit ne le touche pas).
 
 ```
 {
@@ -93,7 +104,10 @@ n'existe que chez le MJ actif ; il se range en deux morceaux (`logique/etat.mjs`
   journalSecret: [ { tour, phase, texte } ],     // SECRET : chronique du MJ (actions de nuit, messages secrets envoyés)
   carnets: { acteurId: [ { id, texte | html, titre, tour, phase, quand } ] },   // SECRET : carnet secret de chaque joueur
   jour: { effets: [ { type, acteurId, cible, nuit } ], benis: [acteurId], rubans: [acteurId], puits, conteuse, appel },   // public
-  pont: { bloqueNuit: Number }, cimetiere: [acteurId],  // public
+  pont: { bloqueNuit: Number },  // SECRET (0.9.0) : la meute bloquée sur l'autre rive trahirait la vraie cause d'une mort de nuit
+  voteDoubleDemain: Boolean,     // SECRET (0.9.0) : la cloche du Sonneur ; publique quand le vote s'ouvre (vote.double)
+  fiches: { acteurId: { camp, amoureux, protections, role } },   // SECRET (0.9.0) : tout ce qui est secret d'un villageois
+  cimetiere: [acteurId],         // public
   bailli: { actif, acteurId, depuis, succession: null | { de, tour }, election },   // public (0.6.0, §1 « Bailli, Registre, Masques »)
   registre: [ { type, tour, phase, quand, … } ],        // public : le Registre du greffier
   masques: [cle de rôle]                                 // SECRET : les Masques de veillée de la meute
@@ -108,31 +122,40 @@ aux seuls navigateurs de ces utilisateurs (sans `recipients` : à tous les autre
 session, en second argument du récepteur. Le système s'en sert ainsi :
 - MJ → un joueur (`recipients: [son userId]`) : `demande` (choix de nuit, ou `mode: "texte"` pour le mot du Messager), `annuler`,
   `secret` (une entrée de son carnet), `carnet` (tout son carnet, sa prime, son vote en cours), `monVote` (accusé), `avis` (refus),
-  `salon` (sa ligne des salons vocaux, §1 « Salons vocaux ») ;
-- joueur → MJ actif seul : `reponse`, `vote`, `jour` (pouvoir de jour), `bonjour` (« renvoie-moi mon carnet », et ma ligne des salons),
-  `peste` (`{ acteurId }` : « C'est la peste noire ! », pour son propre villageois seulement) ;
+  `salon` (sa ligne des salons vocaux, §1 « Salons vocaux ») ; 0.9.0 : `fiche` (`{ partie, acteurId, fiche: { camp, amoureux, role } }`,
+  SA fiche, à chaque changement qui le regarde : rôle, usages restants, camp, lien d'amour — jamais ses protections), `vus` (mort qui
+  voit tout : `{ acteurId: { camp, role: { name, img, system: { cle, camp } } } }` des autres, `{}` sinon), `parole` (un mot relayé :
+  canal des morts, ou au MJ ; affiché localement) — ces trois-là n'étant acceptés que du MJ ACTIF ;
+- joueur → MJ actif seul : `reponse`, `vote`, `jour` (pouvoir de jour), `bonjour` (« renvoie-moi mon carnet, ma fiche, ma vue », et ma
+  ligne des salons), `peste` (`{ acteurId }` : « C'est la peste noire ! », pour son propre villageois seulement), `paroleEnvoi`
+  (`{ texte, canal: "morts" | "mj" }`, le relais de parole : seulement avec l'émetteur donné par le serveur) ;
+- les parts de la clé du coffre passent par le canal du MJ IA (`module.lakour-mj-ia`, `coffre.*`), plus par celui-ci ;
 - MJ → tous : `hook`, avec des arguments publics seulement ;
 - l'émetteur donné par le serveur fait foi : un message dont `userId` le contredit est rejeté ; ce qui s'adresse à un joueur
   n'est accepté que d'un MJ.
 
 Le **carnet secret** remplace le chuchotement pour tout ce qui est secret (carte de rôle, ce qu'un rôle apprend la nuit, mot du
 Messager, Moulin pour la Meunière) : le MJ le garde dans ses secrets, le joueur le range dans son navigateur (réglage client
-`lakour-loups.carnet`) et peut le relire (Table de jeu, bouton « Carnet secret »).
+`lakour-loups.carnet`, rangé par [monde][userId] depuis 0.9.0, avec sa fiche et sa vue de mort) et peut le relire (Table de jeu,
+bouton « Carnet secret »).
 
 ### API : `game.lakourLoups` (prête au `ready`)
 
 Toutes les fonctions qui écrivent ne marchent que chez le MJ actif ; ailleurs elles lèvent une erreur claire.
 ```
 etat()                                   -> copie de l'état (ci-dessus)
-villageois()                             -> acteurs villageois (vivants et morts), avec .role et .metier (objets possédés)
+villageois()                             -> acteurs villageois (vivants et morts), avec .role (le rôle que CE navigateur connaît :
+                                            api.roleDe) et .metier (objet possédé)
 distribuer({ roles: [uuid], metiers: [uuid], joueurs: [userId], compagnons: [nom], maisons: [String] })
                                          -> crée/recycle un villageois par joueur, lui donne un rôle et un métier au hasard
                                             (mélange), règle camp et maison, phase "preparation", tour 0 ; renvoie
                                             [{acteurId, userId, compagnon, roleCle}]. compagnons : un villageois sans joueur
                                             (system.compagnon) par nom, tiré comme les joueurs ; les compagnons d'une partie
                                             précédente sont repris, les autres retirés du village.
-                                            Chaque joueur reçoit son rôle dans son carnet secret et voit sa fiche (OWNER), personne
-                                            d'autre. Maisons par défaut : maisonsDuVillage(n) (un tiers sur l'autre rive, 13 à 18).
+                                            Rôle et camp dans les fiches secrètes du MJ (jamais sur le document) ; chaque joueur
+                                            reçoit sa fiche et sa carte de rôle (carnet secret) par le socket, personne d'autre, et
+                                            observe son villageois (OBSERVER). Sans le coffre du MJ IA : erreur claire, rien n'est
+                                            créé (LAKOUR_LOUPS.Erreurs.SansCoffre). Maisons par défaut : maisonsDuVillage(n) (un tiers sur l'autre rive, 13 à 18).
                                             peste: true -> partie de peste noire (rôles de la meute remplacés par un simple
                                             villageois, drapeau secret etat.peste). composition : clé gardée dans les secrets du MJ.
 changerPhase(phase)                      -> écrit la phase (tour + 1 quand on passe à "nuit"), remet protections/silence selon la phase,
@@ -294,13 +317,34 @@ Hooks publics : `lakourLoups.passage` (`{ acteurId, cle, comment: "arrivee" }`),
 sans visage). Vainqueur `"brume"` (Saint-Martin : personne). Réglages monde : `gensDePassage` (vrai), `banc` et `glasDuDeuil` (faux).
 Étapes du MJ humain : `juger` (action `ouvrirVote`), détail `bancVide` ; l'étape `reveiller` du deuil porte `donnees.deuil`.
 
+Ajouts 0.9.0 — les secrets hors des documents (§6) :
+```
+roleDe(acteur | id)               -> le rôle que CE navigateur connaît (forme d'objet : name, img, system ; null sinon) : chez le MJ actif,
+                                     celui de sa fiche secrète (jamais celui d'un document) ; ailleurs, le sien, ceux qu'un mort voit, ou
+                                     un rôle révélé. Le MJ IA lit les rôles par ici (utilitaires.js, roleLoups).
+campDe(acteur | id)               -> son camp de même ("" : inconnu de ce navigateur) (MJ IA : campLoups)
+fiche(acteurId)                   -> { camp, amoureux, protections, role } | null (MJ actif)
+reglerFiche(acteurId, { camp, amoureux, protections })   -> la fiche (MJ actif ; la fiche du villageois du MJ s'en sert)
+donnerRole(acteurId, uuid | donnéesDObjet | null)        -> la fiche (MJ actif) : le rôle dans la fiche, son camp ; carte au joueur
+reveler(acteurId)                 -> le rôle et le camp DU RÔLE publiés au document (case « Révélé » du MJ, narrateur)
+migrer()                          -> { fiches, documents } (MJ actif, au « ready ») : une partie d'avant 0.9.0 passe aux secrets ;
+                                     fiches construites, rangées et scellées AVANT de toucher un document ; rejouable sans perte
+```
+Garde des écritures (relecture 7) : pendant une partie, tant que le MJ actif n'a pas les secrets À JOUR (autre navigateur, autre MJ
+devenu actif, secrets plus vieux que le coffre, parts attendues), toute écriture de la partie est refusée (`modifierEtat` : erreur
+`LAKOUR_LOUPS.Erreurs.SecretsAbsents` ; votes reçus refusés avec un avis ; `verifierVictoire` ne déclare rien) et le coffre est
+cherché. Une nouvelle partie (autre id) envoie TOUTES les fiches à leurs joueurs, même identiques à la précédente.
+`ecritureBloquee()` -> true quand, chez le MJ actif, les écritures de la partie sont bloquées (le MJ IA se met alors en pause).
+Chez le MJ actif seulement, hook local `lakourLoups.fiches` (une fiche a changé). Garde `preUpdateActor`, `preDeleteActor`,
+`preCreateItem`, `preUpdateItem`, `preDeleteItem` (scripts/garde.mjs) : un non-MJ ne modifie ni un villageois ni ses objets.
+
 ### Lot 0.8.0 (logique/passage.mjs, banc.mjs, deuil.mjs, saintmartin.mjs)
 
 **Gens de passage** (public : `etat.passage = { actif, gens: { acteurId: { cle, tour } } }`, `etat.partis = [{ acteurId, tour, comment }]`) :
 rôles `remouleur` (verrou et lame sur une maison, nuit suivante), `montreur-d-ours` (asile), `pelerine` (le camp d'un joueur, en secret),
 une fois, de jour (`POUVOIRS_JOUR`, source « role »). Le camp (`campDePassage`) : la meute à 70 % si elle est sous son compte
-(`nombreDeLoups(n + 1)`), sinon 15 % ; jamais en peste noire. Il vit sur le DOCUMENT (`system.camp`, comme tout camp) et dans le journal
-SECRET ; le rôle de l'objet reste « village ». Un parti est `vivant: false` sur son document, dans `etat.partis`, jamais dans `etat.morts` :
+(`nombreDeLoups(n + 1)`), sinon 15 % ; jamais en peste noire. Il vit dans la FICHE secrète du MJ (comme tout camp depuis 0.9.0 : jamais
+sur le document) et dans le journal SECRET ; le rôle d'origine reste « village ». Un parti est `vivant: false` sur son document, dans `etat.partis`, jamais dans `etat.morts` :
 ni Dernier souffle, ni gagnant ni perdant (`bilanDePartie({ partis })`), jeton retiré, Bailli vacant, voix en cours retirée.
 **Banc des accusés** (public, `etat.banc = { actif, tour, accusations, juges }`) : `verifierAccusation`, `prochainAccuse`, `verdictDuBanc`
 (pour × 2 ≥ total pondéré des vivants ; Gibet : >) ; pas de cloche, pas de départage ; une exécution par jour.
@@ -392,7 +436,8 @@ rien (ni « plus de loup », ni amants, ni tueur solitaire). Récit de fin et Ch
 **Le secret.** `etat.peste` et `etat.composition` vont dans les secrets du MJ (`separerEtat`) ; l'état public n'a pas la clé
 `peste` avant la phase `fin` ; aucun hook public ni message de socket ne la porte (la demande `posthume` ne va qu'au porteur) ;
 la composition n'est jamais annoncée (hook `nouvellePartie` public sans composition, Table : composition et marque « Peste noire »
-chez le MJ seul). Limite (§6) : les objets `role` restent lisibles dans la console (aucun loup en jeu…).
+chez le MJ seul). Depuis 0.9.0, aucun document ne porte un rôle ou un camp avant sa révélation (§6) : compter les loups dans la
+console ne dit plus rien (0 partout, peste noire ou non).
 
 ### Salons vocaux (logique/salons.mjs, scripts/salons.mjs)
 
@@ -418,7 +463,16 @@ seulement si elle a changé ; à la connexion et sur `bonjour`, toujours). `ente
 pour un non-loup ; `loups` (acteurIds de la meute) n'est donné qu'à un loup, la nuit. Rien dans un réglage monde ni un document.
 
 Dans chaque navigateur non MJ, d'après sa ligne (code client v14 lu : `AVMaster`, `SimplePeerAVClient`, `CameraViews`) :
-- les flux de ceux qu'il ne doit pas entendre sont coupés LOCALEMENT : pistes du flux distant (`getMediaStreamForUser`) désactivées
+- côté ÉMETTEUR, sa voix (son et image) ne part que vers `ligne.auditeurs` : vers les autres pairs, chaque `RTCRtpSender` de
+  la connexion porte `null` (`replaceTrack(null)`, sans renégociation), la vraie piste vers les autres. Lu dans le client
+  v14 : `client.peers` (Map userId -> pair SimplePeer, rangé juste après sa création, avant la signalisation) ; changement
+  d'appareil par `removeStream`/`addStream`. Hypothèse restante (SimplePeer, sans A/V réel) : connexion dans `_pc`. Recalcul à
+  chaque ligne, rendu des caméras, réglage A/V, `userConnected`, `peers.set`/`delete`, `addTrack`/`addTransceiver`/
+  `removeTrack`, `negotiationneeded`/`signalingstatechange`, et `replaceTrack` de Foundry (autre micro, autre caméra) ;
+  ligne d'une autre phase que l'état public, ou pas de ligne en partie : vers les MJ seulement. Repli si l'émetteur ne peut
+  pas être trié alors que sa voix ne doit pas aller à tous : micro ET caméra coupés à la source, pour tous, avec un
+  avertissement (texte en dur, clé de traduction à faire). `salons.etatEmetteur()`, `salons.voixRepliee()` ;
+- en plus (défense en profondeur), les flux de ceux qu'il ne doit pas entendre sont coupés LOCALEMENT : pistes du flux distant (`getMediaStreamForUser`) désactivées
   (son et image), `<video class="user-camera">` muet, voyant « parle » (`ui.webrtc.setUserIsSpeaking`) forcé éteint ; réappliqué
   à chaque rendu des caméras (`renderCameraViews`, `renderCameraPopout`, `rtcSettingsChanged`) ;
 - son micro, quand il doit se taire : `game.webrtc.broadcast` et `game.webrtc.client.toggleBroadcast` enveloppés sur l'instance
@@ -427,7 +481,9 @@ Dans chaque navigateur non MJ, d'après sa ligne (code client v14 lu : `AVMaster
   fin, réglage décoché), si l'A/V est désactivé, et au départ du monde (`beforeunload`). Le MJ n'est jamais coupé.
 - Bandeau : « 🔇 La nuit, silence », « 🐺 Tanière : tu parles aux loups », « 👻 Tu parles aux morts », « 🔇 Réduit au silence » ;
   rien sans A/V (mode « Désactivé ») ni pour un vivant le jour.
-Limite : appliqué dans chaque navigateur (contournable par un tricheur dans la console), comme le reste (§6). Le système gère seul
+Limite : appliqué dans chaque navigateur, comme le reste (§6) : un tricheur peut rouvrir SA voix vers tous dans sa console,
+mais plus entendre les autres (leur flux ne lui arrive pas). Reste observable : les connexions elles-mêmes (chaque pair
+est connecté à tous, ICE/DTLS/RTCP continuent), et la nuit l'absence de paquets venant de chacun (la même pour tous). Le système gère seul
 les salons, sans le MJ IA ; le MJ IA consulte `audibilite` pour la voix des IA et la transcription.
 
 ### Plateau (scripts/plateau.mjs, logique/plateau.mjs)
@@ -448,9 +504,14 @@ candidats, sélection, son vote, coche « a voté » (état public `vote.exprime
 sur un jeton qu'il ne contrôle pas est capté par la sous-classe du Token (`_canControl` sur `pointerdown`, `_onClickLeft`) ;
 seul le choix validé part au MJ actif (`reponse`, `vote`, `jour`), comme depuis les fenêtres, qui restent en secours.
 
-Parole (scripts/parole.mjs) : un mort n'écrit plus au chat public (canal des morts : chuchoté aux morts et au MJ, réglage
-`canalDesMorts`) ; un villageois réduit au silence se tait en phases « jour » et « vote » ; le MJ n'est jamais bloqué. Refus
-dans le navigateur de l'auteur (`preCreateChatMessage`), garde chez le MJ actif (`createChatMessage` : message retiré).
+Parole (scripts/parole.mjs, logique/parole.mjs ; 0.9.0) : pendant une partie (distribuée, pas finie), aucun message de chat ne
+porte ce qui ne doit être lu que de quelques-uns — un chuchotement est livré à tous. Un mort n'écrit plus au chat : avec le canal
+des morts (réglage `canalDesMorts`), son message part au MJ actif par le socket (`paroleEnvoi`), qui le RELAIE (`parole`,
+`recipients` : les autres morts et les MJ) ; chacun l'affiche localement (`ChatLog#postOne` d'un message jamais créé, à défaut une
+notification). Un mot « au seul MJ » (chuchotement aux MJ, d'un mort, d'un réduit au silence ou de tout joueur) suit le même relais
+(`recipients` : les MJ). Un chuchotement de joueur à joueur est refusé. Un réduit au silence se tait en phases « jour » et « vote » ;
+le MJ n'est jamais bloqué ; hors partie, le chat est libre. Refus dans le navigateur de l'auteur (`preCreateChatMessage`), garde chez
+le MJ actif (`createChatMessage` : un message passé outre est retiré, son auteur prévenu).
 Réglages ajoutés : `canalDesMorts` (monde), `plateauInteractif` (client), `historique` (monde, rôles des dernières parties).
 
 ### Compagnons IA (docs/compagnons.md)
@@ -474,7 +535,9 @@ joueur, sans rien envoyer par le socket : le MJ IA en nourrit son cerveau (`carn
 - **Fenêtre de choix de nuit** chez le joueur concerné : invite, liste des candidats (ou zone de texte pour le mot du Messager),
   « Passer ». Rien n'apparaît chez les autres. La même fenêtre, en local, sert à choisir la cible d'un pouvoir de jour.
 - **Carnet secret** chez chaque joueur : ses messages secrets, sa prime.
-- **Fiche de villageois** : rôle et pouvoir visibles seulement du propriétaire et du MJ ; métier public ; état (vivant, révélé).
+- **Fiche de villageois** : rôle et pouvoir visibles seulement de son joueur (`system.joueur`, d'après sa fiche reçue du MJ) et du
+  MJ ; métier public ; état (vivant, révélé). Chez le MJ actif, les champs camp, amoureux et protections viennent de ses secrets et y
+  retournent (`secret.*` -> `reglerFiche`) ; un rôle déposé sur la fiche va dans la fiche secrète (`donnerRole`), « Révélé » le publie.
 - Les morts voient tout (réglage) mais ne votent plus.
 
 ## 2. Module de contenu `lakour-veillees`
@@ -498,6 +561,27 @@ Même contrat que lakour-40k et lakour-warcraft (`modules/lakour-mj-ia/scripts/c
 lève une erreur claire ; `resumer` donne nom, vivant/mort, métier, rôle) ; outils de narrateur qui appellent `game.lakourLoups`.
 Le MJ IA ne révèle jamais un rôle secret en dehors d'un message privé au joueur concerné. Ce que les rôles apprennent la nuit, il
 le remet par `envoyerSecret` (carnet secret), jamais par un chuchotement du chat.
+
+MJ IA 0.35.0 (avec le système 0.9.0) :
+- il lit rôles et camps par l'API du système (`roleDe`, `campDe`, `fiche` ; `utilitaires.js`, `roleLoups` / `campLoups`), chez le
+  MJ actif : `adaptateurs.js` (`resumer`), `compagnons-jeu.js` (la vue d'un compagnon : son rôle, son camp ; les autres, révélés
+  seulement), `moteur.js` (distribution secrète du narrateur), `outils.js` (`loups_nuit`, `loups_vote`, `loups_eliminer`…),
+  `transcription.js` (la meute, pour router la parole) ; jamais un document ;
+- son coffre (`scripts/coffre.js`) scelle aussi les secrets des Veillées : `api.coffre.sceller`, `scellerEnPartant` (passation du MJ
+  qui perd la main), `ouvrirScelle`, `scellerAvec`, `siRenouvele`, `siDisponible` (§6) ;
+- aux Veillées, ni `noter_memoire` ni `creer_journal` (`horsSystemes`, et refus en garde) : un journal du monde, même réservé au MJ,
+  est livré à tous les navigateurs ; ce que le narrateur doit retenir reste dans son fil, chiffré ; `ecrire_chronique` (la chronique de
+  campagne, lisible de tous) n'est ni proposé ni accepté pendant une partie en cours (`horsPartieLoups`) : avant et après, oui ;
+- la transcription montrée aux MJ (réglage `transcriptionAuMJ`) : affichée localement chez le MJ actif et envoyée aux autres MJ par
+  le canal du module (`{ type: "transcription" }`, `recipients` : les MJ), jamais chuchotée aux Veillées (ailleurs, chuchotée aux MJ
+  comme avant) ;
+- quand `api.ecritureBloquee()` (secrets de la partie en attente chez le MJ actif) : le narrateur n'appelle pas le modèle (un avis au MJ,
+  `LAKOUR_MJIA.Erreurs.SecretsVeillees`), un outil `loups_*` reçu rend une erreur « ne relance pas », le pilote automatique s'arrête
+  (raison `secrets`, sans se suspendre : il repart quand les secrets reviennent, hook `lakourLoups.secrets`), les compagnons n'appellent
+  pas leur modèle ;
+- le coût des IA (`seance`, `compagnonsHorsSeance`, réglages monde) reste en mémoire pendant une partie des Veillées et s'écrit d'un
+  coup quand elle est finie ou abandonnée, à l'arrêt de la séance et avant de quitter la page : une écriture par décision d'un
+  compagnon dirait, la nuit, combien de loups IA se réveillent.
 
 Outils `loups_*` (section « Narrateur des Veillées » de `modules/lakour-mj-ia/scripts/outils.js`, `systemes: ["lakour-loups"]`) :
 `loups_composer`, `loups_distribuer` (maisons sur les deux rives), `loups_nuit` (candidats de `candidatsDeNuit`, mot du Messager
@@ -586,12 +670,83 @@ matins pairs), **Lavoir** (indice flou public), **Cimetière** (sans révélatio
 l'Éclusière a le même effet, Pont en jeu ou non), **Gibet**
 (majorité absolue, inchangé).
 
-## 6. Ce qui reste visible (limites de Foundry v14)
+## 6. Ce qui reste visible, et pourquoi (0.9.0)
 
-- Les **objets `role`** sont des objets possédés par l'acteur : Foundry les livre à tous les navigateurs ; un joueur curieux lit
-  tous les rôles dans la console (`game.actors`). Les cacher demanderait de sortir le rôle des documents du monde (le garder dans
-  les secrets du MJ et l'envoyer à son seul joueur), ce qui touche aussi l'adaptateur du MJ IA.
-- Tout **message de chat**, chuchotement compris, est livré à tous : le système n'en chuchote plus, mais un message privé posté
-  par un autre outil (ex. `message_prive` du MJ IA) reste lisible dans la console.
-- Ce que l'état public garde par nature : qui a voté (pas pour qui), les effets du jour annoncés, les morts et leur cause
-  publique, le résultat d'un vote clos, la chronique publique.
+Foundry v14 livre à TOUS les navigateurs les documents (acteurs et leurs objets, journaux, messages de chat, chuchotements compris),
+les réglages monde et chacune de leurs modifications (avec son instant) ; le serveur ne filtre que les messages de socket adressés
+(`recipients`). D'où la règle : **rien de secret dans un document, un réglage monde ou le chat ; le secret voyage par le socket, à
+un seul, et se range chiffré dans le coffre.** L'essai `essais/non-fuite.test.mjs` sérialise, pour chaque joueur, tout ce qu'il
+reçoit pendant des parties complètes (documents, réglages monde, chat, socket qui lui est adressé) et vérifie qu'aucun rôle, camp,
+choix ni secret d'autrui n'y figure avant sa révélation publique.
+
+**Où vit chaque chose**
+
+| | Qui le reçoit | Ce qu'il contient |
+| --- | --- | --- |
+| Documents `villageois` | tous | nom, image, maison, vivant, révélé, silence, joueur, compagnon, notes ; le **métier** (objet et usages : les métiers sont publics, leur usage est annoncé) ; l'**objet `role` et `system.camp` seulement une fois révélés** (et pour tous à la fin, avec `amoureux`). Propriété : LIMITED pour tous, OBSERVER pour son joueur ; personne d'autre que le MJ ne le modifie (serveur, plus `scripts/garde.mjs`). |
+| Réglage monde `partie` | tous | l'état PUBLIC (§1) : phase, tour, qui a voté (pas pour qui), résultats des votes clos, morts et cause publique, effets du jour annoncés, Bailli, Registre, présage, gens de passage (rôle public), Banc, compte du deuil, chronique publique. Récrit seulement s'il change : jamais par un choix de nuit. |
+| Réglage monde `coffre` | tous, chiffré | TOUS les secrets de la partie, scellés avec la clé du coffre du MJ IA. Écrit aux moments publics (phase, aube résolue, vote clos, mort, arrivée, départ, distribution, victoire), au battement (une fois par minute pendant une partie, même sans changement, vecteur neuf) et avant de quitter la page ; jamais au rythme de la nuit. |
+| Réglages client du MJ (`secrets`, par [monde][userId]) et sa mémoire | le MJ actif | l'état complet : fiches (rôle, camp, amoureux, protections), choix de la nuit et bilan, votes en cours, primes, fioles, aspergés, vraies causes, carnets, composition, peste, masques, rêves, Bonne étoile, autel, pouvoirs du deuil, Pont bloqué, cloche à venir. |
+| Socket, à un seul (`recipients`) | son joueur | sa fiche (`fiche`), sa carte de rôle et son carnet (`secret`, `carnet`), ses demandes (`demande`, `annuler`), son vote (`monVote`), ses refus (`avis`), sa ligne des salons (`salon` : la meute à un loup seulement, la nuit), les mots relayés (`parole`), mort qui voit tout : les rôles des autres (`vus`) ; ses parts de clé (canal du MJ IA). |
+| Réglage client du joueur (`carnet`, par [monde][userId]) | lui | ce qu'il a reçu par le socket (carnet, fiche, prime, vote, vue de mort). |
+| Chat | tous | annonces publiques, récit de fin ; aucun chuchotement du système ni du MJ IA aux Veillées ; pendant une partie, un joueur ne chuchote plus (relais du MJ, ou refus). |
+
+**Le coffre** (`scripts/coffre.mjs`) est celui du MJ IA (`lakour-mj-ia/scripts/coffre.js`, `coffre-logique.js`), toujours actif dans ce
+monde ; sans lui, aucune partie ne se distribue. Clé AES-GCM 256 bits chez le MJ (réglage client du moteur, par [monde][userId]) ;
+partage de Shamir à seuil = **majorité des porteurs** (jamais moins de 2) ; une part par compte joueur, envoyée par le MJ ACTIF seul,
+gardée par [monde][userId][id de clé] et **accusée** (le compte devient porteur) ; rendue au seul MJ actif ; clé reconstituée
+vérifiée par son **empreinte SHA-256** publiée au trousseau ; **renouvellement transactionnel** (un compte créé, supprimé ou qui change
+de rôle : la nouvelle clé n'entre en vigueur qu'une fois ses parts accusées par son seuil ; le coffre des Veillées est rescellé
+avant, par `siRenouvele`) ; **passage de clé** d'un MJ connecté au MJ actif ; **clé de secours** exportée et réimportée par le MJ
+(fenêtre du coffre) ; **avertissement** quand les porteurs ne suffisent pas ou qu'il n'y a qu'un ou deux comptes joueurs (comptes
+probablement sans mot de passe : la clé de secours est alors le seul recours sûr).
+
+**Révision du coffre et changement de MJ actif** (relecture 7). Le réglage `coffre` est `{ partie, rev, chiffre, id, iv, donnees }` :
+`rev` (en clair, croissante) est la révision ; les secrets du MJ gardent `revCoffre` et `ivCoffre` du dernier coffre qu'il a scellé ou
+ouvert (la révision est notée chez lui AVANT l'écriture du réglage). Ses secrets sont **à jour** si c'est ce coffre (même vecteur) ou
+s'ils sont STRICTEMENT plus récents (`revCoffre > rev` : à révision égale, un autre contenu — deux scellements calculés depuis la même
+révision — n'est pas à jour) ; le coffre est relu juste avant d'écrire (changé entre-temps : rien n'est écrit, il est rouvert). On ne scelle que des secrets à jour ; sinon le coffre est rouvert (le MJ ne
+joue jamais sur des secrets périmés : ni fiches, ni état complet). Un MJ actif rechargé (F5) retrouve secrets et révision : il
+rescelle comme avant. Un coffre plus récent qui arrive (réglage changé) est rouvert. Changement de MJ actif (`userConnected`, MJ
+compris) : celui qui perd la main attend la fin des écritures en cours (elles s'arrêtent sans rien écrire : seul le MJ actif écrit,
+vérifié dans la file avant et après chaque modification), scelle aussitôt (passation, `api.coffre.scellerEnPartant` du moteur) puis
+vide sa mémoire ; des secrets écrits sans leurs fiches ne passent jamais pour à jour ; celui
+qui la prend relit son navigateur et, s'il n'est pas à jour, cherche le coffre (clé du moteur, parts des joueurs ou passage de clé
+d'un autre MJ connecté). Une nouvelle partie (distribution, « Rejouer », remise à zéro) oublie les parts attendues de l'ancienne ; un
+secret rouvert qui n'est pas de la partie publique est refusé. Après un scellement avec le moteur, l'ancienne clé `cleCoffre` (avant
+0.9.0) de ce navigateur est effacée. Hook local `lakourLoups.secrets` : l'attente des secrets commence ou finit (alerte de la Table ;
+le MJ IA, par `api.ecritureBloquee()`, se met en pause).
+
+**Ce qui reste visible, et pourquoi**
+- **Ce qui est public par la règle** : qui a voté (pas pour qui, sauf un jour de foire), le résultat d'un vote clos et le Registre,
+  les morts et leur cause publique (« dans la nuit » pour toute mort de nuit), les effets du jour annoncés, le Bailli, les présages,
+  le rôle d'un gens de passage (pas son camp), la chronique publique ; les rôles révélés ; à la fin, tout (rôles, camps, liens
+  d'amour, peste noire, composition à l'historique).
+- **Le rythme public** : l'instant des changements de phase, des votes, des morts annoncées est vu de tous (c'est le jeu) ; pendant
+  la nuit, rien n'est écrit au monde (ni l'état public, ni le coffre hors battement, ni les coûts du MJ IA), donc ni le nombre de
+  réveils, ni l'instant d'un choix, ni le nombre de loups IA ne se lisent. Le battement du coffre est régulier, chiffré, de taille
+  arrondie à 4 Kio : il ne dit pas si quelque chose a changé.
+- **Le coffre face à une coalition** : la clé du moteur est celle de tout le monde (elle chiffre aussi le Carnet caché et le fil de
+  l'IA) ; ses parts vont donc à chaque compte joueur, spectateurs et partis compris. Ils comptent dans la majorité : ils n'abaissent
+  pas le seuil, mais une **majorité de comptes joueurs complices** (ou de comptes sans mot de passe pris par un seul) lit le coffre.
+  Protection : un mot de passe par compte ; à une ou deux personnes, la clé de secours.
+- **Un MJ** (tout utilisateur au rôle MJ) est de confiance par construction : il peut devenir MJ actif et rouvrir le coffre avec les
+  joueurs. Un MJ qui n'est pas l'actif n'a ni les secrets ni la fiche de personne (il voit le public).
+- **Le navigateur d'un joueur** : sa fiche, son carnet, sa vue de mort y sont en clair (localStorage, par monde et compte : un autre
+  compte dans le même navigateur ne les affiche pas, mais quelqu'un qui ouvre les outils de développement de CE profil de navigateur
+  les lit). Un tricheur peut, dans son navigateur, passer outre les refus de parole (son chuchotement part alors au serveur, donc à
+  tous, avant que la garde du MJ ne le retire) et la coupure locale des voix (salons) ; il ne modifie aucun document de la partie.
+- **Un mort qui voit tout** (réglage `mortsVoientTout`, sans Dernier souffle) reçoit les rôles et camps des autres : c'est la règle.
+  Le canal écrit des morts se partage comme les salons vocaux : ceux qui gardent leur Dernier souffle entre eux, ceux qui l'ont rendu
+  (et voient tout) entre eux ; les MJ lisent tout.
+- **Jets de dés privés** pendant une partie : « pour soi » s'affiche chez son auteur seul, sans document ; « MJ seul » et « aveugle »
+  partent au relais du MJ avec leur légende, formule et résultat (un jet aveugle n'est pas montré à son auteur). Aucun ne devient un
+  message de chat (il serait livré à tous).
+- **Le MJ IA** chuchote encore aux MJ ses avis techniques (erreur, budget atteint, pilote automatique) : rien sur les rôles ; ses
+  fils (état du jeu, distribution) sont chiffrés (0.34.0) ; la préparation d'un scénario (hors Veillées) se chuchote au MJ.
+- **Migration** : une partie commencée avant 0.9.0 (rôles et camps sur les documents, joueurs propriétaires) est reprise au
+  « ready » du MJ actif (`api.migrer`) : fiches rangées dans les secrets et scellées d'abord, puis objets de rôle non révélés retirés, camps, amoureux et protections
+  effacés des documents, chaque joueur observateur ; ses anciens secrets (réglage `secrets` à l'ancienne) et son ancien coffre (avec
+  l'ancienne clé `cleCoffre` du MÊME navigateur) sont repris puis rescellés avec le moteur. Les anciennes parts (seuil 2, rendues à
+  n'importe quel MJ) ne servent plus : chaque joueur les efface. Ce qui a été lu avant la mise à jour l'a été : la partie en cours
+  n'est pas « rendue » secrète, seulement la suite.

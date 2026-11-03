@@ -22,10 +22,10 @@ const R = FR.LAKOUR_LOUPS.Registre;
 
 async function charger(racine) {
   const m = f => import(pathToFileURL(join(racine, f)).href);
-  const [api, socket, reglagesM, L, bandeau, local, table, infobulle, MJ] = await Promise.all([m("scripts/api.mjs"), m("scripts/socket.mjs"),
+  const [api, socket, reglagesM, L, bandeau, local, table, infobulle, MJ, coffre] = await Promise.all([m("scripts/api.mjs"), m("scripts/socket.mjs"),
     m("scripts/reglages.mjs"), m("logique/index.mjs"), m("scripts/apps/bandeau.mjs"), m("scripts/plateau-local.mjs"), m("scripts/apps/table.mjs"),
-    m("scripts/infobulle.mjs"), m("scripts/actions-mj.mjs")]);
-  return { api: api.api, socket, reglages: reglagesM, L, bandeau, local, table, infobulle, MJ, racine };
+    m("scripts/infobulle.mjs"), m("scripts/actions-mj.mjs"), m("scripts/coffre.mjs")]);
+  return { api: api.api, socket, reglages: reglagesM, L, bandeau, local, table, infobulle, MJ, coffre, racine };
 }
 
 // La page du MJ rechargée (F5) : une nouvelle instance des modules (mémoire vide), mêmes réglages et documents du monde ; elle
@@ -72,7 +72,7 @@ async function monde(M, { bailli = true, masques = true, delai = 2 } = {}) {
   };
 }
 const villageois = () => game.actors.filter(a => a.type === "villageois");
-const roleDe = a => a.items.find(i => i.type === "role");
+const roleDe = a => secretDuMJ.role(a);
 const commeJoueur = id => { game.user = game.users.get(id); };
 const commeMJ = () => { game.user = game.users.get("mj"); };
 const publicBrut = () => reglages.get("lakour-loups.partie").valeur;
@@ -81,8 +81,8 @@ const cle = a => roleDe(a).system.cle;
 // Une partie ordinaire : deux loups, un Garde, trois villageois (u1…u6). roles : pour en changer.
 async function partie(M, U, roles = [U.loup, U.loup, U.garde, U.villageois, U.villageois, U.villageois], extra = {}) {
   await M.api.distribuer({ roles, metiers: [U.forgeron], joueurs: ["u1", "u2", "u3", "u4", "u5", "u6"], graine: "bailli", composition: "essai", batiments: [], ...extra });
-  const loups = villageois().filter(a => a.system.camp === "meute");
-  const autres = villageois().filter(a => a.system.camp !== "meute");
+  const loups = villageois().filter(a => secretDuMJ.camp(a) === "meute");
+  const autres = villageois().filter(a => secretDuMJ.camp(a) !== "meute");
   return { loups, autres };
 }
 // Les votes de joueurs, par le socket (l'émetteur fait foi).
@@ -113,7 +113,7 @@ async function elire(M, elu) {
 function masquesCaches(noms, depuis = 0) {
   const pub = JSON.stringify(publicBrut());
   for (const nom of noms) assert.ok(!pub.includes(nom), `${nom} dans l'état public`);
-  const loups = villageois().filter(a => a.system.camp === "meute").map(a => a.system.joueur);
+  const loups = villageois().filter(a => secretDuMJ.camp(a) === "meute").map(a => a.system.joueur);
   for (const e of emissions.slice(depuis)) {
     const texte = JSON.stringify(e);
     if (!noms.some(n => texte.includes(n))) continue;
@@ -218,8 +218,8 @@ const VERIFICATIONS = {
     await M.api.distribuer({ roles: [U.loup, U.loup, U.garde, U.villageois, U.villageois, U.villageois], joueurs: ["u1", "u2", "u3", "u4", "u5"],
       compagnons: ["Ysaline"], graine: "compagnon", batiments: [] });
     const ia = villageois().find(a => a.system.compagnon);
-    const loups = villageois().filter(a => a.system.camp === "meute");
-    const [x, y] = villageois().filter(a => a.system.camp !== "meute" && a.system.joueur);
+    const loups = villageois().filter(a => secretDuMJ.camp(a) === "meute");
+    const [x, y] = villageois().filter(a => secretDuMJ.camp(a) !== "meute" && a.system.joueur);
     await M.api.changerPhase("jour");
     await M.api.nommerBailli(ia.id);
     assert.equal(publicBrut().bailli.acteurId, ia.id);
@@ -495,6 +495,10 @@ const VERIFICATIONS = {
     await new Promise(r => setTimeout(r, 20));
     assert.deepEqual(publicBrut().vote.resultat.elus, [loups[1].id]);
     assert.equal(M2.api.registre().filter(e => e.type === "vote" && e.numero === numero).length, 1);
+    // Ici l'ancienne page vit encore (deux onglets du MJ) : elle a scellé après la nouvelle ; la nouvelle, en retard sur le coffre,
+    // n'écrit plus rien tant qu'elle ne l'a pas rouvert (relecture 7) — dans Foundry, le changement du réglage « coffre » l'y mène.
+    if (!M2.coffre.secretsAJour(publicBrut().partie)) await M2.coffre.chercherSecrets(publicBrut().partie);
+    await M2.coffre.rangement();
     // Un vote touché pendant que le Bailli tranchait (ici, l'état réécrit) : il entre quand même au Registre, sans condamné.
     await M2.api.changerPhase("jour");
     await M2.api.ouvrirVote({ duree: 0 });
@@ -582,7 +586,7 @@ const MUTATIONS = [
   ["scripts/api.mjs", "      if (c.resultat.objet === \"bailli\") {", "      if (false) {", "l'élu installé"],
   ["scripts/api.mjs", "    if (resultat.departage?.enAttente) resultat = await departageEnAttente(resultat);\n", "", "le Bailli tranche"],
   ["scripts/api.mjs", "nombre: d.places, objet: \"departage\" });", "nombre: d.places });", "départage nommé pour le compagnon"],
-  ["scripts/api.mjs", "    suivreSuccession();\n    return morts;", "    return morts;", "succession après une élimination"],
+  ["scripts/api.mjs", "    suivreSuccession();\n    diffuserVus();", "    diffuserVus();", "succession après une élimination"],
   ["scripts/api.mjs", "    suivreSuccession();\n    return {", "    return {", "succession après la nuit"],
   ["scripts/api.mjs", "    mortsDeLaNuit = true;\n", "", "succession après toutes les morts de la nuit"],
   ["scripts/api.mjs", "const candidats = L.candidatsSuccession(avant, villageoisAPlat());", "const candidats = tousLesVillageois().map(a => a.id);", "successeur vivant"],
@@ -662,5 +666,5 @@ test("Bailli, Registre, Masques (API) : chaque règle cassée est détectée par
 
 test("au chargement de la page du MJ actif, ce qui attendait le Bailli reprend (api.reprendre)", () => {
   const source = readFileSync(join(SYSTEME, "lakour-loups.mjs"), "utf8");
-  assert.match(source, /if \(!remis\) api\.reprendre\(\);/);
+  assert.match(source, /if \(!remis\) \{[\s\S]*?\n\s+api\.reprendre\(\);/);
 });

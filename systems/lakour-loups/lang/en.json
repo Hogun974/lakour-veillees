@@ -107,7 +107,7 @@
       "AsileDonne": "{nom} will sleep in the Chapel.",
       "VoteAnnule": "This vote was cancelled or is being replayed: nobody is executed.",
       "TempsEcoule": "Voting time is up: counting the votes.",
-      "SecretsEnAttente": "The current game's secrets are in the vault, but two connected players are needed to open it: they will be restored as soon as two players are here.",
+      "SecretsEnAttente": "The current game's secrets are in the AI GM's vault, but a majority of the players must be connected (or the recovery key imported) to open it: they will be restored as soon as they are here.",
       "SecretsRetrouves": "Game secrets restored from the vault: the game resumes where it left off.",
       "SecretsPerdus": "This browser does not hold the secrets of the current game (another GM or browser): tonight's choices, bounties and vials are lost.",
       "Benit": "Blessed by the Priest",
@@ -138,7 +138,8 @@
       "CrierPour": "{nom} cries \"It's the black plague!\"",
       "VoteBailli": "Elect the Bailiff",
       "NommerBailli": "Name the Bailiff",
-      "TrancherPour": "Decide in place of the Bailiff ({nom}):"
+      "TrancherPour": "Decide in place of the Bailiff ({nom}):",
+      "Migration": "Game from before version 0.9.0 resumed: {n} role(s) moved into the GM's secrets and removed from the villagers' sheets."
     },
     "Choix": {
       "Titre": "In the night…",
@@ -344,7 +345,7 @@
       },
       "CanalDesMorts": {
         "Nom": "Channel of the dead",
-        "Aide": "The dead may talk among themselves: their messages become whispers to the dead and the GM only. Otherwise, they can only whisper to the GM."
+        "Aide": "The dead may talk among themselves: the active GM relays their messages to the dead and the GMs only (no chat message, which Foundry would deliver to everyone). Otherwise, they can only write to the GM."
       },
       "SalonsAutomatiques": {
         "Nom": "Automatic voice rooms",
@@ -405,7 +406,11 @@
       "PasDeMJ": "No GM is connected: the power cannot be applied.",
       "RolesInconnus": "Unknown roles, or missing from the content: {roles}.",
       "PersonneAReveiller": "No one to wake for \"{role}\" tonight.",
-      "PasDeVote": "No vote is open."
+      "PasDeVote": "No vote is open.",
+      "SansCoffre": "The AI GM module (lakour-mj-ia) must be active: its vault keeps the game's secrets (roles, sides, night choices). Enable it, then deal.",
+      "FicheVerrouillee": "Only the GM may change the villagers of the game.",
+      "SecretsAbsents": "This browser does not (yet) hold the up-to-date secrets of the current game: nothing is written. The vault is reopened as soon as possible (players' shares, another GM, recovery key).",
+      "MJInactif": "Only the active GM holds the game's secrets: role, side, lover and \"Revealed\" are set from that GM's browser."
     },
     "Batiments": {
       "taverne": "The Tavern",
@@ -547,9 +552,13 @@
       "Toi": "you"
     },
     "Parole": {
-      "Mort": "You are dead: the living no longer hear you. You may whisper to the narrator.",
-      "Silence": "You are silenced: you cannot speak during today's debate and vote (whispering to the narrator is still allowed).",
-      "CanalDesMorts": "You are dead: your messages now reach only the other dead and the narrator."
+      "Mort": "You are dead: the living no longer hear you. You may write to the narrator (whisper to the GM: only the GM receives it).",
+      "Silence": "You are silenced: you cannot speak during today's debate and vote (a word whispered to the GM reaches the GM alone).",
+      "CanalDesMorts": "You are dead: your messages now reach only the other dead and the narrator (relayed by the GM, never through Foundry's chat).",
+      "Chuchotement": "During a game, no whispering between players: Foundry would deliver it to every browser. Speak aloud, or write to the GM only.",
+      "TitreMorts": "[Dead]",
+      "TitreMJ": "[To the GM]",
+      "JetAveugle": "🎲 Blind roll sent to the GM."
     },
     "NouvellePartie": {
       "Choisie": "chosen setup",

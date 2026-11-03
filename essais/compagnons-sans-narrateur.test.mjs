@@ -37,8 +37,8 @@ for (const [k, v] of Object.entries({
 })) game.settings.register(ID, k, { default: v });
 game.lakourLoups = api;
 ecouterSocket();
-Object.assign(game, { world: { id: "brumecombe", title: "Brumecombe" }, combats: { active: null }, journal: [], messages: { get contents() { return messages; } },
-  modules: new Map([[ID, { api: {} }]]) });
+// game.modules : celui de la doublure (le coffre du MJ IA y est, comme au « ready » du moteur).
+Object.assign(game, { world: { id: "brumecombe", title: "Brumecombe" }, combats: { active: null }, journal: [], messages: { get contents() { return messages; } } });
 reinitialiserPrive();
 const hasardOrigine = Math.random;
 Math.random = creerHasard("sans-narrateur");
@@ -95,7 +95,7 @@ test("le MJ humain distribue : les joueurs IA tiennent des places comme les joue
   await api.nouvellePartie({ memesJoueurs: false, niveau: "debutants" });
   assert.equal(villageois().length, 6);
   assert.deepEqual(villageois().filter(estCompagnon).map(a => a.name).sort(), noms, "les mêmes joueurs IA, avec leur nom");
-  assert.ok(villageois().every(a => a.items.find(i => i.type === "role")), "chacun a un rôle");
+  assert.ok(villageois().every(a => secretDuMJ.role(a)), "chacun a un rôle");
   assert.equal(game.settings.get(ID, "compagnonsHorsSeance").cout, 0, "nouvelle partie : compteur hors séance à zéro");
 });
 
@@ -141,6 +141,11 @@ test("le vote : les joueurs IA votent dans le même vote que les humains ; le na
   assert.ok(compagnonsVivants.every(id => votants.includes(id)), "chaque joueur IA vivant a voté");
   assert.ok(votants.some(id => !estCompagnon(game.actors.get(id))), "les humains aussi");
   assert.deepEqual(narrateur, [], "le narrateur n'est jamais appelé");
+  // Pendant la partie, le coût reste en mémoire (le réglage monde, livré à tous, ne bat pas au rythme des décisions des IA) ;
+  // il s'écrit d'un coup quand la partie est finie ou abandonnée.
+  assert.equal(game.settings.get(ID, "compagnonsHorsSeance").appels, 0, "rien d'écrit pendant la partie");
+  assert.equal(moteur.couts.hors.appels, appels.length, "chaque appel des compagnons compté (en mémoire)");
+  await moteur.viderCouts();
   const hors = game.settings.get(ID, "compagnonsHorsSeance");
   assert.equal(hors.appels, appels.length, "chaque appel des compagnons au compteur hors séance");
   assert.ok(hors.cout > 0);

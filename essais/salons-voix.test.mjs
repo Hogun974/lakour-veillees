@@ -27,9 +27,9 @@ const NEUTRE = "modules/lakour-veillees/assets/jetons/villageois.svg";
 
 // ------------------------------------------------------------------ mise en place
 const villageois = () => game.actors.filter(a => a.type === "villageois");
-const roleDe = a => a.items.find(i => i.type === "role");
+const roleDe = a => secretDuMJ.role(a);
 const acteurDe = u => villageois().find(a => a.system.joueur === u) ?? null;
-const estLoup = a => a?.system.camp === "meute";
+const estLoup = a => secretDuMJ.camp(a) === "meute";
 const joueursHumains = () => game.users.filter(u => !u.isGM).map(u => u.id);
 const lignesEmises = (depuis = 0) => emissions.slice(depuis).filter(e => e.type === "salon");
 const derniereLigne = u => lignesEmises().filter(e => e.recipients?.[0] === u).at(-1) ?? null;
@@ -254,6 +254,8 @@ function fausseVoix({ mode = 3, voix = "always" } = {}) {
   const pistes = new Map(), videos = new Map(), voyants = new Map(), diffusions = [];
   const pistesDe = id => { if (!pistes.has(id)) pistes.set(id, [{ kind: "audio", enabled: true }, { kind: "video", enabled: true }]); return pistes.get(id); };
   class Client {
+    // Aucun pair connecté : rien à trier côté émetteur (essais/salons-emetteur.test.mjs), seule la coupure locale joue ici.
+    peers = new Map();
     getMediaStreamForUser(id) { return { getTracks: () => pistesDe(id) }; }
     toggleBroadcast(oui) { this.diffuse = oui; diffusions.push(oui); }
   }

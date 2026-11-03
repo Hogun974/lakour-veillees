@@ -8,9 +8,12 @@
 // (création, mise à jour, déplacements par moveTokens, hooks preUpdateToken / preMoveToken comme dans le navigateur qui
 // modifie). Les hooks sont appelés pour de bon (Hooks.on / Hooks.callAll / Hooks.call) ; journalHooks les note tous.
 // Utilisée par essais/loups-api.test.mjs, essais/integration-loups.test.mjs et essais/compagnons.test.mjs.
+// Le coffre : celui du MJ IA (sous-module modules/lakour-mj-ia, scripts/coffre.js), le vrai, branché comme dans Foundry sur
+// game.modules.get("lakour-mj-ia").api.coffre (option moteur, vraie par défaut ; moteur: false = le module coupé).
 import { readFileSync, readdirSync } from "node:fs";
 import { creerHasard, choisir, melanger } from "../../systems/lakour-loups/logique/hasard.mjs";
 import * as L from "../../systems/lakour-loups/logique/index.mjs";
+import * as CoffreMoteur from "../../modules/lakour-mj-ia/scripts/coffre.js";
 
 const RACINE = new URL("../../", import.meta.url);
 export const FR = JSON.parse(readFileSync(new URL("systems/lakour-loups/lang/fr.json", RACINE), "utf8"));
@@ -265,7 +268,7 @@ export const livreA = (emission, userId) => !emission.recipients || emission.rec
 // 0 par défaut, pour que les parties des essais restent reproductibles (la rareté s'éprouve sur L.tirerPeste).
 // dernierSouffle : le réglage « lakour-loups.dernierSouffle » (vrai dans Foundry) ; faux par défaut ici, pour que les morts
 // simulés qui tentent de voter soient refusés comme avant (ses propres essais l'activent : essais/lot2-*.test.mjs).
-export function installerFoundry({ joueurs = 6, contenu = false, chancePeste = 0, dernierSouffle = false } = {}) {
+export function installerFoundry({ joueurs = 6, contenu = false, chancePeste = 0, dernierSouffle = false, moteur = true } = {}) {
   compteur = 0;
   journalHooks = []; emissions = []; messages = []; reglages = new Map();
   ecouteursMJ = []; clients = []; enVol = new Set(); erreursSocket = [];
@@ -280,7 +283,7 @@ export function installerFoundry({ joueurs = 6, contenu = false, chancePeste = 0
   };
   const items = new Collection();
   globalThis.game = {
-    user: mj, users, actors: new Collection(), items, journal: new Collection(), ready: true, system: { id: "lakour-loups" },
+    user: mj, users, actors: new Collection(), items, journal: new Collection(), ready: true, system: { id: "lakour-loups" }, world: { id: "brumecombe" },
     i18n: { localize: c => formater(c), format: formater, has: c => typeof chemin(FR, c) === "string" },
     settings: {
       register(id, cle, conf) {
@@ -302,6 +305,16 @@ export function installerFoundry({ joueurs = 6, contenu = false, chancePeste = 0
     }
   };
   items.fromCompendium = doc => { const d = doc.toObject(); delete d._id; return d; };
+  // Le MJ IA : son coffre (réglages du moteur, API comme dans scripts/main.js du moteur).
+  CoffreMoteur.oublierCoffre();
+  game.modules = new Collection();
+  if (moteur) {
+    const enregistrer = (cle, scope, type, defaut) => game.settings.register("lakour-mj-ia", cle, { scope, config: false, type, default: defaut });
+    for (const cle of ["trousseau", "coffreCarnet", "filsScelles"]) enregistrer(cle, "world", Object, {});
+    for (const cle of ["cleCarnet", "partCarnet"]) enregistrer(cle, "client", Object, {});
+    for (const cle of ["horloges", "enquetes", "contacts"]) enregistrer(cle, "world", Array, []);
+    game.modules.set("lakour-mj-ia", { id: "lakour-mj-ia", active: true, api: { coffre: apiCoffreMoteur() } });
+  }
   // Des hooks qui appellent leurs écouteurs (comme Foundry) ; une erreur d'écouteur est notée, sans arrêter les autres.
   const ecouteursHooks = new Map();
   erreursHooks = [];
@@ -363,6 +376,62 @@ export function installerFoundry({ joueurs = 6, contenu = false, chancePeste = 0
   }
 }
 
+// Pour la comptabilité des essais : ce que le MJ actif sait d'un villageois (ses secrets, 0.9.0), lu comme le MJ, quel que soit
+// l'utilisateur courant de l'essai. Les documents n'ont plus ni rôle (avant sa révélation), ni camp, ni amoureux, ni protections.
+const commeLeMJ = fn => {
+  const avant = globalThis.game.user;
+  globalThis.game.user = globalThis.game.users.activeGM ?? avant;
+  try { return fn(); } finally { globalThis.game.user = avant; }
+};
+const acteurDe = a => (typeof a === "string" ? globalThis.game.actors.get(a) : a);
+const estVillageois = a => acteurDe(a)?.type === "villageois";
+// Les fiches du MJ actif : par l'API du système si l'essai l'a posée, sinon dans son réglage client (rangé par monde et compte).
+const ficheBrute = a => {
+  const id = acteurDe(a)?.id;
+  const api = globalThis.game.lakourLoups;
+  if (typeof api?.fiche === "function") return commeLeMJ(() => api.fiche(id));
+  const s = reglages?.get("lakour-loups.secrets")?.valeur?.brumecombe?.mj;
+  const partie = reglages?.get("lakour-loups.partie")?.valeur?.partie;
+  const f = s?.partie && s.partie === partie ? s.fiches?.[id] : null;
+  return f ? structuredClone(f) : null;
+};
+globalThis.secretDuMJ = {
+  role: a => {
+    if (!a) return null;
+    const api = globalThis.game.lakourLoups;
+    if (typeof api?.roleDe === "function") return commeLeMJ(() => api.roleDe(acteurDe(a)));
+    const r = ficheBrute(a)?.role;
+    return r ? { id: "", name: r.name, img: r.img, type: "role", system: r.system } : null;
+  },
+  // Un objet de rôle (pas un villageois) : son camp de départ.
+  camp: a => (!a ? "" : estVillageois(a) ? ficheBrute(a)?.camp ?? "" : a.system?.camp ?? ""),
+  fiche: a => (a ? ficheBrute(a) : null),
+  amoureux: a => (a ? ficheBrute(a)?.amoureux ?? "" : ""),
+  protections: a => (a ? ficheBrute(a)?.protections ?? 0 : 0)
+};
+
+// L'API du coffre du MJ IA, telle que son main.js la publie (game.modules.get("lakour-mj-ia").api.coffre).
+// Les rappels posés sur une API ne servent que tant qu'elle est celle du module installé (une installation de la doublure par
+// vérification : les rappels d'un système chargé avant, ou d'une copie mutée, ne répondent plus à sa place).
+export function apiCoffreMoteur() {
+  const api = {
+    etat: () => CoffreMoteur.etatCoffre(),
+    chercher: () => CoffreMoteur.chercherCoffre(),
+    renouveler: o => CoffreMoteur.renouveler(o),
+    exporterSecours: () => CoffreMoteur.exporterSecours(),
+    importerSecours: f => CoffreMoteur.importerSecours(f),
+    sceller: contenu => CoffreMoteur.scellerPourAutre(contenu),
+    scellerEnPartant: contenu => CoffreMoteur.scellerEnPartant(contenu),
+    ouvrirScelle: scelle => CoffreMoteur.ouvrirPourAutre(scelle),
+    scellerAvec: (contenu, cle) => CoffreMoteur.scellerAvec(contenu, cle),
+    siRenouvele: fn => CoffreMoteur.siRenouvele(cle => (enPlace() ? fn(cle) : undefined)),
+    siDisponible: fn => CoffreMoteur.siCleDisponible((...a) => (enPlace() ? fn(...a) : undefined))
+  };
+  const enPlace = () => globalThis.game?.modules?.get?.("lakour-mj-ia")?.api?.coffre === api;
+  return api;
+}
+export { CoffreMoteur };
+
 export function creerObjetMonde(name, type, system) {
   const o = new FauxObjet({ name, type, system });
   game.items.set(o.id, o);
@@ -384,15 +453,41 @@ export function simulerJoueurs({ graine = "joueurs", canal = "system.lakour-loup
   const h = creerHasard(graine);
   const journal = { reponses: [], bulletins: [], refusAttendus: [], demandes: [], textes: [], secrets: [], jour: [], fuites: [] };
   let dernierVote = "";
-  const roleDe = a => a?.items.find(i => i.type === "role") ?? null;
+  // Ce que chaque joueur sait (0.9.0) : SA fiche (rôle, usages, camp), reçue du MJ par le socket ; sa meute s'il est loup (sa
+  // carte de rôle, les nouvelles du carnet) ; les rôles et camps révélés à tous (documents). Jamais le rôle d'un autre.
+  const fiches = new Map();   // acteurId -> fiche reçue par son joueur
+  const roleRevele = a => a?.items.find(i => i.type === "role") ?? null;
+  const roleDe = a => fiches.get(a?.id)?.role ?? roleRevele(a);
   const metierDe = a => a?.items.find(i => i.type === "metier") ?? null;
   const acteurDe = userId => game.actors.find(a => a.type === "villageois" && a.system.joueur === userId);
-  const estLoup = a => a?.system.camp === "meute";
+  const campPublic = a => (a?.system.revele ? a.system.camp : "");
+  const meuteDe = userId => {
+    const noms = new Set();
+    for (const s of journal.secrets.filter(x => x.userId === userId)) {
+      const carte = /^<carte [^|]*\|[^|]*\|([^|]*)\|/.exec(s.entree?.html ?? "");
+      if (carte) { noms.clear(); for (const n of carte[1].split(", ").filter(Boolean)) noms.add(n); }
+      const nouveau = /^(.+?), gens de passage, est des vôtres/.exec(s.texte ?? "");
+      if (nouveau) noms.add(nouveau[1]);
+    }
+    return noms;
+  };
+  // Pour le joueur userId, l'acteur a est-il un loup ?
+  const estLoupPour = (userId, a) => {
+    const moi = acteurDe(userId);
+    if (!a) return false;
+    if (a.id === moi?.id) return fiches.get(moi.id)?.camp === "meute";
+    if (campPublic(a) === "meute") return true;
+    return fiches.get(moi?.id)?.camp === "meute" && meuteDe(userId).has(a.name);
+  };
   const tirer = (liste, n) => melanger(liste, h).slice(0, n);
   const etatPublic = () => game.settings.get("lakour-loups", "partie");
-  const aPlat = a => ({ id: a.id, nom: a.name, vivant: a.system.vivant, revele: a.system.revele, camp: a.system.camp, maison: a.system.maison,
-    silence: a.system.silence, role: roleDe(a) ? { cle: roleDe(a).system.cle, usages: { ...roleDe(a).system.usages } } : null,
-    metier: metierDe(a) ? { cle: metierDe(a).system.cle, usages: { ...metierDe(a).system.usages } } : null });
+  // Le village vu par le joueur userId : son rôle et les rôles révélés, rien d'autre.
+  const aPlatPour = userId => a => {
+    const role = a.system.joueur === userId ? roleDe(a) : roleRevele(a);
+    return { id: a.id, nom: a.name, vivant: a.system.vivant, revele: a.system.revele, camp: a.system.joueur === userId ? fiches.get(a.id)?.camp ?? "" : campPublic(a),
+      maison: a.system.maison, silence: a.system.silence, role: role ? { cle: role.system.cle, usages: { ...role.system.usages } } : null,
+      metier: metierDe(a) ? { cle: metierDe(a).system.cle, usages: { ...metierDe(a).system.usages } } : null };
+  };
   const envoyer = (message, qui) => envoyerAuMJ(canal, message, { emetteur: qui });
 
   function choixDeNuit(d) {
@@ -401,7 +496,8 @@ export function simulerJoueurs({ graine = "joueurs", canal = "system.lakour-loup
     const effet = role?.system.effet ?? "";
     const ids = d.candidats.map(c => c.id);
     const autres = ids.filter(id => id !== moi.id);
-    if (estLoup(moi)) return tirer(autres.filter(id => !estLoup(game.actors.get(id))), 1);   // un loup vise un non-loup
+    const loup = a => estLoupPour(d.destinataire, a);
+    if (loup(moi)) return tirer(autres.filter(id => !loup(game.actors.get(id))), 1);   // un loup vise un non-loup
     switch (effet) {
       case "voir-camp": case "proteger": case "eclairer": case "voir-role-mort": return tirer(ids, d.nombre);
       case "lien-amour": case "messager": return tirer(ids, d.nombre);
@@ -426,16 +522,18 @@ export function simulerJoueurs({ graine = "joueurs", canal = "system.lakour-loup
     if (!v?.ouvert || dernierVote === cle) return;
     dernierVote = cle;
     const vivants = game.actors.filter(a => a.type === "villageois" && a.system.vivant);
-    const nonLoups = v.candidats.filter(id => !estLoup(game.actors.get(id)));
+    // La meute (vue d'un loup joueur : sa carte de rôle) se concerte sur une proie hors de la meute.
+    const unLoup = vivants.find(x => x.system.joueur && estLoupPour(x.system.joueur, x));
+    const nonLoups = v.candidats.filter(id => !(unLoup && estLoupPour(unLoup.system.joueur, game.actors.get(id))));
     const proieDuJour = choisir(nonLoups, h);                                   // la meute s'est concertée
     const rumeur = choisir(v.candidats, h);                                      // le soupçon qui court au village
     // Loups connus du village : démasqués (lanterne, mort révélée), ou lus dans les cendres par un villageois qui le dit au
     // débat (lu dans SON carnet secret).
-    const connus = new Set(v.candidats.filter(id => { const a = game.actors.get(id); return a.system.revele && estLoup(a); }));
+    const connus = new Set(v.candidats.filter(id => campPublic(game.actors.get(id)) === "meute"));
     for (const s of journal.secrets) {
       const lecteur = acteurDe(s.userId);
       const lu = /Les cendres parlent : (.+?) est du camp « Meute »/.exec(s.texte ?? "");
-      if (!lu || !lecteur?.system.vivant || estLoup(lecteur)) continue;
+      if (!lu || !lecteur?.system.vivant || estLoupPour(s.userId, lecteur)) continue;
       const suspect = game.actors.find(a => a.type === "villageois" && a.name === lu[1]);
       if (suspect && v.candidats.includes(suspect.id)) connus.add(suspect.id);
     }
@@ -443,8 +541,9 @@ export function simulerJoueurs({ graine = "joueurs", canal = "system.lakour-loup
     // Seuls les joueurs humains votent par leur navigateur ; les compagnons votent par le résolveur du MJ IA.
     for (const a of vivants.filter(x => x.system.joueur)) {
       let cible;
-      if (v.objet === "chapelle") cible = estLoup(a) ? choisir(v.candidats.filter(id => estLoup(game.actors.get(id))), h) ?? rumeur : rumeur;
-      else if (estLoup(a)) cible = proieDuJour && proieDuJour !== a.id ? proieDuJour : choisir(nonLoups.filter(id => id !== a.id), h);
+      const loup = x => estLoupPour(a.system.joueur, x);
+      if (v.objet === "chapelle") cible = loup(a) ? choisir(v.candidats.filter(id => loup(game.actors.get(id))), h) ?? rumeur : rumeur;
+      else if (loup(a)) cible = proieDuJour && proieDuJour !== a.id ? proieDuJour : choisir(nonLoups.filter(id => id !== a.id), h);
       else if (loupsDemasques.length && h() < 0.85) cible = choisir(loupsDemasques, h);
       else {
         const x = h();
@@ -475,7 +574,7 @@ export function simulerJoueurs({ graine = "joueurs", canal = "system.lakour-loup
   function usePouvoirs(etat, filtre = () => true) {
     if (!pouvoirs) return;
     for (const a of game.actors.filter(x => x.type === "villageois" && x.system.joueur)) {
-      const villageois = game.actors.filter(x => x.type === "villageois").map(aPlat);
+      const villageois = game.actors.filter(x => x.type === "villageois").map(aPlatPour(a.system.joueur));
       const possibles = L.pouvoirsDe({ villageois, etat, acteurId: a.id }).filter(p => p.possible && filtre(p));
       if (!possibles.length || h() >= pouvoirs) continue;
       const p = choisir(possibles, h);
@@ -490,7 +589,16 @@ export function simulerJoueurs({ graine = "joueurs", canal = "system.lakour-loup
     if (c !== canal) return;
     // Ce que le serveur livre à chaque joueur : tout s'il n'y a pas de destinataires, sinon les seuls destinataires.
     const pour = userId => !recipients || recipients.includes(userId);
-    if (["demande", "annuler", "secret", "carnet", "monVote", "avis"].includes(m.type) && !recipients) journal.fuites.push(m);
+    if (["demande", "annuler", "secret", "carnet", "monVote", "avis", "fiche", "vus", "parole", "salon"].includes(m.type) && !recipients) journal.fuites.push(m);
+    if (m.type === "fiche") {
+      // Sa fiche, à lui seul : rangée pour son seul joueur (le destinataire doit être celui de l'acteur).
+      const a = game.actors.get(m.acteurId);
+      if (a && recipients?.length === 1 && recipients[0] === a.system.joueur) {
+        if (m.fiche) fiches.set(m.acteurId, structuredClone(m.fiche));
+        else fiches.delete(m.acteurId);
+      } else journal.fuites.push(m);
+      return;
+    }
     if (m.type === "demande") {
       const user = game.users.get(m.destinataire);
       if (!user?.active || user.isGM || !pour(m.destinataire)) return;
@@ -526,5 +634,9 @@ export function simulerJoueurs({ graine = "joueurs", canal = "system.lakour-loup
       if (mort?.system.joueur && h() < 0.7) usePouvoirs(etatPublic(), p => p.pouvoir === "puits");
     }
   });
-  return { journal, acteurDe, calme };
+  // Branchés en pleine partie (page chargée après la distribution) : chacun demande son carnet et sa fiche au MJ (« bonjour »).
+  if (etatPublic()?.partie) {
+    for (const u of game.users.filter(x => !x.isGM && x.active)) envoyer({ type: "bonjour", userId: u.id }, u.id);
+  }
+  return { journal, acteurDe, calme, fiches };
 }

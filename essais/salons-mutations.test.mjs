@@ -58,7 +58,7 @@ async function scenario(M) {
   const vil = creerObjetMonde("Villageois", "role", { cle: "villageois" });
   await M.api.distribuer({ roles: [loup, loup, vil, vil, vil, vil], joueurs: ["u1", "u2", "u3", "u4", "u5", "u6"], graine: "mutants" });
   const acteurDe = u => game.actors.find(a => a.system.joueur === u);
-  const loups = ["u1", "u2", "u3", "u4", "u5", "u6"].filter(u => acteurDe(u).system.camp === "meute");
+  const loups = ["u1", "u2", "u3", "u4", "u5", "u6"].filter(u => secretDuMJ.camp(acteurDe(u)) === "meute");
   const autres = ["u1", "u2", "u3", "u4", "u5", "u6"].filter(u => !loups.includes(u));
   const ligne = u => emissions.filter(e => e.type === "salon" && e.recipients?.includes(u)).at(-1);
   const hooks = depuis => emissions.slice(depuis).filter(e => e.type === "hook" && e.nom === "lakourLoups.audibilite");
@@ -143,8 +143,12 @@ const MUTATIONS = [
   ["scripts/salons.mjs", "const r1 = envelopper(w, \"broadcast\", avant => function () { return avant.call(this, false); });", "const r1 = () => {};", "micro coupé"],
   ["scripts/salons.mjs", "w.broadcast(w.settings?.client?.voice?.mode === \"always\");", "w.broadcast(false);", "micro rendu"],
   ["scripts/salons.mjs", "return () => { if (propre) objet[nom] = avant; else delete objet[nom]; };", "return () => {};", "état d'origine rendu"],
-  ["scripts/salons.mjs", "\"lakourLoups.victoire\", \"lakourLoups.aube\"]", "\"lakourLoups.aube\"]", "la victoire"],
-  ["scripts/salons.mjs", "  if (estMJActif()) {\n    const r = L.audibilite(pub, secretsMJ()", "  if (true) {\n    const r = L.audibilite(pub, secretsMJ()", "prudence hors du MJ"],
+  // Système 0.9.0 : deux mutations d'avant ne cassent plus rien, la règle étant tenue deux fois.
+  // - « la victoire » (hook lakourLoups.victoire retiré) : à la victoire, les rôles et camps entrent aux documents
+  //   (api.mjs, revelerPubliquement), et chaque mise à jour d'un villageois recalcule déjà les lignes (updateActor) ;
+  // - « prudence hors du MJ » (audibilite calculée partout comme chez le MJ) : un navigateur de joueur n'a plus aucun camp
+  //   (ni dans les documents, ni dans un réglage : secrets.mjs et donnees.mjs ne lisent les secrets que chez le MJ actif),
+  //   il ne peut rien deviner, même en calculant tout.
   ["scripts/socket.mjs", "      envoyerLigne(qui);\n", "", "bonjour"],
   ["scripts/socket.mjs", "    case \"salon\": return recevoirLigne(message);\n", "", "ligne reçue"]
 ];

@@ -73,7 +73,7 @@ function monde(n, graine, { simules = true } = {}) {
   return joueursSimules;
 }
 
-const roleDe = a => a?.items.find(i => i.type === "role") ?? null;
+const roleDe = a => secretDuMJ.role(a);
 const metierDe = a => a?.items.find(i => i.type === "metier") ?? null;
 const villageois = () => game.actors.filter(a => a.type === "villageois");
 const vivantsIds = () => new Set(villageois().filter(a => a.system.vivant).map(a => a.id));
@@ -186,7 +186,11 @@ async function verifierPlateau(ou) {
 
 function verifierVillageois(usages) {
   for (const a of villageois()) {
-    assert.equal(a.items.filter(i => i.type === "role").length, 1, `${a.name} : un seul rôle`);
+    // Le rôle vit dans les secrets du MJ ; le document n'a son objet de rôle qu'une fois révélé à tous (ou la partie finie).
+    assert.ok(secretDuMJ.role(a), `${a.name} : un rôle, dans les secrets du MJ`);
+    const publie = a.system.revele || api.etat().phase === "fin";
+    assert.equal(a.items.filter(i => i.type === "role").length, publie ? 1 : 0, `${a.name} : objet de rôle au document seulement révélé`);
+    if (!publie) assert.equal(a.system.camp, "", `${a.name} : aucun camp au document avant la révélation`);
     assert.equal(a.items.filter(i => i.type === "metier").length, 1, `${a.name} : un seul métier`);
   }
   for (const a of villageois()) {
@@ -217,7 +221,7 @@ function verifierVictoireFinale(texte) {
   const nomVainqueur = e.vainqueur === "village" || e.vainqueur === "meute" ? e.vainqueur : game.actors.get(e.vainqueur)?.name;
   assert.match(texte, new RegExp(`VICTOIRE : ${nomVainqueur}`));
   const vivants = villageois().filter(a => a.system.vivant);
-  const meute = vivants.filter(a => a.system.camp === "meute");
+  const meute = vivants.filter(a => secretDuMJ.camp(a) === "meute");
   if (e.vainqueur === "village") {
     assert.equal(meute.length, 0, "le village gagne : plus aucun loup vivant");
     assert.ok(!vivants.some(a => ROLES[roleDe(a).system.cle]?.system.victoireCle === "dernier-survivant"), "ni pyromane vivant");
@@ -227,7 +231,7 @@ function verifierVictoireFinale(texte) {
     assert.ok(game.actors.get(e.vainqueur), "solitaire ou amoureux vainqueur");
   }
   // Le vainqueur est celui que dicte la règle sur l'état final.
-  const aPlat = villageois().map(a => ({ id: a.id, vivant: a.system.vivant, camp: a.system.camp, amoureux: a.system.amoureux,
+  const aPlat = villageois().map(a => ({ id: a.id, vivant: a.system.vivant, camp: secretDuMJ.camp(a), amoureux: secretDuMJ.amoureux(a),
     role: { cle: roleDe(a).system.cle, victoireCle: roleDe(a).system.victoireCle } }));
   assert.equal(verifierVictoire({ villageois: aPlat, morts: e.morts, primes: e.primes }), e.vainqueur);
 }
@@ -374,7 +378,7 @@ async function jouerPartie({ n, niveau, graine, nbCompagnons = 0 }) {
       assert.ok(tour <= 30, `plus de 30 tours sans victoire\n${textes.slice(-6).join("\n\n")}`);
       // --- nuit
       const avantNuit = vivantsIds();
-      const avant = new Map(villageois().map(a => [a.id, { cle: roleDe(a).system.cle, camp: a.system.camp }]));
+      const avant = new Map(villageois().map(a => [a.id, { cle: roleDe(a).system.cle, camp: secretDuMJ.camp(a) }]));
       const fx = effetsDeLaNuit(api.etat(), api.etat().tour + 1);
       const nbDemandes = emissions.length;
       const carnetsAvant = new Map(villageois().filter(a => a.system.compagnon).map(a => [a.id, api.carnet(a.id).length]));
@@ -525,7 +529,7 @@ async function jouerPartie({ n, niveau, graine, nbCompagnons = 0 }) {
     couvert("Taverne (meute repoussée)", api.etat().journalSecret.filter(x => /pas osé tuer .* à la Taverne/.test(x.texte)).length);
     couvert("Chapelle (meute repoussée)", api.etat().journalSecret.filter(x => /pas pu entrer à la Chapelle/.test(x.texte)).length);
     const v = game.actors.get(api.etat().vainqueur);
-    const camp = !v ? api.etat().vainqueur : v.system.amoureux && game.actors.get(v.system.amoureux)?.system.vivant ? "amoureux" : roleDe(v).system.cle;
+    const camp = !v ? api.etat().vainqueur : secretDuMJ.amoureux(v) && game.actors.get(secretDuMJ.amoureux(v))?.system.vivant ? "amoureux" : roleDe(v).system.cle;
     return { vainqueur: api.etat().vainqueur, tours: tour, camp };
   } catch (e) {
     throw new Error(`${niveau}, ${n} joueurs${nbCompagnons ? ` et ${nbCompagnons} compagnons` : ""}, graine « ${graine} » : ${e.message}\n--- derniers échanges :\n${textes.slice(-4).join("\n\n")}`, { cause: e });
@@ -616,7 +620,7 @@ test("loups_nuit : la meute chasse avec l'invite des loups, même si la Louve m�
   const louve = acteurDuRole("louve-mere");
   if (louve.id !== premier) await api.echangerRoles(premier, louve.id);   // entre deux loups : les camps ne bougent pas
   assert.equal(roleDe(game.actors.get(premier)).system.cle, "louve-mere");
-  const loups = villageois().filter(a => a.system.camp === "meute");
+  const loups = villageois().filter(a => secretDuMJ.camp(a) === "meute");
   const depuis = emissions.length;
   await outil("loups_nuit").executer({ delai_secondes: 20 });
   const meute = api.etat().nuitPrecedente.actions.find(x => x.roleCle === "meute");
@@ -643,7 +647,7 @@ test("loups_nuit : l'Herboriste apprend qui la meute a attaqué", async () => {
 test("loups_nuit : le Fossoyeur interroge les tombes (les morts), pas les vivants ; il l'apprend dans son carnet secret", async () => {
   await preparer(15, "debutants-15");
   const fossoyeur = acteurDuRole("fossoyeur");
-  const mort = villageois().find(a => a.id !== fossoyeur.id && a.system.camp !== "meute");
+  const mort = villageois().find(a => a.id !== fossoyeur.id && secretDuMJ.camp(a) !== "meute");
   await api.eliminer(mort.id, { cause: "narrateur", reveler: false });
   const depuis = emissions.length;
   await outil("loups_nuit").executer({ delai_secondes: 20 });
@@ -659,7 +663,7 @@ test("loups_nuit : le Messager fait écrire l'expéditeur, le destinataire seul 
   // Un Messager à coup sûr : celui de la composition, sinon le premier villageois sans pouvoir de nuit le devient.
   let messager = acteurDuRole("messager");
   if (!messager) {
-    messager = villageois().find(a => a.system.camp === "village" && !roleDe(a).system.nuit.actif);
+    messager = villageois().find(a => secretDuMJ.camp(a) === "village" && !roleDe(a).system.nuit.actif);
     await messager.deleteEmbeddedDocuments("Item", [roleDe(messager).id]);
     await messager.createEmbeddedDocuments("Item", [{ ...structuredClone(ROLES.messager), _id: undefined }]);
   }
@@ -721,11 +725,11 @@ test("loups_effet : protéger, faire taire, changer de camp, échanger les rôle
     return r.contenu;
   };
   assert.match(await effet("proteger", [a.name]), new RegExp(`« proteger » appliqué à ${a.name}`));
-  assert.equal(a.system.protections, 1);
+  assert.equal(secretDuMJ.protections(a), 1);
   await effet("silence", [b.name]);
   assert.equal(b.system.silence, true);
   await effet("changer_camp", [a.name], "solitaire");
-  assert.equal(a.system.camp, "solitaire");
+  assert.equal(secretDuMJ.camp(a), "solitaire");
   const depuis = emissions.length;
   assert.match(await effet("echanger_roles", [a.name, b.name]), new RegExp(`appliqué à ${a.name} et ${b.name}`));
   assert.deepEqual([roleDe(a).name, roleDe(b).name], [rb, ra]);
@@ -860,7 +864,7 @@ async function jouerPeste({ n, graine, nbCompagnons = 0, crierAuJour = 0 }) {
     assert.match(depart, /PESTE NOIRE \(secret absolu/, "le narrateur sait que c'est la peste");
     assert.match(depart, /Composition, pour toi seul/);
     const equilibre = JSON.parse(readFileSync(new URL("../modules/lakour-veillees/assets/equilibre.json", import.meta.url), "utf8"));
-    assert.ok(villageois().every(a => equilibre.roles[roleDe(a).system.cle]?.camp !== "meute" && a.system.camp !== "meute"), "aucun rôle de la meute");
+    assert.ok(villageois().every(a => equilibre.roles[roleDe(a).system.cle]?.camp !== "meute" && secretDuMJ.camp(a) !== "meute"), "aucun rôle de la meute");
     assert.equal(api.etat().peste.active, true);
     assert.ok(!("peste" in reglages.get("lakour-loups.partie").valeur), "drapeau absent de l'état public");
     let fin = "", tour = 0;
@@ -994,7 +998,7 @@ test("cri « C'est la peste noire ! » dans une partie ordinaire : le crieur est
     // Un mort ne crie pas ; un vivant, le jour, oui.
     const mort = villageois().find(a => !a.system.vivant);
     if (mort) assert.match((await outil("loups_peste").executer({ villageois: mort.name })).contenu, /Cri refusé/);
-    const crieur = villageois().find(a => a.system.vivant && a.system.camp !== "meute" && !a.system.silence);
+    const crieur = villageois().find(a => a.system.vivant && secretDuMJ.camp(a) !== "meute" && !a.system.silence);
     const r = await outil("loups_peste").executer({ villageois: crieur.name });
     assert.match(r.contenu, /Ce n'était pas la peste/);
     assert.equal(crieur.system.vivant, false);

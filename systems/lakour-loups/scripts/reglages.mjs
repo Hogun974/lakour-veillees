@@ -4,7 +4,7 @@ import { etatInitial } from "../logique/etat.mjs";
 import { oublierSecrets } from "./secrets.mjs";
 import { oublierPrive } from "./prive.mjs";
 import { oublierSalons, quandReglageSalons } from "./salons.mjs";
-import { oublierCoffre } from "./coffre.mjs";
+import { oublierCoffre, surCoffreChange } from "./coffre.mjs";
 
 export function enregistrerReglages(quandEtatChange) {
   oublierSecrets();
@@ -25,11 +25,15 @@ export function enregistrerReglages(quandEtatChange) {
     scope: "world", config: true, type: Boolean, default: true
   });
   game.settings.register(ID, "lancementTraite", { scope: "world", config: false, type: String, default: "" });
+  // Rangés par [monde][userId] (0.9.0) : « secrets » n'est lu que par un MJ, pour lui-même ; « carnet » par son seul joueur.
   game.settings.register(ID, "secrets", { scope: "client", config: false, type: Object, default: {} });
   game.settings.register(ID, "carnet", { scope: "client", config: false, type: Object, default: {} });
-  // Le coffre des secrets (coffre.mjs) : chiffré, livré à tous, illisible sans la clé ; la clé chez le MJ actif, une part
-  // de clé chez chaque joueur.
-  game.settings.register(ID, "coffre", { scope: "world", config: false, type: Object, default: {} });
+  // Le coffre des secrets (coffre.mjs) : chiffré avec la clé du coffre du MJ IA, livré à tous, illisible sans elle ; écrit
+  // seulement aux moments publics et à intervalle fixe (jamais au rythme des choix de nuit).
+  // Un coffre plus récent que les secrets du MJ actif (scellé par un autre MJ) : il le rouvre (coffre.mjs, surCoffreChange).
+  game.settings.register(ID, "coffre", { scope: "world", config: false, type: Object, default: {}, onChange: () => surCoffreChange() });
+  // Avant 0.9.0 : l'ancienne clé du MJ (relue une fois pour la migration d'une partie en cours, puis effacée) et l'ancienne part
+  // d'un joueur (effacée : elle ne sert plus).
   game.settings.register(ID, "cleCoffre", { scope: "client", config: false, type: Object, default: {} });
   game.settings.register(ID, "partCoffre", { scope: "client", config: false, type: Object, default: {} });
   game.settings.register(ID, "revelerALaMort", {

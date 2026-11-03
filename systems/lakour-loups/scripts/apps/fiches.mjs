@@ -2,8 +2,13 @@
 // Mise en page façon carte à jouer : en-tête avec portrait et « pilules » (Rôle · Camp · Métier · Maison), état en
 // insignes, pouvoirs en cartes (« atouts ») avec icône, usages restants et texte en infobulle.
 import { ID, CAMPS, EFFETS, VICTOIRES } from "../../logique/constantes.mjs";
-import { t, roleDe, metierDe, libelleCamp, lireEtat, roleVisible } from "../donnees.mjs";
+import { t, roleDe, campDe, amoureuxDe, protectionsDe, metierDe, libelleCamp, lireEtat, roleVisible } from "../donnees.mjs";
 import { mesSecrets } from "../prive.mjs";
+import { estMJActif } from "../canal.mjs";
+
+// Les champs SECRETS de la fiche (0.9.0) : ils ne vivent pas dans le document, mais dans les secrets du MJ actif. Le formulaire
+// du MJ les nomme « secret.* » ; à l'envoi, ils partent à game.lakourLoups.reglerFiche (jamais au document).
+const CHAMPS_SECRETS = ["camp", "amoureux", "protections"];
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ActorSheetV2, ItemSheetV2 } = foundry.applications.sheets;
@@ -70,11 +75,14 @@ export class FicheVillageois extends HandlebarsApplicationMixin(ActorSheetV2) {
     const gm = game.user.isGM;
     const etat = lireEtat();
     const voitRole = etat.phase === "fin" || roleVisible(a);
+    // Rôle, camp, amoureux, protections : ce que CE navigateur sait (donnees.mjs) — le MJ actif, ses secrets ; le joueur, sa fiche.
     const role = roleDe(a), metier = metierDe(a);
+    const camp = campDe(a), amoureux = amoureuxDe(a), protections = protectionsDe(a);
+    const sienne = Boolean(s.joueur) && s.joueur === game.user.id;
     // La prime n'est pas dans l'état public : le MJ actif la connaît, le joueur la tient de son carnet secret.
-    const prime = gm ? etat.primes?.[a.id] ?? "" : (a.isOwner && s.joueur === game.user.id ? mesSecrets().prime : "");
-    const amoureuxNom = (a.isOwner || gm) && s.amoureux ? game.actors.get(s.amoureux)?.name ?? "" : "";
-    // Un joueur ne reçoit jamais le document entier (rôle, camp, amoureux y sont) : seulement les champs publics.
+    const prime = gm ? etat.primes?.[a.id] ?? "" : (sienne ? mesSecrets().prime : "");
+    const amoureuxNom = (sienne || gm) && amoureux ? game.actors.get(amoureux)?.name ?? "" : "";
+    // Un joueur ne reçoit jamais le document entier : seulement les champs publics.
     const { document: _document, model: _modele, source: _source, ...publics } = contexte;
     const insigne = (classe, icone, texte, bulle = "") => ({ classe, icone, texte, bulle });
     const etats = [
@@ -82,7 +90,7 @@ export class FicheVillageois extends HandlebarsApplicationMixin(ActorSheetV2) {
       s.revele && insigne("revele", "fa-eye", t("LAKOUR_LOUPS.Fiche.Revele")),
       s.silence && insigne("silence", "fa-comment-slash", t("LAKOUR_LOUPS.Table.Silence")),
       s.vivant && etat.bailli?.actif && etat.bailli.acteurId === a.id && insigne("bailli", "fa-stamp", t("LAKOUR_LOUPS.Bailli.Titre"), t("LAKOUR_LOUPS.Bailli.Aide")),
-      gm && s.protections > 0 && insigne("protege", "fa-shield-halved", t("LAKOUR_LOUPS.Fiche.Protege", { n: s.protections }), t("LAKOUR_LOUPS.Fiche.Protections")),
+      gm && protections > 0 && insigne("protege", "fa-shield-halved", t("LAKOUR_LOUPS.Fiche.Protege", { n: protections }), t("LAKOUR_LOUPS.Fiche.Protections")),
       amoureuxNom && insigne("amoureux", "fa-heart", amoureuxNom, t("LAKOUR_LOUPS.Fiche.Amoureux"))
     ].filter(Boolean);
     const vueRole = voitRole && role ? await atout(role, gm) : null;
@@ -91,12 +99,14 @@ export class FicheVillageois extends HandlebarsApplicationMixin(ActorSheetV2) {
       ...(gm ? contexte : publics),
       acteur: { id: a.id, uuid: a.uuid, name: a.name, img: a.img },
       system: gm ? s : { joueur: s.joueur, compagnon: s.compagnon, vivant: s.vivant, revele: s.revele, silence: s.silence, maison: s.maison, notes: s.notes },
-      gm, proprietaire: a.isOwner, voitRole,
+      // Les champs secrets, chez le MJ actif seulement (lui seul a les secrets ; un autre MJ ne les a pas).
+      secret: estMJActif() ? { camp, amoureux, protections } : null,
+      gm, proprietaire: sienne, voitRole,
       editable: this.isEditable,
-      role: vueRole ? { ...vueRole, camp: libelleCamp(role.system.camp), campCle: role.system.camp } : null,
+      role: vueRole ? { ...vueRole, secret: Boolean(role.secret), uuid: role.uuid ?? "", camp: libelleCamp(role.system.camp), campCle: role.system.camp } : null,
       metier: vueMetier,
-      campLibelle: voitRole ? libelleCamp(s.camp) : "",
-      campCle: voitRole ? s.camp : "",
+      campLibelle: voitRole ? libelleCamp(camp) : "",
+      campCle: voitRole ? camp : "",
       etats,
       camps: gm ? choixCamps() : {},
       joueurs: gm ? Object.fromEntries([["", t("LAKOUR_LOUPS.Fiche.Personne")], ...game.users.filter(u => !u.isGM).map(u => [u.id, u.name])]) : {},
@@ -108,27 +118,75 @@ export class FicheVillageois extends HandlebarsApplicationMixin(ActorSheetV2) {
     };
   }
 
-  // Un seul rôle et un seul métier : le nouveau remplace l'ancien. Seul le MJ donne un rôle.
+  // Un seul rôle et un seul métier : le nouveau remplace l'ancien. Seul le MJ ACTIF donne un rôle, et dans la fiche secrète
+  // (game.lakourLoups.donnerRole), jamais sur le document.
   async _onDropItem(event, item) {
     if (!["role", "metier"].includes(item.type)) return super._onDropItem(event, item);
-    if (item.type === "role" && !game.user.isGM) return null;
-    if (!this.actor.isOwner || this.actor.uuid === item.parent?.uuid) return null;
+    if (!game.user.isGM || this.actor.uuid === item.parent?.uuid) return null;
+    if (item.type === "role") {
+      if (!estMJActif()) { ui.notifications.warn(t("LAKOUR_LOUPS.Erreurs.MJInactif")); return null; }
+      try { await game.lakourLoups.donnerRole(this.actor.id, item.uuid); } catch (e) { ui.notifications.error(e.message); }
+      return null;
+    }
     const anciens = this.actor.items.filter(i => i.type === item.type).map(i => i.id);
     if (anciens.length) await this.actor.deleteEmbeddedDocuments("Item", anciens);
-    const cree = await super._onDropItem(event, item);
-    if (cree && item.type === "role") await this.actor.update({ "system.camp": cree.system.camp });
-    return cree;
+    return super._onDropItem(event, item);
+  }
+
+  // Le formulaire du MJ : les champs « secret.* » partent aux secrets (reglerFiche), le reste au document ; la case « Révélé »
+  // cochée publie le rôle (game.lakourLoups.reveler).
+  #secretsSaisis = null;
+  _prepareSubmitData(event, form, formData, updateData) {
+    const plat = formData?.object ?? {};
+    const saisis = {};
+    for (const champ of CHAMPS_SECRETS) {
+      const cle = `secret.${champ}`;
+      if (cle in plat) { saisis[champ] = plat[cle]; delete plat[cle]; }
+    }
+    this.#secretsSaisis = Object.keys(saisis).length ? saisis : null;
+    return super._prepareSubmitData(event, form, formData, updateData);
+  }
+
+  async _processSubmitData(event, form, submitData, options) {
+    const saisis = this.#secretsSaisis;
+    this.#secretsSaisis = null;
+    const revele = submitData?.system?.revele === true && !this.document.system.revele;
+    if (revele) delete submitData.system.revele;
+    await super._processSubmitData(event, form, submitData, options);
+    // Un MJ qui n'est pas l'actif n'a pas les secrets : ni rôle, ni camp, ni « Révélé » ne passent par lui (il est prévenu).
+    if (!estMJActif()) {
+      if (revele || saisis) ui.notifications.warn(t("LAKOUR_LOUPS.Erreurs.MJInactif"));
+      return;
+    }
+    try {
+      if (saisis) {
+        const actuel = { camp: campDe(this.document), amoureux: amoureuxDe(this.document), protections: protectionsDe(this.document) };
+        const changes = {};
+        if (saisis.camp !== undefined && saisis.camp !== actuel.camp && saisis.camp) changes.camp = saisis.camp;
+        if (saisis.amoureux !== undefined && saisis.amoureux !== actuel.amoureux) changes.amoureux = saisis.amoureux;
+        if (saisis.protections !== undefined && Number(saisis.protections) !== actuel.protections) changes.protections = Number(saisis.protections) || 0;
+        if (Object.keys(changes).length) await game.lakourLoups.reglerFiche(this.document.id, changes);
+      }
+      if (revele) await game.lakourLoups.reveler(this.document.id);
+    } catch (e) { ui.notifications.error(e.message); }
   }
 
   static #ouvrirObjet(event, cible) {
-    // Le rôle révélé d'un autre se lit dans la carte et l'infobulle : sa fiche n'est ouverte qu'à qui peut la voir.
+    // Le rôle révélé d'un autre se lit dans la carte et l'infobulle : sa fiche n'est ouverte qu'à qui peut la voir. Un rôle
+    // secret (fiche du MJ, ou la sienne) n'est pas un objet du document : on ouvre le rôle d'origine (compendium), s'il est connu.
     const objet = this.document.items.get(cible.dataset.itemId);
-    if (objet?.testUserPermission(game.user, "OBSERVER")) objet.sheet.render({ force: true });
+    if (objet?.testUserPermission(game.user, "OBSERVER")) return objet.sheet.render({ force: true });
+    const uuid = cible.dataset.uuid;
+    if (!objet && uuid) fromUuid(uuid).then(d => d?.sheet?.render({ force: true })).catch(() => null);
   }
 
   static async #retirerObjet(event, cible) {
     if (!game.user.isGM) return;
-    await this.document.items.get(cible.dataset.itemId)?.delete();
+    const objet = this.document.items.get(cible.dataset.itemId);
+    if (objet) return objet.delete();
+    // Le rôle secret : retiré de la fiche (MJ actif).
+    if (cible.dataset.secret && !estMJActif()) return ui.notifications.warn(t("LAKOUR_LOUPS.Erreurs.MJInactif"));
+    if (cible.dataset.secret) await game.lakourLoups.donnerRole(this.document.id, null);
   }
 }
 

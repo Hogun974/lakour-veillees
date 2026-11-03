@@ -2,6 +2,7 @@
 // Champs d'extension (absents du contrat, sans effet si on les laisse vides) : role.apparence, role.victoireCle.
 
 import { CAMPS } from "../logique/constantes.mjs";
+import { roleDe } from "./donnees.mjs";
 
 const { fields } = foundry.data;
 const texte = (initial = "") => new fields.StringField({ required: true, blank: true, initial });
@@ -10,7 +11,11 @@ const entier = (initial = 0, min = 0) => new fields.NumberField({ required: true
 const bool = (initial = false) => new fields.BooleanField({ initial });
 const camp = () => new fields.StringField({ required: true, blank: false, initial: "village", choices: CAMPS });
 const usages = () => new fields.SchemaField({ max: entier(0), restant: entier(0) });
+// Le camp PUBLIC d'un villageois : "" (inconnu) tant que son rôle n'est pas révélé ; le vrai camp vit dans les secrets du MJ.
+const campPublic = () => new fields.StringField({ required: true, blank: true, initial: "", choices: { "": "", ...Object.fromEntries(CAMPS.map(c => [c, c])) } });
 
+// Le villageois (0.9.0) : le document ne porte que le PUBLIC. Rôle, camp, amoureux et protections sont des secrets du MJ actif
+// (logique/fiches.mjs) ; camp et amoureux ne sont écrits ici qu'à la révélation publique (camp) et à la fin de la partie.
 export class ModeleVillageois extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     return {
@@ -18,11 +23,11 @@ export class ModeleVillageois extends foundry.abstract.TypeDataModel {
       compagnon: bool(false),   // tenu par un compagnon IA (sans joueur : ses choix passent par api.resolveurs.compagnon)
       vivant: bool(true),
       revele: bool(false),      // rôle montré à tous
-      camp: camp(),             // camp ACTUEL
+      camp: campPublic(),       // camp PUBLIC : "" tant que le rôle est caché, le camp actuel une fois révélé
       maison: texte(),
-      amoureux: texte(),        // id de l'acteur lié
+      amoureux: texte(),        // id de l'acteur lié : publié à la fin de la partie seulement
       silence: bool(false),
-      protections: entier(0),
+      protections: entier(0),   // inutilisé depuis 0.9.0 (secret du MJ) : toujours 0
       notes: html()
     };
   }
@@ -78,8 +83,9 @@ export class ModeleBatiment extends foundry.abstract.TypeDataModel {
   }
 }
 
-// Acteur du système : `.role` et `.metier` donnent les objets possédés (contrat : villageois() « avec .role et .metier »).
+// Acteur du système : `.role` et `.metier` (contrat : villageois() « avec .role et .metier »). Le rôle est celui que ce navigateur
+// connaît (donnees.mjs, roleDe) : chez le MJ actif, celui de ses secrets ; ailleurs, le sien ou un rôle révélé.
 export class ActeurLoups extends Actor {
-  get role() { return this.items.find(i => i.type === "role") ?? null; }
+  get role() { return roleDe(this); }
   get metier() { return this.items.find(i => i.type === "metier") ?? null; }
 }

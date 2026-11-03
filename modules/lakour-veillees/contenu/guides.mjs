@@ -556,7 +556,7 @@ Pose sur la carte quelques **figurants** pour animer le village : le garde du gu
 
 # Changer de navigateur en pleine partie
 
-Les secrets de la partie (choix de la nuit, primes, fioles, peste noire…) vivent dans le navigateur du MJ, et dans un **coffre chiffré** sur le serveur. Chaque joueur connecté garde un morceau de la clé, inutilisable seul. Si tu reprends la partie depuis un autre navigateur ou un autre ordinateur, **deux joueurs connectés** suffisent pour rouvrir le coffre : les secrets reviennent d'eux-mêmes, en quelques secondes. Sans eux, un message te prévient, et le coffre s'ouvrira dès que deux joueurs seront là.
+Les secrets de la partie (les rôles et les camps de chacun, les choix de la nuit, primes, fioles, peste noire…) vivent dans le navigateur du MJ, et dans un **coffre chiffré** sur le serveur, celui du MJ IA (qui doit être actif). Chaque compte joueur garde un morceau de la clé, inutilisable seul. Si tu reprends la partie depuis un autre navigateur ou un autre ordinateur, il faut que **la majorité des joueurs** soient connectés pour rouvrir le coffre : les secrets reviennent d'eux-mêmes, en quelques secondes. Sans eux, un message te prévient, et le coffre s'ouvrira dès qu'ils seront là. Plus simple encore : garde la **clé de secours** du MJ IA (Réglages › MJ IA › Coffre) et réimporte-la sur l'autre navigateur. Donne un mot de passe à chaque compte joueur : un compte ouvert à tous est un morceau de clé que n'importe qui peut prendre.
 
 # Si un joueur se trompe
 

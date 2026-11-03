@@ -8,7 +8,10 @@
 // chez tous pour ce qui est public (phase, mort, silence, réglage, distribution, nouvelle partie), chez le MJ seul pour ce
 // qui ne l'est pas (un villageois mordu qui rejoint la meute).
 //
-// Dans chaque navigateur, d'après sa ligne : les flux A/V des gens qu'on ne doit pas entendre sont coupés LOCALEMENT
+// Dans chaque navigateur, d'après sa ligne : sa voix (son et image) ne PART que vers ceux qui doivent l'entendre
+// (ligne.auditeurs) — côté émetteur, RTCRtpSender#replaceTrack(null) vers les autres ; s'il ne peut pas trier, micro et
+// caméra coupés à la source, pour tous (voir « côté émetteur » plus bas). En plus (défense en profondeur), les flux A/V
+// des gens qu'on ne doit pas entendre sont coupés LOCALEMENT
 // (pistes du flux distant désactivées, élément <video> muet, voyant « parle » éteint : rien ne trahit un loup qui parle la
 // nuit), et son propre micro est coupé quand on doit se taire (AVMaster#broadcast et AVClient#toggleBroadcast enveloppés
 // sur l'instance, toujours à false). Aucun réglage A/V persistant n'est modifié (ni muted, ni volume) ; tout est rendu
@@ -216,23 +219,309 @@ function rendreMicro() {
 export const microCoupe = () => Boolean(rendreMicroFn);
 export const fluxCoupes = () => [...coupes];
 
+// ------------------------------------------------------------------ côté émetteur : ma voix ne part que vers qui l'entend
+// La coupure locale ci-dessus ne suffit pas : le flux d'un loup arriverait quand même chez un villageois, qui pourrait
+// rallumer les pistes dans la console, ou mesurer le niveau de chaque flux pour savoir qui parle la nuit. Ici, c'est
+// l'émetteur qui trie : vers un pair qui ne doit pas l'entendre (absent de ligne.auditeurs), chaque RTCRtpSender porte la
+// piste null (RTCRtpSender#replaceTrack(null) : plus un paquet, sans renégociation), et la vraie piste vers les autres.
+// Son et image : tous les émetteurs de la connexion.
+//
+// Lu dans le client v14 (client/av/clients/simplepeer.mjs) : `peers = new Map()` (userId -> pair SimplePeer) ;
+// connectPeer fait `new SimplePeer({ stream: localStream })` puis aussitôt `peers.set(userId, peer)`, avant toute
+// signalisation ; updateLocalStream (autre micro, autre caméra) fait `peer.removeStream(ancien)` puis `peer.addStream(neuf)`
+// (dans SimplePeer : `_pc.removeTrack` / `_pc.addTrack`). Hypothèse restante (bibliothèque SimplePeer, non vérifiable sans
+// A/V réel) : la RTCPeerConnection d'un pair est dans `_pc`. On accepte aussi `pc`, `peerConnection`, `connection`, ou un
+// pair qui est lui-même une connexion (getSenders) ; sinon, repli. Recalcul : à
+// chaque ligne reçue, chaque rendu des caméras, réglage A/V, connexion d'un joueur, pair ajouté (`peers.set` enveloppé sur
+// l'instance : trié avant que la négociation ne parte), piste ajoutée ou retirée (`addTrack`, `addTransceiver`,
+// `removeTrack` enveloppés sur la connexion), renégociation (`negotiationneeded`, `signalingstatechange`), et piste
+// changée par Foundry ou SimplePeer (autre micro, autre caméra : `replaceTrack` enveloppé sur l'émetteur, qui note la vraie
+// piste et n'envoie que null à qui ne doit pas l'entendre).
+//
+// Repli : si ce navigateur ne peut pas trier (pas de `peers`, pair sans connexion lisible, émetteur sans replaceTrack,
+// replaceTrack(null) refusé…) alors que sa voix ne doit pas aller à tout le monde, son micro ET sa caméra sont coupés à la
+// source (pistes du flux local éteintes, AVMaster#broadcast, AVClient#toggleBroadcast et #toggleVideo forcés à false),
+// pour tous, avec un avertissement : mieux vaut une meute muette qu'une meute qui se trahit.
+//
+// Prudence : une ligne d'une autre phase que l'état public (la ligne de la nouvelle phase n'est pas encore arrivée), ou pas
+// de ligne pendant une partie : ma voix ne part que vers les MJ.
+const PHASES_LIBRES = ["preparation", "fin", ""];
+const PROPRIETES_CONNEXION = ["_pc", "pc", "peerConnection", "connection"];
+
+let autorises = null;              // null : tous ; sinon les userId qui peuvent recevoir ma voix
+const connexions = new Map();      // RTCPeerConnection -> { userId, pc, emetteurs: Set, rendre: [fonctions], fautive }
+const emetteurs = new WeakMap();   // RTCRtpSender -> { sender, c, vraie, envoyee, attente, avant, rendre }
+let pairsEnveloppes = null;        // { pairs, rendre } : la Map des pairs dont set/delete sont enveloppés
+let rendreSourceFn = null;
+let averti = false;
+
+// À qui ma voix peut-elle aller ? null : à tous (rien à trier).
+function destinatairesVoix() {
+  if (!avActif() || game.user?.isGM || !salonsAutomatiques()) return null;
+  const phase = String(lirePublic().phase ?? "");
+  const ligne = maLigne;
+  if (ligne && ligne.phase === phase) return ["libre", "mj"].includes(ligne.salon) ? null : new Set((ligne.auditeurs ?? []).map(String));
+  if (PHASES_LIBRES.includes(phase)) return null;
+  return new Set(game.users.filter(u => u.isGM).map(u => u.id));
+}
+const autorise = userId => autorises === null || autorises.has(String(userId));
+
+function connexionDe(pair) {
+  if (!pair || typeof pair !== "object") return null;
+  if (typeof pair.getSenders === "function") return pair;
+  for (const p of PROPRIETES_CONNEXION) {
+    try { const c = pair[p]; if (c && typeof c.getSenders === "function") return c; } catch { /* accesseur */ }
+  }
+  return null;
+}
+const fermee = pc => pc?.signalingState === "closed" || pc?.connectionState === "closed";
+const pairsDe = client => { const p = client?.peers; return p && typeof p === "object" ? p : null; };
+const entrees = pairs => (typeof pairs.entries === "function" ? [...pairs.entries()] : Object.entries(pairs));
+
+// Envoie cette piste (ou null) sur cet émetteur, si ce n'est déjà fait. Un refus de couper rend la connexion « fautive » :
+// repli à la source.
+function envoyer(e, piste) {
+  if (e.envoyee === piste) return;
+  e.envoyee = piste;
+  e.attente++;
+  let p;
+  try { p = e.avant.call(e.sender, piste); } catch (err) { p = Promise.reject(err); }
+  Promise.resolve(p).catch(err => {
+    if (piste !== null || fermee(e.c.pc)) return;
+    console.warn(`${ID} | émetteur`, err);
+    e.c.fautive = true;
+    appliquerVoix();
+  }).finally(() => { e.attente--; });
+}
+
+// Un émetteur : enveloppé (sa vraie piste notée, null vers qui ne doit pas l'entendre), puis réglé.
+function garderEmetteur(sender, c) {
+  if (!sender || typeof sender.replaceTrack !== "function") return null;
+  let e = emetteurs.get(sender);
+  if (!e) {
+    const piste = sender.track ?? null;
+    e = { sender, c, vraie: piste, envoyee: piste, attente: 0, avant: null, rendre: null };
+    emetteurs.set(sender, e);
+  }
+  e.c = c;
+  c.emetteurs.add(sender);
+  if (!e.rendre) {
+    e.rendre = envelopper(sender, "replaceTrack", avant => {
+      e.avant = avant;
+      return function (piste) {
+        e.vraie = piste ?? null;
+        const voulue = autorise(e.c.userId) ? e.vraie : null;
+        e.envoyee = voulue;
+        e.attente++;
+        let p;
+        try { p = avant.call(this, voulue); } catch (err) { p = Promise.reject(err); }
+        return Promise.resolve(p).finally(() => { e.attente--; });
+      };
+    });
+  }
+  return e;
+}
+
+function reglerEmetteur(e) {
+  const piste = e.sender.track ?? null;
+  // Une piste posée sans passer par replaceTrack (addTrack qui reprend un émetteur, removeTrack natif) : c'est la vraie.
+  if (!e.attente && piste !== e.envoyee) { e.vraie = piste; e.envoyee = piste; }
+  envoyer(e, autorise(e.c.userId) ? e.vraie : null);
+}
+
+// Une connexion vers un pair : ses émetteurs gardés, ses ajouts de pistes et renégociations surveillés.
+function garderConnexion(userId, pair) {
+  const pc = connexionDe(pair);
+  if (!pc) return null;
+  let c = connexions.get(pc);
+  if (c && c.userId !== userId) { oublierConnexion(pc); c = null; }
+  if (c) return c;
+  c = { userId, pc, emetteurs: new Set(), rendre: [], fautive: false };
+  connexions.set(pc, c);
+  const trier = s => { try { const e = garderEmetteur(s, c); if (e) reglerEmetteur(e); else { c.fautive = true; appliquerVoix(); } } catch (err) { console.warn(`${ID} | émetteur`, err); } };
+  if (typeof pc.addTrack === "function") {
+    c.rendre.push(envelopper(pc, "addTrack", avant => function (...args) { const s = avant.apply(this, args); trier(s); return s; }));
+  }
+  if (typeof pc.addTransceiver === "function") {
+    c.rendre.push(envelopper(pc, "addTransceiver", avant => function (...args) { const t = avant.apply(this, args); trier(t?.sender); return t; }));
+  }
+  if (typeof pc.removeTrack === "function") {
+    c.rendre.push(envelopper(pc, "removeTrack", avant => function (s, ...args) {
+      const r = avant.call(this, s, ...args);
+      const e = emetteurs.get(s);
+      if (e && !e.attente) { e.vraie = null; e.envoyee = s?.track ?? null; }
+      return r;
+    }));
+  }
+  if (typeof pc.addEventListener === "function") {
+    const relancer = () => { if (connexions.get(pc) === c && !reglerConnexion(c)) appliquerVoix(); };
+    for (const nom of ["negotiationneeded", "signalingstatechange"]) pc.addEventListener(nom, relancer);
+    c.rendre.push(() => { for (const nom of ["negotiationneeded", "signalingstatechange"]) pc.removeEventListener?.(nom, relancer); });
+  }
+  return c;
+}
+
+// -> vrai si chaque émetteur de cette connexion est trié.
+function reglerConnexion(c) {
+  if (fermee(c.pc)) return true;
+  let liste;
+  try { liste = c.pc.getSenders(); } catch { return false; }
+  let ok = !c.fautive;
+  for (const s of liste ?? []) {
+    const e = garderEmetteur(s, c);
+    if (e) reglerEmetteur(e);
+    else ok = false;
+  }
+  return ok;
+}
+
+// Ne suit plus une connexion : enveloppes retirées (l'état des émetteurs reste noté, pour une coupure en cours). rendre :
+// vraies pistes reposées (tout le monde peut m'entendre) ; sinon (pair parti, connexion abandonnée par le client A/V),
+// ce qui était coupé le reste.
+function oublierConnexion(pc, { rendre = false } = {}) {
+  const c = connexions.get(pc);
+  if (!c) return;
+  connexions.delete(pc);
+  for (const s of c.emetteurs) {
+    const e = emetteurs.get(s);
+    if (!e) continue;
+    if (rendre && !fermee(pc)) envoyer(e, e.vraie);
+    e.rendre?.();
+    e.rendre = null;
+  }
+  for (const r of c.rendre) r();
+}
+
+function lacherPairs() {
+  pairsEnveloppes?.rendre();
+  pairsEnveloppes = null;
+}
+
+// Un pair ajouté ou retiré par le client A/V : trié aussitôt.
+function brancherPairs(pairs) {
+  if (pairsEnveloppes?.pairs === pairs) return;
+  lacherPairs();
+  if (typeof pairs.set !== "function") return;
+  const r1 = envelopper(pairs, "set", avant => function (userId, pair) {
+    const r = avant.call(this, userId, pair);
+    try { const c = garderConnexion(String(userId), pair); if (!c || !reglerConnexion(c)) appliquerVoix(); } catch (err) { console.warn(`${ID} | émetteur`, err); }
+    return r;
+  });
+  const r2 = typeof pairs.delete === "function"
+    ? envelopper(pairs, "delete", avant => function (userId) {
+      const pc = connexionDe(this.get?.(userId));
+      const r = avant.call(this, userId);
+      if (pc) oublierConnexion(pc);
+      return r;
+    })
+    : () => {};
+  pairsEnveloppes = { pairs, rendre: () => { r1(); r2(); } };
+}
+
+function lacherEmetteur() {
+  autorises = null;
+  for (const pc of [...connexions.keys()]) oublierConnexion(pc, { rendre: true });
+  lacherPairs();
+}
+
+// Trie mes émetteurs d'après ma ligne. -> vrai si ma voix ne va qu'où elle doit (ou si elle peut aller partout), faux s'il
+// faut le repli.
+function appliquerEmetteur() {
+  const qui = destinatairesVoix();
+  if (qui === null) { lacherEmetteur(); return true; }
+  autorises = qui;
+  const pairs = pairsDe(game.webrtc?.client);
+  let ok = Boolean(pairs);
+  const vus = new Set();
+  if (pairs) {
+    brancherPairs(pairs);
+    for (const [userId, pair] of entrees(pairs)) {
+      const c = garderConnexion(String(userId), pair);
+      if (!c) { ok = false; continue; }
+      vus.add(c.pc);
+      if (!reglerConnexion(c)) ok = false;
+    }
+  }
+  for (const pc of [...connexions.keys()]) if (!vus.has(pc)) oublierConnexion(pc);
+  if (ok) return true;
+  // Rien à cacher si tous ceux qui sont là peuvent m'entendre.
+  return !game.users.some(u => u.id !== game.user.id && u.active !== false && !qui.has(u.id));
+}
+
+// Le repli : micro et caméra éteints à la source, pour tous (le micro par couperMicro, à côté).
+function couperSource() {
+  const client = game.webrtc?.client;
+  if (!rendreSourceFn) {
+    const eteintes = new Set();
+    const r = client && typeof client.toggleVideo === "function"
+      ? envelopper(client, "toggleVideo", avant => function () { return avant.call(this, false); })
+      : () => {};
+    rendreSourceFn = () => {
+      r();
+      for (const p of eteintes) p.enabled = true;   // seulement les caméras que ce repli a éteintes
+    };
+    rendreSourceFn.eteintes = eteintes;
+    if (!averti) {
+      averti = true;
+      // TODO clé de traduction (Salons, « Repli ») dans lang/fr.json et en.json : texte en dur en attendant.
+      const texte = "Veillées : la voix de Foundry ne permet pas de choisir à qui partent ton micro et ta caméra. Pour ne rien trahir, ils sont coupés pour tous tant que ton salon est fermé.";
+      try { ui.notifications?.warn?.(texte, { permanent: false }); } catch { /* sans interface */ }
+      console.warn(`${ID} | ${texte}`);
+    }
+  }
+  let local = null;
+  try { local = client?.localStream ?? fluxDe(game.user.id); } catch { local = null; }
+  // L'image seulement : le son, c'est couperMicro (AVClient#toggleBroadcast(false) éteint les pistes audio), qui le rendra
+  // selon le mode de voix (rallumer ici ouvrirait le micro d'un « appuyer pour parler »).
+  for (const piste of local?.getTracks?.() ?? []) {
+    if (piste.kind === "audio" || !piste.enabled) continue;
+    rendreSourceFn.eteintes.add(piste);
+    piste.enabled = false;
+  }
+}
+
+function rendreSource() {
+  if (!rendreSourceFn) return;
+  rendreSourceFn();
+  rendreSourceFn = null;
+  averti = false;
+}
+
+export const voixRepliee = () => Boolean(rendreSourceFn);
+// Pour le débogage et les essais : à qui ma voix peut aller (null : tous), connexions triées, repli.
+export const etatEmetteur = () => ({ autorises: autorises ? [...autorises].sort() : null, connexions: connexions.size, repli: voixRepliee() });
+
 // Tout rendre : fin de partie, salons coupés, A/V désactivé, départ du monde.
 export function rendreTout() {
   for (const id of [...coupes]) reglerFlux(id, true);
   reglerVoyant();
+  lacherEmetteur();
+  rendreSource();
   rendreMicro();
 }
 
-// Applique la ligne de ce navigateur à la voix de Foundry.
+// Applique la ligne de ce navigateur à la voix de Foundry : côté émetteur d'abord (à qui part ma voix), puis la coupure
+// locale (ce que j'entends), en plus.
 export function appliquerVoix() {
   if (!avActif()) return rendreTout();
+  const repli = !appliquerEmetteur();
   const ligne = maLigne;
   const libre = Boolean(game.user?.isGM) || !salonsAutomatiques() || !ligne || ["libre", "mj"].includes(ligne.salon);
-  if (libre) return rendreTout();
-  for (const u of game.users.filter(x => x.id !== game.user.id)) reglerFlux(u.id, ligne.entend.includes(u.id));
-  reglerVoyant();
-  if (ligne.peutParler) rendreMicro();
-  else couperMicro();
+  if (libre) {
+    for (const id of [...coupes]) reglerFlux(id, true);
+    reglerVoyant();
+  } else {
+    for (const u of game.users.filter(x => x.id !== game.user.id)) reglerFlux(u.id, ligne.entend.includes(u.id));
+    reglerVoyant();
+  }
+  if (repli) {
+    couperMicro();
+    couperSource();
+  } else {
+    rendreSource();
+    if (libre || ligne.peutParler) rendreMicro();
+    else couperMicro();
+  }
 }
 
 // ------------------------------------------------------------------ le bandeau
@@ -247,9 +536,11 @@ export function salonAffiche() {
 // ------------------------------------------------------------------ branchements (hook « init » du système)
 export function brancherSalons() {
   // La phase change par lakourLoups.phase, et aussi par la victoire (phase « fin ») et l'aube.
+  // Chez un joueur, la phase publique peut changer avant que sa ligne n'arrive : sa voix est triée aussitôt (prudence).
   for (const nom of ["lakourLoups.phase", "lakourLoups.nouvellePartie", "lakourLoups.victoire", "lakourLoups.aube"]) {
-    Hooks.on(nom, () => { rafraichirSalons({ forcer: true }); });
+    Hooks.on(nom, () => { if (!rafraichirSalons({ forcer: true })) appliquerVoix(); });
   }
+  Hooks.on("lakourLoups.audibilite", () => { if (!estMJActif()) appliquerVoix(); });
   for (const nom of ["lakourLoups.elimination", "lakourLoups.jour", "lakourLoups.voteClos", "createActor", "deleteActor", "createUser", "deleteUser"]) {
     Hooks.on(nom, () => { rafraichirSalons(); });
   }
@@ -258,6 +549,8 @@ export function brancherSalons() {
     if (!user) return;
     if (connecte) envoyerLigne(user.id);
     else envoyees.delete(user.id);
+    // Un pair qui arrive (ou repart) : mes émetteurs sont triés à nouveau.
+    appliquerVoix();
   });
   // Les caméras sont rendues à nouveau à chaque flux reçu, chaque réglage A/V : la coupure locale est réappliquée.
   for (const nom of ["renderCameraViews", "renderCameraPopout", "rtcSettingsChanged"]) Hooks.on(nom, () => { appliquerVoix(); });

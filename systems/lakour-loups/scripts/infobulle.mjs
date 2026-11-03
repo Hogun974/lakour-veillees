@@ -1,7 +1,7 @@
 // L'infobulle d'un jeton de villageois au survol (hook hoverToken, local) : nom, métier (public), état (vivant, mort,
 // réduit au silence, Bailli, a voté) et rôle s'il est révélé. Le MJ voit aussi le rôle caché ; un joueur voit le sien.
 import { ID } from "../logique/constantes.mjs";
-import { t, lireEtat, roleDe, metierDe, libelleCamp, libelleCause, monVillageois } from "./donnees.mjs";
+import { t, lireEtat, roleDe, campDe, metierDe, libelleCamp, libelleCause, monVillageois } from "./donnees.mjs";
 
 const echapper = s => foundry.utils.escapeHTML(String(s ?? ""));
 
@@ -22,11 +22,13 @@ export function contenuInfobulle(acteur) {
   if (acteur.system.vivant && etat.bailli?.actif && etat.bailli.acteurId === acteur.id) etats.push({ cle: "bailli", texte: t("LAKOUR_LOUPS.Bailli.Titre") });
   if (etat.vote.ouvert && etat.vote.exprimes.includes(acteur.id)) etats.push({ cle: "vote", texte: t("LAKOUR_LOUPS.Vote.AVote") });
   let roleTexte = "", roleCache = false;
+  // Le rôle tel que ce navigateur le connaît (donnees.mjs) : le MJ actif, ses secrets ; un joueur, le sien et les révélés.
+  const camp = campDe(acteur);
   if (role && (revele || soi || game.user.isGM)) {
-    roleTexte = `${role.name} · ${libelleCamp(acteur.system.camp)}`;
+    roleTexte = [role.name, libelleCamp(camp)].filter(Boolean).join(" · ");
     roleCache = !revele;
   }
-  return { nom: acteur.name, soi, metier: metier?.name ?? "", maison: acteur.system.maison, etats, role: roleTexte, roleCache, camp: revele ? acteur.system.camp : "" };
+  return { nom: acteur.name, soi, metier: metier?.name ?? "", maison: acteur.system.maison, etats, role: roleTexte, roleCache, camp: revele ? camp : "" };
 }
 
 function element() {

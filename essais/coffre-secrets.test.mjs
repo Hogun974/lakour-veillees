@@ -45,6 +45,12 @@ async function charger(racine) {
 const valeur = cle => structuredClone(reglages.get(`${ID}.${cle}`).valeur);
 const trousseau = () => structuredClone(reglages.get("lakour-mj-ia.trousseau").valeur);
 const attendre = (ms = 5) => new Promise(r => setTimeout(r, ms));
+// Attendre qu'une chose arrive (déchiffrement WebCrypto, minuterie du système : durées variables sous charge) plutôt qu'un délai
+// fixe. La garde ne sert qu'à ne pas pendre : la condition jamais remplie, l'assertion qui suit échoue avec son propre message.
+async function jusqua(condition, garde = 2000) {
+  const fin = Date.now() + garde;
+  while (!condition() && Date.now() < fin) await attendre(2);
+}
 // Les parts que le moteur a données à chaque joueur (la dernière, par id de clé).
 const partsDonnees = id => Object.fromEntries(emissions.filter(e => e.type === "coffre.part" && e.id === id).map(e => [e.recipients[0], { id: e.id, x: e.x, y: e.y, seuil: e.seuil }]));
 
@@ -128,7 +134,7 @@ const VERIFICATIONS = {
       // Le battement : à intervalle fixe, même sans rien de neuf.
       ecrits.length = 0;
       M.coffre.battre(15);
-      await attendre(60);
+      await jusqua(() => ecrits.filter(e => e === `${ID}.coffre`).length >= 2);
       await M.coffre.rangement();
       assert.ok(ecrits.filter(e => e === `${ID}.coffre`).length >= 2, "le battement scelle à intervalle fixe");
     } finally {
@@ -157,7 +163,7 @@ const VERIFICATIONS = {
     assert.equal(rappels, 0, "deux parts (seuil 3) ne rouvrent rien");
     assert.equal(M.coffre.enAttenteDeParts(), true);
     await CoffreMoteur.recevoirPartRendue(parts.u4, "u4");
-    await attendre(20);
+    await jusqua(() => rappels >= 1);
     await M.coffre.rangement();
     assert.equal(rappels, 1, "la majorité rouvre");
     assert.deepEqual(M.secrets.secretsMJ().fiches, avant.fiches, "les rôles reviennent");
@@ -225,7 +231,7 @@ const VERIFICATIONS = {
     } finally { game.settings.set = set; }
     assert.equal(trousseau().id, enCours, "la nouvelle clé en vigueur");
     assert.equal(auPassage?.id, enCours, "le coffre rescellé avec elle AVANT qu'elle n'entre en vigueur");
-    await attendre();
+    await jusqua(() => valeur("coffre").id === enCours);
     assert.equal(valeur("coffre").id, enCours);
     assert.equal(valeur("coffre").partie, id);
   },
@@ -327,7 +333,7 @@ const VERIFICATIONS = {
     encore.composition = "compo-ENCORE";
     const s2 = await apiCoffreMoteur().sceller(encore);
     await game.settings.set(ID, "coffre", { partie: id, rev: c0.rev + 9, ...s2 });
-    await attendre(20);
+    await jusqua(() => M.secrets.secretsMJ()?.composition === "compo-ENCORE");
     await M.coffre.rangement();
     assert.equal(M.secrets.secretsMJ().composition, "compo-ENCORE");
   },
@@ -419,7 +425,7 @@ const VERIFICATIONS = {
       await M.coffre.rangement();
     } finally { moteur.sceller = sceller; }
     assert.equal(valeur("coffre").iv, intrus.iv, "le coffre de l'autre MJ n'est pas écrasé");
-    await attendre(20);
+    await jusqua(() => M.secrets.secretsMJ()?.composition === "INTRUS");
     await M.coffre.rangement();
     assert.equal(M.secrets.secretsMJ().composition, "INTRUS", "il est rouvert");
   },

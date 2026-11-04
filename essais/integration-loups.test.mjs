@@ -33,16 +33,31 @@ const NEUTRE = "modules/lakour-veillees/assets/jetons/villageois.svg";
 const CIMETIERE = BATIMENTS_CARTE.find(b => b.nom === "Cimetière");
 let sceneVillage = null;
 const outil = nom => OUTILS.find(o => o.nom === nom);
+// Lu une fois, au chargement (et non à chaque partie, plus de 600 fois) : un « npm run fabriquer-veillees » lancé pendant la suite
+// récrit ce fichier sur place, et une lecture tombée au milieu donnait un JSON tronqué (JSON.parse en échec).
+const EQUILIBRE = JSON.parse(readFileSync(new URL("../modules/lakour-veillees/assets/equilibre.json", import.meta.url), "utf8"));
 
 const ROLES = Object.fromEntries(CONTENU.roles.map(r => [r.system.cle, r]));
 const CLES_A_TIRET = [...CONTENU.roles, ...CONTENU.metiers, ...CONTENU.batiments].map(d => d.system.cle).filter(c => c.includes("-"));
 const IDS_CONTENU = [...CONTENU.roles, ...CONTENU.metiers, ...CONTENU.batiments].map(d => d._id);
+
+// ------------------------------------------------------------------ horloge simulée
+// Le système départage à l'heure : la proie de la meute à égalité est celle du loup qui a choisi le PREMIER (quand : Date.now(),
+// logique/votes.mjs majoriteMeute), l'historique des parties est trié par date… Avec l'horloge réelle, deux réponses tombent dans
+// la même milliseconde ou non selon la charge de la machine : la même graine ne donnait pas toujours la même partie (vainqueurs
+// différents d'une suite à l'autre, reproductibilité et fourchettes d'équilibre parfois en échec sous charge). Ici Date.now avance
+// d'une milliseconde à chaque lecture (l'ordre des événements est gardé, jamais deux fois la même heure), et repart du même instant
+// à chaque monde : une graine, une partie.
+const DEBUT_HORLOGE = Date.now();
+let instant = DEBUT_HORLOGE;
+Date.now = () => ++instant;
 
 // ------------------------------------------------------------------ mise en place d'un monde
 let joueursSimules = null;
 let compagnons = null;           // les cerveaux des compagnons (repli sans IA : pas de fournisseur)
 let votesDesCompagnons = [];     // { numero, votant, cible } : ce que chaque compagnon a voté
 function monde(n, graine, { simules = true } = {}) {
+  instant = DEBUT_HORLOGE;
   installerFoundry({ joueurs: n, contenu: true });
   enregistrerReglages(() => {});
   game.settings.register("lakour-mj-ia", "personnalites", { default: [{ id: "conteuse", nomAffiche: "La Conteuse" }] });
@@ -387,7 +402,7 @@ ${r.contenu}`);
       couvert("fête : présent", s.present ? 1 : 0);
     }
     // Composition générée : bon nombre de loups, équilibre des poids proche de zéro (de sa cible, en petite tablée).
-    const equilibre = JSON.parse(readFileSync(new URL("../modules/lakour-veillees/assets/equilibre.json", import.meta.url), "utf8"));
+    const equilibre = EQUILIBRE;
     const distribues = villageois().map(a => roleDe(a).system.cle);
     assert.equal(distribues.filter(c => equilibre.roles[c].camp === "meute").length, tablee ? api.logique.nombreDeLoupsTablee(total) : api.logique.nombreDeLoups(total));
     assert.ok(Math.abs(distribues.reduce((s, c) => s + equilibre.roles[c].poids, 0) - (tablee ? api.logique.cibleTablee(total) : 0)) <= 3, `déséquilibrée : ${distribues.join(", ")}`);
@@ -974,7 +989,7 @@ async function jouerPeste({ n, graine, nbCompagnons = 0, crierAuJour = 0 }) {
     const depart = await appeler("loups_distribuer", { joueurs: [], composition: "", niveau: "classique", peste: "oui", ...(nbCompagnons ? { compagnons: nbCompagnons } : {}) });
     assert.match(depart, /PESTE NOIRE \(secret absolu/, "le narrateur sait que c'est la peste");
     assert.match(depart, /Composition, pour toi seul/);
-    const equilibre = JSON.parse(readFileSync(new URL("../modules/lakour-veillees/assets/equilibre.json", import.meta.url), "utf8"));
+    const equilibre = EQUILIBRE;
     assert.ok(villageois().every(a => equilibre.roles[roleDe(a).system.cle]?.camp !== "meute" && secretDuMJ.camp(a) !== "meute"), "aucun rôle de la meute");
     assert.equal(api.etat().peste.active, true);
     assert.ok(!("peste" in reglages.get("lakour-loups.partie").valeur), "drapeau absent de l'état public");

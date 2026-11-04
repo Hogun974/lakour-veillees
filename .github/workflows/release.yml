@@ -23,16 +23,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Dépôt et sous-module
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: recursive
           fetch-depth: 0
+          # Le moteur lakour-mj-ia doit être lisible : dépôt public, ou PAT (lecture) dans le secret SOUS_MODULE_TOKEN.
+          token: ${{ secrets.SOUS_MODULE_TOKEN || github.token }}
 
       - name: Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: "24"
           cache: npm
+
+      - name: L'étiquette porte la version du système (convention de docs/publication.md)
+        run: |
+          SYS=$(node -p "require('./systems/lakour-loups/system.json').version")
+          if [ "v$SYS" != "$GITHUB_REF_NAME" ]; then
+            echo "Étiquette $GITHUB_REF_NAME, système en $SYS : mettre system.json à jour (ou poser v$SYS)" >&2; exit 1
+          fi
 
       - name: Dépendances
         run: npm ci
@@ -96,7 +105,7 @@ jobs:
           } > dist/NOTES.md
 
       - name: Release GitHub
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           name: ${{ github.ref_name }}
           body_path: dist/NOTES.md

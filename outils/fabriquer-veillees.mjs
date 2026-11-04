@@ -418,7 +418,7 @@ async function ecrireEtCompiler(docs, racine, compiler) {
 }
 
 // Lancé directement (npm run fabriquer-veillees) ; importé par les essais, on ne fait que fabriquer().
-if (process.argv[1] && import.meta.url === `file:///${process.argv[1].replace(/\\/g, "/")}`) {
+if (process.argv[1] && import.meta.url === (await import("node:url")).pathToFileURL((await import("node:path")).resolve(process.argv[1])).href) {
   const docs = fabriquer();
   const compos = compositions();
   const erreurs = [...verifierDocuments(docs), ...verifierCompositions(compos, rolesPourCompositions(docs), batimentsPourCompositions(docs)), ...verifierEquilibre(docs)];

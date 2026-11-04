@@ -120,3 +120,32 @@ depuis Foundry.
 - Une version anglaise des textes du contenu (rôles, guides) est annoncée dans le README : la planifier ou retirer la
   promesse.
 - Les captures vieillissent : les refaire quand l'interface change.
+
+## Release à blanc du 4 novembre 2026
+
+Chaque workflow a été rejoué étape par étape (Ubuntu 24.04 sous WSL, **Node 24.22**, npm 10) dans un clone neuf
+`git clone --recurse-submodules`, avec un tag local et les variables `GITHUB_REF_NAME` / `GITHUB_REPOSITORY` du runner ;
+les archives produites ont été relues (manifeste à la racine, chemins `/`, `packs/` complets, ni `src/`, ni `contenu/`, ni
+`essais/`, ni `node_modules`, ni `.git`, CRC vérifiés). Les actions sont passées en versions Node 24
+(`actions/checkout@v5`, `actions/setup-node@v5`, `softprops/action-gh-release@v3` : les v4/v2 tournent encore sous
+Node 20, en fin de vie sur les runners GitHub).
+
+Constats et corrections :
+
+- **Piège trouvé : les scripts ne s'exécutaient pas sous Linux.** La garde « lancé directement ? » écrite
+  ``import.meta.url === `file:///${process.argv[1]…}` `` est toujours fausse sur le runner (`argv[1]` commence déjà par
+  `/`, d'où `file:////…`) : le script se termine **sans rien faire et sans erreur**. Corrigé dans `outils/empaqueter-paquets.mjs`
+  (`resolve(process.argv[1]) === fileURLToPath(import.meta.url)`). Sans cela : aucun `dist/`, puis échec des copies du monde.
+- Nouvelle étape de garde : l'étiquette doit être `v<version de systems/lakour-loups/system.json>` (convention ci-dessus) ;
+  rien ne le vérifiait. Conséquence à connaître : une version **qui ne change que le contenu** exige quand même un
+  nouveau numéro de système (une étiquette ne sert qu'une fois).
+- `actions/checkout` reçoit `token: ${{ secrets.SOUS_MODULE_TOKEN || github.token }}`.
+- Le monde publié (`world.json`) garde `download` = `releases/latest/download/…` (pas daté de l'étiquette) : il marche,
+  mais une ancienne version du monde n'est plus téléchargeable par son manifeste.
+
+- [ ] **Bloquant, hors des fichiers touchés ici** : même garde cassée dans `outils/fabriquer-veillees.mjs` :
+      `npm run fabriquer-veillees(-en)` ne fabrique rien sous Linux (pas de `packs/`, pas de module anglais) et
+      l'empaquetage échoue. Remplacer la ligne par
+      `if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {` (imports `node:path`,
+      `node:url`).
+- [ ] `lakour-mj-ia` public (ou secret `SOUS_MODULE_TOKEN`) avant de pousser l'étiquette.

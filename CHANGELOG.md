@@ -4,7 +4,7 @@ Deux numéros de version avancent ensemble : celui du **système** `lakour-loups
 `lakour-veillees`. Chaque publication GitHub (étiquette `v<version du système>`) emporte les deux, plus le monde vierge.
 Le moteur commun `lakour-mj-ia` a son propre journal dans [son dépôt](https://github.com/Hogun974/lakour-mj-ia).
 
-## Non publié
+## Système 0.11.1 · Contenu 0.14.0 — 4 novembre 2026
 
 - **Contenu 0.14.0 — Le livre de Brumecombe** : un journal d'univers lisible des joueurs, installé dans le monde avec les
   guides, douze pages à lire avant la première veillée : la vallée et sa brume, une histoire du village, les dix-huit maisons

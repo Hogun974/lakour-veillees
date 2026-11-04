@@ -232,7 +232,9 @@ export function empaqueterTout(options, racine = RACINE) {
 }
 
 // Lancé directement (node outils/empaqueter-paquets.mjs) ; importé par les essais, rien ne s'exécute.
-if (process.argv[1] && import.meta.url === `file:///${process.argv[1].replace(/\\/g, "/")}`) {
+// Lancé directement ? Comparaison de chemins (et non d'URL bricolée « file:/// » + argv[1], fausse sous Linux où argv[1]
+// commence déjà par « / » : le script ne faisait alors rien, sans erreur, sur le runner GitHub ubuntu-latest).
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {
     const options = lireArguments();
     const resultats = empaqueterTout(options);

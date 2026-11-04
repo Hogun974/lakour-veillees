@@ -6,6 +6,11 @@ Le moteur commun `lakour-mj-ia` a son propre journal dans [son dépôt](https://
 
 ## Non publié
 
+- **Contenu 0.14.0 — Le livre de Brumecombe** : un journal d'univers lisible des joueurs, installé dans le monde avec les
+  guides, douze pages à lire avant la première veillée : la vallée et sa brume, une histoire du village, les dix-huit maisons
+  et leurs métiers, la foi et les superstitions, la Meute dans les contes, la Veillée comme coutume, l'année de Brumecombe,
+  des visages, dix rumeurs, le parler local et le récit d'une première veillée. Liens vers les rôles, métiers et bâtiments ;
+  encadrés « paroles d'anciens » (`html()` accepte les blocs « > »). Version anglaise « The Book of Brumecombe ».
 - Préparation de la publication : manifestes étoffés (`url`, `manifest`, `download`, `readme`, `bugs`, `changelog`,
   `license`, `media`, dépendance déclarée au module MJ IA), README en français et en anglais, script d'empaquetage
   `outils/empaqueter-paquets.mjs`, workflow de publication sur étiquette `v*`, liste de contrôle `docs/publication.md`.

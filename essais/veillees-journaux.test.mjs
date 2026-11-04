@@ -1,6 +1,6 @@
 // Essais des journaux et des tables de lakour-veillees : guide du joueur visible (règles, déroulement, tous les rôles,
 // métiers et bâtiments), guide du narrateur caché (rythme, ambiance, MJ IA, morts, égalités, ordre de réveil),
-// variantes visibles ; tables d'au moins 20 résultats ; textes originaux (aucune référence à un jeu édité).
+// variantes visibles, livre de Brumecombe visible (l'univers, sans règle ni secret) ; tables d'au moins 20 résultats ; textes originaux (aucune référence à un jeu édité).
 // Lancer : npm run essais
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -20,8 +20,9 @@ const attendre = (liste, motif) => {
   assert.ok(erreurs.some(e => motif.test(e)), `${motif} attendu, obtenu : ${erreurs.join(" ; ") || "aucune erreur"}`);
 };
 
-test("sept journaux : guide du joueur visible, guide du narrateur caché, variantes visibles, une veillée de fête illustrée par fête", () => {
-  assert.equal(docs.filter(d => d.pack === "journaux").length, 3 + FETES_VEILLEES.length);
+test("huit journaux : guide du joueur visible, guide du narrateur caché, variantes et livre de Brumecombe visibles, une veillée de fête illustrée par fête", () => {
+  assert.equal(docs.filter(d => d.pack === "journaux").length, 4 + FETES_VEILLEES.length);
+  assert.equal(journal("livre-de-brumecombe").doc.ownership.default, 2);
   assert.equal(journal("guide-du-joueur").doc.ownership.default, 2);
   assert.equal(journal("guide-du-narrateur").doc.ownership.default, 0);
   assert.equal(journal("regles-des-variantes").doc.ownership.default, 2);

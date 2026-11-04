@@ -14,8 +14,8 @@ const SYSTEME = "lakour-loups";
 // Almanach des brumes, Dernier souffle et Saints du calendrier (système 0.7.0) ; 0.10.0 : Gens de passage (Rémouleur, Montreur
 // d'ours, Pèlerine), Banc des accusés, Glas du deuil, Nuit de la Saint-Martin (système 0.8.0) ; 0.11.0 : secrets hors des
 // documents (système 0.9.0) ; 0.12.0 : les Veillées de fête (système 0.10.0), un journal illustré par veillée, déclinées auprès du
-// socle des fêtes du moteur (lakour-mj-ia, api.fetes).
-const VERSION_CONTENU = "0.13.1";
+// socle des fêtes du moteur (lakour-mj-ia, api.fetes) ; 0.14.0 : le livre de Brumecombe (journal d'univers, lisible des joueurs).
+const VERSION_CONTENU = "0.14.0";
 
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 

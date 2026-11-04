@@ -145,7 +145,8 @@ veillée entre aux **Chroniques de Brumecombe**, un journal que tous peuvent lir
 Au prochain lancement du monde, le village repart de zéro.
 
 Le **guide du joueur** (journal du monde, lisible de tous) et le **guide du narrateur** (caché aux joueurs) détaillent tout
-cela, et chaque bâtiment de la carte est **épinglé** sur sa page de règles.
+cela, et chaque bâtiment de la carte est **épinglé** sur sa page de règles. Le **livre de Brumecombe** (lisible de tous)
+raconte l'univers : la vallée, l'histoire du village, ses maisons, sa foi, ce qu'on dit des loups, la Veillée comme coutume.
 
 ## Le contenu
 

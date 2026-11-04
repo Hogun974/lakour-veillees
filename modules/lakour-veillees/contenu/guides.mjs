@@ -1,5 +1,5 @@
-// Journaux des Veillées de Brumecombe : le guide du joueur (visible), le guide du narrateur (caché, lu par le MJ IA)
-// et les règles des variantes (visibles). Les listes de rôles, métiers et bâtiments sont tirées des données mêmes
+// Journaux des Veillées de Brumecombe : le guide du joueur (visible), le guide du narrateur (caché, lu par le MJ IA),
+// les règles des variantes (visibles), le livre de Brumecombe (l'univers, visible : livre-univers.mjs) et les veillées de fête. Les listes de rôles, métiers et bâtiments sont tirées des données mêmes
 // (roles.mjs, metiers.mjs, batiments.mjs) : un rôle ajouté apparaît dans les guides. Textes originaux.
 import { ORDRE_MEUTE, journal } from "./aides.mjs";
 import { ROLES } from "./roles.mjs";
@@ -8,6 +8,7 @@ import { BATIMENTS } from "./batiments.mjs";
 import { ALMANACH } from "./tables.mjs";
 import { JOURNAUX_DE_FETE, RESUMES_DE_FETE } from "./fetes.mjs";
 import { FETES_VEILLEES } from "../scripts/fetes.js";
+import { LIVRE_DE_BRUMECOMBE } from "./livre-univers.mjs";
 
 const ligne = d => `- **${d.name}** — ${d.__resume}`;
 const rolesDu = camp => ROLES.filter(r => r.system.camp === camp);
@@ -715,4 +716,4 @@ Une partie d'une dizaine de minutes : trois rôles de plus que de joueurs, cach�
   ]
 });
 
-export const GUIDES = [guideJoueur, guideNarrateur, variantes, ...JOURNAUX_DE_FETE];
+export const GUIDES = [guideJoueur, guideNarrateur, variantes, LIVRE_DE_BRUMECOMBE, ...JOURNAUX_DE_FETE];

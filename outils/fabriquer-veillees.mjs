@@ -167,7 +167,7 @@ export function verifierDocuments(docs) {
 
   // Journaux : visibilité, contenu du guide du joueur.
   const journaux = Object.fromEntries(du("journaux").map(d => [d.doc.flags[MODULE].cle, d]));
-  const visibilites = { "guide-du-joueur": 2, "guide-du-narrateur": 0, "regles-des-variantes": 2 };
+  const visibilites = { "guide-du-joueur": 2, "guide-du-narrateur": 0, "regles-des-variantes": 2, "livre-de-brumecombe": 2 };
   for (const [cle, niveau] of Object.entries(visibilites)) {
     const j = journaux[cle];
     if (!j) { erreurs.push(`journal ${cle} absent`); continue; }

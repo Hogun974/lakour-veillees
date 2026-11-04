@@ -2,7 +2,7 @@
 // Mise en page façon carte à jouer : en-tête avec portrait et « pilules » (Rôle · Camp · Métier · Maison), état en
 // insignes, pouvoirs en cartes (« atouts ») avec icône, usages restants et texte en infobulle.
 import { ID, CAMPS, EFFETS, VICTOIRES } from "../../logique/constantes.mjs";
-import { t, roleDe, campDe, amoureuxDe, protectionsDe, metierDe, libelleCamp, lireEtat, roleVisible } from "../donnees.mjs";
+import { t, roleDe, campDe, amoureuxDe, protectionsDe, metierDe, libelleCamp, libelleRepere, lireEtat, roleVisible } from "../donnees.mjs";
 import { mesSecrets } from "../prive.mjs";
 import { estMJActif } from "../canal.mjs";
 
@@ -99,6 +99,8 @@ export class FicheVillageois extends HandlebarsApplicationMixin(ActorSheetV2) {
       ...(gm ? contexte : publics),
       acteur: { id: a.id, uuid: a.uuid, name: a.name, img: a.img },
       system: gm ? s : { joueur: s.joueur, compagnon: s.compagnon, vivant: s.vivant, revele: s.revele, silence: s.silence, maison: s.maison, notes: s.notes },
+      // La maison affichée dans la langue de Foundry (« House 7 ») ; le champ du MJ garde la clé (« Maison 7 »).
+      maisonLibelle: libelleRepere(s.maison),
       // Les champs secrets, chez le MJ actif seulement (lui seul a les secrets ; un autre MJ ne les a pas).
       secret: estMJActif() ? { camp, amoureux, protections } : null,
       gm, proprietaire: sienne, voitRole,
@@ -212,7 +214,9 @@ class FicheObjet extends HandlebarsApplicationMixin(ItemSheetV2) {
     for (const champ of ["description", "victoire", "regle"]) if (champ in i.system) enrichis[champ] = await enrichir(i.system[champ], i);
     return {
       ...contexte, objet: i, system: i.system, editable: this.isEditable, gm, enrichis, effets: choixEffets(i.system.effet),
-      ...usagesDe(i), rythme: rythmeDe(i, gm), effetLibelle: gm ? libelleEffet(i.system.effet) : ""
+      ...usagesDe(i), rythme: rythmeDe(i, gm), effetLibelle: gm ? libelleEffet(i.system.effet) : "",
+      // Bâtiment : le repère de la carte affiché dans la langue de Foundry ; le champ du MJ garde la clé.
+      repereLibelle: libelleRepere(i.system.repere ?? "")
     };
   }
 }

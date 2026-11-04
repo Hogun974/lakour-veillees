@@ -16,8 +16,8 @@ import * as L from "../../logique/index.mjs";
 import { LONGUEUR_DECLARATION as LONGUEUR } from "../../logique/registre.mjs";
 import { diagnosticVoix } from "../../logique/salons.mjs";
 import {
-  t, lireEtat, tousLesVillageois, monVillageois, roleDe, campDe, amoureuxDe, protectionsDe, metierDe, roleVisible, libellePhase, libelleCamp, libelleCause, libelleVainqueur,
-  villageoisAPlat
+  t, lireEtat, tousLesVillageois, monVillageois, roleDe, campDe, amoureuxDe, protectionsDe, metierDe, roleVisible, libellePhase, libelleCamp, libelleCause, libelleRepere,
+  libelleVainqueur, villageoisAPlat
 } from "../donnees.mjs";
 import { envoyerVote, envoyerJour, envoyerCri, envoyerDeclaration, envoyerAccusation, envoyerDepart } from "../api.mjs";
 import { estMJActif } from "../canal.mjs";
@@ -99,7 +99,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
         passage: gens.find(g => g.acteurId === a.id)?.role ?? "",
         parti: parti ? t(parti.comment === "exil" ? "LAKOUR_LOUPS.Passage.Exile" : "LAKOUR_LOUPS.Passage.Parti", { tour: parti.tour }) : "",
         faireQuitter: gm && a.system.vivant && Boolean(etat.partie) && !fin,
-        id: a.id, nom: a.name, img: a.img, vivant: a.system.vivant, maison: a.system.maison,
+        id: a.id, nom: a.name, img: a.img, vivant: a.system.vivant, maison: libelleRepere(a.system.maison),
         metier: metier?.name ?? "", metierImg: metier?.img ?? "",
         voitRole, roleNom: voitRole ? role?.name ?? "" : "", roleImg: voitRole ? role?.img ?? "" : "",
         camp: voitRole ? libelleCamp(campDe(a)) : "", campCle: voitRole ? campDe(a) : "",
@@ -130,7 +130,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
 
     const batiments = etat.batiments.map(uuid => {
       const d = fromUuidSync(uuid);
-      return { uuid, nom: d?.name ?? uuid, img: d?.img ?? "icons/svg/house.svg", repere: d?.system?.repere ?? "" };
+      return { uuid, nom: d?.name ?? uuid, img: d?.img ?? "icons/svg/house.svg", repere: libelleRepere(d?.system?.repere ?? "") };
     });
 
     let lignes = [];

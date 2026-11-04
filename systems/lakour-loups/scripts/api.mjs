@@ -42,7 +42,7 @@ import { sceller, coffreDisponible, exigerSecretsAJour, ecritureBloquee, changem
 import { noterMonVote } from "./prive.mjs";
 import {
   t, texteBrut, tousLesVillageois, roleDe, roleRevele, campDe, amoureuxDe, metierDe, aPlat, villageoisAPlat, lireEtat, lirePublic, monVillageois,
-  clesDesBatiments, libellePhase, libelleCamp, libelleCause, libelleVainqueur
+  clesDesBatiments, libellePhase, libelleCamp, libelleCause, libelleRepere, libelleVainqueur
 } from "./donnees.mjs";
 import { ouvrirChoix, fermerChoix } from "./apps/choix.mjs";
 import { audibilite, audibiliteActeur, rafraichirSalons } from "./salons.mjs";
@@ -273,7 +273,7 @@ async function envoyerRole(acteur) {
     acteur: acteur.name, role: role.name, img: role.img, camp: libelleCamp(camp),
     description: await foundry.applications.ux.TextEditor.implementation.enrichHTML(role.system.description),
     victoire: role.system.victoire ? await foundry.applications.ux.TextEditor.implementation.enrichHTML(role.system.victoire) : "",
-    metier: metier?.name ?? "", maison: acteur.system.maison, meute: meute.join(", "), prime
+    metier: metier?.name ?? "", maison: libelleRepere(acteur.system.maison), meute: meute.join(", "), prime
   });
   return envoyerSecret(acteur.id, { html: contenu, titre: t("LAKOUR_LOUPS.Carnet.TitreRole", { role: role.name }) });
 }

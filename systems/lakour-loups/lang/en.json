@@ -567,6 +567,19 @@
       "Vivant": "Alive",
       "Toi": "you"
     },
+    "Reperes": {
+      "maison": "House {n}",
+      "chapelle": "Chapel",
+      "moulin": "Mill",
+      "taverne": "Tavern",
+      "gibet": "Gallows",
+      "puits": "Well",
+      "forge": "Forge",
+      "cimetiere": "Graveyard",
+      "pont": "Bridge",
+      "lavoir": "Washhouse",
+      "grange": "Barn"
+    },
     "Parole": {
       "Mort": "You are dead: the living no longer hear you. You may write to the narrator (whisper to the GM: only the GM receives it).",
       "Silence": "You are silenced: you cannot speak during today's debate and vote (a word whispered to the GM reaches the GM alone).",

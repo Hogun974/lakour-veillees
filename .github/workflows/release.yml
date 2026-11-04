@@ -1,8 +1,9 @@
 # Publication d'une version : à chaque étiquette « v* » poussée (ex. v0.11.1), fabrique le contenu (français, puis anglais :
 # module lakour-veillees-en engendré des mêmes sources et des dictionnaires contenu/en/), empaquette le système, les deux
-# modules de contenu et le monde (s'il a son script), puis crée la release GitHub avec :
+# modules de contenu et les mondes vierges (français puis anglais, s'il a son script ; recopiés de monde/dist dans dist/),
+# puis crée la release GitHub avec :
 #   system.json, lakour-loups.zip, module.json, lakour-veillees.zip, lakour-veillees-en.json, lakour-veillees-en.zip,
-#   world.json, <identifiant du monde>.zip
+#   world.json, la-kour-veillees.zip, world-en.json, la-kour-veillees-en.zip
 # Les manifestes publiés portent « manifest » (releases/latest/download/…) et « download » (releases/download/<tag>/…) :
 # Foundry trouve donc toujours la dernière version par le manifeste, et chaque version garde son archive. Adresse stable du
 # manifeste anglais : https://github.com/Hogun974/lakour-veillees/releases/latest/download/lakour-veillees-en.json
@@ -50,13 +51,18 @@ jobs:
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
 
-      - name: Empaquetage du monde (si « npm run empaqueter-monde » existe)
+      - name: Empaquetage des mondes vierges, français puis anglais (si « npm run empaqueter-monde » existe), recopiés dans dist/
         env:
           TAG: ${{ github.ref_name }}
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           if node -e "process.exit((require('./package.json').scripts || {})['empaqueter-monde'] ? 0 : 1)"; then
             npm run empaqueter-monde
+            npm run empaqueter-monde -- --langue en
+            cp monde/dist/world.json dist/world.json
+            cp monde/dist/la-kour-veillees.zip dist/la-kour-veillees.zip
+            cp monde/dist/world-en.json dist/world-en.json
+            cp monde/dist/la-kour-veillees-en.zip dist/la-kour-veillees-en.zip
           else
             echo "Pas de script empaqueter-monde : le monde n'est pas publié dans cette version."
           fi
@@ -74,10 +80,11 @@ jobs:
         run: |
           SYS=$(node -p "require('./dist/system.json').version")
           MOD=$(node -p "require('./dist/module.json').version")
-          MONDE=$(ls dist/*.zip | grep -v -e lakour-loups.zip -e lakour-veillees.zip -e lakour-veillees-en.zip | head -n 1 || true)
+          MONDE=$(ls dist/*.zip | grep -v -e lakour-loups.zip -e lakour-veillees.zip -e lakour-veillees-en.zip -e -en.zip | head -n 1 || true)
           {
             echo "Système \`lakour-loups\` ${SYS} · module de contenu \`lakour-veillees\` ${MOD} · English edition \`lakour-veillees-en\` ${MOD}"
             if [ -n "$MONDE" ]; then echo "· monde : \`$(basename "$MONDE")\`"; fi
+            if [ -s dist/world-en.json ]; then echo "· English world: \`world-en.json\` (\`la-kour-veillees-en.zip\`)"; fi
             echo
             echo "Installation dans Foundry VTT (v14) : voir le README. Manifeste du système :"
             echo "\`https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/system.json\`"

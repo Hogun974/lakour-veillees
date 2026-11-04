@@ -10,12 +10,17 @@ import { ID } from "../logique/constantes.mjs";
 import { normaliserEtat, fusionnerEtat } from "../logique/etat.mjs";
 import { aSonSouffle } from "../logique/souffle.mjs";
 import { normaliserFiche } from "../logique/fiches.mjs";
+import { libelleDeRepere } from "../logique/reperes.mjs";
 import { estMJActif } from "./canal.mjs";
 import { secretsMJ } from "./secrets.mjs";
 import { mesSecrets } from "./prive.mjs";
 import { secretsAJour } from "./coffre.mjs";
 
 export const t = (cle, donnees) => (donnees ? game.i18n.format(cle, donnees) : game.i18n.localize(cle));
+// Le libellé AFFICHÉ d'une maison ou d'un repère de la carte (« Maison 7 » -> « House 7 » en anglais, logique/reperes.mjs) :
+// pour les fiches, l'infobulle, la Table, le vote, les choix et la carte de rôle. Les clés (system.maison, system.repere) ne
+// changent jamais : le plateau et le MJ IA les lisent par nom.
+export const libelleRepere = nom => libelleDeRepere(nom, t);
 
 export const tousLesVillageois = () => game.actors.filter(a => a.type === "villageois");
 export const metierDe = acteur => acteur?.items.find(i => i.type === "metier") ?? null;

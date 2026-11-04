@@ -1,0 +1,6 @@
+{
+  "_commentaire": "Monde vierge anglais la-kour-veillees-en (modules/lakour-mj-ia/outils/empaqueter-monde.mjs --langue en) : ce qui change par rapport à monde/world.json. Le reste (version, système, compatibilité, auteurs, adresses) est repris du manifeste français ; le module requis devient lakour-veillees-en.",
+  "id": "la-kour-veillees-en",
+  "title": "La Kour — The Vigils of Brumecombe (English)",
+  "description": "<p>Every autumn, the mist cuts Brumecombe off from the rest of the world. And every morning, someone is missing.</p><p>A pack hides among the villagers: unmask it before it devours you. An original social deduction game for 6 to 18 players, narrated by the AI GM.</p>"
+}

@@ -3,7 +3,7 @@
 // QUI a voté (vote.exprimes) ; son propre choix, le joueur le tient de lui-même et de l'accusé du MJ (prive.mjs).
 import { ID } from "../../logique/constantes.mjs";
 import * as L from "../../logique/index.mjs";
-import { lireEtat, monVillageois, metierDe, t } from "../donnees.mjs";
+import { lireEtat, monVillageois, metierDe, libelleRepere, t } from "../donnees.mjs";
 import { envoyerVote } from "../api.mjs";
 import { monVote } from "../prive.mjs";
 import { ouvrirTable } from "./table.mjs";
@@ -43,7 +43,7 @@ export class FenetreVote extends HandlebarsApplicationMixin(ApplicationV2) {
       exprimes: v.exprimes.filter(id => vivants.some(a => a.id === id)).length, votants: vivants.length,
       souffles: v.exprimes.filter(id => !vivants.some(a => a.id === id)).length,
       candidats: v.candidats.map(id => game.actors.get(id)).filter(Boolean).map(a => ({
-        id: a.id, nom: a.name, img: a.img, maison: a.system.maison, metier: metierDe(a)?.name ?? "",
+        id: a.id, nom: a.name, img: a.img, maison: libelleRepere(a.system.maison), metier: metierDe(a)?.name ?? "",
         choisi: a.id === monChoix, moi: a.id === moi?.id
       })),
       monChoixNom: monChoix ? game.actors.get(monChoix)?.name ?? "" : t("LAKOUR_LOUPS.Vote.Personne")

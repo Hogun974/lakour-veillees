@@ -6,6 +6,7 @@
 // - ouvrirChoix(demande, { secours: true }) : la même demande, alors qu'elle est déjà sur la carte (plateau-local.mjs) ;
 //   fermer cette fenêtre-là ne passe pas : on peut encore choisir sur la carte.
 import { ID } from "../../logique/constantes.mjs";
+import { libelleRepere } from "../donnees.mjs";
 import { envoyerReponse } from "../api.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
@@ -41,7 +42,8 @@ export class FenetreChoix extends HandlebarsApplicationMixin(ApplicationV2) {
     const texte = d.mode === "texte";
     return {
       acteurNom: d.acteurNom, invite: d.invite, nombre: d.nombre, plusieurs: d.nombre > 1, texte, max: d.max ?? 200,
-      candidats: d.candidats.map(c => ({ ...c, choisi: this.selection.has(c.id) })),
+      // La maison du candidat vient de la demande (clé « Maison 7 ») : affichée dans la langue de ce navigateur.
+      candidats: d.candidats.map(c => ({ ...c, maison: libelleRepere(c.maison), choisi: this.selection.has(c.id) })),
       choisis: this.selection.size, peutValider: texte || this.selection.size > 0, minuteur: Boolean(d.finit)
     };
   }

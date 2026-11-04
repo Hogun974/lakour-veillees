@@ -567,6 +567,19 @@
       "Vivant": "Vivant",
       "Toi": "toi"
     },
+    "Reperes": {
+      "maison": "Maison {n}",
+      "chapelle": "Chapelle",
+      "moulin": "Moulin",
+      "taverne": "Taverne",
+      "gibet": "Gibet",
+      "puits": "Puits",
+      "forge": "Forge",
+      "cimetiere": "Cimetière",
+      "pont": "Pont",
+      "lavoir": "Lavoir",
+      "grange": "Grange"
+    },
     "Parole": {
       "Mort": "Tu es mort : les vivants ne t'entendent plus. Tu peux écrire au narrateur (chuchoter au MJ : le mot lui parvient à lui seul).",
       "Silence": "Tu es réduit au silence : tu ne peux pas parler pendant le débat et le vote d'aujourd'hui (un mot chuchoté au MJ lui parvient à lui seul).",

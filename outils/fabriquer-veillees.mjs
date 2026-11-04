@@ -3,9 +3,22 @@
 // 4. compile en LevelDB (packs/), 5. écrit assets/compositions.json.
 // Les vérificateurs (verifierDocuments, verifierCompositions, verifierCarte) servent aussi aux essais (essais/veillees-*.test.mjs).
 // Usage : npm run fabriquer-veillees        (option --sans-compiler pour vérifier seulement)
+//
+// Version anglaise (module lakour-veillees-en, docs/traduction.md du moteur) : mêmes sources, mêmes _id, un dictionnaire de
+// traduction par pack dans modules/lakour-veillees/contenu/en/<pack>.json (outils/traduction.mjs du moteur).
+//   node outils/fabriquer-veillees.mjs --extraire   écrit ou met à jour les squelettes contenu/en/<pack>.json (traductions gardées)
+//   npm run fabriquer-veillees-en  (= --langue en)   engendre modules/lakour-veillees-en/ EN ENTIER (non versionné) : module.json
+//     anglais (contenu/en/module.json), src/ et packs/ traduits, compositions.json et equilibre.json, copies de lang/, scripts/,
+//     templates/, assets/ (index des jetons récrits, plans.json refait, libellés de figurants.json traduits), CREDITS.md ; puis
+//     contrôle le contrat du contenu. Une entrée obsolète (le français a changé) est signalée ; un écart de balises arrête tout.
+// Les CLÉS ne se traduisent jamais (system.cle, camp, effet, compositions, équilibre, repères et maisons de la carte : le système
+// lakour-loups et le MJ IA lisent le contenu par clés) : seuls les noms, descriptions, règles, invites, pages, tables et notes.
 import { compilePack } from "@foundryvtt/foundryvtt-cli";
-import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { FETES_VEILLEES, imageDeFete } from "../modules/lakour-veillees/scripts/fetes.js";
+import { appliquer, extraire, fusionner, resumerRapport } from "../modules/lakour-mj-ia/outils/traduction.mjs";
+import { verifierModuleDeContenu } from "../modules/lakour-mj-ia/outils/contrat-contenu.mjs";
 import { APPARENCES, CAMPS, EFFETS, MODULE, VICTOIRES, ORDRE_MEUTE, cheminJeton, cleJetonBatiment, cleJetonMetier } from "../modules/lakour-veillees/contenu/aides.mjs";
 import { DOCUMENTS } from "../modules/lakour-veillees/contenu/index.mjs";
 import { compositions, MIN_JOUEURS, MAX_JOUEURS, MIN_TABLEE, MAX_TABLEE, NIVEAU_PETITE_TABLEE } from "../modules/lakour-veillees/contenu/compositions.mjs";
@@ -18,6 +31,18 @@ export const BATIMENTS_ATTENDUS = ["Chapelle", "Moulin", "Taverne", "Gibet", "Pu
 export const NOMBRE_MAISONS = 18;
 export const FICHIER_COMPOSITIONS = `${RACINE}/assets/compositions.json`;
 export const FICHIER_EQUILIBRE = `${RACINE}/assets/equilibre.json`;
+
+// ---------------------------------------------------------------- Version anglaise
+export const MODULE_EN = `${MODULE}-en`;
+const RACINE_EN = `modules/${MODULE_EN}`;
+export const DOSSIER_DICTIONNAIRES = `${RACINE}/contenu/en`;
+// Ce que l'extraction regarde (outils/traduction.mjs du moteur) : nos drapeaux sous flags.lakour-veillees ; jamais les clés que
+// le système lit telles quelles : « repere » du bâtiment et « maison » du villageois (noms d'éléments de la carte), « nom » et
+// « texte » du plan de la carte (« Maison 1 », « Place du village », repères des bâtiments : logique/plateau.mjs du système).
+export const CLES_NON_TRADUITES = ["repere", "maison", "nom", "texte"];
+export const OPTIONS_TRADUCTION = { module: MODULE, exclure: CLES_NON_TRADUITES };
+// Dossiers et fichiers du module français copiés tels quels dans le module anglais (les assets : un zip doit être autonome).
+const COPIES = ["CREDITS.md", "lang", "scripts", "templates", "assets"];
 
 // Équilibre (contenu/equilibre.mjs) : chaque rôle et chaque bâtiment du contenu y figure, avec le bon camp, et rien d'autre.
 export function verifierEquilibre(docs, equilibre = EQUILIBRE, batiments = EQUILIBRE_BATIMENTS) {
@@ -263,6 +288,135 @@ export function verifierCompositions(compos, roles, batiments) {
 export const rolesPourCompositions = docs => docs.filter(d => d.pack === "roles").map(d => ({ cle: d.doc.system.cle, camp: d.doc.system.camp }));
 export const batimentsPourCompositions = docs => docs.filter(d => d.pack === "batiments").map(d => d.doc.system.cle);
 
+// ---------------------------------------------------------------- Dictionnaires de traduction (module anglais)
+
+// Union des dictionnaires contenu/en/<pack>.json (module.json et figurants.json à part). Rend { dictionnaire, packs }.
+export function lireDictionnaires(dossier = DOSSIER_DICTIONNAIRES) {
+  const dictionnaire = {}, packs = [];
+  if (!existsSync(dossier)) return { dictionnaire, packs };
+  for (const f of readdirSync(dossier).filter(f => f.endsWith(".json") && TYPE_PACK[f.slice(0, -5)]).sort()) {
+    Object.assign(dictionnaire, JSON.parse(readFileSync(join(dossier, f), "utf8")));
+    packs.push(f.slice(0, -5));
+  }
+  return { dictionnaire, packs };
+}
+
+// Écrit ou met à jour les squelettes contenu/en/<pack>.json à partir des documents fabriqués (traductions existantes conservées,
+// sources changées signalées). Rend, par pack, { entrees, traduites, nouvelles, conservees, obsoletes, supprimees }.
+export function extraireDictionnaires(docs, dossier = DOSSIER_DICTIONNAIRES) {
+  const { squelette, tout } = extraire(docs, OPTIONS_TRADUCTION);
+  mkdirSync(dossier, { recursive: true });
+  const bilan = {};
+  for (const pack of Object.keys(TYPE_PACK)) {
+    if (!squelette[pack]) continue;
+    const fichier = join(dossier, `${pack}.json`);
+    const existant = existsSync(fichier) ? JSON.parse(readFileSync(fichier, "utf8")) : {};
+    const { dictionnaire, rapport } = fusionner(squelette[pack], existant, tout[pack]);
+    writeFileSync(fichier, `${JSON.stringify(dictionnaire, null, 2)}\n`);
+    const entrees = Object.values(dictionnaire).reduce((n, e) => n + Object.keys(e).filter(k => !k.startsWith("_")).length, 0);
+    const traduites = Object.values(dictionnaire).reduce((n, e) => n + Object.values(e).filter(t => t?.en).length, 0);
+    bilan[pack] = { entrees, traduites, ...rapport };
+  }
+  return bilan;
+}
+
+// Documents du module anglais, en mémoire : les documents français traduits, uuid, chemins et drapeaux récrits vers
+// lakour-veillees-en. Rend { documents, rapport }.
+export function fabriquerAnglais(docs = fabriquer(), dictionnaire = lireDictionnaires().dictionnaire) {
+  return appliquer(docs, dictionnaire, { ...OPTIONS_TRADUCTION, deId: MODULE, versId: MODULE_EN });
+}
+
+// Manifeste du module anglais : celui du module français, identifiant, titre, description, étiquettes des packs, dossiers et
+// légendes des médias pris dans contenu/en/module.json, adresses de publication propres (lakour-veillees-en.json / .zip), conflit
+// déclaré avec le module français (mêmes documents : un seul des deux actif à la fois).
+export function manifesteAnglais(manifeste, traductions) {
+  const en = structuredClone(manifeste);
+  en.id = MODULE_EN;
+  en.title = traductions.title ?? `${manifeste.title} (English)`;
+  en.description = traductions.description ?? manifeste.description;
+  if (manifeste.manifest) en.manifest = manifeste.manifest.replace(/module\.json$/, `${MODULE_EN}.json`);
+  if (manifeste.download) en.download = manifeste.download.replace(`${MODULE}.zip`, `${MODULE_EN}.zip`);
+  en.packs = manifeste.packs.map(p => ({ ...p, label: traductions.packs?.[p.name] ?? p.label }));
+  en.packFolders = (manifeste.packFolders ?? []).map(f => ({ ...f, name: traductions.packFolders?.[f.name] ?? f.name }));
+  en.media = (manifeste.media ?? []).map(m => ({ ...m, caption: traductions.media?.[m.caption] ?? m.caption }));
+  en.relationships = { ...manifeste.relationships, conflicts: [...(manifeste.relationships?.conflicts ?? []).filter(c => c.id !== MODULE),
+    { id: MODULE, type: "module", reason: `Same documents and identifiers as ${MODULE}: enable only one of the two.` }] };
+  return en;
+}
+
+// compositions.json et equilibre.json d'un module (lus par le système lakour-loups et le MJ IA) : des CLÉS, identiques dans les
+// deux langues ; seuls les libellés des compositions (« Classique — 12 joueurs ») sont traduits, par contenu/en/compositions.json.
+export function ecrireAssetsDeContenu(racine, compos, libelles = {}) {
+  mkdirSync(`${racine}/assets`, { recursive: true });
+  const traduits = Object.fromEntries(Object.entries(compos).map(([cle, c]) => [cle, { ...c, libelle: libelles[c.libelle] ?? c.libelle }]));
+  writeFileSync(`${racine}/assets/compositions.json`, `${JSON.stringify(traduits, null, 2)}\n`);
+  writeFileSync(`${racine}/assets/equilibre.json`, `${JSON.stringify({ roles: EQUILIBRE, batiments: EQUILIBRE_BATIMENTS }, null, 2)}\n`);
+}
+
+// Libellés anglais des compositions (contenu/en/compositions.json : { "libellé français": "english label" }), engendrés depuis les
+// niveaux : « Classique — 12 joueurs » -> « Classic — 12 players », « Petite tablée — 7 places » -> « Small Table — 7 seats ».
+export function libellesDeCompositions(compos, niveaux = {}) {
+  const libelles = {};
+  for (const c of Object.values(compos)) {
+    const m = /^(.+) — (\d+) (joueurs|places)$/.exec(c.libelle);
+    if (m && niveaux[m[1]]) libelles[c.libelle] = `${niveaux[m[1]]} — ${m[2]} ${m[3] === "places" ? "seats" : "players"}`;
+  }
+  return libelles;
+}
+
+// Copie le dossier du module français (COPIES) dans le module anglais : fichiers JSON des assets récrits (chemins
+// « modules/lakour-veillees/ » -> « modules/lakour-veillees-en/ »), plans.json refait à partir des scènes traduites (les plans ne
+// changent pas : ce sont des clés), libellés de figurants.json traduits (contenu/en/figurants.json : { "libellé": "label" }).
+export function copierModule(documents, figurants = {}) {
+  for (const element of COPIES) {
+    const source = join(RACINE, element), cible = join(RACINE_EN, element);
+    if (!existsSync(source)) continue;
+    rmSync(cible, { recursive: true, force: true });
+    cpSync(source, cible, { recursive: true });
+  }
+  const recrireJson = dossier => {
+    for (const f of readdirSync(dossier, { withFileTypes: true })) {
+      const chemin = join(dossier, f.name);
+      if (f.isDirectory()) recrireJson(chemin);
+      else if (f.name.endsWith(".json")) writeFileSync(chemin, readFileSync(chemin, "utf8").replaceAll(`modules/${MODULE}/`, `modules/${MODULE_EN}/`));
+    }
+  };
+  if (existsSync(join(RACINE_EN, "assets"))) recrireJson(join(RACINE_EN, "assets"));
+  const fichierFigurants = join(RACINE_EN, "assets/jetons/figurants.json");
+  if (existsSync(fichierFigurants)) {
+    const types = JSON.parse(readFileSync(fichierFigurants, "utf8"));
+    for (const t of Object.values(types)) if (figurants[t.libelle]) t.libelle = figurants[t.libelle];
+    writeFileSync(fichierFigurants, `${JSON.stringify(types, null, 2)}\n`);
+  }
+  const plans = {};
+  for (const { pack, doc } of documents) if (pack === "scenes" && doc.flags?.[MODULE_EN]?.plan) plans[doc.flags[MODULE_EN].cle] = doc.flags[MODULE_EN].plan;
+  mkdirSync(join(RACINE_EN, "assets/cartes"), { recursive: true });
+  writeFileSync(join(RACINE_EN, "assets/cartes/plans.json"), `${JSON.stringify(plans, null, 1)}\n`);
+}
+
+const lireJsonSiPresent = chemin => (existsSync(chemin) ? JSON.parse(readFileSync(chemin, "utf8")) : {});
+
+// ---------------------------------------------------------------- Ligne de commande
+
+// Écrit src/<pack>/*.json puis compile packs/ pour un module (racine), à partir de documents { pack, cle, doc }.
+async function ecrireEtCompiler(docs, racine, compiler) {
+  const parPack = Object.groupBy(docs, d => d.pack);
+  for (const [pack, liste] of Object.entries(parPack)) {
+    const dossier = `${racine}/src/${pack}`;
+    rmSync(dossier, { recursive: true, force: true });
+    mkdirSync(dossier, { recursive: true });
+    for (const { cle, doc } of liste) writeFileSync(`${dossier}/${cle.split(":")[1]}.json`, `${JSON.stringify(doc, null, 2)}\n`);
+    console.log(`${pack.padEnd(12)} ${liste.length} documents`);
+  }
+  if (compiler) {
+    for (const pack of Object.keys(parPack)) {
+      rmSync(`${racine}/packs/${pack}`, { recursive: true, force: true });
+      await compilePack(`${racine}/src/${pack}`, `${racine}/packs/${pack}`);
+    }
+    console.log("compendiums compilés dans", `${racine}/packs/`);
+  }
+}
+
 // Lancé directement (npm run fabriquer-veillees) ; importé par les essais, on ne fait que fabriquer().
 if (process.argv[1] && import.meta.url === `file:///${process.argv[1].replace(/\\/g, "/")}`) {
   const docs = fabriquer();
@@ -272,23 +426,44 @@ if (process.argv[1] && import.meta.url === `file:///${process.argv[1].replace(/\
     console.error(`Contenu non conforme au contrat :\n- ${erreurs.join("\n- ")}`);
     process.exit(1);
   }
-  const parPack = Object.groupBy(docs, d => d.pack);
-  for (const [pack, liste] of Object.entries(parPack)) {
-    const dossier = `${RACINE}/src/${pack}`;
-    rmSync(dossier, { recursive: true, force: true });
-    mkdirSync(dossier, { recursive: true });
-    for (const { cle, doc } of liste) writeFileSync(`${dossier}/${cle.split(":")[1]}.json`, `${JSON.stringify(doc, null, 2)}\n`);
-    console.log(`${pack.padEnd(12)} ${liste.length} documents`);
-  }
-  mkdirSync(`${RACINE}/assets`, { recursive: true });
-  writeFileSync(FICHIER_COMPOSITIONS, `${JSON.stringify(compos, null, 2)}\n`);
-  console.log(`compositions ${Object.keys(compos).length} (${FICHIER_COMPOSITIONS})`);
-  writeFileSync(FICHIER_EQUILIBRE, `${JSON.stringify({ roles: EQUILIBRE, batiments: EQUILIBRE_BATIMENTS }, null, 2)}\n`);
-  if (!process.argv.includes("--sans-compiler")) {
-    for (const pack of Object.keys(parPack)) {
-      rmSync(`${RACINE}/packs/${pack}`, { recursive: true, force: true });
-      await compilePack(`${RACINE}/src/${pack}`, `${RACINE}/packs/${pack}`);
+  const langue = process.argv.includes("--langue") ? process.argv[process.argv.indexOf("--langue") + 1] : "fr";
+  const compiler = !process.argv.includes("--sans-compiler");
+
+  if (process.argv.includes("--extraire")) {
+    // Squelettes des dictionnaires : un fichier par pack, traductions existantes conservées.
+    const bilan = extraireDictionnaires(docs);
+    for (const [pack, b] of Object.entries(bilan)) {
+      console.log(`${pack.padEnd(12)} ${String(b.traduites).padStart(4)}/${String(b.entrees).padEnd(4)} traduites, ${b.nouvelles} nouvelle(s)`
+        + `${b.obsoletes.length ? `, ${b.obsoletes.length} obsolète(s) (enAncien à vérifier)` : ""}${b.supprimees.length ? `, ${b.supprimees.length} retirée(s)` : ""}`);
+      for (const o of b.obsoletes) console.warn(`  obsolète : ${o}`);
     }
-    console.log("compendiums compilés dans", `${RACINE}/packs/`);
+    console.log(`dictionnaires dans ${DOSSIER_DICTIONNAIRES}/`);
+  } else if (langue === "fr") {
+    await ecrireEtCompiler(docs, RACINE, compiler);
+    ecrireAssetsDeContenu(RACINE, compos);
+    console.log(`compositions ${Object.keys(compos).length} (${FICHIER_COMPOSITIONS})`);
+  } else if (langue === "en") {
+    const { dictionnaire } = lireDictionnaires();
+    const { documents, rapport } = fabriquerAnglais(docs, dictionnaire);
+    console.log(resumerRapport(rapport));
+    for (const o of rapport.obsoletes) console.warn(`avertissement : traduction obsolète (le français a changé, relancer --extraire) : ${o}`);
+    if (rapport.erreurs.length) {
+      console.error(`${rapport.erreurs.length} traduction(s) en écart de balises ou de liens :`);
+      for (const e of rapport.erreurs) console.error(`- ${e.cle}:${e.chemin}\n    ${e.ecarts.join("\n    ")}`);
+      process.exit(1);
+    }
+    const manifeste = JSON.parse(readFileSync(`${RACINE}/module.json`, "utf8"));
+    const traductions = lireJsonSiPresent(`${DOSSIER_DICTIONNAIRES}/module.json`);
+    mkdirSync(RACINE_EN, { recursive: true });
+    writeFileSync(`${RACINE_EN}/module.json`, `${JSON.stringify(manifesteAnglais(manifeste, traductions), null, 2)}\n`);
+    copierModule(documents, lireJsonSiPresent(`${DOSSIER_DICTIONNAIRES}/figurants.json`));
+    ecrireAssetsDeContenu(RACINE_EN, compos, libellesDeCompositions(compos, traductions.niveaux));
+    await ecrireEtCompiler(documents, RACINE_EN, compiler);
+    const ecarts = verifierModuleDeContenu(RACINE_EN);
+    if (ecarts.length) { console.error(`${RACINE_EN} : ${ecarts.length} écart(s) au contrat des modules de contenu :\n- ${ecarts.join("\n- ")}`); process.exit(1); }
+    console.log(`${RACINE_EN}/ : module anglais complet (contrat du contenu respecté) ; ${rapport.manquants.length} texte(s) encore en français`);
+  } else {
+    console.error(`Langue inconnue : ${langue} (fr ou en)`);
+    process.exit(2);
   }
 }

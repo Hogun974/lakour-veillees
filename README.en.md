@@ -20,9 +20,13 @@ some of you are wolves: by day they talk, vote and mourn with everyone else; by 
 one weapon: words, and the vote.
 
 > **Language note.** The interface of the system and of the content module is available in **French and English**. The
-> game content itself (roles, trades, buildings, guides, variants, tables) is **written in French**; an English version is
-> planned. The game is fully playable in English by a group that reads French role cards, and the narrator (human or AI) can
-> narrate in any language.
+> game content itself (roles, trades, buildings, guides, variants, tables, holiday journals) exists in both languages:
+> `lakour-veillees` is the French module; **`lakour-veillees-en`** is the English edition, generated from the same sources
+> and the translation dictionaries in `modules/lakour-veillees/contenu/en/` (`npm run fabriquer-veillees-en`). Same
+> documents, same identifiers: enable only one of the two. Manifest: `releases/latest/download/lakour-veillees-en.json`.
+> The English role names are original creations (Ash Reader, Lantern Keeper, Lady of the Ford…); the keys the system reads
+> (map landmarks such as “Maison 1” or “Chapelle”, setups, balance) stay as they are. The narrator (human or AI) can narrate
+> in any language.
 
 ## In short
 

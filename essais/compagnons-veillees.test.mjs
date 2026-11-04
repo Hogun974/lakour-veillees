@@ -189,7 +189,7 @@ test("loups_distribuer : noms tirés de la table des noms du village, jamais un 
 
 // ------------------------------------------------------------------ mutations de la vue (compagnons-jeu.js)
 const SCRIPTS = fileURLToPath(new URL("../modules/lakour-mj-ia/scripts/", import.meta.url));
-const COPIES = ["compagnons-jeu.js", "compagnons.js", "constantes.js", "adaptateurs.js", "utilitaires.js", "tour-logique.js"];
+const COPIES = ["compagnons-jeu.js", "compagnons.js", "constantes.js", "adaptateurs.js", "utilitaires.js", "tour-logique.js", "histoire-logique.js", "survie-logique.js", "contenus.js"];
 const MUTATIONS = {
   "état complet au lieu de l'état public (chronique secrète comprise)": [
     "const pub = api.logique.etatPublic(api.etat());", "const pub = api.etat();",

@@ -333,8 +333,14 @@ lit dans [son dépôt](https://github.com/Hogun974/lakour-mj-ia).
 ## Langues
 
 L'**interface** du système et du module est en **français et en anglais** (fichiers `lang/fr.json` et `lang/en.json`, tout
-libellé traduit). Les **textes du contenu** (rôles, métiers, bâtiments, guides, variantes, tables) sont en **français** ; une
-version anglaise viendra.
+libellé traduit). Les **textes du contenu** (rôles, métiers, bâtiments, guides, variantes, tables, journaux de fête) existent
+dans les deux langues : le module `lakour-veillees` est le français ; `npm run fabriquer-veillees-en` engendre, des mêmes
+sources et des dictionnaires `modules/lakour-veillees/contenu/en/<pack>.json`, le module anglais **`lakour-veillees-en`**
+(mêmes documents, mêmes identifiants ; un seul des deux actif à la fois ; manifeste publié
+`releases/latest/download/lakour-veillees-en.json`). Les noms de rôles anglais sont des créations originales (Ash Reader,
+Lantern Keeper, Lady of the Ford…) ; les clés que le système lit (`system.cle`, compositions, repères et maisons de la carte :
+« Maison 1 », « Chapelle ») ne changent pas. Méthode : `modules/lakour-mj-ia/docs/traduction.md` ;
+`node outils/fabriquer-veillees.mjs --extraire` met les dictionnaires à jour après un changement des sources.
 
 ## Essais
 

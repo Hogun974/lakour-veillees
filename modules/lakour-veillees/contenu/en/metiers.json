@@ -1,0 +1,212 @@
+{
+  "metiers/2UZyZNIS7ipRfZbO": {
+    "_nom": "Éclusière",
+    "name": {
+      "fr": "Éclusière",
+      "en": "Lock Keeper"
+    },
+    "system.description": {
+      "fr": "<p>Tes vannes règlent le cours de la Brume : quand tu les fermes, l'eau monte sous le Pont et le gué disparaît.</p><p><strong>Une fois par partie</strong>, pendant le jour, tu <strong>fermes l'écluse</strong> : la nuit suivante, <strong>la meute ne peut chasser aucune maison de l'autre rive</strong> (maisons 13 à 18), comme quand le Pont est bloqué. Tout le monde le sait, les loups aussi. Les autres pouvoirs de nuit passent.</p>",
+      "en": "<p>Your gates govern the course of the Brume: when you close them, the water rises under the Bridge and the ford disappears.</p><p><strong>Once per game</strong>, during the day, you <strong>close the sluice</strong>: the following night, <strong>the pack cannot hunt any house on the far bank</strong> (houses 13 to 18), just as when the Bridge is blocked. Everyone knows it, the wolves too. The other night powers get through.</p>"
+    },
+    "system.jour.invite": {
+      "fr": "Fermes-tu l'écluse pour la nuit qui vient ?",
+      "en": "Do you close the sluice for the coming night?"
+    }
+  },
+  "metiers/4L9UPlyCraus1CXS": {
+    "_nom": "Curé",
+    "name": {
+      "fr": "Curé",
+      "en": "Priest"
+    },
+    "system.description": {
+      "fr": "<p>Ta chapelle est froide mais tes mots réchauffent.</p><p><strong>Une fois par partie</strong>, pendant le jour, tu <strong>bénis</strong> un joueur (toi compris) : jusqu'à la fin de la partie, il <strong>ne peut plus être réduit au silence</strong>, et il parle le premier au débat suivant.</p>",
+      "en": "<p>Your chapel is cold but your words warm.</p><p><strong>Once per game</strong>, during the day, you <strong>bless</strong> a player (yourself included): until the end of the game, they <strong>can no longer be silenced</strong>, and they speak first at the next debate.</p>"
+    },
+    "system.jour.invite": {
+      "fr": "Qui bénis-tu ?",
+      "en": "Whom do you bless?"
+    }
+  },
+  "metiers/9yr7s89OUikqYkOK": {
+    "_nom": "Apothicaire",
+    "name": {
+      "fr": "Apothicaire",
+      "en": "Apothecary"
+    },
+    "system.description": {
+      "fr": "<p>Sirop de coquelicot, miel et sauge : rien ne résiste à tes pastilles.</p><p><strong>Une fois par partie</strong>, au début d'un débat, tu <strong>rends la parole</strong> à un joueur réduit au silence.</p>",
+      "en": "<p>Poppy syrup, honey and sage: nothing resists your lozenges.</p><p><strong>Once per game</strong>, at the start of a debate, you <strong>give their voice back</strong> to a silenced player.</p>"
+    },
+    "system.jour.invite": {
+      "fr": "À qui rends-tu la voix ?",
+      "en": "To whom do you give their voice back?"
+    }
+  },
+  "metiers/BLWUq0c4PAVKz0Nc": {
+    "_nom": "Colporteur de nouvelles",
+    "name": {
+      "fr": "Colporteur de nouvelles",
+      "en": "Town Crier"
+    },
+    "system.description": {
+      "fr": "<p>Tu sais tout avant tout le monde, et tu le dis plus fort.</p><p><strong>Une fois par partie</strong>, au matin, tu demandes au narrateur une <strong>nouvelle</strong> de la nuit : un indice <strong>vrai mais flou</strong>, qu'il annonce à tout le village (« deux maisons voisines ont eu de la visite », « la victime connaissait celui qui l'a trouvée »).</p>",
+      "en": "<p>You know everything before everyone else, and you say it louder.</p><p><strong>Once per game</strong>, in the morning, you ask the narrator for <strong>news</strong> of the night: a <strong>true but vague</strong> clue, which they announce to the whole village (“two neighbouring houses had visitors”, “the victim knew the one who found them”).</p>"
+    },
+    "system.jour.invite": {
+      "fr": "Veux-tu crier la nouvelle du matin ?",
+      "en": "Do you want to cry the morning news?"
+    }
+  },
+  "metiers/DM1Dq8QcINj2LFTF": {
+    "_nom": "Chasseresse",
+    "name": {
+      "fr": "Chasseresse",
+      "en": "Huntress"
+    },
+    "system.description": {
+      "fr": "<p>Tu lis la boue des chemins comme d'autres lisent l'almanach.</p><p><strong>Une fois par partie</strong>, au matin, tu désignes un joueur : le narrateur dit à tout le village s'il a <strong>quitté sa maison</strong> la nuit passée (pouvoir de nuit ou chasse), sans dire ce qu'il a fait.</p>",
+      "en": "<p>You read the mud of the paths as others read the almanac.</p><p><strong>Once per game</strong>, in the morning, you designate a player: the narrator tells the whole village whether they <strong>left their house</strong> during the past night (a night power or the hunt), without saying what they did.</p>"
+    },
+    "system.jour.invite": {
+      "fr": "Quelles traces suis-tu ce matin ?",
+      "en": "Whose tracks do you follow this morning?"
+    }
+  },
+  "metiers/EiwiuY8leDaDWabk": {
+    "_nom": "Forgeron",
+    "name": {
+      "fr": "Forgeron",
+      "en": "Blacksmith"
+    },
+    "system.description": {
+      "fr": "<p>Ton marteau s'entend de la place, et ta porte ne ferme jamais tout à fait.</p><p><strong>Une fois par partie</strong>, pendant le jour, tu forges un <strong>verrou</strong> pour la maison d'un joueur (la tienne comprise) : la nuit suivante, la <strong>première attaque de loup</strong> contre cette maison échoue (le poison et le feu passent). Tout le monde sait à qui tu l'as donné.</p>",
+      "en": "<p>Your hammer can be heard from the square, and your door never quite closes.</p><p><strong>Once per game</strong>, during the day, you forge a <strong>lock</strong> for a player's house (yours included): the following night, the <strong>first wolf attack</strong> against that house fails (poison and fire get through). Everyone knows whom you gave it to.</p>"
+    },
+    "system.jour.invite": {
+      "fr": "À quelle maison donnes-tu ton verrou ?",
+      "en": "Which house do you give your lock to?"
+    }
+  },
+  "metiers/KdWGbntuYKcXeKhQ": {
+    "_nom": "Passeur",
+    "name": {
+      "fr": "Passeur",
+      "en": "Ferryman"
+    },
+    "system.description": {
+      "fr": "<p>Ta barque connaît la rivière par cœur, même sous la brume.</p><p><strong>Une fois par partie</strong>, pendant le jour, tu fais <strong>traverser la rivière</strong> à un joueur (toi compris) : la nuit suivante, il dort de l'autre côté du <strong>Pont</strong>, hors d'atteinte. Personne ne peut le visiter, mais il ne peut pas agir non plus.</p>",
+      "en": "<p>Your boat knows the river by heart, even under the mist.</p><p><strong>Once per game</strong>, during the day, you take a player (yourself included) <strong>across the river</strong>: the following night, they sleep on the other side of the <strong>Bridge</strong>, out of reach. Nobody can visit them, but they cannot act either.</p>"
+    },
+    "system.jour.invite": {
+      "fr": "Qui fais-tu traverser ce soir ?",
+      "en": "Whom do you take across tonight?"
+    }
+  },
+  "metiers/RBXUxuX7YwiZZAK7": {
+    "_nom": "Maîtresse d'école",
+    "name": {
+      "fr": "Maîtresse d'école",
+      "en": "Schoolmistress"
+    },
+    "system.description": {
+      "fr": "<p>Tu as appris à lire à la moitié du village, et l'autre moitié te craint encore.</p><p><strong>Une fois par partie</strong>, au début d'un débat, tu <strong>fais l'appel</strong> : tu désignes qui parle en premier, puis chaque joueur vivant parle <strong>trente secondes</strong>, à tour de rôle, dans l'ordre des maisons, avant le débat libre.</p>",
+      "en": "<p>You taught half the village to read, and the other half still fears you.</p><p><strong>Once per game</strong>, at the start of a debate, you <strong>call the roll</strong>: you designate who speaks first, then each living player speaks for <strong>thirty seconds</strong>, in turn, in house order, before the open debate.</p>"
+    },
+    "system.jour.invite": {
+      "fr": "Qui parle en premier à l'appel ?",
+      "en": "Who speaks first at the roll call?"
+    }
+  },
+  "metiers/W8qJeQ1Pxc8fal57": {
+    "_nom": "Aubergiste",
+    "name": {
+      "fr": "Aubergiste",
+      "en": "Innkeeper"
+    },
+    "system.description": {
+      "fr": "<p>Ta salle est la seule du village où l'on parle à voix haute après la nuit tombée.</p><p><strong>Une fois par partie</strong>, pendant le jour, tu offres le <strong>gîte</strong> à un joueur (toi compris) : la nuit suivante, il dort à la <strong>Taverne</strong> et non chez lui. La meute qui entre dans sa maison la trouve vide (le poison et le feu, eux, l'atteignent). Si la Taverne est en jeu, il y prend l'un des trois lits et sa règle s'applique.</p>",
+      "en": "<p>Your taproom is the only place in the village where people talk aloud after nightfall.</p><p><strong>Once per game</strong>, during the day, you offer <strong>lodging</strong> to a player (yourself included): the following night, they sleep at the <strong>Tavern</strong> and not at home. The pack that enters their house finds it empty (poison and fire, however, reach them). If the Tavern is in play, they take one of its three beds and its rule applies.</p>"
+    },
+    "system.jour.invite": {
+      "fr": "À qui offres-tu un lit à la Taverne cette nuit ?",
+      "en": "To whom do you offer a bed at the Tavern tonight?"
+    }
+  },
+  "metiers/Xms3unABnsOov4TS": {
+    "_nom": "Garde du guet",
+    "name": {
+      "fr": "Garde du guet",
+      "en": "Watchman"
+    },
+    "system.description": {
+      "fr": "<p>Tu fais la ronde avec ta pique et ton sifflet.</p><p><strong>Une fois par partie</strong>, pendant le jour, tu annonces que tu <strong>gardes un joueur à l'œil</strong> : la nuit suivante, il ne peut utiliser <strong>aucun pouvoir qui vise une autre maison</strong> que la sienne (s'il est loup, la meute chasse sans lui).</p>",
+      "en": "<p>You make your rounds with your pike and your whistle.</p><p><strong>Once per game</strong>, during the day, you announce that you <strong>keep an eye on a player</strong>: the following night, they cannot use <strong>any power that targets a house other than their own</strong> (if they are a wolf, the pack hunts without them).</p>"
+    },
+    "system.jour.invite": {
+      "fr": "Qui gardes-tu à l'œil cette nuit ?",
+      "en": "Whom do you keep an eye on tonight?"
+    }
+  },
+  "metiers/bannRn0UAGWzBH0O": {
+    "_nom": "Ramoneuse",
+    "name": {
+      "fr": "Ramoneuse",
+      "en": "Chimney Sweep"
+    },
+    "system.description": {
+      "fr": "<p>Du haut des toits, tu vois tous les seuils de Brumecombe, et la suie garde la trace des pas.</p><p><strong>Une fois par partie</strong>, au matin, tu désignes la maison d'un joueur vivant (la tienne comprise) : le narrateur dit à tout le village si elle a <strong>reçu de la visite</strong> la nuit passée (un loup, ou un pouvoir qui la visait), sans dire qui est venu ni pourquoi.</p>",
+      "en": "<p>From the rooftops, you see every doorstep in Brumecombe, and soot keeps the trace of footsteps.</p><p><strong>Once per game</strong>, in the morning, you designate a living player's house (yours included): the narrator tells the whole village whether it <strong>had visitors</strong> during the past night (a wolf, or a power that targeted it), without saying who came or why.</p>"
+    },
+    "system.jour.invite": {
+      "fr": "Sur quel toit montes-tu ce matin ?",
+      "en": "Which roof do you climb this morning?"
+    }
+  },
+  "metiers/t9pV5FbvywnKJMXb": {
+    "_nom": "Meunière",
+    "name": {
+      "fr": "Meunière",
+      "en": "Miller"
+    },
+    "system.description": {
+      "fr": "<p>La meule tourne plus lentement quand la meute rôde, tu le sens dans tes bras.</p><p><strong>Une fois par partie</strong>, au début d'un jour, tu demandes au narrateur combien de <strong>loups vivent encore</strong> : il le dit à voix haute, pour tout le village.</p>",
+      "en": "<p>The millstone turns more slowly when the pack prowls, you can feel it in your arms.</p><p><strong>Once per game</strong>, at the start of a day, you ask the narrator how many <strong>wolves are still alive</strong>: they say it aloud, for the whole village.</p>"
+    },
+    "system.jour.invite": {
+      "fr": "Veux-tu demander à la meule combien de loups vivent encore ?",
+      "en": "Do you want to ask the millstone how many wolves are still alive?"
+    }
+  },
+  "metiers/uqYmRSoXtTd3SuTQ": {
+    "_nom": "Tanneur",
+    "name": {
+      "fr": "Tanneur",
+      "en": "Tanner"
+    },
+    "system.description": {
+      "fr": "<p>Les peaux n'ont plus de secret pour toi, ni celles des bêtes ni celles des gens.</p><p><strong>Une fois par partie</strong>, au matin, tu examines un <strong>mort de la nuit</strong> : le narrateur dit à tout le village s'il porte des <strong>traces de crocs</strong> (la meute) ou non (poison, feu, chagrin, collet).</p>",
+      "en": "<p>Hides hold no secrets for you, neither those of beasts nor those of people.</p><p><strong>Once per game</strong>, in the morning, you examine one of <strong>the night's dead</strong>: the narrator tells the whole village whether they bear <strong>fang marks</strong> (the pack) or not (poison, fire, grief, snare).</p>"
+    },
+    "system.jour.invite": {
+      "fr": "Quel corps examines-tu ce matin ?",
+      "en": "Which body do you examine this morning?"
+    }
+  },
+  "metiers/wm5iXtpVF5J13VXG": {
+    "_nom": "Tisserande",
+    "name": {
+      "fr": "Tisserande",
+      "en": "Weaver"
+    },
+    "system.description": {
+      "fr": "<p>Ton métier claque du matin au soir, et tu connais tous les fils.</p><p><strong>Une fois par partie</strong>, pendant le jour, tu noues un <strong>ruban</strong> au poignet d'un joueur : s'il est le plus désigné d'un vote, le dépouillement attend : il gagne <strong>une minute de défense</strong> de plus, pendant laquelle le vote reste ouvert. Le ruban ne sert qu'une fois.</p>",
+      "en": "<p>Your loom clatters from morning to night, and you know every thread.</p><p><strong>Once per game</strong>, during the day, you tie a <strong>ribbon</strong> around a player's wrist: if they are the most designated in a vote, the count waits: they gain <strong>one more minute of defence</strong>, during which the vote stays open. The ribbon serves only once.</p>"
+    },
+    "system.jour.invite": {
+      "fr": "Au poignet de qui noues-tu ton ruban ?",
+      "en": "Around whose wrist do you tie your ribbon?"
+    }
+  }
+}

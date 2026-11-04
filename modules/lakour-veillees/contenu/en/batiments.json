@@ -1,0 +1,152 @@
+{
+  "batiments/2rgmMfujSeFsz7nW": {
+    "_nom": "La Chapelle",
+    "name": {
+      "fr": "La Chapelle",
+      "en": "The Chapel"
+    },
+    "system.description": {
+      "fr": "<p>Une chapelle de pierre grise au nord de la place, avec un clocher trop haut pour elle. La porte n'a jamais eu de serrure.</p>",
+      "en": "<p>A grey stone chapel north of the square, with a bell tower too tall for it. The door has never had a lock.</p>"
+    },
+    "system.regle": {
+      "fr": "<p><strong>Asile.</strong> Chaque jour, après le vote, le village désigne à main levée (un second vote, rapide) un joueur vivant qui <strong>dormira à la Chapelle</strong> : la meute ne peut pas l'attaquer la nuit suivante. Jamais deux nuits de suite le même joueur. Le poison et le feu passent la porte.</p>",
+      "en": "<p><strong>Sanctuary.</strong> Each day, after the vote, the village designates by show of hands (a second, quick vote) a living player who <strong>will sleep at the Chapel</strong>: the pack cannot attack them the following night. Never the same player two nights in a row. Poison and fire get through the door.</p>"
+    }
+  },
+  "batiments/ADpPNKk8GepkynTw": {
+    "_nom": "Le Puits",
+    "name": {
+      "fr": "Le Puits",
+      "en": "The Well"
+    },
+    "system.description": {
+      "fr": "<p>Le vieux puits au milieu de la place. Ceux qui se penchent dessus entendent parfois leur nom.</p>",
+      "en": "<p>The old well in the middle of the square. Those who lean over it sometimes hear their name.</p>"
+    },
+    "system.regle": {
+      "fr": "<p><strong>Dernier mot.</strong> <strong>Une fois par partie</strong>, un joueur qui vient de mourir (cette nuit ou ce jour) peut confier au puits un <strong>dernier mot de dix mots au plus</strong>, que le narrateur lit au village. Le premier mort qui le demande l'obtient.</p>",
+      "en": "<p><strong>Last word.</strong> <strong>Once per game</strong>, a player who has just died (this night or this day) may entrust to the well a <strong>last word of ten words at most</strong>, which the narrator reads to the village. The first dead player to ask for it gets it.</p>"
+    }
+  },
+  "batiments/B1YZZ2QtFYykpNB1": {
+    "_nom": "La Grange",
+    "name": {
+      "fr": "La Grange",
+      "en": "The Barn"
+    },
+    "system.description": {
+      "fr": "<p>La grange des Vaudrey sur l'autre rive, pleine de foin et de courants d'air.</p>",
+      "en": "<p>The Vaudreys' barn on the far bank, full of hay and draughts.</p>"
+    },
+    "system.regle": {
+      "fr": "<p><strong>Cachette.</strong> <strong>Une fois par partie et par joueur</strong>, on peut annoncer pendant le jour qu'on se cache dans la Grange : la nuit suivante, on <strong>ne peut pas être trouvé</strong> (aucune visite ne réussit, et le feu d'une maison vide ne tue personne), mais on <strong>ne peut pas agir</strong>. Deux joueurs au plus par nuit.</p>",
+      "en": "<p><strong>Hiding place.</strong> <strong>Once per game and per player</strong>, one may announce during the day that one hides in the Barn: the following night, one <strong>cannot be found</strong> (no visit succeeds, and the fire of an empty house kills nobody), but one <strong>cannot act</strong>. Two players at most per night.</p>"
+    }
+  },
+  "batiments/DuiM5DsHwb7Ym563": {
+    "_nom": "La Taverne",
+    "name": {
+      "fr": "La Taverne",
+      "en": "The Tavern"
+    },
+    "system.description": {
+      "fr": "<p>La Taverne du Chaudron Fêlé, au bord de la place : trois lits à l'étage, un feu qui ne s'éteint jamais.</p>",
+      "en": "<p>The Cracked Cauldron Tavern, on the edge of the square: three beds upstairs, a fire that never goes out.</p>"
+    },
+    "system.regle": {
+      "fr": "<p><strong>Dortoir.</strong> Chaque jour, jusqu'à <strong>trois joueurs</strong> peuvent annoncer qu'ils dormiront à la Taverne. La nuit suivante, la meute <strong>ne peut tuer aucun d'eux</strong>… sauf si <strong>un loup</strong> dort parmi eux : alors elle peut y tuer celui de son choix, et aucune protection ne joue. L'hôte de l'Aubergiste prend l'un des trois lits. Le poison et le feu atteignent les dormeurs comme ailleurs.</p>",
+      "en": "<p><strong>Dormitory.</strong> Each day, up to <strong>three players</strong> may announce that they will sleep at the Tavern. The following night, the pack <strong>cannot kill any of them</strong>… unless <strong>a wolf</strong> sleeps among them: then it may kill whichever of them it chooses, and no protection applies. The Innkeeper's guest takes one of the three beds. Poison and fire reach the sleepers as anywhere else.</p>"
+    }
+  },
+  "batiments/R0peqJDFG29jmkOn": {
+    "_nom": "Le Cimetière",
+    "name": {
+      "fr": "Le Cimetière",
+      "en": "The Graveyard"
+    },
+    "system.description": {
+      "fr": "<p>Le cimetière derrière la chapelle, ses croix penchées et son if qui ne perd jamais ses aiguilles.</p>",
+      "en": "<p>The graveyard behind the chapel, its leaning crosses and its yew that never loses its needles.</p>"
+    },
+    "system.regle": {
+      "fr": "<p><strong>Les tombes parlent.</strong> Si les rôles ne sont <strong>pas révélés à la mort</strong>, le narrateur annonce chaque matin le <strong>camp</strong> (pas le rôle) de chaque joueur mort depuis le matin précédent, les morts de la nuit compris. Si les rôles sont révélés à la mort, le Cimetière est sans effet.</p>",
+      "en": "<p><strong>The graves speak.</strong> If roles are <strong>not revealed at death</strong>, the narrator announces each morning the <strong>side</strong> (not the role) of each player who died since the previous morning, the night's dead included. If roles are revealed at death, the Graveyard has no effect.</p>"
+    }
+  },
+  "batiments/Rg4NsKM5nw6jNIg8": {
+    "_nom": "Le Moulin",
+    "name": {
+      "fr": "Le Moulin",
+      "en": "The Mill"
+    },
+    "system.description": {
+      "fr": "<p>Le moulin à vent sur la butte de l'ouest. Ses ailes tournent même quand il n'y a pas de vent, disent les enfants.</p>",
+      "en": "<p>The windmill on the western knoll. Its sails turn even when there is no wind, say the children.</p>"
+    },
+    "system.regle": {
+      "fr": "<p><strong>La meule qui compte.</strong> Chaque matin, la Meunière (si quelqu'un a ce métier) apprend en secret le <strong>nombre de loups encore vivants</strong>. Sans Meunière vivante, le narrateur l'annonce à tout le village <strong>un matin sur deux</strong> (après la deuxième nuit, la quatrième…).</p>",
+      "en": "<p><strong>The counting stone.</strong> Each morning, the Miller (if someone holds that trade) secretly learns the <strong>number of wolves still alive</strong>. Without a living Miller, the narrator announces it to the whole village <strong>every other morning</strong> (after the second night, the fourth…).</p>"
+    }
+  },
+  "batiments/UchZugIE6gnV4JDz": {
+    "_nom": "Le Lavoir",
+    "name": {
+      "fr": "Le Lavoir",
+      "en": "The Washhouse"
+    },
+    "system.description": {
+      "fr": "<p>Le lavoir couvert au bord de la rivière : on y lave le linge, et surtout les réputations.</p>",
+      "en": "<p>The covered washhouse on the riverbank: linen is washed there, and above all reputations.</p>"
+    },
+    "system.regle": {
+      "fr": "<p><strong>Les bavardages.</strong> Chaque matin, le narrateur rapporte ce qu'on dit au lavoir : un <strong>indice vrai mais flou</strong> sur la nuit passée (« quelqu'un est sorti par la porte de derrière », « la victime avait de la visite deux nuits plus tôt »). Il ne nomme jamais personne.</p>",
+      "en": "<p><strong>Gossip.</strong> Each morning, the narrator reports what is said at the washhouse: a <strong>true but vague clue</strong> about the past night (“someone went out by the back door”, “the victim had visitors two nights earlier”). It never names anyone.</p>"
+    }
+  },
+  "batiments/ap1JoJfTcFCLgHBV": {
+    "_nom": "Le Gibet",
+    "name": {
+      "fr": "Le Gibet",
+      "en": "The Gallows"
+    },
+    "system.description": {
+      "fr": "<p>Une potence de chêne noirci au coin de la place. On ne s'en sert presque jamais, et c'est déjà trop.</p>",
+      "en": "<p>A blackened oak gallows at the corner of the square. It is almost never used, and that is already too much.</p>"
+    },
+    "system.regle": {
+      "fr": "<p><strong>Majorité absolue.</strong> Pour exécuter un joueur, il faut que <strong>plus de la moitié des vivants</strong> aient voté pour lui. Sinon, personne n'est exécuté ce jour-là.</p>",
+      "en": "<p><strong>Absolute majority.</strong> To execute a player, <strong>more than half of the living</strong> must have voted for them. Otherwise, nobody is executed that day.</p>"
+    }
+  },
+  "batiments/bVJKwASGyN0fAEa7": {
+    "_nom": "Le Pont",
+    "name": {
+      "fr": "Le Pont",
+      "en": "The Bridge"
+    },
+    "system.description": {
+      "fr": "<p>Le pont de pierre sur la Brume, la rivière qui coupe le village. Les maisons 13 à 18 sont sur l'autre rive.</p>",
+      "en": "<p>The stone bridge over the Brume, the river that cuts the village in two. Houses 13 to 18 are on the far bank.</p>"
+    },
+    "system.regle": {
+      "fr": "<p><strong>L'autre rive.</strong> Les maisons <strong>13 à 18</strong> sont de l'autre côté du Pont ; environ un tiers des joueurs y dort, quelle que soit la taille du village. Si la meute a tué sur l'autre rive une nuit, elle <strong>ne peut pas traverser</strong> la nuit suivante : aucune maison de l'autre rive ne peut être sa proie.</p>",
+      "en": "<p><strong>The far bank.</strong> Houses <strong>13 to 18</strong> are on the other side of the Bridge; about a third of the players sleep there, whatever the size of the village. If the pack killed on the far bank one night, it <strong>cannot cross</strong> the following night: no house on the far bank can be its prey.</p>"
+    }
+  },
+  "batiments/xF0rpQdfm1I5aCuj": {
+    "_nom": "La Forge",
+    "name": {
+      "fr": "La Forge",
+      "en": "The Forge"
+    },
+    "system.description": {
+      "fr": "<p>La forge à l'ouest de la place, toujours rouge, toujours chaude. Le forgeron dort à côté de l'enclume.</p>",
+      "en": "<p>The forge west of the square, always red, always hot. The blacksmith sleeps beside the anvil.</p>"
+    },
+    "system.regle": {
+      "fr": "<p><strong>Une lame sous l'oreiller.</strong> <strong>Une fois par partie</strong>, pendant le jour, un joueur peut annoncer qu'il emporte une <strong>lame</strong> de la forge. Si la meute l'attaque la nuit suivante, la lame ne le protège pas (il meurt, sauf protection), mais il <strong>blesse un loup</strong> tiré au hasard parmi ceux qui chassaient : ce loup est <strong>réduit au silence</strong> au jour suivant (le narrateur dit seulement « du sang de bête sur le seuil »).</p>",
+      "en": "<p><strong>A blade under the pillow.</strong> <strong>Once per game</strong>, during the day, a player may announce that they take a <strong>blade</strong> from the forge. If the pack attacks them the following night, the blade does not protect them (they die, unless protected), but they <strong>wound a wolf</strong> drawn at random among those who hunted: that wolf is <strong>silenced</strong> the following day (the narrator says only “beast's blood on the doorstep”).</p>"
+    }
+  }
+}

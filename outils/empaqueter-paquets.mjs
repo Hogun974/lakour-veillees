@@ -3,6 +3,10 @@
 //   dist/lakour-loups.zip  systems/lakour-loups/ entier (system.json à la racine de l'archive)
 //   dist/module.json       manifeste du module de contenu, même traitement
 //   dist/lakour-veillees.zip  modules/lakour-veillees/ sans src/, contenu/ ni essais/ (packs/ compilés exigés)
+//   dist/lakour-veillees-en.json + dist/lakour-veillees-en.zip  le module anglais engendré par `npm run fabriquer-veillees-en`
+//                          (modules/lakour-veillees-en/, non versionné) : manifeste publié sous son propre nom (Foundry lit un
+//                          manifeste sous n'importe quel nom ; « module.json » reste celui du module français). Facultatif :
+//                          s'il n'a pas été fabriqué, il est passé avec un avertissement (le workflow, lui, exige l'archive).
 // Les archives sont écrites sans dépendance (zip « deflate » maison, node:zlib). Le monde est empaqueté à part
 // (npm run empaqueter-monde, s'il existe) ; le workflow .github/workflows/release.yml appelle les deux.
 // Usage : node outils/empaqueter-paquets.mjs [--tag v0.11.1] [--depot Hogun974/lakour-veillees] [--sortie dist]
@@ -19,10 +23,15 @@ import { deflateRawSync } from "node:zlib";
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..");
 export const DEPOT_PAR_DEFAUT = "Hogun974/lakour-veillees";
 
+// manifeste : fichier lu dans le dossier du paquet ; publie (par défaut le même nom) : nom du manifeste écrit dans la sortie et
+// visé par « manifest » ; facultatif : paquet passé (avec avertissement) si son dossier n'a pas été engendré.
 export const PAQUETS = [
   { id: "lakour-loups", type: "system", dossier: "systems/lakour-loups", manifeste: "system.json", zip: "lakour-loups.zip", exclure: [] },
   { id: "lakour-veillees", type: "module", dossier: "modules/lakour-veillees", manifeste: "module.json", zip: "lakour-veillees.zip",
-    exclure: ["src", "contenu", "essais"], exiger: ["packs"] }
+    exclure: ["src", "contenu", "essais"], exiger: ["packs"] },
+  { id: "lakour-veillees-en", type: "module", dossier: "modules/lakour-veillees-en", manifeste: "module.json", publie: "lakour-veillees-en.json",
+    zip: "lakour-veillees-en.zip", exclure: ["src", "contenu", "essais"], exiger: ["packs"], facultatif: true,
+    fabrication: "npm run fabriquer-veillees-en" }
 ];
 
 // ---------------------------------------------------------------- Arguments
@@ -179,15 +188,17 @@ export function listerFichiers(dossier, exclure = []) {
 
 export function empaqueter(paquet, { depot, tag, sortie, racine = RACINE }) {
   const dossier = join(racine, paquet.dossier);
-  if (!existsSync(join(dossier, paquet.manifeste))) throw new Error(`${paquet.dossier}/${paquet.manifeste} introuvable`);
+  const fabrication = paquet.fabrication ?? "npm run fabriquer-veillees";
+  if (!existsSync(join(dossier, paquet.manifeste))) throw new Error(`${paquet.dossier}/${paquet.manifeste} introuvable${paquet.facultatif ? ` : lancer « ${fabrication} » avant d'empaqueter` : ""}`);
   for (const d of paquet.exiger ?? []) {
     if (!existsSync(join(dossier, d)) || !readdirSync(join(dossier, d)).length) {
-      throw new Error(`${paquet.dossier}/${d}/ manquant ou vide : lancer « npm run fabriquer-veillees » avant d'empaqueter`);
+      throw new Error(`${paquet.dossier}/${d}/ manquant ou vide : lancer « ${fabrication} » avant d'empaqueter`);
     }
   }
   const source = JSON.parse(readFileSync(join(dossier, paquet.manifeste), "utf8"));
   if (source.id !== paquet.id) throw new Error(`${paquet.manifeste} : id « ${source.id} » au lieu de « ${paquet.id} »`);
-  const publie = manifestePublie(source, { depot, tag, manifeste: paquet.manifeste, zip: paquet.zip });
+  const nomPublie = paquet.publie ?? paquet.manifeste;
+  const publie = manifestePublie(source, { depot, tag, manifeste: nomPublie, zip: paquet.zip });
   const texteManifeste = `${JSON.stringify(publie, null, 2)}\n`;
   const fichiers = listerFichiers(dossier, paquet.exclure).map(nom => {
     const chemin = join(dossier, nom);
@@ -197,16 +208,27 @@ export function empaqueter(paquet, { depot, tag, sortie, racine = RACINE }) {
   });
   const archive = fabriquerZip(fichiers);
   mkdirSync(sortie, { recursive: true });
-  writeFileSync(join(sortie, paquet.manifeste), texteManifeste);
+  writeFileSync(join(sortie, nomPublie), texteManifeste);
   writeFileSync(join(sortie, paquet.zip), archive);
   return { id: publie.id, version: publie.version, fichiers: fichiers.length, octets: archive.length, sha256: createHash("sha256").update(archive).digest("hex"),
-    manifeste: join(sortie, paquet.manifeste), zip: join(sortie, paquet.zip), download: publie.download, manifest: publie.manifest };
+    manifeste: join(sortie, nomPublie), zip: join(sortie, paquet.zip), download: publie.download, manifest: publie.manifest };
 }
 
-export function empaqueterTout(options) {
-  const tag = options.tag || `v${JSON.parse(readFileSync(join(RACINE, PAQUETS[0].dossier, PAQUETS[0].manifeste), "utf8")).version}`;
-  const sortie = resolve(RACINE, options.sortie);
-  return PAQUETS.map(p => empaqueter(p, { depot: options.depot, tag, sortie }));
+// Tous les paquets ; un paquet facultatif dont le dossier n'existe pas (module anglais non fabriqué) est passé, signalé dans
+// « passes » : [{ id, raison }].
+export function empaqueterTout(options, racine = RACINE) {
+  const tag = options.tag || `v${JSON.parse(readFileSync(join(racine, PAQUETS[0].dossier, PAQUETS[0].manifeste), "utf8")).version}`;
+  const sortie = resolve(racine, options.sortie);
+  const resultats = [], passes = [];
+  for (const p of PAQUETS) {
+    if (p.facultatif && !existsSync(join(racine, p.dossier, p.manifeste))) {
+      passes.push({ id: p.id, raison: `${p.dossier}/ absent : lancer « ${p.fabrication ?? "npm run fabriquer-veillees"} » pour le publier` });
+      continue;
+    }
+    resultats.push(empaqueter(p, { depot: options.depot, tag, sortie, racine }));
+  }
+  resultats.passes = passes;
+  return resultats;
 }
 
 // Lancé directement (node outils/empaqueter-paquets.mjs) ; importé par les essais, rien ne s'exécute.
@@ -219,6 +241,7 @@ if (process.argv[1] && import.meta.url === `file:///${process.argv[1].replace(/\
       console.log(`  ${posix.normalize(r.zip.split(/[\\/]/).join("/"))}  <-  ${r.download}`);
       console.log(`  ${posix.normalize(r.manifeste.split(/[\\/]/).join("/"))}  (manifest : ${r.manifest})`);
     }
+    for (const p of resultats.passes) console.warn(`avertissement : ${p.id} non empaqueté (${p.raison})`);
   } catch (erreur) {
     console.error(`Empaquetage impossible : ${erreur.message}`);
     process.exit(1);

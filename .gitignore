@@ -5,3 +5,6 @@ dist/
 Thumbs.db
 modules/*/packs/
 monde/dist/
+# Module anglais lakour-veillees-en : engendré en entier par `npm run fabriquer-veillees-en` (dictionnaires versionnés dans
+# modules/lakour-veillees/contenu/en/) ; jamais versionné.
+modules/lakour-veillees-en/

@@ -3,9 +3,10 @@
 // style visuel plat ou relief. Rôles, métiers, bâtiments, tables et villageois non joués restent dans les compendiums :
 // la Table de jeu du système et le MJ IA les y lisent. Le plateau du système (jetons posés et mis en scène à chaque phase)
 // reçoit d'ici le jeton NEUTRE des Veillées (« villageois », qui cache le rôle) et le style visuel des images.
-import { FETES_VEILLEES } from "./fetes.js";
+import { FETES_VEILLEES, textesDeFete } from "./fetes.js";
+import { ID } from "./identite.js";
 
-const ID = "lakour-veillees";
+// ID : « lakour-veillees » ou « lakour-veillees-en » (scripts/identite.js) ; tout ce qui porte l'identifiant du module passe par lui.
 const SYSTEME = "lakour-loups";
 // 0.3.0 : plan du village avec son plateau (seuils, cercle, cimetière) ; 0.5.0 (aligné sur module.json) : carte épinglée
 // (une épingle par bâtiment vers sa page du guide du joueur, sons), journaux gardant leur identifiant et leur visibilité ;
@@ -24,7 +25,8 @@ const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applicat
 // (système lakour-loups : la Table la pré-sélectionne, le réglage « veilleeDeFete » sert sans la Table). Le lien de la carte vise
 // le journal du monde (installé, lisible des joueurs), à défaut celui du compendium.
 export function declinaisonsDeFete(journaux = globalThis.game?.journal) {
-  return FETES_VEILLEES.map(f => {
+  return FETES_VEILLEES.map(fete => {
+    const f = textesDeFete(fete); // textes de la langue du module (anglais dans lakour-veillees-en)
     const monde = journaux?.find?.(j => j.getFlag?.(ID, "cle") === f.journal.cle);
     return { id: f.id, fete: f.fete, nom: f.nom, description: f.description, consigne: f.consigne, decor: f.decor,
       contenu: [{ uuid: monde?.uuid ?? `Compendium.${ID}.journaux.JournalEntry.${f.journal.id}`, nom: f.journal.nom }] };
@@ -142,7 +144,7 @@ export function installer() {
   installationEnCours ??= installerContenu()
     .catch(erreur => {
       console.error(`${ID} | installation`, erreur);
-      globalThis.ui?.notifications?.error?.(`Les Veillées : installation interrompue (${erreur.message}). Le détail est dans la console (F12).`, { permanent: true });
+      globalThis.ui?.notifications?.error?.(game.i18n.format("LAKOURVEIL.Interrompue", { erreur: erreur.message }), { permanent: true });
     })
     .finally(() => { installationEnCours = null; });
   return installationEnCours;

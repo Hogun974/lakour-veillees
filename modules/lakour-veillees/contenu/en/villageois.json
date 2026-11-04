@@ -1,0 +1,79 @@
+{
+  "villageois/NCfQ5TgTFDlXtxgD": {
+    "_nom": "Le petit Colin",
+    "name": {
+      "fr": "Le petit Colin",
+      "en": "Little Colin"
+    },
+    "system.notes": {
+      "fr": "<p>Un gamin de huit ans qui court partout et colle son oreille aux portes. Il raconte ce qu'il a vu à qui veut l'entendre, et invente le reste.</p>",
+      "en": "<p>An eight-year-old boy who runs everywhere and presses his ear to doors. He tells what he saw to anyone who will listen, and makes up the rest.</p>"
+    }
+  },
+  "villageois/clfFSvveonA1t0Oq": {
+    "_nom": "Noiraude, le chien des Vaudrey",
+    "name": {
+      "fr": "Noiraude, le chien des Vaudrey",
+      "en": "Noiraude, the Vaudreys' dog"
+    },
+    "system.notes": {
+      "fr": "<p>Une chienne de berger noire qui dort devant la grange. Elle aboie à chaque passant… sauf, ces derniers temps, à un seul.</p>",
+      "en": "<p>A black sheepdog who sleeps in front of the barn. She barks at every passer-by… except, lately, at one.</p>"
+    }
+  },
+  "villageois/dYlQQ6HWc9euGm5L": {
+    "_nom": "Odile Basquin, lavandière",
+    "name": {
+      "fr": "Odile Basquin, lavandière",
+      "en": "Odile Basquin, washerwoman"
+    },
+    "system.notes": {
+      "fr": "<p>Elle lave le linge de tout le village et sait donc tout : qui a déchiré sa chemise, qui a du sang sur ses manches, qui a changé de draps deux fois cette semaine.</p>",
+      "en": "<p>She washes the whole village's linen and so knows everything: who tore their shirt, who has blood on their sleeves, who changed their sheets twice this week.</p>"
+    }
+  },
+  "villageois/itfFPEZ8rwATe0l9": {
+    "_nom": "Bastien Grenier, garde du guet",
+    "name": {
+      "fr": "Bastien Grenier, garde du guet",
+      "en": "Bastien Grenier, watchman"
+    },
+    "system.notes": {
+      "fr": "<p>Il fait la ronde avec sa pique et son sifflet, et ne siffle jamais. On le voit souvent appuyé au parapet du pont, à regarder la brume.</p>",
+      "en": "<p>He makes his rounds with his pike and his whistle, and never whistles. He is often seen leaning on the parapet of the bridge, watching the mist.</p>"
+    }
+  },
+  "villageois/kveB1UsXhHo4k4qa": {
+    "_nom": "Mère Ysaline, la doyenne",
+    "name": {
+      "fr": "Mère Ysaline, la doyenne",
+      "en": "Mother Ysaline, the elder"
+    },
+    "system.notes": {
+      "fr": "<p>La plus vieille du village. Elle passe ses journées sur le banc près du puits et se souvient de « l'autre automne », celui dont personne ne veut parler.</p>",
+      "en": "<p>The oldest woman in the village. She spends her days on the bench by the well and remembers “the other autumn”, the one nobody wants to talk about.</p>"
+    }
+  },
+  "villageois/oMg3vcBvonVk7Prw": {
+    "_nom": "Frère Anselme, le curé",
+    "name": {
+      "fr": "Frère Anselme, le curé",
+      "en": "Brother Anselme, the priest"
+    },
+    "system.notes": {
+      "fr": "<p>Un vieux prêtre au dos voûté qui connaît chaque famille depuis trois générations. Il sonne la cloche à l'aube et au couvre-feu, et ne ferme jamais la porte de sa chapelle.</p>",
+      "en": "<p>An old priest with a stooped back who has known every family for three generations. He rings the bell at dawn and at curfew, and never closes the door of his chapel.</p>"
+    }
+  },
+  "villageois/vl2VTAcsyf0BVVqz": {
+    "_nom": "Gaspard Lerouge, l'aubergiste",
+    "name": {
+      "fr": "Gaspard Lerouge, l'aubergiste",
+      "en": "Gaspard Lerouge, the innkeeper"
+    },
+    "system.notes": {
+      "fr": "<p>Gros, rieur, et plus attentif qu'il n'en a l'air. Il ne sert plus à boire après le couvre-feu, mais il laisse la lampe allumée.</p>",
+      "en": "<p>Fat, jolly, and more attentive than he looks. He no longer serves drinks after curfew, but he leaves the lamp lit.</p>"
+    }
+  }
+}

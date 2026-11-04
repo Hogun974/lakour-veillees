@@ -1,0 +1,41 @@
+{
+  "scenes/mYZHsnhVOQZRi5f1": {
+    "_nom": "Brumecombe — le village",
+    "name": {
+      "fr": "Brumecombe — le village",
+      "en": "Brumecombe — the village"
+    },
+    "levels.defaultLevel0000.name": {
+      "fr": "Niveau principal",
+      "en": "Main level"
+    },
+    "drawings.OyxlL3u19gCBXjzO.text": {
+      "fr": "Brumecombe",
+      "en": "Brumecombe"
+    },
+    "drawings.LFf0HRIq03hCggih.text": {
+      "fr": "Place du village",
+      "en": "Village square"
+    },
+    "sounds.mlJXIZ44TPKzJfEj.name": {
+      "fr": "forge — Forge",
+      "en": "forge — Forge"
+    },
+    "sounds.JyaXxsbEL1auzUfa.name": {
+      "fr": "nuit — Brumecombe",
+      "en": "night — Brumecombe"
+    },
+    "sounds.Y9Ye6ywHCjtFKAtw.name": {
+      "fr": "feu — Âtre de la Taverne",
+      "en": "fire — Hearth of the Tavern"
+    },
+    "sounds.l7tX3RU0hrAtqvk0.name": {
+      "fr": "mer — la Brume",
+      "en": "sea — the Brume"
+    },
+    "flags.lakour-veillees.description": {
+      "fr": "Le village de Brumecombe, de nuit : dix-huit maisons (« Maison 1 » à « Maison 18 » ; 13 à 18 sur l'autre rive de la Brume), la place du village où l'on débat et vote, et les dix bâtiments (Chapelle, Cimetière, Moulin, Taverne, Forge, Gibet, Puits, Pont, Lavoir, Grange). Chaque joueur a son jeton devant sa maison ; le jour, on se rassemble sur la place autour du Puits, et l'accusé se tient devant le Gibet.",
+      "en": "The village of Brumecombe, by night: eighteen houses (“Maison 1” to “Maison 18”; 13 to 18 on the far bank of the Brume), the village square where people debate and vote, and the ten buildings (Chapel, Graveyard, Mill, Tavern, Forge, Gallows, Well, Bridge, Washhouse, Barn). Each player has their token in front of their house; by day, everyone gathers on the square around the Well, and the accused stands in front of the Gallows."
+    }
+  }
+}

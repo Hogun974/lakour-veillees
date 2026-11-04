@@ -1,0 +1,494 @@
+{
+  "tables/5HVy0NAiv7TMaar7": {
+    "_nom": "Rumeurs du village",
+    "name": {
+      "fr": "Rumeurs du village",
+      "en": "Village rumours"
+    },
+    "description": {
+      "fr": "<p>Ce qu'on se dit à mi-voix sur la place. À glisser dans un débat qui s'essouffle : une rumeur n'est ni vraie ni fausse, elle donne à parler.</p>",
+      "en": "<p>What is said in hushed voices on the square. To slip into a flagging debate: a rumour is neither true nor false, it gives people something to talk about.</p>"
+    },
+    "results.QHUAKDWG8l45NFgK.description": {
+      "fr": "<p>Quelqu'un a vu une lanterne traverser le pont après minuit, et personne ne l'a vue revenir.</p>",
+      "en": "<p>Someone saw a lantern cross the bridge after midnight, and nobody saw it come back.</p>"
+    },
+    "results.kZdvLDblYuSuxwrx.description": {
+      "fr": "<p>Le chien des Vaudrey n'aboie plus depuis trois nuits. Il ne mange plus non plus.</p>",
+      "en": "<p>The Vaudreys' dog has not barked for three nights. It has stopped eating, too.</p>"
+    },
+    "results.ncbcWPQS7wHc8e3a.description": {
+      "fr": "<p>On dit que la meunière compte ses sacs de farine deux fois, et qu'il en manque toujours un.</p>",
+      "en": "<p>They say the miller counts her sacks of flour twice, and one is always missing.</p>"
+    },
+    "results.8LlKaDs1YPwOl2Vg.description": {
+      "fr": "<p>Une des maisons de l'autre rive a laissé ses volets ouverts toute la nuit. Par oubli, ou pour guetter ?</p>",
+      "en": "<p>One of the houses on the far bank left its shutters open all night. By oversight, or to keep watch?</p>"
+    },
+    "results.PsOIQoDYZ3nqALeZ.description": {
+      "fr": "<p>Le curé a changé la serrure de la sacristie. Il n'a pas dit pourquoi.</p>",
+      "en": "<p>The priest changed the lock on the sacristy. He did not say why.</p>"
+    },
+    "results.bHBwfJkKyMww11aP.description": {
+      "fr": "<p>À la taverne, quelqu'un a payé sa tournée avec une pièce qui sentait la terre mouillée.</p>",
+      "en": "<p>At the tavern, someone paid for a round with a coin that smelled of wet earth.</p>"
+    },
+    "results.j6ExBDTAjckkzG0E.description": {
+      "fr": "<p>La vieille Mahaut jure que les corbeaux se posent toujours sur le même toit.</p>",
+      "en": "<p>Old Mahaut swears the crows always land on the same roof.</p>"
+    },
+    "results.KoAFLpBW2O8qmUUl.description": {
+      "fr": "<p>On a retrouvé des touffes de poils gris accrochées à la haie du lavoir.</p>",
+      "en": "<p>Tufts of grey hair were found caught on the hedge by the washhouse.</p>"
+    },
+    "results.cKop1NDMYr9Xm5eh.description": {
+      "fr": "<p>Quelqu'un a demandé à la forge une lame courte, sans manche, « pour couper le pain ».</p>",
+      "en": "<p>Someone asked the forge for a short blade, without a handle, “to cut bread”.</p>"
+    },
+    "results.VpTZxDJ2YDliVwFs.description": {
+      "fr": "<p>Deux voisins qui ne se parlaient plus depuis dix ans ont été vus se serrer la main sur la place.</p>",
+      "en": "<p>Two neighbours who had not spoken for ten years were seen shaking hands on the square.</p>"
+    },
+    "results.KPPaHgXmmOXkyHqS.description": {
+      "fr": "<p>Les enfants disent qu'un homme sans visage se tient parfois au bout du cimetière, à l'heure où l'on rentre les bêtes.</p>",
+      "en": "<p>The children say a faceless man sometimes stands at the far end of the graveyard, at the hour the animals are brought in.</p>"
+    },
+    "results.hGHk6Kjz62Ol2lde.description": {
+      "fr": "<p>Le passeur prétend qu'on lui a demandé de traverser à la nage, une nuit, sans barque ni lumière.</p>",
+      "en": "<p>The ferryman claims someone asked him to cross by swimming, one night, with neither boat nor light.</p>"
+    },
+    "results.GFzeDEI5l5qFlEnt.description": {
+      "fr": "<p>Une femme a pleuré toute une nuit dans une maison où personne n'habite.</p>",
+      "en": "<p>A woman wept all night in a house where nobody lives.</p>"
+    },
+    "results.0aPmznGm5w3Q6ZMI.description": {
+      "fr": "<p>On a entendu siffler l'air de la fête des moissons à trois heures du matin, près du puits.</p>",
+      "en": "<p>The tune of the harvest feast was heard whistled at three in the morning, near the well.</p>"
+    },
+    "results.fKsVJDWXCfJBdBwH.description": {
+      "fr": "<p>Le garde du guet a trouvé sa pique plantée dans la porte de la chapelle.</p>",
+      "en": "<p>The watchman found his pike planted in the chapel door.</p>"
+    },
+    "results.2RqURBYiM9ScAg87.description": {
+      "fr": "<p>Quelqu'un vend des amulettes de sorbier à la sortie de la messe. Elles se vendent très bien.</p>",
+      "en": "<p>Someone is selling rowan amulets at the church door after mass. They sell very well.</p>"
+    },
+    "results.TufE3rUfO0JEKX4o.description": {
+      "fr": "<p>Le tanneur dit que certaines peaux, cet automne, ont le poil qui repousse après le tannage.</p>",
+      "en": "<p>The tanner says that some hides, this autumn, grow their hair back after tanning.</p>"
+    },
+    "results.Hk7ClVEQNSmt11xx.description": {
+      "fr": "<p>L'aubergiste jure qu'un de ses clients ne touche jamais au pain, seulement à la viande, et crue.</p>",
+      "en": "<p>The innkeeper swears one of his customers never touches bread, only meat, and raw.</p>"
+    },
+    "results.kYPCi341wzTr1Yvx.description": {
+      "fr": "<p>Une lettre sans signature a été glissée sous la porte de la maîtresse d'école. Elle l'a brûlée sans la lire, dit-elle.</p>",
+      "en": "<p>An unsigned letter was slipped under the schoolmistress's door. She burned it without reading it, she says.</p>"
+    },
+    "results.R9luavJ17bUUqwC4.description": {
+      "fr": "<p>On a vu deux silhouettes se disputer devant la grange, puis plus qu'une seule repartir.</p>",
+      "en": "<p>Two figures were seen arguing in front of the barn, then only one walking away.</p>"
+    },
+    "results.JbBDC69VD4dmyESk.description": {
+      "fr": "<p>La cloche a sonné un coup, seule, à l'heure où personne ne la tire.</p>",
+      "en": "<p>The bell rang once, on its own, at an hour when nobody pulls it.</p>"
+    },
+    "results.FKN51KRruvOoYTxM.description": {
+      "fr": "<p>Quelqu'un a laissé des traces de pas nus dans la boue du chemin, des traces qui deviennent plus larges vers le bois.</p>",
+      "en": "<p>Someone left bare footprints in the mud of the path, prints that grow wider towards the woods.</p>"
+    },
+    "results.pQ7pnfB0h9bsy8Hk.description": {
+      "fr": "<p>La herboriste a acheté plus de belladone qu'il n'en faut pour soigner un village entier.</p>",
+      "en": "<p>The herbalist bought more belladonna than it takes to treat a whole village.</p>"
+    },
+    "results.pLEUzw7LvCp81Y2C.description": {
+      "fr": "<p>On murmure qu'une famille de Brumecombe a déjà eu un loup parmi les siens, il y a trois générations, et qu'on n'a jamais dit lequel.</p>",
+      "en": "<p>They whisper that a family of Brumecombe once had a wolf among its own, three generations ago, and that nobody ever said which.</p>"
+    }
+  },
+  "tables/93TEgEyE65YPD8Yo": {
+    "_nom": "Morts mystérieuses",
+    "name": {
+      "fr": "Morts mystérieuses",
+      "en": "Mysterious deaths"
+    },
+    "description": {
+      "fr": "<p>Récits de mort pour l'aube : trois phrases au plus. Adapte le lieu (« Maison 7 »), le nom, et retire tout détail qui livrerait la cause si elle doit rester secrète.</p>",
+      "en": "<p>Death tales for the dawn: three sentences at most. Adapt the place (“House 7”), the name, and remove any detail that would give away the cause if it must stay secret.</p>"
+    },
+    "results.av6W9h1EIGHUfrtJ.description": {
+      "fr": "<p>La porte était entrouverte et le feu éteint. Dans le lit défait, il ne restait qu'une forme creusée et un peu de terre noire.</p>",
+      "en": "<p>The door was ajar and the fire was out. In the unmade bed, only a hollowed shape remained, and a little black earth.</p>"
+    },
+    "results.ozUesxADsPuGRRtF.description": {
+      "fr": "<p>On l'a trouvé assis à sa table, la cuillère encore à la main, les yeux tournés vers la fenêtre. Sur la vitre, une buée en forme de main.</p>",
+      "en": "<p>They found him sitting at his table, the spoon still in his hand, his eyes turned to the window. On the pane, a patch of mist in the shape of a hand.</p>"
+    },
+    "results.AMq2sDI6kYy3bEKp.description": {
+      "fr": "<p>Les volets avaient été arrachés de l'extérieur. Dans la neige fondue du seuil, des empreintes qui commencent humaines et finissent autrement.</p>",
+      "en": "<p>The shutters had been torn off from outside. In the melting snow on the doorstep, footprints that start out human and end up otherwise.</p>"
+    },
+    "results.lBLA8kLztwG6qF0b.description": {
+      "fr": "<p>Le corps reposait au bord du puits, enveloppé dans sa propre courtepointe, comme si quelqu'un avait voulu le border une dernière fois.</p>",
+      "en": "<p>The body lay at the edge of the well, wrapped in its own quilt, as if someone had wanted to tuck it in one last time.</p>"
+    },
+    "results.oSPbNHEMEaxVevDM.description": {
+      "fr": "<p>Sa maison était parfaitement rangée. Trop rangée. Seul le loquet de la porte portait des marques de dents.</p>",
+      "en": "<p>The house was perfectly tidy. Too tidy. Only the door latch bore teeth marks.</p>"
+    },
+    "results.BjmFaEm829BgNa8d.description": {
+      "fr": "<p>On l'a retrouvé dans le lavoir, au matin, flottant parmi les draps. Personne n'avait entendu de cri.</p>",
+      "en": "<p>They found her in the washhouse, in the morning, floating among the sheets. Nobody had heard a cry.</p>"
+    },
+    "results.tOhHdhhwqakB4TYi.description": {
+      "fr": "<p>Une traînée de feuilles mouillées menait de sa porte jusqu'à la lisière du bois. Elle s'arrêtait net.</p>",
+      "en": "<p>A trail of wet leaves led from the door to the edge of the woods. It stopped dead.</p>"
+    },
+    "results.LWLOKZgEeiFaiLCU.description": {
+      "fr": "<p>Les poules du voisin étaient toutes vivantes, et toutes silencieuses. Chez lui, la chandelle brûlait encore.</p>",
+      "en": "<p>The neighbour's hens were all alive, and all silent. In his house, the candle was still burning.</p>"
+    },
+    "results.MbtQ3kEQXQxaIOsH.description": {
+      "fr": "<p>Il gisait sur le pont, une main tendue vers l'autre rive, comme s'il avait voulu prévenir quelqu'un.</p>",
+      "en": "<p>He lay on the bridge, one hand stretched towards the far bank, as if he had wanted to warn someone.</p>"
+    },
+    "results.pawV2LNZRA9sqXog.description": {
+      "fr": "<p>Sa chaise à bascule balançait encore quand on est entré. Elle était vide ; le corps était derrière la porte.</p>",
+      "en": "<p>The rocking chair was still swaying when they came in. It was empty; the body was behind the door.</p>"
+    },
+    "results.QPNB4OUPpaN7A5r3.description": {
+      "fr": "<p>On a d'abord cru à une chute dans l'escalier. Puis on a vu que l'escalier avait été griffé de haut en bas.</p>",
+      "en": "<p>At first they thought it was a fall down the stairs. Then they saw the stairs had been clawed from top to bottom.</p>"
+    },
+    "results.c7eeqy1LAuzEGqdl.description": {
+      "fr": "<p>La chambre sentait la cire chaude et le fer. Sur l'oreiller, une seule plume de corbeau.</p>",
+      "en": "<p>The bedroom smelled of warm wax and iron. On the pillow, a single crow's feather.</p>"
+    },
+    "results.bq7bh6kp2Cwin4ZI.description": {
+      "fr": "<p>Sa lanterne était posée devant la maison, toujours allumée, comme pour qu'on le retrouve vite.</p>",
+      "en": "<p>The lantern stood in front of the house, still lit, as if to make sure he would be found quickly.</p>"
+    },
+    "results.GROQrGqaQFYWOxA5.description": {
+      "fr": "<p>Il était couché dans le foin de la grange, paisible. Seule sa main serrait une poignée de poils gris.</p>",
+      "en": "<p>He was lying in the hay of the barn, peaceful. Only his hand was clenched around a fistful of grey hair.</p>"
+    },
+    "results.MId6SvJs3fBvefEp.description": {
+      "fr": "<p>La porte était fermée à double tour, de l'intérieur. La fenêtre aussi. Et pourtant.</p>",
+      "en": "<p>The door was double-locked, from the inside. The window too. And yet.</p>"
+    },
+    "results.xFuhgouVOP4glKWA.description": {
+      "fr": "<p>On l'a trouvé au pied du gibet, assis, le dos contre le poteau, comme s'il avait attendu toute la nuit.</p>",
+      "en": "<p>They found him at the foot of the gallows, sitting, his back against the post, as if he had waited all night.</p>"
+    },
+    "results.fGdlrTbXDJfBDgnA.description": {
+      "fr": "<p>Le chat de la maison n'a pas voulu entrer. Il miaule encore sur le seuil.</p>",
+      "en": "<p>The house cat would not go in. It is still mewing on the doorstep.</p>"
+    },
+    "results.pGjCBeTUW5rE4GBy.description": {
+      "fr": "<p>Sur la table, deux bols de soupe servis, un seul entamé. L'autre convive n'a jamais été retrouvé.</p>",
+      "en": "<p>On the table, two bowls of soup served, only one touched. The other guest was never found.</p>"
+    },
+    "results.3RXmlzFeI5pAOyTK.description": {
+      "fr": "<p>La cheminée était pleine de cendres froides où l'on voyait encore la forme d'une lettre brûlée.</p>",
+      "en": "<p>The hearth was full of cold ashes in which the shape of a burnt letter could still be seen.</p>"
+    },
+    "results.05TaqX7eWAfpZPGG.description": {
+      "fr": "<p>Ses sabots étaient alignés devant la porte, bien droits. Ses pieds nus, eux, étaient couverts de boue jusqu'aux genoux.</p>",
+      "en": "<p>His clogs were lined up in front of the door, perfectly straight. His bare feet, though, were caked in mud up to the knees.</p>"
+    },
+    "results.12DoDHvcAvf1mSpJ.description": {
+      "fr": "<p>On a cherché toute la matinée. On l'a trouvé dans le cimetière, allongé sur une tombe qui n'était pas la sienne.</p>",
+      "en": "<p>They searched all morning. They found him in the graveyard, lying on a grave that was not his.</p>"
+    },
+    "results.84SgJBCiWtJtA6yi.description": {
+      "fr": "<p>Rien n'était cassé, rien n'avait été volé. Seul le miroir de la chambre avait été retourné contre le mur.</p>",
+      "en": "<p>Nothing was broken, nothing had been stolen. Only the bedroom mirror had been turned to face the wall.</p>"
+    },
+    "results.qUUK995PsxUzgXg9.description": {
+      "fr": "<p>Les draps étaient tachés de cire rouge et non de sang. C'est le médecin qui l'a dit. Personne ne l'a cru.</p>",
+      "en": "<p>The sheets were stained with red wax, not blood. The doctor said so. Nobody believed him.</p>"
+    },
+    "results.TxpJ2c408Nf2dX2b.description": {
+      "fr": "<p>Le vent avait éteint toutes les chandelles de la maison, sauf celle qui brûlait à son chevet.</p>",
+      "en": "<p>The wind had blown out every candle in the house, except the one burning at his bedside.</p>"
+    }
+  },
+  "tables/MUAdMWPpEXvzldYp": {
+    "_nom": "Présages de l'aube",
+    "name": {
+      "fr": "Présages de l'aube",
+      "en": "Omens of the dawn"
+    },
+    "description": {
+      "fr": "<p>Pour les matins où personne n'est mort, ou pour ouvrir le jour. Aucun présage ne désigne un joueur.</p>",
+      "en": "<p>For mornings when nobody died, or to open the day. No omen designates a player.</p>"
+    },
+    "results.bEuScIvWJdmRixbA.description": {
+      "fr": "<p>Le jour se lève sans soleil. La brume est si basse qu'on ne voit plus le clocher.</p>",
+      "en": "<p>The day breaks without a sun. The mist is so low that the bell tower can no longer be seen.</p>"
+    },
+    "results.RyVS8RZFAL15pNEh.description": {
+      "fr": "<p>Un corbeau s'est posé sur le gibet et refuse de s'envoler, même quand on lui jette des pierres.</p>",
+      "en": "<p>A crow has landed on the gallows and refuses to fly away, even when stones are thrown at it.</p>"
+    },
+    "results.UkSfZBgVEPNGSt2H.description": {
+      "fr": "<p>L'eau du puits est tiède ce matin, comme si quelque chose y avait dormi.</p>",
+      "en": "<p>The water in the well is lukewarm this morning, as if something had slept in it.</p>"
+    },
+    "results.f5aIDSorEMSqAQ4B.description": {
+      "fr": "<p>Toutes les feuilles du tilleul de la place sont tombées en une seule nuit.</p>",
+      "en": "<p>Every leaf on the lime tree of the square fell in a single night.</p>"
+    },
+    "results.lDn7NmyyottgiGvF.description": {
+      "fr": "<p>Le coq des Fougerol a chanté treize fois, puis s'est tu pour de bon.</p>",
+      "en": "<p>The Fougerols' rooster crowed thirteen times, then fell silent for good.</p>"
+    },
+    "results.JrYnHeBxtBrhDLYu.description": {
+      "fr": "<p>Sur la rivière, un tapis de feuilles rousses remonte le courant.</p>",
+      "en": "<p>On the river, a carpet of russet leaves is drifting upstream.</p>"
+    },
+    "results.DK7Ej1uQyeVf1oqz.description": {
+      "fr": "<p>Les chiens du village se sont tous tournés vers la même maison, sans aboyer.</p>",
+      "en": "<p>All the dogs in the village turned towards the same house, without barking.</p>"
+    },
+    "results.ncU7FFyBXPIugKqx.description": {
+      "fr": "<p>La cloche de la chapelle porte une longue rayure fraîche, comme une griffe sur du métal.</p>",
+      "en": "<p>The chapel bell bears a long fresh scratch, like a claw mark on metal.</p>"
+    },
+    "results.QqmCODG2fW09WCH0.description": {
+      "fr": "<p>Il a gelé cette nuit, mais seulement sur les seuils des maisons.</p>",
+      "en": "<p>There was a frost last night, but only on the doorsteps of the houses.</p>"
+    },
+    "results.gggWRTgHxQUoGKKi.description": {
+      "fr": "<p>Une chouette blanche est restée sur le toit du moulin jusqu'au lever du jour.</p>",
+      "en": "<p>A white owl stayed on the roof of the mill until daybreak.</p>"
+    },
+    "results.gCSMtYA46fWvMcQH.description": {
+      "fr": "<p>Le vent tourne au nord. Les anciens disent que c'est le vent des choix difficiles.</p>",
+      "en": "<p>The wind is turning north. The elders say it is the wind of hard choices.</p>"
+    },
+    "results.9CJBLsfaMjDQsOuN.description": {
+      "fr": "<p>Les bougies de la chapelle ont toutes brûlé jusqu'au bout, alors que personne ne les avait allumées.</p>",
+      "en": "<p>The chapel candles all burned down to the end, though nobody had lit them.</p>"
+    },
+    "results.WMClfPQ3CxmdjHRC.description": {
+      "fr": "<p>On a trouvé un cercle de champignons noirs au milieu de la place.</p>",
+      "en": "<p>A ring of black mushrooms was found in the middle of the square.</p>"
+    },
+    "results.6JHgHmhuCZV3sUQ5.description": {
+      "fr": "<p>Le linge étendu au lavoir est sec, mais il sent la fumée.</p>",
+      "en": "<p>The linen hung out at the washhouse is dry, but it smells of smoke.</p>"
+    },
+    "results.ZvBXcbAIRk8f7ItS.description": {
+      "fr": "<p>Une rangée de petites pierres blanches mène d'une maison à une autre. Personne ne dit les avoir posées.</p>",
+      "en": "<p>A row of small white stones leads from one house to another. Nobody admits to laying them.</p>"
+    },
+    "results.UoHpwOHYckZf6Fqw.description": {
+      "fr": "<p>La lune est encore visible en plein jour, pâle et énorme au-dessus de la combe.</p>",
+      "en": "<p>The moon is still visible in broad daylight, pale and huge above the combe.</p>"
+    },
+    "results.GfckAHykEALIbadK.description": {
+      "fr": "<p>Les pommes du verger ont toutes une tache brune, au même endroit.</p>",
+      "en": "<p>Every apple in the orchard has a brown spot, in the same place.</p>"
+    },
+    "results.jDooBy6BUk54wqAq.description": {
+      "fr": "<p>La forge s'est rallumée seule pendant la nuit ; le forgeron jure qu'il l'avait couverte.</p>",
+      "en": "<p>The forge relit itself during the night; the blacksmith swears he had banked it.</p>"
+    },
+    "results.xpjA3xR7C4iQWleT.description": {
+      "fr": "<p>Une odeur de miel brûlé flotte sur tout le village et ne se dissipe pas.</p>",
+      "en": "<p>A smell of burnt honey hangs over the whole village and will not fade.</p>"
+    },
+    "results.enMv4GicmAZQWHKQ.description": {
+      "fr": "<p>Les sorbiers du cimetière sont couverts de baies rouges, alors qu'ils étaient nus hier.</p>",
+      "en": "<p>The rowans in the graveyard are covered in red berries, though they were bare yesterday.</p>"
+    },
+    "results.hY6yWB6DlAH3NMVO.description": {
+      "fr": "<p>Le vieux puits renvoie un écho de trop : quand on crie un nom, il en répond deux.</p>",
+      "en": "<p>The old well gives back one echo too many: when you shout a name, it answers with two.</p>"
+    },
+    "results.roVD9DS4K5fGtQJL.description": {
+      "fr": "<p>Un renard traverse la place au grand jour, regarde chacun en face, et repart vers le bois.</p>",
+      "en": "<p>A fox crosses the square in broad daylight, looks each one in the face, and heads back to the woods.</p>"
+    },
+    "results.LAGkiflzSveabAdx.description": {
+      "fr": "<p>La brume s'est levée d'un coup, et pendant une minute on a vu tout le village très net, comme dans un miroir.</p>",
+      "en": "<p>The mist lifted all at once, and for a minute the whole village could be seen sharp and clear, as in a mirror.</p>"
+    },
+    "results.B3mpiXBEuvaiiR7d.description": {
+      "fr": "<p>Personne n'a rêvé cette nuit. Absolument personne.</p>",
+      "en": "<p>Nobody dreamed last night. Absolutely nobody.</p>"
+    }
+  },
+  "tables/t89mi9HnqnmFYov8": {
+    "_nom": "Noms de villageois",
+    "name": {
+      "fr": "Noms de villageois",
+      "en": "Villager names"
+    },
+    "description": {
+      "fr": "<p>Prénoms et noms de familles de Brumecombe, pour les figurants, les morts d'autrefois et les voisins dont on parle.</p>",
+      "en": "<p>First names and family names of Brumecombe, for extras, the dead of old and the neighbours people talk about.</p>"
+    },
+    "results.gxZdstNhiLJh6VjR.description": {
+      "fr": "<p>Mathurin Vaudrey</p>",
+      "en": "<p>Mathurin Vaudrey</p>"
+    },
+    "results.Mc9PFbVtPomw90jV.description": {
+      "fr": "<p>Ysaline Corbet</p>",
+      "en": "<p>Ysaline Corbet</p>"
+    },
+    "results.Vest7l1OaR0xFLR9.description": {
+      "fr": "<p>Anselme Ferrand</p>",
+      "en": "<p>Anselme Ferrand</p>"
+    },
+    "results.9S7NAxzHcnqd1bzB.description": {
+      "fr": "<p>Odile Basquin</p>",
+      "en": "<p>Odile Basquin</p>"
+    },
+    "results.3k0JvVj44YSTLlrI.description": {
+      "fr": "<p>Gaspard Lerouge</p>",
+      "en": "<p>Gaspard Lerouge</p>"
+    },
+    "results.opeVcArHhPeAKQTG.description": {
+      "fr": "<p>Bertille Mauvoisin</p>",
+      "en": "<p>Bertille Mauvoisin</p>"
+    },
+    "results.qQhr4LsRGaczK8hu.description": {
+      "fr": "<p>Colin Hautecœur</p>",
+      "en": "<p>Colin Hautecœur</p>"
+    },
+    "results.8AtzW6G29zhCgCj6.description": {
+      "fr": "<p>Perrine Sablon</p>",
+      "en": "<p>Perrine Sablon</p>"
+    },
+    "results.m0G39JowDvg7bwU1.description": {
+      "fr": "<p>Aymeric Fontbrune</p>",
+      "en": "<p>Aymeric Fontbrune</p>"
+    },
+    "results.6BMWB53778DVPrpH.description": {
+      "fr": "<p>Guillemette Rousseau</p>",
+      "en": "<p>Guillemette Rousseau</p>"
+    },
+    "results.CZxb12enT4qZ4IEM.description": {
+      "fr": "<p>Thibaut Cassagne</p>",
+      "en": "<p>Thibaut Cassagne</p>"
+    },
+    "results.hjYE2F9Jl4AYUGi5.description": {
+      "fr": "<p>Mahaut Lenoir</p>",
+      "en": "<p>Mahaut Lenoir</p>"
+    },
+    "results.ilGqgmmXwmn3sHCA.description": {
+      "fr": "<p>Félicien Morteau</p>",
+      "en": "<p>Félicien Morteau</p>"
+    },
+    "results.CfjkPrwVvk9ERSUv.description": {
+      "fr": "<p>Clémence Dubreuil</p>",
+      "en": "<p>Clémence Dubreuil</p>"
+    },
+    "results.VzZzT5EfjmuQYgZZ.description": {
+      "fr": "<p>Eudes Carrel</p>",
+      "en": "<p>Eudes Carrel</p>"
+    },
+    "results.FcXTTvz5vJH00UBJ.description": {
+      "fr": "<p>Jacquette Vignal</p>",
+      "en": "<p>Jacquette Vignal</p>"
+    },
+    "results.PNIHMGpP9MClossO.description": {
+      "fr": "<p>Sylvestre Pradel</p>",
+      "en": "<p>Sylvestre Pradel</p>"
+    },
+    "results.WnRrSZT9XpAjvEWk.description": {
+      "fr": "<p>Aliénor Fauchet</p>",
+      "en": "<p>Aliénor Fauchet</p>"
+    },
+    "results.LHfskBOgtuHLhyZq.description": {
+      "fr": "<p>Bastien Grenier</p>",
+      "en": "<p>Bastien Grenier</p>"
+    },
+    "results.b8duTHdYl0MtIKsU.description": {
+      "fr": "<p>Margot Chênevert</p>",
+      "en": "<p>Margot Chênevert</p>"
+    },
+    "results.MCweUNRzpOtLiwGk.description": {
+      "fr": "<p>Honoré Bellefeuille</p>",
+      "en": "<p>Honoré Bellefeuille</p>"
+    },
+    "results.0K5aFi37pqyD432T.description": {
+      "fr": "<p>Solène Marchais</p>",
+      "en": "<p>Solène Marchais</p>"
+    },
+    "results.sNk1FslrH0yTsLNz.description": {
+      "fr": "<p>Hugon Ravier</p>",
+      "en": "<p>Hugon Ravier</p>"
+    },
+    "results.oLkiKpr3zIcdT3Zj.description": {
+      "fr": "<p>Philippine Aubrac</p>",
+      "en": "<p>Philippine Aubrac</p>"
+    },
+    "results.IVxNXtdzPsIDaSqX.description": {
+      "fr": "<p>Léonce Tarride</p>",
+      "en": "<p>Léonce Tarride</p>"
+    },
+    "results.E2ey0HoWE6PDUpLr.description": {
+      "fr": "<p>Agathe Combemale</p>",
+      "en": "<p>Agathe Combemale</p>"
+    },
+    "results.BINGoxSL2meEsACV.description": {
+      "fr": "<p>Valentin Brossard</p>",
+      "en": "<p>Valentin Brossard</p>"
+    },
+    "results.OxXfeH9hDhNYW6XG.description": {
+      "fr": "<p>Isaure Moulinier</p>",
+      "en": "<p>Isaure Moulinier</p>"
+    },
+    "results.ejAQsUmH0eL3y9m9.description": {
+      "fr": "<p>Firmin Delorme</p>",
+      "en": "<p>Firmin Delorme</p>"
+    },
+    "results.nW7ykHRdKw2LUWAx.description": {
+      "fr": "<p>Rosalie Fougerol</p>",
+      "en": "<p>Rosalie Fougerol</p>"
+    },
+    "results.guRv7MbZYdTyQbBL.description": {
+      "fr": "<p>Quentin Labrousse</p>",
+      "en": "<p>Quentin Labrousse</p>"
+    },
+    "results.TvGsNns5FsqQAnGZ.description": {
+      "fr": "<p>Hermine Castagné</p>",
+      "en": "<p>Hermine Castagné</p>"
+    },
+    "results.gogMB7MzeKJEALov.description": {
+      "fr": "<p>Augustin Pélissier</p>",
+      "en": "<p>Augustin Pélissier</p>"
+    },
+    "results.e51j2U9o5GAiK58v.description": {
+      "fr": "<p>Blanche Sorbier</p>",
+      "en": "<p>Blanche Sorbier</p>"
+    },
+    "results.ujdvReNGkbRZyG4X.description": {
+      "fr": "<p>Josselin Brumaire</p>",
+      "en": "<p>Josselin Brumaire</p>"
+    },
+    "results.3BfWt8lplO2X60D4.description": {
+      "fr": "<p>Edmée Vaissière</p>",
+      "en": "<p>Edmée Vaissière</p>"
+    },
+    "results.Nng5tS71Fq6CTSzx.description": {
+      "fr": "<p>Norbert Gaillac</p>",
+      "en": "<p>Norbert Gaillac</p>"
+    },
+    "results.1K5dZuIi07T0gtJR.description": {
+      "fr": "<p>Apolline Ternant</p>",
+      "en": "<p>Apolline Ternant</p>"
+    },
+    "results.7crTM1vfmNwABkad.description": {
+      "fr": "<p>Baptistin Rochefort</p>",
+      "en": "<p>Baptistin Rochefort</p>"
+    },
+    "results.q4Gs5sJ0TbTQh0b2.description": {
+      "fr": "<p>Ondine Malefosse</p>",
+      "en": "<p>Ondine Malefosse</p>"
+    }
+  }
+}

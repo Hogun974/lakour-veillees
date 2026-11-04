@@ -1,0 +1,18 @@
+{
+  "_commentaire": "Libellés anglais des types de figurants (assets/jetons/figurants.json, lus par le MJ IA), appliqués à la copie des assets dans lakour-veillees-en : { \"libellé français\": \"English label\" }. Les clés et les jetons ne changent pas.",
+  "Villageois anonyme": "Nameless villager",
+  "Garde du guet": "Watchman",
+  "Curé": "Priest",
+  "Forgeron": "Blacksmith",
+  "Meunière": "Miller",
+  "Aubergiste": "Innkeeper",
+  "Passeur": "Ferryman",
+  "Enfant": "Child",
+  "Paysan": "Peasant",
+  "Religieuse": "Nun",
+  "Lavandière": "Washerwoman",
+  "Chien de ferme": "Farm dog",
+  "Corbeau": "Crow",
+  "Chat": "Cat",
+  "Silhouette dans la brume": "Figure in the mist"
+}

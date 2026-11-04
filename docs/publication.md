@@ -40,14 +40,15 @@ restent la seule source : ne pas les modifier à la main dans la release.
 
 - [ ] Vérifier en local, avant de pousser l'étiquette :
       ```bash
-      npm ci && npm run essais && npm run fabriquer-veillees
-      node outils/empaqueter-paquets.mjs --tag v0.11.1      # écrit dist/
+      npm ci && npm run essais && npm run fabriquer-veillees && npm run fabriquer-veillees-en
+      node outils/empaqueter-paquets.mjs --tag v0.11.1      # écrit dist/ (module anglais lakour-veillees-en compris)
       npm run empaqueter-monde                              # s'il existe : world.json + <monde>.zip dans dist/
       ```
       et ouvrir les archives (`system.json` / `module.json` à la racine, `packs/` présent dans le module, ni `src/` ni `contenu/`).
 - [ ] Pousser le dépôt, puis l'étiquette : `git tag v0.11.1 && git push github v0.11.1` (remote `github`).
 - [ ] Suivre l'onglet **Actions** : la release doit contenir `system.json`, `lakour-loups.zip`, `module.json`,
-      `lakour-veillees.zip` et, si le script du monde existe, `world.json` et `la-kour-veillees.zip` (identifiant du monde :
+      `lakour-veillees.zip`, `lakour-veillees-en.json`, `lakour-veillees-en.zip` (module anglais, engendré par
+      `npm run fabriquer-veillees-en`) et, si le script du monde existe, `world.json` et `la-kour-veillees.zip` (identifiant du monde :
       `la-kour-veillees`, dossier `monde/`). Les manifestes
       publiés portent `manifest` = `releases/latest/download/…` et `download` = `releases/download/v0.11.1/…`.
 - [ ] **Essai d'installation à blanc** dans un Foundry v14 vide (pas le serveur de jeu) : installer le système par son

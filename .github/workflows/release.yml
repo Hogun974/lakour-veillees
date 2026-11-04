@@ -1,9 +1,12 @@
-# Publication d'une version : à chaque étiquette « v* » poussée (ex. v0.11.1), fabrique le contenu, empaquette le système,
-# le module de contenu et le monde (s'il a son script), puis crée la release GitHub avec :
-#   system.json, lakour-loups.zip, module.json, lakour-veillees.zip, world.json, <identifiant du monde>.zip
+# Publication d'une version : à chaque étiquette « v* » poussée (ex. v0.11.1), fabrique le contenu (français, puis anglais :
+# module lakour-veillees-en engendré des mêmes sources et des dictionnaires contenu/en/), empaquette le système, les deux
+# modules de contenu et le monde (s'il a son script), puis crée la release GitHub avec :
+#   system.json, lakour-loups.zip, module.json, lakour-veillees.zip, lakour-veillees-en.json, lakour-veillees-en.zip,
+#   world.json, <identifiant du monde>.zip
 # Les manifestes publiés portent « manifest » (releases/latest/download/…) et « download » (releases/download/<tag>/…) :
-# Foundry trouve donc toujours la dernière version par le manifeste, et chaque version garde son archive.
-# Le sous-module modules/lakour-mj-ia est récupéré : la fabrication du contenu en a besoin (rendu des cartes, jetons).
+# Foundry trouve donc toujours la dernière version par le manifeste, et chaque version garde son archive. Adresse stable du
+# manifeste anglais : https://github.com/Hogun974/lakour-veillees/releases/latest/download/lakour-veillees-en.json
+# Le sous-module modules/lakour-mj-ia est récupéré : la fabrication du contenu en a besoin (rendu des cartes, jetons, traduction).
 name: Publication
 
 on:
@@ -39,7 +42,10 @@ jobs:
       - name: Fabrication du contenu (src/, packs/, compositions)
         run: npm run fabriquer-veillees
 
-      - name: Empaquetage du système et du module
+      - name: Module anglais lakour-veillees-en (modules/lakour-veillees-en/, hors git)
+        run: npm run fabriquer-veillees-en
+
+      - name: Empaquetage du système et des modules
         run: node outils/empaqueter-paquets.mjs --tag "$GITHUB_REF_NAME" --sortie dist
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -58,7 +64,7 @@ jobs:
       - name: Vérification des fichiers à publier
         run: |
           ls -la dist/
-          for f in dist/system.json dist/lakour-loups.zip dist/module.json dist/lakour-veillees.zip; do
+          for f in dist/system.json dist/lakour-loups.zip dist/module.json dist/lakour-veillees.zip dist/lakour-veillees-en.json dist/lakour-veillees-en.zip; do
             test -s "$f" || { echo "Fichier manquant : $f"; exit 1; }
           done
           node -e "for (const f of require('fs').readdirSync('dist').filter(f => f.endsWith('.json'))) { const m = require('./dist/' + f); console.log(f, m.id, m.version, '->', m.download); }"
@@ -68,13 +74,16 @@ jobs:
         run: |
           SYS=$(node -p "require('./dist/system.json').version")
           MOD=$(node -p "require('./dist/module.json').version")
-          MONDE=$(ls dist/*.zip | grep -v -e lakour-loups.zip -e lakour-veillees.zip | head -n 1 || true)
+          MONDE=$(ls dist/*.zip | grep -v -e lakour-loups.zip -e lakour-veillees.zip -e lakour-veillees-en.zip | head -n 1 || true)
           {
-            echo "Système \`lakour-loups\` ${SYS} · module de contenu \`lakour-veillees\` ${MOD}"
+            echo "Système \`lakour-loups\` ${SYS} · module de contenu \`lakour-veillees\` ${MOD} · English edition \`lakour-veillees-en\` ${MOD}"
             if [ -n "$MONDE" ]; then echo "· monde : \`$(basename "$MONDE")\`"; fi
             echo
             echo "Installation dans Foundry VTT (v14) : voir le README. Manifeste du système :"
             echo "\`https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/system.json\`"
+            echo
+            echo "English content module (same documents, same identifiers as \`lakour-veillees\`; enable only one of the two) :"
+            echo "\`https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/lakour-veillees-en.json\`"
             echo
             echo "Détail des changements : [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/${GITHUB_REF_NAME}/CHANGELOG.md)."
           } > dist/NOTES.md

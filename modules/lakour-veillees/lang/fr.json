@@ -11,6 +11,7 @@
     "Installer": "Installer le contenu dans ce monde",
     "DejaInstalle": "Contenu installé",
     "PasInstalle": "Contenu pas encore installé dans ce monde.",
+    "Interrompue": "Les Veillées : installation interrompue ({erreur}). Le détail est dans la console (F12).",
     "MauvaisSysteme": "Ce monde n'utilise pas le système La Kour Loups : rien à installer."
   }
 }

@@ -1,0 +1,18 @@
+{
+  "key": "lakour-loups.chanceEpier",
+  "user": null,
+  "value": "0.33",
+  "_id": "Pg2DLqrKtRHFbXEn",
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.2.1",
+    "createdTime": 1793516338538,
+    "modifiedTime": 1793516338538,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!settings!Pg2DLqrKtRHFbXEn"
+}

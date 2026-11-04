@@ -1,0 +1,18 @@
+{
+  "key": "lib-wrapper.high-performance-mode",
+  "user": null,
+  "value": "false",
+  "_id": "E4y40Aho02jvKcjt",
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.2.1",
+    "createdTime": 1793516338715,
+    "modifiedTime": 1793516338715,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!settings!E4y40Aho02jvKcjt"
+}

@@ -1,0 +1,2866 @@
+{
+  "name": "Brumecombe — le village",
+  "navName": "Brumecombe — le village",
+  "navigation": false,
+  "width": 4200,
+  "height": 3000,
+  "padding": 0,
+  "grid": {
+    "type": 1,
+    "size": 100,
+    "distance": 1.5,
+    "units": "m",
+    "style": "solidLines",
+    "thickness": 1,
+    "color": "#000000",
+    "alpha": 0.2
+  },
+  "tokenVision": false,
+  "environment": {
+    "darknessLevel": 0.15,
+    "globalLight": {
+      "enabled": false,
+      "alpha": 0.5,
+      "bright": false,
+      "color": null,
+      "coloration": 1,
+      "luminosity": 0,
+      "saturation": 0,
+      "contrast": 0,
+      "shadows": 0,
+      "darkness": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    "darknessLock": false,
+    "cycle": true,
+    "base": {
+      "hue": 0,
+      "intensity": 0,
+      "luminosity": 0,
+      "saturation": 0,
+      "shadows": 0
+    },
+    "dark": {
+      "hue": 0.7138888888888889,
+      "intensity": 0,
+      "luminosity": -0.25,
+      "saturation": 0,
+      "shadows": 0
+    }
+  },
+  "levels": [
+    {
+      "_id": "defaultLevel0000",
+      "name": "Niveau principal",
+      "elevation": {
+        "bottom": 0,
+        "top": null
+      },
+      "background": {
+        "color": "#18181b",
+        "src": "modules/lakour-veillees/assets/cartes/3d/village-de-brumecombe.svg",
+        "tint": "#ffffff",
+        "alphaThreshold": 0.75
+      },
+      "flags": {},
+      "foreground": {
+        "src": null,
+        "tint": "#ffffff",
+        "alphaThreshold": 0.75
+      },
+      "fog": {
+        "src": null
+      },
+      "textures": {
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "offsetX": 0,
+        "offsetY": 0,
+        "fit": "fill",
+        "scaleX": 1,
+        "scaleY": 1,
+        "rotation": 0
+      },
+      "visibility": {
+        "levels": []
+      },
+      "sort": 0,
+      "_key": "!scenes.levels!7Nk56NXeftj168Qt.defaultLevel0000"
+    }
+  ],
+  "initialLevel": "defaultLevel0000",
+  "walls": [
+    {
+      "c": [
+        0,
+        0,
+        4200,
+        0
+      ],
+      "move": 20,
+      "sight": 20,
+      "light": 20,
+      "sound": 20,
+      "door": 0,
+      "ds": 0,
+      "dir": 0,
+      "levels": [],
+      "_id": "P9iOGaTAxP5Kl7Wh",
+      "flags": {},
+      "threshold": {
+        "light": null,
+        "sight": null,
+        "sound": null,
+        "attenuation": false
+      },
+      "animation": null,
+      "_key": "!scenes.walls!7Nk56NXeftj168Qt.P9iOGaTAxP5Kl7Wh"
+    },
+    {
+      "c": [
+        0,
+        3000,
+        4200,
+        3000
+      ],
+      "move": 20,
+      "sight": 20,
+      "light": 20,
+      "sound": 20,
+      "door": 0,
+      "ds": 0,
+      "dir": 0,
+      "levels": [],
+      "_id": "nSb0j7x7DGEdpzWm",
+      "flags": {},
+      "threshold": {
+        "light": null,
+        "sight": null,
+        "sound": null,
+        "attenuation": false
+      },
+      "animation": null,
+      "_key": "!scenes.walls!7Nk56NXeftj168Qt.nSb0j7x7DGEdpzWm"
+    },
+    {
+      "c": [
+        0,
+        0,
+        0,
+        3000
+      ],
+      "move": 20,
+      "sight": 20,
+      "light": 20,
+      "sound": 20,
+      "door": 0,
+      "ds": 0,
+      "dir": 0,
+      "levels": [],
+      "_id": "1EZxGbrDhQZEIkM2",
+      "flags": {},
+      "threshold": {
+        "light": null,
+        "sight": null,
+        "sound": null,
+        "attenuation": false
+      },
+      "animation": null,
+      "_key": "!scenes.walls!7Nk56NXeftj168Qt.1EZxGbrDhQZEIkM2"
+    },
+    {
+      "c": [
+        4200,
+        0,
+        4200,
+        3000
+      ],
+      "move": 20,
+      "sight": 20,
+      "light": 20,
+      "sound": 20,
+      "door": 0,
+      "ds": 0,
+      "dir": 0,
+      "levels": [],
+      "_id": "8LUGqkdWS5jTLSOV",
+      "flags": {},
+      "threshold": {
+        "light": null,
+        "sight": null,
+        "sound": null,
+        "attenuation": false
+      },
+      "animation": null,
+      "_key": "!scenes.walls!7Nk56NXeftj168Qt.8LUGqkdWS5jTLSOV"
+    }
+  ],
+  "drawings": [
+    {
+      "x": 0,
+      "y": 0,
+      "shape": {
+        "type": "r",
+        "width": 4200,
+        "height": 3000,
+        "radius": null,
+        "points": []
+      },
+      "fillType": 0,
+      "fillColor": "#000000",
+      "fillAlpha": 0,
+      "strokeWidth": 0,
+      "strokeColor": "#000000",
+      "strokeAlpha": 0,
+      "levels": [],
+      "text": "Brumecombe",
+      "fontSize": 33,
+      "textColor": "#ffffff",
+      "textAlpha": 0.8,
+      "hidden": true,
+      "sort": 1000,
+      "_id": "OyxlL3u19gCBXjzO",
+      "flags": {},
+      "author": null,
+      "elevation": 0,
+      "rotation": 0,
+      "bezierFactor": 0,
+      "texture": null,
+      "fontFamily": "",
+      "locked": false,
+      "interface": false,
+      "_key": "!scenes.drawings!7Nk56NXeftj168Qt.OyxlL3u19gCBXjzO"
+    },
+    {
+      "x": 1300,
+      "y": 1000,
+      "shape": {
+        "type": "r",
+        "width": 1200,
+        "height": 1000,
+        "radius": null,
+        "points": []
+      },
+      "fillType": 0,
+      "fillColor": "#000000",
+      "fillAlpha": 0,
+      "strokeWidth": 0,
+      "strokeColor": "#000000",
+      "strokeAlpha": 0,
+      "levels": [],
+      "text": "Place du village",
+      "fontSize": 33,
+      "textColor": "#ffffff",
+      "textAlpha": 0.8,
+      "hidden": true,
+      "sort": 1001,
+      "_id": "LFf0HRIq03hCggih",
+      "flags": {},
+      "author": null,
+      "elevation": 0,
+      "rotation": 0,
+      "bezierFactor": 0,
+      "texture": null,
+      "fontFamily": "",
+      "locked": false,
+      "interface": false,
+      "_key": "!scenes.drawings!7Nk56NXeftj168Qt.LFf0HRIq03hCggih"
+    }
+  ],
+  "lights": [
+    {
+      "x": 1350,
+      "y": 1050,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 4.5,
+        "bright": 2.5,
+        "color": "#ffcc77",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "1fE5HtftDHvfuUNO",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.1fE5HtftDHvfuUNO"
+    },
+    {
+      "x": 2450,
+      "y": 1050,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 4.5,
+        "bright": 2.5,
+        "color": "#ffcc77",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "AP4Tcege9yIUKfE5",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.AP4Tcege9yIUKfE5"
+    },
+    {
+      "x": 1350,
+      "y": 1950,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 4.5,
+        "bright": 2.5,
+        "color": "#ffcc77",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "BXOEAKF4GztkJwvo",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.BXOEAKF4GztkJwvo"
+    },
+    {
+      "x": 2450,
+      "y": 1950,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 4.5,
+        "bright": 2.5,
+        "color": "#ffcc77",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "Muy0vXhWeHUyTcQe",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.Muy0vXhWeHUyTcQe"
+    },
+    {
+      "x": 1950,
+      "y": 750,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 4.5,
+        "bright": 2.5,
+        "color": "#d8c8ff",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "4w65C3dCXcilgi9Y",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.4w65C3dCXcilgi9Y"
+    },
+    {
+      "x": 2850,
+      "y": 1350,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 4.5,
+        "bright": 2.5,
+        "color": "#ff9a40",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "vndBwLtHti1KWG3J",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.vndBwLtHti1KWG3J"
+    },
+    {
+      "x": 1050,
+      "y": 1350,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 4.5,
+        "bright": 2.5,
+        "color": "#ff6a20",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "C3ko3zJmlQDr9DZ3",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.C3ko3zJmlQDr9DZ3"
+    },
+    {
+      "x": 3050,
+      "y": 1350,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 3,
+        "bright": 1.5,
+        "color": "#ffd28a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "N2Jsco3523hwTZXZ",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.N2Jsco3523hwTZXZ"
+    },
+    {
+      "x": 3450,
+      "y": 1650,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 3,
+        "bright": 1.5,
+        "color": "#ffd28a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "V495IWuEznSQvFsk",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.V495IWuEznSQvFsk"
+    },
+    {
+      "x": 2850,
+      "y": 2350,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 3,
+        "bright": 1.5,
+        "color": "#cfe0ff",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "SuyKalcxN7s25uBf",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.SuyKalcxN7s25uBf"
+    },
+    {
+      "x": 450,
+      "y": 550,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 3,
+        "bright": 1.5,
+        "color": "#ffcc88",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "Z0VWa93nq8EAfLAk",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.Z0VWa93nq8EAfLAk"
+    },
+    {
+      "x": 3750,
+      "y": 2750,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 3,
+        "bright": 1.5,
+        "color": "#ffb060",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "dkjNE8XLdixD5IYz",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.dkjNE8XLdixD5IYz"
+    },
+    {
+      "x": 850,
+      "y": 450,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "KYAT7mBjaSArZgtB",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.KYAT7mBjaSArZgtB"
+    },
+    {
+      "x": 1450,
+      "y": 450,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "FbkbaJ8IEYbmDZCV",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.FbkbaJ8IEYbmDZCV"
+    },
+    {
+      "x": 750,
+      "y": 850,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "ILmpf4mTDJi0vnIv",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.ILmpf4mTDJi0vnIv"
+    },
+    {
+      "x": 1150,
+      "y": 850,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "OQDrjDCiSADhsFod",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.OQDrjDCiSADhsFod"
+    },
+    {
+      "x": 650,
+      "y": 1250,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "SCCbhwiGgwB15FXK",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.SCCbhwiGgwB15FXK"
+    },
+    {
+      "x": 250,
+      "y": 1950,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "dpXDv3mNjRg7GFFp",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.dpXDv3mNjRg7GFFp"
+    },
+    {
+      "x": 650,
+      "y": 1950,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "R6tXshO4EiXHMYdN",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.R6tXshO4EiXHMYdN"
+    },
+    {
+      "x": 1050,
+      "y": 1950,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "PYERAknniU5XQ5JG",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.PYERAknniU5XQ5JG"
+    },
+    {
+      "x": 350,
+      "y": 2450,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "JPecqMUuZS7BnQyF",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.JPecqMUuZS7BnQyF"
+    },
+    {
+      "x": 850,
+      "y": 2450,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "ywk8VCFhUvpo4RDK",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.ywk8VCFhUvpo4RDK"
+    },
+    {
+      "x": 1350,
+      "y": 2450,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "ZIHdJ0sBACBjEHGk",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.ZIHdJ0sBACBjEHGk"
+    },
+    {
+      "x": 2350,
+      "y": 2450,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "QLa8x2CrCEizmsIn",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.QLa8x2CrCEizmsIn"
+    },
+    {
+      "x": 3550,
+      "y": 550,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "RnwoumGw31NZdsIk",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.RnwoumGw31NZdsIk"
+    },
+    {
+      "x": 4050,
+      "y": 550,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "SdQJr7kJjjJzI5ET",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.SdQJr7kJjjJzI5ET"
+    },
+    {
+      "x": 3550,
+      "y": 1050,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "5sqDNDVWw5Vdf4nc",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.5sqDNDVWw5Vdf4nc"
+    },
+    {
+      "x": 4050,
+      "y": 1050,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "XnBRBBkMMm9d9GWV",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.XnBRBBkMMm9d9GWV"
+    },
+    {
+      "x": 3550,
+      "y": 2050,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "nqwIEO5FkVdg5D5k",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.nqwIEO5FkVdg5D5k"
+    },
+    {
+      "x": 4050,
+      "y": 2050,
+      "elevation": 0,
+      "levels": [],
+      "walls": true,
+      "config": {
+        "dim": 1.5,
+        "bright": 1,
+        "color": "#ffb85a",
+        "alpha": 0.4,
+        "coloration": 1,
+        "luminosity": 0.5,
+        "negative": false,
+        "priority": 0,
+        "angle": 360,
+        "attenuation": 0.5,
+        "saturation": 0,
+        "contrast": 0,
+        "shadows": 0,
+        "animation": {
+          "type": null,
+          "speed": 5,
+          "intensity": 5,
+          "reverse": false
+        },
+        "darkness": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "_id": "2xmBX3eCxD8sPsuo",
+      "flags": {},
+      "rotation": 0,
+      "vision": false,
+      "hidden": false,
+      "locked": false,
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.2xmBX3eCxD8sPsuo"
+    }
+  ],
+  "tokens": [],
+  "notes": [
+    {
+      "entryId": "hNQ5fYcN3giwWXzh",
+      "pageId": "QIKXHcnrr9M6qTbg",
+      "x": 1850,
+      "y": 450,
+      "elevation": 0,
+      "levels": [],
+      "sort": 0,
+      "locked": false,
+      "texture": {
+        "src": "icons/svg/temple.svg",
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "tint": "#ffffff",
+        "alphaThreshold": 0
+      },
+      "iconSize": 40,
+      "text": "La Chapelle",
+      "fontFamily": "",
+      "fontSize": 24,
+      "textAnchor": 1,
+      "textColor": "#ffffff",
+      "global": false,
+      "_id": "qeGL2NkeDGD7uC21",
+      "flags": {
+        "lakour-veillees": {
+          "carte": true
+        }
+      },
+      "author": null,
+      "_key": "!scenes.notes!7Nk56NXeftj168Qt.qeGL2NkeDGD7uC21"
+    },
+    {
+      "entryId": "hNQ5fYcN3giwWXzh",
+      "pageId": "HkUwbvZBwyxUzIEC",
+      "x": 2850,
+      "y": 450,
+      "elevation": 0,
+      "levels": [],
+      "sort": 0,
+      "locked": false,
+      "texture": {
+        "src": "icons/svg/obelisk.svg",
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "tint": "#ffffff",
+        "alphaThreshold": 0
+      },
+      "iconSize": 40,
+      "text": "Le Cimetière",
+      "fontFamily": "",
+      "fontSize": 24,
+      "textAnchor": 1,
+      "textColor": "#ffffff",
+      "global": false,
+      "_id": "CVh9Yn8omw1DJJ4E",
+      "flags": {
+        "lakour-veillees": {
+          "carte": true
+        }
+      },
+      "author": null,
+      "_key": "!scenes.notes!7Nk56NXeftj168Qt.CVh9Yn8omw1DJJ4E"
+    },
+    {
+      "entryId": "hNQ5fYcN3giwWXzh",
+      "pageId": "tbL4JLTRngZb6B7E",
+      "x": 350,
+      "y": 350,
+      "elevation": 0,
+      "levels": [],
+      "sort": 0,
+      "locked": false,
+      "texture": {
+        "src": "icons/svg/windmill.svg",
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "tint": "#ffffff",
+        "alphaThreshold": 0
+      },
+      "iconSize": 40,
+      "text": "Le Moulin",
+      "fontFamily": "",
+      "fontSize": 24,
+      "textAnchor": 1,
+      "textColor": "#ffffff",
+      "global": false,
+      "_id": "U2SiWp0F96UGZ3QJ",
+      "flags": {
+        "lakour-veillees": {
+          "carte": true
+        }
+      },
+      "author": null,
+      "_key": "!scenes.notes!7Nk56NXeftj168Qt.U2SiWp0F96UGZ3QJ"
+    },
+    {
+      "entryId": "hNQ5fYcN3giwWXzh",
+      "pageId": "25GHYdzbhWMiRLU9",
+      "x": 2750,
+      "y": 1150,
+      "elevation": 0,
+      "levels": [],
+      "sort": 0,
+      "locked": false,
+      "texture": {
+        "src": "icons/svg/tankard.svg",
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "tint": "#ffffff",
+        "alphaThreshold": 0
+      },
+      "iconSize": 40,
+      "text": "La Taverne",
+      "fontFamily": "",
+      "fontSize": 24,
+      "textAnchor": 1,
+      "textColor": "#ffffff",
+      "global": false,
+      "_id": "P7K2kwIOUQUBcg3q",
+      "flags": {
+        "lakour-veillees": {
+          "carte": true
+        }
+      },
+      "author": null,
+      "_key": "!scenes.notes!7Nk56NXeftj168Qt.P7K2kwIOUQUBcg3q"
+    },
+    {
+      "entryId": "hNQ5fYcN3giwWXzh",
+      "pageId": "rrl6GKhc6WIIz5UL",
+      "x": 1050,
+      "y": 1150,
+      "elevation": 0,
+      "levels": [],
+      "sort": 0,
+      "locked": false,
+      "texture": {
+        "src": "icons/svg/sword.svg",
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "tint": "#ffffff",
+        "alphaThreshold": 0
+      },
+      "iconSize": 40,
+      "text": "La Forge",
+      "fontFamily": "",
+      "fontSize": 24,
+      "textAnchor": 1,
+      "textColor": "#ffffff",
+      "global": false,
+      "_id": "RbHXexC5qIXhjmaq",
+      "flags": {
+        "lakour-veillees": {
+          "carte": true
+        }
+      },
+      "author": null,
+      "_key": "!scenes.notes!7Nk56NXeftj168Qt.RbHXexC5qIXhjmaq"
+    },
+    {
+      "entryId": "hNQ5fYcN3giwWXzh",
+      "pageId": "7KpinLXkoJ8poGNx",
+      "x": 1450,
+      "y": 1150,
+      "elevation": 0,
+      "levels": [],
+      "sort": 0,
+      "locked": false,
+      "texture": {
+        "src": "icons/svg/skull.svg",
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "tint": "#ffffff",
+        "alphaThreshold": 0
+      },
+      "iconSize": 40,
+      "text": "Le Gibet",
+      "fontFamily": "",
+      "fontSize": 24,
+      "textAnchor": 1,
+      "textColor": "#ffffff",
+      "global": false,
+      "_id": "ShilMauaR8rAalI6",
+      "flags": {
+        "lakour-veillees": {
+          "carte": true
+        }
+      },
+      "author": null,
+      "_key": "!scenes.notes!7Nk56NXeftj168Qt.ShilMauaR8rAalI6"
+    },
+    {
+      "entryId": "hNQ5fYcN3giwWXzh",
+      "pageId": "ik0N2ip2FfeNXbdH",
+      "x": 1850,
+      "y": 1450,
+      "elevation": 0,
+      "levels": [],
+      "sort": 0,
+      "locked": false,
+      "texture": {
+        "src": "icons/svg/sound.svg",
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "tint": "#ffffff",
+        "alphaThreshold": 0
+      },
+      "iconSize": 40,
+      "text": "Le Puits",
+      "fontFamily": "",
+      "fontSize": 24,
+      "textAnchor": 1,
+      "textColor": "#ffffff",
+      "global": false,
+      "_id": "hAzwTONuKo92TulB",
+      "flags": {
+        "lakour-veillees": {
+          "carte": true
+        }
+      },
+      "author": null,
+      "_key": "!scenes.notes!7Nk56NXeftj168Qt.hAzwTONuKo92TulB"
+    },
+    {
+      "entryId": "hNQ5fYcN3giwWXzh",
+      "pageId": "liUCpIQEbHv1MUa8",
+      "x": 3250,
+      "y": 1450,
+      "elevation": 0,
+      "levels": [],
+      "sort": 0,
+      "locked": false,
+      "texture": {
+        "src": "icons/svg/bridge.svg",
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "tint": "#ffffff",
+        "alphaThreshold": 0
+      },
+      "iconSize": 40,
+      "text": "Le Pont",
+      "fontFamily": "",
+      "fontSize": 24,
+      "textAnchor": 1,
+      "textColor": "#ffffff",
+      "global": false,
+      "_id": "VuENCqHARIJStzAr",
+      "flags": {
+        "lakour-veillees": {
+          "carte": true
+        }
+      },
+      "author": null,
+      "_key": "!scenes.notes!7Nk56NXeftj168Qt.VuENCqHARIJStzAr"
+    },
+    {
+      "entryId": "hNQ5fYcN3giwWXzh",
+      "pageId": "qMF6dr4pK51fZjkQ",
+      "x": 2850,
+      "y": 2150,
+      "elevation": 0,
+      "levels": [],
+      "sort": 0,
+      "locked": false,
+      "texture": {
+        "src": "icons/svg/waterfall.svg",
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "tint": "#ffffff",
+        "alphaThreshold": 0
+      },
+      "iconSize": 40,
+      "text": "Le Lavoir",
+      "fontFamily": "",
+      "fontSize": 24,
+      "textAnchor": 1,
+      "textColor": "#ffffff",
+      "global": false,
+      "_id": "7i17hwWIsUtRXMAN",
+      "flags": {
+        "lakour-veillees": {
+          "carte": true
+        }
+      },
+      "author": null,
+      "_key": "!scenes.notes!7Nk56NXeftj168Qt.7i17hwWIsUtRXMAN"
+    },
+    {
+      "entryId": "hNQ5fYcN3giwWXzh",
+      "pageId": "11IyFxABvPsk1jmA",
+      "x": 3750,
+      "y": 2450,
+      "elevation": 0,
+      "levels": [],
+      "sort": 0,
+      "locked": false,
+      "texture": {
+        "src": "icons/svg/house.svg",
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "tint": "#ffffff",
+        "alphaThreshold": 0
+      },
+      "iconSize": 40,
+      "text": "La Grange",
+      "fontFamily": "",
+      "fontSize": 24,
+      "textAnchor": 1,
+      "textColor": "#ffffff",
+      "global": false,
+      "_id": "X9FJRNKjtW51BTXD",
+      "flags": {
+        "lakour-veillees": {
+          "carte": true
+        }
+      },
+      "author": null,
+      "_key": "!scenes.notes!7Nk56NXeftj168Qt.X9FJRNKjtW51BTXD"
+    }
+  ],
+  "sounds": [
+    {
+      "name": "forge — Forge",
+      "x": 1050,
+      "y": 1150,
+      "elevation": 0,
+      "levels": [],
+      "radius": 6,
+      "path": "modules/lakour-mj-ia/assets/sons/forge.wav",
+      "repeat": true,
+      "volume": 0.3,
+      "walls": true,
+      "easing": true,
+      "hidden": false,
+      "locked": false,
+      "_id": "mlJXIZ44TPKzJfEj",
+      "flags": {
+        "lakour-veillees": {
+          "carte": true
+        }
+      },
+      "darkness": {
+        "min": 0,
+        "max": 1
+      },
+      "effects": {
+        "base": {
+          "intensity": 5
+        },
+        "muffled": {
+          "intensity": 5
+        }
+      },
+      "_key": "!scenes.sounds!7Nk56NXeftj168Qt.mlJXIZ44TPKzJfEj"
+    },
+    {
+      "name": "nuit — Brumecombe",
+      "x": 2100,
+      "y": 1500,
+      "elevation": 0,
+      "levels": [],
+      "radius": 22.5,
+      "path": "modules/lakour-mj-ia/assets/sons/nuit.wav",
+      "repeat": true,
+      "volume": 0.25,
+      "walls": true,
+      "easing": true,
+      "hidden": false,
+      "locked": false,
+      "_id": "JyaXxsbEL1auzUfa",
+      "flags": {
+        "lakour-veillees": {
+          "carte": true
+        }
+      },
+      "darkness": {
+        "min": 0,
+        "max": 1
+      },
+      "effects": {
+        "base": {
+          "intensity": 5
+        },
+        "muffled": {
+          "intensity": 5
+        }
+      },
+      "_key": "!scenes.sounds!7Nk56NXeftj168Qt.JyaXxsbEL1auzUfa"
+    },
+    {
+      "name": "feu — Âtre de la Taverne",
+      "x": 2850,
+      "y": 1050,
+      "elevation": 0,
+      "levels": [],
+      "radius": 4.5,
+      "path": "modules/lakour-mj-ia/assets/sons/feu.wav",
+      "repeat": true,
+      "volume": 0.3,
+      "walls": true,
+      "easing": true,
+      "hidden": false,
+      "locked": false,
+      "_id": "Y9Ye6ywHCjtFKAtw",
+      "flags": {
+        "lakour-veillees": {
+          "carte": true
+        }
+      },
+      "darkness": {
+        "min": 0,
+        "max": 1
+      },
+      "effects": {
+        "base": {
+          "intensity": 5
+        },
+        "muffled": {
+          "intensity": 5
+        }
+      },
+      "_key": "!scenes.sounds!7Nk56NXeftj168Qt.Y9Ye6ywHCjtFKAtw"
+    },
+    {
+      "name": "mer — la Brume",
+      "x": 3250,
+      "y": 2150,
+      "elevation": 0,
+      "levels": [],
+      "radius": 6,
+      "path": "modules/lakour-mj-ia/assets/sons/mer.wav",
+      "repeat": true,
+      "volume": 0.2,
+      "walls": true,
+      "easing": true,
+      "hidden": false,
+      "locked": false,
+      "_id": "l7tX3RU0hrAtqvk0",
+      "flags": {
+        "lakour-veillees": {
+          "carte": true
+        }
+      },
+      "darkness": {
+        "min": 0,
+        "max": 1
+      },
+      "effects": {
+        "base": {
+          "intensity": 5
+        },
+        "muffled": {
+          "intensity": 5
+        }
+      },
+      "_key": "!scenes.sounds!7Nk56NXeftj168Qt.l7tX3RU0hrAtqvk0"
+    }
+  ],
+  "regions": [],
+  "tiles": [],
+  "folder": "03QYXKXY0fPC20NO",
+  "flags": {
+    "lakour-veillees": {
+      "cle": "village-de-brumecombe",
+      "description": "Le village de Brumecombe, de nuit : dix-huit maisons (« Maison 1 » à « Maison 18 » ; 13 à 18 sur l'autre rive de la Brume), la place du village où l'on débat et vote, et les dix bâtiments (Chapelle, Cimetière, Moulin, Taverne, Forge, Gibet, Puits, Pont, Lavoir, Grange). Chaque joueur a son jeton devant sa maison ; le jour, on se rassemble sur la place autour du Puits, et l'accusé se tient devant le Gibet.",
+      "plan": {
+        "largeur": 42,
+        "hauteur": 30,
+        "lumiere": "nuit",
+        "pieces": [
+          {
+            "nom": "Brumecombe",
+            "x": 0,
+            "y": 0,
+            "l": 42,
+            "h": 30,
+            "sol": "herbe"
+          },
+          {
+            "nom": "Place du village",
+            "x": 13,
+            "y": 10,
+            "l": 12,
+            "h": 10,
+            "sol": "pierre"
+          }
+        ],
+        "ouvertures": [
+          {
+            "x": 13,
+            "y": 10,
+            "cote": "nord",
+            "type": "passage"
+          },
+          {
+            "x": 13,
+            "y": 19,
+            "cote": "sud",
+            "type": "passage"
+          },
+          {
+            "x": 14,
+            "y": 10,
+            "cote": "nord",
+            "type": "passage"
+          },
+          {
+            "x": 14,
+            "y": 19,
+            "cote": "sud",
+            "type": "passage"
+          },
+          {
+            "x": 15,
+            "y": 10,
+            "cote": "nord",
+            "type": "passage"
+          },
+          {
+            "x": 15,
+            "y": 19,
+            "cote": "sud",
+            "type": "passage"
+          },
+          {
+            "x": 16,
+            "y": 10,
+            "cote": "nord",
+            "type": "passage"
+          },
+          {
+            "x": 16,
+            "y": 19,
+            "cote": "sud",
+            "type": "passage"
+          },
+          {
+            "x": 17,
+            "y": 10,
+            "cote": "nord",
+            "type": "passage"
+          },
+          {
+            "x": 17,
+            "y": 19,
+            "cote": "sud",
+            "type": "passage"
+          },
+          {
+            "x": 18,
+            "y": 10,
+            "cote": "nord",
+            "type": "passage"
+          },
+          {
+            "x": 18,
+            "y": 19,
+            "cote": "sud",
+            "type": "passage"
+          },
+          {
+            "x": 19,
+            "y": 10,
+            "cote": "nord",
+            "type": "passage"
+          },
+          {
+            "x": 19,
+            "y": 19,
+            "cote": "sud",
+            "type": "passage"
+          },
+          {
+            "x": 20,
+            "y": 10,
+            "cote": "nord",
+            "type": "passage"
+          },
+          {
+            "x": 20,
+            "y": 19,
+            "cote": "sud",
+            "type": "passage"
+          },
+          {
+            "x": 21,
+            "y": 10,
+            "cote": "nord",
+            "type": "passage"
+          },
+          {
+            "x": 21,
+            "y": 19,
+            "cote": "sud",
+            "type": "passage"
+          },
+          {
+            "x": 22,
+            "y": 10,
+            "cote": "nord",
+            "type": "passage"
+          },
+          {
+            "x": 22,
+            "y": 19,
+            "cote": "sud",
+            "type": "passage"
+          },
+          {
+            "x": 23,
+            "y": 10,
+            "cote": "nord",
+            "type": "passage"
+          },
+          {
+            "x": 23,
+            "y": 19,
+            "cote": "sud",
+            "type": "passage"
+          },
+          {
+            "x": 24,
+            "y": 10,
+            "cote": "nord",
+            "type": "passage"
+          },
+          {
+            "x": 24,
+            "y": 19,
+            "cote": "sud",
+            "type": "passage"
+          },
+          {
+            "x": 13,
+            "y": 10,
+            "cote": "ouest",
+            "type": "passage"
+          },
+          {
+            "x": 24,
+            "y": 10,
+            "cote": "est",
+            "type": "passage"
+          },
+          {
+            "x": 13,
+            "y": 11,
+            "cote": "ouest",
+            "type": "passage"
+          },
+          {
+            "x": 24,
+            "y": 11,
+            "cote": "est",
+            "type": "passage"
+          },
+          {
+            "x": 13,
+            "y": 12,
+            "cote": "ouest",
+            "type": "passage"
+          },
+          {
+            "x": 24,
+            "y": 12,
+            "cote": "est",
+            "type": "passage"
+          },
+          {
+            "x": 13,
+            "y": 13,
+            "cote": "ouest",
+            "type": "passage"
+          },
+          {
+            "x": 24,
+            "y": 13,
+            "cote": "est",
+            "type": "passage"
+          },
+          {
+            "x": 13,
+            "y": 14,
+            "cote": "ouest",
+            "type": "passage"
+          },
+          {
+            "x": 24,
+            "y": 14,
+            "cote": "est",
+            "type": "passage"
+          },
+          {
+            "x": 13,
+            "y": 15,
+            "cote": "ouest",
+            "type": "passage"
+          },
+          {
+            "x": 24,
+            "y": 15,
+            "cote": "est",
+            "type": "passage"
+          },
+          {
+            "x": 13,
+            "y": 16,
+            "cote": "ouest",
+            "type": "passage"
+          },
+          {
+            "x": 24,
+            "y": 16,
+            "cote": "est",
+            "type": "passage"
+          },
+          {
+            "x": 13,
+            "y": 17,
+            "cote": "ouest",
+            "type": "passage"
+          },
+          {
+            "x": 24,
+            "y": 17,
+            "cote": "est",
+            "type": "passage"
+          },
+          {
+            "x": 13,
+            "y": 18,
+            "cote": "ouest",
+            "type": "passage"
+          },
+          {
+            "x": 24,
+            "y": 18,
+            "cote": "est",
+            "type": "passage"
+          },
+          {
+            "x": 13,
+            "y": 19,
+            "cote": "ouest",
+            "type": "passage"
+          },
+          {
+            "x": 24,
+            "y": 19,
+            "cote": "est",
+            "type": "passage"
+          }
+        ],
+        "lumieres": [
+          {
+            "x": 13,
+            "y": 10,
+            "rayon": 3,
+            "couleur": "#ffcc77"
+          },
+          {
+            "x": 24,
+            "y": 10,
+            "rayon": 3,
+            "couleur": "#ffcc77"
+          },
+          {
+            "x": 13,
+            "y": 19,
+            "rayon": 3,
+            "couleur": "#ffcc77"
+          },
+          {
+            "x": 24,
+            "y": 19,
+            "rayon": 3,
+            "couleur": "#ffcc77"
+          },
+          {
+            "x": 19,
+            "y": 7,
+            "rayon": 3,
+            "couleur": "#d8c8ff"
+          },
+          {
+            "x": 28,
+            "y": 13,
+            "rayon": 3,
+            "couleur": "#ff9a40"
+          },
+          {
+            "x": 10,
+            "y": 13,
+            "rayon": 3,
+            "couleur": "#ff6a20"
+          },
+          {
+            "x": 30,
+            "y": 13,
+            "rayon": 2,
+            "couleur": "#ffd28a"
+          },
+          {
+            "x": 34,
+            "y": 16,
+            "rayon": 2,
+            "couleur": "#ffd28a"
+          },
+          {
+            "x": 28,
+            "y": 23,
+            "rayon": 2,
+            "couleur": "#cfe0ff"
+          },
+          {
+            "x": 4,
+            "y": 5,
+            "rayon": 2,
+            "couleur": "#ffcc88"
+          },
+          {
+            "x": 37,
+            "y": 27,
+            "rayon": 2,
+            "couleur": "#ffb060"
+          },
+          {
+            "x": 8,
+            "y": 4,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 14,
+            "y": 4,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 7,
+            "y": 8,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 11,
+            "y": 8,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 6,
+            "y": 12,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 2,
+            "y": 19,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 6,
+            "y": 19,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 10,
+            "y": 19,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 3,
+            "y": 24,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 8,
+            "y": 24,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 13,
+            "y": 24,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 23,
+            "y": 24,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 35,
+            "y": 5,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 40,
+            "y": 5,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 35,
+            "y": 10,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 40,
+            "y": 10,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 35,
+            "y": 20,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          },
+          {
+            "x": 40,
+            "y": 20,
+            "rayon": 1,
+            "couleur": "#ffb85a"
+          }
+        ],
+        "elements": [
+          {
+            "nom": "Maison 1",
+            "x": 7,
+            "y": 2,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 2",
+            "x": 13,
+            "y": 2,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 3",
+            "x": 6,
+            "y": 6,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 4",
+            "x": 10,
+            "y": 6,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 5",
+            "x": 5,
+            "y": 10,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 6",
+            "x": 1,
+            "y": 17,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 7",
+            "x": 5,
+            "y": 17,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 8",
+            "x": 9,
+            "y": 17,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 9",
+            "x": 2,
+            "y": 22,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 10",
+            "x": 7,
+            "y": 22,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 11",
+            "x": 12,
+            "y": 22,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 12",
+            "x": 22,
+            "y": 22,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 13",
+            "x": 34,
+            "y": 3,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 14",
+            "x": 39,
+            "y": 3,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 15",
+            "x": 34,
+            "y": 8,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 16",
+            "x": 39,
+            "y": 8,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 17",
+            "x": 34,
+            "y": 18,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Maison 18",
+            "x": 39,
+            "y": 18,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Chapelle",
+            "x": 17,
+            "y": 2,
+            "l": 4,
+            "h": 5
+          },
+          {
+            "nom": "Cimetière",
+            "x": 22,
+            "y": 2,
+            "l": 6,
+            "h": 5
+          },
+          {
+            "nom": "Moulin",
+            "x": 2,
+            "y": 2,
+            "l": 3,
+            "h": 3
+          },
+          {
+            "nom": "Taverne",
+            "x": 26,
+            "y": 10,
+            "l": 4,
+            "h": 3
+          },
+          {
+            "nom": "Forge",
+            "x": 9,
+            "y": 10,
+            "l": 3,
+            "h": 3
+          },
+          {
+            "nom": "Gibet",
+            "x": 14,
+            "y": 11,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Puits",
+            "x": 18,
+            "y": 14,
+            "l": 2,
+            "h": 2
+          },
+          {
+            "nom": "Pont",
+            "x": 31,
+            "y": 14,
+            "l": 3,
+            "h": 2
+          },
+          {
+            "nom": "Lavoir",
+            "x": 27,
+            "y": 21,
+            "l": 3,
+            "h": 2
+          },
+          {
+            "nom": "Grange",
+            "x": 35,
+            "y": 23,
+            "l": 5,
+            "h": 4
+          }
+        ],
+        "plateau": {
+          "seuils": {
+            "Maison 1": {
+              "x": 8,
+              "y": 4.5
+            },
+            "Maison 2": {
+              "x": 14,
+              "y": 4.5
+            },
+            "Maison 3": {
+              "x": 7,
+              "y": 8.5
+            },
+            "Maison 4": {
+              "x": 11,
+              "y": 8.5
+            },
+            "Maison 5": {
+              "x": 6,
+              "y": 12.5
+            },
+            "Maison 6": {
+              "x": 2,
+              "y": 19.5
+            },
+            "Maison 7": {
+              "x": 6,
+              "y": 19.5
+            },
+            "Maison 8": {
+              "x": 10,
+              "y": 19.5
+            },
+            "Maison 9": {
+              "x": 3,
+              "y": 24.5
+            },
+            "Maison 10": {
+              "x": 8,
+              "y": 24.5
+            },
+            "Maison 11": {
+              "x": 13,
+              "y": 24.5
+            },
+            "Maison 12": {
+              "x": 23,
+              "y": 24.5
+            },
+            "Maison 13": {
+              "x": 35,
+              "y": 5.5
+            },
+            "Maison 14": {
+              "x": 40,
+              "y": 5.5
+            },
+            "Maison 15": {
+              "x": 35,
+              "y": 10.5
+            },
+            "Maison 16": {
+              "x": 40,
+              "y": 10.5
+            },
+            "Maison 17": {
+              "x": 35,
+              "y": 20.5
+            },
+            "Maison 18": {
+              "x": 40,
+              "y": 20.5
+            }
+          },
+          "cercle": {
+            "x": 19,
+            "y": 15,
+            "rayon": 4,
+            "rayonMin": 3.3
+          },
+          "cimetiere": {
+            "x": 22,
+            "y": 2,
+            "l": 6,
+            "h": 5
+          }
+        },
+        "sons": [
+          {
+            "son": "forge",
+            "x": 10,
+            "y": 11,
+            "rayon": 4,
+            "volume": 0.3,
+            "nom": "Forge"
+          },
+          {
+            "son": "nuit",
+            "x": 20.5,
+            "y": 14.5,
+            "rayon": 15,
+            "volume": 0.25,
+            "nom": "Brumecombe"
+          },
+          {
+            "son": "feu",
+            "x": 28,
+            "y": 10,
+            "rayon": 3,
+            "volume": 0.3,
+            "nom": "Âtre de la Taverne"
+          },
+          {
+            "son": "mer",
+            "x": 32,
+            "y": 21,
+            "rayon": 4,
+            "volume": 0.2,
+            "nom": "la Brume"
+          }
+        ],
+        "notes": [
+          {
+            "x": 18,
+            "y": 4,
+            "entryId": "IWLvmKtjvzPRJYr5",
+            "pageId": "QIKXHcnrr9M6qTbg",
+            "texte": "La Chapelle",
+            "icone": "icons/svg/temple.svg"
+          },
+          {
+            "x": 28,
+            "y": 4,
+            "entryId": "IWLvmKtjvzPRJYr5",
+            "pageId": "HkUwbvZBwyxUzIEC",
+            "texte": "Le Cimetière",
+            "icone": "icons/svg/obelisk.svg"
+          },
+          {
+            "x": 3,
+            "y": 3,
+            "entryId": "IWLvmKtjvzPRJYr5",
+            "pageId": "tbL4JLTRngZb6B7E",
+            "texte": "Le Moulin",
+            "icone": "icons/svg/windmill.svg"
+          },
+          {
+            "x": 27,
+            "y": 11,
+            "entryId": "IWLvmKtjvzPRJYr5",
+            "pageId": "25GHYdzbhWMiRLU9",
+            "texte": "La Taverne",
+            "icone": "icons/svg/tankard.svg"
+          },
+          {
+            "x": 10,
+            "y": 11,
+            "entryId": "IWLvmKtjvzPRJYr5",
+            "pageId": "rrl6GKhc6WIIz5UL",
+            "texte": "La Forge",
+            "icone": "icons/svg/sword.svg"
+          },
+          {
+            "x": 14,
+            "y": 11,
+            "entryId": "IWLvmKtjvzPRJYr5",
+            "pageId": "7KpinLXkoJ8poGNx",
+            "texte": "Le Gibet",
+            "icone": "icons/svg/skull.svg"
+          },
+          {
+            "x": 18,
+            "y": 14,
+            "entryId": "IWLvmKtjvzPRJYr5",
+            "pageId": "ik0N2ip2FfeNXbdH",
+            "texte": "Le Puits",
+            "icone": "icons/svg/sound.svg"
+          },
+          {
+            "x": 32,
+            "y": 14,
+            "entryId": "IWLvmKtjvzPRJYr5",
+            "pageId": "liUCpIQEbHv1MUa8",
+            "texte": "Le Pont",
+            "icone": "icons/svg/bridge.svg"
+          },
+          {
+            "x": 28,
+            "y": 21,
+            "entryId": "IWLvmKtjvzPRJYr5",
+            "pageId": "qMF6dr4pK51fZjkQ",
+            "texte": "Le Lavoir",
+            "icone": "icons/svg/waterfall.svg"
+          },
+          {
+            "x": 37,
+            "y": 24,
+            "entryId": "IWLvmKtjvzPRJYr5",
+            "pageId": "11IyFxABvPsk1jmA",
+            "texte": "La Grange",
+            "icone": "icons/svg/house.svg"
+          }
+        ]
+      },
+      "version": "0.12.0"
+    },
+    "fxmaster": {
+      "parameterRangeMigrationVersion": 1
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.4.0",
+    "createdTime": 1793535596068,
+    "modifiedTime": 1793711233684,
+    "lastModifiedBy": null,
+    "compendiumSource": "Compendium.lakour-veillees.scenes.Scene.mYZHsnhVOQZRi5f1",
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "thumb": null,
+  "shiftX": 0,
+  "shiftY": 0,
+  "initial": {
+    "x": null,
+    "y": null,
+    "scale": null
+  },
+  "fog": {
+    "mode": 1,
+    "colors": {
+      "explored": null,
+      "unexplored": null
+    }
+  },
+  "transition": {
+    "type": null,
+    "duration": 1500,
+    "activeOnly": false
+  },
+  "playlist": null,
+  "playlistSound": null,
+  "journal": null,
+  "journalEntryPage": null,
+  "weather": "",
+  "ownership": {
+    "default": 0
+  },
+  "_id": "7Nk56NXeftj168Qt",
+  "active": true,
+  "navOrder": 0,
+  "sort": 0,
+  "_key": "!scenes!7Nk56NXeftj168Qt",
+  "templates": []
+}

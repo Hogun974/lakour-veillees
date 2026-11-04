@@ -1,0 +1,18 @@
+{
+  "key": "lakour-loups.dureeVote",
+  "user": null,
+  "value": "120",
+  "_id": "hSOGMUQ8gDuiD7wV",
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.2.1",
+    "createdTime": 1793516338530,
+    "modifiedTime": 1793516338530,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!settings!hSOGMUQ8gDuiD7wV"
+}

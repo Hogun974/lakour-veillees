@@ -1,0 +1,18 @@
+{
+  "key": "fxmaster.parameterRangeMigrationVersion",
+  "user": null,
+  "value": "1",
+  "_id": "cyOORKKjdA1UEEnk",
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.4.0",
+    "createdTime": 1793591743519,
+    "modifiedTime": 1793591743519,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!settings!cyOORKKjdA1UEEnk"
+}

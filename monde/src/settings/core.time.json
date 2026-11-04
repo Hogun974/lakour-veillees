@@ -1,0 +1,18 @@
+{
+  "key": "core.time",
+  "value": "0",
+  "_id": "K9HJl7vJjvwY5vcp",
+  "user": null,
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.2.1",
+    "createdTime": 1793516280537,
+    "modifiedTime": 1793516280537,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!settings!K9HJl7vJjvwY5vcp"
+}

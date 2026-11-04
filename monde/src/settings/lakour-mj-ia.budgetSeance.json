@@ -1,0 +1,18 @@
+{
+  "key": "lakour-mj-ia.budgetSeance",
+  "user": null,
+  "value": "20",
+  "_id": "R5pmu43ezE4mwORk",
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.2.1",
+    "createdTime": 1793516338656,
+    "modifiedTime": 1793516386430,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!settings!R5pmu43ezE4mwORk"
+}

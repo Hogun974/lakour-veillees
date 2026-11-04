@@ -1,0 +1,18 @@
+{
+  "key": "dice-so-nice.maxDiceNumber",
+  "user": null,
+  "value": "20",
+  "_id": "WWldpusMPjbzhZgY",
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.2.1",
+    "createdTime": 1793516338548,
+    "modifiedTime": 1793516338548,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!settings!WWldpusMPjbzhZgY"
+}

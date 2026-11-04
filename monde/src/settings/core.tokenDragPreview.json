@@ -1,0 +1,18 @@
+{
+  "key": "core.tokenDragPreview",
+  "user": null,
+  "value": "false",
+  "_id": "oxAAA8CzBNJxpnWr",
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.2.1",
+    "createdTime": 1793516338466,
+    "modifiedTime": 1793516338466,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!settings!oxAAA8CzBNJxpnWr"
+}

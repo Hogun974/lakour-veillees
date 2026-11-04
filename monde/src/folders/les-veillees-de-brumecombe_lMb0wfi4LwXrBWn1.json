@@ -1,0 +1,27 @@
+{
+  "name": "Les Veillées de Brumecombe",
+  "type": "JournalEntry",
+  "color": "#3a2a4a",
+  "flags": {
+    "lakour-veillees": {
+      "dossier": "Les Veillées de Brumecombe"
+    }
+  },
+  "_id": "lMb0wfi4LwXrBWn1",
+  "description": "",
+  "folder": null,
+  "sorting": "a",
+  "sort": 0,
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.4.0",
+    "createdTime": 1793535595889,
+    "modifiedTime": 1793535595889,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!folders!lMb0wfi4LwXrBWn1"
+}

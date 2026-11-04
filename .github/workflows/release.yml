@@ -1,0 +1,90 @@
+# Publication d'une version : à chaque étiquette « v* » poussée (ex. v0.11.1), fabrique le contenu, empaquette le système,
+# le module de contenu et le monde (s'il a son script), puis crée la release GitHub avec :
+#   system.json, lakour-loups.zip, module.json, lakour-veillees.zip, world.json, <identifiant du monde>.zip
+# Les manifestes publiés portent « manifest » (releases/latest/download/…) et « download » (releases/download/<tag>/…) :
+# Foundry trouve donc toujours la dernière version par le manifeste, et chaque version garde son archive.
+# Le sous-module modules/lakour-mj-ia est récupéré : la fabrication du contenu en a besoin (rendu des cartes, jetons).
+name: Publication
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  publier:
+    name: Fabriquer et publier
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dépôt et sous-module
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Dépendances
+        run: npm ci
+
+      - name: Essais
+        run: npm run essais
+
+      - name: Fabrication du contenu (src/, packs/, compositions)
+        run: npm run fabriquer-veillees
+
+      - name: Empaquetage du système et du module
+        run: node outils/empaqueter-paquets.mjs --tag "$GITHUB_REF_NAME" --sortie dist
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+
+      - name: Empaquetage du monde (si « npm run empaqueter-monde » existe)
+        env:
+          TAG: ${{ github.ref_name }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          if node -e "process.exit((require('./package.json').scripts || {})['empaqueter-monde'] ? 0 : 1)"; then
+            npm run empaqueter-monde
+          else
+            echo "Pas de script empaqueter-monde : le monde n'est pas publié dans cette version."
+          fi
+
+      - name: Vérification des fichiers à publier
+        run: |
+          ls -la dist/
+          for f in dist/system.json dist/lakour-loups.zip dist/module.json dist/lakour-veillees.zip; do
+            test -s "$f" || { echo "Fichier manquant : $f"; exit 1; }
+          done
+          node -e "for (const f of require('fs').readdirSync('dist').filter(f => f.endsWith('.json'))) { const m = require('./dist/' + f); console.log(f, m.id, m.version, '->', m.download); }"
+
+      - name: Notes de version
+        id: notes
+        run: |
+          SYS=$(node -p "require('./dist/system.json').version")
+          MOD=$(node -p "require('./dist/module.json').version")
+          MONDE=$(ls dist/*.zip | grep -v -e lakour-loups.zip -e lakour-veillees.zip | head -n 1 || true)
+          {
+            echo "Système \`lakour-loups\` ${SYS} · module de contenu \`lakour-veillees\` ${MOD}"
+            if [ -n "$MONDE" ]; then echo "· monde : \`$(basename "$MONDE")\`"; fi
+            echo
+            echo "Installation dans Foundry VTT (v14) : voir le README. Manifeste du système :"
+            echo "\`https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/system.json\`"
+            echo
+            echo "Détail des changements : [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/${GITHUB_REF_NAME}/CHANGELOG.md)."
+          } > dist/NOTES.md
+
+      - name: Release GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          body_path: dist/NOTES.md
+          files: |
+            dist/*.json
+            dist/*.zip
+          fail_on_unmatched_files: true

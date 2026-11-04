@@ -1,0 +1,55 @@
+{
+  "id": "la-kour-veillees",
+  "title": "La Kour — Les Veillées de Brumecombe",
+  "description": "<p>Chaque automne, la brume coupe Brumecombe du reste du monde. Et chaque matin, quelqu'un manque à l'appel.</p><p>Une meute se cache parmi les villageois : démasquez-la avant qu'elle ne vous dévore. Jeu de déduction sociale original, de 6 à 18 joueurs, narré par le MJ IA.</p>",
+  "version": "0.13.1",
+  "system": "lakour-loups",
+  "systemVersion": "0.10.2",
+  "coreVersion": "14.369",
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14.369"
+  },
+  "background": "modules/lakour-veillees/assets/monde/fond.jpg",
+  "joinTheme": "default",
+  "authors": [
+    {
+      "name": "Jordan (La Kour)",
+      "url": "https://github.com/Hogun974"
+    }
+  ],
+  "url": "https://github.com/Hogun974/lakour-veillees",
+  "manifest": "https://github.com/Hogun974/lakour-veillees/releases/latest/download/world.json",
+  "download": "https://github.com/Hogun974/lakour-veillees/releases/latest/download/la-kour-veillees.zip",
+  "readme": "https://github.com/Hogun974/lakour-veillees#readme",
+  "license": "LICENSE",
+  "bugs": "https://github.com/Hogun974/lakour-veillees/issues",
+  "relationships": {
+    "requires": [
+      {
+        "id": "lakour-loups",
+        "type": "system",
+        "compatibility": {
+          "minimum": "0.10.2"
+        }
+      },
+      {
+        "id": "lakour-veillees",
+        "type": "module",
+        "manifest": "https://github.com/Hogun974/lakour-veillees/releases/latest/download/module.json",
+        "compatibility": {
+          "minimum": "0.13.1"
+        }
+      },
+      {
+        "id": "lakour-mj-ia",
+        "type": "module",
+        "manifest": "https://github.com/Hogun974/lakour-mj-ia/releases/latest/download/module.json",
+        "compatibility": {
+          "minimum": "0.39.0"
+        }
+      }
+    ]
+  },
+  "flags": {}
+}

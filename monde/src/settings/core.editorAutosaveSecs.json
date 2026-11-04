@@ -1,0 +1,18 @@
+{
+  "key": "core.editorAutosaveSecs",
+  "user": null,
+  "value": "60",
+  "_id": "V2kzNsneFzbmGXg4",
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.2.1",
+    "createdTime": 1793516338473,
+    "modifiedTime": 1793516338473,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!settings!V2kzNsneFzbmGXg4"
+}

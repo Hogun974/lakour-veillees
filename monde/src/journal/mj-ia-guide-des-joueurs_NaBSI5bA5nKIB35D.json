@@ -1,0 +1,182 @@
+{
+  "name": "MJ IA — Guide des joueurs",
+  "pages": [
+    {
+      "name": "Jouer avec le MJ IA",
+      "type": "text",
+      "sort": 100,
+      "text": {
+        "content": "<ul><li><strong>Parle dans le chat</strong>, comme à une table : ce que fait ton personnage, ce qu'il dit. Le MJ répond quand tout le monde a fini d'écrire.</li><li><strong>Les jets</strong> : quand le MJ demande un test, une fenêtre s'ouvre déjà réglée (difficulté, modificateurs) ; vérifie et lance.</li><li><strong>Ce que toi seul vois</strong> : les messages chuchotés du MJ, les choix secrets et les votes s'ouvrent chez toi seulement.</li><li><strong>La voix</strong> : Réglages › MJ IA › « Entendre les voix des IA » et « Volume de la voix des IA » pour régler chez toi la voix du narrateur et des compagnons.</li><li><strong>Parler à voix haute</strong> : si la voix de Foundry est active, quand une IA écoute (pastille « L'IA écoute » en haut de l'écran), ce que tu dis est transcrit pour le MJ IA et les compagnons qui peuvent t'entendre. Coupe ton micro pour ne pas l'être.</li><li><strong>Ta fiche</strong> : le MJ peut la créer avec toi, et la tient à jour (expérience, argent, objets) ; tu peux toujours la consulter.</li><li><strong>Les cartes</strong> : tu peux déplacer ton jeton ; le MJ réagit à ce que tu découvres. S'il bloque tes déplacements, c'est voulu (scène en cours).</li><li><strong>Les compagnons IA</strong> : des personnages joués par l'IA peuvent compléter la table. Ils parlent sous leur nom et jouent comme toi, sans tricher : ils ne savent que ce que sait leur personnage.</li><li><strong>Les fêtes</strong> : à Noël, Halloween et quelques autres fêtes, le monde peut se décorer un peu (guirlande, flocons…). Réglages › MJ IA › « Effets visuels des fêtes » pour les couper chez toi.</li></ul>",
+        "format": 1
+      },
+      "_id": "uKlxFo1l9fSyESza",
+      "system": {},
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708791378,
+        "modifiedTime": 1793708791383,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "_key": "!journal.pages!NaBSI5bA5nKIB35D.uKlxFo1l9fSyESza"
+    },
+    {
+      "name": "Tour par tour (40k et Warcraft)",
+      "type": "text",
+      "sort": 200,
+      "text": {
+        "content": "<ul><li><strong>En combat</strong>, un bandeau en haut de l'écran te dit où on en est : « ⚔️ Round 3 — À toi de jouer ! », ou « Au tour de X, puis toi ».</li><li><strong>À ton tour</strong>, il montre ce qu'il te reste (D&amp;D 5e : action, action bonus, réaction, mouvement en mètres ; Imperium Maledictum : action et déplacement) et tes attaques en boutons : ils ouvrent tes vrais jets. Désigne d'abord ta cible (touche <strong>T</strong> sur son jeton).</li><li><strong>Fin de mon tour</strong> passe la main au suivant.</li><li>Quand ton tour arrive, un <strong>tintement</strong> discret sonne chez toi seul (réglage « M'appeler quand c'est à moi » du MJ IA) ; de même pour un vote de groupe ou un choix secret.</li><li>Si le MJ l'a réglé ainsi, seul le combattant dont c'est le tour peut bouger son jeton.</li><li><strong>Hors combat</strong>, le MJ peut faire un <strong>tour de table</strong> : quand vient ton tour, le bandeau dit « À toi de décrire ce que fait ton personnage ». Écris-le dans le chat (ou presse <strong>J'ai fini</strong>), ou <strong>Je passe</strong>.</li></ul>",
+        "format": 1
+      },
+      "_id": "MHa8AupVuoexKFRn",
+      "system": {},
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708791380,
+        "modifiedTime": 1793708791384,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "_key": "!journal.pages!NaBSI5bA5nKIB35D.MHa8AupVuoexKFRn"
+    },
+    {
+      "name": "Carnet de campagne (40k et Warcraft)",
+      "type": "text",
+      "sort": 300,
+      "text": {
+        "content": "<ul><li>Le bouton <strong>livre ouvert</strong> de la barre de gauche ouvre le <strong>Carnet de campagne</strong> : ce que le MJ a choisi de te montrer, en trois onglets (Horloges, Enquêtes, Contacts).</li><li>Une <strong>horloge</strong> se remplit segment par segment : quand elle est pleine, quelque chose arrive. Une <strong>jauge</strong> monte avec vos actions (l'Exposition, en 40k : plus elle est haute, plus vous êtes repérés). Une <strong>réputation</strong> dit ce qu'une faction pense de vous, de <strong>Haï</strong> à <strong>Exalté</strong>.</li><li>Quand une horloge sonne ou qu'une réputation change, le chat te le dit.</li><li><strong>Enquêtes</strong> : les indices que vous avez trouvés et les conclusions que vous avez comprises. <strong>Contacts</strong> : les gens que vous connaissez, ce qu'ils pensent de vous, ce que vous leur devez (ou eux à vous).</li></ul>",
+        "format": 1
+      },
+      "_id": "OIPhOqk6jWIIM9cM",
+      "system": {},
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708791382,
+        "modifiedTime": 1793708791385,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "_key": "!journal.pages!NaBSI5bA5nKIB35D.OIPhOqk6jWIIM9cM"
+    },
+    {
+      "name": "Les Veillées de Brumecombe",
+      "type": "text",
+      "sort": 400,
+      "text": {
+        "content": "<ul><li>Ton <strong>rôle</strong> t'est donné en secret au début ; garde-le pour toi.</li><li>La <strong>nuit</strong>, si ton rôle agit, une fenêtre s'ouvre chez toi seul : choisis, ou passe.</li><li>Le <strong>jour</strong>, débattez, puis <strong>votez</strong> dans la fenêtre de vote ou la Table de jeu. Les voix restent cachées jusqu'à la fin du vote.</li><li>Les <strong>morts</strong> se taisent et ne votent plus.</li><li>Le guide du joueur de Brumecombe (journal du monde) décrit tous les rôles, métiers et bâtiments ; sur la carte, clique l'épingle d'un bâtiment pour lire sa règle.</li><li>Quand c'est à toi (choix de nuit, vote), un <strong>tintement</strong> discret sonne chez toi seul et l'onglet clignote si tu regardes ailleurs (réglage « Signal quand c'est à moi »).</li><li>À la fin, les <strong>Chroniques de Brumecombe</strong> racontent la partie et tiennent le palmarès.</li></ul>",
+        "format": 1
+      },
+      "_id": "Q5NAJBh0iYJNCHUz",
+      "system": {},
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708791383,
+        "modifiedTime": 1793708791385,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "_key": "!journal.pages!NaBSI5bA5nKIB35D.Q5NAJBh0iYJNCHUz"
+    }
+  ],
+  "ownership": {
+    "default": 2
+  },
+  "flags": {
+    "lakour-mj-ia": {
+      "guide": "guide-joueurs",
+      "versionGuide": 14
+    }
+  },
+  "_id": "NaBSI5bA5nKIB35D",
+  "folder": null,
+  "categories": [],
+  "sort": 0,
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.4.0",
+    "createdTime": 1793536684866,
+    "modifiedTime": 1793708791398,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!journal!NaBSI5bA5nKIB35D"
+}

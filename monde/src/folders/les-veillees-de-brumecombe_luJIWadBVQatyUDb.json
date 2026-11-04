@@ -1,0 +1,23 @@
+{
+  "_id": "luJIWadBVQatyUDb",
+  "name": "Les Veillées de Brumecombe",
+  "type": "Compendium",
+  "sorting": "m",
+  "sort": 100000,
+  "color": "#3a2a4a",
+  "folder": null,
+  "description": "",
+  "flags": {},
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.4.0",
+    "createdTime": 1793591736242,
+    "modifiedTime": 1793591736242,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!folders!luJIWadBVQatyUDb"
+}

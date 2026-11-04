@@ -1,0 +1,18 @@
+{
+  "key": "sequencer.permissions-sidebar-tools",
+  "user": null,
+  "value": "0",
+  "_id": "Kprp8Pg88uwXYRjS",
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.4.0",
+    "createdTime": 1793592418860,
+    "modifiedTime": 1793592418860,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!settings!Kprp8Pg88uwXYRjS"
+}

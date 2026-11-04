@@ -1,0 +1,18 @@
+{
+  "key": "sequencer.permissions-effect-create",
+  "user": null,
+  "value": "0",
+  "_id": "kDOskxfH8zVIz1zJ",
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.4.0",
+    "createdTime": 1793592418828,
+    "modifiedTime": 1793592418828,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!settings!kDOskxfH8zVIz1zJ"
+}

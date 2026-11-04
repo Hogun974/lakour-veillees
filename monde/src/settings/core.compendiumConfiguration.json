@@ -1,0 +1,18 @@
+{
+  "key": "core.compendiumConfiguration",
+  "value": "{\"lakour-veillees.journaux\":{\"folder\":\"luJIWadBVQatyUDb\",\"sort\":100000},\"lakour-veillees.scenes\":{\"folder\":\"luJIWadBVQatyUDb\",\"sort\":200000},\"lakour-veillees.roles\":{\"folder\":\"luJIWadBVQatyUDb\",\"sort\":300000},\"lakour-veillees.metiers\":{\"folder\":\"luJIWadBVQatyUDb\",\"sort\":400000},\"lakour-veillees.batiments\":{\"folder\":\"luJIWadBVQatyUDb\",\"sort\":500000},\"lakour-veillees.villageois\":{\"folder\":\"luJIWadBVQatyUDb\",\"sort\":600000},\"lakour-veillees.tables\":{\"folder\":\"luJIWadBVQatyUDb\",\"sort\":700000}}",
+  "_id": "aONHBUvM3Tp61ggc",
+  "user": null,
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.2.1",
+    "createdTime": 1793516307930,
+    "modifiedTime": 1793591736249,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!settings!aONHBUvM3Tp61ggc"
+}

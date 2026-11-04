@@ -1,0 +1,18 @@
+{
+  "key": "sequencer.permissions-sound-create",
+  "user": null,
+  "value": "0",
+  "_id": "pvQiGogv6ZBLpQHv",
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.4.0",
+    "createdTime": 1793592418847,
+    "modifiedTime": 1793592418847,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!settings!pvQiGogv6ZBLpQHv"
+}

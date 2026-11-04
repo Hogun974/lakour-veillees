@@ -8,7 +8,8 @@
     "fabriquer-jetons-veillees": "node outils/fabriquer-jetons-veillees.mjs",
     "fabriquer-veillees": "node outils/fabriquer-veillees.mjs",
     "contrat": "node modules/lakour-mj-ia/outils/contrat-contenu.mjs modules/lakour-veillees",
-    "valider": "node modules/lakour-mj-ia/outils/valider-foundry.mjs modules/lakour-veillees lakour-loups"
+    "valider": "node modules/lakour-mj-ia/outils/valider-foundry.mjs modules/lakour-veillees lakour-loups",
+    "empaqueter-monde": "node modules/lakour-mj-ia/outils/empaqueter-monde.mjs"
   },
   "devDependencies": {
     "@foundryvtt/foundryvtt-cli": "3.0.5"

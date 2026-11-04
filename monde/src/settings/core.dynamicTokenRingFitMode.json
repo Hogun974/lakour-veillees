@@ -1,0 +1,18 @@
+{
+  "key": "core.dynamicTokenRingFitMode",
+  "user": null,
+  "value": "\"subject\"",
+  "_id": "n5I9b8OgwShrXIDO",
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.2.1",
+    "createdTime": 1793516338433,
+    "modifiedTime": 1793516338433,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!settings!n5I9b8OgwShrXIDO"
+}

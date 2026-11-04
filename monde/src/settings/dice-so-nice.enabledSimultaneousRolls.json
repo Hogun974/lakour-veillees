@@ -1,0 +1,18 @@
+{
+  "key": "dice-so-nice.enabledSimultaneousRolls",
+  "user": null,
+  "value": "true",
+  "_id": "ec2AUi24iYmXTFiQ",
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.2.1",
+    "createdTime": 1793516338558,
+    "modifiedTime": 1793516338558,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!settings!ec2AUi24iYmXTFiQ"
+}

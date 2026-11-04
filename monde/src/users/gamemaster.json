@@ -1,0 +1,22 @@
+{
+  "name": "Gamemaster",
+  "role": 4,
+  "_id": "LaKourGamemaster",
+  "password": "",
+  "avatar": null,
+  "character": null,
+  "color": "#aa3333",
+  "pronouns": "",
+  "hotbar": {},
+  "permissions": {},
+  "flags": {},
+  "_stats": {
+    "coreVersion": null,
+    "systemId": null,
+    "systemVersion": null,
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!users!LaKourGamemaster"
+}

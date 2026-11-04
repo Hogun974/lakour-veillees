@@ -1,0 +1,146 @@
+{
+  "_id": "PIQAzYQp9aFwh59a",
+  "name": "Veillée de fête — La Fête des promis",
+  "folder": "lMb0wfi4LwXrBWn1",
+  "categories": [],
+  "ownership": {
+    "default": 2
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "fete-fete-des-promis",
+      "visible": true,
+      "version": "0.12.0"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.10.0",
+    "createdTime": 1793708826390,
+    "modifiedTime": 1793708826390,
+    "lastModifiedBy": null,
+    "compendiumSource": "Compendium.lakour-veillees.journaux.JournalEntry.PIQAzYQp9aFwh59a",
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "pages": [
+    {
+      "_id": "KgOAFFb85LPTaXL3",
+      "name": "La Fête des promis",
+      "type": "image",
+      "sort": 100,
+      "title": {
+        "show": false,
+        "level": 1
+      },
+      "src": "modules/lakour-veillees/assets/fetes/saint-valentin.jpg",
+      "image": {
+        "caption": "Des rubans noués aux piles du Pont de Brumecombe, à la mi-février."
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708826390,
+        "modifiedTime": 1793708826390,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "system": {},
+      "text": {
+        "format": 1
+      },
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "category": null,
+      "_key": "!journal.pages!PIQAzYQp9aFwh59a.KgOAFFb85LPTaXL3"
+    },
+    {
+      "_id": "YVB6T7BtoX3QMFuq",
+      "name": "La fête à Brumecombe",
+      "type": "text",
+      "sort": 200,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Les rubans sous le Pont</h2><p>À la mi-février, les jeunes gens de Brumecombe descendent sous le Pont nouer des rubans aux piles de pierre, et se promettent l'un à l'autre devant la rivière. On mange le pain d'épice en cœur, on chante faux, on rougit.</p><p>Cette année, deux cœurs du village se sont trouvés. Ils ne l'ont dit à personne. Mais dans les roseaux, des yeux jaunes les ont vus s'embrasser.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708826390,
+        "modifiedTime": 1793708826390,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "system": {},
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "_key": "!journal.pages!PIQAzYQp9aFwh59a.YVB6T7BtoX3QMFuq"
+    },
+    {
+      "_id": "zkccKW2Q3xRZAI7T",
+      "name": "Les règles de la veillée",
+      "type": "text",
+      "sort": 300,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Les promis</h2><p>À la distribution, <strong>deux joueurs du camp du Village</strong>, tirés au hasard, deviennent promis. Chacun apprend, en secret, le nom de l'autre : un allié sûr, du Village au moment de la distribution.</p><h2>La meute les a vus</h2><p>Chaque loup apprend, en secret, <strong>les deux noms</strong>. Les promis sont des proies de choix… et des cibles faciles à accuser.</p><h2>En pratique</h2><ul><li>Ce n'est pas un lien d'amour : la mort de l'un ne tue pas l'autre.</li><li>Une morsure peut faire passer un promis dans la meute : sa promesse ne garantit que le passé.</li><li>Deux loups peuvent se dire promis pour se couvrir : les vrais promis savent qu'ils mentent.</li><li>Le narrateur ne confirme jamais une promesse.</li></ul>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708826390,
+        "modifiedTime": 1793708826390,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "system": {},
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "_key": "!journal.pages!PIQAzYQp9aFwh59a.zkccKW2Q3xRZAI7T"
+    }
+  ],
+  "sort": 0,
+  "_key": "!journal!PIQAzYQp9aFwh59a"
+}

@@ -1,0 +1,18 @@
+{
+  "key": "lakour-loups.mortsVoientTout",
+  "user": null,
+  "value": "true",
+  "_id": "8jARKCe1p2euc8lq",
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.2.1",
+    "createdTime": 1793516338517,
+    "modifiedTime": 1793516338517,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!settings!8jARKCe1p2euc8lq"
+}

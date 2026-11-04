@@ -1,0 +1,18 @@
+{
+  "key": "fxmaster.enableLogger",
+  "user": null,
+  "value": "false",
+  "_id": "YbTJCwIqqxrZJG7p",
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.4.0",
+    "createdTime": 1793592418799,
+    "modifiedTime": 1793592418799,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!settings!YbTJCwIqqxrZJG7p"
+}

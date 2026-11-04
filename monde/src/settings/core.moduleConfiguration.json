@@ -1,0 +1,18 @@
+{
+  "key": "core.moduleConfiguration",
+  "value": "{\"levels-3d-preview\":false,\"3ds-atlas\":false,\"autoanimations\":false,\"babele\":false,\"calendaria\":false,\"dice-so-nice\":false,\"fr-core\":true,\"fxmaster\":true,\"item-piles\":false,\"itempilesdnd5e\":false,\"JB2A_DnD5e\":true,\"lakour-mj-ia\":true,\"lakour-veillees\":true,\"lib-wrapper\":false,\"sequencer\":true,\"socketlib\":true}",
+  "_id": "U0pTejescXlnGt19",
+  "user": null,
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.2.1",
+    "createdTime": 1793516280556,
+    "modifiedTime": 1793592448770,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!settings!U0pTejescXlnGt19"
+}

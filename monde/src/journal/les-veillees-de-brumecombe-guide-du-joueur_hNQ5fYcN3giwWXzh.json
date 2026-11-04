@@ -1,0 +1,829 @@
+{
+  "name": "Les Veillées de Brumecombe — Guide du joueur",
+  "folder": "lMb0wfi4LwXrBWn1",
+  "categories": [],
+  "flags": {
+    "lakour-veillees": {
+      "cle": "guide-du-joueur",
+      "visible": true,
+      "version": "0.12.0"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.4.0",
+    "createdTime": 1793535595917,
+    "modifiedTime": 1793708826377,
+    "lastModifiedBy": null,
+    "compendiumSource": "Compendium.lakour-veillees.journaux.JournalEntry.IWLvmKtjvzPRJYr5",
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "pages": [
+    {
+      "_id": "Fqt9ZQXVhrS4aEav",
+      "name": "Bienvenue à Brumecombe",
+      "type": "text",
+      "sort": 100,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Un village dans la brume</h2><p>Brumecombe est un village de fond de vallée, coupé du monde chaque automne par une brume si épaisse qu'on n'y voit pas sa propre main. Une rivière, la Brume, le traverse ; un pont de pierre relie les deux rives. Il y a une chapelle, un moulin, une taverne, une forge, un cimetière et dix-huit maisons aux volets clos.</p><p>Cet automne, on a retrouvé le berger de la Combe-aux-Sorbiers dans le fossé, la gorge ouverte. Ce n'était pas un loup des bois : les loups des bois n'ouvrent pas les loquets.</p><p><strong>Certains d'entre vous sont des loups.</strong> Le jour, ils parlent, votent et pleurent avec les autres. La nuit, ils entrent dans les maisons. Les autres ont une seule arme : la parole, et le vote du village.</p><h2>Le principe</h2><ul><li>Chaque joueur reçoit en secret un <strong>rôle</strong> : il dit dans quel camp il joue et quel pouvoir il a.</li><li>Chaque joueur reçoit aussi un <strong>métier</strong>, public : tout le monde sait qui est le forgeron ou la meunière. Le métier ne dit rien du camp.</li><li>La partie alterne <strong>nuits</strong> (les rôles agissent en secret) et <strong>jours</strong> (le village débat, puis vote pour exécuter un suspect).</li><li>Un <strong>narrateur</strong> mène la partie : c'est le MJ, humain ou IA. Il connaît tous les rôles et ne ment jamais sur les règles.</li></ul><h2>Les camps</h2><ul><li><strong>Le Village</strong> gagne quand <strong>plus aucun loup</strong> ne vit.</li><li><strong>La Meute</strong> gagne quand les loups sont <strong>aussi nombreux</strong> que tous les autres vivants réunis.</li><li><strong>Les solitaires</strong> ont chacun leur propre condition de victoire, écrite sur leur rôle.</li><li><strong>Les amants</strong> (liés par l'Entremetteuse) gagnent ensemble s'ils sont les deux derniers vivants, quel que soit leur camp ; sinon chacun gagne avec son camp.</li></ul><p>Il arrive, rarement, qu'il n'y ait <strong>aucun loup</strong> : c'est la <strong>peste noire</strong> (voir la page qui lui est consacrée).</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708826307,
+        "modifiedTime": 1793708826341,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "system": {},
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.Fqt9ZQXVhrS4aEav"
+    },
+    {
+      "_id": "0r20QSMNpotjnHTY",
+      "name": "Déroulement d'une partie",
+      "type": "text",
+      "sort": 200,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>La préparation</h2><p>Le narrateur choisit une composition (selon le nombre de joueurs et le niveau), met 4 à 6 <strong>bâtiments</strong> en jeu, puis distribue en secret un rôle et un métier à chacun. Chacun reçoit son rôle en <strong>message privé</strong> et voit sa fiche ; personne d'autre ne la voit. Chacun a une <strong>maison</strong> sur la carte du village (« Maison 1 » à « Maison 18 »).</p><p>La composition reste <strong>secrète</strong> : le narrateur n'annonce ni les rôles en jeu, ni le nombre de loups. Seuls les bâtiments sont connus de tous. Le reste, le village le découvre en jouant.</p><h2>La nuit</h2><p>Le narrateur annonce la nuit. Tout le monde « ferme les yeux » : on se tait, on n'écrit plus sur le canal commun.</p><p>Le narrateur réveille les rôles <strong>un par un, dans l'ordre</strong>, toujours en secret : une <strong>fenêtre de choix</strong> s'ouvre chez le joueur concerné, avec une question (« Quelle maison éclaires-tu cette nuit ? ») et la liste des joueurs. Il choisit, ou il passe. Les loups se réveillent ensemble et votent pour leur victime ; à égalité, le premier choix l'emporte.</p><p>Si ta fenêtre ne s'ouvre pas, c'est que ton rôle ne joue pas cette nuit. Ne le dis à personne.</p><h2>L'aube</h2><p>Le narrateur raconte ce que le village découvre au matin : qui est mort, et parfois comment. Selon le réglage, le <strong>rôle des morts est révélé</strong> ou non. Un mort ne parle plus aux vivants et ne doit plus rien leur révéler (il peut regarder la partie, et parler aux autres morts dans leur salon). Avec le <strong>Dernier souffle</strong> (réglage, par défaut oui), il garde <strong>une seule voix</strong> pour un vote d'exécution, à utiliser quand il veut : son bandeau le lui rappelle, et le Registre la note « dernier souffle » au dépouillement. Tant qu'il garde cette voix, il ne voit pas les rôles cachés et n'entend pas la meute la nuit, même si les morts « voient tout » : il voterait en connaissant les loups. Une fois sa voix rendue, il rejoint les morts qui voient tout.</p><h2>Le jour</h2><p>Le village <strong>débat</strong> : on accuse, on se défend, on ment ou l'on dit vrai. Le débat est minuté (cinq minutes par défaut, moins quand il reste peu de joueurs).</p><p>Les <strong>pouvoirs de jour</strong> (ton métier, quelques rôles comme le Juge de paix ou la Conteuse, et certains bâtiments) se jouent pendant le jour : clique sur ton pouvoir dans la <strong>Table de jeu</strong>, ou annonce-le au narrateur à voix haute. Le système vérifie que c'est le bon moment, applique l'effet et l'annonce au village. Un pouvoir « une fois par partie » ne revient pas.</p><h2>Le Bailli</h2><p>Le premier jour, avant le premier vote d'exécution, le village <strong>élit son Bailli</strong> par un vote à part : chacun désigne son candidat (on peut voter pour soi), le plus désigné prend le <strong>sceau du village</strong> ; à égalité, le sort choisit entre les ex æquo. Le Bailli est <strong>public</strong> : son nom est sur la Table de jeu et dans le bandeau, son sceau sur son jeton.</p><ul><li>Au vote d'exécution, <strong>sa voix compte double</strong>.</li><li>En cas d'<strong>égalité</strong>, c'est <strong>lui qui tranche</strong> : une fenêtre s'ouvre chez lui seul, avec les ex æquo ; il désigne le condamné (même lui-même), ou passe, et alors personne n'est exécuté.</li><li>À <strong>sa mort</strong>, il <strong>remet le sceau</strong> à un vivant de son choix (une dernière fenêtre, depuis la tombe). S'il ne choisit personne, la charge reste vacante et le village élit un nouveau Bailli au jour suivant (le jour même, si l'on n'a pas encore voté).</li></ul><p>Un Bailli peut être un loup : le village l'a choisi, à lui de bien choisir.</p><h2>Le vote</h2><p>Le narrateur ouvre le <strong>vote</strong> : chaque vivant clique sur un nom dans la fenêtre de vote (ou sur la Table de jeu). On peut changer d'avis jusqu'à la clôture. Les voix restent <strong>secrètes jusqu'au dépouillement</strong> : on voit seulement qui a déjà voté. Au dépouillement, le joueur qui a <strong>le plus de voix est exécuté</strong> et quitte la partie — sauf si le <strong>Juge de paix</strong> annule le vote (le village revote aussitôt) ou si le plus désigné porte le <strong>ruban de la Tisserande</strong> (une minute de défense de plus, le vote reste ouvert). Après la clôture, chacun peut relire <strong>qui a voté pour qui</strong> dans le Registre du greffier.</p><p>Si la <strong>Chapelle</strong> est en jeu, un second vote, rapide, désigne ensuite qui dormira à l'abri la nuit suivante.</p><p>Si la <strong>Rosière</strong> est exécutée par le vote, le serment de Brumecombe est rompu : <strong>le Village perd aussitôt</strong>. Réfléchis avant de condamner quelqu'un qui s'en réclame… et souviens-toi qu'un loup peut mentir.</p><p>Avec la variante <strong>Banc des accusés</strong>, on ne vote pas pour n'importe qui : pendant le débat, chaque vivant <strong>accuse une fois</strong> (champ « Accuser » de la Table de jeu), et chacun ne peut être accusé qu'une fois par jour. Les accusés sont <strong>jugés un par un</strong> : voter pour l'accusé, c'est le condamner ; s'abstenir, c'est l'acquitter. Il faut <strong>la moitié des voix des vivants</strong> (plus de la moitié avec le Gibet) ; dès qu'un accusé est exécuté, les autres sont tirés d'affaire pour la journée.</p><p>Avec la variante <strong>Glas du deuil</strong>, chaque innocent exécuté par le vote fait sonner le glas sur Brumecombe (« le glas sonne pour la 2e fois »). Le village n'apprend rien de plus… mais la meute, elle, y gagne un pouvoir qui grandit à chaque glas. Méfiez-vous des votes hâtifs.</p><p><strong>Arriver en cours de partie</strong> : un joueur qui arrive après la distribution entre comme <strong>gens de passage</strong> (Rémouleur, Montreur d'ours ou Pèlerine) : son <strong>rôle est connu de tous</strong>, son <strong>camp ne l'est pas</strong> (le narrateur le lui dit en secret, et il peut être de la meute). Son pouvoir est fort mais ne sert <strong>qu'une fois</strong>, pendant le jour. Le village peut le chasser par un <strong>vote d'exil</strong> : il reprend la route sans mourir, son camp tu.</p><p><strong>Partir avant la fin</strong> : le bouton <strong>Quitter la veillée</strong> (Table de jeu) te fait quitter la partie sans mourir : ni ton rôle ni ton camp ne sont révélés, ta voix en cours est retirée, et la partie continue sans toi (tu ne gagnes ni ne perds).</p><p><strong>Égalité</strong> : s'il y a un <strong>Bailli</strong>, il tranche. Sans Bailli (charge vacante, ou Bailli absent de la partie), les ex æquo ont trente secondes chacun pour se défendre, puis le village revote <strong>entre eux seulement</strong> ; nouvelle égalité : personne n'est exécuté ce jour-là, et la nuit tombe.</p><p>Puis la nuit revient, et ainsi de suite jusqu'à la victoire d'un camp.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708826312,
+        "modifiedTime": 1793708826343,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "system": {},
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.0r20QSMNpotjnHTY"
+    },
+    {
+      "_id": "PYGneq7UaCKyiAXF",
+      "name": "Dans Foundry",
+      "type": "text",
+      "sort": 300,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Ce que tu vois</h2><ul><li><strong>La carte du village</strong> : chaque joueur a son jeton devant sa maison. Les jetons montrent un <strong>villageois encapuchonné</strong> tant que le rôle n'est pas révélé ; à la mort (si les rôles sont révélés), le jeton prend l'image du rôle.</li><li><strong>La Table de jeu</strong> (bouton dans les contrôles du calque Jetons) : la phase, le tour, le minuteur, qui vit et qui est mort, les métiers, les bâtiments en jeu, <strong>tes pouvoirs de jour</strong> (un bouton par pouvoir, grisé quand ce n'est pas le moment), ce qui vaudra la nuit prochaine (verrous, Taverne, Grange…), et pendant un vote, les boutons de vote.</li><li><strong>Le Registre du greffier</strong> (sur la Table de jeu) : la mémoire publique de la veillée (voir plus bas).</li><li><strong>Ta fiche</strong> : ton rôle et ton pouvoir (toi seul et le narrateur les voyez), ton métier (public).</li><li><strong>La fenêtre de choix de nuit</strong> : elle ne s'ouvre que chez toi, et rien n'apparaît chez les autres. Si le Messager te choisit comme expéditeur, elle te demande d'écrire ta phrase.</li></ul><h2>Les messages privés</h2><p>Le narrateur te parle en message privé pour tout ce qui est secret : ton rôle, ce que tu apprends la nuit, le mot que te porte le Messager. Tout arrive dans ton <strong>carnet secret</strong> (bouton de la Table de jeu), envoyé à toi seul. <strong>Ne recopie jamais un message privé sur le canal commun</strong> : dire ce que tu sais, c'est ton droit ; montrer la preuve, c'est interdit.</p><h2>L'Almanach des brumes</h2><p>Dans les veillées qui jouent cette variante, chaque aube apporte un <strong>présage</strong>, annoncé à tous et rappelé en tête de la Table de jeu : il change la règle du jour (vote à main levée, deux condamnés, majorité absolue, pas de déclaration au Registre…) ou de la nuit suivante (givre, crue). La liste est dans les Variantes.</p><h2>Le Registre du greffier</h2><p>Le greffier de Brumecombe note tout ce qui est public : <strong>chaque vote clos, voix par voix</strong> (la voix double du Bailli, son départage), <strong>chaque mort</strong> avec sa cause connue de tous (une mort de la nuit reste « tuée dans la nuit »), l'élection et la succession du Bailli. Tu le retrouves sur la Table de jeu, les entrées les plus récentes en haut.</p><p>Pendant le jour, tant que tu es vivant et que tu peux parler, tu peux y <strong>faire inscrire une déclaration</strong> courte (trois par jour) : « Je me dis Liseuse de cendres, j'ai lu la Maison 4 : elle est du village. » Elle est lue par tout le village et annoncée au chat. <strong>Le greffier ne vérifie rien</strong> : une déclaration engage celui qui l'écrit, rien de plus. Les loups aussi écrivent au Registre.</p><h2>Le savoir-vivre de la veillée</h2><ul><li>Pendant la nuit, silence sur le canal commun et sur la voix.</li><li>Pas de capture d'écran de ta fiche ni de ta fenêtre de choix.</li><li>Mentir sur ton rôle est permis, et même attendu. Tricher en dehors du jeu ne l'est pas.</li><li>Les morts se taisent. Ils peuvent rire, mais en silence.</li><li>On attaque des rôles, pas des personnes.</li></ul><h2>Le cri de la peste noire</h2><p>Pendant le jour, chaque vivant voit dans son bandeau (et sur la Table de jeu) le bouton <strong>« C'est la peste noire ! »</strong>. Il est là dans toutes les parties : son seul aspect ne dit rien. Ne le presse que si tu es sûr de toi (voir la page « La peste noire »).</p><h2>Les compagnons IA</h2><p>Pour compléter une petite table, le narrateur peut donner des places à des <strong>compagnons IA</strong> : des villageois joués par une IA, comme des joueurs. Ils reçoivent un rôle en secret, choisissent la nuit, parlent au débat et votent. Ils ne trichent pas : un compagnon ne sait que ce que sait son villageois (son rôle, son carnet, ce qui se dit en public). Soupçonne-les, crois-les ou mens-leur comme à n'importe qui.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708826316,
+        "modifiedTime": 1793708826344,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "system": {},
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.PYGneq7UaCKyiAXF"
+    },
+    {
+      "_id": "5hUHALWZp9AW8uVQ",
+      "name": "La peste noire",
+      "type": "text",
+      "sort": 400,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Une veillée sans loups</h2><p>Il arrive, rarement, qu'une veillée n'ait <strong>aucun loup</strong>. Les rôles sont tous du village (et parfois des solitaires), les métiers et les bâtiments sont les mêmes que d'habitude. Mais chaque nuit, quelqu'un meurt quand même : c'est la <strong>peste noire</strong>.</p><ul><li>La première nuit, le narrateur guide la fièvre vers sa première maison.</li><li>Ensuite, c'est <strong>sa dernière victime</strong> qui, depuis la tombe, désigne en secret la suivante. Si tu meurs de la peste, tu l'apprends dans ton carnet secret, et c'est à toi de choisir la nuit suivante. Les morts ne parlent pas aux vivants : garde-le pour toi et pour les autres morts.</li><li>Une victime de la peste est annoncée <strong>comme une victime des loups</strong> : « tuée dans la nuit ». Les protections (garde, remède, verrou, asile de la Chapelle, Taverne, Grange, Passeur) la sauvent comme elles sauveraient d'une attaque de loup.</li><li>Les rôles d'information fonctionnent comme toujours. Simplement, ils ne trouveront <strong>jamais</strong> de loup.</li></ul><h2>Crier « C'est la peste noire ! »</h2><p>Pendant le jour (l'aube, le débat ou le vote), tout vivant qui n'est pas réduit au silence peut crier <strong>« C'est la peste noire ! »</strong> (bouton du bandeau, de la Table de jeu, ou à voix haute au narrateur).</p><ul><li><strong>Si c'est vrai</strong>, la partie s'arrête aussitôt : <strong>le village gagne</strong>.</li><li><strong>Si c'est faux</strong>, le crieur est <strong>pendu pour avoir semé la panique</strong>. On ne crie donc pas au hasard.</li></ul><h2>Si personne ne la reconnaît</h2><p>Quand il ne reste qu'un seul vivant, ou plus personne, <strong>la peste l'emporte</strong> : Brumecombe s'éteint dans la fièvre, et tout le village a perdu.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708826318,
+        "modifiedTime": 1793708826344,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "system": {},
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.5hUHALWZp9AW8uVQ"
+    },
+    {
+      "_id": "1pSxCTUtrYl8LBp0",
+      "name": "Les rôles de la Meute",
+      "type": "text",
+      "sort": 500,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>La Meute</h2><p>Les loups se reconnaissent dès la première nuit. Chaque nuit, <strong>ils se réveillent ensemble</strong> et désignent une victime. Certains loups ont en plus un pouvoir propre : ils se réveillent une seconde fois, seuls.</p><p><strong>Les Masques de veillée</strong> : à la distribution, la meute reçoit dans le carnet secret de chaque loup deux ou trois rôles du Village <strong>absents de la partie</strong>. Se dire l'un d'eux est sans risque : personne ne viendra se réclamer du même rôle. Accordez-vous avant de vous en servir. (Un villageois qui rejoint la meute reçoit les mêmes ; dans une veillée sans loups, il n'y en a pas.)</p><ul><li><strong>Loup de Brumecombe</strong> — chaque nuit, avec la meute, choisit la victime.</li><li><strong>Loup affamé</strong> — une nuit sur deux, tue seul une seconde victime.</li><li><strong>Loup déguisé</strong> — apparaît comme villageois à toute vision ; perd son masque s'il survit à un vote qui l'a désigné.</li><li><strong>Louve mère</strong> — une fois par partie, mord la victime de la meute au lieu de la tuer : elle rejoint la meute en secret.</li><li><strong>Loup hurleur</strong> — chaque nuit, impose le silence à un joueur pour le débat du lendemain.</li><li><strong>Loup flaireur</strong> — chaque nuit, flaire un joueur et apprend son camp.</li><li><strong>Loup des roseaux</strong> — chaque nuit, guette une maison depuis les roseaux et apprend si son occupant a agi.</li></ul>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708826320,
+        "modifiedTime": 1793708826345,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "system": {},
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.1pSxCTUtrYl8LBp0"
+    },
+    {
+      "_id": "52N3zwvQlajoeEAt",
+      "name": "Les rôles du Village",
+      "type": "text",
+      "sort": 600,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Le Village</h2><p>Le village gagne quand plus aucun loup ne vit. La plupart de ses rôles ont un pouvoir, de nuit ou de jour ; certains n'en ont aucun.</p><ul><li><strong>Villageois</strong> — aucun pouvoir, une voix.</li><li><strong>Veilleuse de lanterne</strong> — éclaire une maison chaque nuit : un loup qui y entre est démasqué à l'aube.</li><li><strong>Liseuse de cendres</strong> — chaque nuit, apprend le camp d'un joueur.</li><li><strong>Herboriste</strong> — un remède (sauve la victime de la nuit) et un poison (tue), une fois chacun.</li><li><strong>Garde du pont</strong> — protège un joueur par nuit, jamais deux fois de suite le même.</li><li><strong>Sonneur</strong> — une fois par partie, sonne la cloche : le vote du jour désigne deux condamnés.</li><li><strong>Fossoyeur</strong> — chaque matin, apprend le rôle exact d'un mort.</li><li><strong>Braconnière</strong> — si elle meurt, elle emporte un joueur de son choix.</li><li><strong>Conteuse</strong> — une fois par partie, impose deux minutes de débat sur un joueur, qui ne peut pas répondre.</li><li><strong>Juge de paix</strong> — une fois par partie, annule un vote : le village revote.</li><li><strong>Enfant de la brume</strong> — peut épier la meute la nuit, mais s'il est repéré, il devient la victime.</li><li><strong>Ermite</strong> — chaque nuit, apprend le nom d'un joueur qui a agi (sans savoir ce qu'il a fait).</li><li><strong>Messager</strong> — chaque nuit, porte un message secret entre deux joueurs.</li><li><strong>Entremetteuse</strong> — unit deux amants la première nuit, puis joue avec le village.</li><li><strong>Gardienne des clés</strong> — chaque nuit, verrouille une maison : personne n'y entre, personne n'en sort.</li><li><strong>Sourcier</strong> — une nuit sur deux, apprend si deux joueurs sont du même camp.</li><li><strong>Louvetier</strong> — chaque nuit, apprend le camp d'un joueur ; mais il sent le loup : toute vision le voit de la meute.</li><li><strong>Somnambule</strong> — croit tenir un rôle de vision (Liseuse de cendres, Fossoyeur ou Sourcier), mais il rêve : ses visions sont fausses.</li><li><strong>Rosière</strong> — la fierté du village : si le village l'exécute par le vote, le Village perd aussitôt.</li><li><strong>Pêcheur de nuit</strong> — une fois par partie, lance son harpon dans la brume : sa cible meurt à l'aube, sauf si elle est protégée.</li><li><strong>Rémouleur</strong> — gens de passage : une fois, de jour, affûte la serrure d'une maison : la première attaque de loup la nuit suivante échoue.</li><li><strong>Montreur d'ours</strong> — gens de passage : une fois, de jour, couche son ours devant une porte : la meute n'y entre pas la nuit suivante.</li><li><strong>Pèlerine</strong> — gens de passage : une fois, de jour, prie sur un seuil et apprend en secret le camp de ce joueur.</li></ul>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708826323,
+        "modifiedTime": 1793708826345,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "system": {},
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.52N3zwvQlajoeEAt"
+    },
+    {
+      "_id": "CxKHPCOdqapMGQad",
+      "name": "Les solitaires",
+      "type": "text",
+      "sort": 700,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Les solitaires</h2><p>Ils ne jouent ni pour le village ni pour la meute. Chacun a sa propre condition de victoire.</p><ul><li><strong>Revenant</strong> — gagne s'il est exécuté par le village. <em>Victoire :</em> Tu gagnes seul et aussitôt si le village t'exécute au vote. La partie continue pour les autres.</li><li><strong>Colporteur</strong> — échange en secret son rôle avec un autre joueur, une fois ; gagne avec son nouveau camp. <em>Victoire :</em> Tant que tu n'as pas échangé, tu ne peux pas gagner. Après l'échange, tu gagnes avec le camp de ton nouveau rôle. Celui qui a reçu ton rôle reste solitaire et ne gagne que s'il est encore vivant à la fin de la partie.</li><li><strong>Chasseur de primes</strong> — reçoit une cible au début : gagne si elle est exécutée de jour. <em>Victoire :</em> Tu gagnes seul et aussitôt si ta cible est exécutée par le vote du village, que tu sois vivant ou non. Si elle meurt d'une autre façon, tu deviens un simple villageois et joues avec le village.</li><li><strong>Pyromane</strong> — asperge une maison par nuit ; une nuit, met le feu à toutes les maisons aspergées ; gagne seul. <em>Victoire :</em> Tu gagnes seul si tu es le dernier vivant, ou le dernier avec un seul autre joueur qui n'est pas un loup.</li><li><strong>Dame du gué</strong> — une nuit sur deux, attire un joueur au gué où il se noie ; la meute ne peut pas la tuer ; gagne seule. <em>Victoire :</em> Tu gagnes seule si tu es la dernière vivante, ou la dernière avec un seul autre joueur qui n'est pas un loup.</li></ul>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708826324,
+        "modifiedTime": 1793708826346,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "system": {},
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.CxKHPCOdqapMGQad"
+    },
+    {
+      "_id": "eAtpj7TZAGIntonE",
+      "name": "Les métiers",
+      "type": "text",
+      "sort": 800,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Les métiers publics</h2><p>Chaque joueur a un métier, <strong>connu de tous</strong>. Il donne un petit pouvoir de <strong>jour</strong>, en général <strong>une fois par partie</strong> : on l'annonce à voix haute au narrateur. Un métier ne dit rien du camp : la meunière peut être une louve.</p><ul><li><strong>Forgeron</strong> — forge un verrou : la prochaine attaque de loup contre une maison échoue.</li><li><strong>Meunière</strong> — annonce combien de loups vivent encore.</li><li><strong>Garde du guet</strong> — garde un joueur à l'œil : il ne peut visiter aucune autre maison la nuit suivante.</li><li><strong>Curé</strong> — bénit un joueur : il ne peut pas être réduit au silence et parle le premier.</li><li><strong>Chasseresse</strong> — apprend si un joueur a quitté sa maison cette nuit.</li><li><strong>Aubergiste</strong> — offre le gîte : un joueur dort à la Taverne la nuit suivante.</li><li><strong>Apothicaire</strong> — rend la parole à un joueur réduit au silence.</li><li><strong>Colporteur de nouvelles</strong> — obtient du narrateur un indice vrai mais flou sur la nuit.</li><li><strong>Tisserande</strong> — noue un ruban : le joueur désigné au vote gagne une minute de défense.</li><li><strong>Passeur</strong> — fait traverser un joueur : il ne peut ni être visité ni agir la nuit suivante.</li><li><strong>Tanneur</strong> — examine un mort de la nuit : traces de crocs ou non.</li><li><strong>Maîtresse d'école</strong> — fait l'appel : chacun parle trente secondes, à tour de rôle.</li><li><strong>Ramoneuse</strong> — dit au village si une maison a reçu de la visite la nuit passée.</li><li><strong>Éclusière</strong> — ferme l'écluse : la nuit suivante, la meute ne peut chasser aucune maison de l'autre rive.</li></ul>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708826325,
+        "modifiedTime": 1793708826346,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "system": {},
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.eAtpj7TZAGIntonE"
+    },
+    {
+      "_id": "dC60w4AikPtzKrzh",
+      "name": "Les bâtiments",
+      "type": "text",
+      "sort": 900,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Les bâtiments en jeu</h2><p>Chaque partie met <strong>4 à 6 bâtiments</strong> en jeu : le narrateur les annonce au début, et la Table de jeu les rappelle. Chacun change une règle. Sur la carte, chaque bâtiment est un lieu du village où l'on peut se retrouver.</p><ul><li><strong>La Chapelle</strong> — le village y met un joueur à l'abri chaque nuit. Asile. Chaque jour, après le vote, le village désigne à main levée (un second vote, rapide) un joueur vivant qui dormira à la Chapelle : la meute ne peut pas l'attaquer la nuit suivante. Jamais deux nuits de suite le même joueur. Le poison et le feu passent la porte.</li><li><strong>Le Moulin</strong> — la meule compte les loups vivants. La meule qui compte. Chaque matin, la Meunière (si quelqu'un a ce métier) apprend en secret le nombre de loups encore vivants. Sans Meunière vivante, le narrateur l'annonce à tout le village un matin sur deux (après la deuxième nuit, la quatrième…).</li><li><strong>La Taverne</strong> — ceux qui y dorment se protègent, sauf si un loup est parmi eux. Dortoir. Chaque jour, jusqu'à trois joueurs peuvent annoncer qu'ils dormiront à la Taverne. La nuit suivante, la meute ne peut tuer aucun d'eux… sauf si un loup dort parmi eux : alors elle peut y tuer celui de son choix, et aucune protection ne joue. L'hôte de l'Aubergiste prend l'un des trois lits. Le poison et le feu atteignent les dormeurs comme ailleurs.</li><li><strong>Le Gibet</strong> — une exécution exige la majorité absolue. Majorité absolue. Pour exécuter un joueur, il faut que plus de la moitié des vivants aient voté pour lui. Sinon, personne n'est exécuté ce jour-là.</li><li><strong>Le Puits</strong> — un mort peut transmettre un dernier mot. Dernier mot. Une fois par partie, un joueur qui vient de mourir (cette nuit ou ce jour) peut confier au puits un dernier mot de dix mots au plus, que le narrateur lit au village. Le premier mort qui le demande l'obtient.</li><li><strong>La Forge</strong> — une lame qui blesse la meute. Une lame sous l'oreiller. Une fois par partie, pendant le jour, un joueur peut annoncer qu'il emporte une lame de la forge. Si la meute l'attaque la nuit suivante, la lame ne le protège pas (il meurt, sauf protection), mais il blesse un loup tiré au hasard parmi ceux qui chassaient : ce loup est réduit au silence au jour suivant (le narrateur dit seulement « du sang de bête sur le seuil »).</li><li><strong>Le Cimetière</strong> — le camp des morts finit par se savoir. Les tombes parlent. Si les rôles ne sont pas révélés à la mort, le narrateur annonce chaque matin le camp (pas le rôle) de chaque joueur mort depuis le matin précédent, les morts de la nuit compris. Si les rôles sont révélés à la mort, le Cimetière est sans effet.</li><li><strong>Le Pont</strong> — la meute ne traverse pas deux nuits de suite. L'autre rive. Les maisons 13 à 18 sont de l'autre côté du Pont ; environ un tiers des joueurs y dort, quelle que soit la taille du village. Si la meute a tué sur l'autre rive une nuit, elle ne peut pas traverser la nuit suivante : aucune maison de l'autre rive ne peut être sa proie.</li><li><strong>Le Lavoir</strong> — chaque matin, un indice vrai mais flou. Les bavardages. Chaque matin, le narrateur rapporte ce qu'on dit au lavoir : un indice vrai mais flou sur la nuit passée (« quelqu'un est sorti par la porte de derrière », « la victime avait de la visite deux nuits plus tôt »). Il ne nomme jamais personne.</li><li><strong>La Grange</strong> — une cachette où l'on ne peut ni être trouvé ni agir. Cachette. Une fois par partie et par joueur, on peut annoncer pendant le jour qu'on se cache dans la Grange : la nuit suivante, on ne peut pas être trouvé (aucune visite ne réussit, et le feu d'une maison vide ne tue personne), mais on ne peut pas agir. Deux joueurs au plus par nuit.</li></ul>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708826328,
+        "modifiedTime": 1793708826347,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "system": {},
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.dC60w4AikPtzKrzh"
+    },
+    {
+      "_id": "QIKXHcnrr9M6qTbg",
+      "name": "La Chapelle",
+      "type": "text",
+      "sort": 1000,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<p>Une chapelle de pierre grise au nord de la place, avec un clocher trop haut pour elle. La porte n'a jamais eu de serrure.</p><h2>En jeu</h2><p><em>Le village y met un joueur à l'abri chaque nuit.</em></p><p><strong>Asile.</strong> Chaque jour, après le vote, le village désigne à main levée (un second vote, rapide) un joueur vivant qui <strong>dormira à la Chapelle</strong> : la meute ne peut pas l'attaquer la nuit suivante. Jamais deux nuits de suite le même joueur. Le poison et le feu passent la porte.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708826329,
+        "modifiedTime": 1793708826347,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "system": {},
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.QIKXHcnrr9M6qTbg"
+    },
+    {
+      "_id": "tbL4JLTRngZb6B7E",
+      "name": "Le Moulin",
+      "type": "text",
+      "sort": 1100,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<p>Le moulin à vent sur la butte de l'ouest. Ses ailes tournent même quand il n'y a pas de vent, disent les enfants.</p><h2>En jeu</h2><p><em>La meule compte les loups vivants.</em></p><p><strong>La meule qui compte.</strong> Chaque matin, la Meunière (si quelqu'un a ce métier) apprend en secret le <strong>nombre de loups encore vivants</strong>. Sans Meunière vivante, le narrateur l'annonce à tout le village <strong>un matin sur deux</strong> (après la deuxième nuit, la quatrième…).</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708826330,
+        "modifiedTime": 1793708826348,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "system": {},
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.tbL4JLTRngZb6B7E"
+    },
+    {
+      "_id": "25GHYdzbhWMiRLU9",
+      "name": "La Taverne",
+      "type": "text",
+      "sort": 1200,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<p>La Taverne du Chaudron Fêlé, au bord de la place : trois lits à l'étage, un feu qui ne s'éteint jamais.</p><h2>En jeu</h2><p><em>Ceux qui y dorment se protègent, sauf si un loup est parmi eux.</em></p><p><strong>Dortoir.</strong> Chaque jour, jusqu'à <strong>trois joueurs</strong> peuvent annoncer qu'ils dormiront à la Taverne. La nuit suivante, la meute <strong>ne peut tuer aucun d'eux</strong>… sauf si <strong>un loup</strong> dort parmi eux : alors elle peut y tuer celui de son choix, et aucune protection ne joue. L'hôte de l'Aubergiste prend l'un des trois lits. Le poison et le feu atteignent les dormeurs comme ailleurs.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708826330,
+        "modifiedTime": 1793708826348,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "system": {},
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.25GHYdzbhWMiRLU9"
+    },
+    {
+      "_id": "7KpinLXkoJ8poGNx",
+      "name": "Le Gibet",
+      "type": "text",
+      "sort": 1300,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<p>Une potence de chêne noirci au coin de la place. On ne s'en sert presque jamais, et c'est déjà trop.</p><h2>En jeu</h2><p><em>Une exécution exige la majorité absolue.</em></p><p><strong>Majorité absolue.</strong> Pour exécuter un joueur, il faut que <strong>plus de la moitié des vivants</strong> aient voté pour lui. Sinon, personne n'est exécuté ce jour-là.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708826331,
+        "modifiedTime": 1793708826348,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "system": {},
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.7KpinLXkoJ8poGNx"
+    },
+    {
+      "_id": "ik0N2ip2FfeNXbdH",
+      "name": "Le Puits",
+      "type": "text",
+      "sort": 1400,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<p>Le vieux puits au milieu de la place. Ceux qui se penchent dessus entendent parfois leur nom.</p><h2>En jeu</h2><p><em>Un mort peut transmettre un dernier mot.</em></p><p><strong>Dernier mot.</strong> <strong>Une fois par partie</strong>, un joueur qui vient de mourir (cette nuit ou ce jour) peut confier au puits un <strong>dernier mot de dix mots au plus</strong>, que le narrateur lit au village. Le premier mort qui le demande l'obtient.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708826332,
+        "modifiedTime": 1793708826349,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "system": {},
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.ik0N2ip2FfeNXbdH"
+    },
+    {
+      "_id": "rrl6GKhc6WIIz5UL",
+      "name": "La Forge",
+      "type": "text",
+      "sort": 1500,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<p>La forge à l'ouest de la place, toujours rouge, toujours chaude. Le forgeron dort à côté de l'enclume.</p><h2>En jeu</h2><p><em>Une lame qui blesse la meute.</em></p><p><strong>Une lame sous l'oreiller.</strong> <strong>Une fois par partie</strong>, pendant le jour, un joueur peut annoncer qu'il emporte une <strong>lame</strong> de la forge. Si la meute l'attaque la nuit suivante, la lame ne le protège pas (il meurt, sauf protection), mais il <strong>blesse un loup</strong> tiré au hasard parmi ceux qui chassaient : ce loup est <strong>réduit au silence</strong> au jour suivant (le narrateur dit seulement « du sang de bête sur le seuil »).</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708826333,
+        "modifiedTime": 1793708826349,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "system": {},
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.rrl6GKhc6WIIz5UL"
+    },
+    {
+      "_id": "HkUwbvZBwyxUzIEC",
+      "name": "Le Cimetière",
+      "type": "text",
+      "sort": 1600,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<p>Le cimetière derrière la chapelle, ses croix penchées et son if qui ne perd jamais ses aiguilles.</p><h2>En jeu</h2><p><em>Le camp des morts finit par se savoir.</em></p><p><strong>Les tombes parlent.</strong> Si les rôles ne sont <strong>pas révélés à la mort</strong>, le narrateur annonce chaque matin le <strong>camp</strong> (pas le rôle) de chaque joueur mort depuis le matin précédent, les morts de la nuit compris. Si les rôles sont révélés à la mort, le Cimetière est sans effet.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708826333,
+        "modifiedTime": 1793708826349,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "system": {},
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.HkUwbvZBwyxUzIEC"
+    },
+    {
+      "_id": "liUCpIQEbHv1MUa8",
+      "name": "Le Pont",
+      "type": "text",
+      "sort": 1700,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<p>Le pont de pierre sur la Brume, la rivière qui coupe le village. Les maisons 13 à 18 sont sur l'autre rive.</p><h2>En jeu</h2><p><em>La meute ne traverse pas deux nuits de suite.</em></p><p><strong>L'autre rive.</strong> Les maisons <strong>13 à 18</strong> sont de l'autre côté du Pont ; environ un tiers des joueurs y dort, quelle que soit la taille du village. Si la meute a tué sur l'autre rive une nuit, elle <strong>ne peut pas traverser</strong> la nuit suivante : aucune maison de l'autre rive ne peut être sa proie.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708826334,
+        "modifiedTime": 1793708826350,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "system": {},
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.liUCpIQEbHv1MUa8"
+    },
+    {
+      "_id": "qMF6dr4pK51fZjkQ",
+      "name": "Le Lavoir",
+      "type": "text",
+      "sort": 1800,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<p>Le lavoir couvert au bord de la rivière : on y lave le linge, et surtout les réputations.</p><h2>En jeu</h2><p><em>Chaque matin, un indice vrai mais flou.</em></p><p><strong>Les bavardages.</strong> Chaque matin, le narrateur rapporte ce qu'on dit au lavoir : un <strong>indice vrai mais flou</strong> sur la nuit passée (« quelqu'un est sorti par la porte de derrière », « la victime avait de la visite deux nuits plus tôt »). Il ne nomme jamais personne.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708826336,
+        "modifiedTime": 1793708826350,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "system": {},
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.qMF6dr4pK51fZjkQ"
+    },
+    {
+      "_id": "11IyFxABvPsk1jmA",
+      "name": "La Grange",
+      "type": "text",
+      "sort": 1900,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<p>La grange des Vaudrey sur l'autre rive, pleine de foin et de courants d'air.</p><h2>En jeu</h2><p><em>Une cachette où l'on ne peut ni être trouvé ni agir.</em></p><p><strong>Cachette.</strong> <strong>Une fois par partie et par joueur</strong>, on peut annoncer pendant le jour qu'on se cache dans la Grange : la nuit suivante, on <strong>ne peut pas être trouvé</strong> (aucune visite ne réussit, et le feu d'une maison vide ne tue personne), mais on <strong>ne peut pas agir</strong>. Deux joueurs au plus par nuit.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708826336,
+        "modifiedTime": 1793708826351,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "system": {},
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.11IyFxABvPsk1jmA"
+    },
+    {
+      "_id": "0jmyBXNTvehGMyUB",
+      "name": "Nouveaux visages de la veillée",
+      "type": "text",
+      "sort": 2000,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Ce que la brume a ramené</h2><p>Quatre rôles et deux métiers venus des berges de la Brume. Ils ne sont pas dans toutes les compositions, et le narrateur ne dit jamais lesquels sont en jeu : à vous de le deviner.</p><h3>Loup des roseaux (camp de la Meute)</h3><p><em>Chaque nuit, guette une maison depuis les roseaux et apprend si son occupant a agi.</em></p><p>Tu connais chaque touffe de roseaux entre le Pont et le Moulin, et personne ne t'y voit attendre.</p><p>Tu chasses chaque nuit avec la meute. Puis, <strong>chaque nuit</strong>, tu guettes la maison d'un joueur : le narrateur te dit en secret s'il <strong>a agi</strong> cette nuit (un pouvoir de nuit, ou la chasse), sans dire ce qu'il a fait. De quoi repérer ceux qui cachent un pouvoir, et les désigner à la meute la nuit suivante.</p><p>Guetter, c'est rôder au seuil : si la Veilleuse de lanterne éclaire la maison que tu guettes, tu es démasqué.</p><h3>Louvetier (camp du Village)</h3><p><em>Chaque nuit, apprend le camp d'un joueur ; mais il sent le loup : toute vision le voit de la meute.</em></p><p>Tu traques les loups depuis tant d'hivers que tu as fini par prendre leur odeur.</p><p><strong>Chaque nuit</strong>, tu suis la piste d'un joueur et le narrateur te dit en secret son <strong>camp</strong> : Village, Meute ou Solitaire.</p><p>Mais <strong>toute vision te voit du camp de la Meute</strong> (Liseuse de cendres, Sourcier, Loup flaireur…). Si l'on t'accuse sur la foi des cendres, ce sera ta parole contre la leur : choisis bien le moment de dire ce que tu sais. Les loups, eux, savent que tu n'es pas des leurs.</p><h3>Pêcheur de nuit (camp du Village)</h3><p><em>Une fois par partie, lance son harpon dans la brume : sa cible meurt à l'aube, sauf si elle est protégée.</em></p><p>Tu connais les eaux noires de la Brume, et ce qui y remue après minuit.</p><p><strong>Une fois par partie</strong>, la nuit, tu lances ton <strong>harpon</strong> sur la maison d'un joueur : celui qui y dort <strong>meurt à l'aube</strong>, sauf s'il est protégé cette nuit (Garde du pont, Gardienne des clés) ou sauvé par un remède. Ton harpon atteint aussi ceux que la meute ne peut pas tuer, et il ne laisse aucune trace de crocs.</p><p>Vise juste : un harpon perdu dans la poitrine d'un voisin ne revient pas. Tant que tu passes, tu le gardes.</p><h3>Dame du gué (solitaire)</h3><p><em>Une nuit sur deux, attire un joueur au gué où il se noie ; la meute ne peut pas la tuer ; gagne seule.</em></p><p>À Brumecombe, on dit qu'une femme pâle lave son linge au gué quand la brume monte, et que ceux qui s'approchent pour l'aider ne reviennent pas.</p><p><strong>Une nuit sur deux</strong> (la deuxième, la quatrième…), tu chantes au bord de l'eau et tu désignes un joueur : il suit ta voix jusqu'au gué et <strong>se noie</strong>. On le trouve mort à l'aube, sauf s'il était protégé cette nuit ou sauvé par un remède.</p><p>La meute ne peut pas te tuer : quand elle entre chez toi, elle n'y trouve que de l'eau froide. Le vote, le poison, le feu et le harpon, si.</p><p><strong>Victoire.</strong> Tu gagnes <strong>seule</strong> si tu es la dernière vivante, ou la dernière avec un seul autre joueur qui n'est pas un loup.</p><h3>Ramoneuse (métier public)</h3><p><em>Dit au village si une maison a reçu de la visite la nuit passée.</em></p><p>Du haut des toits, tu vois tous les seuils de Brumecombe, et la suie garde la trace des pas.</p><p><strong>Une fois par partie</strong>, au matin, tu désignes la maison d'un joueur vivant (la tienne comprise) : le narrateur dit à tout le village si elle a <strong>reçu de la visite</strong> la nuit passée (un loup, ou un pouvoir qui la visait), sans dire qui est venu ni pourquoi.</p><h3>Éclusière (métier public)</h3><p><em>Ferme l'écluse : la nuit suivante, la meute ne peut chasser aucune maison de l'autre rive.</em></p><p>Tes vannes règlent le cours de la Brume : quand tu les fermes, l'eau monte sous le Pont et le gué disparaît.</p><p><strong>Une fois par partie</strong>, pendant le jour, tu <strong>fermes l'écluse</strong> : la nuit suivante, <strong>la meute ne peut chasser aucune maison de l'autre rive</strong> (maisons 13 à 18), comme quand le Pont est bloqué. Tout le monde le sait, les loups aussi. Les autres pouvoirs de nuit passent.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708826338,
+        "modifiedTime": 1793708826351,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "system": {},
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.0jmyBXNTvehGMyUB"
+    },
+    {
+      "_id": "JG8lSOeKmFHkMC80",
+      "name": "Les veillées de fête",
+      "type": "text",
+      "sort": 2100,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Quand Brumecombe fait la fête</h2><p>Aux grandes fêtes de l'année, le narrateur peut proposer une <strong>veillée de fête</strong> : une variante de saison, annoncée au début de la partie et rappelée sur la Table de jeu. Il n'y en a jamais qu'une à la fois, et jamais d'office : c'est le narrateur qui décide, même le jour de la fête.</p><ul><li><strong>La Nuit des âmes</strong> — après chaque nuit meurtrière, l'âme du premier mort murmure à un vivant tiré au hasard si deux autres vivants sont du même camp ; la meute apprend à quelle porte elle a frappé.</li><li><strong>La Veillée d'hiver</strong> — un joueur tiré au hasard reçoit en secret un présent qui fait échouer le premier coup mortel de la nuit ; à chaque aube, la neige peut tomber (une fois sur trois, jamais deux aubes de suite) et recouvrir les traces (Chasseresse, Ramoneuse, Tanneur, Colporteur de nouvelles, Lavoir).</li><li><strong>Le Carnaval des masques</strong> — un joueur tiré au hasard porte en secret le masque du Carnaval (la première vision du Village qui le perce le voit du camp opposé, puis le masque tombe ; la meute n'est jamais trompée) ; le défilé montre à tous un rôle du Village que personne ne porte.</li><li><strong>La Fête des promis</strong> — deux joueurs du Village tirés au hasard se savent promis l'un à l'autre (un allié sûr) ; la meute connaît leurs deux noms.</li></ul><p>Chacune a son journal, « Veillée de fête — … », avec ses règles complètes. Ce qu'une veillée vous apprend en secret arrive dans votre carnet secret, comme le reste ; le narrateur ne confirme jamais un secret de fête, même quand quelqu'un s'en réclame.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.369",
+        "systemId": "lakour-loups",
+        "systemVersion": "0.10.0",
+        "createdTime": 1793708826340,
+        "modifiedTime": 1793708826351,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "system": {},
+      "image": {},
+      "video": {
+        "controls": true,
+        "volume": 0.5
+      },
+      "src": null,
+      "category": null,
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.JG8lSOeKmFHkMC80"
+    }
+  ],
+  "ownership": {
+    "default": 2
+  },
+  "_id": "hNQ5fYcN3giwWXzh",
+  "sort": 0,
+  "_key": "!journal!hNQ5fYcN3giwWXzh"
+}

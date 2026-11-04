@@ -1,0 +1,18 @@
+{
+  "key": "fxmaster.displayEffectsOverVision",
+  "user": null,
+  "value": "false",
+  "_id": "MghUlYk0tYMb0hNN",
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.4.0",
+    "createdTime": 1793592418785,
+    "modifiedTime": 1793592418785,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!settings!MghUlYk0tYMb0hNN"
+}

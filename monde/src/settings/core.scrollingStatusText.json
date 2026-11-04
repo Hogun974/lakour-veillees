@@ -1,0 +1,18 @@
+{
+  "key": "core.scrollingStatusText",
+  "user": null,
+  "value": "true",
+  "_id": "ZLF2zfgKD93e7kuI",
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.2.1",
+    "createdTime": 1793516338438,
+    "modifiedTime": 1793516338438,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!settings!ZLF2zfgKD93e7kuI"
+}

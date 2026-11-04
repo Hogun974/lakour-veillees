@@ -1,0 +1,18 @@
+{
+  "key": "lakour-loups.annoncesEnChat",
+  "user": null,
+  "value": "true",
+  "_id": "QQg1detm9pXDhndk",
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.2.1",
+    "createdTime": 1793516338543,
+    "modifiedTime": 1793516338543,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!settings!QQg1detm9pXDhndk"
+}

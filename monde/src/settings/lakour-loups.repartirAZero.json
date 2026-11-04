@@ -1,0 +1,18 @@
+{
+  "key": "lakour-loups.repartirAZero",
+  "user": null,
+  "value": "true",
+  "_id": "sEMRwGtOQXIWjvtC",
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.4.0",
+    "createdTime": 1793592931125,
+    "modifiedTime": 1793592931125,
+    "lastModifiedBy": null,
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "exportSource": null
+  },
+  "_key": "!settings!sEMRwGtOQXIWjvtC"
+}

@@ -4,6 +4,9 @@
 
 [English version](README.en.md) · [Changements](CHANGELOG.md) · [Crédits](modules/lakour-veillees/CREDITS.md)
 
+> **Première fois ? Suivez le [tutoriel](TUTORIEL.md)** : de l'installation à la première veillée (comptes et mots de
+> passe des joueurs, clé de secours du coffre, voix, MJ IA, dépannage).
+
 <p align="center">
   <img src="docs/captures/village.png" alt="La carte du village de Brumecombe, la nuit" width="49%">
   <img src="docs/captures/table-de-jeu.png" alt="La Table de jeu pendant un débat" width="49%">
@@ -37,6 +40,10 @@ heure et demie selon la taille de la table). Il se mène de deux façons :
 
 Dans les deux cas, **aucun joueur n'a à sacrifier sa place** pour être meneur, et **aucun secret ne passe par le navigateur
 d'un joueur** : ce qu'il ne doit pas savoir ne lui est jamais envoyé.
+
+**Transparence.** Le code et les textes de ce dépôt ont été écrits avec l'aide d'une IA (Claude, d'Anthropic) et relus par
+l'auteur. Les illustrations (écran d'accueil du monde, veillées de fête) sont générées par IA, localement (FLUX.2 klein
+9B dans ComfyStudio) ; la carte du village et les jetons ne le sont pas (voir [Crédits](#crédits)).
 
 Ce dépôt contient trois pièces :
 
@@ -408,12 +415,13 @@ Pour proposer un changement :
 
 ## Crédits
 
-- Jeu, textes, règles, carte et code : **Jordan (La Kour)**, avec l'aide d'assistants de programmation.
+- Jeu, textes, règles, carte et code : **Jordan (La Kour)**, écrits avec l'aide d'une IA (**Claude**, d'Anthropic) et relus
+  par l'auteur.
 - Silhouettes des jetons : icônes de **[game-icons.net](https://game-icons.net)** (Caro Asercion, Cathelineau, DarkZaitzev,
   Delapouite, Lorc, Skoll), licence **CC BY 3.0**, recolorées et composées dans un médaillon ; la liste icône par icône est
   dans [`modules/lakour-veillees/CREDITS.md`](modules/lakour-veillees/CREDITS.md).
-- Illustrations (écran d'accueil du monde, veillées de fête) : **générées localement par IA par l'auteur**, sans service
-  distant.
+- Illustrations (écran d'accueil du monde, veillées de fête) : **générées par IA**, localement par l'auteur (FLUX.2 klein 9B
+  dans ComfyStudio), sans service distant.
 - Carte du village : dessinée par programme, aucune image extérieure. Sons d'ambiance : boucles synthétisées du moteur commun.
 - **Jeu original de la famille du loup-garou** (jeux de déduction sociale nés du jeu traditionnel *Mafia*) : aucune reprise
   des *Loups-garous de Thiercelieux* (marque de ses éditeurs) ni d'un autre jeu commercial.

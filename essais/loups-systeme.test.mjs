@@ -21,7 +21,7 @@ const systeme = JSON.parse(lire(join(RACINE, "system.json")));
 test("system.json : conforme au contrat", () => {
   assert.equal(systeme.id, "lakour-loups");
   assert.match(systeme.version, /^\d+\.\d+\.\d+$/);
-  assert.deepEqual(systeme.compatibility, { minimum: "14", verified: "14.369" });
+  assert.deepEqual(systeme.compatibility, { minimum: "14", verified: "14.370" });
   assert.equal(systeme.socket, true);
   assert.deepEqual(systeme.esmodules, ["lakour-loups.mjs"]);
   assert.deepEqual(systeme.languages.map(l => l.lang).sort(), ["en", "fr"]);

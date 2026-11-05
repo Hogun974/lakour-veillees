@@ -1,6 +1,7 @@
 // Le coffre des secrets des Veillées : le coffre du MJ IA (module lakour-mj-ia, toujours actif dans ce monde ; scripts/coffre.js
 // et coffre-logique.js), par son API game.modules.get("lakour-mj-ia").api.coffre. Rien n'est dupliqué ici : la clé (AES-GCM
-// 256 bits), ses parts (Shamir, seuil à la MAJORITÉ des comptes joueurs), leur accusé de réception, leur rangement par
+// 256 bits), ses parts (Shamir, seuil à la MAJORITÉ des comptes joueurs ; aux Veillées, monde à rôles secrets, le moteur n'en
+// confie AUCUNE aux joueurs : seuls la clé de secours du MJ et un autre MJ connecté la rendent), leur accusé de réception, leur rangement par
 // [monde][userId][id de clé] chez chaque joueur, l'empreinte SHA-256 publiée au trousseau, le renouvellement transactionnel, le
 // passage de clé entre MJ et la clé de secours sont ceux du moteur (docs/loups-contrat.md §6).
 //
@@ -12,7 +13,7 @@
 //   changement, avec un vecteur neuf : rien ne dit si quelque chose a bougé) et avant un rechargement prévu (beforeunload, au
 //   mieux). Entre deux, tout reste dans la mémoire du MJ et dans son navigateur (secrets.mjs) : rien n'est perdu pour lui.
 // - Retrouver (MJ actif sans les secrets : autre navigateur, autre MJ) : le moteur ouvre le coffre s'il a la clé, sinon il en
-//   demande les parts aux joueurs connectés et la clé aux autres MJ ; le hook « lakour-mj-ia.coffreRouvert » relance l'ouverture.
+//   demande la clé aux autres MJ connectés (aux Veillées, aucune part n'est chez les joueurs ; la clé de secours la rend) ; le hook « lakour-mj-ia.coffreRouvert » relance l'ouverture.
 //   Tant qu'il attend, ce navigateur ne rescelle rien : le coffre d'une partie n'est jamais écrasé par des secrets incomplets.
 // - Renouvellement du moteur (un compte créé, supprimé, qui change de rôle) : avant que la nouvelle clé n'entre en vigueur, le
 //   moteur appelle siRenouvele : le coffre est rescellé avec elle.
@@ -29,7 +30,7 @@
 //   MJ devenu actif, parts attendues), RIEN de la partie ne s'écrit (api.mjs, modifierEtat ; verifierVictoire ne déclare rien) :
 //   jamais de secrets vides rangés sous le nom de la partie, jamais une fausse victoire. Le coffre est cherché aussitôt.
 // - Changement de MJ actif (userConnected, MJ compris) : celui qui prend la main relit son navigateur et, s'il n'est pas à jour,
-//   cherche le coffre (clé du moteur : parts des joueurs, ou passage de clé d'un autre MJ connecté) ; celui qui la perd scelle
+//   cherche le coffre (clé du moteur : passage de clé d'un autre MJ connecté, ou clé de secours réimportée) ; celui qui la perd scelle
 //   aussitôt (passation) puis vide sa mémoire.
 // - Relecture 8 : « à jour » = le même coffre (même vecteur) ou une révision STRICTEMENT plus récente (deux scellements calculés
 //   depuis la même révision, passation et premier scellement du nouveau MJ, portent le même rev : le perdant n'est pas à jour) ; le

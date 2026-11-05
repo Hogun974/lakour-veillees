@@ -11,12 +11,27 @@ est automatisé l'est par `.github/workflows/release.yml` et `outils/empaqueter-
       champ `license` de `system.json` et `module.json` à `"LICENSE"` (hérité par `lakour-veillees-en`), et
       `outils/empaqueter-paquets.mjs` copie les deux fichiers dans chaque archive ; les archives du monde ne les contiendront qu'une fois le sous-module `modules/lakour-mj-ia` mis à jour (`outils/empaqueter-monde.mjs` les copie désormais), et l'étape « Licences dans chaque archive » du workflow refuse la release sans eux. CC BY 3.0
       (game-icons) toujours citée.
+- [x] **Tutoriels** « de zéro à la première veillée » : `TUTORIEL.md` (français) et `TUTORIAL.md` (anglais) à la racine
+      (prérequis, installation par les manifestes et par le monde vierge, version anglaise, un compte et un mot de passe par
+      joueur, clé de secours du coffre, salons vocaux et nuit, MJ IA, compagnons et pilote automatique, déroulé, réglages,
+      dépannage), liés en tête des deux README et renvoyant au tutoriel du moteur (`lakour-mj-ia`, branche `principale`).
+- [x] **Transparence** dans les deux README (en tête et aux Crédits) : code et textes écrits avec l'aide d'une IA (Claude,
+      d'Anthropic) et relus par l'auteur ; illustrations générées par IA en local (FLUX.2 klein 9B dans ComfyStudio, comme dit
+      `modules/lakour-veillees/CREDITS.md`).
+- [x] **Réglages du monde vierge public** : `lakour-mj-ia.budgetSeance` à 10 dollars (`monde/src/settings/`) ;
+      autonomie `autonome` et personnalité `voix-de-la-brume` gardées.
 - [ ] **Captures** : déposer les PNG listés dans `docs/captures/LISEZ-MOI.md` (au moins `village`, `table-de-jeu`, `vote`,
-      `carte-de-role`, `chroniques` : ce sont celles du bandeau du README et des `media` des manifestes).
+      `carte-de-role`, `chroniques` : ce sont celles du bandeau du README et des `media` des manifestes), plus celles des
+      tutoriels (`preparatifs`, `choix-de-nuit`, `mj-ia`, `tuto-manifeste`, `tuto-comptes`, `tuto-coffre`, `tuto-voix`).
 - [ ] **Relire le dépôt pour les fuites** : aucune adresse interne, aucun nom de machine, aucune clé, aucun vrai nom de
       joueur dans les essais, les docs (`docs/loups-contrat.md`, `docs/plan-loup-garou.md`), les commentaires et l'historique
       git. `git log -p | grep -i -E "172\.|192\.168|\.local|mot de passe|clé" ` pour un premier passage. Les documents
       mentionnent « LaKour », « Jordan » : à garder ou non, au choix.
+      Fait sur l'arbre de travail (5 novembre 2026) : la recherche des adresses internes, noms de machine, hébergeurs et
+      préfixes de clé (hors sous-module) ne trouve que des faux positifs (coordonnées des SVG, octets de
+      `assets/fetes/noel.jpg`, un mot composé de `contenu/en/journaux.json`) ; aucun lien vers un dépôt privé dans les
+      README. Reste à faire : l'**historique git**, et les noms des autres mondes La Kour (sans lien) dans `docs/` et dans
+      les guides du moteur copiés dans `monde/src/journal/`.
 - [ ] **Sous-module** : `.gitmodules` pointe sur `../lakour-mj-ia` (URL relative). Sur GitHub, cela résout vers
       `https://github.com/Hogun974/lakour-mj-ia` : ce dépôt doit **exister et être public** (ou le workflow ne pourra pas le
       récupérer : le jeton `GITHUB_TOKEN` n'a accès qu'au dépôt courant). Le commit du sous-module enregistré ici doit avoir
@@ -119,8 +134,8 @@ depuis Foundry.
 ## 6. Ensuite
 
 - Tenir `CHANGELOG.md` à jour à chaque version (section « Non publié » puis une section par étiquette).
-- Une version anglaise des textes du contenu (rôles, guides) est annoncée dans le README : la planifier ou retirer la
-  promesse.
+- ~~Une version anglaise des textes du contenu (rôles, guides) est annoncée dans le README : la planifier ou retirer la
+  promesse.~~ Fait : module `lakour-veillees-en` et monde `world-en.json`.
 - Les captures vieillissent : les refaire quand l'interface change.
 
 ## Release à blanc à la main
@@ -157,7 +172,8 @@ Constats et corrections :
 - Le monde publié (`world.json`) garde `download` = `releases/latest/download/…` (pas daté de l'étiquette) : il marche,
   mais une ancienne version du monde n'est plus téléchargeable par son manifeste.
 
-- [ ] **Bloquant, hors des fichiers touchés ici** : même garde cassée dans `outils/fabriquer-veillees.mjs` :
+- [x] **Bloquant, hors des fichiers touchés ici** (corrigé : la garde compare désormais
+      `pathToFileURL(resolve(process.argv[1])).href` à `import.meta.url`) : même garde cassée dans `outils/fabriquer-veillees.mjs` :
       `npm run fabriquer-veillees(-en)` ne fabrique rien sous Linux (pas de `packs/`, pas de module anglais) et
       l'empaquetage échoue. Remplacer la ligne par
       `if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {` (imports `node:path`,

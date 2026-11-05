@@ -107,7 +107,7 @@
       "AsileDonne": "{nom} dormira à la Chapelle.",
       "VoteAnnule": "Ce vote a été annulé ou se rejoue : personne n'est exécuté.",
       "TempsEcoule": "Le temps du vote est écoulé : dépouillement.",
-      "SecretsEnAttente": "Les secrets de la partie en cours sont dans le coffre du MJ IA, mais il faut la majorité des joueurs connectés (ou la clé de secours) pour le rouvrir : ils seront repris dès qu'ils seront là.",
+      "SecretsEnAttente": "Les secrets de la partie en cours sont dans le coffre du MJ IA, mais ce navigateur n'en a pas la clé (aux Veillées, les joueurs n'en gardent aucune part) : réimporte la clé de secours (Réglages › MJ IA › Coffre) ou connecte un autre MJ qui l'a. Ils seront repris dès que la clé sera revenue.",
       "SecretsRetrouves": "Secrets de la partie retrouvés dans le coffre : la partie reprend là où elle en était.",
       "SecretsPerdus": "Ce navigateur n'a pas les secrets de la partie en cours (autre MJ ou autre navigateur) : les choix déjà faits cette nuit, les primes et les fioles sont perdus.",
       "Benit": "Béni par le Curé",
@@ -425,10 +425,10 @@
       "PersonneAReveiller": "Personne à réveiller pour « {role} » cette nuit.",
       "PasDeVote": "Aucun vote n'est ouvert.",
       "SansCoffre": "Le module MJ IA (lakour-mj-ia) doit être actif : son coffre garde les secrets de la partie (rôles, camps, choix de nuit). Active-le, puis distribue.",
-      "SansCleCoffre": "Coffre du MJ IA fermé dans ce navigateur : sa clé est restée dans le navigateur où le monde a été préparé. La partie se joue, mais ses secrets ne restent que dans ce navigateur tant que la clé n'est pas revenue : ne change pas de navigateur en cours de partie. Pour la rendre, réimporte la clé de secours (Réglages › MJ IA › Coffre) ou attends les parts des joueurs.",
+      "SansCleCoffre": "Coffre du MJ IA fermé dans ce navigateur : sa clé est restée dans le navigateur où le monde a été préparé. La partie se joue, mais ses secrets ne restent que dans ce navigateur tant que la clé n'est pas revenue : ne change pas de navigateur en cours de partie. Pour la rendre, réimporte la clé de secours (Réglages › MJ IA › Coffre) ou connecte un autre MJ qui l'a : aux Veillées, les joueurs n'en gardent aucune part.",
       "FicheVerrouillee": "Les villageois de la partie ne se modifient que par le MJ.",
       "NotesSecretes": "Les notes d’un villageois arrivent dans le navigateur de chaque joueur : un bloc secret n’y est pas gardé. Range-le dans un journal réservé au MJ.",
-      "SecretsAbsents": "Ce navigateur n'a pas (encore) les secrets à jour de la partie en cours : rien n'est écrit. Le coffre est rouvert dès que possible (parts des joueurs, autre MJ, clé de secours).",
+      "SecretsAbsents": "Ce navigateur n'a pas (encore) les secrets à jour de la partie en cours : rien n'est écrit. Le coffre est rouvert dès que la clé revient (clé de secours réimportée, ou autre MJ connecté qui l'a).",
       "MJInactif": "Seul le MJ actif tient les secrets de la partie : rôle, camp, amoureux et « Révélé » se règlent chez lui."
     },
     "Batiments": {

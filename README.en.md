@@ -4,6 +4,9 @@
 
 [Version française](README.md) · [Changelog](CHANGELOG.md) · [Credits](modules/lakour-veillees/CREDITS.md)
 
+> **First time? Follow the [tutorial](TUTORIAL.md)**: from installation to your first vigil (player accounts and
+> passwords, the vault backup key, voice, the AI GM, troubleshooting).
+
 <p align="center">
   <img src="docs/captures/village.png" alt="The village map of Brumecombe at night" width="49%">
   <img src="docs/captures/table-de-jeu.png" alt="The game table during a debate" width="49%">
@@ -46,6 +49,10 @@ and a half depending on the size of the table). It can be run two ways:
 
 Either way, **no player has to give up their seat** to be the narrator, and **no secret ever goes through a player's
 browser**: what they must not know is never sent to them.
+
+**Transparency.** The code and the texts in this repository were written with the help of an AI (Claude, by
+Anthropic) and reviewed by the author. The illustrations (world welcome screen, festive vigils) are AI-generated, locally
+(FLUX.2 klein 9B in ComfyStudio); the village map and the tokens are not (see [Credits](#credits)).
 
 This repository holds three pieces:
 
@@ -377,11 +384,13 @@ change:
 
 ## Credits
 
-- Game, texts, rules, map and code: **Jordan (La Kour)**, with the help of coding assistants.
+- Game, texts, rules, map and code: **Jordan (La Kour)**, written with the help of an AI (**Claude**, by Anthropic) and
+  reviewed by the author.
 - Token silhouettes: icons from **[game-icons.net](https://game-icons.net)** (Caro Asercion, Cathelineau, DarkZaitzev,
   Delapouite, Lorc, Skoll), **CC BY 3.0** licence, recoloured and set in a medallion; the icon-by-icon list is in
   [`modules/lakour-veillees/CREDITS.md`](modules/lakour-veillees/CREDITS.md).
-- Illustrations (world welcome screen, festive vigils): **generated locally by AI by the author**, without any remote service.
+- Illustrations (world welcome screen, festive vigils): **AI-generated**, locally by the author (FLUX.2 klein 9B in
+  ComfyStudio), without any remote service.
 - Village map: drawn by code, no external image. Ambient sounds: synthesised loops from the shared engine.
 - **An original game of the werewolf family** (social-deduction games born from the traditional game *Mafia*): nothing is
   taken from *Les Loups-garous de Thiercelieux* (a trademark of its publishers) nor from any other commercial game.

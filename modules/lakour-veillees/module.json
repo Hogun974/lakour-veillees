@@ -16,7 +16,7 @@
     { "type": "screenshot", "url": "https://raw.githubusercontent.com/Hogun974/lakour-veillees/HEAD/docs/captures/village.png", "caption": "La carte du village de Brumecombe" },
     { "type": "screenshot", "url": "https://raw.githubusercontent.com/Hogun974/lakour-veillees/HEAD/docs/captures/carte-de-role.png", "caption": "Une carte de rôle, reçue en secret" }
   ],
-  "compatibility": { "minimum": "14", "verified": "14.369" },
+  "compatibility": { "minimum": "14", "verified": "14.370" },
   "relationships": {
     "systems": [
       {

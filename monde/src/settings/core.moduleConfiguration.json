@@ -1,6 +1,6 @@
 {
   "key": "core.moduleConfiguration",
-  "value": "{\"levels-3d-preview\":false,\"3ds-atlas\":false,\"autoanimations\":false,\"babele\":false,\"calendaria\":false,\"dice-so-nice\":false,\"fr-core\":true,\"fxmaster\":true,\"item-piles\":false,\"itempilesdnd5e\":false,\"JB2A_DnD5e\":true,\"lakour-mj-ia\":true,\"lakour-veillees\":true,\"lib-wrapper\":false,\"sequencer\":true,\"socketlib\":true}",
+  "value": "{\"levels-3d-preview\":false,\"3ds-atlas\":false,\"autoanimations\":false,\"babele\":false,\"calendaria\":false,\"dice-so-nice\":false,\"fr-core\":true,\"fxmaster\":false,\"item-piles\":false,\"itempilesdnd5e\":false,\"JB2A_DnD5e\":false,\"lakour-mj-ia\":true,\"lakour-veillees\":true,\"lib-wrapper\":false,\"sequencer\":false,\"socketlib\":false}",
   "_id": "U0pTejescXlnGt19",
   "user": null,
   "_stats": {

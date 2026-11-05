@@ -7,7 +7,7 @@ Foundry v14 (14.369). Tout en français, textes originaux (aucun texte, aucune c
 
 ## 1. Système `lakour-loups`
 
-`systems/lakour-loups/system.json` : `id: "lakour-loups"`, `version: "0.11.0"`, `compatibility { minimum: "14", verified: "14.369" }`,
+`systems/lakour-loups/system.json` : `id: "lakour-loups"`, `version: "0.11.0"`, `compatibility { minimum: "14", verified: "14.370" }`,
 `socket: true`, `esmodules: ["lakour-loups.mjs"]`, langues fr et en, `documentTypes` ci-dessous,
 `grid { type: 1, distance: 1.5, units: "m" }`, `primaryTokenAttribute: null`.
 
@@ -858,8 +858,8 @@ rescelle comme avant. Un coffre plus récent qui arrive (réglage changé) est r
 compris) : celui qui perd la main attend la fin des écritures en cours (elles s'arrêtent sans rien écrire : seul le MJ actif écrit,
 vérifié dans la file avant et après chaque modification), scelle aussitôt (passation, `api.coffre.scellerEnPartant` du moteur) puis
 vide sa mémoire ; des secrets écrits sans leurs fiches ne passent jamais pour à jour ; celui
-qui la prend relit son navigateur et, s'il n'est pas à jour, cherche le coffre (clé du moteur, parts des joueurs ou passage de clé
-d'un autre MJ connecté). Une nouvelle partie (distribution, « Rejouer », remise à zéro) oublie les parts attendues de l'ancienne ; un
+qui la prend relit son navigateur et, s'il n'est pas à jour, cherche le coffre (clé du moteur, passage de clé
+d'un autre MJ connecté ou clé de secours réimportée ; aux Veillées, aucune part des joueurs). Une nouvelle partie (distribution, « Rejouer », remise à zéro) oublie les parts attendues de l'ancienne ; un
 secret rouvert qui n'est pas de la partie publique est refusé. Après un scellement avec le moteur, l'ancienne clé `cleCoffre` (avant
 0.9.0) de ce navigateur est effacée. Hook local `lakourLoups.secrets` : l'attente des secrets commence ou finit (alerte de la Table ;
 le MJ IA, par `api.ecritureBloquee()`, se met en pause).

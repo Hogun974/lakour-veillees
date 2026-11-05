@@ -5,10 +5,10 @@
   "version": "0.14.0",
   "system": "lakour-loups",
   "systemVersion": "0.10.2",
-  "coreVersion": "14.369",
+  "coreVersion": "14.370",
   "compatibility": {
     "minimum": "14",
-    "verified": "14.369"
+    "verified": "14.370"
   },
   "background": "modules/lakour-veillees/assets/monde/fond.jpg",
   "joinTheme": "default",

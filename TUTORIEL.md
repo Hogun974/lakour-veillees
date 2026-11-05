@@ -40,9 +40,13 @@ Veillées.
 
 ## 2. Installer le jeu
 
-Deux chemins. Le monde vierge (2.b) est le plus court : il arrive avec tout déjà réglé.
+D'abord le système et les modules, par leurs manifestes (2.a). Ensuite, deux chemins : le **monde vierge** (2.b, chemin A),
+le plus court, qui arrive avec tout déjà réglé ; ou **votre propre monde** (2.c, chemin B).
 
-### 2.a Par les manifestes
+> **Foundry 14 n'installe plus de monde par son URL de manifeste** : l'onglet **Mondes de jeu** ne propose que **Créer un
+> monde**. Le monde vierge se distribue donc en archive à décompresser.
+
+### 2.a Le système et les modules, par les manifestes
 
 Dans l'écran de configuration de Foundry (avant de lancer un monde) :
 
@@ -57,28 +61,22 @@ Dans l'écran de configuration de Foundry (avant de lancer un monde) :
    ```
    Le premier est le moteur (*La Kour – MJ IA*), le second le contenu français (*La Kour — Les Veillées de Brumecombe*).
    Installez le moteur d'abord : le système le déclare requis.
-3. **Mondes › Créer un monde**, système **Les Veillées de Brumecombe**. Lancez-le, connectez-vous en **Gamemaster**.
-4. **Gérer les modules** : activez **La Kour – MJ IA** et **La Kour — Les Veillées de Brumecombe**, enregistrez (le monde se
-   recharge).
-5. À la question « Installer le contenu des Veillées de Brumecombe dans ce monde ? », répondez oui. Sinon : **Réglages du jeu ›
-   Configurer les réglages › La Kour — Les Veillées de Brumecombe › Installer**. Le guide du joueur, le guide du narrateur
-   (caché), les variantes, le livre de Brumecombe et la carte du village arrivent dans le monde ; rôles, métiers, bâtiments et
-   tables restent dans les compendiums.
-6. Dans ce chemin, les réglages du MJ IA gardent leurs valeurs d'usine (autonomie en *Validation*, budget de 10 dollars) :
-   passez l'**autonomie** en *Autonome* et choisissez la **personnalité** comme au § 7.
 
 ![Le manifeste collé dans « Installer un système »](docs/captures/tuto-manifeste.png)
 
-### 2.b Le monde vierge, tout prêt
+### 2.b Chemin A — le monde vierge, tout prêt
 
-Dans l'écran de configuration : **Mondes › Installer un monde**, coller :
+1. Le système et les deux modules doivent être installés (§ 2.a) : le monde les exige et ne les apporte pas.
+2. **Téléchargez** `la-kour-veillees.zip` dans la dernière version publiée : <https://github.com/Hogun974/lakour-veillees/releases/latest> (rubrique
+   *Assets*).
+3. **Trouvez le dossier de données de Foundry** : écran de configuration › onglet **Configuration** › champ **Chemin des
+   données** (*User Data Path*). Sur un hébergeur, passez par son gestionnaire de fichiers.
+4. **Décompressez** l'archive dans un nouveau dossier `Data/worlds/la-kour-veillees/` (le nom du dossier est l'identifiant du
+   monde) : `world.json` doit se trouver directement dedans, pas dans un sous-dossier.
+5. **Redémarrez Foundry** (le serveur ou l'application) : il ne voit un nouveau dossier de monde qu'au démarrage. Le monde
+   **La Kour — Les Veillées de Brumecombe** apparaît alors dans **Mondes de jeu**.
 
-```
-https://github.com/Hogun974/lakour-veillees/releases/latest/download/world.json
-```
-
-Foundry propose d'installer le système et les deux modules s'ils manquent : acceptez. Le monde **La Kour — Les Veillées de
-Brumecombe** arrive avec les modules actifs, le contenu installé, la carte du village en place et les réglages conseillés :
+Il arrive avec les modules actifs, le contenu installé, la carte du village en place et les réglages conseillés :
 
 | Réglage | Valeur du monde vierge |
 |---|---|
@@ -96,17 +94,28 @@ FXMaster, Sequencer, JB2A, socketlib) ; aucun n'est nécessaire, Foundry signale
 Le monde est **vierge** : aucune partie, aucun joueur, aucune chronique, et un seul utilisateur, **Gamemaster**, **sans mot de
 passe**. Passez tout de suite au § 4 avant d'envoyer l'adresse du serveur à qui que ce soit.
 
+### 2.c Chemin B — votre propre monde
+
+1. **Mondes de jeu › Créer un monde**, système **Les Veillées de Brumecombe**. Lancez-le, connectez-vous en **Gamemaster**.
+2. **Gérer les modules** : activez **La Kour – MJ IA** et **La Kour — Les Veillées de Brumecombe**, enregistrez (le monde se
+   recharge).
+3. À la question « Installer le contenu des Veillées de Brumecombe dans ce monde ? », répondez oui. Sinon : **Réglages du jeu ›
+   Configurer les réglages › La Kour — Les Veillées de Brumecombe › Installer**. Le guide du joueur, le guide du narrateur
+   (caché), les variantes, le livre de Brumecombe et la carte du village arrivent dans le monde ; rôles, métiers, bâtiments et
+   tables restent dans les compendiums.
+4. Dans ce chemin, les réglages du MJ IA gardent leurs valeurs d'usine (autonomie en *Validation*, budget de 10 dollars) :
+   passez l'**autonomie** en *Autonome* et choisissez la **personnalité** comme au § 7.
+
 ## 3. La version anglaise
 
 Tout existe en anglais : l'interface (système, module, moteur) suit la langue de Foundry, et le contenu (rôles, guides,
 variantes, tables) a son module jumeau **`lakour-veillees-en`** (*La Kour — The Vigils of Brumecombe*), mêmes documents et
 mêmes identifiants que le module français.
 
-- **Monde vierge anglais** (le plus simple) : **Installer un monde** avec
-  ```
-  https://github.com/Hogun974/lakour-veillees/releases/latest/download/world-en.json
-  ```
-  Il installe et active `lakour-veillees-en` au lieu du module français.
+- **Monde vierge anglais** (le plus simple) : archive `la-kour-veillees-en.zip` de la
+  [dernière version](https://github.com/Hogun974/lakour-veillees/releases/latest), à décompresser dans `Data/worlds/la-kour-veillees-en/` comme au
+  § 2.b, puis redémarrer Foundry. Il exige et active `lakour-veillees-en` (à installer d'abord par son manifeste, ci-dessous)
+  au lieu du module français.
 - **Par les manifestes** : installez le module anglais à la place du français (étape 2 du § 2.a) :
   ```
   https://github.com/Hogun974/lakour-veillees/releases/latest/download/lakour-veillees-en.json
@@ -135,8 +144,6 @@ fenêtres de choix de nuit de ce joueur.
 5. Envoyez à chaque joueur l'adresse du serveur, son nom de compte et son mot de passe. Rien à installer de son côté.
 
 Le guide du joueur (journal du monde) explique les règles à vos joueurs ; faites-le-leur lire avant la première veillée.
-
-![Gérer les utilisateurs : un compte Joueur par personne, chacun son mot de passe](docs/captures/tuto-comptes.png)
 
 ## 5. La clé de secours du coffre
 
@@ -315,6 +322,7 @@ narrateur** (journaux du monde).
 | Symptôme | Quoi faire |
 |---|---|
 | « Dépendance introuvable » à l'installation du système | Installez d'abord le moteur `lakour-mj-ia` par son manifeste (§ 2.a). |
+| Le monde vierge n'apparaît pas dans **Mondes de jeu** | Foundry n'a pas été redémarré, ou l'archive est au mauvais endroit : il faut `Data/worlds/la-kour-veillees/world.json` (pas de sous-dossier en trop). Redémarrez Foundry. |
 | « Aucun joueur à qui distribuer les rôles » | Les joueurs doivent être **connectés** et cochés dans la Table de jeu ; un compte MJ ne compte pas. |
 | Fenêtre « Télécharge ta clé de secours maintenant » à chaque chargement | Téléchargez-la (§ 5) ; elle cesse alors. |
 | « Coffre fermé dans ce navigateur », « secrets pas à jour » | Ce navigateur n'a pas la clé : **Réimporter une clé de secours** (Réglages › MJ IA › Coffre), ou connectez un autre MJ qui l'a. Ne relancez pas de partie en attendant. |

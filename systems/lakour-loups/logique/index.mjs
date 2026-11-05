@@ -31,3 +31,4 @@ export * from "./fiches.mjs";
 export * from "./notes.mjs";
 export * from "./fetes.mjs";
 export * from "./tablee.mjs";
+export * from "./grammaire.mjs";

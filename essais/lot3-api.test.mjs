@@ -289,7 +289,7 @@ const VERIFICATIONS = {
     assert.deepEqual(publicBrut().deuil, { actif: true, compte: 1 });
     assert.deepEqual(publicBrut().pouvoirsDeuil, { visions: 0, voix: false, linceul: 0, cible: null }, "le pouvoir reste secret");
     assert.equal(M.api.pouvoirsDuDeuil().visions, 1);
-    assert.ok(messages.some(m => m.content.includes(FR.LAKOUR_LOUPS.Deuil.Sonne.replace("{n}", "1"))));
+    assert.ok(messages.some(m => m.content.includes("Le glas du deuil sonne pour la 1re fois sur Brumecombe.")));
     assert.deepEqual(hooksPublics("lakourLoups.deuil", depuis).map(e => e.args), [[{ compte: 1 }]]);
     const secrets = emissions.slice(depuis).filter(e => e.type === "secret");
     assert.deepEqual(secrets.map(e => e.recipients), [[loup.system.joueur]], "au loup seul");

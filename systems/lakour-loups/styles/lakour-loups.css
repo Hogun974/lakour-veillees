@@ -181,6 +181,7 @@
 }
 .lakour-loups .loups-nom { font-weight: bold; color: var(--loups-parchemin); cursor: pointer; overflow-wrap: anywhere; }
 .lakour-loups .loups-role { margin-top: 0.2em; font-size: 0.88em; color: var(--loups-lanterne); }
+.lakour-loups .loups-carte-texte { min-width: 0; overflow-wrap: break-word; }
 .lakour-loups .loups-role .loups-camp { font-size: 0.9em; margin-left: 0.2em; }
 .lakour-loups .loups-carte-etat { display: flex; flex-direction: column; align-items: flex-end; gap: 0.3em; color: var(--loups-brume); }
 .lakour-loups .loups-voix {
@@ -188,7 +189,13 @@
   background: var(--loups-sang); color: #fff; border-radius: 999px; padding: 0.05em 0.45em;
 }
 .lakour-loups .loups-bouton.voter { grid-column: 1 / -1; width: 100%; }
-.lakour-loups .loups-mj-boutons { position: absolute; right: 0.35em; bottom: 0.35em; display: flex; gap: 0.2em; opacity: 0.45; }
+/* Les boutons du MJ (œil, crâne…) : une rangée dans le flux, en bas à droite de la carte, et non plus posée par-dessus
+   (position: absolute) : un métier sur deux lignes ou un rôle long (« Loup de Brumecombe · Meute ») passait dessous.
+   La carte grandit d'autant ; le texte n'est jamais recouvert. */
+.lakour-loups .loups-mj-boutons {
+  grid-column: 1 / -1; justify-self: end; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.2em;
+  margin-top: -0.25em; opacity: 0.45;
+}
 .lakour-loups .loups-carte:hover .loups-mj-boutons { opacity: 1; }
 .lakour-loups .loups-mj-boutons button {
   width: 1.9em; height: 1.9em; line-height: 1; padding: 0; border-radius: 4px;
@@ -582,6 +589,7 @@ body.theme-light .application.lakour-loups.loups-fiche:not(.theme-dark),
 }
 .lakour-loups.carte-role .carte-role-details:empty { display: none; }
 .lakour-loups.carte-role .carte-role-details li { display: grid; grid-template-columns: 1.2em auto minmax(0, 1fr); gap: 0.35em; align-items: baseline; }
+.lakour-loups.carte-role .carte-role-details li.sans-etiquette span { grid-column: 2 / -1; }   /* « Maison 4 » se nomme seule */
 .lakour-loups.carte-role .carte-role-details i { color: var(--lf-teinte); text-align: center; }
 .lakour-loups.carte-role .carte-role-details li.meute i { color: var(--loups-meute); }
 .lakour-loups.carte-role .carte-role-details strong { color: var(--loups-terne); font-weight: normal; }

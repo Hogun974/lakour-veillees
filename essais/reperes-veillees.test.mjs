@@ -80,3 +80,36 @@ test("affichage seulement : les clés restent françaises, et chaque endroit qui
   const dictionnaireVillageois = JSON.parse(readFileSync(new URL("../modules/lakour-veillees/contenu/en/villageois.json", import.meta.url), "utf8"));
   for (const e of Object.values(dictionnaireVillageois)) for (const chemin of Object.keys(e)) assert.ok(!/^system\.maison$/.test(chemin), `${e._nom} : system.maison extrait`);
 });
+
+// Vu en partie réelle : la carte de rôle disait « Maison Maison 4 » (l'étiquette Fiche.Maison, puis le libellé qui la contient
+// déjà). Une maison numérotée se nomme seule ; une demeure nommée à la main (« Chapelle ») garde l'étiquette.
+test("carte de rôle et fiche : « Maison 4 », jamais « Maison Maison 4 » (ni « House House 4 »)", async () => {
+  const { maisonNumerotee } = await import("../systems/lakour-loups/scripts/donnees.mjs");
+  assert.equal(maisonNumerotee("Maison 4"), true);
+  assert.equal(maisonNumerotee("Chapelle"), false);
+  assert.equal(maisonNumerotee(""), false);
+  const lire = f => readFileSync(new URL(f, SYSTEME), "utf8");
+  // Le rendu de la ligne « maison » de la carte, avec le contexte que l'envoi (api.mjs) lui donne.
+  const carte = lire("templates/carte-role.hbs");
+  const ligne = carte.split("\n").find(l => l.includes("fa-door-closed"));
+  const rendre = (maison, maisonEtiquette, dico) => ligne
+    .replace(/\{\{#if maison\}\}([\s\S]*)\{\{\/if\}\}\s*$/, "$1")
+    .replace(/\{\{#if maisonEtiquette\}\}([\s\S]*?)\{\{else\}\}([\s\S]*?)\{\{\/if\}\}/, (_, oui, non) => (maisonEtiquette ? oui : non))
+    .replace(/\{\{localize "([\w.]+)"\}\}/g, (_, c) => c.split(".").reduce((o, k) => o?.[k], dico))
+    .replace("{{maison}}", maison).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  for (const [l, traduire] of [["fr", fr], ["en", en]]) {
+    const libelle = libelleDeRepere("Maison 4", traduire);
+    const texte = rendre(libelle, false, langue(l));
+    assert.equal(texte, libelle, `${l} : ${texte}`);
+    assert.doesNotMatch(texte, /(Maison|House) (Maison|House)/);
+    assert.equal(rendre("Chapelle", true, langue(l)), `${langue(l).LAKOUR_LOUPS.Fiche.Maison} Chapelle`);
+  }
+  assert.match(lire("scripts/api.mjs"), /maisonEtiquette: !maisonNumerotee\(acteur\.system\.maison\)/);
+  // La fiche du villageois : même pilule, même règle.
+  assert.match(lire("templates/fiche-villageois.hbs"), /<span class="loups-pilule-cle"><i class="fa-solid fa-door-closed"><\/i>\{\{#if maisonEtiquette\}\} \{\{localize "LAKOUR_LOUPS\.Fiche\.Maison"\}\}\{\{\/if\}\}<\/span>/);
+  assert.match(lire("scripts/apps/fiches.mjs"), /maisonEtiquette: !maisonNumerotee\(s\.maison\)/);
+  // Ailleurs (Table, vote, choix de nuit, infobulle) : le libellé seul, sans étiquette Fiche.Maison devant.
+  for (const f of ["templates/table.hbs", "templates/vote.hbs", "templates/choix.hbs", "scripts/infobulle.mjs"]) {
+    assert.doesNotMatch(lire(f), /Fiche\.Maison/, f);
+  }
+});

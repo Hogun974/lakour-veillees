@@ -22,7 +22,7 @@ est automatisé l'est par `.github/workflows/release.yml` et `outils/empaqueter-
       autonomie `autonome` et personnalité `voix-de-la-brume` gardées.
 - [ ] **Captures** : déposer les PNG listés dans `docs/captures/LISEZ-MOI.md` (au moins `village`, `table-de-jeu`, `vote`,
       `carte-de-role`, `chroniques` : ce sont celles du bandeau du README et des `media` des manifestes), plus celles des
-      tutoriels (`preparatifs`, `choix-de-nuit`, `mj-ia`, `tuto-manifeste`, `tuto-comptes`, `tuto-coffre`, `tuto-voix`).
+      tutoriels (`preparatifs`, `choix-de-nuit`, `mj-ia`, `tuto-manifeste`, `tuto-coffre`, `tuto-voix`).
 - [ ] **Relire le dépôt pour les fuites** : aucune adresse interne, aucun nom de machine, aucune clé, aucun vrai nom de
       joueur dans les essais, les docs (`docs/loups-contrat.md`, `docs/plan-loup-garou.md`), les commentaires et l'historique
       git. `git log -p | grep -i -E "172\.|192\.168|\.local|mot de passe|clé" ` pour un premier passage. Les documents
@@ -70,7 +70,12 @@ restent la seule source : ne pas les modifier à la main dans la release.
       publiés portent `manifest` = `releases/latest/download/…` et `download` = `releases/download/v0.11.1/…`.
 - [ ] **Essai d'installation à blanc** dans un Foundry v14 vide (pas le serveur de jeu) : installer le système par son
       manifeste, les deux modules, créer un monde, activer les modules, installer le contenu, distribuer une partie à 6 avec
-      des joueurs IA, jouer une nuit et un vote. Puis essayer le monde vierge par `world.json`.
+      des joueurs IA, jouer une nuit et un vote. Puis essayer le monde vierge : décompresser `la-kour-veillees.zip` dans
+      `Data/worlds/la-kour-veillees/` et redémarrer Foundry.
+- [ ] **Installation de monde par manifeste absente en Foundry 14** : l'onglet Mondes de jeu n'a plus que « Créer un
+      monde » (constaté en 14.370), et un dossier déposé dans `Data/worlds/` n'est vu qu'après un redémarrage. Distribuer
+      le zip du monde (`la-kour-veillees.zip`, `la-kour-veillees-en.zip`) ; `world.json` et `world-en.json` restent publiés,
+      mais ne pas les donner comme adresse à coller.
 - [ ] Vérifier la **mise à jour** : avec une version installée, publier une `v0.11.2` de test (ou attendre la prochaine vraie)
       et voir Foundry la proposer.
 
@@ -87,14 +92,16 @@ client, aucune clé. Le script d'empaquetage du monde en est responsable ; le v�
 
 ## 4. Adresses à donner aux joueurs
 
-À copier dans Foundry (**Installer un système**, **Installer un module**, **Installer un monde**) :
+À copier dans Foundry (**Installer un système**, **Installer un module**) ; le monde vierge, lui, se télécharge en archive
+(Foundry 14 n'a plus d'installation de monde par manifeste) :
 
 | Quoi | Adresse |
 |---|---|
 | Système *Les Veillées de Brumecombe* | `https://github.com/Hogun974/lakour-veillees/releases/latest/download/system.json` |
 | Module de contenu *La Kour — Les Veillées de Brumecombe* | `https://github.com/Hogun974/lakour-veillees/releases/latest/download/module.json` |
 | Module *La Kour – MJ IA* (requis : le coffre des secrets) | `https://github.com/Hogun974/lakour-mj-ia/releases/latest/download/module.json` |
-| Monde vierge tout prêt | `https://github.com/Hogun974/lakour-veillees/releases/latest/download/world.json` |
+| Monde vierge tout prêt (à décompresser dans `Data/worlds/la-kour-veillees/`, puis redémarrer Foundry) | `https://github.com/Hogun974/lakour-veillees/releases/latest/download/la-kour-veillees.zip` |
+| Monde vierge anglais (dans `Data/worlds/la-kour-veillees-en/`) | `https://github.com/Hogun974/lakour-veillees/releases/latest/download/la-kour-veillees-en.zip` |
 | Le dépôt, le README, les issues | `https://github.com/Hogun974/lakour-veillees` |
 
 Pour un joueur qui rejoint une table déjà installée : seulement l'adresse d'invitation du serveur de jeu et son compte ; rien à

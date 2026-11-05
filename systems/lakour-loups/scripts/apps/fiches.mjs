@@ -2,7 +2,7 @@
 // Mise en page façon carte à jouer : en-tête avec portrait et « pilules » (Rôle · Camp · Métier · Maison), état en
 // insignes, pouvoirs en cartes (« atouts ») avec icône, usages restants et texte en infobulle.
 import { ID, CAMPS, EFFETS, VICTOIRES } from "../../logique/constantes.mjs";
-import { t, roleDe, campDe, amoureuxDe, protectionsDe, metierDe, libelleCamp, libelleRepere, lireEtat, roleVisible } from "../donnees.mjs";
+import { t, roleDe, campDe, amoureuxDe, protectionsDe, metierDe, libelleCamp, libelleRepere, maisonNumerotee, lireEtat, roleVisible } from "../donnees.mjs";
 import { mesSecrets } from "../prive.mjs";
 import { estMJActif } from "../canal.mjs";
 
@@ -101,6 +101,7 @@ export class FicheVillageois extends HandlebarsApplicationMixin(ActorSheetV2) {
       system: gm ? s : { joueur: s.joueur, compagnon: s.compagnon, vivant: s.vivant, revele: s.revele, silence: s.silence, maison: s.maison, notes: s.notes },
       // La maison affichée dans la langue de Foundry (« House 7 ») ; le champ du MJ garde la clé (« Maison 7 »).
       maisonLibelle: libelleRepere(s.maison),
+      maisonEtiquette: !maisonNumerotee(s.maison),   // « Maison 4 » seul, pas « Maison Maison 4 »
       // Les champs secrets, chez le MJ actif seulement (lui seul a les secrets ; un autre MJ ne les a pas).
       secret: estMJActif() ? { camp, amoureux, protections } : null,
       gm, proprietaire: sienne, voitRole,

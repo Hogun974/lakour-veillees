@@ -139,7 +139,7 @@
       "VoteBailli": "Élire le Bailli",
       "NommerBailli": "Nommer le Bailli",
       "TrancherPour": "Trancher à la place du Bailli ({nom}) :",
-      "Migration": "Partie d'avant la version 0.9.0 reprise : {n} rôle(s) rangé(s) dans les secrets du MJ, retirés des fiches des villageois."
+      "Migration": "Partie d'avant la version 0.9.0 reprise : {n} rôle(s) rangé(s) dans les secrets du MJ, retiré(s) des fiches des villageois."
     },
     "Choix": {
       "Titre": "Dans la nuit…",
@@ -449,7 +449,7 @@
     },
     "Jour": {
       "Verrou": "{qui} forge un verrou pour la maison de {nom} : la nuit prochaine, la première attaque de loup contre elle échouera.",
-      "Meule": "{qui} interroge la meule : {n} loup(s) vivent encore à Brumecombe.",
+      "Meule": "{qui} interroge la meule : {n} loup(s) (vit|vivent) encore à Brumecombe.",
       "Garde": "{qui} garde {nom} à l'œil : la nuit prochaine, {nom} ne pourra viser aucune autre maison que la sienne.",
       "Benediction": "{qui} bénit {nom} : plus personne ne pourra le réduire au silence, et il parlera le premier au prochain débat.",
       "TracesOui": "{qui} a suivi les traces de {nom} : {nom} a quitté sa maison cette nuit.",
@@ -488,7 +488,7 @@
       "IndiceSauve": "quelqu'un a échappé à la mort cette nuit.",
       "IndicePasSauve": "personne n'a échappé à la mort cette nuit.",
       "MoulinPrive": "La meule du Moulin vous souffle qu'il reste {n} loup(s) vivant(s).",
-      "MoulinPublic": "Les ailes du Moulin ont compté : {n} loup(s) vivent encore à Brumecombe.",
+      "MoulinPublic": "Les ailes du Moulin ont compté : {n} loup(s) (vit|vivent) encore à Brumecombe.",
       "Lavoir": "Au lavoir, on raconte que {indice}",
       "Cimetiere": "Les tombes parlent : {nom} était du camp « {camp} ».",
       "InviteTexte": "Ton dernier mot, dix mots au plus : le narrateur le lira au village.",
@@ -618,7 +618,7 @@
       "chapelle": "Vote de la Chapelle",
       "rejouer": "Rejouer",
       "Detail": {
-        "voixManquantes": "({n} voix manquent encore)",
+        "voixManquantes": "({n} voix (manque|manquent) encore)",
         "juge": "Le Juge de paix ({nom}) peut encore annuler ce vote.",
         "emporter": "{nom} désigne qui il emporte (ou personne).",
         "sansSecrets": "Ce navigateur n'a pas les secrets de la nuit.",
@@ -816,7 +816,7 @@
         "exil": "Tour {tour} — {nom} est exilé par le village."
       },
       "Accusation": "Tour {tour} — {nom} accuse {contre}.",
-      "Deuil": "Tour {tour} — le glas du deuil sonne pour la {n}e fois.",
+      "Deuil": "Tour {tour} — le glas du deuil sonne pour la {n}(re|e) fois.",
       "Banc": "Jugement de {nom} : {pour} voix pour sur {total}.",
       "VoixDeuil": "Une voix sans visage s'est jointe à {cible}.",
       "Fete": {
@@ -969,7 +969,7 @@
       "Titre": "Le glas du deuil",
       "Aide": "Le Glas du deuil : chaque innocent exécuté le fait sonner, et la meute en tire un pouvoir.",
       "Compte": "Glas du deuil : {n}",
-      "Sonne": "Le glas du deuil sonne pour la {n}e fois sur Brumecombe.",
+      "Sonne": "Le glas du deuil sonne pour la {n}(re|e) fois sur Brumecombe.",
       "Pouvoir1": "Le glas a sonné : à la nuit qui vient, la meute pourra désigner un villageois ; chaque loup apprendra son camp.",
       "Pouvoir2": "Le glas a sonné une deuxième fois : à chaque vote d'exécution, une voix sans visage rejoindra le candidat que vous, les loups vivants, aurez le plus désigné.",
       "Pouvoir3": "Le glas a sonné une troisième fois : la nuit qui vient, aucune protection ne tiendra contre la meute.",

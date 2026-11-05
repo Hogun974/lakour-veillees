@@ -211,7 +211,7 @@ test("nouvellePartie({ niveau: petite-tablee }) : composition du mode, tirage co
   assert.equal(pub.composition, "");
   const annonce = annoncesChat().find(t => t.includes(FR.LAKOUR_LOUPS.Tablee.Nom));
   assert.ok(annonce, "la petite tablée s'annonce au chat");
-  assert.match(annonce, /3 joueur\(s\) et 4 compagnon\(s\) IA/);
+  assert.match(annonce, /3 joueurs et 4 compagnons IA/);
   assert.match(annonce, /jour 4/);
   for (const a of villageois()) assert.ok(!annonce.includes(a.name), `l'annonce nomme ${a.name}`);
   assert.ok(!emissions.some(x => x.type === "hook" && x.nom === "lakourLoups.nouvellePartie" && "composition" in (x.args?.[0] ?? {})));

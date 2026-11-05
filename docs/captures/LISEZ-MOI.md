@@ -28,12 +28,14 @@ Les trois premières (`village`, `table-de-jeu`, `vote`) et `carte-de-role` serv
 ## Captures du tutoriel
 
 Les tutoriels (`TUTORIEL.md`, `TUTORIAL.md`) reprennent `preparatifs.png`, `choix-de-nuit.png`, `vote.png` et `mj-ia.png`
-(tableau ci-dessus) et attendent en plus ces quatre fichiers. Les deux tutoriels partagent les mêmes images (interface en
+(tableau ci-dessus) et attendent en plus ces trois fichiers. Les deux tutoriels partagent les mêmes images (interface en
 français ; le tutoriel anglais le signale).
+
+> Pas de capture de l'installation du monde par manifeste : Foundry 14 n'a plus de bouton « Installer un monde » (le monde
+> vierge se distribue en archive à décompresser dans `Data/worlds/`). Pas de capture des comptes et mots de passe non plus.
 
 | Fichier | Contenu | Comment l'obtenir |
 |---|---|---|
 | `tuto-manifeste.png` | L'écran de configuration de Foundry, fenêtre **Installer un système**, l'adresse du manifeste `…/releases/latest/download/system.json` collée dans le champ « URL du manifeste ». | Écran de configuration (hors monde), onglet Systèmes de jeu › Installer un système. Recadrer sur la fenêtre ; aucune adresse de serveur, aucune licence visible. |
-| `tuto-comptes.png` | **Gérer les utilisateurs** : Gamemaster au rôle Maître du jeu, trois ou quatre comptes au rôle **Joueur**, champs de mot de passe remplis (masqués). | Dans le monde, Réglages du jeu › Gérer les utilisateurs, avec des comptes d'essai aux noms du village (« Mathurin », « Ysaline »…). Vérifier qu'aucun mot de passe n'est lisible. |
 | `tuto-coffre.png` | La fenêtre **Coffre du MJ IA** : la mention « Monde à rôles secrets : aucune part… », la date de la clé de secours, les boutons **Télécharger la clé de secours** et **Réimporter une clé de secours**. | Compte MJ, Réglages du jeu › Configurer les réglages › MJ IA › Coffre. Ne pas montrer le fichier téléchargé ni son contenu. |
 | `tuto-voix.png` | La section **Voix** de la Table de jeu chez le MJ : **Activer l'audio**, **Donner le micro aux joueurs**, la liste « Sans droit de micro » si elle s'affiche. | Compte MJ, Table de jeu en préparatifs, avant d'activer l'audio (puis une seconde capture après, si elle rend mieux). |

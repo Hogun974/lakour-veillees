@@ -10,7 +10,7 @@
   {{#if texte}}
   <textarea class="loups-texte" name="texte" maxlength="{{max}}" rows="3" placeholder="{{localize 'LAKOUR_LOUPS.Choix.TexteAide'}}"></textarea>
   {{else}}
-  {{#if plusieurs}}<p class="loups-consigne">{{localize "LAKOUR_LOUPS.Choix.Plusieurs" n=nombre}} ({{choisis}} / {{nombre}})</p>{{/if}}
+  {{#if plusieurs}}<p class="loups-consigne">{{loupsT "LAKOUR_LOUPS.Choix.Plusieurs" n=nombre}} ({{choisis}} / {{nombre}})</p>{{/if}}
   <ul class="loups-candidats">
     {{#each candidats}}
     <li>

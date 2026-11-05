@@ -3,7 +3,7 @@
     <i class="fa-solid fa-scale-balanced"></i>
     <div>
       <div class="loups-etiquette">{{localize "LAKOUR_LOUPS.Vote.Place"}}</div>
-      <p class="loups-invite">{{#if chapelle}}{{localize "LAKOUR_LOUPS.Vote.QuestionChapelle"}}{{else if bailli}}{{localize "LAKOUR_LOUPS.Vote.QuestionBailli"}}{{else if exil}}{{localize "LAKOUR_LOUPS.Passage.QuestionExil"}}{{else if banc}}{{localize "LAKOUR_LOUPS.Banc.Question" nom=banc}}{{else}}{{localize "LAKOUR_LOUPS.Vote.Question"}}{{/if}}</p>
+      <p class="loups-invite">{{#if chapelle}}{{localize "LAKOUR_LOUPS.Vote.QuestionChapelle"}}{{else if bailli}}{{localize "LAKOUR_LOUPS.Vote.QuestionBailli"}}{{else if exil}}{{localize "LAKOUR_LOUPS.Passage.QuestionExil"}}{{else if banc}}{{loupsT "LAKOUR_LOUPS.Banc.Question" nom=banc}}{{else}}{{localize "LAKOUR_LOUPS.Vote.Question"}}{{/if}}</p>
       <div class="loups-pastilles">
         {{#if double}}<span class="loups-pastille cloche"><i class="fa-solid fa-bell"></i> {{localize "LAKOUR_LOUPS.Vote.Double"}}</span>{{/if}}
         {{#if majoriteAbsolue}}<span class="loups-pastille gibet">{{localize "LAKOUR_LOUPS.Vote.MajoriteAbsolue"}}</span>{{/if}}
@@ -15,7 +15,7 @@
     <div class="loups-minuteur"></div>
   </header>
   {{#if ouvert}}
-  <p class="loups-consigne">{{exprimes}} / {{votants}} {{localize "LAKOUR_LOUPS.Vote.OntVote"}}{{#if souffles}} · {{localize "LAKOUR_LOUPS.Souffle.Compte" n=souffles}}{{/if}} · {{localize "LAKOUR_LOUPS.Vote.VotreVoix"}} <strong>{{monChoixNom}}</strong></p>
+  <p class="loups-consigne">{{exprimes}} / {{votants}} {{localize "LAKOUR_LOUPS.Vote.OntVote"}}{{#if souffles}} · {{loupsT "LAKOUR_LOUPS.Souffle.Compte" n=souffles}}{{/if}} · {{localize "LAKOUR_LOUPS.Vote.VotreVoix"}} <strong>{{monChoixNom}}</strong></p>
   <ul class="loups-candidats">
     {{#each candidats}}
     <li>

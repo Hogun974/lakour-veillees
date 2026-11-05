@@ -17,6 +17,7 @@
 import { choisir } from "./hasard.mjs";
 import { normaliserEtat } from "./etat.mjs";
 import { indiceFlou } from "./jour.mjs";
+import { elider } from "./grammaire.mjs";
 
 export const PRESAGES = {
   "ciel-clair": { quand: "jour" },
@@ -70,7 +71,7 @@ export function appliquerPresage(e, { cle, villageois = [], bilan = null, hasard
   sortie.annonces.push(msg("Annonce", `Almanach des brumes : ${cle}.`, { presage: cle }));
   if (cle === "rumeur") {
     const indice = indiceFlou({ bilan, villageois, hasard });
-    sortie.annonces.push(msg("Rumeur", `La rumeur court que ${indice.texte}`, { indice }));
+    sortie.annonces.push(msg("Rumeur", `La rumeur court ${elider("que", indice.texte)}`, { indice }));
   }
   if (cle === "vent-du-nord") {
     for (const v of villageois) if (v.vivant !== false && v.silence) sortie.changements.push({ type: "silence", acteurId: v.id, valeur: false });

@@ -113,6 +113,8 @@ Hooks.once("init", () => {
   brancherSalons();
   brancherImmersion();   // brume, lueurs, tremblement (v14), chez chaque client
   foundry.applications.handlebars.loadTemplates([`systems/${ID}/templates/carte-role.hbs`]);
+  // {{loupsT "CLE" n=… nom=…}} : comme {{localize}} avec des données, mais avec l'élision et l'accord de t() (donnees.mjs).
+  Handlebars.registerHelper("loupsT", (cle, options) => t(cle, { ...(options?.hash ?? {}) }));
 });
 
 // ------------------------------------------------------------------ prêt : API, socket

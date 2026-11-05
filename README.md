@@ -91,14 +91,18 @@ village) : Réglages du jeu › La Kour — Les Veillées de Brumecombe › Inst
 ### 2. Un monde vierge, tout prêt
 
 Un monde déjà configuré (système, modules actifs, contenu installé, carte du village en place) est publié avec chaque
-version. Dans **Mondes › Installer un monde**, coller :
+version, en archive : Foundry 14 n'installe plus de monde par URL de manifeste (l'onglet **Mondes de jeu** ne propose que
+**Créer un monde**).
 
-```
-https://github.com/Hogun974/lakour-veillees/releases/latest/download/world.json
-```
+1. Installez d'abord le système et les deux modules par leurs manifestes (façon 1) : le monde les exige.
+2. Téléchargez `la-kour-veillees.zip` (ou `la-kour-veillees-en.zip` pour l'anglais) dans la
+   [dernière version](https://github.com/Hogun974/lakour-veillees/releases/latest).
+3. Décompressez-la dans `Data/worlds/la-kour-veillees/` (ou `Data/worlds/la-kour-veillees-en/`) du dossier de données de
+   Foundry (**Configuration › Chemin des données** ; sur un hébergeur, son gestionnaire de fichiers) : `world.json`
+   directement dans ce dossier.
+4. **Redémarrez Foundry** : le monde apparaît alors dans **Mondes de jeu**.
 
-Le système et les modules sont proposés à l'installation s'ils manquent. Le monde est vierge : aucune partie, aucun joueur,
-aucune chronique. Son seul utilisateur, **Gamemaster**, n'a pas de mot de passe : **posez-lui-en un** (Configuration ›
+Le monde est vierge : aucune partie, aucun joueur, aucune chronique. Son seul utilisateur, **Gamemaster**, n'a pas de mot de passe : **posez-lui-en un** (Configuration ›
 Utilisateurs) **avant d'inviter qui que ce soit**, sinon n'importe quel invité peut entrer en MJ.
 
 ### 3. Depuis les sources

@@ -9,13 +9,14 @@
 //   node outils/fabriquer-veillees.mjs --extraire   écrit ou met à jour les squelettes contenu/en/<pack>.json (traductions gardées)
 //   npm run fabriquer-veillees-en  (= --langue en)   engendre modules/lakour-veillees-en/ EN ENTIER (non versionné) : module.json
 //     anglais (contenu/en/module.json), src/ et packs/ traduits, compositions.json et equilibre.json, copies de lang/, scripts/,
-//     templates/, assets/ (index des jetons récrits, plans.json refait, libellés de figurants.json traduits), CREDITS.md ; puis
-//     contrôle le contrat du contenu. Une entrée obsolète (le français a changé) est signalée ; un écart de balises arrête tout.
+//     templates/, assets/ (index des jetons récrits, plans.json refait, libellés de figurants.json traduits, fonds de carte
+//     redessinés et tout SVG à texte traduit par contenu/en/cartes.json), CREDITS.md ; puis contrôle le contrat du contenu.
+//     Un libellé gravé sans entrée dans cartes.json, ou un libellé français resté dans un SVG anglais, arrête tout. Une entrée obsolète (le français a changé) est signalée ; un écart de balises arrête tout.
 // Les CLÉS ne se traduisent jamais (system.cle, camp, effet, compositions, équilibre, repères et maisons de la carte : le système
 // lakour-loups et le MJ IA lisent le contenu par clés) : seuls les noms, descriptions, règles, invites, pages, tables et notes.
 import { compilePack } from "@foundryvtt/foundryvtt-cli";
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { join, relative } from "node:path";
 import { FETES_VEILLEES, imageDeFete } from "../modules/lakour-veillees/scripts/fetes.js";
 import { appliquer, extraire, fusionner, resumerRapport } from "../modules/lakour-mj-ia/outils/traduction.mjs";
 import { verifierModuleDeContenu } from "../modules/lakour-mj-ia/outils/contrat-contenu.mjs";
@@ -23,6 +24,7 @@ import { APPARENCES, CAMPS, EFFETS, MODULE, VICTOIRES, ORDRE_MEUTE, cheminJeton,
 import { DOCUMENTS } from "../modules/lakour-veillees/contenu/index.mjs";
 import { compositions, MIN_JOUEURS, MAX_JOUEURS, MIN_TABLEE, MAX_TABLEE, NIVEAU_PETITE_TABLEE } from "../modules/lakour-veillees/contenu/compositions.mjs";
 import { EQUILIBRE, EQUILIBRE_BATIMENTS } from "../modules/lakour-veillees/contenu/equilibre.mjs";
+import { FONDS, fondSVG, textesGraves } from "../modules/lakour-veillees/contenu/cartes.mjs";
 
 // Écriture atomique (fichier temporaire puis renommage) : un essai ou un serveur qui lit le fichier pendant la fabrication
 // ne voit jamais un JSON tronqué (equilibre.json était relu pendant les essais).
@@ -404,6 +406,63 @@ export function copierModule(documents, figurants = {}) {
 
 const lireJsonSiPresent = chemin => (existsSync(chemin) ? JSON.parse(readFileSync(chemin, "utf8")) : {});
 
+// ---------------------------------------------------------------- Cartes anglaises (texte gravé dans les SVG)
+
+// contenu/en/cartes.json : { "libelles": { "libellé gravé en français": "English label" } } (pas un pack : lireDictionnaires et
+// le MJ IA l'ignorent).
+export const FICHIER_CARTES_EN = `${DOSSIER_DICTIONNAIRES}/cartes.json`;
+export const lireLibellesDeCartes = (fichier = FICHIER_CARTES_EN) => lireJsonSiPresent(fichier).libelles ?? {};
+// Un libellé « à traduire » contient un mot (deux lettres ou plus) : les numéros des maisons et la rose des vents n'en ont pas.
+const aDesMots = texte => /\p{L}{2,}/u.test(texte);
+const echapper = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+// Traduit le contenu des <text>/<tspan> d'un SVG par les libellés. Rend { svg, inconnus } (libellés à mots sans entrée).
+export function traduireSVG(svg, libelles) {
+  const inconnus = [];
+  const traduit = svg.replace(/(<(?:text|tspan)\b[^>]*>)([^<]*)/g, (tout, ouvrante, brut) => {
+    const [texte] = textesGraves(`<text>${brut}`);
+    if (!texte) return tout;
+    if (libelles[texte] === undefined) { if (aDesMots(texte)) inconnus.push(texte); return tout; }
+    return `${ouvrante}${brut.replace(brut.trim(), () => echapper(libelles[texte]))}`;
+  });
+  return { svg: traduit, inconnus };
+}
+
+// Écarts d'un SVG anglais : libellés gravés du SVG français sans entrée dans cartes.json, libellés français restés.
+export function verifierSVGAnglais(chemin, svgFr, svgEn, libelles) {
+  const erreurs = [];
+  for (const t of new Set(textesGraves(svgFr))) if (aDesMots(t) && libelles[t] === undefined) erreurs.push(`${chemin} : « ${t} » sans traduction dans ${FICHIER_CARTES_EN}`);
+  for (const t of new Set(textesGraves(svgEn))) if (libelles[t] !== undefined && libelles[t] !== t) erreurs.push(`${chemin} : « ${t} » resté en français`);
+  return erreurs;
+}
+
+// SVG du module anglais (chemins relatifs à assets/) : les fonds des scènes (FONDS de contenu/cartes.mjs) redessinés avec les
+// libellés anglais (les bandeaux suivent la longueur du libellé), puis tout autre SVG à texte de assets/ traduit tel quel.
+// Rend { fichiers: [{ chemin, svg }], erreurs }.
+export function cartesAnglaises(libelles = lireLibellesDeCartes(), racine = RACINE) {
+  const fichiers = [], erreurs = [];
+  const traduire = t => libelles[t] ?? t;
+  const fonds = new Map();
+  for (const { cle, plan, decor } of FONDS) for (const style of ["2d", "3d"]) {
+    fonds.set(`cartes/${style === "3d" ? "3d/" : ""}${cle}.svg`, { fr: fondSVG(plan, style, decor).svg, en: fondSVG(plan, style, decor, traduire).svg });
+  }
+  const parcourir = dossier => readdirSync(dossier, { withFileTypes: true }).flatMap(f => (f.isDirectory() ? parcourir(join(dossier, f.name)) : f.name.endsWith(".svg") ? [join(dossier, f.name)] : []));
+  const assets = join(racine, "assets");
+  const chemins = new Set([...fonds.keys(), ...(existsSync(assets) ? parcourir(assets).map(c => relative(assets, c).replaceAll("\\", "/")) : [])]);
+  for (const chemin of [...chemins].sort()) {
+    let fr, en;
+    if (fonds.has(chemin)) ({ fr, en } = fonds.get(chemin));
+    else {
+      fr = readFileSync(join(assets, chemin), "utf8");
+      if (!textesGraves(fr).length) continue;
+      en = traduireSVG(fr, libelles).svg;
+    }
+    erreurs.push(...verifierSVGAnglais(chemin, fr, en, libelles));
+    fichiers.push({ chemin, svg: en });
+  }
+  return { fichiers, erreurs };
+}
+
 // ---------------------------------------------------------------- Ligne de commande
 
 // Écrit src/<pack>/*.json puis compile packs/ pour un module (racine), à partir de documents { pack, cle, doc }.
@@ -465,6 +524,10 @@ if (process.argv[1] && import.meta.url === (await import("node:url")).pathToFile
     mkdirSync(RACINE_EN, { recursive: true });
     ecrire(`${RACINE_EN}/module.json`, `${JSON.stringify(manifesteAnglais(manifeste, traductions), null, 2)}\n`);
     copierModule(documents, lireJsonSiPresent(`${DOSSIER_DICTIONNAIRES}/figurants.json`));
+    const cartes = cartesAnglaises();
+    if (cartes.erreurs.length) { console.error(`Cartes anglaises : ${cartes.erreurs.length} libellé(s) gravé(s) en français :\n- ${cartes.erreurs.join("\n- ")}`); process.exit(1); }
+    for (const { chemin, svg } of cartes.fichiers) ecrire(join(RACINE_EN, "assets", chemin), svg);
+    console.log(`cartes anglaises : ${cartes.fichiers.map(c => c.chemin).join(", ")}`);
     ecrireAssetsDeContenu(RACINE_EN, compos, libellesDeCompositions(compos, traductions.niveaux));
     await ecrireEtCompiler(documents, RACINE_EN, compiler);
     const ecarts = verifierModuleDeContenu(RACINE_EN);

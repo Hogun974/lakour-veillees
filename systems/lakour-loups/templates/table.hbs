@@ -10,15 +10,15 @@
     {{#if bailli}}
     <div class="loups-bailli-tete {{#if bailli.vacant}}vacant{{/if}}" data-tooltip="{{localize 'LAKOUR_LOUPS.Bailli.Aide'}}">
       <i class="fa-solid fa-stamp"></i>
-      {{#if bailli.vacant}}{{#if bailli.succession}}{{localize "LAKOUR_LOUPS.Bailli.Sceau" nom=bailli.succession}}{{else}}{{localize "LAKOUR_LOUPS.Bailli.Vacant"}}{{/if}}
-      {{else}}{{localize "LAKOUR_LOUPS.Bailli.Bandeau" nom=bailli.nom}}{{#if bailli.moi}} <small>({{localize "LAKOUR_LOUPS.Table.Vous"}})</small>{{/if}}{{/if}}
+      {{#if bailli.vacant}}{{#if bailli.succession}}{{loupsT "LAKOUR_LOUPS.Bailli.Sceau" nom=bailli.succession}}{{else}}{{localize "LAKOUR_LOUPS.Bailli.Vacant"}}{{/if}}
+      {{else}}{{loupsT "LAKOUR_LOUPS.Bailli.Bandeau" nom=bailli.nom}}{{#if bailli.moi}} <small>({{localize "LAKOUR_LOUPS.Table.Vous"}})</small>{{/if}}{{/if}}
     </div>
     {{/if}}
     {{#if presage}}<div class="loups-presage" data-tooltip="{{presage.effet}}"><i class="fa-solid fa-cloud-moon"></i> {{presage.nom}}</div>{{/if}}
-    {{#if glas}}<div class="loups-glas" data-tooltip="{{localize 'LAKOUR_LOUPS.Calendrier.GlasAide'}}"><i class="fa-solid fa-bell"></i> {{localize "LAKOUR_LOUPS.Calendrier.Glas" n=glas}}</div>{{/if}}
-    {{#if deuil}}<div class="loups-glas loups-deuil" data-tooltip="{{localize 'LAKOUR_LOUPS.Deuil.Aide'}}"><i class="fa-solid fa-bell"></i> {{localize "LAKOUR_LOUPS.Deuil.Compte" n=deuil.compte}}</div>{{/if}}
+    {{#if glas}}<div class="loups-glas" data-tooltip="{{localize 'LAKOUR_LOUPS.Calendrier.GlasAide'}}"><i class="fa-solid fa-bell"></i> {{loupsT "LAKOUR_LOUPS.Calendrier.Glas" n=glas}}</div>{{/if}}
+    {{#if deuil}}<div class="loups-glas loups-deuil" data-tooltip="{{localize 'LAKOUR_LOUPS.Deuil.Aide'}}"><i class="fa-solid fa-bell"></i> {{loupsT "LAKOUR_LOUPS.Deuil.Compte" n=deuil.compte}}</div>{{/if}}
     {{#if saintMartin}}<div class="loups-presage loups-saint-martin" data-tooltip="{{localize 'LAKOUR_LOUPS.SaintMartin.Aide'}}"><i class="fa-solid fa-church"></i> {{localize "LAKOUR_LOUPS.SaintMartin.Titre"}}</div>{{/if}}
-    {{#if fete}}<div class="loups-presage loups-fete" data-tooltip="{{fete.aide}}"><i class="fa-solid fa-star"></i> {{fete.nom}}{{#if fete.neige}} · <i class="fa-solid fa-snowflake"></i> {{localize "LAKOUR_LOUPS.Fetes.Neige"}}{{/if}}{{#if fete.defile}} · <i class="fa-solid fa-masks-theater"></i> {{localize "LAKOUR_LOUPS.Fetes.Defile" role=fete.defile}}{{/if}}{{#if fete.secrets}} · <small class="loups-mj-seul">{{fete.secrets}}</small>{{/if}}</div>{{/if}}
+    {{#if fete}}<div class="loups-presage loups-fete" data-tooltip="{{fete.aide}}"><i class="fa-solid fa-star"></i> {{fete.nom}}{{#if fete.neige}} · <i class="fa-solid fa-snowflake"></i> {{localize "LAKOUR_LOUPS.Fetes.Neige"}}{{/if}}{{#if fete.defile}} · <i class="fa-solid fa-masks-theater"></i> {{loupsT "LAKOUR_LOUPS.Fetes.Defile" role=fete.defile}}{{/if}}{{#if fete.secrets}} · <small class="loups-mj-seul">{{fete.secrets}}</small>{{/if}}</div>{{/if}}
     <div class="loups-minuteur" aria-live="polite"></div>
     {{#if moi}}
     <div class="loups-moi">
@@ -102,7 +102,7 @@
       <button type="button" class="loups-bouton discret" data-action="voixActiver" data-tooltip="{{localize 'LAKOUR_LOUPS.Preparation.Voix.ActiverAide'}}"><i class="fa-solid fa-microphone"></i> {{localize "LAKOUR_LOUPS.Preparation.Voix.Activer"}}</button>
       {{/if}}
       {{#if preparation.voix.muets}}
-      <span>{{localize "LAKOUR_LOUPS.Preparation.Voix.Muets" noms=preparation.voix.muets}}</span>
+      <span>{{loupsT "LAKOUR_LOUPS.Preparation.Voix.Muets" noms=preparation.voix.muets}}</span>
       <button type="button" class="loups-bouton discret" data-action="voixMicro" data-tooltip="{{localize 'LAKOUR_LOUPS.Preparation.Voix.MicroAide'}}"><i class="fa-solid fa-user-check"></i> {{localize "LAKOUR_LOUPS.Preparation.Voix.Micro"}}</button>
       {{/if}}
     </div>
@@ -121,11 +121,11 @@
       {{#if vote.ouvert}}
       <div class="loups-vote-bandeau">
         <i class="fa-solid fa-scale-balanced"></i>
-        <strong>{{#if vote.chapelle}}{{localize "LAKOUR_LOUPS.Vote.QuestionChapelle"}}{{else if vote.bailli}}{{localize "LAKOUR_LOUPS.Vote.QuestionBailli"}}{{else if vote.exil}}{{localize "LAKOUR_LOUPS.Passage.QuestionExil"}}{{else if vote.banc}}{{localize "LAKOUR_LOUPS.Banc.Question" nom=vote.banc}}{{else}}{{localize "LAKOUR_LOUPS.Vote.EnCours"}}{{/if}}</strong>
-        <span>{{vote.exprimes}} / {{vote.votants}} {{localize "LAKOUR_LOUPS.Vote.OntVote"}}{{#if vote.souffles}} · {{localize "LAKOUR_LOUPS.Souffle.Compte" n=vote.souffles}}{{/if}}</span>
+        <strong>{{#if vote.chapelle}}{{localize "LAKOUR_LOUPS.Vote.QuestionChapelle"}}{{else if vote.bailli}}{{localize "LAKOUR_LOUPS.Vote.QuestionBailli"}}{{else if vote.exil}}{{localize "LAKOUR_LOUPS.Passage.QuestionExil"}}{{else if vote.banc}}{{loupsT "LAKOUR_LOUPS.Banc.Question" nom=vote.banc}}{{else}}{{localize "LAKOUR_LOUPS.Vote.EnCours"}}{{/if}}</strong>
+        <span>{{vote.exprimes}} / {{vote.votants}} {{localize "LAKOUR_LOUPS.Vote.OntVote"}}{{#if vote.souffles}} · {{loupsT "LAKOUR_LOUPS.Souffle.Compte" n=vote.souffles}}{{/if}}</span>
         {{#if vote.double}}<span class="loups-pastille cloche"><i class="fa-solid fa-bell"></i> {{localize "LAKOUR_LOUPS.Vote.Double"}}</span>{{/if}}
         {{#if vote.majoriteAbsolue}}<span class="loups-pastille gibet">{{localize "LAKOUR_LOUPS.Vote.MajoriteAbsolue"}}</span>{{/if}}
-        {{#if vote.voixDouble}}<span class="loups-pastille bailli"><i class="fa-solid fa-stamp"></i> {{localize "LAKOUR_LOUPS.Bailli.VoixDouble" nom=vote.voixDouble}}</span>{{/if}}
+        {{#if vote.voixDouble}}<span class="loups-pastille bailli"><i class="fa-solid fa-stamp"></i> {{loupsT "LAKOUR_LOUPS.Bailli.VoixDouble" nom=vote.voixDouble}}</span>{{/if}}
         {{#if vote.mainLevee}}<span class="loups-pastille jour"><i class="fa-solid fa-hand"></i> {{localize "LAKOUR_LOUPS.Vote.MainLevee"}}</span>{{/if}}
         {{#if vote.souffle}}{{#if vote.peutVoter}}<span class="loups-pastille mort"><i class="fa-solid fa-wind"></i> {{localize "LAKOUR_LOUPS.Souffle.Voter"}}</span>{{/if}}{{/if}}
         {{#if vote.peutVoter}}<button type="button" class="loups-bouton discret" data-action="abstenir">{{localize "LAKOUR_LOUPS.Vote.Abstention"}}</button>{{/if}}
@@ -164,7 +164,7 @@
           <div class="loups-mj-boutons">
             <button type="button" data-action="reveler" data-id="{{id}}" title="{{localize 'LAKOUR_LOUPS.Table.Reveler'}}"><i class="fa-solid fa-eye"></i></button>
             <button type="button" data-action="eliminer" data-id="{{id}}" title="{{localize 'LAKOUR_LOUPS.Table.Eliminer'}}"><i class="fa-solid fa-skull"></i></button>
-            {{#if crier}}<button type="button" data-action="crier" data-id="{{id}}" title="{{localize 'LAKOUR_LOUPS.Table.CrierPour' nom=nom}}"><i class="fa-solid fa-biohazard"></i></button>{{/if}}
+            {{#if crier}}<button type="button" data-action="crier" data-id="{{id}}" title="{{loupsT 'LAKOUR_LOUPS.Table.CrierPour' nom=nom}}"><i class="fa-solid fa-biohazard"></i></button>{{/if}}
             {{#if faireQuitter}}<button type="button" data-action="faireQuitter" data-id="{{id}}" title="{{localize 'LAKOUR_LOUPS.Passage.FaireQuitter'}}"><i class="fa-solid fa-door-open"></i></button>{{/if}}
           </div>
           {{/if}}
@@ -203,7 +203,7 @@
       <section class="loups-encart loups-banc">
         <h3><i class="fa-solid fa-hand-point-right"></i> {{localize "LAKOUR_LOUPS.Banc.Titre"}}</h3>
         {{#if banc.accusations.length}}
-        <ul class="loups-journal">{{#each banc.accusations}}<li class="{{#if juge}}fait{{/if}}">{{localize "LAKOUR_LOUPS.Banc.Ligne" nom=parNom contre=contreNom}}{{#if juge}} <small>({{localize "LAKOUR_LOUPS.Banc.Juge"}})</small>{{/if}}</li>{{/each}}</ul>
+        <ul class="loups-journal">{{#each banc.accusations}}<li class="{{#if juge}}fait{{/if}}">{{loupsT "LAKOUR_LOUPS.Banc.Ligne" nom=parNom contre=contreNom}}{{#if juge}} <small>({{localize "LAKOUR_LOUPS.Banc.Juge"}})</small>{{/if}}</li>{{/each}}</ul>
         {{else}}<p class="loups-vide">{{localize "LAKOUR_LOUPS.Banc.Vide"}}</p>{{/if}}
         {{#if accusation}}{{#if accusation.ok}}
         <div class="loups-declarer">
@@ -224,7 +224,7 @@
       </section>
       {{/if}}
 
-      {{#if conteuse}}<p class="loups-alerte"><i class="fa-solid fa-book-open-reader"></i> {{localize "LAKOUR_LOUPS.Table.Conteuse" nom=conteuse}}</p>{{/if}}
+      {{#if conteuse}}<p class="loups-alerte"><i class="fa-solid fa-book-open-reader"></i> {{loupsT "LAKOUR_LOUPS.Table.Conteuse" nom=conteuse}}</p>{{/if}}
       {{#if appel}}<p class="loups-alerte"><i class="fa-solid fa-chalkboard-user"></i> {{localize "LAKOUR_LOUPS.Table.Appel"}} {{appel}}</p>{{/if}}
       {{#if effets.length}}
       <section class="loups-encart">
@@ -242,23 +242,23 @@
         </ol>
         {{/if}}
         <p class="loups-verdict">
-          {{#if vote.resultat.departage.enAttente}}<i class="fa-solid fa-hourglass-half"></i> {{localize "LAKOUR_LOUPS.Bailli.Tranchera" nom=vote.resultat.departage.nom}}
+          {{#if vote.resultat.departage.enAttente}}<i class="fa-solid fa-hourglass-half"></i> {{loupsT "LAKOUR_LOUPS.Bailli.Tranchera" nom=vote.resultat.departage.nom}}
           {{else if vote.resultat.personne}}{{#if vote.resultat.bailli}}{{localize "LAKOUR_LOUPS.Bailli.Personne"}}{{else if vote.resultat.egalite}}{{localize "LAKOUR_LOUPS.Vote.Egalite"}}{{else}}{{localize "LAKOUR_LOUPS.Journal.VoteNul"}}{{/if}}
           {{else if vote.resultat.bailli}}{{localize "LAKOUR_LOUPS.Bailli.EluCourt"}} <strong>{{vote.resultat.elus}}</strong>{{#if vote.resultat.sort}} <small>({{localize "LAKOUR_LOUPS.Bailli.ParLeSort"}})</small>{{/if}}
           {{else}}{{localize "LAKOUR_LOUPS.Vote.Designe"}} <strong>{{vote.resultat.elus}}</strong>{{/if}}
-          {{#if vote.resultat.departage.choix}}<br><small><i class="fa-solid fa-stamp"></i> {{localize "LAKOUR_LOUPS.Bailli.TrancheCourt" nom=vote.resultat.departage.nom}}</small>{{/if}}
-          {{#if vote.resultat.banc}}<br><small><i class="fa-solid fa-hand-point-right"></i> {{#if vote.resultat.banc.condamne}}{{localize "LAKOUR_LOUPS.Banc.Condamne" nom=vote.resultat.banc.nom pour=vote.resultat.banc.pour total=vote.resultat.banc.total}}{{else}}{{localize "LAKOUR_LOUPS.Banc.Acquitte" nom=vote.resultat.banc.nom pour=vote.resultat.banc.pour total=vote.resultat.banc.total}}{{/if}}</small>{{/if}}
-          {{#if vote.resultat.deuil}}<br><small><i class="fa-solid fa-bell"></i> {{localize "LAKOUR_LOUPS.Deuil.Voix" nom=vote.resultat.deuil}}</small>{{/if}}
+          {{#if vote.resultat.departage.choix}}<br><small><i class="fa-solid fa-stamp"></i> {{loupsT "LAKOUR_LOUPS.Bailli.TrancheCourt" nom=vote.resultat.departage.nom}}</small>{{/if}}
+          {{#if vote.resultat.banc}}<br><small><i class="fa-solid fa-hand-point-right"></i> {{#if vote.resultat.banc.condamne}}{{loupsT "LAKOUR_LOUPS.Banc.Condamne" nom=vote.resultat.banc.nom pour=vote.resultat.banc.pour total=vote.resultat.banc.total}}{{else}}{{loupsT "LAKOUR_LOUPS.Banc.Acquitte" nom=vote.resultat.banc.nom pour=vote.resultat.banc.pour total=vote.resultat.banc.total}}{{/if}}</small>{{/if}}
+          {{#if vote.resultat.deuil}}<br><small><i class="fa-solid fa-bell"></i> {{loupsT "LAKOUR_LOUPS.Deuil.Voix" nom=vote.resultat.deuil}}</small>{{/if}}
         </p>
         {{#if vote.resultat.departage.candidats.length}}
         <div class="loups-actions loups-trancher">
-          <span class="loups-etiquette">{{localize "LAKOUR_LOUPS.Table.TrancherPour" nom=vote.resultat.departage.nom}}</span>
+          <span class="loups-etiquette">{{loupsT "LAKOUR_LOUPS.Table.TrancherPour" nom=vote.resultat.departage.nom}}</span>
           {{#each vote.resultat.departage.candidats}}<button type="button" class="loups-bouton discret" data-action="trancher" data-id="{{id}}"><i class="fa-solid fa-stamp"></i> {{nom}}</button>{{/each}}
           <button type="button" class="loups-bouton discret" data-action="trancher" data-id="">{{localize "LAKOUR_LOUPS.Table.Personne"}}</button>
         </div>
         {{/if}}
         {{#if gm}}{{#each vote.resultat.condamnes}}
-        <button type="button" class="loups-bouton" data-action="executer" data-id="{{id}}"><i class="fa-solid fa-gavel"></i> {{localize "LAKOUR_LOUPS.Etapes.executer" nom=nom}}</button>
+        <button type="button" class="loups-bouton" data-action="executer" data-id="{{id}}"><i class="fa-solid fa-gavel"></i> {{loupsT "LAKOUR_LOUPS.Etapes.executer" nom=nom}}</button>
         {{/each}}{{/if}}
       </section>
       {{/if}}
@@ -308,7 +308,7 @@
           {{/if}}
           {{#if passage}}<button type="button" data-action="accueillir" {{#unless passage.accueil.ok}}disabled data-tooltip="{{passage.accueil.raisonTexte}}"{{/unless}}><i class="fa-solid fa-person-walking-luggage"></i> {{localize "LAKOUR_LOUPS.Passage.Accueillir"}}</button>{{/if}}
           <button type="button" data-action="victoire"><i class="fa-solid fa-crown"></i> {{localize "LAKOUR_LOUPS.Table.VerifierVictoire"}}</button>
-          {{#if emporteur}}<button type="button" data-action="emporter" data-id="{{emporteur.id}}"><i class="fa-solid fa-person-falling"></i> {{localize "LAKOUR_LOUPS.Etapes.emporter" nom=emporteur.nom}}</button>
+          {{#if emporteur}}<button type="button" data-action="emporter" data-id="{{emporteur.id}}"><i class="fa-solid fa-person-falling"></i> {{loupsT "LAKOUR_LOUPS.Etapes.emporter" nom=emporteur.nom}}</button>
           <button type="button" data-action="emporterPersonne" data-id="{{emporteur.id}}">{{localize "LAKOUR_LOUPS.Table.Personne"}}</button>{{/if}}
           <button type="button" data-action="miseEnScene" title="{{localize 'LAKOUR_LOUPS.Table.MiseEnSceneAide'}}"><i class="fa-solid fa-chess-board"></i> {{localize "LAKOUR_LOUPS.Table.MiseEnScene"}}</button>
           {{#if saints}}

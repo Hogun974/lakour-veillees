@@ -449,7 +449,7 @@
     },
     "Jour": {
       "Verrou": "{qui} forges a lock for {nom}'s house: next night, the first wolf attack against it will fail.",
-      "Meule": "{qui} asks the millstone: {n} wolf(s) still live in Brumecombe.",
+      "Meule": "{qui} asks the millstone: {n} (wolf|wolves) still (lives|live) in Brumecombe.",
       "Garde": "{qui} keeps an eye on {nom}: next night, {nom} cannot target any house but their own.",
       "Benediction": "{qui} blesses {nom}: nobody can silence them any more, and they speak first at the next debate.",
       "TracesOui": "{qui} followed {nom}'s tracks: {nom} left their house last night.",
@@ -487,8 +487,8 @@
       "IndiceVoisins": "two neighbouring houses were visited last night.",
       "IndiceSauve": "someone escaped death last night.",
       "IndicePasSauve": "nobody escaped death last night.",
-      "MoulinPrive": "The Mill's stone whispers that {n} wolf(s) remain alive.",
-      "MoulinPublic": "The Mill's sails have counted: {n} wolf(s) still live in Brumecombe.",
+      "MoulinPrive": "The Mill's stone whispers that {n} (wolf|wolves) (remains|remain) alive.",
+      "MoulinPublic": "The Mill's sails have counted: {n} (wolf|wolves) still (lives|live) in Brumecombe.",
       "Lavoir": "At the wash-house, they say that {indice}",
       "Cimetiere": "The graves speak: {nom} belonged to the {camp} side.",
       "InviteTexte": "Your last word, ten words at most: the narrator will read it to the village.",
@@ -618,7 +618,7 @@
       "chapelle": "Chapel vote",
       "rejouer": "Play again",
       "Detail": {
-        "voixManquantes": "({n} votes still missing)",
+        "voixManquantes": "({n} (vote|votes) still missing)",
         "juge": "The Justice of the Peace ({nom}) may still cancel this vote.",
         "emporter": "{nom} chooses whom to take along (or no one).",
         "sansSecrets": "This browser does not hold the night's secrets.",
@@ -653,7 +653,7 @@
         "village": "Favours the village ({somme})",
         "meute": "Favours the pack ({somme})"
       },
-      "Loups": "{n} wolf/wolves, {conseil} advised",
+      "Loups": "{n} (wolf|wolves), {conseil} advised",
       "Trop": "More roles than seats: remove some.",
       "Distribuer": "Deal",
       "PersonneConnecte": "No player connected.",
@@ -671,7 +671,7 @@
     },
     "Recit": {
       "Titre": "The tale of the vigil",
-      "Resume": "{n} villagers, {tours} round(s) in the mist. The cards turn over:",
+      "Resume": "{n} (villager|villagers), {tours} round(s) in the mist. The cards turn over:",
       "Survivant": "alive on the last morning",
       "Mort": "died in round {tour}, {cause}",
       "IA": "AI player",

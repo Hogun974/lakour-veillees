@@ -241,7 +241,7 @@ Hooks.once("init", () => {
 Hooks.on("lakourStyleVisuel", async style => {
   if (game.user !== game.users.activeGM || game.system.id !== SYSTEME) return;
   const n = await appliquerStyle(style);
-  if (n) ui.notifications.info(game.i18n.format("LAKOURVEIL.StyleApplique", { n }));
+  if (n) ui.notifications.info(game.i18n.format(n === 1 ? "LAKOURVEIL.StyleApplique1" : "LAKOURVEIL.StyleApplique", { n }));   // 1 carte, 2 cartes
 });
 
 // Un villageois ou une carte importés plus tard du compendium arrivent en version plate.

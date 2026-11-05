@@ -12,8 +12,10 @@
 // Aucun réseau.  Lancer : npm run essais
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
-import { fabriquer, fabriquerAnglais, lireDictionnaires, manifesteAnglais, libellesDeCompositions, CLES_NON_TRADUITES, MODULE_EN, OPTIONS_TRADUCTION, TYPE_PACK } from "../outils/fabriquer-veillees.mjs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { fabriquer, fabriquerAnglais, lireDictionnaires, manifesteAnglais, libellesDeCompositions, CLES_NON_TRADUITES, MODULE_EN, OPTIONS_TRADUCTION, TYPE_PACK,
+  BATIMENTS_ATTENDUS, cartesAnglaises, lireLibellesDeCartes, traduireSVG } from "../outils/fabriquer-veillees.mjs";
+import { textesGraves } from "../modules/lakour-veillees/contenu/cartes.mjs";
 import { compositions } from "../modules/lakour-veillees/contenu/compositions.mjs";
 import { FETES_VEILLEES, MODULE_FETES, textesDeFete } from "../modules/lakour-veillees/scripts/fetes.js";
 import { ANGLAIS, ID, ID_FRANCAIS } from "../modules/lakour-veillees/scripts/identite.js";
@@ -194,4 +196,36 @@ test("lakour-veillees-en sur le disque (si fabriqué) : contrat des modules de c
   assert.deepEqual(lire("assets/equilibre.json"), lireFr("assets/equilibre.json"));
   assert.ok(existsSync(new URL(`../modules/${MODULE_EN}/scripts/identite.js`, import.meta.url)));
   assert.equal(lire("module.json").id, MODULE_EN);
+});
+
+// Cartes anglaises : les fonds SVG du module anglais sont redessinés avec contenu/en/cartes.json (outils/fabriquer-veillees.mjs).
+// Libellés français connus : tous ceux du dictionnaire des cartes dont l'anglais diffère, plus les noms français des bâtiments.
+const libellesCartes = lireLibellesDeCartes();
+const francaisConnus = [...Object.entries(libellesCartes).filter(([fr, en]) => fr !== en).map(([fr]) => fr), ...BATIMENTS_ATTENDUS];
+const textesAnglais = svg => textesGraves(svg);
+
+test("cartes anglaises : chaque libellé gravé a sa traduction, aucun texte français connu, noms des épingles anglaises", () => {
+  const { fichiers, erreurs } = cartesAnglaises(libellesCartes);
+  assert.deepEqual(erreurs, []);
+  assert.deepEqual(fichiers.map(f => f.chemin).sort(), ["cartes/3d/village-de-brumecombe.svg", "cartes/village-de-brumecombe.svg"]);
+  const epingles = en("scenes:village-de-brumecombe").notes.map(n => n.text);
+  for (const { chemin, svg } of fichiers) {
+    const textes = textesAnglais(svg);
+    for (const t of textes) assert.ok(!francaisConnus.includes(t), `${chemin} : « ${t} » gravé en français`);
+    for (const nom of epingles) assert.ok(textes.includes(nom), `${chemin} : « ${nom} » (épingle) absent du fond`);
+    assert.ok(textes.includes("Village square"), chemin);
+  }
+  // Le contrôle mord : un libellé sans entrée ou un libellé laissé en français est signalé.
+  const { Puits, ...sansPuits } = libellesCartes;
+  assert.ok(cartesAnglaises(sansPuits).erreurs.some(e => e.includes("« Puits »")));
+  assert.ok(traduireSVG("<svg><text>Lavoir</text><text><tspan>Mot inconnu</tspan></text></svg>", libellesCartes).inconnus.includes("Mot inconnu"));
+});
+
+test("lakour-veillees-en sur le disque (si fabriqué) : aucune image de carte du module anglais ne contient de texte français connu", { skip: !surLeDisque && "npm run fabriquer-veillees-en n'a pas tourné" }, () => {
+  const assets = new URL(`../modules/${MODULE_EN}/assets/`, import.meta.url);
+  const svgs = readdirSync(assets, { recursive: true }).map(f => String(f).replaceAll("\\", "/")).filter(f => f.endsWith(".svg"));
+  assert.ok(svgs.includes("cartes/village-de-brumecombe.svg") && svgs.includes("cartes/3d/village-de-brumecombe.svg"));
+  for (const f of svgs) {
+    for (const t of textesAnglais(readFileSync(new URL(f, assets), "utf8"))) assert.ok(!francaisConnus.includes(t), `${f} : « ${t} » gravé en français (relancer npm run fabriquer-veillees-en)`);
+  }
 });

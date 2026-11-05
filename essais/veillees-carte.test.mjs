@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { fabriquer, verifierCarte, BATIMENTS_ATTENDUS } from "../outils/fabriquer-veillees.mjs";
 import { CLE_VILLAGE, PLAN_VILLAGE, MAISONS, decorVillage as decor } from "../modules/lakour-veillees/contenu/village.mjs";
-import { fondSVG, scene } from "../modules/lakour-veillees/contenu/cartes.mjs";
+import { fondSVG, scene, textesGraves } from "../modules/lakour-veillees/contenu/cartes.mjs";
 import { reperesDuPlan, trouverRepere } from "../modules/lakour-mj-ia/scripts/placement.js";
 
 const M = "lakour-veillees";
@@ -66,6 +66,21 @@ test("scène v14 : grille de 1,5 m, aucun mur sur la place, lumières, tout le v
     assert.ok((x1 === x2 && (x1 === 0 || x1 === L)) || (y1 === y2 && (y1 === 0 || y1 === H)), `mur intérieur ${w.c}`);
   }
   for (const d of village.drawings) assert.ok(d.hidden && d.author, "étiquettes des pièces : MJ seulement, avec un auteur");
+});
+
+test("étiquettes des pièces : pas de doublon d'un libellé gravé, aucun texte affiché par-dessus un autre (place, Puits)", () => {
+  const graves = new Set(textesGraves(fondSVG(PLAN_VILLAGE, "2d", decor).svg));
+  const pieces = village.drawings.filter(d => d.text);
+  // Le placement du MJ IA lit les pièces dans les dessins cachés : « Brumecombe » et « Place du village » restent.
+  assert.deepEqual(pieces.map(d => d.text).sort(), ["Brumecombe", "Place du village"]);
+  const affiches = pieces.filter(d => (d.textAlpha ?? 1) > 0);
+  for (const d of affiches) assert.ok(!graves.has(d.text), `« ${d.text} » est déjà gravé sur le fond : texte affiché en double`);
+  // Foundry écrit le texte d'un dessin au centre de son rectangle : deux textes affichés ne doivent pas tomber au même endroit.
+  const centre = d => [d.x + d.shape.width / 2, d.y + d.shape.height / 2];
+  for (let i = 0; i < affiches.length; i++) for (let j = i + 1; j < affiches.length; j++) {
+    const [[x1, y1], [x2, y2]] = [centre(affiches[i]), centre(affiches[j])];
+    assert.ok(Math.abs(y1 - y2) > 60 || Math.abs(x1 - x2) > 400, `« ${affiches[i].text} » et « ${affiches[j].text} » se chevauchent`);
+  }
 });
 
 test("fonds plat et relief : présents, à jour, autonomes (aucune ressource extérieure), avec le décor du village", () => {

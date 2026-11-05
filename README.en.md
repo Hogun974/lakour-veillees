@@ -99,13 +99,17 @@ La Kour — Les Veillées de Brumecombe › Install.
 ### 2. A ready-made empty world
 
 A world that is already configured (system, modules enabled, content installed, village map in place) is published with each
-release. In **Game Worlds › Install World**, paste:
+release, as an archive: Foundry 14 no longer installs a world from a manifest URL (the **Game Worlds** tab only offers
+**Create World**).
 
-```
-https://github.com/Hogun974/lakour-veillees/releases/latest/download/world.json
-```
+1. First install the system and both modules from their manifests (way 1): the world requires them.
+2. Download `la-kour-veillees-en.zip` (English) or `la-kour-veillees.zip` (French) from the
+   [latest release](https://github.com/Hogun974/lakour-veillees/releases/latest).
+3. Unzip it into `Data/worlds/la-kour-veillees-en/` (or `Data/worlds/la-kour-veillees/`) inside Foundry's data folder
+   (**Configuration › User Data Path**; on a hosting service, its file manager): `world.json` directly in that folder.
+4. **Restart Foundry**: the world then appears in **Game Worlds**.
 
-The system and the modules are offered for installation if missing. The world is empty: no game, no player, no chronicle.
+The world is empty: no game, no player, no chronicle.
 Its only user, **Gamemaster**, has no password: **set one** (Configuration › Users) **before inviting anyone**, or any guest
 can log in as GM.
 

@@ -43,9 +43,13 @@ The screenshots below show the French interface; every label quoted here is the 
 
 ## 2. Installing the game
 
-Two paths. The empty world (2.b) is the shortest: it comes with everything already set up.
+First the system and the modules, from their manifests (2.a). Then two paths: the **empty world** (2.b, path A), the
+shortest, which comes with everything already set up; or **your own world** (2.c, path B).
 
-### 2.a With the manifests
+> **Foundry 14 no longer installs a world from its manifest URL**: the **Game Worlds** tab only offers **Create World**.
+> The empty world is therefore distributed as an archive to unzip.
+
+### 2.a The system and the modules, from the manifests
 
 In Foundry's setup screen (before launching a world):
 
@@ -61,28 +65,22 @@ In Foundry's setup screen (before launching a world):
    The first is the engine (*La Kour – MJ IA*), the second the English content (*La Kour — The Vigils of Brumecombe*). For
    the French content, use `…/releases/latest/download/module.json` instead. Install the engine first: the system declares
    it as required.
-3. **Game Worlds › Create World**, system **Les Veillées de Brumecombe**. Launch it and log in as **Gamemaster**.
-4. **Manage Modules**: enable **La Kour – MJ IA** and **La Kour — The Vigils of Brumecombe**, save (the world reloads).
-5. When asked "Install The Vigils of Brumecombe content in this world?", answer yes. Otherwise: **Game Settings › Configure
-   Settings › La Kour — The Vigils of Brumecombe › Install**. The player's guide, the narrator's guide (hidden), the variants,
-   the book of Brumecombe and the village map are imported into the world; roles, trades, buildings and tables stay in the
-   compendiums.
-6. On this path, the AI GM settings keep their factory values (autonomy set to *Human GM approval*, a 10-dollar budget):
-   switch **autonomy** to *Autonomous* and pick the **personality** as in § 7.
 
 ![The manifest pasted in "Install System"](docs/captures/tuto-manifeste.png)
 
-### 2.b The ready-made empty world
+### 2.b Path A — the ready-made empty world
 
-In the setup screen: **Game Worlds › Install World**, paste:
+1. The system and both modules must be installed (§ 2.a): the world requires them and does not bring them.
+2. **Download** `la-kour-veillees-en.zip` from the latest release: <https://github.com/Hogun974/lakour-veillees/releases/latest> (*Assets*
+   section). The French world is `la-kour-veillees.zip`.
+3. **Find Foundry's data folder**: setup screen › **Configuration** tab › **User Data Path** field. On a hosting service,
+   use its file manager.
+4. **Unzip** the archive into a new folder `Data/worlds/la-kour-veillees-en/` (the folder name is the world's id;
+   `Data/worlds/la-kour-veillees/` for the French one): `world.json` must sit directly inside it, not in a subfolder.
+5. **Restart Foundry** (the server or the application): it only sees a new world folder at startup. The world
+   **La Kour — The Vigils of Brumecombe (English)** then appears in **Game Worlds**.
 
-```
-https://github.com/Hogun974/lakour-veillees/releases/latest/download/world-en.json
-```
-
-(The French world is `…/releases/latest/download/world.json`.) Foundry offers to install the system and the modules if they
-are missing: accept. The world **La Kour — The Vigils of Brumecombe (English)** comes with its modules enabled, the content
-installed, the village map in place and the recommended settings:
+It comes with its modules enabled, the content installed, the village map in place and the recommended settings:
 
 | Setting | Value in the empty world |
 |---|---|
@@ -100,17 +98,27 @@ needed, Foundry merely lists the missing ones.
 The world is **empty**: no game, no player, no chronicle, and a single user, **Gamemaster**, **with no password**. Go straight
 to § 4 before giving the server address to anyone.
 
+### 2.c Path B — your own world
+
+1. **Game Worlds › Create World**, system **Les Veillées de Brumecombe**. Launch it and log in as **Gamemaster**.
+2. **Manage Modules**: enable **La Kour – MJ IA** and **La Kour — The Vigils of Brumecombe**, save (the world reloads).
+3. When asked "Install The Vigils of Brumecombe content in this world?", answer yes. Otherwise: **Game Settings › Configure
+   Settings › La Kour — The Vigils of Brumecombe › Install**. The player's guide, the narrator's guide (hidden), the variants,
+   the book of Brumecombe and the village map are imported into the world; roles, trades, buildings and tables stay in the
+   compendiums.
+4. On this path, the AI GM settings keep their factory values (autonomy set to *Human GM approval*, a 10-dollar budget):
+   switch **autonomy** to *Autonomous* and pick the **personality** as in § 7.
+
 ## 3. The English edition
 
 Everything exists in English: the interface (system, module, engine) follows Foundry's language, and the content (roles,
 guides, variants, tables) has its twin module **`lakour-veillees-en`** (*La Kour — The Vigils of Brumecombe*), with the same
 documents and identifiers as the French module.
 
-- **English empty world** (simplest): **Install World** with
-  ```
-  https://github.com/Hogun974/lakour-veillees/releases/latest/download/world-en.json
-  ```
-  It installs and enables `lakour-veillees-en` instead of the French module.
+- **English empty world** (simplest): archive `la-kour-veillees-en.zip` from the
+  [latest release](https://github.com/Hogun974/lakour-veillees/releases/latest), unzipped into `Data/worlds/la-kour-veillees-en/` as in § 2.b, then
+  restart Foundry. It requires and enables `lakour-veillees-en` (install it first from its manifest, below) instead of the
+  French module.
 - **With the manifests**: install the English module (step 2 of § 2.a):
   ```
   https://github.com/Hogun974/lakour-veillees/releases/latest/download/lakour-veillees-en.json
@@ -139,8 +147,6 @@ secret notebook and night choice windows.
 5. Send each player the server address, their account name and their password. Nothing to install on their side.
 
 The player's guide (a journal in the world) explains the rules to your players; have them read it before the first vigil.
-
-![User Management: one Player account per person, each with its own password](docs/captures/tuto-comptes.png)
 
 ## 5. The vault backup key
 
@@ -317,6 +323,7 @@ Guide** (journals in the world).
 | Symptom | What to do |
 |---|---|
 | "Dependency not found" when installing the system | Install the `lakour-mj-ia` engine first, from its manifest (§ 2.a). |
+| The empty world does not appear in **Game Worlds** | Foundry was not restarted, or the archive is in the wrong place: you need `Data/worlds/la-kour-veillees-en/world.json` (no extra subfolder). Restart Foundry. |
 | "No player to deal roles to" | Players must be **connected** and ticked in the Game Table; a GM account does not count. |
 | "Download your backup key now" window on every load | Download it (§ 5); then it stops. |
 | "Vault locked in this browser", "secrets not up to date" | This browser lacks the key: **Import a backup key** (Settings › MJ IA › Vault), or connect another GM who has it. Do not start a new game meanwhile. |

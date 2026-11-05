@@ -10,11 +10,12 @@ import { MODULE, STATS, identifiant } from "./aides.mjs";
 export const TAILLE = 100;     // pixels par case
 export const DISTANCE = 1.5;   // mètres par case (grille du système lakour-loups)
 
-// Fond complet : rendu commun + décor (SVG inséré avant </svg>), pour un style "2d" ou "3d".
-export function fondSVG(plan, style, decor) {
+// Fond complet : rendu commun + décor (SVG inséré avant </svg>), pour un style "2d" ou "3d". traduire (facultatif) : libellé
+// français gravé -> libellé affiché, passé au décor (fonds du module anglais : outils/fabriquer-veillees.mjs).
+export function fondSVG(plan, style, decor, traduire) {
   const { erreurs, svg } = planVersSVG(plan, { taille: TAILLE, style });
   if (erreurs.length) return { erreurs };
-  const ajout = decor ? decor(plan, { t: TAILLE, style }) : "";
+  const ajout = decor ? decor(plan, { t: TAILLE, style, ...(traduire ? { traduire } : {}) }) : "";
   return { erreurs: [], svg: svg.replace(/<\/svg>$/, `${ajout}</svg>`) };
 }
 
@@ -24,7 +25,16 @@ function ecrire(fichier, texte) {
   if (actuel !== texte) writeFileSync(fichier, texte);
 }
 
+// Libellés gravés d'un SVG : contenu des <text> et <tspan> (entités décodées), dans l'ordre.
+const ENTITES = { "&amp;": "&", "&lt;": "<", "&gt;": ">", "&quot;": '"', "&apos;": "'", "&#39;": "'" };
+export const textesGraves = svg => [...svg.matchAll(/<(?:text|tspan)\b[^>]*>([^<]*)/g)]
+  .map(m => m[1].replace(/&(?:amp|lt|gt|quot|apos|#39);/g, e => ENTITES[e]).trim()).filter(Boolean);
+
+// Fonds dessinés par ce module (une entrée par scène) : le fabricant du module anglais les redessine avec ses libellés.
+export const FONDS = [];
+
 function ecrireFond(cle, plan, decor) {
+  FONDS.push({ cle, plan, decor });
   for (const style of ["2d", "3d"]) {
     const { erreurs, svg } = fondSVG(plan, style, decor);
     if (erreurs.length) throw new Error(`Fond de « ${cle} » (${style}) : ${erreurs.join(" ; ")}`);
@@ -59,7 +69,11 @@ export function scene({ cle, nom, plan, description, decor, visionDesJetons = fa
   s.levels[0].background.src = ecrireFond(cle, plan, decor);
   PLANS[cle] = plan;
   prevoirPlans();
-  s.drawings = s.drawings.filter(d => d.hidden); // restent les étiquettes de pièces (MJ seulement)
+  // Restent les étiquettes de pièces (MJ seulement ; le placement du MJ IA lit leur texte et leur rectangle). Celles dont le nom
+  // est déjà gravé sur le fond (« Brumecombe » au cartouche, « Place du village ») gardent leur texte mais ne l'affichent pas :
+  // sinon il se superpose au centre de la pièce (« Brumecombe », pièce de toute la carte, tombait sur la place, au Puits).
+  const graves = new Set(textesGraves(fondSVG(plan, "2d", decor).svg));
+  s.drawings = s.drawings.filter(d => d.hidden).map(d => (graves.has(d.text) ? { ...d, textAlpha: 0 } : d));
   s.tokenVision = visionDesJetons;
   if (obscurite !== null) s.environment.darknessLevel = obscurite;
   const _id = identifiant(`scenes:${cle}`);

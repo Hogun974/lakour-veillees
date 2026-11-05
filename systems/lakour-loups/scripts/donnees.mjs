@@ -10,17 +10,24 @@ import { ID } from "../logique/constantes.mjs";
 import { normaliserEtat, fusionnerEtat } from "../logique/etat.mjs";
 import { aSonSouffle } from "../logique/souffle.mjs";
 import { normaliserFiche } from "../logique/fiches.mjs";
-import { libelleDeRepere } from "../logique/reperes.mjs";
+import { libelleDeRepere, repereDe } from "../logique/reperes.mjs";
+import { remplir } from "../logique/grammaire.mjs";
 import { estMJActif } from "./canal.mjs";
 import { secretsMJ } from "./secrets.mjs";
 import { mesSecrets } from "./prive.mjs";
 import { secretsAJour } from "./coffre.mjs";
 
-export const t = (cle, donnees) => (donnees ? game.i18n.format(cle, donnees) : game.i18n.localize(cle));
+// Avec des données, le gabarit est rempli par logique/grammaire.mjs plutôt que par game.i18n.format : élision au point
+// d'insertion (« on raconte qu'une seule maison », « que d'Anne ») et accord en nombre (« 1 tour », « 2 tours »).
+// Les gabarits .hbs passent par le même chemin (assistant {{loupsT}}, enregistré par lakour-loups.mjs).
+export const t = (cle, donnees) => (donnees ? remplir(game.i18n.localize(cle), donnees, { langue: game.i18n.lang ?? "fr" }) : game.i18n.localize(cle));
 // Le libellé AFFICHÉ d'une maison ou d'un repère de la carte (« Maison 7 » -> « House 7 » en anglais, logique/reperes.mjs) :
 // pour les fiches, l'infobulle, la Table, le vote, les choix et la carte de rôle. Les clés (system.maison, system.repere) ne
 // changent jamais : le plateau et le MJ IA les lisent par nom.
 export const libelleRepere = nom => libelleDeRepere(nom, t);
+// Une maison numérotée (« Maison 4 ») se nomme elle-même : pas d'étiquette « Maison » devant (sinon « Maison Maison 4 »).
+// Une demeure nommée à la main (« Chapelle », « Le vieux four ») garde son étiquette.
+export const maisonNumerotee = nom => repereDe(nom)?.cle === "maison";
 
 export const tousLesVillageois = () => game.actors.filter(a => a.type === "villageois");
 export const metierDe = acteur => acteur?.items.find(i => i.type === "metier") ?? null;

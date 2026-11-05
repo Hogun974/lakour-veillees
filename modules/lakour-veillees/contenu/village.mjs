@@ -509,8 +509,10 @@ function nuit(t, plan, relief) {
   return s;
 }
 
-// Étiquettes : bâtiments (bandeau), place, rivière, cartouche du titre.
-function etiquettes(t, plan) {
+// Étiquettes : bâtiments (bandeau), place, rivière, cartouche du titre. traduire : libellé français -> libellé affiché (le
+// module anglais redessine ses fonds avec contenu/en/cartes.json : outils/fabriquer-veillees.mjs) ; les bandeaux prennent la
+// largeur du libellé affiché.
+function etiquettes(t, plan, traduire = texte => texte) {
   const bandeau = (texte, cx, cy) => {
     const largeur = texte.length * 19 + 34;
     return `<rect x="${r1(cx - largeur / 2)}" y="${r1(cy - 22)}" width="${r1(largeur)}" height="44" rx="8" fill="#ece2c6" fill-opacity="0.92" stroke="#3a2e1e" stroke-width="3"/>`
@@ -519,28 +521,28 @@ function etiquettes(t, plan) {
   let s = "";
   for (const b of BATIMENTS_CARTE) {
     const dessous = { Pont: [0, 1.0], Puits: [0, 0.55], Gibet: [0, 0.55] }[b.nom] ?? [0, 0.45];
-    s += bandeau(b.nom, (b.x + b.l / 2 + dessous[0]) * t, (b.y + b.h + dessous[1]) * t);
+    s += bandeau(traduire(b.nom), (b.x + b.l / 2 + dessous[0]) * t, (b.y + b.h + dessous[1]) * t);
   }
-  s += `<text x="${19 * t}" y="${r1(19.55 * t)}" text-anchor="middle" font-family="${POLICE}" font-size="44" font-style="italic" fill="#ece2c6" opacity="0.6">Place du village</text>`;
-  s += `<text transform="translate(${r1(32.7 * t)} ${r1(7 * t)}) rotate(90)" text-anchor="middle" font-family="${POLICE}" font-size="46" font-style="italic" fill="#bcd6ea" opacity="0.65" letter-spacing="8">la Brume</text>`;
-  s += `<text transform="translate(${r1(32.7 * t)} ${r1(25 * t)}) rotate(90)" text-anchor="middle" font-family="${POLICE}" font-size="30" font-style="italic" fill="#bcd6ea" opacity="0.5">vers les marais</text>`;
+  s += `<text x="${19 * t}" y="${r1(19.55 * t)}" text-anchor="middle" font-family="${POLICE}" font-size="44" font-style="italic" fill="#ece2c6" opacity="0.6">${esc(traduire("Place du village"))}</text>`;
+  s += `<text transform="translate(${r1(32.7 * t)} ${r1(7 * t)}) rotate(90)" text-anchor="middle" font-family="${POLICE}" font-size="46" font-style="italic" fill="#bcd6ea" opacity="0.65" letter-spacing="8">${esc(traduire("la Brume"))}</text>`;
+  s += `<text transform="translate(${r1(32.7 * t)} ${r1(25 * t)}) rotate(90)" text-anchor="middle" font-family="${POLICE}" font-size="30" font-style="italic" fill="#bcd6ea" opacity="0.5">${esc(traduire("vers les marais"))}</text>`;
   const c = CARTOUCHE, x = c.x * t, y = c.y * t, l = c.l * t, h = c.h * t;
   s += `<rect x="${r1(x)}" y="${r1(y)}" width="${r1(l)}" height="${r1(h)}" rx="14" fill="#1a1612" fill-opacity="0.85" stroke="#b89a5a" stroke-width="5"/>`
     + `<rect x="${r1(x + 14)}" y="${r1(y + 14)}" width="${r1(l - 28)}" height="${r1(h - 28)}" rx="8" fill="none" stroke="#b89a5a" stroke-width="2" opacity="0.7"/>`
-    + `<text x="${r1(x + l / 2)}" y="${r1(y + h * 0.5)}" text-anchor="middle" font-family="${POLICE}" font-size="96" fill="#ece2c6" letter-spacing="6">Brumecombe</text>`
-    + `<text x="${r1(x + l / 2)}" y="${r1(y + h * 0.78)}" text-anchor="middle" font-family="${POLICE}" font-size="34" font-style="italic" fill="#c9b890">les Veillées — une maison par joueur</text>`;
+    + `<text x="${r1(x + l / 2)}" y="${r1(y + h * 0.5)}" text-anchor="middle" font-family="${POLICE}" font-size="96" fill="#ece2c6" letter-spacing="6">${esc(traduire("Brumecombe"))}</text>`
+    + `<text x="${r1(x + l / 2)}" y="${r1(y + h * 0.78)}" text-anchor="middle" font-family="${POLICE}" font-size="34" font-style="italic" fill="#c9b890">${esc(traduire("les Veillées — une maison par joueur"))}</text>`;
   // Rose des vents.
   const rx = 39.6 * t, ry = 28 * t;
   s += `<g opacity="0.75"><circle cx="${r1(rx)}" cy="${r1(ry)}" r="70" fill="#1a1612" fill-opacity="0.6" stroke="#b89a5a" stroke-width="3"/>`
     + `<path d="M${r1(rx)} ${r1(ry - 62)}L${r1(rx + 14)} ${r1(ry)}L${r1(rx)} ${r1(ry + 62)}L${r1(rx - 14)} ${r1(ry)}Z" fill="#ece2c6"/>`
     + `<path d="M${r1(rx - 62)} ${r1(ry)}L${r1(rx)} ${r1(ry - 14)}L${r1(rx + 62)} ${r1(ry)}L${r1(rx)} ${r1(ry + 14)}Z" fill="#b89a5a"/>`
-    + `<text x="${r1(rx)}" y="${r1(ry - 74)}" text-anchor="middle" font-family="${POLICE}" font-size="30" fill="#ece2c6">N</text></g>`;
+    + `<text x="${r1(rx)}" y="${r1(ry - 74)}" text-anchor="middle" font-family="${POLICE}" font-size="30" fill="#ece2c6">${esc(traduire("N"))}</text></g>`;
   return s;
 }
 
-export function decorVillage(plan, { t, style }) {
+export function decorVillage(plan, { t, style, traduire }) {
   const relief = style === "3d";
-  return `<g id="decor-brumecombe">${defsDecor(t, relief)}${sol(t, plan)}${arbres(t, plan, relief)}${batiments(t, plan, relief)}${nuit(t, plan, relief)}${etiquettes(t, plan)}</g>`;
+  return `<g id="decor-brumecombe">${defsDecor(t, relief)}${sol(t, plan)}${arbres(t, plan, relief)}${batiments(t, plan, relief)}${nuit(t, plan, relief)}${etiquettes(t, plan, traduire)}</g>`;
 }
 
 export const CARTES = [

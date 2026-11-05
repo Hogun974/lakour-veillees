@@ -1,0 +1,21 @@
+{
+  "_commentaire": "Libellés gravés dans les fonds de carte SVG (assets/cartes/<cle>.svg et 3d/) : texte français d'un <text>/<tspan> -> texte anglais. outils/fabriquer-veillees.mjs --langue en redessine les fonds du module anglais avec ces libellés (bandeaux à la bonne largeur), traduit tout autre SVG de assets/ qui porte du texte, et s'arrête si un libellé gravé n'a pas d'entrée ici ou si un libellé français reste dans un SVG anglais. Noms des bâtiments : ceux des épingles anglaises (scenes.json). Les nombres (maisons) ne se traduisent pas.",
+  "libelles": {
+    "Chapelle": "The Chapel",
+    "Cimetière": "The Graveyard",
+    "Moulin": "The Mill",
+    "Taverne": "The Tavern",
+    "Forge": "The Forge",
+    "Gibet": "The Gallows",
+    "Puits": "The Well",
+    "Pont": "The Bridge",
+    "Lavoir": "The Washhouse",
+    "Grange": "The Barn",
+    "Place du village": "Village square",
+    "la Brume": "the Brume",
+    "vers les marais": "to the marshes",
+    "Brumecombe": "Brumecombe",
+    "les Veillées — une maison par joueur": "the Vigils — one house per player",
+    "N": "N"
+  }
+}

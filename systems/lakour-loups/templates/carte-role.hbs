@@ -11,7 +11,7 @@
     {{#if victoire}}<div class="carte-role-victoire"><strong><i class="fa-solid fa-trophy"></i> {{localize "LAKOUR_LOUPS.Role.Victoire"}}</strong>{{{victoire}}}</div>{{/if}}
     <ul class="carte-role-details">
       {{#if metier}}<li><i class="fa-solid fa-hammer"></i><strong>{{localize "LAKOUR_LOUPS.Fiche.Metier"}}</strong> <span>{{metier}}</span></li>{{/if}}
-      {{#if maison}}<li><i class="fa-solid fa-door-closed"></i><strong>{{localize "LAKOUR_LOUPS.Fiche.Maison"}}</strong> <span>{{maison}}</span></li>{{/if}}
+      {{#if maison}}{{#if maisonEtiquette}}<li><i class="fa-solid fa-door-closed"></i><strong>{{localize "LAKOUR_LOUPS.Fiche.Maison"}}</strong> <span>{{maison}}</span></li>{{else}}<li class="sans-etiquette"><i class="fa-solid fa-door-closed"></i><span>{{maison}}</span></li>{{/if}}{{/if}}
       {{#if meute}}<li class="meute"><i class="fa-solid fa-paw"></i><strong>{{localize "LAKOUR_LOUPS.Fiche.Meute"}}</strong> <span>{{meute}}</span></li>{{/if}}
       {{#if prime}}<li class="prime"><i class="fa-solid fa-crosshairs"></i><strong>{{localize "LAKOUR_LOUPS.Fiche.Prime"}}</strong> <span>{{prime}}</span></li>{{/if}}
     </ul>

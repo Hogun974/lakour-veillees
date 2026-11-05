@@ -25,6 +25,7 @@ import { linceulDeLaNuit } from "./deuil.mjs";
 import { aveuglePar, masqueDuCarnaval, presentDeLaNuit, neigeDuJour } from "./fetes.mjs";
 import { campInverse } from "./somnambule.mjs";
 import { nuitBlancheTablee } from "./tablee.mjs";
+import { elider, remplir } from "./grammaire.mjs";
 
 export const MATIN = ["aube", "jour"];             // « au matin », « au début d'un débat »
 export const JOURNEE = ["aube", "jour", "vote"];   // « pendant le jour »
@@ -220,7 +221,7 @@ export function appliquerPouvoir({ villageois = [], etat: e, acteurId = "", pouv
       break;
     case "meuniere": {
       const loups = villageois.filter(v => vivant(v) && v.camp === "meute").length;
-      annonce("Meule", `${qui} interroge la meule : ${loups} loup(s) vivent encore à Brumecombe.`, { qui, n: loups });
+      annonce("Meule", remplir("{qui} interroge la meule : {n} loup(s) (vit|vivent) encore à Brumecombe.", { qui, n: loups }), { qui, n: loups });
       break;
     }
     case "garde":
@@ -452,9 +453,9 @@ export function annoncesDeLAube({ villageois = [], etat: e, tour, bilan = null, 
     const loups = villageois.filter(v => vivant(v) && v.camp === "meute").length;
     const meunieres = villageois.filter(v => vivant(v) && v.metier?.cle === "meuniere");
     if (meunieres.length) {
-      for (const m of meunieres) sortie.prives.push(msg(m.id, "MoulinPrive", `La meule du Moulin vous souffle qu'il reste ${loups} loup(s) vivant(s).`, { n: loups }));
+      for (const m of meunieres) sortie.prives.push(msg(m.id, "MoulinPrive", remplir("La meule du Moulin vous souffle qu'il reste {n} loup(s) vivant(s).", { n: loups }), { n: loups }));
     } else if (n % 2 === 0) {
-      sortie.annonces.push(msg("public", "MoulinPublic", `Les ailes du Moulin ont compté : ${loups} loup(s) vivent encore à Brumecombe.`, { n: loups }));
+      sortie.annonces.push(msg("public", "MoulinPublic", remplir("Les ailes du Moulin ont compté : {n} loup(s) (vit|vivent) encore à Brumecombe.", { n: loups }), { n: loups }));
     }
   }
   if (enJeu.includes("lavoir") && neigeDuJour(etat, n)) {
@@ -462,7 +463,7 @@ export function annoncesDeLAube({ villageois = [], etat: e, tour, bilan = null, 
     sortie.annonces.push(msg("public", "LavoirNeige", "Le lavoir est gelé : on n'y parle que de la neige, qui a tout recouvert."));
   } else if (enJeu.includes("lavoir")) {
     const indice = indiceFlou({ bilan, villageois, hasard });
-    sortie.annonces.push(msg("public", "Lavoir", `Au lavoir, on raconte que ${indice.texte}`, { indice }));
+    sortie.annonces.push(msg("public", "Lavoir", `Au lavoir, on raconte ${elider("que", indice.texte)}`, { indice }));
   }
   if (enJeu.includes("cimetiere") && !revelerALaMort) {
     for (const v of villageois.filter(v => !vivant(v) && !v.revele && !etat.cimetiere.includes(v.id))) {

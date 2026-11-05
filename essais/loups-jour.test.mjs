@@ -92,7 +92,7 @@ test("Forgeron : un verrou public ; la nuit suivante, la PREMIÈRE attaque de lo
 
 test("Meunière : annonce le nombre de loups vivants (mordus compris)", () => {
   const vs = village().map(x => x.id === "y" ? { ...x, camp: "meute" } : x.id === "l2" ? { ...x, vivant: false } : x);
-  assert.match(agir(vs, etatDuJour(), "l1", "meuniere").annonces[0].texte, /: 2 loup\(s\) vivent encore/);
+  assert.match(agir(vs, etatDuJour(), "l1", "meuniere").annonces[0].texte, /: 2 loups vivent encore/);
 });
 
 test("Garde du guet : la nuit suivante, le gardé ne vise que sa maison ; gardé, un loup ne chasse pas (la meute chasse sans lui)", () => {
@@ -345,7 +345,7 @@ test("Moulin, Lavoir, Cimetière à l'aube : la Meunière vivante apprend en sec
   assert.deepEqual(avec.annonces, []);
   const sans = vs.map(x => x.id === "l1" ? { ...x, vivant: false } : x);
   assert.deepEqual(L.annoncesDeLAube({ villageois: sans, etat: e, tour: 1, batiments: ["moulin"] }).annonces, [], "matin impair");
-  assert.match(L.annoncesDeLAube({ villageois: sans, etat: e, tour: 2, batiments: ["moulin"] }).annonces[0].texte, /1 loup\(s\) vivent encore/);
+  assert.match(L.annoncesDeLAube({ villageois: sans, etat: e, tour: 2, batiments: ["moulin"] }).annonces[0].texte, /: 1 loup vit encore à Brumecombe/);
   assert.match(L.annoncesDeLAube({ villageois: vs, etat: e, tour: 1, bilan: null, batiments: ["lavoir"] }).annonces[0].texte, /^Au lavoir, on raconte que /);
   const morts = vs.map(x => x.id === "l2" ? { ...x, vivant: false } : x.id === "x" ? { ...x, vivant: false, revele: true } : x);
   const cim = L.annoncesDeLAube({ villageois: morts, etat: e, tour: 1, batiments: ["cimetiere"], revelerALaMort: false });

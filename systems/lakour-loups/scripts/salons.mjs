@@ -14,7 +14,8 @@
 // des gens qu'on ne doit pas entendre sont coupés LOCALEMENT
 // (pistes du flux distant désactivées, élément <video> muet, voyant « parle » éteint : rien ne trahit un loup qui parle la
 // nuit), et son propre micro est coupé quand on doit se taire (AVMaster#broadcast et AVClient#toggleBroadcast enveloppés
-// sur l'instance, toujours à false). Aucun réglage A/V persistant n'est modifié (ni muted, ni volume) ; tout est rendu
+// sur l'instance, toujours à false). Le voyant « parle » que Foundry diffuse à tous (User#broadcastActivity, av.speaking) et le
+// curseur ne partent pas la nuit : scripts/activite.mjs. Aucun réglage A/V persistant n'est modifié (ni muted, ni volume) ; tout est rendu
 // quand la ligne le permet (préparatifs, fin, salons coupés), et quand on quitte le monde. Le MJ n'est jamais coupé.
 // Sans A/V (mode « Désactivé »), rien n'est touché et le bandeau reste discret.
 //

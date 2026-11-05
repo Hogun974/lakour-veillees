@@ -6,6 +6,16 @@ import { t } from "../donnees.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
+// Le HTML d'une entrée (la carte de rôle, un mot du narrateur) vient d'un MJ, quel qu'il soit (socket.mjs : vientDUnMJ) :
+// nettoyé avant d'être affiché tel quel ({{{contenu}}}), par foundry.utils.cleanHTML (v14, client/utils/helpers.mjs : balises
+// et attributs permis, liens sûrs, iframe en bac à sable ; sans auteur, jamais allow-scripts). Sans lui, le texte seul.
+export function nettoyerHTML(html) {
+  const brut = String(html ?? "");
+  const nettoyer = foundry.utils?.cleanHTML;
+  if (typeof nettoyer === "function") return nettoyer(brut);
+  return `<p>${foundry.utils.escapeHTML(brut.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim())}</p>`;
+}
+
 export class CarnetSecret extends HandlebarsApplicationMixin(ApplicationV2) {
   static DEFAULT_OPTIONS = {
     id: `${ID}-carnet`,
@@ -23,7 +33,7 @@ export class CarnetSecret extends HandlebarsApplicationMixin(ApplicationV2) {
     return {
       prime,
       entrees: [...s.entrees].reverse().map(e => ({
-        titre: e.titre ?? "", tour: e.tour ?? "", contenu: e.html ? e.html : `<p>${echapper(e.texte)}</p>`
+        titre: e.titre ?? "", tour: e.tour ?? "", contenu: e.html ? nettoyerHTML(e.html) : `<p>${echapper(e.texte)}</p>`
       })),
       vide: !s.entrees.length, aide: t("LAKOUR_LOUPS.Carnet.Aide")
     };

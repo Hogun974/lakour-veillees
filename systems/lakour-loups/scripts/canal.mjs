@@ -6,7 +6,9 @@
 //   carnet secret, accusé de vote) a donc des destinataires ; une réponse de joueur ne part que vers le MJ actif ;
 // - le récepteur reçoit (message, idDeLEmetteur) : l'identifiant est ajouté par le serveur d'après la session, un joueur
 //   ne peut pas le falsifier. C'est lui qui fait foi ; message.userId n'est qu'une déclaration, rejetée si elle le
-//   contredit (sans cet identifiant, sur un serveur plus ancien, on se rabat sur message.userId).
+//   contredit. Lu dans le serveur v14 (14.370, dist/server/sockets.mjs) : handleCustomSocket émet toujours
+//   (message, this.user.id), et les canaux des paquets (Package#registerCustomSocket) ne sont branchés que sur une socket
+//   dont la session a un utilisateur. Un message sans émetteur ne vient donc pas de ce serveur : il est refusé.
 import { CANAL } from "../logique/constantes.mjs";
 
 export const estMJActif = () => Boolean(game.users.activeGM) && game.users.activeGM.id === game.user.id;
@@ -27,14 +29,15 @@ export function versMJ(message) {
   return true;
 }
 
-// L'auteur réel d'un message reçu : l'identifiant donné par le serveur ; null si le message ment sur son auteur.
+// L'auteur réel d'un message reçu : l'identifiant donné par le serveur ; null sans lui, ou si le message ment sur son auteur.
 export function auteur(message, emetteur) {
-  if (emetteur && message?.userId && message.userId !== emetteur) return null;
-  return emetteur || message?.userId || null;
+  if (!emetteur || typeof emetteur !== "string") return null;
+  if (message?.userId && message.userId !== emetteur) return null;
+  return emetteur;
 }
 export const vientDUnMJ = (message, emetteur) => {
   const qui = auteur(message, emetteur);
-  return qui === null ? false : (!qui || Boolean(game.users.get(qui)?.isGM));
+  return qui !== null && Boolean(game.users.get(qui)?.isGM);
 };
 
 // Appelle le hook ici, et le fait appeler chez tous les autres avec des arguments PUBLICS (jamais un choix de nuit,

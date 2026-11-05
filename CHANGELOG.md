@@ -4,6 +4,15 @@ Deux numéros de version avancent ensemble : celui du **système** `lakour-loups
 `lakour-veillees`. Chaque publication GitHub (étiquette `v<version du système>`) emporte les deux, plus le monde vierge.
 Le moteur commun `lakour-mj-ia` a son propre journal dans [son dépôt](https://github.com/Hogun974/lakour-mj-ia).
 
+## Non publié
+
+- Sécurité (revue) : la nuit, et pendant un choix secret, le navigateur d'un joueur ne diffuse plus son activité Foundry
+  (curseur, ping, règle, cibles, déplacements prévus, voyant « parle » : `scripts/activite.mjs`, lu dans le client et le
+  serveur v14) ; un loup et un villageois envoient les mêmes messages du soir au matin (`essais/activite-nuit.test.mjs`). Un
+  spectateur n'entend plus la tanière ; un message de socket sans émetteur est refusé ; le carnet nettoie son HTML
+  (`cleanHTML`) ; les notes d'un villageois ne gardent plus de bloc secret. README : ce que la console montre vraiment
+  (chuchotements, clé du coffre, MJ assistant, mot de passe du Gamemaster). `.gitignore` : `.env`, clés de secours.
+
 ## Système 0.11.1 · Contenu 0.14.0 — 4 novembre 2026
 
 - **Contenu 0.14.0 — Le livre de Brumecombe** : un journal d'univers lisible des joueurs, installé dans le monde avec les

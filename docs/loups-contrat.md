@@ -572,6 +572,7 @@ Avec la voix intégrée de Foundry (A/V), réglage monde **`salonsAutomatiques`*
 | un mort (ou un spectateur sans villageois) | les morts seulement | les morts seulement |
 | un réduit au silence | personne pendant `jour` et `vote` (il parle à l'aube) | personne |
 
+Un spectateur (utilisateur sans villageois, qui n'a jamais joué) n'entend jamais la tanière, même avec `mortsVoientTout`.
 Le MJ (tout utilisateur MJ, même s'il incarne un villageois) entend tout et parle à tous. `preparation` et `fin`, ou le réglage
 décoché : tout le monde parle à tout le monde. Est loup le villageois dont le camp ACTUEL est `meute` : les sept loups du contenu
 (Loup de Brumecombe, affamé, déguisé, Louve mère, hurleur, flaireur, des roseaux), le mordu (à l'aube, `changerCamp` : il est à la tanière
@@ -826,7 +827,7 @@ choix ni secret d'autrui n'y figure avant sa révélation publique.
 
 | | Qui le reçoit | Ce qu'il contient |
 | --- | --- | --- |
-| Documents `villageois` | tous | nom, image, maison, vivant, révélé, silence, joueur, compagnon, notes ; le **métier** (objet et usages : les métiers sont publics, leur usage est annoncé) ; l'**objet `role` et `system.camp` seulement une fois révélés** (et pour tous à la fin, avec `amoureux`). Propriété : LIMITED pour tous, OBSERVER pour son joueur ; personne d'autre que le MJ ne le modifie (serveur, plus `scripts/garde.mjs`). |
+| Documents `villageois` | tous | nom, image, maison, vivant, révélé, silence, joueur, compagnon, notes (sans bloc « secret » : retiré à la création et à la modification, `scripts/garde.mjs`, puisque le document entier part chez tous) ; le **métier** (objet et usages : les métiers sont publics, leur usage est annoncé) ; l'**objet `role` et `system.camp` seulement une fois révélés** (et pour tous à la fin, avec `amoureux`). Propriété : LIMITED pour tous, OBSERVER pour son joueur ; personne d'autre que le MJ ne le modifie (serveur, plus `scripts/garde.mjs`). |
 | Réglage monde `partie` | tous | l'état PUBLIC (§1) : phase, tour, qui a voté (pas pour qui), résultats des votes clos, morts et cause publique, effets du jour annoncés, Bailli, Registre, présage, gens de passage (rôle public), Banc, compte du deuil, veillée de fête (sa clé, la neige, le masque du défilé), la Petite tablée (le mode, une règle : jamais de quel côté l'ombre est tombée), chronique publique. Récrit seulement s'il change : jamais par un choix de nuit. |
 | Réglage monde `coffre` | tous, chiffré | TOUS les secrets de la partie, scellés avec la clé du coffre du MJ IA. Écrit aux moments publics (phase, aube résolue, vote clos, mort, arrivée, départ, distribution, victoire), au battement (une fois par minute pendant une partie, même sans changement, vecteur neuf) et avant de quitter la page ; jamais au rythme de la nuit. |
 | Réglages client du MJ (`secrets`, par [monde][userId]) et sa mémoire | le MJ actif | l'état complet : fiches (rôle, camp, amoureux, protections), choix de la nuit et bilan, votes en cours, primes, fioles, aspergés, vraies causes, carnets, composition, peste, masques, rêves, Bonne étoile, autel, pouvoirs du deuil, Pont bloqué, cloche à venir, secrets de fête (masque, présent, promis). |
@@ -836,7 +837,10 @@ choix ni secret d'autrui n'y figure avant sa révélation publique.
 
 **Le coffre** (`scripts/coffre.mjs`) est celui du MJ IA (`lakour-mj-ia/scripts/coffre.js`, `coffre-logique.js`), toujours actif dans ce
 monde ; sans lui, aucune partie ne se distribue. Clé AES-GCM 256 bits chez le MJ (réglage client du moteur, par [monde][userId]) ;
-partage de Shamir à seuil = **majorité des porteurs** (jamais moins de 2) ; une part par compte joueur, envoyée par le MJ ACTIF seul,
+**aux Veillées, aucune part n'est confiée aux joueurs** (moteur 0.40.1 et suivants : deux loups pourraient réunir les leurs) ; la clé
+ne se retrouve que par la **clé de secours** du MJ (exigée : rappel à chaque chargement tant qu'elle n'est pas téléchargée) et le
+passage de clé d'un autre MJ ; une clé déjà partagée avec des joueurs est renouvelée une fois. Dans les autres mondes, partage de
+Shamir à seuil = majorité des porteurs (jamais moins de 2), une part par compte joueur, envoyée par le MJ ACTIF seul,
 gardée par [monde][userId][id de clé] et **accusée** (le compte devient porteur) ; rendue au seul MJ actif ; clé reconstituée
 vérifiée par son **empreinte SHA-256** publiée au trousseau ; **renouvellement transactionnel** (un compte créé, supprimé ou qui change
 de rôle : la nouvelle clé n'entre en vigueur qu'une fois ses parts accusées par son seuil ; le coffre des Veillées est rescellé
@@ -873,10 +877,22 @@ le MJ IA, par `api.ecritureBloquee()`, se met en pause).
   la nuit, rien n'est écrit au monde (ni l'état public, ni le coffre hors battement, ni les coûts du MJ IA), donc ni le nombre de
   réveils, ni l'instant d'un choix, ni le nombre de loups IA ne se lisent. Le battement du coffre est régulier, chiffré, de taille
   arrondie à 4 Kio : il ne dit pas si quelque chose a changé.
-- **Le coffre face à une coalition** : la clé du moteur est celle de tout le monde (elle chiffre aussi le Carnet caché et le fil de
-  l'IA) ; ses parts vont donc à chaque compte joueur, spectateurs et partis compris. Ils comptent dans la majorité : ils n'abaissent
-  pas le seuil, mais une **majorité de comptes joueurs complices** (ou de comptes sans mot de passe pris par un seul) lit le coffre.
-  Protection : un mot de passe par compte ; à une ou deux personnes, la clé de secours.
+- **Le coffre face à une coalition** : aux Veillées, aucun joueur ne garde de part de la clé : des joueurs complices ne peuvent pas
+  la reconstituer. La contrepartie : sans la clé de secours (ou un autre MJ qui l'a), un navigateur du MJ perdu rend le coffre
+  illisible. Protection restante : un mot de passe par compte (un compte pris est un joueur de plus, pas une clé).
+- **L'activité que Foundry diffuse** (`User#broadcastActivity`, lu dans le client et le serveur 14.370) : le serveur relaie à TOUS
+  les autres navigateurs, sans filtre ni droit, le curseur, les pings, la règle, les cibles, les déplacements prévus, le voyant
+  « parle » de la voix (`av.speaking`, à chaque changement) et l'état A/V, avec l'heure de l'activité (même un message vide) ; les
+  droits `SHOW_CURSOR`, `SHOW_RULER`, `PING_CANVAS` ne sont vérifiés que par l'émetteur. Chez un joueur, la nuit (phase publique
+  ou ligne des salons de nuit) et tant qu'il a un choix secret en cours, `scripts/activite.mjs` n'en laisse rien partir ; à la
+  tombée de la nuit, chacun envoie le même effacement (curseur, règle, voyant éteint), au matin une seule resynchronisation de
+  la voix, une fois la ligne des salons arrivée : un loup et un villageois envoient les mêmes messages
+  (`essais/activite-nuit.test.mjs`). Restent visibles : la scène affichée, et l'activité d'un MJ (qu'il évite de pointer un jeton
+  la nuit). Ce n'est qu'une enveloppe dans le navigateur du joueur : qui la retire ne trahit que lui-même. Pour plus de sûreté, le MJ
+  peut aussi réserver ces trois droits aux MJ (Configuration › Droits des utilisateurs) le temps d'une partie.
+- **Le socket** : un message sans émetteur donné par le serveur (v14 le donne toujours) est refusé ; l'auteur déclaré
+  (`userId`) ne compte jamais seul. Le HTML d'une entrée du carnet (d'un MJ, quel qu'il soit) est nettoyé par
+  `foundry.utils.cleanHTML` avant d'être affiché.
 - **Un MJ** (tout utilisateur au rôle MJ) est de confiance par construction : il peut devenir MJ actif et rouvrir le coffre avec les
   joueurs. Un MJ qui n'est pas l'actif n'a ni les secrets ni la fiche de personne (il voit le public).
 - **Le navigateur d'un joueur** : sa fiche, son carnet, sa vue de mort y sont en clair (localStorage, par monde et compte : un autre

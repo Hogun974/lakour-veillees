@@ -72,10 +72,10 @@ function ligneAttendue(userId) {
   const qui = u => {
     if (game.users.get(u).isGM) return { mj: true };
     const a = acteurDe(u);
-    return a ? { vivant: a.system.vivant, silence: a.system.silence, loup: estLoup(a) } : { vivant: false };
+    return a ? { vivant: a.system.vivant, silence: a.system.silence, loup: estLoup(a) } : { vivant: false, spectateur: true };
   };
   const parle = s => s.mj || libre || !s.vivant || (phase === "nuit" ? s.loup && !s.silence : !(s.silence && ["jour", "vote"].includes(phase)));
-  const entendDe = (a, l) => a.mj || l.mj || libre || (l.vivant ? (phase === "nuit" ? (a.vivant ? a.loup : mvt) : true) : !a.vivant);
+  const entendDe = (a, l) => a.mj || l.mj || libre || (l.vivant ? (phase === "nuit" ? (a.vivant ? a.loup : mvt && !a.spectateur) : true) : !a.vivant);
   const moi = qui(userId);
   const autres = game.users.map(u => u.id).filter(id => id !== userId);
   return {

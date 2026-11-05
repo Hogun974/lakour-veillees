@@ -13,7 +13,7 @@
 //   Louve mère, hurleur, flaireur, des roseaux), le villageois mordu par la Louve mère (changerCamp à l'aube : il rejoint
 //   la tanière la nuit suivante), et pas un loup dont le Colporteur a pris le rôle (son camp suit le rôle reçu). Le rôle ne sert que si
 //   le camp manque.
-// - Un spectateur (utilisateur sans villageois) est traité comme un mort : il observe.
+// - Un spectateur (utilisateur sans villageois) est traité comme un mort : il observe ; mais il n'entend jamais la tanière.
 // - Le Dernier souffle (souffle.mjs) : un mort qui garde encore sa voix ne doit rien savoir des rôles cachés. Avec
 //   « mortsVoientTout », il n'entend pas la tanière, et les morts se partagent en deux salons : ceux qui gardent leur souffle
 //   (et les spectateurs, quand le souffle est en jeu : table.souffleActif) entre eux, ceux qui l'ont rendu (et voient tout)
@@ -84,6 +84,8 @@ function entend(a, l, salonL, mortsVoientTout) {
   if (a.mj || salonL === "mj" || salonL === "libre" || salonL === "village") return true;
   // Le Dernier souffle : un mort qui garde sa voix n'entend ni la tanière, ni les morts qui voient tout (et réciproquement).
   if (salonL === "taniere" && !a.vivant && a.souffle) return false;
+  // Un spectateur (sans villageois, il n'a jamais joué) n'entend jamais la tanière, même si « les morts voient tout ».
+  if (salonL === "taniere" && a.spectateur) return false;
   if (salonL === "morts" && mortsVoientTout && Boolean(a.souffle) !== Boolean(l.souffle)) return false;
   if (salonL === "taniere") return (a.vivant && a.loup) || (!a.vivant && Boolean(mortsVoientTout));
   if (salonL === "morts") return !a.vivant;

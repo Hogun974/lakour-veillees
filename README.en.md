@@ -99,6 +99,8 @@ https://github.com/Hogun974/lakour-veillees/releases/latest/download/world.json
 ```
 
 The system and the modules are offered for installation if missing. The world is empty: no game, no player, no chronicle.
+Its only user, **Gamemaster**, has no password: **set one** (Configuration › Users) **before inviting anyone**, or any guest
+can log in as GM.
 
 ### 3. From source
 
@@ -277,26 +279,37 @@ All are chosen at set-up, in the Game Table or the world settings; the Variants 
 
 ## How secrets are kept, in plain words
 
-In an online werewolf game the temptation to open the browser console is strong. Here **it is useless**:
+In an online werewolf game the temptation to open the browser console is strong. Here is exactly what you will find there:
 
-- Foundry sends every browser all documents and all world settings, whispers included. So the system stores **no secret**
-  there: no role on a sheet, no side, no night choice, no private chat message.
-- The complete game state **exists only on the narrator's side** (the active GM). Players receive the **public state** (phase,
-  who has voted, closed results, deaths and public cause) and, each for themselves, **what concerns them**: their role card,
-  their notebook, their choice windows, their vote; sent through the socket to them alone, never to anyone else.
-- Secrets are saved in the world as an **encrypted vault** (AES-GCM 256) with the AI GM module's key, which never leaves the
-  narrator's browser. Another narrator, or the same one from another browser, reopens it with the **key shares** entrusted to
-  the players (Shamir sharing: a majority is needed) or with an exported **backup key**. During the night nothing is written
-  to the world: neither the number of wake-ups nor the moment of a choice can be read.
+- Foundry sends every browser all documents and all world settings, and every change to them. Whispers too: a chat message,
+  whispered or not, reaches every browser; only its **display** is restricted to its recipients (checked in Foundry v14). So
+  the system stores **no secret** there: no role on a sheet, no side, no night choice, no private chat message, no "secret"
+  block in a villager's notes (it is removed on save). In the Vigils the AI GM whispers to GMs only, and only technical
+  notices (error, budget reached, autopilot): never anything about roles, since every browser receives it.
+- The complete game state **exists only on the narrator's side** (the active GM). In the console a player sees only **what
+  concerns them**: the **public state** (phase, who has voted, closed results, deaths and public cause) and what the GM sends
+  to them alone through the socket: their role card, their notebook, their choice windows, their vote, their voice-room line.
+- The game's secrets are **encrypted** (AES-GCM 256 vault) with the AI GM module's key, which never leaves the narrator's
+  browser. That key can be recovered only **by the GM** (their browser, or another connected GM handing it over) and with the
+  **backup key** they exported. During the night nothing is written to the world: neither the number of wake-ups nor the
+  moment of a choice can be read.
 - **Voice rooms** are sorted at the source: at night a living player's voice goes to nobody (except a wolf's, to the wolves);
-  the dead talk only to the dead. A silenced player can neither speak nor write during the debate.
+  the dead talk only to the dead; a spectator never hears the den. A silenced player can neither speak nor write during the
+  debate.
+- **The cursor and the "speaking" light are hidden at night.** Otherwise Foundry broadcasts everyone's activity to all
+  (checked in Foundry v14): their cursor on the map, their pings, their ruler, their targets, and the voice "speaking"
+  indicator. At night, and while a player makes a secret choice, none of this leaves their browser; at nightfall cursors
+  vanish and speaking lights go out for everyone at the same moment. The GM stays visible: they should avoid pointing at a
+  token during the night.
 - **AI companions** do not cheat: each has its own context, restricted to what a player in its seat would know.
 - An automated test (`essais/non-fuite.test.mjs`) sifts **everything each player receives** during complete games and checks
   that no role, side, choice or secret of another player appears before its public reveal.
 
 What remains visible is what the rules make public: the rhythm of the phases, who has voted, announced deaths, revealed
-roles. What is in **your** browser (your card, your notebook) is in the clear, for you; and a narrator is trusted by
-construction. Details and limits are in `docs/loups-contrat.md` (§ 6, in French).
+roles. What is in **your** browser (your card, your notebook) is in the clear, for you. And **a GM sees everything**: any user
+with the GM role, assistants included, can become the narrator and reopen the vault; give that role to the narrator only. The
+empty world has a **Gamemaster user without a password**: **set a password on it before inviting anyone**, or any guest can
+log in as GM. Details and limits are in `docs/loups-contrat.md` (§ 6, in French).
 
 ## The AI game master, in brief
 
@@ -375,14 +388,16 @@ change:
 
 ## Licence
 
-> **TODO (Jordan)**: choose and confirm the licence before going public, then state it in `CREDITS.md` and in the `license`
-> field of the manifests. No `LICENSE` file exists yet: until there is one, the repository is "all rights reserved" by default.
+- **The code** (the `lakour-loups` system, scripts, templates, `lang/`, tools, tests, `docs/`): **MIT** licence, see
+  [`LICENSE`](LICENSE) (© 2026 Hogun974).
+- **Original texts and images** (roles, trades, buildings, guides, variants, tables: `contenu/` and its English
+  dictionaries, the `src/` and `packs/` compendiums, the English module `lakour-veillees-en`, the blank world `monde/`;
+  map, illustrations and tokens in `assets/`): [**CC BY-NC-SA 4.0**](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+  (attribution, non-commercial, share-alike). Expected attribution: "LaKour — Hogun974", with a link to this repository
+  and to the licence.
 
-Two options are considered:
+The folder-by-folder details and the third-party notices are in [`LICENCE-CONTENU.md`](LICENCE-CONTENU.md); both files
+ship in the system, module and world archives.
 
-- **the code** (system, scripts, tools) under the **MIT** licence;
-- **texts and images** (roles, guides, variants, tables, map, illustrations) under **CC BY-NC-SA 4.0**
-  (attribution, non-commercial, share-alike).
-
-The game-icons.net icons keep their own CC BY 3.0 licence. Foundry VTT is a trademark of Foundry Gaming LLC; this project is
-not affiliated with it.
+The game-icons.net icons (token silhouettes) keep their own CC BY 3.0 licence. Foundry VTT is a trademark of Foundry
+Gaming LLC; this project is not affiliated with it.

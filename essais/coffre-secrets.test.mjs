@@ -3,9 +3,10 @@
 //   n'est nulle part dans le monde.
 // - Le coffre ne bat PAS au rythme de la nuit : aucun choix de nuit n'écrit ni le coffre ni l'état public ; il est scellé aux
 //   moments publics (phase, aube, distribution) et au battement, à intervalle fixe, même sans changement.
-// - Un autre navigateur du MJ le rouvre avec les parts de la MAJORITÉ des joueurs (seuil du moteur) ; une part de moins ne suffit
-//   pas ; tant qu'il attend, le coffre n'est jamais écrasé.
-// - Un renouvellement de la clé du moteur rescelle le coffre avant que la nouvelle clé n'entre en vigueur.
+// - Aucune part n'est confiée aux joueurs (rôles secrets : deux loups alliés réuniraient leurs parts). Un autre navigateur du MJ
+//   rouvre le coffre avec la clé de secours ; les joueurs n'ont rien à rendre ; tant qu'il attend, le coffre n'est jamais écrasé.
+// - Un renouvellement de la clé du moteur rescelle le coffre avant que la nouvelle clé n'entre en vigueur (par sa clé de secours,
+//   jamais par des accusés de joueurs).
 // - Une partie d'avant 0.9.0 : l'ancien coffre s'ouvre avec l'ancienne clé de ce navigateur, puis il est rescellé avec le moteur.
 // - Sans le moteur, aucune partie ne se distribue.
 // - Relecture 8 : une nouvelle partie pendant l'attente des parts s'écrit, et l'ancien coffre ne la remplace jamais ; à révision
@@ -107,11 +108,10 @@ const VERIFICATIONS = {
     const monde = JSON.stringify([...reglages.entries()].filter(([, r]) => r.conf.scope === "world").map(([k, r]) => [k, r.valeur]));
     assert.ok(!monde.includes("compo-tres-secrete"), "la composition n'est en clair dans aucun réglage monde");
     assert.ok(!JSON.stringify(game.actors.contents.map(a => [a.system, a.items.contents.map(i => i.system)])).includes("\"meute\""), "aucun camp dans les documents");
-    // Le seuil : la majorité des joueurs (4 comptes connectés -> 3).
-    assert.equal(trousseau().seuil, 3);
-    const parts = partsDonnees(coffre.id);
-    assert.deepEqual(Object.keys(parts).sort(), ["u1", "u2", "u3", "u4"]);
-    for (const e of emissions.filter(x => x.type === "coffre.part")) assert.equal(e.recipients.length, 1, "une part à lui seul");
+    // Aucune part aux joueurs, aucun porteur.
+    assert.deepEqual(partsDonnees(coffre.id), {});
+    assert.deepEqual(emissions.filter(x => x.type === "coffre.part"), [], "aucune part émise");
+    assert.deepEqual(trousseau().porteurs ?? [], []);
   },
 
   async "la nuit, aucun choix n'écrit ni le coffre ni l'état public ; l'aube et le battement scellent"(M) {
@@ -143,29 +143,25 @@ const VERIFICATIONS = {
     }
   },
 
-  async "autre navigateur : la majorité des parts rouvre le coffre ; une de moins, ou celle d'un autre, non"(M) {
+  async "autre navigateur : rien à attendre des joueurs ; la clé de secours rouvre le coffre"(M) {
     const id = await partie(M);
     const avant = structuredClone(M.secrets.secretsMJ());
-    const cle = valeur("coffre").id;
-    const parts = partsDonnees(cle);
+    const { texte } = await CoffreMoteur.exporterSecours();
     autreNavigateur(M);
     assert.ok(M.secrets.secretsPerdus(M.donnees.lirePublic()));
     emissions.length = 0;
     let rappels = 0;
     assert.equal(await M.coffre.chercherSecrets(id, () => { rappels++; }), true);
     await calme();
-    const demande = emissions.find(e => e.type === "coffre.rendrePart");
-    assert.deepEqual([...demande.recipients].sort(), ["u1", "u2", "u3", "u4"]);
-    await CoffreMoteur.recevoirPartRendue(parts.u1, "u1");
-    await CoffreMoteur.recevoirPartRendue(parts.u2, "u3");   // la part d'un autre
-    await CoffreMoteur.recevoirPartRendue(parts.u2, "u2");
+    // Un joueur qui « rend » une part forgée ne rouvre rien.
+    await CoffreMoteur.recevoirPartRendue({ id: "faux", x: "1", y: "2" }, "u1");
     await attendre();
-    assert.equal(rappels, 0, "deux parts (seuil 3) ne rouvrent rien");
+    assert.equal(rappels, 0, "une part forgée ne rouvre rien");
     assert.equal(M.coffre.enAttenteDeParts(), true);
-    await CoffreMoteur.recevoirPartRendue(parts.u4, "u4");
+    assert.equal(await CoffreMoteur.importerSecours(texte), 1);
     await jusqua(() => rappels >= 1);
     await M.coffre.rangement();
-    assert.equal(rappels, 1, "la majorité rouvre");
+    assert.equal(rappels, 1, "la clé de secours rouvre");
     assert.deepEqual(M.secrets.secretsMJ().fiches, avant.fiches, "les rôles reviennent");
     assert.equal(M.secrets.secretsMJ().composition, "compo-tres-secrete");
     assert.equal(M.secrets.secretsPerdus(M.donnees.lirePublic()), false);
@@ -227,7 +223,11 @@ const VERIFICATIONS = {
       return set.call(game.settings, m, k, v);
     };
     try {
+      // Des accusés de joueurs ne la font jamais entrer en vigueur ; sa clé de secours, si.
       for (const u of ["u1", "u2", "u3"]) await CoffreMoteur.recevoirAccuse({ id: enCours }, u);
+      assert.equal(trousseau().id, ancienne, "des accusés ne suffisent pas");
+      await CoffreMoteur.exporterSecours();
+      await jusqua(() => trousseau().id === enCours);
     } finally { game.settings.set = set; }
     assert.equal(trousseau().id, enCours, "la nouvelle clé en vigueur");
     assert.equal(auPassage?.id, enCours, "le coffre rescellé avec elle AVANT qu'elle n'entre en vigueur");

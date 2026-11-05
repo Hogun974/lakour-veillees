@@ -14,6 +14,18 @@ const ouvertes = new Map();
 // Prévenu quand une fenêtre a répondu à une demande (la carte s'éteint alors : plateau-local.mjs).
 let quandRepondu = null;
 export function surReponse(fn) { quandRepondu = typeof fn === "function" ? fn : null; }
+// Toutes les fenêtres de choix ouvertes (demandes et choix locaux) : un choix secret est en cours (scripts/activite.mjs).
+const enCours = new Set();
+const ecouteursEnCours = new Set();
+export const choixEnCours = () => enCours.size > 0;
+export function surChoixEnCours(fn) { ecouteursEnCours.add(fn); return () => ecouteursEnCours.delete(fn); }
+function suivre(f, ouverte) {
+  const avant = enCours.size > 0;
+  if (ouverte) enCours.add(f);
+  else enCours.delete(f);
+  if (avant === enCours.size > 0) return;
+  for (const fn of ecouteursEnCours) { try { fn(enCours.size > 0); } catch (e) { console.warn(`${ID} | choix`, e); } }
+}
 
 export class FenetreChoix extends HandlebarsApplicationMixin(ApplicationV2) {
   constructor(demande, options = {}) {
@@ -65,6 +77,7 @@ export class FenetreChoix extends HandlebarsApplicationMixin(ApplicationV2) {
   async _onClose(options) {
     clearInterval(this._minuterie);
     if (ouvertes.get(this.demande.id) === this) ouvertes.delete(this.demande.id);
+    suivre(this, false);
     if (!this.repondu && !this.annulee && !this.secours) this.#repondre([], "");
     return super._onClose(options);
   }
@@ -105,6 +118,7 @@ export function ouvrirChoix(demande, { secours = false } = {}) {
   if (deja) { deja.annulee = true; deja.close(); }
   const f = new FenetreChoix(demande, { secours });
   ouvertes.set(demande.id, f);
+  suivre(f, true);
   f.render({ force: true });
   return f;
 }
@@ -112,6 +126,7 @@ export function ouvrirChoix(demande, { secours = false } = {}) {
 // Un choix fait chez soi, sans socket (cible d'un pouvoir de jour) : rappel(cibles, texte), cibles [] si on passe.
 export function ouvrirChoixLocal(demande, rappel) {
   const f = new FenetreChoix({ id: foundry.utils.randomID(), candidats: [], nombre: 1, ...demande }, { rappel });
+  suivre(f, true);
   f.render({ force: true });
   return f;
 }

@@ -125,7 +125,8 @@ async function monde(graine, { compagnons = 6, reglages = {} } = {}) {
   moteur.pilote.horloge = { t: 0, maintenant() { return this.t; }, attendre(ms) { this.t += ms; return new Promise(r => setTimeout(r, 0)); } };
   const creer = ChatMessage.implementation.create;
   ChatMessage.implementation.create = async d => {
-    const m = await creer({ ...d });
+    // Comme Foundry : le serveur pose l'auteur (le créateur, ici le MJ) ; le moteur ne croit le drapeau « compagnon » que d'un MJ.
+    const m = await creer({ ...d, author: game.user });
     Object.assign(m, { getFlag: (s, k) => m.flags?.[s]?.[k], update: async u => Object.assign(m, u), delete: async () => { messages.splice(messages.indexOf(m), 1); } });
     moteur.recevoir(m);   // le hook createChatMessage du MJ IA (appelé par Foundry pendant la création, chez le créateur)
     return m;

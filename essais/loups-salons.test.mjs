@@ -90,7 +90,7 @@ const VERIFICATIONS = {
   },
   "nuit : avec « les morts voient tout », les morts entendent la tanière": L => {
     const r = L.audibilite(etat("nuit"), SECRETS, "u2", tableEssai({ mortsVoientTout: true }));
-    assert.deepEqual(tri(r.auditeurs), ["mj", "u1", "u5", "u7"]);
+    assert.deepEqual(tri(r.auditeurs), ["mj", "u1", "u5"], "un spectateur (u7) n'entend pas la tanière");
     assert.deepEqual(tri(r.acteursAuditeurs), ["c1", "c3", "l1", "m5"]);
     // Sans le réglage, non.
     assert.deepEqual(tri(L.audibilite(etat("nuit"), SECRETS, "u2", tableEssai()).auditeurs), ["mj", "u1"]);
@@ -173,6 +173,8 @@ const VERIFICATIONS = {
     assert.deepEqual(tri(jourVivant.entend), ["mj", "u1", "u2", "u4"], "un vivant n'entend ni les morts ni le réduit au silence");
     const nuitMort = L.ligneDe(etat("nuit"), SECRETS, "u5", tableEssai({ mortsVoientTout: true }));
     assert.deepEqual(tri(nuitMort.entend), ["mj", "u1", "u2", "u7"]);
+    const nuitSpectateur = L.ligneDe(etat("nuit"), SECRETS, "u7", tableEssai({ mortsVoientTout: true }));
+    assert.deepEqual(tri(nuitSpectateur.entend), ["mj", "u5"], "un spectateur n'entend que les morts la nuit, jamais la tanière");
     assert.equal(L.ligneDe(etat("nuit"), SECRETS, "u5", tableEssai()).entend.includes("u1"), false, "sans le réglage, pas la tanière");
     const toutes = L.lignesDeTous(etat("nuit"), SECRETS, tableEssai());
     assert.deepEqual(Object.keys(toutes).sort(), TOUS);
@@ -234,7 +236,8 @@ const MUTATIONS = [
   ["const entendus = moi ? liste.filter(l => l.userId && entend(moi, l, salonDe(l, phase, options), table.mortsVoientTout)) : [];", "const entendus = liste.filter(l => l.userId);", "qui il entend"],
   ["mj: false, vivant: false, silence: false, loup: false, spectateur: true", "mj: false, vivant: true, silence: false, loup: false, spectateur: true", "un spectateur observe"],
   ["if (a === l || !peutParlerDans(salonL)) return false;", "if (a === l) return false;", "qui se tait n'est entendu de personne"],
-  ["if (!l) return { peutParler: false,", "if (!l) return { peutParler: true,", "locuteur inconnu"]
+  ["if (!l) return { peutParler: false,", "if (!l) return { peutParler: true,", "locuteur inconnu"],
+  ["  if (salonL === \"taniere\" && a.spectateur) return false;\n", "", "un spectateur n'entend pas la tanière"]
 ];
 
 async function chargerMutant(avant, apres) {

@@ -427,6 +427,7 @@
       "SansCoffre": "The AI GM module (lakour-mj-ia) must be active: its vault keeps the game's secrets (roles, sides, night choices). Enable it, then deal.",
       "SansCleCoffre": "AI GM vault closed in this browser: its key stayed in the browser where the world was prepared. The game goes on, but its secrets stay only in this browser until the key returns: do not switch browsers mid-game. To bring it back, re-import the backup key (Settings › AI GM › Vault) or wait for the players' shares.",
       "FicheVerrouillee": "Only the GM may change the villagers of the game.",
+      "NotesSecretes": "A villager's notes reach every player's browser: a secret block is not kept there. Put it in a GM-only journal.",
       "SecretsAbsents": "This browser does not (yet) hold the up-to-date secrets of the current game: nothing is written. The vault is reopened as soon as possible (players' shares, another GM, recovery key).",
       "MJInactif": "Only the active GM holds the game's secrets: role, side, lover and \"Revealed\" are set from that GM's browser."
     },

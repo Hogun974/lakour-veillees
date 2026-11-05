@@ -30,6 +30,7 @@ import { brancherParole } from "./scripts/parole.mjs";
 import { brancherInfobulle } from "./scripts/infobulle.mjs";
 import { brancherSalons, rafraichirSalons } from "./scripts/salons.mjs";
 import { brancherImmersion } from "./scripts/immersion.mjs";
+import { brancherActivite, brancherCrochetsActivite, verifierActivite } from "./scripts/activite.mjs";
 
 // ------------------------------------------------------------------ rafraîchissement des fenêtres
 // Une fiche où l'on écrit (notes ouvertes dans l'éditeur, champ actif) n'est pas redessinée : le texte en cours serait perdu.
@@ -68,6 +69,7 @@ function quandEtatChange() {
 // Le bandeau et les surimpressions des jetons suivent l'état (public, et local au joueur).
 function rafraichirPlateauLocal() {
   if (!game.ready) return;
+  verifierActivite();   // une demande de nuit, un pouvoir de jour en préparation : curseur et voyant masqués (scripts/activite.mjs)
   rafraichirBandeau();
   rafraichirJetons();
 }
@@ -125,6 +127,9 @@ Hooks.once("ready", () => {
   // qu'il a bien les secrets de la partie en cours (ils ne vivent que dans SON navigateur).
   chargerPrive(lirePublic().partie);
   if (!game.user.isGM) {
+    // Curseur, ping, règle, cibles, voyant « parle » : rien ne part la nuit, ni pendant un choix secret (scripts/activite.mjs).
+    brancherCrochetsActivite();
+    brancherActivite();
     versMJ({ type: "bonjour" });
     oublierAnciennePart();   // la part de l'ancien coffre (avant 0.9.0) ne sert plus
   } else if (estMJActif()) {

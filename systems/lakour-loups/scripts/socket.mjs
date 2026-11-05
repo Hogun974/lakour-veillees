@@ -89,9 +89,9 @@ export function traiterMessage(message, emetteur) {
   return false;
 }
 
-// L'émetteur est-il le MJ actif ? (sans émetteur, serveur ancien : le filtre vientDUnMJ a déjà parlé)
+// L'émetteur est-il le MJ actif ? (un message sans émetteur est déjà refusé : canal.mjs, auteur)
 function deMJActif(emetteur) {
-  return !emetteur || emetteur === game.users.activeGM?.id;
+  return Boolean(emetteur) && emetteur === game.users.activeGM?.id;
 }
 
 export function ecouterSocket() {

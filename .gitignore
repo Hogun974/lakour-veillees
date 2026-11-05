@@ -8,3 +8,7 @@ monde/dist/
 # Module anglais lakour-veillees-en : engendré en entier par `npm run fabriquer-veillees-en` (dictionnaires versionnés dans
 # modules/lakour-veillees/contenu/en/) ; jamais versionné.
 modules/lakour-veillees-en/
+# Secrets locaux : variables d'environnement, clés de secours exportées du coffre (jamais versionnés).
+.env
+*.env
+cle-de-secours-*.json

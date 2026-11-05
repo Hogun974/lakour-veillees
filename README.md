@@ -91,7 +91,8 @@ https://github.com/Hogun974/lakour-veillees/releases/latest/download/world.json
 ```
 
 Le système et les modules sont proposés à l'installation s'ils manquent. Le monde est vierge : aucune partie, aucun joueur,
-aucune chronique.
+aucune chronique. Son seul utilisateur, **Gamemaster**, n'a pas de mot de passe : **posez-lui-en un** (Configuration ›
+Utilisateurs) **avant d'inviter qui que ce soit**, sinon n'importe quel invité peut entrer en MJ.
 
 ### 3. Depuis les sources
 
@@ -291,26 +292,39 @@ Toutes se choisissent à la préparation, dans la Table de jeu ou les réglages 
 
 ## La sécurité des secrets, en termes simples
 
-Dans un jeu de loup-garou en ligne, la tentation est grande d'ouvrir la console du navigateur. Ici, **cela ne sert à rien** :
+Dans un jeu de loup-garou en ligne, la tentation est grande d'ouvrir la console du navigateur. Voici, exactement, ce qu'on y
+trouve :
 
-- Foundry envoie à chaque navigateur tous les documents et tous les réglages du monde, chuchotements compris. Le système n'y
-  range donc **aucun secret** : pas de rôle sur une fiche, pas de camp, pas de choix de nuit, pas de message privé au chat.
-- L'état complet de la partie **n'existe que chez le meneur** (le MJ actif). Les joueurs reçoivent **l'état public** (phase,
-  qui a voté, résultats clos, morts et cause publique) et, chacun pour soi, **ce qui le concerne** : sa carte de rôle, son
-  carnet, ses fenêtres de choix, son vote ; envoyé par le socket à lui seul, jamais à un autre.
-- Les secrets sont sauvegardés dans le monde sous forme de **coffre chiffré** (AES-GCM 256 bits) avec la clé du MJ IA, qui ne
-  quitte pas le navigateur du meneur. Un autre meneur, ou le même depuis un autre navigateur, le rouvre grâce aux **parts de
-  clé** confiées aux joueurs (partage de Shamir : il en faut une majorité) ou à une **clé de secours** exportée. Pendant la
-  nuit, rien n'est écrit au monde : ni le nombre de réveils, ni l'instant d'un choix ne se lisent.
+- Foundry envoie à chaque navigateur tous les documents et tous les réglages du monde, et chacune de leurs modifications. Un
+  chuchotement aussi : un message de chat, chuchoté ou non, arrive dans tous les navigateurs ; seul son **affichage** est
+  réservé à ses destinataires (vérifié dans Foundry v14). Le système n'y range donc **aucun secret** : pas de rôle sur une
+  fiche, pas de camp, pas de choix de nuit, pas de message privé au chat, pas de bloc « secret » dans les notes d'un
+  villageois (il est retiré à l'enregistrement). Aux Veillées, le MJ IA ne chuchote qu'aux MJ, et seulement des avis
+  techniques (erreur, budget atteint, pilote automatique) : jamais rien sur les rôles, puisque tous les navigateurs le reçoivent.
+- L'état complet de la partie **n'existe que chez le meneur** (le MJ actif). Un joueur ne voit dans la console que **ce qui
+  le concerne** : l'**état public** (phase, qui a voté, résultats clos, morts et cause publique) et ce que le MJ lui envoie, à
+  lui seul, par le socket : sa carte de rôle, son carnet, ses fenêtres de choix, son vote, sa ligne des salons vocaux.
+- Les secrets de la partie sont **chiffrés** (coffre AES-GCM 256 bits) avec la clé du MJ IA, qui ne quitte pas le navigateur
+  du meneur. Cette clé ne se retrouve que **par le MJ** (son navigateur, ou un autre MJ connecté qui la lui passe) et par la
+  **clé de secours** qu'il a exportée. Pendant la nuit, rien n'est écrit au monde : ni le nombre de réveils, ni l'instant d'un
+  choix ne se lisent.
 - Les **salons vocaux** sont triés à la source : la nuit, la voix d'un vivant ne part vers personne (sauf un loup, vers les
-  loups) ; un mort ne parle qu'aux morts. Un joueur réduit au silence ne peut ni parler ni écrire au débat.
+  loups) ; un mort ne parle qu'aux morts ; un spectateur n'entend jamais la tanière. Un joueur réduit au silence ne peut ni
+  parler ni écrire au débat.
+- **Le curseur et le voyant « parle » sont masqués la nuit.** Foundry diffuse sinon à tous l'activité de chacun (vérifié dans
+  Foundry v14) : son curseur sur la carte, ses pings, sa règle, ses cibles, et l'indicateur « parle » de la voix. La nuit, et
+  tant qu'un joueur fait un choix secret, rien de tout cela ne part de son navigateur ; à la tombée de la nuit, les curseurs
+  disparaissent et les voyants s'éteignent chez tous en même temps. Le MJ, lui, reste visible : qu'il évite de pointer un
+  jeton pendant la nuit.
 - Les **compagnons IA** ne trichent pas : chacun a son propre contexte, restreint à ce que saurait un joueur à sa place.
 - Un essai automatique (`essais/non-fuite.test.mjs`) passe au crible **tout ce que chaque joueur reçoit** pendant des parties
   complètes et vérifie qu'aucun rôle, camp, choix ni secret d'autrui n'y figure avant sa révélation publique.
 
 Ce qui reste visible est ce qui est public par la règle : le rythme des phases, qui a voté, les morts annoncées, les rôles
-révélés. Ce qui est dans **votre** navigateur (votre carte, votre carnet) y est en clair, pour vous ; et un meneur est, par
-construction, de confiance. Le détail, avec ses limites, est dans `docs/loups-contrat.md` (§ 6).
+révélés. Ce qui est dans **votre** navigateur (votre carte, votre carnet) y est en clair, pour vous. Et **un MJ voit tout** :
+tout utilisateur au rôle MJ, assistant compris, peut devenir le meneur et rouvrir le coffre ; ne donnez ce rôle qu'au meneur.
+Le monde vierge a un utilisateur **Gamemaster sans mot de passe** : **posez-lui un mot de passe avant d'inviter qui que ce
+soit**, sinon n'importe quel invité peut entrer en MJ. Le détail, avec ses limites, est dans `docs/loups-contrat.md` (§ 6).
 
 ## Le MJ IA, en bref
 
@@ -406,15 +420,17 @@ Pour proposer un changement :
 
 ## Licence
 
-> **TODO (Jordan)** : choisir et confirmer la licence avant le passage en public, puis la rappeler dans `CREDITS.md` et dans le
-> champ `license` des manifestes. Aucun fichier `LICENSE` n'est encore créé : tant qu'il n'y en a pas, le dépôt est
-> « tous droits réservés » par défaut.
+- **Le code** (système `lakour-loups`, scripts, gabarits, `lang/`, outils, essais, `docs/`) : licence **MIT**, voir
+  [`LICENSE`](LICENSE) (© 2026 Hogun974).
+- **Les textes et les images originaux** (rôles, métiers, bâtiments, guides, variantes, tables : `contenu/` et ses
+  dictionnaires anglais, compendiums `src/` et `packs/`, module anglais `lakour-veillees-en`, monde vierge `monde/` ;
+  carte, illustrations et jetons de `assets/`) : licence
+  [**CC BY-NC-SA 4.0**](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr) (attribution, pas d'usage
+  commercial, partage dans les mêmes conditions). Attribution attendue : « LaKour — Hogun974 », avec le lien vers ce
+  dépôt et vers la licence.
 
-Deux options sont envisagées :
+Le détail, dossier par dossier, et les mentions des tiers sont dans [`LICENCE-CONTENU.md`](LICENCE-CONTENU.md) ; les
+deux fichiers sont livrés dans les archives du système, des modules et du monde.
 
-- **le code** (système, scripts, outils) sous licence **MIT** ;
-- **les textes et les images** (rôles, guides, variantes, tables, carte, illustrations) sous **CC BY-NC-SA 4.0**
-  (attribution, pas d'usage commercial, partage dans les mêmes conditions).
-
-Les icônes de game-icons.net restent sous leur propre licence CC BY 3.0. Foundry VTT est une marque de Foundry Gaming LLC ;
-ce projet n'y est pas affilié.
+Les icônes de game-icons.net (silhouettes des jetons) restent sous leur propre licence CC BY 3.0. Foundry VTT est une
+marque de Foundry Gaming LLC ; ce projet n'y est pas affilié.

@@ -516,6 +516,10 @@ const VERIFICATIONS = {
     assert.equal(M.socket.traiterMessage({ type: "paroleEnvoi", texte: "triche", canal: "morts", userId: "u1" }, "u1"), false);
     assert.equal(M.socket.traiterMessage({ type: "paroleEnvoi", texte: "triche", canal: "morts", userId: "u6" }, "u1"), false);
     assert.equal(M.socket.traiterMessage({ type: "paroleEnvoi", texte: "triche", canal: "morts", userId: "u6" }), false, "sans émetteur donné par le serveur : rien");
+    // L'émetteur du serveur suffit (la déclaration userId n'est jamais ce qui compte) : relayé au nom de u6.
+    const mSansDeclaration = emissions.length;
+    assert.equal(M.socket.traiterMessage({ type: "paroleEnvoi", texte: "CANARI-SANS-DECLARATION", canal: "morts" }, "u6"), true, "relayé d'après l'émetteur");
+    assert.equal(emissions.slice(mSansDeclaration).filter(e => e.type === "parole").length, 1);
     // Chez un destinataire : le mot relayé ne vient que du MJ actif.
     commeJoueur(morts[0] ?? "u6");
     assert.equal(M.socket.traiterMessage({ type: "parole", canal: "morts", nom: "x", texte: "faux" }, "u1"), false, "d'un joueur : refusé");

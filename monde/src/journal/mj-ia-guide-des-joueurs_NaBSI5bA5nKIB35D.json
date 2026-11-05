@@ -31,7 +31,7 @@
         "level": 1
       },
       "text": {
-        "content": "<ul><li>Le bouton <strong>Histoire</strong> en haut de ta fiche ouvre le journal de ton personnage (s&#39;il n&#39;existe pas encore, le MJ le crée pour toi).</li><li><strong>Qui il est</strong> et <strong>Son histoire</strong> sont lisibles de tous ; <strong>Ce qu&#39;il garde pour lui</strong>, seulement de toi et du MJ ; les <strong>Chapitres</strong> racontent la campagne.</li><li>À la création, le MJ IA te pose deux ou trois questions et l&#39;écrit avec toi ; tu peux la compléter toi-même à tout moment (les questions d&#39;aide disent quoi y mettre).</li></ul>",
+        "content": "<ul><li>Le bouton <strong>Histoire</strong> en haut de ta fiche ouvre le journal de ton personnage (s&#39;il n&#39;existe pas encore, le MJ le crée pour toi).</li><li><strong>Portrait</strong> et <strong>Son histoire</strong> sont lisibles de tous ; <strong>Ses secrets</strong>, seulement de toi et du MJ (dans un journal plus ancien : « Qui il est » et « Ce qu&#39;il garde pour lui ») ; les <strong>Chapitres</strong> racontent la campagne.</li><li>À la création, le MJ IA te pose deux ou trois questions et l&#39;écrit avec toi ; tu peux la compléter toi-même à tout moment (les questions d&#39;aide disent quoi y mettre).</li></ul>",
         "format": 1
       },
       "ownership": {

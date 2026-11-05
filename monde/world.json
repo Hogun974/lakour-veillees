@@ -46,7 +46,7 @@
         "type": "module",
         "manifest": "https://github.com/Hogun974/lakour-mj-ia/releases/latest/download/module.json",
         "compatibility": {
-          "minimum": "0.40.0"
+          "minimum": "0.40.1"
         }
       }
     ]

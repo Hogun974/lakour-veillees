@@ -93,6 +93,18 @@ jobs:
           done
           node -e "for (const f of require('fs').readdirSync('dist').filter(f => f.endsWith('.json'))) { const m = require('./dist/' + f); console.log(f, m.id, m.version, '->', m.download); }"
 
+      # Chaque archive publiée (système, modules, mondes) porte les licences du dépôt : LICENSE (MIT, le code) et
+      # LICENCE-CONTENU.md (CC BY-NC-SA 4.0, les textes et les images). Les empaqueteurs les copient de la racine du dépôt ;
+      # les archives des mondes les reçoivent de modules/lakour-mj-ia/outils/empaqueter-monde.mjs (sous-module à jour exigé).
+      - name: Licences dans chaque archive (LICENSE, LICENCE-CONTENU.md)
+        run: |
+          for z in dist/*.zip; do
+            for f in LICENSE LICENCE-CONTENU.md; do
+              unzip -Z1 "$z" | grep -qx "$f" || { echo "$f absent de $z"; exit 1; }
+            done
+            echo "$z : licences présentes"
+          done
+
       - name: Notes de version
         id: notes
         run: |

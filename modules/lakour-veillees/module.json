@@ -10,7 +10,7 @@
   "readme": "https://github.com/Hogun974/lakour-veillees/blob/HEAD/README.md",
   "bugs": "https://github.com/Hogun974/lakour-veillees/issues",
   "changelog": "https://github.com/Hogun974/lakour-veillees/blob/HEAD/CHANGELOG.md",
-  "license": "https://github.com/Hogun974/lakour-veillees/blob/HEAD/README.md#licence",
+  "license": "LICENSE",
   "media": [
     { "type": "cover", "url": "https://raw.githubusercontent.com/Hogun974/lakour-veillees/HEAD/modules/lakour-veillees/assets/monde/fond.jpg", "caption": "Brumecombe, un soir de brume" },
     { "type": "screenshot", "url": "https://raw.githubusercontent.com/Hogun974/lakour-veillees/HEAD/docs/captures/village.png", "caption": "La carte du village de Brumecombe" },

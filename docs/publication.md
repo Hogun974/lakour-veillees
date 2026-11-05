@@ -5,10 +5,12 @@ est automatisé l'est par `.github/workflows/release.yml` et `outils/empaqueter-
 
 ## 1. Avant le passage en public
 
-- [ ] **Licence** : choisir (proposition : code MIT ; textes et images CC BY-NC-SA 4.0), créer `LICENSE` (et, si deux
-      licences, `LICENSE-CONTENU` ou une section claire), retirer le `TODO` du README (français et anglais), rappeler la
-      licence dans `modules/lakour-veillees/CREDITS.md`, et mettre à jour le champ `license` des deux manifestes (il pointe
-      pour l'instant sur `README.md#licence`). Vérifier que CC BY 3.0 (game-icons) reste citée.
+- [x] **Licence** (décidé par Jordan le 5 novembre 2026) : code MIT, textes et images CC BY-NC-SA 4.0. `LICENSE` (MIT,
+      « Copyright (c) 2026 Hogun974 ») et `LICENCE-CONTENU.md` (détail par dossier, attribution « LaKour — Hogun974 »,
+      tiers) à la racine ; `TODO` retiré des deux README ; licence rappelée dans `modules/lakour-veillees/CREDITS.md` ;
+      champ `license` de `system.json` et `module.json` à `"LICENSE"` (hérité par `lakour-veillees-en`), et
+      `outils/empaqueter-paquets.mjs` copie les deux fichiers dans chaque archive ; les archives du monde ne les contiendront qu'une fois le sous-module `modules/lakour-mj-ia` mis à jour (`outils/empaqueter-monde.mjs` les copie désormais), et l'étape « Licences dans chaque archive » du workflow refuse la release sans eux. CC BY 3.0
+      (game-icons) toujours citée.
 - [ ] **Captures** : déposer les PNG listés dans `docs/captures/LISEZ-MOI.md` (au moins `village`, `table-de-jeu`, `vote`,
       `carte-de-role`, `chroniques` : ce sont celles du bandeau du README et des `media` des manifestes).
 - [ ] **Relire le dépôt pour les fuites** : aucune adresse interne, aucun nom de machine, aucune clé, aucun vrai nom de

@@ -1,7 +1,7 @@
 # Crédits — Les Veillées de Brumecombe
 
 Jeu original de déduction sociale, de la famille des jeux de « loup-garou » nés du jeu traditionnel *Mafia*, pour un
-usage privé à la table. Tous les textes de ce module (rôles, métiers, bâtiments, guides, variantes, tables) et la
+usage non commercial. Tous les textes de ce module (rôles, métiers, bâtiments, guides, variantes, tables) et la
 carte du village de Brumecombe sont originaux. Aucun texte, aucune carte ni aucune illustration d'un jeu édité n'est
 reproduit.
 
@@ -96,3 +96,11 @@ relief). Fichiers produits par `outils/fabriquer-jetons-veillees.mjs` ; les corr
 | [wolf-trap](https://game-icons.net/1x1/lorc/wolf-trap.html) | Lorc | Rôle — Braconnière |
 | [hasty-grave](https://game-icons.net/1x1/skoll/hasty-grave.html) | Skoll | Rôle — Fossoyeur |
 | [pestle-mortar](https://game-icons.net/1x1/skoll/pestle-mortar.html) | Skoll | Métier — Apothicaire |
+
+## Licence
+
+Les textes et les images originaux de ce module sont sous licence **CC BY-NC-SA 4.0**
+(<https://creativecommons.org/licenses/by-nc-sa/4.0/>), attribution « LaKour — Hogun974 » ; son code (scripts, gabarits,
+styles, `lang/`) est sous licence **MIT**. Le détail et les mentions des tiers sont dans `LICENCE-CONTENU.md` et
+`LICENSE`, livrés dans l'archive avec ce fichier. Les icônes de game-icons.net créditées ci-dessus restent sous CC BY 3.0.
+Foundry VTT est une marque de Foundry Gaming, LLC ; ce module n'y est pas affilié.

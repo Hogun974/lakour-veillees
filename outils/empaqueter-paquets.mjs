@@ -23,6 +23,11 @@ import { deflateRawSync } from "node:zlib";
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..");
 export const DEPOT_PAR_DEFAUT = "Hogun974/lakour-veillees";
 
+// Licences tenues à la racine du dépôt, ajoutées à la racine de chaque archive (système, modules) quand le dossier du paquet
+// n'en a pas : LICENSE (MIT, le code ; les manifestes déclarent « license »: "LICENSE") et LICENCE-CONTENU.md
+// (CC BY-NC-SA 4.0, les textes et les images). Une licence absente est signalée, l'archive part sans.
+export const LICENCES = ["LICENSE", "LICENCE-CONTENU.md"];
+
 // manifeste : fichier lu dans le dossier du paquet ; publie (par défaut le même nom) : nom du manifeste écrit dans la sortie et
 // visé par « manifest » ; facultatif : paquet passé (avec avertissement) si son dossier n'a pas été engendré.
 export const PAQUETS = [
@@ -206,12 +211,19 @@ export function empaqueter(paquet, { depot, tag, sortie, racine = RACINE }) {
       ? { nom, donnees: Buffer.from(texteManifeste), date: statSync(chemin).mtime }
       : { nom, donnees: readFileSync(chemin), date: statSync(chemin).mtime };
   });
+  const licencesAbsentes = [];
+  for (const nom of LICENCES) {
+    if (fichiers.some(f => f.nom === nom)) continue;
+    const chemin = join(racine, nom);
+    if (existsSync(chemin)) fichiers.push({ nom, donnees: readFileSync(chemin), date: statSync(chemin).mtime });
+    else licencesAbsentes.push(nom);
+  }
   const archive = fabriquerZip(fichiers);
   mkdirSync(sortie, { recursive: true });
   writeFileSync(join(sortie, nomPublie), texteManifeste);
   writeFileSync(join(sortie, paquet.zip), archive);
   return { id: publie.id, version: publie.version, fichiers: fichiers.length, octets: archive.length, sha256: createHash("sha256").update(archive).digest("hex"),
-    manifeste: join(sortie, nomPublie), zip: join(sortie, paquet.zip), download: publie.download, manifest: publie.manifest };
+    manifeste: join(sortie, nomPublie), zip: join(sortie, paquet.zip), download: publie.download, manifest: publie.manifest, licencesAbsentes };
 }
 
 // Tous les paquets ; un paquet facultatif dont le dossier n'existe pas (module anglais non fabriqué) est passé, signalé dans
@@ -242,6 +254,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
       console.log(`${r.id} ${r.version} : ${r.fichiers} fichiers, ${(r.octets / 1024).toFixed(0)} Kio, sha256 ${r.sha256.slice(0, 12)}…`);
       console.log(`  ${posix.normalize(r.zip.split(/[\\/]/).join("/"))}  <-  ${r.download}`);
       console.log(`  ${posix.normalize(r.manifeste.split(/[\\/]/).join("/"))}  (manifest : ${r.manifest})`);
+      for (const l of r.licencesAbsentes) console.warn(`avertissement : ${l} absent de la racine du dépôt : ${r.id} part sans`);
     }
     for (const p of resultats.passes) console.warn(`avertissement : ${p.id} non empaqueté (${p.raison})`);
   } catch (erreur) {

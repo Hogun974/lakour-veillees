@@ -13,6 +13,10 @@ name: Publication
 on:
   push:
     tags: ["v*"]
+  # Release à blanc, à la main (Actions › Publication › Run workflow, sur principale ou une autre branche) :
+  # tout est fabriqué et vérifié comme pour une vraie release, avec la version du manifeste (comme si l'étiquette
+  # v<version> était posée) ; le contenu de dist/ est déposé en artefact du workflow, rien n'est publié.
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -37,11 +41,17 @@ jobs:
           cache: npm
 
       - name: L'étiquette porte la version du système (convention de docs/publication.md)
+        # Release à blanc hors étiquette : rien à comparer, l'empaquetage se fait comme si l'étiquette v<version> était posée.
         run: |
           SYS=$(node -p "require('./systems/lakour-loups/system.json').version")
-          if [ "v$SYS" != "$GITHUB_REF_NAME" ]; then
-            echo "Étiquette $GITHUB_REF_NAME, système en $SYS : mettre system.json à jour (ou poser v$SYS)" >&2; exit 1
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            if [ "v$SYS" != "$GITHUB_REF_NAME" ]; then
+              echo "Étiquette $GITHUB_REF_NAME, système en $SYS : mettre system.json à jour (ou poser v$SYS)" >&2; exit 1
+            fi
+          else
+            echo "Release à blanc sur « $GITHUB_REF_NAME » (pas d'étiquette) : empaquetage comme v$SYS"
           fi
+          echo "TAG=v$SYS" >> "$GITHUB_ENV"
 
       - name: Dépendances
         run: npm ci
@@ -56,13 +66,12 @@ jobs:
         run: npm run fabriquer-veillees-en
 
       - name: Empaquetage du système et des modules
-        run: node outils/empaqueter-paquets.mjs --tag "$GITHUB_REF_NAME" --sortie dist
+        run: node outils/empaqueter-paquets.mjs --tag "$TAG" --sortie dist
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
 
       - name: Empaquetage des mondes vierges, français puis anglais (si « npm run empaqueter-monde » existe), recopiés dans dist/
         env:
-          TAG: ${{ github.ref_name }}
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           if node -e "process.exit((require('./package.json').scripts || {})['empaqueter-monde'] ? 0 : 1)"; then
@@ -101,10 +110,11 @@ jobs:
             echo "English content module (same documents, same identifiers as \`lakour-veillees\`; enable only one of the two) :"
             echo "\`https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/lakour-veillees-en.json\`"
             echo
-            echo "Détail des changements : [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/${GITHUB_REF_NAME}/CHANGELOG.md)."
+            echo "Détail des changements : [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/${TAG}/CHANGELOG.md)."
           } > dist/NOTES.md
 
       - name: Release GitHub
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v3
         with:
           name: ${{ github.ref_name }}
@@ -113,3 +123,12 @@ jobs:
             dist/*.json
             dist/*.zip
           fail_on_unmatched_files: true
+
+      # Release à blanc (lancement à la main) : pas de release GitHub, dist/ est déposé en artefact à télécharger.
+      - name: Release à blanc (dist/ déposé en artefact, rien n'est publié)
+        if: github.event_name != 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.event.repository.name }}-a-blanc-${{ env.TAG }}
+          path: dist/
+          if-no-files-found: error

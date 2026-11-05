@@ -1,0 +1,49 @@
+# Essais à chaque envoi : à chaque push et à chaque pull request vers « principale » (et à la main, onglet Actions ›
+# Essais › Run workflow), récupère le sous-module (moteur lakour-mj-ia), installe les dépendances épinglées, fabrique le
+# contenu (français puis anglais : packs/ et modules/lakour-veillees-en/ sont hors git, et des essais les lisent) puis lance
+# la suite complète (`npm run essais`). La publication reste l'affaire de release.yml (étiquettes « v* »).
+name: Essais
+
+on:
+  push:
+    branches: [principale]
+  pull_request:
+    branches: [principale]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  essais:
+    # Automatique (push, pull request) seulement quand la variable de dépôt ESSAIS_AUTOMATIQUES vaut « oui » (Settings ›
+    # Secrets and variables › Actions › Variables) : tant que le moteur lakour-mj-ia n'est pas à jour sur GitHub, la
+    # récupération du sous-module échouerait à chaque envoi. À la main (Run workflow), toujours.
+    if: github.event_name == 'workflow_dispatch' || vars.ESSAIS_AUTOMATIQUES == 'oui'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dépôt et sous-module (moteur lakour-mj-ia)
+        uses: actions/checkout@v5
+        with:
+          submodules: recursive
+          # Le moteur lakour-mj-ia doit être lisible : dépôt public, ou PAT (lecture) dans le secret SOUS_MODULE_TOKEN.
+          token: ${{ secrets.SOUS_MODULE_TOKEN || github.token }}
+
+      - name: Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Dépendances
+        run: npm ci
+
+      - name: Fabrication du contenu (src/ et packs/ ; packs/ est hors git)
+        run: npm run fabriquer-veillees
+
+      - name: Module anglais lakour-veillees-en (modules/lakour-veillees-en/, hors git)
+        run: npm run fabriquer-veillees-en
+
+      # Après la fabrication : certains essais lisent packs/ et le module anglais (absents d'un clone neuf).
+      - name: Essais
+        run: npm run essais

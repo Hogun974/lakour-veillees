@@ -48,11 +48,14 @@ const duCompendium = d => ({
 });
 
 function journalDuMonde(d) {
-  const j = { ...structuredClone(d), id: d._id, pages: (d.pages ?? []).map(p => ({ ...structuredClone(p), id: p._id, getFlag: (m, k) => p.flags?.[m]?.[k] })) };
+  const j = { ...structuredClone(d), id: d._id, pages: (d.pages ?? []).map(p => ({ ...structuredClone(p), id: p._id, getFlag: (m, k) => p.flags?.[m]?.[k], toObject: () => structuredClone(p) })) };
   j.getFlag = (m, k) => j.flags?.[m]?.[k];
   j.deleteEmbeddedDocuments = async (t, ids) => { j.pages = j.pages.filter(p => !ids.includes(p.id)); };
   j.createEmbeddedDocuments = async (t, pages, o = {}) => {
     j.pages.push(...pages.map((p, i) => { const pid = o.keepId ? p._id : `PageNeuve${i}`.padEnd(16, "0"); return { ...p, _id: pid, id: pid }; }));
+  };
+  j.updateEmbeddedDocuments = async (t, majs) => {
+    for (const { _id, ...maj } of majs) { const p = j.pages.find(x => x.id === _id); for (const [k, v] of Object.entries(maj)) poser(p, k, v); }
   };
   j.update = async maj => { for (const [k, v] of Object.entries(maj)) poser(j, k, v); };
   return j;
@@ -236,7 +239,7 @@ const MUTATIONS = [
   ["main.js", "const libre = !game.journal.get(j.id);", "const libre = false;", "identifiant du compendium perdu"],
   ["main.js", "entryId: journaux.get(n.entryId) ?? n.entryId", "entryId: n.entryId", "épingles non raccordées"],
   ["main.js", " || duModule.has(d.id)", "", "sons d'avant 0.5.0 en double"],
-  ["main.js", ".map(p => p.toObject()), { keepId: true });", ".map(p => p.toObject()));", "pages rafraîchies sans leur identifiant"],
+  ["main.js", "plan.creer, { keepId: true });", "plan.creer);", "pages rafraîchies sans leur identifiant"],
   ["main.js", "\"ownership.default\": source.ownership.default, ", "", "visibilité non réparée au rafraîchissement"],
   ["main.js", "  if (scene.getFlag(ID, \"version\") === VERSION_CONTENU) return false;\n", "", "carte rafraîchie à chaque installation"]
 ];
@@ -248,8 +251,9 @@ async function chargerMutant(avant, apres) {
   const texte = readFileSync(MAIN, "utf8");
   assert.ok(texte.includes(avant), `mutation introuvable dans main.js : ${avant}`);
   writeFileSync(join(dossier, "main.js"), texte.replace(avant, apres));
-  // Importés par main.js : fetes.js et identite.js (qui retombe sur l'identifiant français hors d'un dossier modules/<id>/).
-  for (const f of ["fetes.js", "identite.js"]) writeFileSync(join(dossier, f), readFileSync(join(MAIN, "..", f), "utf8"));
+  // Importés par main.js : fetes.js, mise-a-jour.js et identite.js (qui retombe sur l'identifiant français hors d'un dossier
+  // modules/<id>/).
+  for (const f of ["fetes.js", "identite.js", "mise-a-jour.js"]) writeFileSync(join(dossier, f), readFileSync(join(MAIN, "..", f), "utf8"));
   try { return await charger(join(dossier, "main.js")); }
   finally { rmSync(dossier, { recursive: true, force: true }); }
 }

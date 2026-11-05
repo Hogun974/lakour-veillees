@@ -16,6 +16,7 @@
     "MauvaisSysteme": "This world does not use the La Kour Loups system: nothing to install.",
     "Rapport": {
       "MisAJour": "{nom} (updated)",
+      "Gardees": "pages edited by hand, left as they are: {liste}",
       "SonsEpingles": "{nom} (sounds and pins)"
     }
   }

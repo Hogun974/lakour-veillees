@@ -16,6 +16,7 @@
     "MauvaisSysteme": "Ce monde n'utilise pas le système La Kour Loups : rien à installer.",
     "Rapport": {
       "MisAJour": "{nom} (mis à jour)",
+      "Gardees": "pages retouchées à la main, laissées telles quelles : {liste}",
       "SonsEpingles": "{nom} (sons et épingles)"
     }
   }

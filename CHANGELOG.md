@@ -4,7 +4,15 @@ Deux numéros de version avancent ensemble : celui du **système** `lakour-loups
 `lakour-veillees`. Chaque publication GitHub (étiquette `v<version du système>`) emporte les deux, plus le monde vierge.
 Le moteur commun `lakour-mj-ia` a son propre journal dans [son dépôt](https://github.com/Hogun974/lakour-mj-ia).
 
-## Non publié
+## Système 0.11.2 · Contenu 0.14.1 — 5 novembre 2026
+
+- **Mise à jour des mondes déjà installés** (`scripts/mise-a-jour.js`, fichier commun aux modules de contenu LaKour) : un
+  journal déjà importé n'est plus remplacé en bloc. Les pages nouvelles du compendium sont ajoutées, les pages que personne
+  n'a retouchées reprennent le texte et le rang du compendium (avec leurs identifiants : les épingles des cartes les visent),
+  celles que le compendium n'a plus sont retirées ; les pages retouchées à la main restent telles quelles et sont nommées au MJ
+  dans le rapport d'installation (avant : les retouches étaient perdues), les pages ajoutées ou réécrites par le MJ IA restent
+  protégées. Chaque page importée porte une empreinte de son texte. Un essai lie le numéro de contenu de l'installateur à
+  `module.json` (`essais/mise-a-jour-journaux.test.mjs`).
 
 - Sécurité (revue) : la nuit, et pendant un choix secret, le navigateur d'un joueur ne diffuse plus son activité Foundry
   (curseur, ping, règle, cibles, déplacements prévus, voyant « parle » : `scripts/activite.mjs`, lu dans le client et le

@@ -1,7 +1,9 @@
 {
   "_id": "BmG4Y4VZkG7WKJvi",
+  "_key": "!journal!BmG4Y4VZkG7WKJvi",
   "name": "Veillée de fête — La Nuit des âmes",
   "folder": "lMb0wfi4LwXrBWn1",
+  "sort": 0,
   "categories": [],
   "ownership": {
     "default": 2
@@ -10,7 +12,7 @@
     "lakour-veillees": {
       "cle": "fete-nuit-des-ames",
       "visible": true,
-      "version": "0.12.0"
+      "version": "0.14.0"
     }
   },
   "_stats": {
@@ -27,6 +29,7 @@
   "pages": [
     {
       "_id": "UHj00sDteGA6CbcJ",
+      "_key": "!journal.pages!BmG4Y4VZkG7WKJvi.UHj00sDteGA6CbcJ",
       "name": "La Nuit des âmes",
       "type": "image",
       "sort": 100,
@@ -41,31 +44,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826266,
-        "modifiedTime": 1793708826266,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "text": {
-        "format": 1
-      },
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "category": null,
-      "_key": "!journal.pages!BmG4Y4VZkG7WKJvi.UHj00sDteGA6CbcJ"
+      "flags": {}
     },
     {
       "_id": "fO7n9sdWH6cH3z8S",
+      "_key": "!journal.pages!BmG4Y4VZkG7WKJvi.fO7n9sdWH6cH3z8S",
       "name": "La fête à Brumecombe",
       "type": "text",
       "sort": 200,
@@ -80,30 +63,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826266,
-        "modifiedTime": 1793708826266,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!BmG4Y4VZkG7WKJvi.fO7n9sdWH6cH3z8S"
+      "flags": {}
     },
     {
       "_id": "iwBzuvvMaFUHSofN",
+      "_key": "!journal.pages!BmG4Y4VZkG7WKJvi.iwBzuvvMaFUHSofN",
       "name": "Les règles de la veillée",
       "type": "text",
       "sort": 300,
@@ -118,29 +82,7 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826266,
-        "modifiedTime": 1793708826266,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!BmG4Y4VZkG7WKJvi.iwBzuvvMaFUHSofN"
+      "flags": {}
     }
-  ],
-  "sort": 0,
-  "_key": "!journal!BmG4Y4VZkG7WKJvi"
+  ]
 }

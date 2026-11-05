@@ -1,12 +1,18 @@
 {
+  "_id": "hNQ5fYcN3giwWXzh",
+  "_key": "!journal!hNQ5fYcN3giwWXzh",
   "name": "Les Veillées de Brumecombe — Guide du joueur",
   "folder": "lMb0wfi4LwXrBWn1",
+  "sort": 0,
   "categories": [],
+  "ownership": {
+    "default": 2
+  },
   "flags": {
     "lakour-veillees": {
       "cle": "guide-du-joueur",
       "visible": true,
-      "version": "0.12.0"
+      "version": "0.14.0"
     }
   },
   "_stats": {
@@ -23,6 +29,7 @@
   "pages": [
     {
       "_id": "Fqt9ZQXVhrS4aEav",
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.Fqt9ZQXVhrS4aEav",
       "name": "Bienvenue à Brumecombe",
       "type": "text",
       "sort": 100,
@@ -37,30 +44,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826307,
-        "modifiedTime": 1793708826341,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.Fqt9ZQXVhrS4aEav"
+      "flags": {}
     },
     {
       "_id": "0r20QSMNpotjnHTY",
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.0r20QSMNpotjnHTY",
       "name": "Déroulement d'une partie",
       "type": "text",
       "sort": 200,
@@ -75,30 +63,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826312,
-        "modifiedTime": 1793708826343,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.0r20QSMNpotjnHTY"
+      "flags": {}
     },
     {
       "_id": "PYGneq7UaCKyiAXF",
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.PYGneq7UaCKyiAXF",
       "name": "Dans Foundry",
       "type": "text",
       "sort": 300,
@@ -113,30 +82,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826316,
-        "modifiedTime": 1793708826344,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.PYGneq7UaCKyiAXF"
+      "flags": {}
     },
     {
       "_id": "5hUHALWZp9AW8uVQ",
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.5hUHALWZp9AW8uVQ",
       "name": "La peste noire",
       "type": "text",
       "sort": 400,
@@ -151,30 +101,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826318,
-        "modifiedTime": 1793708826344,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.5hUHALWZp9AW8uVQ"
+      "flags": {}
     },
     {
       "_id": "1pSxCTUtrYl8LBp0",
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.1pSxCTUtrYl8LBp0",
       "name": "Les rôles de la Meute",
       "type": "text",
       "sort": 500,
@@ -189,30 +120,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826320,
-        "modifiedTime": 1793708826345,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.1pSxCTUtrYl8LBp0"
+      "flags": {}
     },
     {
       "_id": "52N3zwvQlajoeEAt",
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.52N3zwvQlajoeEAt",
       "name": "Les rôles du Village",
       "type": "text",
       "sort": 600,
@@ -227,30 +139,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826323,
-        "modifiedTime": 1793708826345,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.52N3zwvQlajoeEAt"
+      "flags": {}
     },
     {
       "_id": "CxKHPCOdqapMGQad",
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.CxKHPCOdqapMGQad",
       "name": "Les solitaires",
       "type": "text",
       "sort": 700,
@@ -265,30 +158,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826324,
-        "modifiedTime": 1793708826346,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.CxKHPCOdqapMGQad"
+      "flags": {}
     },
     {
       "_id": "eAtpj7TZAGIntonE",
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.eAtpj7TZAGIntonE",
       "name": "Les métiers",
       "type": "text",
       "sort": 800,
@@ -303,30 +177,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826325,
-        "modifiedTime": 1793708826346,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.eAtpj7TZAGIntonE"
+      "flags": {}
     },
     {
       "_id": "dC60w4AikPtzKrzh",
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.dC60w4AikPtzKrzh",
       "name": "Les bâtiments",
       "type": "text",
       "sort": 900,
@@ -341,30 +196,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826328,
-        "modifiedTime": 1793708826347,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.dC60w4AikPtzKrzh"
+      "flags": {}
     },
     {
       "_id": "QIKXHcnrr9M6qTbg",
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.QIKXHcnrr9M6qTbg",
       "name": "La Chapelle",
       "type": "text",
       "sort": 1000,
@@ -379,30 +215,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826329,
-        "modifiedTime": 1793708826347,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.QIKXHcnrr9M6qTbg"
+      "flags": {}
     },
     {
       "_id": "tbL4JLTRngZb6B7E",
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.tbL4JLTRngZb6B7E",
       "name": "Le Moulin",
       "type": "text",
       "sort": 1100,
@@ -417,30 +234,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826330,
-        "modifiedTime": 1793708826348,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.tbL4JLTRngZb6B7E"
+      "flags": {}
     },
     {
       "_id": "25GHYdzbhWMiRLU9",
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.25GHYdzbhWMiRLU9",
       "name": "La Taverne",
       "type": "text",
       "sort": 1200,
@@ -455,30 +253,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826330,
-        "modifiedTime": 1793708826348,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.25GHYdzbhWMiRLU9"
+      "flags": {}
     },
     {
       "_id": "7KpinLXkoJ8poGNx",
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.7KpinLXkoJ8poGNx",
       "name": "Le Gibet",
       "type": "text",
       "sort": 1300,
@@ -493,30 +272,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826331,
-        "modifiedTime": 1793708826348,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.7KpinLXkoJ8poGNx"
+      "flags": {}
     },
     {
       "_id": "ik0N2ip2FfeNXbdH",
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.ik0N2ip2FfeNXbdH",
       "name": "Le Puits",
       "type": "text",
       "sort": 1400,
@@ -531,30 +291,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826332,
-        "modifiedTime": 1793708826349,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.ik0N2ip2FfeNXbdH"
+      "flags": {}
     },
     {
       "_id": "rrl6GKhc6WIIz5UL",
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.rrl6GKhc6WIIz5UL",
       "name": "La Forge",
       "type": "text",
       "sort": 1500,
@@ -569,30 +310,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826333,
-        "modifiedTime": 1793708826349,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.rrl6GKhc6WIIz5UL"
+      "flags": {}
     },
     {
       "_id": "HkUwbvZBwyxUzIEC",
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.HkUwbvZBwyxUzIEC",
       "name": "Le Cimetière",
       "type": "text",
       "sort": 1600,
@@ -607,30 +329,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826333,
-        "modifiedTime": 1793708826349,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.HkUwbvZBwyxUzIEC"
+      "flags": {}
     },
     {
       "_id": "liUCpIQEbHv1MUa8",
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.liUCpIQEbHv1MUa8",
       "name": "Le Pont",
       "type": "text",
       "sort": 1700,
@@ -645,30 +348,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826334,
-        "modifiedTime": 1793708826350,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.liUCpIQEbHv1MUa8"
+      "flags": {}
     },
     {
       "_id": "qMF6dr4pK51fZjkQ",
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.qMF6dr4pK51fZjkQ",
       "name": "Le Lavoir",
       "type": "text",
       "sort": 1800,
@@ -683,30 +367,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826336,
-        "modifiedTime": 1793708826350,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.qMF6dr4pK51fZjkQ"
+      "flags": {}
     },
     {
       "_id": "11IyFxABvPsk1jmA",
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.11IyFxABvPsk1jmA",
       "name": "La Grange",
       "type": "text",
       "sort": 1900,
@@ -721,30 +386,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826336,
-        "modifiedTime": 1793708826351,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.11IyFxABvPsk1jmA"
+      "flags": {}
     },
     {
       "_id": "0jmyBXNTvehGMyUB",
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.0jmyBXNTvehGMyUB",
       "name": "Nouveaux visages de la veillée",
       "type": "text",
       "sort": 2000,
@@ -759,30 +405,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826338,
-        "modifiedTime": 1793708826351,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.0jmyBXNTvehGMyUB"
+      "flags": {}
     },
     {
       "_id": "JG8lSOeKmFHkMC80",
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.JG8lSOeKmFHkMC80",
       "name": "Les veillées de fête",
       "type": "text",
       "sort": 2100,
@@ -797,33 +424,26 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826340,
-        "modifiedTime": 1793708826351,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
+      "flags": {}
+    },
+    {
+      "_id": "lzZbyRnj5YVolPnP",
+      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.lzZbyRnj5YVolPnP",
+      "name": "La petite tablée",
+      "type": "text",
+      "sort": 2200,
+      "title": {
+        "show": true,
+        "level": 1
       },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
+      "text": {
+        "content": "<h2>Une veillée à peu d'humains</h2><p>Vous n'êtes que deux ou trois autour du narrateur ? La <strong>petite tablée</strong> est faite pour vous : de <strong>1 à 4 joueurs humains</strong>, complétés par <strong>2 à 8 joueurs IA</strong> (les compagnons, qui tiennent une place comme n'importe quel villageois : ils agissent la nuit, parlent au débat et votent), pour <strong>4 à 12 places</strong> en tout. Le narrateur la choisit à la préparation (niveau <strong>« Petite tablée »</strong>), et la Table de jeu l'annonce à tous : ses règles sont publiques. Ce qui ne l'est pas, c'est qui tient quoi.</p><h2>Ses règles</h2><ul><li><strong>La meute est courte</strong> : un seul loup jusqu'à sept places, deux jusqu'à dix, trois au-delà. Mais le village n'a presque <strong>pas de simples villageois</strong> : chacun ou presque a un pouvoir, et quelque chose à faire la nuit.</li><li><strong>Le régime des deux loups</strong> (huit places et plus) : la <strong>première nuit est blanche</strong> (la meute se reconnaît, mais ne chasse pas : le village a un débat avant le premier sang), et la meute ne l'emporte que lorsqu'elle est <strong>plus nombreuse</strong> que tous les autres vivants réunis — à égalité (deux loups, deux autres), la veillée continue et le village a encore un vote. À un seul loup, les règles ordinaires : la meute gagne dès qu'elle égale les autres.</li><li><strong>Le partage des camps, ce qui est garanti.</strong> Les joueurs humains ne sont <strong>jamais tous loups</strong> ; à trois humains ou plus, ils ne sont <strong>jamais tous du même camp</strong> (ni tous du Village, ni tous de l'ombre). Dès six places, il y a toujours <strong>au moins deux rôles de l'ombre</strong> en jeu (les loups, et un solitaire qui ne tue pas : le Colporteur ; quatre à onze et douze places), parfois un de plus.</li><li><strong>Le partage des camps, ce qui est favorisé sans être garanti.</strong> À chaque distribution, le narrateur (le système) tire en secret s'il impose ou non deux penchants : <strong>une lanterne chez un humain</strong> (un rôle d'information — Liseuse de cendres, Sourcier, Veilleuse de lanterne, Fossoyeur, Ermite, Enfant de la brume, Louvetier — tenu par un humain du Village, une fois sur deux) et, à trois humains ou plus, <strong>l'ombre des deux côtés de la table</strong> (un rôle de l'ombre chez les humains ET chez les compagnons, une fois sur deux). Le reste du tirage est libre : les rôles vont au hasard, aux humains comme aux compagnons.</li><li><strong>Pas de jour sans verdict.</strong> Au vote d'exécution, une <strong>égalité</strong> en tête que le Bailli ne tranche pas (pas de Bailli, ou il passe) est tranchée <strong>par le sort</strong> parmi les ex æquo. On vote chaque jour, et chaque vote compte.</li><li><strong>Le glas final est posé d'office</strong> : la veillée s'arrête au soir du jour 3 jusqu'à six places, puis un jour de plus par deux places (jour 4 à huit places, jour 6 à douze). Si un loup vit encore à ce soir-là, la meute l'emporte : le village n'a pas le temps de tergiverser.</li><li><strong>Les compagnons vous parlent.</strong> Les joueurs IA s'adressent d'abord aux humains : ils vous accusent, vous défendent, vous questionnent, plutôt que de discuter entre eux.</li></ul><p>Ni Loup déguisé (il rendrait la seule lanterne aveugle), ni Pyromane ni Dame du gué (trop pour une tablée de six), ni Gibet ni Pont. Le reste est une veillée ordinaire : métiers publics, bâtiments, Bailli, Masques de veillée, Dernier souffle si le réglage le veut.</p><h2>Ce qu'on en déduit, et ce qu'on n'en déduit pas</h2><p>Ce que la règle garantit, tu peux t'en servir : si tu es loup, ton ami humain n'est pas loup (à deux) ; à trois humains ou plus, si tu es du Village, <strong>l'un de tes amis au moins n'en est pas</strong> — sans savoir lequel, ni s'il est loup ou Colporteur (qui, s'il a échangé son rôle, gagne avec son nouveau camp) — et si tu es de l'ombre, l'un d'eux au moins est du Village. Mais dès qu'un camp humain se dévoile (un mort révélé, une lanterne lue), la règle fait le reste : à trois humains, si tu es du Village et qu'un ami l'est aussi, le troisième est de l'ombre. Rien de plus n'est certain : à deux humains, vous pouvez être tous deux du Village ; l'ombre peut être toute entière chez les compagnons, ou toute entière chez les humains ; la lanterne peut être chez un compagnon, et celui qui jure n'avoir rien vu peut être celui qui a tout vu. Un loup peut se réclamer de la lanterne : rien ne le contredit.</p>",
+        "format": 1
       },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!hNQ5fYcN3giwWXzh.JG8lSOeKmFHkMC80"
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
     }
-  ],
-  "ownership": {
-    "default": 2
-  },
-  "_id": "hNQ5fYcN3giwWXzh",
-  "sort": 0,
-  "_key": "!journal!hNQ5fYcN3giwWXzh"
+  ]
 }

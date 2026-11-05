@@ -1,12 +1,18 @@
 {
+  "_id": "0ICIjxrLS8wIyXW9",
+  "_key": "!journal!0ICIjxrLS8wIyXW9",
   "name": "Les Veillées de Brumecombe — Guide du narrateur",
   "folder": "lMb0wfi4LwXrBWn1",
+  "sort": 0,
   "categories": [],
+  "ownership": {
+    "default": 0
+  },
   "flags": {
     "lakour-veillees": {
       "cle": "guide-du-narrateur",
       "visible": false,
-      "version": "0.12.0"
+      "version": "0.14.0"
     }
   },
   "_stats": {
@@ -23,6 +29,7 @@
   "pages": [
     {
       "_id": "7QwL8Fxvd7dsbOd6",
+      "_key": "!journal.pages!0ICIjxrLS8wIyXW9.7QwL8Fxvd7dsbOd6",
       "name": "Le métier de narrateur",
       "type": "text",
       "sort": 100,
@@ -37,30 +44,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826472,
-        "modifiedTime": 1793708826494,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!0ICIjxrLS8wIyXW9.7QwL8Fxvd7dsbOd6"
+      "flags": {}
     },
     {
       "_id": "958ttMVbH0yRIMpz",
+      "_key": "!journal.pages!0ICIjxrLS8wIyXW9.958ttMVbH0yRIMpz",
       "name": "Préparer la partie",
       "type": "text",
       "sort": 200,
@@ -69,36 +57,17 @@
         "level": 1
       },
       "text": {
-        "content": "<h2>La composition</h2><p>Les compositions toutes prêtes vont de 6 à 18 joueurs, en trois niveaux :<br>- <strong>Débutants</strong> : loups simples, pouvoirs faciles à expliquer, aucun solitaire. Pour une première partie ou un groupe qui découvre.<br>- <strong>Classique</strong> : un ou deux loups spéciaux, un ou deux solitaires au-delà de dix joueurs. La partie de tous les jours.<br>- <strong>Chaos</strong> : loups spéciaux, solitaires, pouvoirs qui se croisent. Pour un groupe qui connaît bien le jeu, et un narrateur sûr de lui.</p><p>Chaque composition indique ses bâtiments (4 à 6). Tu peux en changer un, en annonçant la liste avant la distribution.</p><p><strong>Ne révèle jamais la composition</strong> : ni les rôles en jeu, ni le nombre de loups. Les bâtiments, eux, sont publics. Une partie peut même n'avoir aucun loup (la <strong>peste noire</strong>, page suivante) : rien ne doit le laisser deviner.</p><h2>La distribution</h2><ul><li>Distribue les rôles et les métiers au hasard (la Table de jeu s'en charge). Chaque joueur reçoit son rôle en message privé.</li><li>Attribue une maison à chacun, dans l'ordre (« Maison 1 », « Maison 2 »…). Avec le Pont en jeu, rappelle que les maisons 13 à 18 sont sur l'autre rive.</li><li><strong>Chasseur de primes</strong> : tire sa cible au hasard parmi les autres joueurs (jamais un loup si possible, pour que la partie reste ouverte), et donne-la-lui la première nuit.</li><li>Annonce les <strong>bâtiments en jeu</strong> et les <strong>variantes</strong> choisies (révélation à la mort, durée du débat, <strong>Bailli</strong>).</li><li><strong>Masques de veillée</strong> (réglage, par défaut oui) : le système remet en secret à chaque loup deux ou trois rôles du Village absents de la partie (trois pour une meute, deux pour un loup seul ; jamais dans une peste noire). Tu les vois dans ta chronique secrète ; ne les cite jamais, ne les confirme ni ne les démens.</li><li>Lis à voix haute une présentation du village (deux ou trois phrases, pas plus).</li></ul>",
+        "content": "<h2>La composition</h2><p>Les compositions toutes prêtes vont de 6 à 18 joueurs, en trois niveaux :<br>- <strong>Débutants</strong> : loups simples, pouvoirs faciles à expliquer, aucun solitaire. Pour une première partie ou un groupe qui découvre.<br>- <strong>Classique</strong> : un ou deux loups spéciaux, un ou deux solitaires au-delà de dix joueurs. La partie de tous les jours.<br>- <strong>Chaos</strong> : loups spéciaux, solitaires, pouvoirs qui se croisent. Pour un groupe qui connaît bien le jeu, et un narrateur sûr de lui.</p><p>Chaque composition indique ses bâtiments (4 à 6). Tu peux en changer un, en annonçant la liste avant la distribution.</p><h2>La petite tablée</h2><p>Pour <strong>1 à 4 humains et 2 à 8 compagnons IA</strong> (4 à 12 places) : le niveau <strong>« Petite tablée »</strong> de la Table de jeu (ou les compositions prêtes « Petite tablée — n places »). Ses règles sont <strong>publiques</strong> (page « La petite tablée » du guide du joueur) : meute courte (1 loup jusqu'à 7 places, 2 jusqu'à 10, 3 au-delà), au régime des deux loups dès 8 places (première nuit blanche, et la meute doit être PLUS nombreuse que les autres pour l'emporter), au moins deux rôles de l'ombre dès 6 places (quatre à 11 et 12 : trois loups et le Colporteur), presque pas de simples villageois, ni Loup déguisé ni tueur solitaire, ni Gibet ni Pont ; le <strong>tirage est contraint</strong> (garanti : les humains jamais tous loups, ni tous du même camp à trois ou plus ; favorisé sans garantie, tiré en secret à chaque partie : une lanterne chez un humain du Village, l'ombre des deux côtés de la table à trois humains ou plus — jamais une déduction certaine) ; <strong>le sort tranche</strong> les égalités que le Bailli ne tranche pas ; le <strong>glas final</strong> est posé d'office (jour 3 jusqu'à 6 places, puis un jour de plus par deux places). Le réglage du monde « Petite tablée par défaut » se souvient du dernier niveau choisi : « Rejouer » et le MJ IA composent alors une petite tablée.</p><p>Ce que tu dis : la règle, et rien d'autre. <strong>Jamais</strong> de qui l'ombre est tombée chez les humains, ni qui tient la lanterne, ni si les penchants favorisés ont été appliqués cette fois : le tirage contraint ne s'annonce que par ses nombres (le système le fait pour toi, en n'annonçant que ce qui vaut pour cette table). Le Glas final : 0 à la distribution veut dire « posé d'office » ; un jour donné est gardé tel quel. Les compagnons IA y parlent d'abord aux humains : laisse-les faire, ne les relance pas pour un humain silencieux.</p><p><strong>Ne révèle jamais la composition</strong> : ni les rôles en jeu, ni le nombre de loups. Les bâtiments, eux, sont publics. Une partie peut même n'avoir aucun loup (la <strong>peste noire</strong>, page suivante) : rien ne doit le laisser deviner.</p><h2>La distribution</h2><ul><li>Distribue les rôles et les métiers au hasard (la Table de jeu s'en charge). Chaque joueur reçoit son rôle en message privé.</li><li>Attribue une maison à chacun, dans l'ordre (« Maison 1 », « Maison 2 »…). Avec le Pont en jeu, rappelle que les maisons 13 à 18 sont sur l'autre rive.</li><li><strong>Chasseur de primes</strong> : tire sa cible au hasard parmi les autres joueurs (jamais un loup si possible, pour que la partie reste ouverte), et donne-la-lui la première nuit.</li><li>Annonce les <strong>bâtiments en jeu</strong> et les <strong>variantes</strong> choisies (révélation à la mort, durée du débat, <strong>Bailli</strong>).</li><li><strong>Masques de veillée</strong> (réglage, par défaut oui) : le système remet en secret à chaque loup deux ou trois rôles du Village absents de la partie (trois pour une meute, deux pour un loup seul ; jamais dans une peste noire). Tu les vois dans ta chronique secrète ; ne les cite jamais, ne les confirme ni ne les démens.</li><li>Lis à voix haute une présentation du village (deux ou trois phrases, pas plus).</li></ul>",
         "format": 1
       },
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826474,
-        "modifiedTime": 1793708826495,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!0ICIjxrLS8wIyXW9.958ttMVbH0yRIMpz"
+      "flags": {}
     },
     {
       "_id": "yUioRbMwoERR4ePH",
+      "_key": "!journal.pages!0ICIjxrLS8wIyXW9.yUioRbMwoERR4ePH",
       "name": "La peste noire",
       "type": "text",
       "sort": 300,
@@ -113,30 +82,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826476,
-        "modifiedTime": 1793708826495,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!0ICIjxrLS8wIyXW9.yUioRbMwoERR4ePH"
+      "flags": {}
     },
     {
       "_id": "L0BO3XGHCmQnDGHh",
+      "_key": "!journal.pages!0ICIjxrLS8wIyXW9.L0BO3XGHCmQnDGHh",
       "name": "Mener la nuit",
       "type": "text",
       "sort": 400,
@@ -151,30 +101,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826478,
-        "modifiedTime": 1793708826496,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!0ICIjxrLS8wIyXW9.L0BO3XGHCmQnDGHh"
+      "flags": {}
     },
     {
       "_id": "AGI84GwETYMp2fE8",
+      "_key": "!journal.pages!0ICIjxrLS8wIyXW9.AGI84GwETYMp2fE8",
       "name": "L'aube et les morts",
       "type": "text",
       "sort": 500,
@@ -189,30 +120,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826480,
-        "modifiedTime": 1793708826497,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!0ICIjxrLS8wIyXW9.AGI84GwETYMp2fE8"
+      "flags": {}
     },
     {
       "_id": "3bLkq9S8pWa7Desh",
+      "_key": "!journal.pages!0ICIjxrLS8wIyXW9.3bLkq9S8pWa7Desh",
       "name": "Le jour, le vote et les égalités",
       "type": "text",
       "sort": 600,
@@ -227,30 +139,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826485,
-        "modifiedTime": 1793708826497,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!0ICIjxrLS8wIyXW9.3bLkq9S8pWa7Desh"
+      "flags": {}
     },
     {
       "_id": "Ift7TscrLRS7RYqe",
+      "_key": "!journal.pages!0ICIjxrLS8wIyXW9.Ift7TscrLRS7RYqe",
       "name": "Ambiance : un automne gothique",
       "type": "text",
       "sort": 700,
@@ -265,30 +158,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826487,
-        "modifiedTime": 1793708826498,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!0ICIjxrLS8wIyXW9.Ift7TscrLRS7RYqe"
+      "flags": {}
     },
     {
       "_id": "NA1klwbcWzpQBIVU",
+      "_key": "!journal.pages!0ICIjxrLS8wIyXW9.NA1klwbcWzpQBIVU",
       "name": "Conseils pour un MJ IA",
       "type": "text",
       "sort": 800,
@@ -297,36 +171,17 @@
         "level": 1
       },
       "text": {
-        "content": "<h2>Discipline du secret</h2><ul><li>Un rôle, une vision, une cible ne se disent <strong>qu'en message privé</strong> au joueur concerné. Jamais dans la narration publique, jamais dans un résumé, jamais dans la chronique visible.</li><li>Le système remet lui-même ces messages privés dans le <strong>carnet secret</strong> du joueur, envoyé à lui seul. Un chuchotement du chat, lui, arrive dans le navigateur de tous les joueurs (un curieux peut le lire dans la console) : n'y mets jamais un secret de partie.</li><li>Les pouvoirs de jour : loups_jour (lister ce qui est possible, utiliser celui qu'un joueur annonce). Les métiers sont publics ; le Juge de paix et la Conteuse sont des rôles secrets — ne dis jamais qui les tient avant qu'ils ne s'en servent.</li><li>Ne réponds pas à « qui est le loup ? », ni à « est-ce que X a agi cette nuit ? », ni à « que dit ma fiche à propos de Y ? ». Réponds : « Le village devra le découvrir. »</li><li>Si un joueur te demande en privé ce que fait un rôle, réponds avec le texte du rôle, sans dire qui l'a.</li><li>Ne cite jamais le nombre de loups vivants, sauf effet public (Meunière, Moulin), ni la composition, ni les rôles en jeu.</li><li><strong>Peste noire</strong> : tu le sais (distribution secrète), tu ne le dis jamais, même par allusion. La première nuit, donne la victime à loups_nuit (peste_victime, ou « hasard ») ; ensuite, le porteur choisit. Quand un joueur crie « C'est la peste noire ! », loups_peste : le système tranche.</li></ul><ul><li><strong>Masques de veillée</strong> : ils sont le secret de la meute. Ne les nomme jamais, ne dis jamais qu'un rôle « n'est pas en jeu », même quand un loup s'en réclame.</li><li><strong>Registre du greffier</strong> : il est public (votes clos voix par voix, morts et cause publique, Bailli, déclarations). Tu peux t'en servir dans tes récits ; une déclaration n'est qu'une parole de joueur, jamais une vérité que tu confirmes.</li></ul><h2>Tenir le fil</h2><ul><li>Avant chaque nuit, appelle <strong>ordreDeNuit()</strong> et suis la liste. Ne saute pas un rôle mort sans attendre un peu.</li><li>Note chaque choix au moment où il arrive. À l'aube, résous dans l'ordre de la page « L'aube et les morts », puis vérifie la victoire.</li><li>Garde une chronique courte : « Nuit 2 : Maison 7 (Mathurin) tué par la meute. Jour 2 : Maison 3 exécutée, Liseuse de cendres. » Elle sert au « Précédemment… » de la séance suivante.</li></ul><h2>Placer les jetons</h2><ul><li>Au début, pose chaque jeton <strong>devant sa maison</strong> (« Maison 3 »). Le jour, rassemble les vivants <strong>sur la place du village</strong>, autour du Puits. Pendant le vote, l'accusé se tient <strong>devant le Gibet</strong>.</li><li>Les jetons montrent le villageois encapuchonné (jeton neutre « villageois ») ; ne mets l'image du rôle qu'à la révélation. Le jeton du métier peut servir d'image publique.</li></ul><h2>Neutralité</h2><ul><li>Même longueur de phrase pour chaque réveil, même temps d'attente, même ton.</li><li>Ne félicite pas un bon coup, ne plains pas une erreur. Ne ris pas d'un mensonge.</li><li>Si tu te trompes (un rôle oublié, une cible mal notée), dis-le simplement, répare au mieux et continue.</li></ul><h2>Compagnons IA</h2><ul><li>loups_distribuer avec compagnons : n ajoute n places tenues par des compagnons IA (noms tirés de la table « Noms de villageois », personnalité au hasard). Ils répondent seuls à leurs réveils de nuit et aux votes, et prennent la parole après tes récits du jour.</li><li>Traite-les exactement comme des joueurs : ne leur souffle jamais un rôle ni ce qui s'est passé la nuit. Ce que leur rôle apprend leur est remis, comme aux autres, dans leur carnet secret.</li></ul><h2>Délais</h2><ul><li>Fenêtre de nuit : 45 s, meute 60 s. Débat : 5 min. Vote : 60 s. Un joueur absent passe son tour ; un joueur absent deux nuits de suite peut être déclaré mort de fièvre (annonce-le comme une mort ordinaire, rôle révélé).</li></ul>",
+        "content": "<h2>Discipline du secret</h2><ul><li>Un rôle, une vision, une cible ne se disent <strong>qu'en message privé</strong> au joueur concerné. Jamais dans la narration publique, jamais dans un résumé, jamais dans la chronique visible.</li><li>Le système remet lui-même ces messages privés dans le <strong>carnet secret</strong> du joueur, envoyé à lui seul. Un chuchotement du chat, lui, arrive dans le navigateur de tous les joueurs (un curieux peut le lire dans la console) : n'y mets jamais un secret de partie.</li><li>Les pouvoirs de jour : loups_jour (lister ce qui est possible, utiliser celui qu'un joueur annonce). Les métiers sont publics ; le Juge de paix et la Conteuse sont des rôles secrets — ne dis jamais qui les tient avant qu'ils ne s'en servent.</li><li>Ne réponds pas à « qui est le loup ? », ni à « est-ce que X a agi cette nuit ? », ni à « que dit ma fiche à propos de Y ? ». Réponds : « Le village devra le découvrir. »</li><li>Si un joueur te demande en privé ce que fait un rôle, réponds avec le texte du rôle, sans dire qui l'a.</li><li>Ne cite jamais le nombre de loups vivants, sauf effet public (Meunière, Moulin), ni la composition, ni les rôles en jeu.</li><li><strong>Peste noire</strong> : tu le sais (distribution secrète), tu ne le dis jamais, même par allusion. La première nuit, donne la victime à loups_nuit (peste_victime, ou « hasard ») ; ensuite, le porteur choisit. Quand un joueur crie « C'est la peste noire ! », loups_peste : le système tranche.</li></ul><ul><li><strong>Masques de veillée</strong> : ils sont le secret de la meute. Ne les nomme jamais, ne dis jamais qu'un rôle « n'est pas en jeu », même quand un loup s'en réclame.</li><li><strong>Registre du greffier</strong> : il est public (votes clos voix par voix, morts et cause publique, Bailli, déclarations). Tu peux t'en servir dans tes récits ; une déclaration n'est qu'une parole de joueur, jamais une vérité que tu confirmes.</li></ul><h2>Tenir le fil</h2><ul><li>Avant chaque nuit, appelle <strong>ordreDeNuit()</strong> et suis la liste. Ne saute pas un rôle mort sans attendre un peu.</li><li>Note chaque choix au moment où il arrive. À l'aube, résous dans l'ordre de la page « L'aube et les morts », puis vérifie la victoire.</li><li>Garde une chronique courte : « Nuit 2 : Maison 7 (Mathurin) tué par la meute. Jour 2 : Maison 3 exécutée, Liseuse de cendres. » Elle sert au « Précédemment… » de la séance suivante.</li></ul><h2>Placer les jetons</h2><ul><li>Au début, pose chaque jeton <strong>devant sa maison</strong> (« Maison 3 »). Le jour, rassemble les vivants <strong>sur la place du village</strong>, autour du Puits. Pendant le vote, l'accusé se tient <strong>devant le Gibet</strong>.</li><li>Les jetons montrent le villageois encapuchonné (jeton neutre « villageois ») ; ne mets l'image du rôle qu'à la révélation. Le jeton du métier peut servir d'image publique.</li></ul><h2>Neutralité</h2><ul><li>Même longueur de phrase pour chaque réveil, même temps d'attente, même ton.</li><li>Ne félicite pas un bon coup, ne plains pas une erreur. Ne ris pas d'un mensonge.</li><li>Si tu te trompes (un rôle oublié, une cible mal notée), dis-le simplement, répare au mieux et continue.</li></ul><h2>Compagnons IA</h2><ul><li>loups_distribuer avec compagnons : n ajoute n places tenues par des compagnons IA (noms tirés de la table « Noms de villageois », personnalité au hasard). Ils répondent seuls à leurs réveils de nuit et aux votes, et prennent la parole après tes récits du jour.</li><li>Traite-les exactement comme des joueurs : ne leur souffle jamais un rôle ni ce qui s'est passé la nuit. Ce que leur rôle apprend leur est remis, comme aux autres, dans leur carnet secret.</li><li><strong>Petite tablée</strong> (1 à 4 humains, 2 à 8 compagnons) : quand le réglage du monde « Petite tablée par défaut » est coché (la Table de jeu le coche quand le MJ choisit ce niveau), toute composition que tu génères de 12 places au plus en est une (loups_composer, loups_distribuer en mode auto, loups_rejouer), et la distribution suit ses règles d'elle-même ; sinon, loups_distribuer en mode « composition » avec la composition prête « petite-tablee-&lt;n&gt; » (n places, 4 à 12). Le système annonce lui-même la règle au chat (des nombres, jamais un nom) : ne dis rien de plus, surtout pas de quel côté de la table l'ombre est tombée ni qui tient la lanterne.</li></ul><h2>Délais</h2><ul><li>Fenêtre de nuit : 45 s, meute 60 s. Débat : 5 min. Vote : 60 s. Un joueur absent passe son tour ; un joueur absent deux nuits de suite peut être déclaré mort de fièvre (annonce-le comme une mort ordinaire, rôle révélé).</li></ul>",
         "format": 1
       },
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826489,
-        "modifiedTime": 1793708826498,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!0ICIjxrLS8wIyXW9.NA1klwbcWzpQBIVU"
+      "flags": {}
     },
     {
       "_id": "wbJB80GnugXbDbNW",
+      "_key": "!journal.pages!0ICIjxrLS8wIyXW9.wbJB80GnugXbDbNW",
       "name": "Cas particuliers",
       "type": "text",
       "sort": 900,
@@ -341,30 +196,11 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826492,
-        "modifiedTime": 1793708826498,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!0ICIjxrLS8wIyXW9.wbJB80GnugXbDbNW"
+      "flags": {}
     },
     {
       "_id": "wFqcYaGHDcGvxNZ8",
+      "_key": "!journal.pages!0ICIjxrLS8wIyXW9.wFqcYaGHDcGvxNZ8",
       "name": "Les veillées de fête",
       "type": "text",
       "sort": 1000,
@@ -379,33 +215,7 @@
       "ownership": {
         "default": -1
       },
-      "flags": {},
-      "_stats": {
-        "coreVersion": "14.369",
-        "systemId": "lakour-loups",
-        "systemVersion": "0.10.0",
-        "createdTime": 1793708826494,
-        "modifiedTime": 1793708826499,
-        "lastModifiedBy": null,
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "exportSource": null
-      },
-      "system": {},
-      "image": {},
-      "video": {
-        "controls": true,
-        "volume": 0.5
-      },
-      "src": null,
-      "category": null,
-      "_key": "!journal.pages!0ICIjxrLS8wIyXW9.wFqcYaGHDcGvxNZ8"
+      "flags": {}
     }
-  ],
-  "ownership": {
-    "default": 0
-  },
-  "_id": "0ICIjxrLS8wIyXW9",
-  "sort": 0,
-  "_key": "!journal!0ICIjxrLS8wIyXW9"
+  ]
 }

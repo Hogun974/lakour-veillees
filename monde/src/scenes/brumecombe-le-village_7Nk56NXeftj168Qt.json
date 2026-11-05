@@ -1,7 +1,10 @@
 {
+  "_id": "7Nk56NXeftj168Qt",
+  "_key": "!scenes!7Nk56NXeftj168Qt",
   "name": "Brumecombe — le village",
   "navName": "Brumecombe — le village",
   "navigation": false,
+  "active": true,
   "width": 4200,
   "height": 3000,
   "padding": 0,
@@ -9,45 +12,13 @@
     "type": 1,
     "size": 100,
     "distance": 1.5,
-    "units": "m",
-    "style": "solidLines",
-    "thickness": 1,
-    "color": "#000000",
-    "alpha": 0.2
+    "units": "m"
   },
   "tokenVision": false,
   "environment": {
-    "darknessLevel": 0.15,
+    "darknessLevel": 0.55,
     "globalLight": {
-      "enabled": false,
-      "alpha": 0.5,
-      "bright": false,
-      "color": null,
-      "coloration": 1,
-      "luminosity": 0,
-      "saturation": 0,
-      "contrast": 0,
-      "shadows": 0,
-      "darkness": {
-        "min": 0,
-        "max": 1
-      }
-    },
-    "darknessLock": false,
-    "cycle": true,
-    "base": {
-      "hue": 0,
-      "intensity": 0,
-      "luminosity": 0,
-      "saturation": 0,
-      "shadows": 0
-    },
-    "dark": {
-      "hue": 0.7138888888888889,
-      "intensity": 0,
-      "luminosity": -0.25,
-      "saturation": 0,
-      "shadows": 0
+      "enabled": false
     }
   },
   "levels": [
@@ -60,34 +31,10 @@
       },
       "background": {
         "color": "#18181b",
-        "src": "modules/lakour-veillees/assets/cartes/3d/village-de-brumecombe.svg",
-        "tint": "#ffffff",
-        "alphaThreshold": 0.75
+        "src": "modules/lakour-veillees/assets/cartes/3d/village-de-brumecombe.svg"
       },
-      "flags": {},
-      "foreground": {
-        "src": null,
-        "tint": "#ffffff",
-        "alphaThreshold": 0.75
-      },
-      "fog": {
-        "src": null
-      },
-      "textures": {
-        "anchorX": 0.5,
-        "anchorY": 0.5,
-        "offsetX": 0,
-        "offsetY": 0,
-        "fit": "fill",
-        "scaleX": 1,
-        "scaleY": 1,
-        "rotation": 0
-      },
-      "visibility": {
-        "levels": []
-      },
-      "sort": 0,
-      "_key": "!scenes.levels!7Nk56NXeftj168Qt.defaultLevel0000"
+      "_key": "!scenes.levels!7Nk56NXeftj168Qt.defaultLevel0000",
+      "flags": {}
     }
   ],
   "initialLevel": "defaultLevel0000",
@@ -108,15 +55,8 @@
       "dir": 0,
       "levels": [],
       "_id": "P9iOGaTAxP5Kl7Wh",
-      "flags": {},
-      "threshold": {
-        "light": null,
-        "sight": null,
-        "sound": null,
-        "attenuation": false
-      },
-      "animation": null,
-      "_key": "!scenes.walls!7Nk56NXeftj168Qt.P9iOGaTAxP5Kl7Wh"
+      "_key": "!scenes.walls!7Nk56NXeftj168Qt.P9iOGaTAxP5Kl7Wh",
+      "flags": {}
     },
     {
       "c": [
@@ -134,15 +74,8 @@
       "dir": 0,
       "levels": [],
       "_id": "nSb0j7x7DGEdpzWm",
-      "flags": {},
-      "threshold": {
-        "light": null,
-        "sight": null,
-        "sound": null,
-        "attenuation": false
-      },
-      "animation": null,
-      "_key": "!scenes.walls!7Nk56NXeftj168Qt.nSb0j7x7DGEdpzWm"
+      "_key": "!scenes.walls!7Nk56NXeftj168Qt.nSb0j7x7DGEdpzWm",
+      "flags": {}
     },
     {
       "c": [
@@ -160,15 +93,8 @@
       "dir": 0,
       "levels": [],
       "_id": "1EZxGbrDhQZEIkM2",
-      "flags": {},
-      "threshold": {
-        "light": null,
-        "sight": null,
-        "sound": null,
-        "attenuation": false
-      },
-      "animation": null,
-      "_key": "!scenes.walls!7Nk56NXeftj168Qt.1EZxGbrDhQZEIkM2"
+      "_key": "!scenes.walls!7Nk56NXeftj168Qt.1EZxGbrDhQZEIkM2",
+      "flags": {}
     },
     {
       "c": [
@@ -186,15 +112,8 @@
       "dir": 0,
       "levels": [],
       "_id": "8LUGqkdWS5jTLSOV",
-      "flags": {},
-      "threshold": {
-        "light": null,
-        "sight": null,
-        "sound": null,
-        "attenuation": false
-      },
-      "animation": null,
-      "_key": "!scenes.walls!7Nk56NXeftj168Qt.8LUGqkdWS5jTLSOV"
+      "_key": "!scenes.walls!7Nk56NXeftj168Qt.8LUGqkdWS5jTLSOV",
+      "flags": {}
     }
   ],
   "drawings": [
@@ -204,9 +123,7 @@
       "shape": {
         "type": "r",
         "width": 4200,
-        "height": 3000,
-        "radius": null,
-        "points": []
+        "height": 3000
       },
       "fillType": 0,
       "fillColor": "#000000",
@@ -222,16 +139,9 @@
       "hidden": true,
       "sort": 1000,
       "_id": "OyxlL3u19gCBXjzO",
+      "_key": "!scenes.drawings!7Nk56NXeftj168Qt.OyxlL3u19gCBXjzO",
       "flags": {},
-      "author": null,
-      "elevation": 0,
-      "rotation": 0,
-      "bezierFactor": 0,
-      "texture": null,
-      "fontFamily": "",
-      "locked": false,
-      "interface": false,
-      "_key": "!scenes.drawings!7Nk56NXeftj168Qt.OyxlL3u19gCBXjzO"
+      "author": "LaKourGamemaster"
     },
     {
       "x": 1300,
@@ -239,9 +149,7 @@
       "shape": {
         "type": "r",
         "width": 1200,
-        "height": 1000,
-        "radius": null,
-        "points": []
+        "height": 1000
       },
       "fillType": 0,
       "fillColor": "#000000",
@@ -257,16 +165,9 @@
       "hidden": true,
       "sort": 1001,
       "_id": "LFf0HRIq03hCggih",
+      "_key": "!scenes.drawings!7Nk56NXeftj168Qt.LFf0HRIq03hCggih",
       "flags": {},
-      "author": null,
-      "elevation": 0,
-      "rotation": 0,
-      "bezierFactor": 0,
-      "texture": null,
-      "fontFamily": "",
-      "locked": false,
-      "interface": false,
-      "_key": "!scenes.drawings!7Nk56NXeftj168Qt.LFf0HRIq03hCggih"
+      "author": "LaKourGamemaster"
     }
   ],
   "lights": [
@@ -282,32 +183,11 @@
         "color": "#ffcc77",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "1fE5HtftDHvfuUNO",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.1fE5HtftDHvfuUNO"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.1fE5HtftDHvfuUNO",
+      "flags": {}
     },
     {
       "x": 2450,
@@ -321,32 +201,11 @@
         "color": "#ffcc77",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "AP4Tcege9yIUKfE5",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.AP4Tcege9yIUKfE5"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.AP4Tcege9yIUKfE5",
+      "flags": {}
     },
     {
       "x": 1350,
@@ -360,32 +219,11 @@
         "color": "#ffcc77",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "BXOEAKF4GztkJwvo",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.BXOEAKF4GztkJwvo"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.BXOEAKF4GztkJwvo",
+      "flags": {}
     },
     {
       "x": 2450,
@@ -399,32 +237,11 @@
         "color": "#ffcc77",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "Muy0vXhWeHUyTcQe",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.Muy0vXhWeHUyTcQe"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.Muy0vXhWeHUyTcQe",
+      "flags": {}
     },
     {
       "x": 1950,
@@ -438,32 +255,11 @@
         "color": "#d8c8ff",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "4w65C3dCXcilgi9Y",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.4w65C3dCXcilgi9Y"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.4w65C3dCXcilgi9Y",
+      "flags": {}
     },
     {
       "x": 2850,
@@ -477,32 +273,11 @@
         "color": "#ff9a40",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "vndBwLtHti1KWG3J",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.vndBwLtHti1KWG3J"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.vndBwLtHti1KWG3J",
+      "flags": {}
     },
     {
       "x": 1050,
@@ -516,32 +291,11 @@
         "color": "#ff6a20",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "C3ko3zJmlQDr9DZ3",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.C3ko3zJmlQDr9DZ3"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.C3ko3zJmlQDr9DZ3",
+      "flags": {}
     },
     {
       "x": 3050,
@@ -555,32 +309,11 @@
         "color": "#ffd28a",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "N2Jsco3523hwTZXZ",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.N2Jsco3523hwTZXZ"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.N2Jsco3523hwTZXZ",
+      "flags": {}
     },
     {
       "x": 3450,
@@ -594,32 +327,11 @@
         "color": "#ffd28a",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "V495IWuEznSQvFsk",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.V495IWuEznSQvFsk"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.V495IWuEznSQvFsk",
+      "flags": {}
     },
     {
       "x": 2850,
@@ -633,32 +345,11 @@
         "color": "#cfe0ff",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "SuyKalcxN7s25uBf",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.SuyKalcxN7s25uBf"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.SuyKalcxN7s25uBf",
+      "flags": {}
     },
     {
       "x": 450,
@@ -672,32 +363,11 @@
         "color": "#ffcc88",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "Z0VWa93nq8EAfLAk",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.Z0VWa93nq8EAfLAk"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.Z0VWa93nq8EAfLAk",
+      "flags": {}
     },
     {
       "x": 3750,
@@ -711,32 +381,11 @@
         "color": "#ffb060",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "dkjNE8XLdixD5IYz",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.dkjNE8XLdixD5IYz"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.dkjNE8XLdixD5IYz",
+      "flags": {}
     },
     {
       "x": 850,
@@ -750,32 +399,11 @@
         "color": "#ffb85a",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "KYAT7mBjaSArZgtB",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.KYAT7mBjaSArZgtB"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.KYAT7mBjaSArZgtB",
+      "flags": {}
     },
     {
       "x": 1450,
@@ -789,32 +417,11 @@
         "color": "#ffb85a",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "FbkbaJ8IEYbmDZCV",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.FbkbaJ8IEYbmDZCV"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.FbkbaJ8IEYbmDZCV",
+      "flags": {}
     },
     {
       "x": 750,
@@ -828,32 +435,11 @@
         "color": "#ffb85a",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "ILmpf4mTDJi0vnIv",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.ILmpf4mTDJi0vnIv"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.ILmpf4mTDJi0vnIv",
+      "flags": {}
     },
     {
       "x": 1150,
@@ -867,32 +453,11 @@
         "color": "#ffb85a",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "OQDrjDCiSADhsFod",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.OQDrjDCiSADhsFod"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.OQDrjDCiSADhsFod",
+      "flags": {}
     },
     {
       "x": 650,
@@ -906,32 +471,11 @@
         "color": "#ffb85a",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "SCCbhwiGgwB15FXK",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.SCCbhwiGgwB15FXK"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.SCCbhwiGgwB15FXK",
+      "flags": {}
     },
     {
       "x": 250,
@@ -945,32 +489,11 @@
         "color": "#ffb85a",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "dpXDv3mNjRg7GFFp",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.dpXDv3mNjRg7GFFp"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.dpXDv3mNjRg7GFFp",
+      "flags": {}
     },
     {
       "x": 650,
@@ -984,32 +507,11 @@
         "color": "#ffb85a",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "R6tXshO4EiXHMYdN",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.R6tXshO4EiXHMYdN"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.R6tXshO4EiXHMYdN",
+      "flags": {}
     },
     {
       "x": 1050,
@@ -1023,32 +525,11 @@
         "color": "#ffb85a",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "PYERAknniU5XQ5JG",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.PYERAknniU5XQ5JG"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.PYERAknniU5XQ5JG",
+      "flags": {}
     },
     {
       "x": 350,
@@ -1062,32 +543,11 @@
         "color": "#ffb85a",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "JPecqMUuZS7BnQyF",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.JPecqMUuZS7BnQyF"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.JPecqMUuZS7BnQyF",
+      "flags": {}
     },
     {
       "x": 850,
@@ -1101,32 +561,11 @@
         "color": "#ffb85a",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "ywk8VCFhUvpo4RDK",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.ywk8VCFhUvpo4RDK"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.ywk8VCFhUvpo4RDK",
+      "flags": {}
     },
     {
       "x": 1350,
@@ -1140,32 +579,11 @@
         "color": "#ffb85a",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "ZIHdJ0sBACBjEHGk",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.ZIHdJ0sBACBjEHGk"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.ZIHdJ0sBACBjEHGk",
+      "flags": {}
     },
     {
       "x": 2350,
@@ -1179,32 +597,11 @@
         "color": "#ffb85a",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "QLa8x2CrCEizmsIn",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.QLa8x2CrCEizmsIn"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.QLa8x2CrCEizmsIn",
+      "flags": {}
     },
     {
       "x": 3550,
@@ -1218,32 +615,11 @@
         "color": "#ffb85a",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "RnwoumGw31NZdsIk",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.RnwoumGw31NZdsIk"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.RnwoumGw31NZdsIk",
+      "flags": {}
     },
     {
       "x": 4050,
@@ -1257,32 +633,11 @@
         "color": "#ffb85a",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "SdQJr7kJjjJzI5ET",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.SdQJr7kJjjJzI5ET"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.SdQJr7kJjjJzI5ET",
+      "flags": {}
     },
     {
       "x": 3550,
@@ -1296,32 +651,11 @@
         "color": "#ffb85a",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "5sqDNDVWw5Vdf4nc",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.5sqDNDVWw5Vdf4nc"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.5sqDNDVWw5Vdf4nc",
+      "flags": {}
     },
     {
       "x": 4050,
@@ -1335,32 +669,11 @@
         "color": "#ffb85a",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "XnBRBBkMMm9d9GWV",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.XnBRBBkMMm9d9GWV"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.XnBRBBkMMm9d9GWV",
+      "flags": {}
     },
     {
       "x": 3550,
@@ -1374,32 +687,11 @@
         "color": "#ffb85a",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "nqwIEO5FkVdg5D5k",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.nqwIEO5FkVdg5D5k"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.nqwIEO5FkVdg5D5k",
+      "flags": {}
     },
     {
       "x": 4050,
@@ -1413,385 +705,11 @@
         "color": "#ffb85a",
         "alpha": 0.4,
         "coloration": 1,
-        "luminosity": 0.5,
-        "negative": false,
-        "priority": 0,
-        "angle": 360,
-        "attenuation": 0.5,
-        "saturation": 0,
-        "contrast": 0,
-        "shadows": 0,
-        "animation": {
-          "type": null,
-          "speed": 5,
-          "intensity": 5,
-          "reverse": false
-        },
-        "darkness": {
-          "min": 0,
-          "max": 1
-        }
+        "luminosity": 0.5
       },
       "_id": "2xmBX3eCxD8sPsuo",
-      "flags": {},
-      "rotation": 0,
-      "vision": false,
-      "hidden": false,
-      "locked": false,
-      "_key": "!scenes.lights!7Nk56NXeftj168Qt.2xmBX3eCxD8sPsuo"
-    }
-  ],
-  "tokens": [],
-  "notes": [
-    {
-      "entryId": "hNQ5fYcN3giwWXzh",
-      "pageId": "QIKXHcnrr9M6qTbg",
-      "x": 1850,
-      "y": 450,
-      "elevation": 0,
-      "levels": [],
-      "sort": 0,
-      "locked": false,
-      "texture": {
-        "src": "icons/svg/temple.svg",
-        "anchorX": 0.5,
-        "anchorY": 0.5,
-        "fit": "contain",
-        "scaleX": 1,
-        "scaleY": 1,
-        "tint": "#ffffff",
-        "alphaThreshold": 0
-      },
-      "iconSize": 40,
-      "text": "La Chapelle",
-      "fontFamily": "",
-      "fontSize": 24,
-      "textAnchor": 1,
-      "textColor": "#ffffff",
-      "global": false,
-      "_id": "qeGL2NkeDGD7uC21",
-      "flags": {
-        "lakour-veillees": {
-          "carte": true
-        }
-      },
-      "author": null,
-      "_key": "!scenes.notes!7Nk56NXeftj168Qt.qeGL2NkeDGD7uC21"
-    },
-    {
-      "entryId": "hNQ5fYcN3giwWXzh",
-      "pageId": "HkUwbvZBwyxUzIEC",
-      "x": 2850,
-      "y": 450,
-      "elevation": 0,
-      "levels": [],
-      "sort": 0,
-      "locked": false,
-      "texture": {
-        "src": "icons/svg/obelisk.svg",
-        "anchorX": 0.5,
-        "anchorY": 0.5,
-        "fit": "contain",
-        "scaleX": 1,
-        "scaleY": 1,
-        "tint": "#ffffff",
-        "alphaThreshold": 0
-      },
-      "iconSize": 40,
-      "text": "Le Cimetière",
-      "fontFamily": "",
-      "fontSize": 24,
-      "textAnchor": 1,
-      "textColor": "#ffffff",
-      "global": false,
-      "_id": "CVh9Yn8omw1DJJ4E",
-      "flags": {
-        "lakour-veillees": {
-          "carte": true
-        }
-      },
-      "author": null,
-      "_key": "!scenes.notes!7Nk56NXeftj168Qt.CVh9Yn8omw1DJJ4E"
-    },
-    {
-      "entryId": "hNQ5fYcN3giwWXzh",
-      "pageId": "tbL4JLTRngZb6B7E",
-      "x": 350,
-      "y": 350,
-      "elevation": 0,
-      "levels": [],
-      "sort": 0,
-      "locked": false,
-      "texture": {
-        "src": "icons/svg/windmill.svg",
-        "anchorX": 0.5,
-        "anchorY": 0.5,
-        "fit": "contain",
-        "scaleX": 1,
-        "scaleY": 1,
-        "tint": "#ffffff",
-        "alphaThreshold": 0
-      },
-      "iconSize": 40,
-      "text": "Le Moulin",
-      "fontFamily": "",
-      "fontSize": 24,
-      "textAnchor": 1,
-      "textColor": "#ffffff",
-      "global": false,
-      "_id": "U2SiWp0F96UGZ3QJ",
-      "flags": {
-        "lakour-veillees": {
-          "carte": true
-        }
-      },
-      "author": null,
-      "_key": "!scenes.notes!7Nk56NXeftj168Qt.U2SiWp0F96UGZ3QJ"
-    },
-    {
-      "entryId": "hNQ5fYcN3giwWXzh",
-      "pageId": "25GHYdzbhWMiRLU9",
-      "x": 2750,
-      "y": 1150,
-      "elevation": 0,
-      "levels": [],
-      "sort": 0,
-      "locked": false,
-      "texture": {
-        "src": "icons/svg/tankard.svg",
-        "anchorX": 0.5,
-        "anchorY": 0.5,
-        "fit": "contain",
-        "scaleX": 1,
-        "scaleY": 1,
-        "tint": "#ffffff",
-        "alphaThreshold": 0
-      },
-      "iconSize": 40,
-      "text": "La Taverne",
-      "fontFamily": "",
-      "fontSize": 24,
-      "textAnchor": 1,
-      "textColor": "#ffffff",
-      "global": false,
-      "_id": "P7K2kwIOUQUBcg3q",
-      "flags": {
-        "lakour-veillees": {
-          "carte": true
-        }
-      },
-      "author": null,
-      "_key": "!scenes.notes!7Nk56NXeftj168Qt.P7K2kwIOUQUBcg3q"
-    },
-    {
-      "entryId": "hNQ5fYcN3giwWXzh",
-      "pageId": "rrl6GKhc6WIIz5UL",
-      "x": 1050,
-      "y": 1150,
-      "elevation": 0,
-      "levels": [],
-      "sort": 0,
-      "locked": false,
-      "texture": {
-        "src": "icons/svg/sword.svg",
-        "anchorX": 0.5,
-        "anchorY": 0.5,
-        "fit": "contain",
-        "scaleX": 1,
-        "scaleY": 1,
-        "tint": "#ffffff",
-        "alphaThreshold": 0
-      },
-      "iconSize": 40,
-      "text": "La Forge",
-      "fontFamily": "",
-      "fontSize": 24,
-      "textAnchor": 1,
-      "textColor": "#ffffff",
-      "global": false,
-      "_id": "RbHXexC5qIXhjmaq",
-      "flags": {
-        "lakour-veillees": {
-          "carte": true
-        }
-      },
-      "author": null,
-      "_key": "!scenes.notes!7Nk56NXeftj168Qt.RbHXexC5qIXhjmaq"
-    },
-    {
-      "entryId": "hNQ5fYcN3giwWXzh",
-      "pageId": "7KpinLXkoJ8poGNx",
-      "x": 1450,
-      "y": 1150,
-      "elevation": 0,
-      "levels": [],
-      "sort": 0,
-      "locked": false,
-      "texture": {
-        "src": "icons/svg/skull.svg",
-        "anchorX": 0.5,
-        "anchorY": 0.5,
-        "fit": "contain",
-        "scaleX": 1,
-        "scaleY": 1,
-        "tint": "#ffffff",
-        "alphaThreshold": 0
-      },
-      "iconSize": 40,
-      "text": "Le Gibet",
-      "fontFamily": "",
-      "fontSize": 24,
-      "textAnchor": 1,
-      "textColor": "#ffffff",
-      "global": false,
-      "_id": "ShilMauaR8rAalI6",
-      "flags": {
-        "lakour-veillees": {
-          "carte": true
-        }
-      },
-      "author": null,
-      "_key": "!scenes.notes!7Nk56NXeftj168Qt.ShilMauaR8rAalI6"
-    },
-    {
-      "entryId": "hNQ5fYcN3giwWXzh",
-      "pageId": "ik0N2ip2FfeNXbdH",
-      "x": 1850,
-      "y": 1450,
-      "elevation": 0,
-      "levels": [],
-      "sort": 0,
-      "locked": false,
-      "texture": {
-        "src": "icons/svg/sound.svg",
-        "anchorX": 0.5,
-        "anchorY": 0.5,
-        "fit": "contain",
-        "scaleX": 1,
-        "scaleY": 1,
-        "tint": "#ffffff",
-        "alphaThreshold": 0
-      },
-      "iconSize": 40,
-      "text": "Le Puits",
-      "fontFamily": "",
-      "fontSize": 24,
-      "textAnchor": 1,
-      "textColor": "#ffffff",
-      "global": false,
-      "_id": "hAzwTONuKo92TulB",
-      "flags": {
-        "lakour-veillees": {
-          "carte": true
-        }
-      },
-      "author": null,
-      "_key": "!scenes.notes!7Nk56NXeftj168Qt.hAzwTONuKo92TulB"
-    },
-    {
-      "entryId": "hNQ5fYcN3giwWXzh",
-      "pageId": "liUCpIQEbHv1MUa8",
-      "x": 3250,
-      "y": 1450,
-      "elevation": 0,
-      "levels": [],
-      "sort": 0,
-      "locked": false,
-      "texture": {
-        "src": "icons/svg/bridge.svg",
-        "anchorX": 0.5,
-        "anchorY": 0.5,
-        "fit": "contain",
-        "scaleX": 1,
-        "scaleY": 1,
-        "tint": "#ffffff",
-        "alphaThreshold": 0
-      },
-      "iconSize": 40,
-      "text": "Le Pont",
-      "fontFamily": "",
-      "fontSize": 24,
-      "textAnchor": 1,
-      "textColor": "#ffffff",
-      "global": false,
-      "_id": "VuENCqHARIJStzAr",
-      "flags": {
-        "lakour-veillees": {
-          "carte": true
-        }
-      },
-      "author": null,
-      "_key": "!scenes.notes!7Nk56NXeftj168Qt.VuENCqHARIJStzAr"
-    },
-    {
-      "entryId": "hNQ5fYcN3giwWXzh",
-      "pageId": "qMF6dr4pK51fZjkQ",
-      "x": 2850,
-      "y": 2150,
-      "elevation": 0,
-      "levels": [],
-      "sort": 0,
-      "locked": false,
-      "texture": {
-        "src": "icons/svg/waterfall.svg",
-        "anchorX": 0.5,
-        "anchorY": 0.5,
-        "fit": "contain",
-        "scaleX": 1,
-        "scaleY": 1,
-        "tint": "#ffffff",
-        "alphaThreshold": 0
-      },
-      "iconSize": 40,
-      "text": "Le Lavoir",
-      "fontFamily": "",
-      "fontSize": 24,
-      "textAnchor": 1,
-      "textColor": "#ffffff",
-      "global": false,
-      "_id": "7i17hwWIsUtRXMAN",
-      "flags": {
-        "lakour-veillees": {
-          "carte": true
-        }
-      },
-      "author": null,
-      "_key": "!scenes.notes!7Nk56NXeftj168Qt.7i17hwWIsUtRXMAN"
-    },
-    {
-      "entryId": "hNQ5fYcN3giwWXzh",
-      "pageId": "11IyFxABvPsk1jmA",
-      "x": 3750,
-      "y": 2450,
-      "elevation": 0,
-      "levels": [],
-      "sort": 0,
-      "locked": false,
-      "texture": {
-        "src": "icons/svg/house.svg",
-        "anchorX": 0.5,
-        "anchorY": 0.5,
-        "fit": "contain",
-        "scaleX": 1,
-        "scaleY": 1,
-        "tint": "#ffffff",
-        "alphaThreshold": 0
-      },
-      "iconSize": 40,
-      "text": "La Grange",
-      "fontFamily": "",
-      "fontSize": 24,
-      "textAnchor": 1,
-      "textColor": "#ffffff",
-      "global": false,
-      "_id": "X9FJRNKjtW51BTXD",
-      "flags": {
-        "lakour-veillees": {
-          "carte": true
-        }
-      },
-      "author": null,
-      "_key": "!scenes.notes!7Nk56NXeftj168Qt.X9FJRNKjtW51BTXD"
+      "_key": "!scenes.lights!7Nk56NXeftj168Qt.2xmBX3eCxD8sPsuo",
+      "flags": {}
     }
   ],
   "sounds": [
@@ -1810,24 +728,12 @@
       "hidden": false,
       "locked": false,
       "_id": "mlJXIZ44TPKzJfEj",
+      "_key": "!scenes.sounds!7Nk56NXeftj168Qt.mlJXIZ44TPKzJfEj",
       "flags": {
         "lakour-veillees": {
           "carte": true
         }
-      },
-      "darkness": {
-        "min": 0,
-        "max": 1
-      },
-      "effects": {
-        "base": {
-          "intensity": 5
-        },
-        "muffled": {
-          "intensity": 5
-        }
-      },
-      "_key": "!scenes.sounds!7Nk56NXeftj168Qt.mlJXIZ44TPKzJfEj"
+      }
     },
     {
       "name": "nuit — Brumecombe",
@@ -1844,24 +750,12 @@
       "hidden": false,
       "locked": false,
       "_id": "JyaXxsbEL1auzUfa",
+      "_key": "!scenes.sounds!7Nk56NXeftj168Qt.JyaXxsbEL1auzUfa",
       "flags": {
         "lakour-veillees": {
           "carte": true
         }
-      },
-      "darkness": {
-        "min": 0,
-        "max": 1
-      },
-      "effects": {
-        "base": {
-          "intensity": 5
-        },
-        "muffled": {
-          "intensity": 5
-        }
-      },
-      "_key": "!scenes.sounds!7Nk56NXeftj168Qt.JyaXxsbEL1auzUfa"
+      }
     },
     {
       "name": "feu — Âtre de la Taverne",
@@ -1878,24 +772,12 @@
       "hidden": false,
       "locked": false,
       "_id": "Y9Ye6ywHCjtFKAtw",
+      "_key": "!scenes.sounds!7Nk56NXeftj168Qt.Y9Ye6ywHCjtFKAtw",
       "flags": {
         "lakour-veillees": {
           "carte": true
         }
-      },
-      "darkness": {
-        "min": 0,
-        "max": 1
-      },
-      "effects": {
-        "base": {
-          "intensity": 5
-        },
-        "muffled": {
-          "intensity": 5
-        }
-      },
-      "_key": "!scenes.sounds!7Nk56NXeftj168Qt.Y9Ye6ywHCjtFKAtw"
+      }
     },
     {
       "name": "mer — la Brume",
@@ -1912,29 +794,354 @@
       "hidden": false,
       "locked": false,
       "_id": "l7tX3RU0hrAtqvk0",
+      "_key": "!scenes.sounds!7Nk56NXeftj168Qt.l7tX3RU0hrAtqvk0",
       "flags": {
         "lakour-veillees": {
           "carte": true
         }
-      },
-      "darkness": {
-        "min": 0,
-        "max": 1
-      },
-      "effects": {
-        "base": {
-          "intensity": 5
-        },
-        "muffled": {
-          "intensity": 5
-        }
-      },
-      "_key": "!scenes.sounds!7Nk56NXeftj168Qt.l7tX3RU0hrAtqvk0"
+      }
     }
   ],
   "regions": [],
+  "notes": [
+    {
+      "entryId": "hNQ5fYcN3giwWXzh",
+      "pageId": "QIKXHcnrr9M6qTbg",
+      "x": 1850,
+      "y": 450,
+      "elevation": 0,
+      "levels": [],
+      "sort": 0,
+      "locked": false,
+      "texture": {
+        "src": "icons/svg/temple.svg",
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "tint": "#ffffff"
+      },
+      "iconSize": 40,
+      "text": "La Chapelle",
+      "fontFamily": "",
+      "fontSize": 24,
+      "textAnchor": 1,
+      "textColor": "#ffffff",
+      "global": false,
+      "_id": "qeGL2NkeDGD7uC21",
+      "_key": "!scenes.notes!7Nk56NXeftj168Qt.qeGL2NkeDGD7uC21",
+      "flags": {
+        "lakour-veillees": {
+          "carte": true
+        }
+      }
+    },
+    {
+      "entryId": "hNQ5fYcN3giwWXzh",
+      "pageId": "HkUwbvZBwyxUzIEC",
+      "x": 2850,
+      "y": 450,
+      "elevation": 0,
+      "levels": [],
+      "sort": 0,
+      "locked": false,
+      "texture": {
+        "src": "icons/svg/obelisk.svg",
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "tint": "#ffffff"
+      },
+      "iconSize": 40,
+      "text": "Le Cimetière",
+      "fontFamily": "",
+      "fontSize": 24,
+      "textAnchor": 1,
+      "textColor": "#ffffff",
+      "global": false,
+      "_id": "CVh9Yn8omw1DJJ4E",
+      "_key": "!scenes.notes!7Nk56NXeftj168Qt.CVh9Yn8omw1DJJ4E",
+      "flags": {
+        "lakour-veillees": {
+          "carte": true
+        }
+      }
+    },
+    {
+      "entryId": "hNQ5fYcN3giwWXzh",
+      "pageId": "tbL4JLTRngZb6B7E",
+      "x": 350,
+      "y": 350,
+      "elevation": 0,
+      "levels": [],
+      "sort": 0,
+      "locked": false,
+      "texture": {
+        "src": "icons/svg/windmill.svg",
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "tint": "#ffffff"
+      },
+      "iconSize": 40,
+      "text": "Le Moulin",
+      "fontFamily": "",
+      "fontSize": 24,
+      "textAnchor": 1,
+      "textColor": "#ffffff",
+      "global": false,
+      "_id": "U2SiWp0F96UGZ3QJ",
+      "_key": "!scenes.notes!7Nk56NXeftj168Qt.U2SiWp0F96UGZ3QJ",
+      "flags": {
+        "lakour-veillees": {
+          "carte": true
+        }
+      }
+    },
+    {
+      "entryId": "hNQ5fYcN3giwWXzh",
+      "pageId": "25GHYdzbhWMiRLU9",
+      "x": 2750,
+      "y": 1150,
+      "elevation": 0,
+      "levels": [],
+      "sort": 0,
+      "locked": false,
+      "texture": {
+        "src": "icons/svg/tankard.svg",
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "tint": "#ffffff"
+      },
+      "iconSize": 40,
+      "text": "La Taverne",
+      "fontFamily": "",
+      "fontSize": 24,
+      "textAnchor": 1,
+      "textColor": "#ffffff",
+      "global": false,
+      "_id": "P7K2kwIOUQUBcg3q",
+      "_key": "!scenes.notes!7Nk56NXeftj168Qt.P7K2kwIOUQUBcg3q",
+      "flags": {
+        "lakour-veillees": {
+          "carte": true
+        }
+      }
+    },
+    {
+      "entryId": "hNQ5fYcN3giwWXzh",
+      "pageId": "rrl6GKhc6WIIz5UL",
+      "x": 1050,
+      "y": 1150,
+      "elevation": 0,
+      "levels": [],
+      "sort": 0,
+      "locked": false,
+      "texture": {
+        "src": "icons/svg/sword.svg",
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "tint": "#ffffff"
+      },
+      "iconSize": 40,
+      "text": "La Forge",
+      "fontFamily": "",
+      "fontSize": 24,
+      "textAnchor": 1,
+      "textColor": "#ffffff",
+      "global": false,
+      "_id": "RbHXexC5qIXhjmaq",
+      "_key": "!scenes.notes!7Nk56NXeftj168Qt.RbHXexC5qIXhjmaq",
+      "flags": {
+        "lakour-veillees": {
+          "carte": true
+        }
+      }
+    },
+    {
+      "entryId": "hNQ5fYcN3giwWXzh",
+      "pageId": "7KpinLXkoJ8poGNx",
+      "x": 1450,
+      "y": 1150,
+      "elevation": 0,
+      "levels": [],
+      "sort": 0,
+      "locked": false,
+      "texture": {
+        "src": "icons/svg/skull.svg",
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "tint": "#ffffff"
+      },
+      "iconSize": 40,
+      "text": "Le Gibet",
+      "fontFamily": "",
+      "fontSize": 24,
+      "textAnchor": 1,
+      "textColor": "#ffffff",
+      "global": false,
+      "_id": "ShilMauaR8rAalI6",
+      "_key": "!scenes.notes!7Nk56NXeftj168Qt.ShilMauaR8rAalI6",
+      "flags": {
+        "lakour-veillees": {
+          "carte": true
+        }
+      }
+    },
+    {
+      "entryId": "hNQ5fYcN3giwWXzh",
+      "pageId": "ik0N2ip2FfeNXbdH",
+      "x": 1850,
+      "y": 1450,
+      "elevation": 0,
+      "levels": [],
+      "sort": 0,
+      "locked": false,
+      "texture": {
+        "src": "icons/svg/sound.svg",
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "tint": "#ffffff"
+      },
+      "iconSize": 40,
+      "text": "Le Puits",
+      "fontFamily": "",
+      "fontSize": 24,
+      "textAnchor": 1,
+      "textColor": "#ffffff",
+      "global": false,
+      "_id": "hAzwTONuKo92TulB",
+      "_key": "!scenes.notes!7Nk56NXeftj168Qt.hAzwTONuKo92TulB",
+      "flags": {
+        "lakour-veillees": {
+          "carte": true
+        }
+      }
+    },
+    {
+      "entryId": "hNQ5fYcN3giwWXzh",
+      "pageId": "liUCpIQEbHv1MUa8",
+      "x": 3250,
+      "y": 1450,
+      "elevation": 0,
+      "levels": [],
+      "sort": 0,
+      "locked": false,
+      "texture": {
+        "src": "icons/svg/bridge.svg",
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "tint": "#ffffff"
+      },
+      "iconSize": 40,
+      "text": "Le Pont",
+      "fontFamily": "",
+      "fontSize": 24,
+      "textAnchor": 1,
+      "textColor": "#ffffff",
+      "global": false,
+      "_id": "VuENCqHARIJStzAr",
+      "_key": "!scenes.notes!7Nk56NXeftj168Qt.VuENCqHARIJStzAr",
+      "flags": {
+        "lakour-veillees": {
+          "carte": true
+        }
+      }
+    },
+    {
+      "entryId": "hNQ5fYcN3giwWXzh",
+      "pageId": "qMF6dr4pK51fZjkQ",
+      "x": 2850,
+      "y": 2150,
+      "elevation": 0,
+      "levels": [],
+      "sort": 0,
+      "locked": false,
+      "texture": {
+        "src": "icons/svg/waterfall.svg",
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "tint": "#ffffff"
+      },
+      "iconSize": 40,
+      "text": "Le Lavoir",
+      "fontFamily": "",
+      "fontSize": 24,
+      "textAnchor": 1,
+      "textColor": "#ffffff",
+      "global": false,
+      "_id": "7i17hwWIsUtRXMAN",
+      "_key": "!scenes.notes!7Nk56NXeftj168Qt.7i17hwWIsUtRXMAN",
+      "flags": {
+        "lakour-veillees": {
+          "carte": true
+        }
+      }
+    },
+    {
+      "entryId": "hNQ5fYcN3giwWXzh",
+      "pageId": "11IyFxABvPsk1jmA",
+      "x": 3750,
+      "y": 2450,
+      "elevation": 0,
+      "levels": [],
+      "sort": 0,
+      "locked": false,
+      "texture": {
+        "src": "icons/svg/house.svg",
+        "anchorX": 0.5,
+        "anchorY": 0.5,
+        "fit": "contain",
+        "scaleX": 1,
+        "scaleY": 1,
+        "tint": "#ffffff"
+      },
+      "iconSize": 40,
+      "text": "La Grange",
+      "fontFamily": "",
+      "fontSize": 24,
+      "textAnchor": 1,
+      "textColor": "#ffffff",
+      "global": false,
+      "_id": "X9FJRNKjtW51BTXD",
+      "_key": "!scenes.notes!7Nk56NXeftj168Qt.X9FJRNKjtW51BTXD",
+      "flags": {
+        "lakour-veillees": {
+          "carte": true
+        }
+      }
+    }
+  ],
+  "tokens": [],
   "tiles": [],
+  "ownership": {
+    "default": 0
+  },
   "folder": "03QYXKXY0fPC20NO",
+  "sort": 0,
   "flags": {
     "lakour-veillees": {
       "cle": "village-de-brumecombe",
@@ -2812,10 +2019,7 @@
           }
         ]
       },
-      "version": "0.12.0"
-    },
-    "fxmaster": {
-      "parameterRangeMigrationVersion": 1
+      "version": "0.14.0"
     }
   },
   "_stats": {
@@ -2828,39 +2032,5 @@
     "compendiumSource": "Compendium.lakour-veillees.scenes.Scene.mYZHsnhVOQZRi5f1",
     "duplicateSource": null,
     "exportSource": null
-  },
-  "thumb": null,
-  "shiftX": 0,
-  "shiftY": 0,
-  "initial": {
-    "x": null,
-    "y": null,
-    "scale": null
-  },
-  "fog": {
-    "mode": 1,
-    "colors": {
-      "explored": null,
-      "unexplored": null
-    }
-  },
-  "transition": {
-    "type": null,
-    "duration": 1500,
-    "activeOnly": false
-  },
-  "playlist": null,
-  "playlistSound": null,
-  "journal": null,
-  "journalEntryPage": null,
-  "weather": "",
-  "ownership": {
-    "default": 0
-  },
-  "_id": "7Nk56NXeftj168Qt",
-  "active": true,
-  "navOrder": 0,
-  "sort": 0,
-  "_key": "!scenes!7Nk56NXeftj168Qt",
-  "templates": []
+  }
 }

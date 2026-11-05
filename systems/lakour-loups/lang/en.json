@@ -404,6 +404,10 @@
         "Aide": "The holiday vigil of a game dealt without an explicit choice (by the AI GM, or « Replay »): none by default, the one the calendar suggests that day, or a named vigil. The Game Table suggests the calendar's one; the narrator decides. Applied at the next deal.",
         "Aucune": "None by default (the previous game keeps its own)",
         "Date": "By the calendar (today's holiday, if any)"
+      },
+      "EffetsVisuels": {
+        "Nom": "Visual effects",
+        "Aide": "Night mist, glow of dawn and of victory, a slight screen shake at each death. Nothing moves if your system asks for reduced motion."
       }
     },
     "Erreurs": {

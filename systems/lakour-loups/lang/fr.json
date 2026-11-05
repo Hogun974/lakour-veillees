@@ -404,6 +404,10 @@
         "Aide": "La veillée de fête d'une partie distribuée sans choix (par le MJ IA, ou « Rejouer ») : aucune d'office, celle que propose le calendrier ce jour-là, ou une veillée nommée. La Table de jeu propose celle du calendrier ; le narrateur décide. Pris en compte à la prochaine distribution.",
         "Aucune": "Aucune d'office (la partie précédente garde la sienne)",
         "Date": "Selon le calendrier (la fête du jour, s'il y en a une)"
+      },
+      "EffetsVisuels": {
+        "Nom": "Effets visuels",
+        "Aide": "Brume de la nuit, lueurs de l'aube et de la victoire, léger tremblement de l'écran à chaque mort. Rien ne bouge si votre système demande moins d'animations."
       }
     },
     "Erreurs": {

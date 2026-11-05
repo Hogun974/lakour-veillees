@@ -68,7 +68,13 @@ const VERIFICATIONS = {
     assert.equal(conf.config, true);
     assert.equal(conf.default, true);
     assert.equal(conf.type, Boolean);
-    assert.ok(!/^LAKOUR/.test(conf.name), "libellé littéral (pas de clé de langue nouvelle)");
+    // Libellé et aide traduits (lang/fr.json et lang/en.json du système), comme les autres réglages.
+    const langue = l => JSON.parse(readFileSync(join(SYSTEME, `lang/${l}.json`), "utf8")).LAKOUR_LOUPS.Reglages.EffetsVisuels;
+    assert.equal(conf.name, "LAKOUR_LOUPS.Reglages.EffetsVisuels.Nom");
+    assert.equal(conf.hint, "LAKOUR_LOUPS.Reglages.EffetsVisuels.Aide");
+    assert.equal(langue("fr").Nom, "Effets visuels");
+    assert.equal(langue("en").Nom, "Visual effects");
+    assert.ok(langue("fr").Aide && langue("en").Aide);
   },
 
   "une mort : l'écran tremble, brièvement et modérément"(M) {

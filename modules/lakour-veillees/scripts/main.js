@@ -162,7 +162,7 @@ async function installerContenu() {
     const existant = game.journal.find(x => x.getFlag(ID, "cle") === j.getFlag(ID, "cle"));
     if (existant) {
       journauxDuMonde.set(j.id, existant.id);
-      if (await rafraichirJournal(existant, j)) rapport.push(`${j.name} (mis à jour)`);
+      if (await rafraichirJournal(existant, j)) rapport.push(game.i18n.format("LAKOURVEIL.Rapport.MisAJour", { nom: j.name }));
       continue;
     }
     // Même identifiant qu'au compendium (s'il est libre) : les épingles de la carte le visent.
@@ -179,7 +179,7 @@ async function installerContenu() {
     const cle = s.getFlag(ID, "cle");
     const existante = game.scenes.find(x => x.getFlag(ID, "cle") === cle);
     if (existante) {
-      if (await rafraichirScene(existante, s, journauxDuMonde)) rapport.push(`${s.name} (sons et épingles)`);
+      if (await rafraichirScene(existante, s, journauxDuMonde)) rapport.push(game.i18n.format("LAKOURVEIL.Rapport.SonsEpingles", { nom: s.name }));
       continue;
     }
     const donnees = game.scenes.fromCompendium(s);

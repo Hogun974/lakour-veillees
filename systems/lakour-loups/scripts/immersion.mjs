@@ -180,8 +180,7 @@ export function brancherImmersion() {
   branche = Hooks;
   oublierImmersion();
   game.settings.register(ID, REGLAGE, {
-    name: "Effets visuels",
-    hint: "Brume de la nuit, lueurs de l'aube et de la victoire, léger tremblement de l'écran à chaque mort. Rien ne bouge si votre système demande moins d'animations.",
+    name: "LAKOUR_LOUPS.Reglages.EffetsVisuels.Nom", hint: "LAKOUR_LOUPS.Reglages.EffetsVisuels.Aide",
     scope: "client", config: true, type: Boolean, default: true, onChange: () => suivreLaPhase()
   });
   // Les hooks publics : on n'en lit que la phase et le vainqueur.

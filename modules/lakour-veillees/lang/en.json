@@ -12,6 +12,10 @@
     "DejaInstalle": "Content installed",
     "PasInstalle": "Content not installed in this world yet.",
     "Interrompue": "The Vigils: installation interrupted ({erreur}). Details are in the console (F12).",
-    "MauvaisSysteme": "This world does not use the La Kour Loups system: nothing to install."
+    "MauvaisSysteme": "This world does not use the La Kour Loups system: nothing to install.",
+    "Rapport": {
+      "MisAJour": "{nom} (updated)",
+      "SonsEpingles": "{nom} (sounds and pins)"
+    }
   }
 }

@@ -245,7 +245,7 @@ const MUTATIONS = [
   ["derniers-gestes.mjs", "v.vivant !== false && v.id !== acteurId", "v.vivant !== false", "geste : pas soi-même"],
   ["derniers-gestes.mjs", "if (!gesteEnAttente(etat, villageois, acteurId, geste)) return non(\"fait\");", "", "geste : déjà fait"],
   ["derniers-gestes.mjs", "if (etat?.vainqueur || etat?.phase === \"fin\") return non(\"fin\");", "", "geste : partie finie"],
-  ["derniers-gestes.mjs", ".slice(0, def.nombre)", "", "geste : une cible"],
+  ["derniers-gestes.mjs", ".slice(0, nombreDuGeste(geste, candidats))", "", "geste : une cible"],
   ["etapes.mjs", "const demande = Boolean(emporteur) && attente.includes(`geste:${emporteur}`);", "const demande = false;", "étape : attendre la Braconnière"],
   ["tenures.mjs", "etat.tenures = { ...etat.tenures, [cle]: acteurId ? String(acteurId) : null };", "etat.tenures = { ...etat.tenures, [cle]: String(acteurId) };", "tenures : libérer"],
   ["tenures.mjs", ".filter(([, id]) => !id).map(([cle]) => cle)", ".map(([cle]) => cle)", "tenures : les vacants"],

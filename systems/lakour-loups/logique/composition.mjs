@@ -9,6 +9,8 @@
 // Pur et reproductible avec une graine.
 // La peste noire (option peste, logique/peste.mjs) : aucun rôle de la meute (ni loup, ni rôle du camp de la meute) ; les
 // places vont au village (et aux solitaires que le niveau permet), au moins un rôle d'information comme d'habitude.
+// Les cartes qui vont ensemble (equilibre.roles[cle].groupe : les Lavandières par deux, les Bûcherons par trois, Le Pacte) : tirées
+// toutes ou aucune, jamais au-delà des places ; un groupe demandé (inclure) entre en entier.
 import { creerHasard, melanger } from "./hasard.mjs";
 import { NIVEAU_PETITE_TABLEE, nombreDeLoupsTablee, ombresTablee } from "./tablee.mjs";
 
@@ -33,13 +35,17 @@ const BASE_LOUP = "loup-de-brumecombe", BASE_VILLAGE = "villageois";
 // votes (le Colporteur ; le Chasseur de primes gagnait une partie sur cinq, sa cible exécutée par le sort, et le Revenant une sur
 // quatre, pendu par un village qui vote vite).
 export const HORS_TABLEE = ["loup-deguise", "pyromane", "dame-du-gue"];
+// Le Pacte, étape 3a : les rôles du Village du jeu de soirée ne sortent pas encore à la petite tablée, dont les dosages ont été
+// mesurés sans eux ; l'étape 6 (simulation) les y fera entrer ou non. Aux niveaux classique et chaos, le générateur les tire.
+export const PACTE_HORS_TABLEE = ["franc-villageois", "aieul", "souffre-douleur", "innocent", "lavandiere", "bucheron", "furet", "gardeuse-d-oies",
+  "greffier-begue", "vieux-sergent", "pie"];
 export const SOLITAIRES_TABLEE = ["colporteur"];
 export const HORS_TABLEE_BATIMENTS = ["gibet", "pont"];
 function catalogue(equilibre, n, niveau, exclure, peste = false) {
   const tablee = niveau === NIVEAU_PETITE_TABLEE;
   const permis = Object.entries(equilibre.roles ?? {}).filter(([cle, r]) =>
     !exclure.has(cle) && !(peste && r.camp === "meute")
-    && (tablee ? (rangNiveau(r.niveau) <= rangNiveau(niveau) || SOLITAIRES_TABLEE.includes(cle)) && !HORS_TABLEE.includes(cle)
+    && (tablee ? (rangNiveau(r.niveau) <= rangNiveau(niveau) || SOLITAIRES_TABLEE.includes(cle)) && !HORS_TABLEE.includes(cle) && !PACTE_HORS_TABLEE.includes(cle)
       : rangNiveau(r.niveau) <= rangNiveau(niveau) && n >= (r.joueursMin ?? 0)));
   const famille = f => permis.filter(f).map(([cle]) => cle);
   return {
@@ -66,16 +72,38 @@ function penaliteHistorique(cles, historique, champ) {
   return p;
 }
 
+// Le nombre de cartes d'un rôle : son groupe (Lavandières : 2, Bûcherons : 3), sinon une.
+export const tailleDuGroupe = (cle, permis) => Math.max(1, Number(permis.get(cle)?.groupe) || 1);
+
+// Prend jusqu'à « nombre » PLACES parmi ces rôles (mélangés), sans doublon, chaque groupe en entier et seulement s'il tient dans les
+// places restantes (max : n).
+function prendreDans(roles, cat, liste, nombre, hasard, max) {
+  let reste = nombre;
+  for (const cle of melanger(liste.filter(c => !roles.includes(c)), hasard)) {
+    if (reste <= 0) break;
+    const k = tailleDuGroupe(cle, cat.permis);
+    if (k > reste || roles.length + k > max) continue;
+    for (let i = 0; i < k; i++) roles.push(cle);
+    reste -= k;
+  }
+}
+// Les souhaits (rôles imposés) : un groupe entre en entier, une seule fois.
+function inclureDans(roles, cat, inclure) {
+  for (const cle of inclure) {
+    if (!cat.permis.has(cle)) continue;
+    const k = tailleDuGroupe(cle, cat.permis);
+    if (k > 1) { if (!roles.includes(cle)) for (let i = 0; i < k; i++) roles.push(cle); continue; }
+    if (!cat.permis.get(cle).unique || !roles.includes(cle)) roles.push(cle);
+  }
+}
+
 // Une composition tirée au hasard qui respecte les règles du niveau (ou null si impossible).
 function tirer(n, niveau, cat, inclure, hasard, peste = false) {
   const roles = [];
-  const prendre = (liste, nombre) => {
-    const libres = melanger(liste.filter(c => !roles.includes(c)), hasard);
-    roles.push(...libres.slice(0, nombre));
-  };
+  const prendre = (liste, nombre) => prendreDans(roles, cat, liste, nombre, hasard, n);
   const entre = ([min, max]) => min + Math.floor(hasard() * (max - min + 1));
   // Souhaits d'abord (rôles imposés), dans la limite du nombre de joueurs.
-  for (const cle of inclure) if (cat.permis.has(cle) && (!cat.permis.get(cle).unique || !roles.includes(cle))) roles.push(cle);
+  inclureDans(roles, cat, inclure);
   const loups = peste ? 0 : nombreDeLoups(n);
   const loupsDeja = roles.filter(c => cat.permis.get(c)?.camp === "meute").length;
   prendre(cat.loupsSpeciaux, Math.max(0, Math.min(entre(LOUPS_SPECIAUX[niveau]), loups - 1) - roles.filter(c => cat.loupsSpeciaux.includes(c)).length));
@@ -100,12 +128,9 @@ function tirer(n, niveau, cat, inclure, hasard, peste = false) {
 export const villageoisTablee = n => Math.min(1, Math.floor(n / 6));
 function tirerTablee(n, cat, inclure, hasard, peste = false) {
   const roles = [];
-  const prendre = (liste, nombre) => {
-    const libres = melanger(liste.filter(c => !roles.includes(c)), hasard);
-    roles.push(...libres.slice(0, nombre));
-  };
+  const prendre = (liste, nombre) => prendreDans(roles, cat, liste, nombre, hasard, n);
   const compte = liste => roles.filter(c => liste.includes(c)).length;
-  for (const cle of inclure) if (cat.permis.has(cle) && (!cat.permis.get(cle).unique || !roles.includes(cle))) roles.push(cle);
+  inclureDans(roles, cat, inclure);
   const loups = peste ? 0 : nombreDeLoupsTablee(n);
   if (!peste) {
     if (n >= 7 && hasard() < 0.5) prendre(cat.loupsSpeciaux, Math.max(0, Math.min(1, loups - 1) - compte(cat.loupsSpeciaux)));

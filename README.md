@@ -178,7 +178,7 @@ Les loups se reconnaissent dès la première nuit et chassent ensemble ; certain
 | **Loup flaireur** | Chaque nuit, flaire un joueur et apprend son camp. |
 | **Loup des roseaux** | Chaque nuit, guette une maison et apprend si son occupant a agi. |
 
-### Le Village (20 rôles)
+### Le Village (31 rôles)
 
 | Rôle | Pouvoir |
 |---|---|
@@ -202,6 +202,17 @@ Les loups se reconnaissent dès la première nuit et chassent ensemble ; certain
 | **Somnambule** *(sur demande)* | Croit tenir un rôle de vision, mais il rêve : ses visions sont fausses. |
 | **Rosière** *(sur demande)* | La fierté du village : si le village l'exécute par le vote, le Village perd aussitôt. |
 | **Pêcheur de nuit** | Une fois par partie, lance son harpon : sa cible meurt à l'aube, sauf si elle est protégée. |
+| **Franc-Villageois** | Aucun pouvoir, mais sa carte est retournée dès la distribution : tout le village sait qu'il est innocent. |
+| **Aïeul** | La meute doit l'attaquer deux fois pour le tuer ; s'il tombe de la main du village, les villageois perdent leurs pouvoirs. |
+| **Souffre-douleur** | Si le vote finit à égalité, c'est lui qui est exécuté ; il désigne alors qui votera le lendemain. |
+| **Innocent** | Si le village vote contre lui, il est gracié : sa carte est retournée, il reste en jeu, mais ne vote plus. |
+| **Lavandières** *(par deux)* | Se reconnaissent la première nuit, puis se retrouvent une nuit sur deux pour se concerter. |
+| **Bûcherons** *(par trois)* | Se reconnaissent la première nuit, puis se retrouvent une nuit sur deux pour se concerter. |
+| **Furet** | Chaque nuit, flaire un joueur et ses deux voisins : un loup parmi eux ? Sinon, il perd son flair. |
+| **Gardeuse d'oies** | Chaque matin, ses oies cacardent si un loup est l'un de ses deux voisins. |
+| **Greffier bègue** | Une fois par partie, juste après une condamnation, déclenche en secret un second vote, sans débat. |
+| **Vieux Sergent** | Si la meute le dévore, sa vieille épée tue le premier loup à sa gauche la nuit suivante. |
+| **Pie** | Chaque nuit, pose une plume noire sur un joueur : deux voix de plus contre lui au vote du jour. |
 
 ### Les solitaires (5 rôles)
 

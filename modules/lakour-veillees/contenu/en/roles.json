@@ -1,4 +1,30 @@
 {
+  "roles/2qP7pXx98GyMHyhM": {
+    "_nom": "Aïeul",
+    "name": {
+      "fr": "Aïeul",
+      "en": "Greybeard"
+    },
+    "system.description": {
+      "fr": "<p>Tu as vu passer plus d'hivers que quiconque à Brumecombe, et ta peau est dure comme l'écorce.</p><p><strong>La première fois que la meute t'attaque</strong>, tu survis, en secret : ta carte reste cachée et le village n'en sait rien. <strong>La seconde fois</strong>, tu meurs. La première morsure de la Louve mère compte pour cette première attaque : elle ne fait pas de toi un loup. Si un remède de l'Herboriste te sauve d'une attaque, tu gardes ta vie de réserve.</p><p>Mais tu es la sagesse du village : si <strong>le village</strong> te fait mourir (le vote, le poison de l'Herboriste, la Braconnière), Brumecombe perd la tête, et <strong>tous les villageois perdent leurs pouvoirs</strong> jusqu'à la fin de la partie : les rôles du Village comme les métiers. Le Bailli garde sa charge.</p>",
+      "en": "<p>You have seen more winters than anyone in Brumecombe, and your skin is as tough as bark.</p><p><strong>The first time the pack attacks you</strong>, you survive, in secret: your card stays hidden and the village knows nothing of it. <strong>The second time</strong>, you die. The Wolf Mother's first bite counts as that first attack: it does not make you a wolf. If one of the Herbalist's remedies saves you from an attack, you keep your spare life.</p><p>But you are the village's wisdom: if <strong>the village</strong> brings about your death (the vote, the Herbalist's poison, the Poacher), Brumecombe loses its head, and <strong>all the villagers lose their powers</strong> until the end of the game: the Village roles as well as the trades. The Bailiff keeps his office.</p>"
+    }
+  },
+  "roles/7ExCekbrqwBvDll1": {
+    "_nom": "Pie",
+    "name": {
+      "fr": "Pie",
+      "en": "Magpie"
+    },
+    "system.description": {
+      "fr": "<p>Tu ramasses tout ce qui brille, et tu sais sous quel toit chacun cache ses secrets.</p><p><strong>Chaque nuit</strong>, après la chasse, tu peux désigner un joueur (pas toi). Au matin, le narrateur annonce à tous : « <strong>une plume noire désigne</strong> <em>(son nom)</em> ». Au <strong>vote d'exécution</strong> de ce jour, il compte <strong>deux voix de plus</strong> contre lui. Personne ne sait d'où vient la plume.</p><p>Passe si tu ne veux désigner personne.</p>",
+      "en": "<p>You pick up everything that glitters, and you know under which roof everyone hides their secrets.</p><p><strong>Each night</strong>, after the hunt, you may choose a player (not yourself). In the morning, the narrator announces to all: “<strong>a black feather points at</strong> <em>(their name)</em>”. At that day's <strong>execution vote</strong>, they count <strong>two more votes</strong> against them. No one knows where the feather came from.</p><p>Pass if you do not wish to choose anyone.</p>"
+    },
+    "system.nuit.invite": {
+      "fr": "Sur quel seuil poses-tu ta plume noire cette nuit ? Passe pour n'en poser aucune.",
+      "en": "On which doorstep do you lay your black feather tonight? Pass to lay none."
+    }
+  },
   "roles/8ybiOVnPr6CdCI7C": {
     "_nom": "Pèlerine",
     "name": {
@@ -8,6 +34,17 @@
     "system.description": {
       "fr": "<p>Tu marches vers un sanctuaire lointain, et Brumecombe n'est qu'une étape.</p><p>Ton rôle est <strong>connu de tous</strong>, ton camp <strong>ne l'est pas</strong> : le narrateur te l'a dit en secret (Village ou Meute).</p><p><strong>Une fois</strong>, pendant le jour, tu pries longuement sur le seuil d'un autre joueur : le village le voit, mais toi seule apprends <strong>son camp</strong> (tel que le voient les visions).</p>",
       "en": "<p>You walk towards a distant shrine, and Brumecombe is only a stop on the way.</p><p>Your role is <strong>known to all</strong>, your side <strong>is not</strong>: the narrator told it to you in secret (Village or Pack).</p><p><strong>Once</strong>, during the day, you pray at length on another player's doorstep: the village sees it, but you alone learn <strong>their side</strong> (as the visions see it).</p>"
+    }
+  },
+  "roles/9kFfQyTqzx0c3v0x": {
+    "_nom": "Franc-Villageois",
+    "name": {
+      "fr": "Franc-Villageois",
+      "en": "Plain Villager"
+    },
+    "system.description": {
+      "fr": "<p>Tu n'as aucun pouvoir, et tout Brumecombe le sait : ta carte est <strong>retournée devant tous dès la distribution</strong>. Personne ne peut douter que tu es du camp du <strong>Village</strong>.</p><p>C'est ta force : ta parole ne cache rien, et tu peux guider le vote sans qu'on te soupçonne. C'est aussi ta faiblesse : la meute sait qu'elle ne pourra jamais te faire accuser à sa place.</p>",
+      "en": "<p>You have no power, and all of Brumecombe knows it: your card is <strong>turned face up for everyone from the deal</strong>. No one can doubt that you belong to the <strong>Village</strong> side.</p><p>That is your strength: your word hides nothing, and you can steer the vote without falling under suspicion. It is also your weakness: the pack knows it can never get you accused in its place.</p>"
     }
   },
   "roles/AI6OVZG5008lzsqa": {
@@ -163,6 +200,21 @@
       "en": "From the reeds, which door do you watch tonight?"
     }
   },
+  "roles/PpWJeQnFZgYNfUVu": {
+    "_nom": "Furet",
+    "name": {
+      "fr": "Furet",
+      "en": "Ferret"
+    },
+    "system.description": {
+      "fr": "<p>Tu te faufiles sous les portes et rien ne t'échappe, tant que ton nez ne te trompe pas.</p><p><strong>Chaque nuit</strong>, tu désignes un joueur : tu flaires <strong>lui et ses deux voisins vivants</strong> (à sa gauche et à sa droite autour de la table). Le narrateur te dit en secret s'il y a <strong>au moins un loup</strong> parmi ces trois-là :<br>- <strong>oui</strong> : tu gardes ton flair ;<br>- <strong>non</strong> : ces trois-là sont innocents, mais ton flair te quitte <strong>pour toujours</strong>. Le narrateur te réveille encore chaque nuit, pour que personne ne remarque rien, mais tu n'as plus rien à désigner.</p>",
+      "en": "<p>You slip under doors and nothing escapes you, as long as your nose does not fail you.</p><p><strong>Each night</strong>, you choose a player: you sniff <strong>them and their two living neighbours</strong> (to their left and to their right around the table). The narrator secretly tells you whether there is <strong>at least one wolf</strong> among those three:<br>- <strong>yes</strong>: you keep your nose;<br>- <strong>no</strong>: those three are innocent, but your nose leaves you <strong>for good</strong>. The narrator still wakes you every night, so that no one notices anything, but you have no one left to choose.</p>"
+    },
+    "system.nuit.invite": {
+      "fr": "Quelle maison flaires-tu cette nuit, avec ses deux voisines ?",
+      "en": "Which house do you sniff tonight, with its two neighbours?"
+    }
+  },
   "roles/Q0BRLSmf34mpvMPU": {
     "_nom": "Sonneur",
     "name": {
@@ -189,6 +241,43 @@
       "en": "At which house do you cast your harpoon tonight? Pass to keep it."
     }
   },
+  "roles/RAnGqgLIYMNRRnim": {
+    "_nom": "Lavandière",
+    "name": {
+      "fr": "Lavandière",
+      "en": "Washerwoman"
+    },
+    "system.description": {
+      "fr": "<p>Vous êtes deux, et vous battez le linge au lavoir depuis l'enfance : vous vous connaissez mieux que personne.</p><p><strong>La première nuit</strong>, les Lavandières se réveillent ensemble et <strong>se reconnaissent</strong> : le narrateur vous dit en secret le nom de l'autre. Ensuite, <strong>une nuit sur deux</strong> (la troisième, la cinquième…), vous vous réveillez de nouveau ensemble et pouvez <strong>vous concerter</strong> en secret, le temps de votre réveil.</p><p>Vous êtes du camp du <strong>Village</strong> toutes les deux : au moins une personne à Brumecombe est digne de votre confiance.</p>",
+      "en": "<p>There are two of you, and you have been beating linen at the wash-house since childhood: you know each other better than anyone.</p><p><strong>On the first night</strong>, the Washerwomen wake together and <strong>recognise each other</strong>: the narrator secretly tells you the other's name. Then, <strong>every other night</strong> (the third, the fifth…), you wake together again and may <strong>confer</strong> in secret, while you are awake.</p><p>You both belong to the <strong>Village</strong> side: at least one person in Brumecombe deserves your trust.</p>"
+    },
+    "system.nuit.invite": {
+      "fr": "Les Lavandières se retrouvent au lavoir : le narrateur vous souffle les vôtres.",
+      "en": "The Washerwomen meet at the wash-house: the narrator whispers your own to you."
+    }
+  },
+  "roles/RccoUj0mFdhUqolZ": {
+    "_nom": "Souffre-douleur",
+    "name": {
+      "fr": "Souffre-douleur",
+      "en": "Whipping Boy"
+    },
+    "system.description": {
+      "fr": "<p>On t'a toujours tout mis sur le dos, et ça ne changera pas aujourd'hui.</p><p>Si un <strong>vote d'exécution finit à égalité</strong>, aucun des ex æquo n'est exécuté : <strong>c'est toi</strong>, avant toute autre règle (avant même la voix du Bailli).</p><p>Mort ainsi, tu as un dernier mot : tu désignes en secret <strong>qui votera</strong> au vote d'exécution du lendemain (un joueur au moins). Ceux que tu n'as pas désignés ne votent pas ce jour-là. Ta liste peut sauver un innocent, ou livrer le village à la meute.</p>",
+      "en": "<p>You have always been blamed for everything, and today will be no different.</p><p>If an <strong>execution vote ends in a tie</strong>, none of those tied is executed: <strong>you are</strong>, before any other rule (even before the Bailiff's vote).</p><p>Dying that way, you have a last word: you secretly choose <strong>who will vote</strong> in the next day's execution vote (at least one player). Those you did not choose do not vote that day. Your list can save an innocent, or hand the village over to the pack.</p>"
+    }
+  },
+  "roles/TPjAhSGCDL5HVFtO": {
+    "_nom": "Gardeuse d'oies",
+    "name": {
+      "fr": "Gardeuse d'oies",
+      "en": "Goose Girl"
+    },
+    "system.description": {
+      "fr": "<p>Tes oies ne suivent que toi, et elles ne supportent pas l'odeur du loup.</p><p><strong>Chaque matin</strong>, juste après l'annonce des morts de la nuit, si <strong>un loup</strong> est l'un de tes <strong>deux voisins vivants</strong> (à ta gauche et à ta droite autour de la table), le narrateur annonce à tout le village : « <strong>les oies de</strong> <em>(ton nom)</em> <strong>cacardent</strong> ». Sinon, il ne dit rien.</p><p>Si la meute fait de toi un loup (la morsure de la Louve mère), tes oies cacardent chaque matin, tant que tu vis.</p>",
+      "en": "<p>Your geese follow no one but you, and they cannot stand the smell of wolf.</p><p><strong>Each morning</strong>, right after the night's deaths are announced, if <strong>a wolf</strong> is one of your <strong>two living neighbours</strong> (to your left and to your right around the table), the narrator announces to the whole village: “<strong>the geese of</strong> <em>(your name)</em> <strong>are honking</strong>”. Otherwise, he says nothing.</p><p>If the pack makes a wolf of you (the Wolf Mother's bite), your geese honk every morning, as long as you live.</p>"
+    }
+  },
   "roles/Uz9e9vNGNh8w7jNm": {
     "_nom": "Loup affamé",
     "name": {
@@ -202,6 +291,17 @@
     "system.nuit.invite": {
       "fr": "Ta faim te ronge : quelle autre maison visites-tu seul cette nuit ?",
       "en": "Hunger gnaws at you: which other house do you visit alone tonight?"
+    }
+  },
+  "roles/VHebA5lEwFzWJmAC": {
+    "_nom": "Vieux Sergent",
+    "name": {
+      "fr": "Vieux Sergent",
+      "en": "Old Sergeant"
+    },
+    "system.description": {
+      "fr": "<p>Tu as servi trente ans sous les drapeaux, et ta vieille épée rouillée ne quitte jamais ton chevet.</p><p>Si <strong>la meute te dévore</strong>, tu meurs, mais ta lame a mordu : le <strong>premier loup vivant à ta gauche</strong> autour de la table est blessé. La rouille fait son œuvre : il <strong>meurt la nuit suivante</strong>, et sa mort est annoncée au matin d'après. Rien ne le protège.</p><p>Mort d'une autre façon (le vote, le poison, les flammes…), ton épée ne sert à rien.</p>",
+      "en": "<p>You served thirty years under the colours, and your old rusty sword never leaves your bedside.</p><p>If <strong>the pack devours you</strong>, you die, but your blade has bitten: the <strong>first living wolf to your left</strong> around the table is wounded. The rust does its work: he <strong>dies the following night</strong>, and his death is announced the morning after. Nothing protects him.</p><p>If you die any other way (the vote, poison, flames…), your sword is of no use.</p>"
     }
   },
   "roles/W6cBRI1JdaB6I6nb": {
@@ -328,6 +428,17 @@
       "en": "<p>You win <strong>alone and at once</strong> if the village executes you by vote: the game ends on your victory.</p>"
     }
   },
+  "roles/excyVOJas5SeEGke": {
+    "_nom": "Greffier bègue",
+    "name": {
+      "fr": "Greffier bègue",
+      "en": "Stammering Clerk"
+    },
+    "system.description": {
+      "fr": "<p>Tu tiens la plume du tribunal, et ta langue fourche quand l'émotion te prend.</p><p><strong>Une fois par partie</strong>, pendant un vote d'exécution ou juste après qu'il a désigné un condamné, tu fais un <strong>signe discret</strong> au narrateur (ton pouvoir de jour, sur la Table de jeu) : dès que le condamné est tombé, il annonce <strong>un second vote d'exécution</strong>, aussitôt, <strong>sans débat</strong>. Ce vote suit les règles ordinaires.</p><p>Personne ne sait que c'est toi : le narrateur dit seulement « un second vote ». Si le vote ne condamne personne, ton signe est perdu, mais pas ton pouvoir : tu pourras le refaire un autre jour.</p>",
+      "en": "<p>You hold the court's quill, and your tongue trips when emotion takes you.</p><p><strong>Once per game</strong>, during an execution vote or right after it has condemned someone, you give the narrator a <strong>discreet sign</strong> (your day power, on the Game Table): as soon as the condemned has fallen, he announces <strong>a second execution vote</strong>, at once, <strong>without debate</strong>. That vote follows the usual rules.</p><p>No one knows it was you: the narrator only says “a second vote”. If the vote condemns no one, your sign is lost, but not your power: you may give it again another day.</p>"
+    }
+  },
   "roles/fjHGd55SIOeEfG0j": {
     "_nom": "Louvetier",
     "name": {
@@ -418,6 +529,17 @@
       "en": "Which door do you stand guard at tonight?"
     }
   },
+  "roles/nC8VTL9GixF8JGwG": {
+    "_nom": "Innocent",
+    "name": {
+      "fr": "Innocent",
+      "en": "Village Innocent"
+    },
+    "system.description": {
+      "fr": "<p>Tout Brumecombe te connaît, et personne ne te croit capable de faire du mal à une mouche.</p><p>Si <strong>le village vote contre toi</strong>, ta carte est retournée au moment de l'exécution : le village comprend son erreur et te <strong>gracie</strong>. Tu restes en jeu et tu peux encore parler, mais tu <strong>ne voteras plus jamais</strong>. Si tu étais Bailli, tu perds la charge, et personne ne la reprendra.</p><p>La nuit, tu meurs comme tout le monde : la meute ne fait pas de grâce, la Braconnière non plus. Et le village ne te graciera qu'une fois.</p>",
+      "en": "<p>All of Brumecombe knows you, and no one believes you could hurt a fly.</p><p>If <strong>the village votes against you</strong>, your card is turned over at the moment of execution: the village sees its mistake and <strong>pardons</strong> you. You stay in the game and may still speak, but you <strong>will never vote again</strong>. If you were Bailiff, you lose the office, and no one will take it up.</p><p>At night, you die like everyone else: the pack grants no pardon, and neither does the Poacher. And the village will pardon you only once.</p>"
+    }
+  },
   "roles/nvxabQa8s1E8fYPS": {
     "_nom": "Entremetteuse",
     "name": {
@@ -494,6 +616,21 @@
     "system.description": {
       "fr": "<p>Tu marchais la nuit, les yeux ouverts, et tu croyais voir.</p><p><strong>Tu ne savais pas que tu étais Somnambule.</strong> À la distribution, tu as reçu la carte d'un rôle de vision (Liseuse de cendres, Fossoyeur ou Sourcier) et tu l'as joué de bonne foi : chaque nuit, tu te levais, tu désignais, et le narrateur te répondait. Mais tu rêvais : <strong>tes visions étaient fausses</strong>, toujours plausibles, jamais vraies.</p><p>Tu es bien du camp du <strong>Village</strong>, et tu gagnes avec lui. On ne découvre ta vraie nature qu'à ta mort (ou à la fin de la partie).</p>",
       "en": "<p>You walked at night, eyes open, and you believed you could see.</p><p><strong>You did not know you were the Sleepwalker.</strong> When roles were dealt, you received the card of a vision role (Ash Reader, Gravedigger or Dowser) and played it in good faith: each night, you got up, you designated, and the narrator answered you. But you were dreaming: <strong>your visions were false</strong>, always plausible, never true.</p><p>You are indeed of the <strong>Village</strong> side, and you win with it. Your true nature is only discovered at your death (or at the end of the game).</p>"
+    }
+  },
+  "roles/z9pfMH2eLEdLqSIP": {
+    "_nom": "Bûcheron",
+    "name": {
+      "fr": "Bûcheron",
+      "en": "Woodcutter"
+    },
+    "system.description": {
+      "fr": "<p>Vous êtes trois frères, et vous abattez les chênes de la forêt de Brumecombe depuis que vous tenez une hache.</p><p><strong>La première nuit</strong>, les Bûcherons se réveillent ensemble et <strong>se reconnaissent</strong> : le narrateur vous dit en secret le nom des deux autres. Ensuite, <strong>une nuit sur deux</strong> (la troisième, la cinquième…), vous vous réveillez de nouveau ensemble et pouvez <strong>vous concerter</strong> en secret, le temps de votre réveil.</p><p>Vous êtes tous trois du camp du <strong>Village</strong> : à trois, vous pesez déjà dans un vote.</p>",
+      "en": "<p>You are three brothers, and you have been felling the oaks of the Brumecombe forest since you could hold an axe.</p><p><strong>On the first night</strong>, the Woodcutters wake together and <strong>recognise each other</strong>: the narrator secretly tells you the names of the other two. Then, <strong>every other night</strong> (the third, the fifth…), you wake together again and may <strong>confer</strong> in secret, while you are awake.</p><p>All three of you belong to the <strong>Village</strong> side: three of you already weigh in a vote.</p>"
+    },
+    "system.nuit.invite": {
+      "fr": "Les Bûcherons se retrouvent à la coupe : le narrateur vous souffle les vôtres.",
+      "en": "The Woodcutters meet at the felling: the narrator whispers your own to you."
     }
   }
 }

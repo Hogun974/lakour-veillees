@@ -1,0 +1,46 @@
+{
+  "_id": "9kFfQyTqzx0c3v0x",
+  "_key": "!items!9kFfQyTqzx0c3v0x",
+  "name": "Franc-Villageois",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/franc-villageois.svg",
+  "system": {
+    "cle": "franc-villageois",
+    "camp": "village",
+    "description": "<p>Tu n'as aucun pouvoir, et tout Brumecombe le sait : ta carte est <strong>retournée devant tous dès la distribution</strong>. Personne ne peut douter que tu es du camp du <strong>Village</strong>.</p><p>C'est ta force : ta parole ne cache rien, et tu peux guider le vote sans qu'on te soupçonne. C'est aussi ta faiblesse : la meute sait qu'elle ne pourra jamais te faire accuser à sa place.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": false,
+      "ordre": 50,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 0,
+      "soiMeme": false,
+      "invite": ""
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "",
+    "apparence": "",
+    "victoireCle": "",
+    "public": true
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "franc-villageois"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

@@ -25,11 +25,17 @@
 //                meute l'a-t-elle surprise ? Absente : tirée ici (chanceEpier).
 //   somnambules: [acteurId] qui rêvent leur rôle (somnambule.mjs) : leurs visions sont fausses ; rolesFactices : [nom de rôle]
 //                parmi lesquels un Fossoyeur rêvé lit un faux rôle.
+//   Le Pacte, étape 3a (pacte.mjs) : cercle (etat.cercle : les voisins du Furet et du Vieux Sergent) ; aieux : [acteurId] les Aïeux
+//                qui ont déjà perdu leur première vie ; furets : [acteurId] les Furets qui ont perdu leur flair ; contamines :
+//                [acteurId] les loups contaminés par le Vieux Sergent, qui meurent cette nuit ; sagessePerdue : le village a perdu sa
+//                sagesse (les rôles du Village n'agissent plus).
 // -> { morts, deces, sauves, revelations, messages, changements, asperges, fioles, fiolesVides, voteDouble, enAttente, narrateur,
 //      annonces, bilan, pontFranchi }
 //    annonces : [msg] publiques (la lame de la Forge) ; bilan : { visites, sorties, victime, loup, sauves, attaques } pour les
 //    pouvoirs du matin (Chasseresse, Colporteur de nouvelles, Lavoir) ; pontFranchi : la meute a tué sur l'autre rive.
 //    fiolesVides : herboristes dont aucune fiole n'a rien versé (fiole déjà vide, ou soi-même hors danger) : l'usage leur est rendu.
+//    Le Pacte : aieux et furets (les listes à jour), plume (la cible de la plume noire de la Pie, "" sinon), contaminations
+//    ([{ sergent, loup }] : le loup mourra la nuit suivante).
 //    messages : [{ destinataire: acteurId | "mj", cle, texte, donnees }]
 //
 // Conventions tirées des rôles de lakour-veillees (un seul `effet` par rôle) :
@@ -47,6 +53,15 @@
 //   RISQUE_ENFANT), c'est elle que la meute dévore à la place de sa proie (cause secrète « epie ») : prise dehors, ni garde ni
 //   porte ne la sauvent (un remède, si) ;
 // - Liseuse de cendres (effet "voir-role") : le rôle d'un joueur (roleApparent : le Loup déguisé paraît « Villageois ») ;
+// - Aïeul (effet "resister") : la première attaque de la meute (un loup qui tue seul, la peste aussi : rien ne doit les distinguer)
+//   qui l'aurait tué ne le tue pas, en secret (seule la chronique du MJ le sait) ; un remède ou une garde qui le sauvent lui
+//   laissent cette vie. La première morsure de la Louve mère compte comme cette attaque : elle ne l'infecte pas ;
+// - Furet (effet "flairer") : le joueur désigné et ses deux voisins vivants (cercle.mjs, trioAutour) ; au moins un loup parmi eux
+//   (tel que le voient les visions) : « oui », il garde son flair ; sinon « non », et il le perd pour toujours (furets) ;
+// - Pie (effet "plume") : sa cible (ni elle-même) portera deux voix de plus au vote d'exécution du jour ; annoncée au matin ;
+// - Vieux Sergent (effet "contaminer") : dévoré par la meute (cause « meute »), il contamine le premier loup vivant à sa gauche
+//   (contaminations) ; ce loup meurt la nuit suivante (contamines, cause publique « contamine »), rien ne l'en protège ;
+// - Lavandières, Bûcherons (effet "fratrie") : rien à résoudre (ils se reconnaissent au réveil : api.noterAction) ;
 // - rôles à nuit.cibles = 0 (Ermite, Chasseur de primes) : leur réveil vaut action, même s'il n'a pas été noté ;
 // - Messager (effet "messager") : cibles [expéditeur, destinataire], action.texte = le mot écrit par l'expéditeur ;
 // - effets du jour : hors d'atteinte (Passeur, Grange) = ni visité ni agissant ; gardé à l'œil (Garde du guet) = ne vise
@@ -59,8 +74,8 @@
 //   protection, remède, absence, Pont, immunité des tueurs solitaires), mais aucun loup n'entre (ni lanterne, ni sang de la
 //   lame, ni sortie) ; cause secrète « peste », publique « nuit » ; bilan.victime la compte, bilan.loup reste vide.
 //
-// Ordre : liens d'amour, protections, épier, attaques (meute, tuer), morsure, poison, feu, remède, éclairer,
-// informations (camp, rôle), silence, échanges, cloche, chagrin en cascade, emporter.
+// Ordre : liens d'amour, protections, épier, attaques (meute, tuer), morsure, poison, feu, remède, contamination, éclairer,
+// informations (camp, rôle, flair), plume, silence, échanges, cloche, chagrin en cascade, contamination du Sergent, emporter.
 // Tout se joue sur l'état du début de nuit : un mort de la nuit agit encore cette nuit-là.
 
 import { CLE_MEUTE, CLE_PESTE, CAUSES, EFFETS_AUTOMATISES, RISQUE_ENFANT } from "./constantes.mjs";
@@ -71,6 +86,8 @@ import { victoireCleDe } from "./victoire.mjs";
 import { majoriteMeute } from "./votes.mjs";
 import { surLAutreRive } from "./distribution.mjs";
 import { CLE_DEUIL } from "./deuil.mjs";
+import { trioAutour, premierAGauche } from "./cercle.mjs";
+import { EFFET_AIEUL, EFFET_FURET, EFFET_PIE, EFFET_SERGENT, pouvoirPerdu, candidatsDeLaPlume } from "./pacte.mjs";
 
 // Un mot porté par le Messager : une ligne, sans balises, 200 caractères au plus.
 export function nettoyerMot(texte, longueur = 200) {
@@ -117,7 +134,7 @@ const msg = (destinataire, cle, texte, donnees = {}) => ({ destinataire, cle: `L
 const sansCible = role => Number(role?.nuit?.cibles ?? 1) === 0;
 
 export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges = [], precedentes = [], primes = {}, fioles = {}, hasard = Math.random, chanceEpier = RISQUE_ENFANT, jour = {},
-  somnambules = [], rolesFactices = [], nomsApparents = {} } = {}) {
+  somnambules = [], rolesFactices = [], nomsApparents = {}, cercle = [], aieux = [], furets = [], contamines = [], sagessePerdue = false } = {}) {
   const noms = { ...NOMS_APPARENTS, ...nomsApparents };
   const reve = new Set(somnambules);
   const parId = new Map(villageois.map(v => [v.id, v]));
@@ -149,12 +166,17 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
 
   const sortie = { morts: [], deces: [], sauves: [], revelations: [], messages: [], changements: [], asperges: [],
     fioles: JSON.parse(JSON.stringify(fioles ?? {})), fiolesVides: [], voteDouble: false, enAttente: [], narrateur: [],
-    annonces: [], bilan: null, pontFranchi: false, deuil: "", presentOuvert: false, masqueTombe: false };
+    annonces: [], bilan: null, pontFranchi: false, deuil: "", presentOuvert: false, masqueTombe: false,
+    aieux: [...new Set(aieux)], furets: [...new Set(furets)], plume: "", contaminations: [] };
+  // Le Pacte : la place de chacun autour de la table (le Furet, le Vieux Sergent) ; les rôles du Village sans pouvoir.
+  const placesDuCercle = { cercle };
+  const sansPouvoir = role => pouvoirPerdu(sagessePerdue, role);
+  const aieulEnVie = id => parId.get(id)?.role?.effet === EFFET_AIEUL && !sansPouvoir(parId.get(id)?.role) && !sortie.aieux.includes(id);
 
   // Les rôles sans cible réveillés cette nuit agissent d'office (l'Ermite guette, le Chasseur apprend sa cible).
   const toutes = [...actions];
   for (const v of villageois) {
-    if (v.vivant === false || !v.role?.cle || !sansCible(v.role) || agitAvecLaMeute(v.role) || !seReveille(v.role, tour)) continue;
+    if (v.vivant === false || !v.role?.cle || !sansCible(v.role) || agitAvecLaMeute(v.role) || !seReveille(v.role, tour, { sansPouvoirs: sagessePerdue })) continue;
     if (!toutes.some(a => a.acteurId === v.id && a.roleCle === v.role.cle)) toutes.push({ acteurId: v.id, roleCle: v.role.cle, cibles: [] });
   }
 
@@ -167,6 +189,8 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
     const deLaPeste = a.roleCle === CLE_PESTE;   // son porteur est mort : il agit quand même
     const duDeuil = a.roleCle === CLE_DEUIL;     // la vision du Glas du deuil : toute la meute, quel que soit le loup noté
     if (!deLaMeute && !deLaPeste && !duDeuil && (!acteur || acteur.vivant === false)) continue;
+    // Le village a perdu sa sagesse (pacte.mjs) : l'action d'un rôle du Village ne vaut plus rien (il n'aurait pas dû être réveillé).
+    if (!deLaMeute && !deLaPeste && !duDeuil && a.roleCle === acteur?.role?.cle && sansPouvoir(acteur.role)) continue;
     if ((deLaMeute || duDeuil) && !vivantsMeute.length) continue;
     const cibles = [...new Set((a.cibles ?? []).filter(id => parId.has(id)))];
     const passe = !cibles.length && !a.effet && (deLaMeute || deLaPeste || !sansCible(acteur?.role));
@@ -329,6 +353,11 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
     else if (fermees.has(cible) && cible !== surprise && !sansProtection(cible) && !linceul) {
       sortie.sauves.push({ acteurId: cible, par: "proteger" });
       sortie.messages.push(msg("mj", "MorsureEvitee", `La morsure sur ${nom(cible)} a été repoussée.`, { nom: nom(cible) }));
+    } else if (aieulEnVie(cible) && !linceul) {
+      // L'Aïeul : la première morsure ne l'infecte pas, elle lui coûte sa première vie (en secret).
+      sortie.aieux.push(cible);
+      sortie.sauves.push({ acteurId: cible, par: "aieul" });
+      sortie.messages.push(msg("mj", "AieulMorsure", `${nom(cible)}, l'Aïeul, a résisté à la morsure : il a perdu sa première vie.`, { nom: nom(cible) }));
     } else if (parId.get(cible).camp !== "meute") {
       sortie.changements.push({ type: "camp", acteurId: cible, camp: "meute" });
       sortie.messages.push(msg(cible, "Mordu", "Une morsure dans la nuit : vous rejoignez la meute, en secret.", {}));
@@ -426,6 +455,13 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
       sortie.sauves.push({ acteurId: x.cible, par: "proteger" });
       continue;
     }
+    // L'Aïeul : la première attaque de la meute qui l'aurait tué (rien d'autre ne l'a arrêté) lui coûte sa première vie, en secret.
+    if (x.meute && aieulEnVie(x.cible)) {
+      sortie.aieux.push(x.cible);
+      sortie.sauves.push({ acteurId: x.cible, par: "aieul" });
+      sortie.messages.push(msg("mj", "AieulResiste", `${nom(x.cible)}, l'Aïeul, a survécu à l'attaque : il a perdu sa première vie.`, { nom: nom(x.cible) }));
+      continue;
+    }
     // Le présent de la Veillée d'hiver : le premier coup qui devait tuer son porteur échoue, une fois (rien d'autre ne l'a arrêté).
     if (jour.present && x.cible === jour.present && !sortie.presentOuvert) {
       sortie.presentOuvert = true;
@@ -435,6 +471,13 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
       continue;
     }
     meurt(x.cible, x.cause);
+  }
+
+  // La contamination du Vieux Sergent : le loup contaminé la nuit d'avant meurt cette nuit ; rien ne l'en protège.
+  for (const id of contamines) {
+    if (!vivant(id) || sortie.morts.includes(id)) continue;
+    meurt(id, CAUSES.contamine);
+    sortie.messages.push(msg("mj", "ContamineMort", `${nom(id)} a succombé à la blessure de la vieille épée.`, { nom: nom(id) }));
   }
 
   // La lame de la Forge : la meute qui atteint celui qui la porte (même s'il survit) y laisse du sang ; un loup tiré au
@@ -533,6 +576,28 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
         : msg(a.acteurId, "ActifPersonne", "Personne n'est sorti cette nuit.", {}));
     }
   }
+  // Le Furet flaire un joueur et ses deux voisins vivants (au début de la nuit). Un Furet sans flair n'a rien désigné.
+  for (const a of parEffet(EFFET_FURET)) {
+    const c = a.cibles[0];
+    if (!c || sortie.furets.includes(a.acteurId)) continue;
+    const groupe = trioAutour(placesDuCercle, villageois, c);
+    if (!groupe.length) continue;
+    const noms = groupe.map(nom).join(", ");
+    if (groupe.some(id => vu(id, a.acteurId) === "meute")) {
+      sortie.messages.push(msg(a.acteurId, "FuretOui", `Votre museau frémit : il y a au moins un loup parmi ${noms}.`, { noms }));
+    } else {
+      sortie.furets.push(a.acteurId);
+      sortie.messages.push(msg(a.acteurId, "FuretNon", `Aucun loup parmi ${noms} : ils sont innocents. Mais votre flair vous a quitté, pour toujours.`, { noms }));
+      sortie.messages.push(msg("mj", "FuretPerdu", `${nom(a.acteurId)}, le Furet, n'a flairé aucun loup : il perd son flair.`, { nom: nom(a.acteurId) }));
+    }
+  }
+  // La Pie : sa plume noire (la dernière posée), jamais sur elle-même ni sur un rôle exclu ; annoncée au matin si sa cible vit.
+  for (const a of parEffet(EFFET_PIE)) {
+    const c = a.cibles[0];
+    if (c && vivant(c) && candidatsDeLaPlume(villageois, a.acteurId, [c]).length) sortie.plume = c;
+  }
+  if (sortie.plume) sortie.messages.push(msg("mj", "Plume", `Une plume noire se posera sur ${nom(sortie.plume)} : deux voix de plus contre lui au vote du jour.`, { nom: nom(sortie.plume) }));
+
   // Le chasseur de primes apprend sa cible.
   const informes = new Set();
   for (const a of retenues) {
@@ -589,6 +654,21 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
   for (let i = 0; i < sortie.morts.length; i++) {
     const lie = amours.get(sortie.morts[i]);
     if (lie) meurt(lie, CAUSES.chagrin);
+  }
+
+  // Le Vieux Sergent dévoré par la meute : le premier loup vivant à sa gauche (après les morts et les morsures de la nuit) est
+  // contaminé, et mourra la nuit suivante. Les autres causes de mort ne déclenchent rien.
+  if (sortie.deces.some(d => d.cause === CAUSES.meute)) {
+    const camps = new Map(sortie.changements.filter(c => c.type === "camp").map(c => [c.acteurId, c.camp]));
+    const apres = villageois.map(v => ({ ...v, ...(sortie.morts.includes(v.id) ? { vivant: false } : {}), ...(camps.has(v.id) ? { camp: camps.get(v.id) } : {}) }));
+    for (const d of sortie.deces.filter(x => x.cause === CAUSES.meute)) {
+      const s = parId.get(d.acteurId);
+      if (s?.role?.effet !== EFFET_SERGENT || sansPouvoir(s.role)) continue;
+      const loup = premierAGauche(placesDuCercle, apres, d.acteurId, v => v.camp === "meute");
+      if (!loup || sortie.contaminations.some(c => c.loup === loup)) continue;
+      sortie.contaminations.push({ sergent: d.acteurId, loup });
+      sortie.messages.push(msg("mj", "Contamination", `La vieille épée de ${nom(d.acteurId)} a blessé ${nom(loup)} : il mourra la nuit prochaine.`, { qui: nom(d.acteurId), nom: nom(loup) }));
+    }
   }
 
   // 12. Emporter : un mort qui emporte quelqu'un doit encore choisir (le narrateur le lui demande).

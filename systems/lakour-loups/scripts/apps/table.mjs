@@ -278,7 +278,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
         voixDouble: v.objet === "execution" && bailliId && pesees[bailliId] > 1 ? nomDe(bailliId) : "",
         exprimes: v.exprimes.filter(id => vivants.some(x => x.id === id)).length, votants: vivants.length,
         souffles: v.exprimes.filter(id => !vivants.some(x => x.id === id)).length,
-        peutVoter: Boolean(v.ouvert && moi && (moi.system.vivant || tenterSync(() => api().peutSouffler(moi.id).ok, false))), minuteur: Boolean(v.finit),
+        peutVoter: Boolean(v.ouvert && moi && (moi.system.vivant || tenterSync(() => api().peutSouffler(moi.id).ok, false)) && !L.priveDeVote(etat, moi.id)), minuteur: Boolean(v.finit),
         souffle: Boolean(v.ouvert && moi && !moi.system.vivant), mainLevee: Boolean(v.mainLevee),
         resultat: resultat ? { lignes, egalite: resultat.egalite, personne: !resultat.elus?.length, bailli: resultat.objet === "bailli", sort: Boolean(resultat.sort), departage,
           banc: resultat.banc ? { nom: nomDe(resultat.banc.accuse), pour: resultat.banc.pour, total: resultat.banc.total, condamne: Boolean(resultat.elus?.length) } : null,

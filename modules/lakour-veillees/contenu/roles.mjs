@@ -3,6 +3,9 @@
 // meute (40), les rôles qui réagissent à la victime juste après, les informations à la fin, le Fossoyeur en dernier.
 // Tous les loups se réveillent ensemble à 40 pour choisir la victime de la meute ; un loup dont l'ordre n'est pas 40
 // se réveille EN PLUS, seul, à son ordre, pour son pouvoir propre.
+// Le Pacte, étape 3a (docs/plan-le-pacte.md) : les rôles du Village du jeu de soirée, placés dans l'ordre d'appel du livre entre nos
+// ordres : le Furet après l'Entremetteuse (7), les Lavandières et les Bûcherons après le Messager (11, 12), la Pie juste après la
+// chasse (46). Leurs règles vivent dans le système (logique/pacte.mjs).
 import { ORDRE_MEUTE, role } from "./aides.mjs";
 
 // ======================================================================= La Meute
@@ -247,6 +250,109 @@ Tu n'as aucun pouvoir, mais **ta vie est le serment du village** : si le village
 
 Vise juste : un harpon perdu dans la poitrine d'un voisin ne revient pas. Tant que tu passes, tu le gardes.`,
     nuit: { ordre: 48, cibles: 1, invite: "Sur quelle maison lances-tu ton harpon cette nuit ? Passe pour le garder." }
+  }),
+
+  // --------------------------------------------------------------- les rôles du Village du jeu de soirée (Le Pacte, étape 3a)
+  role({
+    cle: "franc-villageois", nom: "Franc-Villageois", camp: "village", public: true,
+    resume: "aucun pouvoir, mais sa carte est retournée dès la distribution : tout le village sait qu'il est innocent.",
+    pouvoir: `Tu n'as aucun pouvoir, et tout Brumecombe le sait : ta carte est **retournée devant tous dès la distribution**. Personne ne peut douter que tu es du camp du **Village**.
+
+C'est ta force : ta parole ne cache rien, et tu peux guider le vote sans qu'on te soupçonne. C'est aussi ta faiblesse : la meute sait qu'elle ne pourra jamais te faire accuser à sa place.`
+  }),
+  role({
+    cle: "aieul", nom: "Aïeul", camp: "village", effet: "resister",
+    resume: "la meute doit l'attaquer deux fois pour le tuer ; s'il tombe de la main du village, les villageois perdent leurs pouvoirs.",
+    pouvoir: `Tu as vu passer plus d'hivers que quiconque à Brumecombe, et ta peau est dure comme l'écorce.
+
+**La première fois que la meute t'attaque**, tu survis, en secret : ta carte reste cachée et le village n'en sait rien. **La seconde fois**, tu meurs. La première morsure de la Louve mère compte pour cette première attaque : elle ne fait pas de toi un loup. Si un remède de l'Herboriste te sauve d'une attaque, tu gardes ta vie de réserve.
+
+Mais tu es la sagesse du village : si **le village** te fait mourir (le vote, le poison de l'Herboriste, la Braconnière), Brumecombe perd la tête, et **tous les villageois perdent leurs pouvoirs** jusqu'à la fin de la partie : les rôles du Village comme les métiers. Le Bailli garde sa charge.`
+  }),
+  role({
+    cle: "souffre-douleur", nom: "Souffre-douleur", camp: "village", effet: "egalite",
+    resume: "si le vote finit à égalité, c'est lui qui est exécuté ; il désigne alors qui votera le lendemain.",
+    pouvoir: `On t'a toujours tout mis sur le dos, et ça ne changera pas aujourd'hui.
+
+Si un **vote d'exécution finit à égalité**, aucun des ex æquo n'est exécuté : **c'est toi**, avant toute autre règle (avant même la voix du Bailli).
+
+Mort ainsi, tu as un dernier mot : tu désignes en secret **qui votera** au vote d'exécution du lendemain (un joueur au moins). Ceux que tu n'as pas désignés ne votent pas ce jour-là. Ta liste peut sauver un innocent, ou livrer le village à la meute.`
+  }),
+  role({
+    cle: "innocent", nom: "Innocent", camp: "village", effet: "grace",
+    resume: "si le village vote contre lui, il est gracié : sa carte est retournée, il reste en jeu, mais ne vote plus.",
+    pouvoir: `Tout Brumecombe te connaît, et personne ne te croit capable de faire du mal à une mouche.
+
+Si **le village vote contre toi**, ta carte est retournée au moment de l'exécution : le village comprend son erreur et te **gracie**. Tu restes en jeu et tu peux encore parler, mais tu **ne voteras plus jamais**. Si tu étais Bailli, tu perds la charge, et personne ne la reprendra.
+
+La nuit, tu meurs comme tout le monde : la meute ne fait pas de grâce, la Braconnière non plus. Et le village ne te graciera qu'une fois.`
+  }),
+  role({
+    cle: "lavandiere", nom: "Lavandière", camp: "village", effet: "fratrie",
+    resume: "elles sont deux : elles se reconnaissent la première nuit, puis se retrouvent une nuit sur deux pour se concerter.",
+    pouvoir: `Vous êtes deux, et vous battez le linge au lavoir depuis l'enfance : vous vous connaissez mieux que personne.
+
+**La première nuit**, les Lavandières se réveillent ensemble et **se reconnaissent** : le narrateur vous dit en secret le nom de l'autre. Ensuite, **une nuit sur deux** (la troisième, la cinquième…), vous vous réveillez de nouveau ensemble et pouvez **vous concerter** en secret, le temps de votre réveil.
+
+Vous êtes du camp du **Village** toutes les deux : au moins une personne à Brumecombe est digne de votre confiance.`,
+    nuit: { ordre: 11, cibles: 0, nuitsImpaires: true, invite: "Les Lavandières se retrouvent au lavoir : le narrateur vous souffle les vôtres." }
+  }),
+  role({
+    cle: "bucheron", nom: "Bûcheron", camp: "village", effet: "fratrie",
+    resume: "ils sont trois : ils se reconnaissent la première nuit, puis se retrouvent une nuit sur deux pour se concerter.",
+    pouvoir: `Vous êtes trois frères, et vous abattez les chênes de la forêt de Brumecombe depuis que vous tenez une hache.
+
+**La première nuit**, les Bûcherons se réveillent ensemble et **se reconnaissent** : le narrateur vous dit en secret le nom des deux autres. Ensuite, **une nuit sur deux** (la troisième, la cinquième…), vous vous réveillez de nouveau ensemble et pouvez **vous concerter** en secret, le temps de votre réveil.
+
+Vous êtes tous trois du camp du **Village** : à trois, vous pesez déjà dans un vote.`,
+    nuit: { ordre: 12, cibles: 0, nuitsImpaires: true, invite: "Les Bûcherons se retrouvent à la coupe : le narrateur vous souffle les vôtres." }
+  }),
+  role({
+    cle: "furet", nom: "Furet", camp: "village", effet: "flairer",
+    resume: "chaque nuit, flaire un joueur et ses deux voisins : apprend s'il y a un loup parmi eux ; sinon, il perd son flair.",
+    pouvoir: `Tu te faufiles sous les portes et rien ne t'échappe, tant que ton nez ne te trompe pas.
+
+**Chaque nuit**, tu désignes un joueur : tu flaires **lui et ses deux voisins vivants** (à sa gauche et à sa droite autour de la table). Le narrateur te dit en secret s'il y a **au moins un loup** parmi ces trois-là :
+- **oui** : tu gardes ton flair ;
+- **non** : ces trois-là sont innocents, mais ton flair te quitte **pour toujours**. Le narrateur te réveille encore chaque nuit, pour que personne ne remarque rien, mais tu n'as plus rien à désigner.`,
+    nuit: { ordre: 7, cibles: 1, invite: "Quelle maison flaires-tu cette nuit, avec ses deux voisines ?" }
+  }),
+  role({
+    cle: "gardeuse-d-oies", nom: "Gardeuse d'oies", camp: "village", effet: "cacarder",
+    resume: "chaque matin, ses oies cacardent si un loup est l'un de ses deux voisins.",
+    pouvoir: `Tes oies ne suivent que toi, et elles ne supportent pas l'odeur du loup.
+
+**Chaque matin**, juste après l'annonce des morts de la nuit, si **un loup** est l'un de tes **deux voisins vivants** (à ta gauche et à ta droite autour de la table), le narrateur annonce à tout le village : « **les oies de** *(ton nom)* **cacardent** ». Sinon, il ne dit rien.
+
+Si la meute fait de toi un loup (la morsure de la Louve mère), tes oies cacardent chaque matin, tant que tu vis.`
+  }),
+  role({
+    cle: "greffier-begue", nom: "Greffier bègue", camp: "village", effet: "second-vote", usages: 1,
+    resume: "une fois par partie, pendant ou juste après un vote qui condamne, déclenche en secret un second vote, sans débat.",
+    pouvoir: `Tu tiens la plume du tribunal, et ta langue fourche quand l'émotion te prend.
+
+**Une fois par partie**, pendant un vote d'exécution ou juste après qu'il a désigné un condamné, tu fais un **signe discret** au narrateur (ton pouvoir de jour, sur la Table de jeu) : dès que le condamné est tombé, il annonce **un second vote d'exécution**, aussitôt, **sans débat**. Ce vote suit les règles ordinaires.
+
+Personne ne sait que c'est toi : le narrateur dit seulement « un second vote ». Si le vote ne condamne personne, ton signe est perdu, mais pas ton pouvoir : tu pourras le refaire un autre jour.`
+  }),
+  role({
+    cle: "vieux-sergent", nom: "Vieux Sergent", camp: "village", effet: "contaminer",
+    resume: "si la meute le dévore, sa vieille épée blesse le premier loup à sa gauche, qui meurt la nuit suivante.",
+    pouvoir: `Tu as servi trente ans sous les drapeaux, et ta vieille épée rouillée ne quitte jamais ton chevet.
+
+Si **la meute te dévore**, tu meurs, mais ta lame a mordu : le **premier loup vivant à ta gauche** autour de la table est blessé. La rouille fait son œuvre : il **meurt la nuit suivante**, et sa mort est annoncée au matin d'après. Rien ne le protège.
+
+Mort d'une autre façon (le vote, le poison, les flammes…), ton épée ne sert à rien.`
+  }),
+  role({
+    cle: "pie", nom: "Pie", camp: "village", effet: "plume",
+    resume: "chaque nuit, pose une plume noire sur un joueur : il aura deux voix de plus contre lui au vote du jour.",
+    pouvoir: `Tu ramasses tout ce qui brille, et tu sais sous quel toit chacun cache ses secrets.
+
+**Chaque nuit**, après la chasse, tu peux désigner un joueur (pas toi). Au matin, le narrateur annonce à tous : « **une plume noire désigne** *(son nom)* ». Au **vote d'exécution** de ce jour, il compte **deux voix de plus** contre lui. Personne ne sait d'où vient la plume.
+
+Passe si tu ne veux désigner personne.`,
+    nuit: { ordre: 46, cibles: 1, invite: "Sur quel seuil poses-tu ta plume noire cette nuit ? Passe pour n'en poser aucune." }
   })
 ];
 

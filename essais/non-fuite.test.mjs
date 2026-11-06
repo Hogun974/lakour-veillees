@@ -97,6 +97,8 @@ function crible(etat) {
   for (const [ou, texte] of [["chat", nouveauxMessages.map(m => decoder(m.content)).join("\n")], ["réglages monde", monde], ["socket sans destinataire", JSON.stringify(diffuses)]]) {
     for (const m of LIGNES_SECRETES_DE_FETE) if (m.test(texte)) fuite("*", `une ligne secrète de la veillée de fête (${m.source.slice(0, 50)}) dans ${ou}`);
   }
+  // Le signe du Greffier bègue est secret : jamais de hook public qui le porte.
+  for (const e of diffuses.filter(e => e.type === "hook" && e.nom === "lakourLoups.jour" && JSON.stringify(e.args).includes("greffier-begue"))) fuite("*", "le signe du Greffier dans un hook public");
   for (const e of diffuses.filter(e => e.type === "hook" && e.nom === "lakourLoups.fete")) {
     if (JSON.stringify(Object.keys(e.args?.[0] ?? {}).sort()) !== JSON.stringify(["cle", "quoi", "tour"])) fuite("*", `hook public de la veillée trop bavard : ${JSON.stringify(e.args)}`);
   }
@@ -145,6 +147,8 @@ function crible(etat) {
       if (m.type === "demande" && m.destinataire !== u) fuite(u, "la demande d'un autre");
       if (m.type === "vus" && Object.keys(m.vus ?? {}).length && !voitTout) fuite(u, "les rôles des autres sans y avoir droit");
       if (m.type === "salon" && (m.ligne?.loups ?? []).length && !loup) fuite(u, "la meute dans la ligne d'un non-loup");
+      // Le Pacte : une fratrie (Lavandières, Bûcherons) n'est connue que des siens.
+      if (m.type === "salon" && (m.ligne?.freres ?? []).length && !m.ligne.freres.includes(moi?.id)) fuite(u, "une fratrie dans la ligne d'un autre");
       // Les veillées de fête : chaque secret à ses seuls destinataires.
       const t = m.type === "secret" ? String(m.entree?.texte ?? "") : "";
       if (/le masque s'est posé sur ton visage/.test(t) && moi?.id !== fete.masque) fuite(u, "le masque du Carnaval d'un autre");
@@ -251,6 +255,9 @@ const PARTIES = [
   { graine: "roseaux", joueurs: 5, compagnons: 3, roles: ["loup-affame", "loup-flaireur", "dame-du-gue", "pecheur-de-nuit", "braconniere", "gardienne-des-cles", "rosiere", "conteuse"] },
   // Le socle du Pacte : un rôle public dès la distribution (ici la Conteuse, rendue publique pour l'essai), une Braconnière qui choisit.
   { graine: "public", joueurs: 7, compagnons: 1, publics: ["conteuse"], roles: ["loup-de-brumecombe", "loup-hurleur", "conteuse", "braconniere", "liseuse-de-cendres", "garde-du-pont", "herboriste", "villageois"] },
+  // Le Pacte, étape 3a : les rôles du Village du jeu de soirée (fratrie et son salon, Furet, Pie, Greffier, Aïeul…), avec des compagnons IA.
+  { graine: "pacte-village", joueurs: 8, compagnons: 7, roles: ["loup-de-brumecombe", "loup-de-brumecombe", "loup-de-brumecombe", "loup-de-brumecombe", "revenant",
+    "aieul", "souffre-douleur", "innocent", "lavandiere", "lavandiere", "furet", "gardeuse-d-oies", "greffier-begue", "vieux-sergent", "pie"] },
   // Les veillées de fête (0.10.0), dont une avec des compagnons IA et une en peste noire.
   { graine: "ames", joueurs: 7, fete: "nuit-des-ames" },
   { graine: "hiver", joueurs: 6, compagnons: 2, fete: "veillee-d-hiver" },
@@ -384,7 +391,10 @@ const MUTATIONS = [
   // public par la règle, et la partie doit le porter).
   ["scripts/api.mjs", "      const morceaux = [t(\"LAKOUR_LOUPS.Tablee.AnnonceTete\", { humains: h, compagnons: nomsCompagnons.length }),",
     "      const morceaux = [t(\"LAKOUR_LOUPS.Tablee.AnnonceTete\", { humains: h, compagnons: nomsCompagnons.length }) + \" \" + sortie.filter(s => !s.compagnon && campDe(game.actors.get(s.acteurId)) !== \"village\").map(s => game.actors.get(s.acteurId).name).join(\", \"),",
-    "petite tablée : l'annonce nomme les humains de l'ombre", PARTIES.findIndex(p => p.graine === "tablee-trois")]
+    "petite tablée : l'annonce nomme les humains de l'ombre", PARTIES.findIndex(p => p.graine === "tablee-trois")],
+  // Le Pacte, étape 3a : la ligne de salon d'une fratrie, à ses seuls membres.
+  ["logique/salons.mjs", "  if (a.salon === \"fratrie\") ligne.freres = ids(liste.filter(p => p.vivant && !p.loup && !p.mj && p.fratrie === moi.fratrie).map(p => p.acteurId));",
+    "  ligne.freres = ids(liste.filter(p => p.fratrie).map(p => p.acteurId));", "fratries : les siens à eux seuls", PARTIES.findIndex(p => p.graine === "pacte-village")]
 ];
 
 async function chargerMutant(fichier, avant, apres) {

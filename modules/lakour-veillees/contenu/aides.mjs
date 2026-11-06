@@ -12,7 +12,9 @@ export const CAMPS = ["village", "meute", "solitaire"];
 export const EFFETS = [
   "tuer", "proteger", "voir-camp", "voir-role-mort", "eclairer", "silence", "vote-double", "annuler-vote",
   "remede", "poison", "lien-amour", "echanger-role", "mordre", "emporter", "asperger", "embraser",
-  "epier", "messager", "voir-actif", "voir-role"
+  "epier", "messager", "voir-actif", "voir-role",
+  // Les rôles du Village du Pacte (système : logique/pacte.mjs).
+  "resister", "egalite", "grace", "fratrie", "flairer", "cacarder", "second-vote", "contaminer", "plume"
 ];
 // Extensions du système lakour-loups (systems/lakour-loups/scripts/modeles.mjs, logique/constantes.mjs) :
 // role.apparence = camp vu par une vision « voir-camp » ("" = camp réel) ; role.victoireCle = victoire d'un solitaire ;
@@ -58,7 +60,8 @@ const verifierEffet = (cle, effet) => {
 const usagesDe = max => ({ max, restant: max });
 
 // ---------- Objet « role »
-// nuit : { ordre, cibles, soiMeme, premiereNuitSeulement, uneNuitSurDeux, invite } (absent = n'agit pas la nuit).
+// nuit : { ordre, cibles, soiMeme, premiereNuitSeulement, uneNuitSurDeux, nuitsImpaires, tantQueMeuteEntiere, invite } (absent = n'agit
+// pas la nuit). nuitsImpaires : la première nuit, puis une nuit sur deux (1, 3, 5… : les Lavandières, les Bûcherons).
 export function role({ cle, nom, camp, pouvoir, victoire = "", victoireCle = "", apparence = "", nuit = null, usages = 0, effet = "", resume, public: estPublic = false }) {
   if (!CAMPS.includes(camp)) throw new Error(`${cle} : camp « ${camp} » inconnu`);
   if (!APPARENCES.includes(apparence)) throw new Error(`${cle} : apparence « ${apparence} » inconnue`);
@@ -77,6 +80,7 @@ export function role({ cle, nom, camp, pouvoir, victoire = "", victoireCle = "",
         actif: Boolean(nuit), ordre: nuit?.ordre ?? 50,
         premiereNuitSeulement: nuit?.premiereNuitSeulement ?? false, uneNuitSurDeux: nuit?.uneNuitSurDeux ?? false,
         ...(nuit?.tantQueMeuteEntiere ? { tantQueMeuteEntiere: true } : {}),
+        ...(nuit?.nuitsImpaires ? { nuitsImpaires: true } : {}),
         cibles: nuit ? (nuit.cibles ?? 1) : 0, soiMeme: nuit?.soiMeme ?? false, invite: nuit?.invite ?? ""
       },
       usages: usagesDe(usages), effet, apparence, victoireCle, ...(estPublic ? { public: true } : {})

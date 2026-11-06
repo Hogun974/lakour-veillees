@@ -26,6 +26,7 @@ import { prochainAccuse } from "./banc.mjs";
 import { estSaintMartin, saintMartinFinie } from "./saintmartin.mjs";
 import { pariteStricteTablee } from "./tablee.mjs";
 import { gestesEnAttente } from "./derniers-gestes.mjs";
+import { filtrerVotants, gracieAuVote, sagesseEstPerdue } from "./pacte.mjs";
 
 const etape = (cle, action, donnees = {}, extra = {}) => ({ cle, action, donnees, attente: false, detail: null, ...extra });
 
@@ -37,8 +38,10 @@ export function emporteursEnAttente(etat, villageois = [], ignorer = []) {
 }
 
 // Un vote ouvert : le clore (avec les voix qui manquent encore).
-// Les voix qui manquent : celles des vivants (le Dernier souffle d'un mort ne remplace pas une voix vivante).
-function cloture(v, vivants) {
+// Les voix qui manquent : celles des vivants (le Dernier souffle d'un mort ne remplace pas une voix vivante) qui ont le droit de
+// voter (pacte.mjs : ni un Innocent gracié, ni, le lendemain du Souffre-douleur, qui n'est pas sur sa liste).
+function cloture(v, tous, etat) {
+  const vivants = tous.filter(x => filtrerVotants(etat, [x.id], v.objet).length);
   const ids = new Set(vivants.map(x => x.id));
   const manquent = Math.max(0, vivants.length - v.exprimes.filter(id => ids.has(id)).length);
   return etape("cloreVote", "cloreVote", { n: manquent, objet: v.objet }, manquent ? { detail: { cle: "voixManquantes", donnees: { n: manquent } } } : {});
@@ -87,7 +90,7 @@ export function etapeSuivante(etatPublic, secretsMJ = null, { villageois = [], a
       if (!secretsMJ) return etape("aube", "aube", {}, { detail: { cle: "sansSecrets", donnees: {} } });
       const faits = new Set(etat.nuit.actions.map(a => a.roleCle));
       // Peste noire (secret du MJ) : l'étape « la peste », à la place de la meute ; qui : son porteur, s'il y en a un.
-      for (const e of ordreDeNuit(villageois, tour, { peste: etat.peste, deuil: visionDuDeuilDue(etat, villageois) })) {
+      for (const e of ordreDeNuit(villageois, tour, { peste: etat.peste, deuil: visionDuDeuilDue(etat, villageois), sagessePerdue: sagesseEstPerdue(etat) })) {
         if (faits.has(e.roleCle)) continue;
         const groupe = e.roleCle === CLE_MEUTE || e.roleCle === CLE_PESTE || e.roleCle === CLE_DEUIL;
         const roleNom = groupe ? "" : villageois.find(v => v.id === e.acteurIds[0])?.role?.nom ?? e.roleCle;
@@ -104,7 +107,7 @@ export function etapeSuivante(etatPublic, secretsMJ = null, { villageois = [], a
     }
     case "jour": {
       // L'élection du Bailli se tient au débat, sans changer de phase : ouverte, on la clôt.
-      if (etat.vote.ouvert) return cloture(etat.vote, vivants);
+      if (etat.vote.ouvert) return cloture(etat.vote, vivants, etat);
       const apres = apresUneMort();
       if (apres) return apres;
       // Le Bailli défunt remet le sceau (au plus le délai des choix) : on l'attend avant d'élire ou de voter.
@@ -115,12 +118,13 @@ export function etapeSuivante(etatPublic, secretsMJ = null, { villageois = [], a
     }
     case "vote": {
       const v = etat.vote;
-      if (v.ouvert) return cloture(v, vivants);
+      if (v.ouvert) return cloture(v, vivants, etat);
       const r = v.resultat;
       // Une égalité que le Bailli tranche : on attend son choix.
       if (r?.departage?.enAttente) return etape("departage", "", { nom: nom(r.departage.par) }, { attente: true });
       if (r && r.numero === v.numero && r.objet === "execution") {
-        const condamne = (r.elus ?? []).find(id => villageois.find(x => x.id === id)?.vivant !== false);
+        // L'Innocent gracié par ce vote reste en vie : il n'y a plus rien à exécuter pour lui.
+        const condamne = (r.elus ?? []).find(id => villageois.find(x => x.id === id)?.vivant !== false && !gracieAuVote(etat, id, r.numero));
         if (condamne) {
           // Le Juge de paix, vivant, pas encore révélé, avec son usage : il peut encore annuler (le MJ le sait, lui seul).
           const juge = vivants.find(x => x.role?.effet === "annuler-vote" && !x.revele && !(Number(x.role.usages?.max) > 0 && Number(x.role.usages?.restant) <= 0));

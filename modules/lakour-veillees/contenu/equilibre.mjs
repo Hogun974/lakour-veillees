@@ -4,6 +4,10 @@
 //         Une partie équilibrée a une somme proche de 0 : chaque loup « coûte » autour de -6, chaque villageois rapporte +1.
 // niveau : niveau minimal où le rôle peut sortir (debutants < classique < chaos) ; joueursMin : nombre minimal de joueurs ;
 // unique : au plus un exemplaire (tous sauf le loup de base et le villageois) ; surDemande : jamais tiré par le générateur.
+// groupe : n — des cartes qui vont toujours ensemble (les Lavandières par deux, les Bûcherons par trois) : le générateur les tire
+//          toutes ou aucune ; le poids est celui d'UNE carte.
+// Le Pacte, étape 3a : les poids des rôles du Village du jeu de soirée sont PROVISOIRES (posés à la main) ; l'étape 6 les calibrera
+// par simulation et les fera entrer dans les compositions prêtes.
 export const EQUILIBRE = {
   // --- Meute
   "loup-de-brumecombe": { camp: "meute", poids: -6, niveau: "debutants", joueursMin: 4, unique: false },
@@ -45,6 +49,18 @@ export const EQUILIBRE = {
   "montreur-d-ours": { camp: "village", poids: 0, niveau: "debutants", joueursMin: 4, unique: true, surDemande: true },
   "pelerine": { camp: "village", poids: 0, niveau: "debutants", joueursMin: 4, unique: true, surDemande: true },
   "villageois": { camp: "village", poids: 1, niveau: "debutants", joueursMin: 4, unique: false },
+  // --- Village : les rôles du jeu de soirée (Le Pacte, étape 3a ; poids provisoires)
+  "franc-villageois": { camp: "village", poids: 2, niveau: "classique", joueursMin: 8, unique: true },
+  "aieul": { camp: "village", poids: 5, niveau: "classique", joueursMin: 8, unique: true },
+  "souffre-douleur": { camp: "village", poids: 2, niveau: "classique", joueursMin: 8, unique: true },
+  "innocent": { camp: "village", poids: 3, niveau: "classique", joueursMin: 8, unique: true },
+  "lavandiere": { camp: "village", poids: 3, niveau: "classique", joueursMin: 9, unique: false, groupe: 2 },
+  "bucheron": { camp: "village", poids: 3, niveau: "chaos", joueursMin: 12, unique: false, groupe: 3 },
+  "furet": { camp: "village", poids: 5, niveau: "classique", joueursMin: 8, unique: true, information: true },
+  "gardeuse-d-oies": { camp: "village", poids: 4, niveau: "classique", joueursMin: 8, unique: true, information: true },
+  "greffier-begue": { camp: "village", poids: 3, niveau: "chaos", joueursMin: 9, unique: true },
+  "vieux-sergent": { camp: "village", poids: 3, niveau: "classique", joueursMin: 8, unique: true },
+  "pie": { camp: "village", poids: 3, niveau: "chaos", joueursMin: 9, unique: true },
   // --- Solitaires
   "revenant": { camp: "solitaire", poids: -2, niveau: "classique", joueursMin: 9, unique: true },
   "chasseur-de-primes": { camp: "solitaire", poids: -2, niveau: "classique", joueursMin: 9, unique: true },

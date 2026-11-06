@@ -1,0 +1,45 @@
+{
+  "_id": "TPjAhSGCDL5HVFtO",
+  "_key": "!items!TPjAhSGCDL5HVFtO",
+  "name": "Gardeuse d'oies",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/gardeuse-d-oies.svg",
+  "system": {
+    "cle": "gardeuse-d-oies",
+    "camp": "village",
+    "description": "<p>Tes oies ne suivent que toi, et elles ne supportent pas l'odeur du loup.</p><p><strong>Chaque matin</strong>, juste après l'annonce des morts de la nuit, si <strong>un loup</strong> est l'un de tes <strong>deux voisins vivants</strong> (à ta gauche et à ta droite autour de la table), le narrateur annonce à tout le village : « <strong>les oies de</strong> <em>(ton nom)</em> <strong>cacardent</strong> ». Sinon, il ne dit rien.</p><p>Si la meute fait de toi un loup (la morsure de la Louve mère), tes oies cacardent chaque matin, tant que tu vis.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": false,
+      "ordre": 50,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 0,
+      "soiMeme": false,
+      "invite": ""
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "cacarder",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "gardeuse-d-oies"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

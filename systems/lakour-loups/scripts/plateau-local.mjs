@@ -113,6 +113,8 @@ export function modeActif() {
   if (local.demande) return "nuit";
   if (local.pouvoir) return "jour";
   const v = lireEtat().vote;
+  // Le Pacte : un Innocent gracié, ou un joueur hors de la liste du Souffre-douleur, ne vote pas (logique/pacte.mjs).
+  if (v.ouvert && L.priveDeVote(lireEtat(), monVillageois()?.id)) return "";
   if (v.ouvert && moiVivant()) return "vote";
   if (moiSouffle()) return "vote";
   return "";

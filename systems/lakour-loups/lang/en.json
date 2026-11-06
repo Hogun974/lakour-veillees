@@ -35,7 +35,9 @@
       "epie": "caught spying on the pack",
       "narrateur": "mysterious death",
       "peste": "taken by the black plague",
-      "panique": "hanged for spreading panic"
+      "panique": "hanged for spreading panic",
+      "contamine": "felled by the old sword's wound",
+      "sagesse": "gone with the Greybeard's wisdom"
     },
     "Effets": {
       "aucun": "none (ruled by the narrator)",
@@ -58,7 +60,16 @@
       "embraser": "sets the doused houses ablaze",
       "epier": "spies on the pack, at the risk of being caught",
       "messager": "carries a secret message",
-      "voir-actif": "sees who went out at night"
+      "voir-actif": "sees who went out at night",
+      "resister": "survives the pack's first attack; killed by the village, the villagers lose their powers",
+      "egalite": "pays for tied votes; dying so, chooses who votes the next day",
+      "grace": "pardoned by the vote, stays in the game without voting",
+      "fratrie": "recognise each other, then meet every other night",
+      "flairer": "sniffs a player and their neighbours: a wolf among them?",
+      "cacarder": "the geese honk if a wolf is a neighbour",
+      "second-vote": "secretly calls for a second execution vote",
+      "contaminer": "devoured, wounds the first wolf to his left",
+      "plume": "two more votes against the target at the day's vote"
     },
     "Victoires": {
       "aucune": "none (see text)",
@@ -307,7 +318,15 @@
       "VisionDeuil": "The mourning bell whispers {nom}'s side to you: « {camp} ».",
       "PresentOuvert": "Your gift opened tonight: a deadly blow missed you. You are still alive.",
       "PresentMj": "The gift of {nom} opened: they survived a deadly blow.",
-      "MasqueTombe": "The Carnival mask of {nom} fooled a vision, then it fell."
+      "MasqueTombe": "The Carnival mask of {nom} fooled a vision, then it fell.",
+      "AieulMorsure": "{nom}, the Greybeard, withstood the bite: he has lost his first life.",
+      "AieulResiste": "{nom}, the Greybeard, survived the attack: he has lost his first life.",
+      "ContamineMort": "{nom} succumbed to the wound from the old sword.",
+      "Contamination": "{qui}'s old sword wounded {nom}: he will die next night.",
+      "FuretOui": "Your snout twitches: there is at least one wolf among {noms}.",
+      "FuretNon": "No wolf among {noms}: they are innocent. But your nose has left you, for good.",
+      "FuretPerdu": "{nom}, the Ferret, sniffed out no wolf: he loses his nose.",
+      "Plume": "A black feather will settle on {nom}: two more votes against them at today's vote."
     },
     "Messages": {
       "Mort": "{nom} is dead: {cause}.",
@@ -414,6 +433,10 @@
       "EffetsVisuels": {
         "Nom": "Visual effects",
         "Aide": "Night mist, glow of dawn and of victory, a slight screen shake at each death. Nothing moves if your system asks for reduced motion."
+      },
+      "InnocentSuitAieul": {
+        "Nom": "The Innocent follows the Greybeard",
+        "Aide": "If the Greybeard falls at the village's hand (vote, poison, Poacher), a Village Innocent already pardoned dies with him: the village loses its wisdom. Taken at the deal."
       }
     },
     "Erreurs": {
@@ -435,7 +458,8 @@
       "FicheVerrouillee": "Only the GM may change the villagers of the game.",
       "NotesSecretes": "A villager's notes reach every player's browser: a secret block is not kept there. Put it in a GM-only journal.",
       "SecretsAbsents": "This browser does not (yet) hold the up-to-date secrets of the current game: nothing is written. The vault is reopened as soon as the key is back (backup key imported, or another connected GM who has it).",
-      "MJInactif": "Only the active GM holds the game's secrets: role, side, lover and \"Revealed\" are set from that GM's browser."
+      "MJInactif": "Only the active GM holds the game's secrets: role, side, lover and \"Revealed\" are set from that GM's browser.",
+      "Votants": "Choose at least one living villager who may vote; there must be a Whipping Boy who died of a tie."
     },
     "Batiments": {
       "taverne": "The Tavern",
@@ -516,7 +540,9 @@
         "cibles": "Choose {n} player(s) among those allowed.",
         "texte": "A last word of {mots} words at most, and not empty.",
         "personne": "Nobody can be chosen.",
-        "neige": "Snow covered the tracks: nothing to read this morning."
+        "neige": "Snow covered the tracks: nothing to read this morning.",
+        "sagesse": "The village has lost its wisdom: this power died out with the Greybeard.",
+        "secondVote": "Only during an execution vote, or right after it has condemned someone."
       },
       "Remouleur": "{qui} sharpens {nom}'s lock and knife: next night, the first wolf attack on that house will fail.",
       "Ours": "{qui} sets the marmot on {nom}'s doorstep: it will whistle at the slightest shadow, and next night the pack will not dare to enter.",
@@ -524,7 +550,8 @@
       "ClocheJour": "{qui}, the Bell Ringer, pulls the rope: the bell rings, and the next vote will condemn two.",
       "Pelerine": "{qui} prays long on {nom}'s doorstep.",
       "PelerinePrive": "Your prayer was heard: {nom} belongs to the « {camp} » side.",
-      "LavoirNeige": "The wash-house is frozen: people only talk about the snow, which covered everything."
+      "LavoirNeige": "The wash-house is frozen: people only talk about the snow, which covered everything.",
+      "GreffierSigne": "Your sign was seen: a second vote will follow, without debate, as soon as the condemned has fallen."
     },
     "Plateau": {
       "ChoisisSurLaCarte": "Your turn: choose on the map (click a glowing token), then \"Confirm\" in the banner."
@@ -562,7 +589,8 @@
         "taniere": "🐺 Den: you speak to the wolves",
         "morts": "👻 You speak to the dead",
         "silence": "🔇 Silenced",
-        "Aide": "Voice room: what Foundry built-in voice lets you say and hear right now."
+        "Aide": "Voice room: what Foundry built-in voice lets you say and hear right now.",
+        "fratrie": "🤝 You meet among your own"
       },
       "MonRole": "My role",
       "MonRoleAide": "Your secret notebook: your role card and what you learn at night (only you can see it).",
@@ -806,7 +834,8 @@
         "sort": "Round {tour} — {nom} becomes Bailiff, named by fate.",
         "succession": "Round {tour} — {de}, the late Bailiff, hands the seal to {nom}.",
         "nomme": "Round {tour} — the narrator names {nom} Bailiff.",
-        "vacance": "Round {tour} — the office of Bailiff is vacant."
+        "vacance": "Round {tour} — the office of Bailiff is vacant.",
+        "abolie": "Round {tour} — {de}, pardoned, loses the office of Bailiff: Brumecombe will have no Bailiff any more."
       },
       "Declaration": "Round {tour} — {nom} declares: “{texte}”",
       "Refus": {
@@ -834,7 +863,17 @@
         "neige": "Round {tour} — snow fell: the tracks are gone.",
         "defile": "Round {tour} — at the Carnival parade, the mask of {role}, which nobody wears."
       },
-      "Vacance": "Turn {tour} — {nom} has died: their buildings stand vacant ({batiments})."
+      "Vacance": "Turn {tour} — {nom} has died: their buildings stand vacant ({batiments}).",
+      "VoixPlume": "(the black feather: two votes against {cible})",
+      "SouffreDouleur": "(tie: {nom} pays for it)",
+      "Pacte": {
+        "grace": "Round {tour} — {nom}, the Village Innocent, is pardoned: he will no longer vote.",
+        "sagesse": "Round {tour} — {nom}, the Greybeard, fell at the village's hand: the villagers have lost their powers.",
+        "votants": "Round {tour} — {nom}, fallen for the tie, chooses tomorrow's voters: {noms}.",
+        "plume": "Round {tour} — a black feather points at {nom}.",
+        "oies": "Round {tour} — {nom}'s geese are honking.",
+        "second-vote": "Round {tour} — a second execution vote, without debate."
+      }
     },
     "Masques": {
       "Titre": "Vigil masks",
@@ -1083,6 +1122,11 @@
         "Invite": "You fall, but your snares still hold: secretly choose the living villager you take into the grave (or pass).",
         "Choisi": "Last act: {nom} takes {cibles} into the grave.",
         "Personne": "{nom} chose no one (or could not answer in time): it is up to you to decide who is taken, or to say “No one”."
+      },
+      "votants": {
+        "Invite": "The tie cost you your life: secretly choose who will vote tomorrow (at least one). The others will stay silent at the vote.",
+        "Choisi": "Last act: {nom} chooses who will vote tomorrow: {cibles}.",
+        "Personne": "{nom} chose no one (or could not answer in time): the whole village will vote tomorrow, unless you dictate the list (designerVotants)."
       }
     },
     "Public": {
@@ -1093,6 +1137,22 @@
         "cle": "Which building? (missing key)",
         "mort": "{nom} is dead and can no longer hold a building."
       }
+    },
+    "Pacte": {
+      "Grace": "{nom} is the Village Innocent: the village pardons him. He stays among you, but will never vote again.",
+      "BailliAboli": "{nom} was Bailiff: pardoned, he loses the office, and no one will take it up. Brumecombe will have no Bailiff any more.",
+      "Sagesse": "{nom}, the Greybeard, fell at the village's hand: Brumecombe has lost its wisdom. Until the end of the evening, no villager has any power left, neither from their role nor from their trade.",
+      "Egalite": "Tie: {nom} is the one who pays for those tied.",
+      "Votants": "{nom}, fallen for the tie, has chosen who will vote tomorrow: {noms}. The others will stay silent at the vote.",
+      "PlumeMatin": "A black feather points at {nom}: at today's execution vote, two more votes against them.",
+      "PlumeVoix": "The black feather weighs two votes against {nom}.",
+      "Oies": "{nom}'s geese are honking!",
+      "SecondVote": "A second execution vote opens at once, without debate.",
+      "GreffierNote": "{nom}, the Stammering Clerk, gave his sign: a second vote will follow the execution.",
+      "FratrieReconnue": "Tonight you open your eyes at the same time as your own: {noms}. Same blood, same side; no one else knows.",
+      "FratrieRetrouvee": "You meet in silence with {noms}: while you are awake, you may speak among yourselves.",
+      "FratrieSeule": "You wake alone: your own are gone.",
+      "PriveDeVote": "You do not vote in this vote."
     }
   }
 }

@@ -1,0 +1,46 @@
+{
+  "_id": "z9pfMH2eLEdLqSIP",
+  "_key": "!items!z9pfMH2eLEdLqSIP",
+  "name": "Bûcheron",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/bucheron.svg",
+  "system": {
+    "cle": "bucheron",
+    "camp": "village",
+    "description": "<p>Vous êtes trois frères, et vous abattez les chênes de la forêt de Brumecombe depuis que vous tenez une hache.</p><p><strong>La première nuit</strong>, les Bûcherons se réveillent ensemble et <strong>se reconnaissent</strong> : le narrateur vous dit en secret le nom des deux autres. Ensuite, <strong>une nuit sur deux</strong> (la troisième, la cinquième…), vous vous réveillez de nouveau ensemble et pouvez <strong>vous concerter</strong> en secret, le temps de votre réveil.</p><p>Vous êtes tous trois du camp du <strong>Village</strong> : à trois, vous pesez déjà dans un vote.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 12,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "nuitsImpaires": true,
+      "cibles": 0,
+      "soiMeme": false,
+      "invite": "Les Bûcherons se retrouvent à la coupe : le narrateur vous souffle les vôtres."
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "fratrie",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "bucheron"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

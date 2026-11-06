@@ -1,0 +1,45 @@
+{
+  "_id": "excyVOJas5SeEGke",
+  "_key": "!items!excyVOJas5SeEGke",
+  "name": "Greffier bègue",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/greffier-begue.svg",
+  "system": {
+    "cle": "greffier-begue",
+    "camp": "village",
+    "description": "<p>Tu tiens la plume du tribunal, et ta langue fourche quand l'émotion te prend.</p><p><strong>Une fois par partie</strong>, pendant un vote d'exécution ou juste après qu'il a désigné un condamné, tu fais un <strong>signe discret</strong> au narrateur (ton pouvoir de jour, sur la Table de jeu) : dès que le condamné est tombé, il annonce <strong>un second vote d'exécution</strong>, aussitôt, <strong>sans débat</strong>. Ce vote suit les règles ordinaires.</p><p>Personne ne sait que c'est toi : le narrateur dit seulement « un second vote ». Si le vote ne condamne personne, ton signe est perdu, mais pas ton pouvoir : tu pourras le refaire un autre jour.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": false,
+      "ordre": 50,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 0,
+      "soiMeme": false,
+      "invite": ""
+    },
+    "usages": {
+      "max": 1,
+      "restant": 1
+    },
+    "effet": "second-vote",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "greffier-begue"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

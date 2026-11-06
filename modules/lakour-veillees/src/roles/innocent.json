@@ -1,0 +1,45 @@
+{
+  "_id": "nC8VTL9GixF8JGwG",
+  "_key": "!items!nC8VTL9GixF8JGwG",
+  "name": "Innocent",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/innocent.svg",
+  "system": {
+    "cle": "innocent",
+    "camp": "village",
+    "description": "<p>Tout Brumecombe te connaît, et personne ne te croit capable de faire du mal à une mouche.</p><p>Si <strong>le village vote contre toi</strong>, ta carte est retournée au moment de l'exécution : le village comprend son erreur et te <strong>gracie</strong>. Tu restes en jeu et tu peux encore parler, mais tu <strong>ne voteras plus jamais</strong>. Si tu étais Bailli, tu perds la charge, et personne ne la reprendra.</p><p>La nuit, tu meurs comme tout le monde : la meute ne fait pas de grâce, la Braconnière non plus. Et le village ne te graciera qu'une fois.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": false,
+      "ordre": 50,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 0,
+      "soiMeme": false,
+      "invite": ""
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "grace",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "innocent"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

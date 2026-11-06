@@ -1,0 +1,45 @@
+{
+  "_id": "7ExCekbrqwBvDll1",
+  "_key": "!items!7ExCekbrqwBvDll1",
+  "name": "Pie",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/pie.svg",
+  "system": {
+    "cle": "pie",
+    "camp": "village",
+    "description": "<p>Tu ramasses tout ce qui brille, et tu sais sous quel toit chacun cache ses secrets.</p><p><strong>Chaque nuit</strong>, après la chasse, tu peux désigner un joueur (pas toi). Au matin, le narrateur annonce à tous : « <strong>une plume noire désigne</strong> <em>(son nom)</em> ». Au <strong>vote d'exécution</strong> de ce jour, il compte <strong>deux voix de plus</strong> contre lui. Personne ne sait d'où vient la plume.</p><p>Passe si tu ne veux désigner personne.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 46,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 1,
+      "soiMeme": false,
+      "invite": "Sur quel seuil poses-tu ta plume noire cette nuit ? Passe pour n'en poser aucune."
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "plume",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "pie"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

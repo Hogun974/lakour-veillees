@@ -1,0 +1,45 @@
+{
+  "_id": "2qP7pXx98GyMHyhM",
+  "_key": "!items!2qP7pXx98GyMHyhM",
+  "name": "Aïeul",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/aieul.svg",
+  "system": {
+    "cle": "aieul",
+    "camp": "village",
+    "description": "<p>Tu as vu passer plus d'hivers que quiconque à Brumecombe, et ta peau est dure comme l'écorce.</p><p><strong>La première fois que la meute t'attaque</strong>, tu survis, en secret : ta carte reste cachée et le village n'en sait rien. <strong>La seconde fois</strong>, tu meurs. La première morsure de la Louve mère compte pour cette première attaque : elle ne fait pas de toi un loup. Si un remède de l'Herboriste te sauve d'une attaque, tu gardes ta vie de réserve.</p><p>Mais tu es la sagesse du village : si <strong>le village</strong> te fait mourir (le vote, le poison de l'Herboriste, la Braconnière), Brumecombe perd la tête, et <strong>tous les villageois perdent leurs pouvoirs</strong> jusqu'à la fin de la partie : les rôles du Village comme les métiers. Le Bailli garde sa charge.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": false,
+      "ordre": 50,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 0,
+      "soiMeme": false,
+      "invite": ""
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "resister",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "aieul"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

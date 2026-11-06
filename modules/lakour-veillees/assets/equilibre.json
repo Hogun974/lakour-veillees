@@ -225,6 +225,87 @@
       "joueursMin": 4,
       "unique": false
     },
+    "franc-villageois": {
+      "camp": "village",
+      "poids": 2,
+      "niveau": "classique",
+      "joueursMin": 8,
+      "unique": true
+    },
+    "aieul": {
+      "camp": "village",
+      "poids": 5,
+      "niveau": "classique",
+      "joueursMin": 8,
+      "unique": true
+    },
+    "souffre-douleur": {
+      "camp": "village",
+      "poids": 2,
+      "niveau": "classique",
+      "joueursMin": 8,
+      "unique": true
+    },
+    "innocent": {
+      "camp": "village",
+      "poids": 3,
+      "niveau": "classique",
+      "joueursMin": 8,
+      "unique": true
+    },
+    "lavandiere": {
+      "camp": "village",
+      "poids": 3,
+      "niveau": "classique",
+      "joueursMin": 9,
+      "unique": false,
+      "groupe": 2
+    },
+    "bucheron": {
+      "camp": "village",
+      "poids": 3,
+      "niveau": "chaos",
+      "joueursMin": 12,
+      "unique": false,
+      "groupe": 3
+    },
+    "furet": {
+      "camp": "village",
+      "poids": 5,
+      "niveau": "classique",
+      "joueursMin": 8,
+      "unique": true,
+      "information": true
+    },
+    "gardeuse-d-oies": {
+      "camp": "village",
+      "poids": 4,
+      "niveau": "classique",
+      "joueursMin": 8,
+      "unique": true,
+      "information": true
+    },
+    "greffier-begue": {
+      "camp": "village",
+      "poids": 3,
+      "niveau": "chaos",
+      "joueursMin": 9,
+      "unique": true
+    },
+    "vieux-sergent": {
+      "camp": "village",
+      "poids": 3,
+      "niveau": "classique",
+      "joueursMin": 8,
+      "unique": true
+    },
+    "pie": {
+      "camp": "village",
+      "poids": 3,
+      "niveau": "chaos",
+      "joueursMin": 9,
+      "unique": true
+    },
     "revenant": {
       "camp": "solitaire",
       "poids": -2,

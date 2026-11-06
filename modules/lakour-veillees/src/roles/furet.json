@@ -1,0 +1,45 @@
+{
+  "_id": "PpWJeQnFZgYNfUVu",
+  "_key": "!items!PpWJeQnFZgYNfUVu",
+  "name": "Furet",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/furet.svg",
+  "system": {
+    "cle": "furet",
+    "camp": "village",
+    "description": "<p>Tu te faufiles sous les portes et rien ne t'échappe, tant que ton nez ne te trompe pas.</p><p><strong>Chaque nuit</strong>, tu désignes un joueur : tu flaires <strong>lui et ses deux voisins vivants</strong> (à sa gauche et à sa droite autour de la table). Le narrateur te dit en secret s'il y a <strong>au moins un loup</strong> parmi ces trois-là :<br>- <strong>oui</strong> : tu gardes ton flair ;<br>- <strong>non</strong> : ces trois-là sont innocents, mais ton flair te quitte <strong>pour toujours</strong>. Le narrateur te réveille encore chaque nuit, pour que personne ne remarque rien, mais tu n'as plus rien à désigner.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 7,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 1,
+      "soiMeme": false,
+      "invite": "Quelle maison flaires-tu cette nuit, avec ses deux voisines ?"
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "flairer",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "furet"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

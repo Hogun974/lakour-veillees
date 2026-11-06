@@ -35,7 +35,9 @@ export class FenetreVote extends HandlebarsApplicationMixin(ApplicationV2) {
       voixDouble: v.objet === "execution" && Boolean(moi) && etat.bailli?.actif && etat.bailli.acteurId === moi.id
         && Boolean(L.poidsDesVoix(etat)[moi.id]),
       // Un mort vote encore de son Dernier souffle (vote d'exécution) ; jour de foire : à main levée, les voix sont publiques.
-      peutVoter: Boolean(v.ouvert && moi && (moi.system.vivant || L.peutSouffler(etat, { id: moi.id, vivant: false }))),
+      // Le Pacte (logique/pacte.mjs) : un Innocent gracié ne vote plus ; le lendemain du Souffre-douleur, seuls ceux de sa liste.
+      peutVoter: Boolean(v.ouvert && moi && (moi.system.vivant || L.peutSouffler(etat, { id: moi.id, vivant: false })) && !L.priveDeVote(etat, moi.id)),
+      priveDeVote: Boolean(v.ouvert && moi && L.priveDeVote(etat, moi.id)),
       souffle: Boolean(moi && !moi.system.vivant && v.ouvert), mainLevee: Boolean(v.mainLevee),
       moi: moi?.name ?? "",
       aVote: Boolean(monChoix),

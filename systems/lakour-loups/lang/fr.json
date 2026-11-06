@@ -35,7 +35,9 @@
       "epie": "prise sur le fait à épier la meute",
       "narrateur": "mort mystérieuse",
       "peste": "victime de la peste noire",
-      "panique": "pendaison pour avoir semé la panique"
+      "panique": "pendaison pour avoir semé la panique",
+      "contamine": "victime de la vieille épée",
+      "sagesse": "emporté avec la sagesse de l'Aïeul"
     },
     "Effets": {
       "aucun": "aucun (arbitré par le narrateur)",
@@ -58,7 +60,16 @@
       "embraser": "met le feu aux maisons aspergées",
       "epier": "épie la meute, au risque d'être repéré",
       "messager": "porte un message secret",
-      "voir-actif": "voit qui est sorti la nuit"
+      "voir-actif": "voit qui est sorti la nuit",
+      "resister": "survit à la première attaque de la meute ; tué par le village, les villageois perdent leurs pouvoirs",
+      "egalite": "paie les égalités du vote ; mort ainsi, désigne qui votera le lendemain",
+      "grace": "gracié par le vote, il reste en jeu sans voter",
+      "fratrie": "se reconnaissent, puis se retrouvent une nuit sur deux",
+      "flairer": "flaire un joueur et ses voisins : un loup parmi eux ?",
+      "cacarder": "les oies cacardent si un loup est voisin",
+      "second-vote": "déclenche en secret un second vote d'exécution",
+      "contaminer": "dévoré, blesse le premier loup à sa gauche",
+      "plume": "deux voix de plus contre sa cible au vote du jour"
     },
     "Victoires": {
       "aucune": "aucune (selon le texte)",
@@ -307,7 +318,15 @@
       "VisionDeuil": "Le glas vous souffle le camp de {nom} : « {camp} ».",
       "PresentOuvert": "Votre présent s'est ouvert cette nuit : un coup mortel vous a manqué. Vous êtes encore en vie.",
       "PresentMj": "Le présent de {nom} s'est ouvert : il a survécu à un coup mortel.",
-      "MasqueTombe": "Le masque du Carnaval de {nom} a trompé une vision, puis il est tombé."
+      "MasqueTombe": "Le masque du Carnaval de {nom} a trompé une vision, puis il est tombé.",
+      "AieulMorsure": "{nom}, l'Aïeul, a résisté à la morsure : il a perdu sa première vie.",
+      "AieulResiste": "{nom}, l'Aïeul, a survécu à l'attaque : il a perdu sa première vie.",
+      "ContamineMort": "{nom} a succombé à la blessure de la vieille épée.",
+      "Contamination": "La vieille épée de {qui} a blessé {nom} : il mourra la nuit prochaine.",
+      "FuretOui": "Votre museau frémit : il y a au moins un loup parmi {noms}.",
+      "FuretNon": "Aucun loup parmi {noms} : ils sont innocents. Mais votre flair vous a quitté, pour toujours.",
+      "FuretPerdu": "{nom}, le Furet, n'a flairé aucun loup : il perd son flair.",
+      "Plume": "Une plume noire se posera sur {nom} : deux voix de plus contre lui au vote du jour."
     },
     "Messages": {
       "Mort": "{nom} n’est plus : {cause}.",
@@ -414,6 +433,10 @@
       "EffetsVisuels": {
         "Nom": "Effets visuels",
         "Aide": "Brume de la nuit, lueurs de l'aube et de la victoire, léger tremblement de l'écran à chaque mort. Rien ne bouge si votre système demande moins d'animations."
+      },
+      "InnocentSuitAieul": {
+        "Nom": "L'Innocent suit l'Aïeul",
+        "Aide": "Si l'Aïeul tombe de la main du village (vote, poison, Braconnière), un Innocent déjà gracié meurt avec lui : le village perd sa sagesse. Pris à la distribution."
       }
     },
     "Erreurs": {
@@ -435,7 +458,8 @@
       "FicheVerrouillee": "Les villageois de la partie ne se modifient que par le MJ.",
       "NotesSecretes": "Les notes d’un villageois arrivent dans le navigateur de chaque joueur : un bloc secret n’y est pas gardé. Range-le dans un journal réservé au MJ.",
       "SecretsAbsents": "Ce navigateur n'a pas (encore) les secrets à jour de la partie en cours : rien n'est écrit. Le coffre est rouvert dès que la clé revient (clé de secours réimportée, ou autre MJ connecté qui l'a).",
-      "MJInactif": "Seul le MJ actif tient les secrets de la partie : rôle, camp, amoureux et « Révélé » se règlent chez lui."
+      "MJInactif": "Seul le MJ actif tient les secrets de la partie : rôle, camp, amoureux et « Révélé » se règlent chez lui.",
+      "Votants": "Désignez au moins un vivant qui peut voter ; il faut un Souffre-douleur mort d'une égalité."
     },
     "Batiments": {
       "taverne": "La Taverne",
@@ -516,7 +540,9 @@
         "cibles": "Désignez {n} joueur(s) parmi ceux qui sont permis.",
         "texte": "Un dernier mot de {mots} mots au plus, et pas vide.",
         "personne": "Personne ne peut être désigné.",
-        "neige": "La neige a recouvert les traces : rien à lire ce matin."
+        "neige": "La neige a recouvert les traces : rien à lire ce matin.",
+        "sagesse": "Le village a perdu sa sagesse : ce pouvoir s'est éteint avec l'Aïeul.",
+        "secondVote": "Seulement pendant un vote d'exécution, ou juste après qu'il a désigné un condamné."
       },
       "Remouleur": "{qui} affûte la serrure et le couteau de {nom} : la nuit prochaine, la première attaque de loup contre sa maison échouera.",
       "Ours": "{qui} installe sa marmotte sur le seuil de {nom} : elle sifflera à la moindre ombre, et la nuit prochaine la meute n'osera pas y entrer.",
@@ -524,7 +550,8 @@
       "ClocheJour": "{qui}, le Sonneur, tire la corde : la cloche sonne, et le prochain vote désignera deux condamnés.",
       "Pelerine": "{qui} prie longuement sur le seuil de {nom}.",
       "PelerinePrive": "Votre prière s'est fait entendre : {nom} est du camp « {camp} ».",
-      "LavoirNeige": "Le lavoir est gelé : on n'y parle que de la neige, qui a tout recouvert."
+      "LavoirNeige": "Le lavoir est gelé : on n'y parle que de la neige, qui a tout recouvert.",
+      "GreffierSigne": "Votre signe est passé : un second vote suivra, sans débat, dès que le condamné sera tombé."
     },
     "Plateau": {
       "ChoisisSurLaCarte": "À toi : choisis sur la carte (clique sur un jeton allumé), puis « Valider » dans le bandeau."
@@ -562,7 +589,8 @@
         "taniere": "🐺 Tanière : tu parles aux loups",
         "morts": "👻 Tu parles aux morts",
         "silence": "🔇 Réduit au silence",
-        "Aide": "Salon vocal : ce que la voix intégrée de Foundry te laisse dire et entendre en ce moment."
+        "Aide": "Salon vocal : ce que la voix intégrée de Foundry te laisse dire et entendre en ce moment.",
+        "fratrie": "🤝 Vous vous retrouvez entre vous"
       },
       "MonRole": "Mon rôle",
       "MonRoleAide": "Ton carnet secret : ta carte de rôle et ce que tu apprends la nuit (toi seul le vois).",
@@ -806,7 +834,8 @@
         "sort": "Tour {tour} — {nom} devient Bailli, désigné par le sort.",
         "succession": "Tour {tour} — {de}, Bailli défunt, remet le sceau à {nom}.",
         "nomme": "Tour {tour} — le narrateur nomme {nom} Bailli.",
-        "vacance": "Tour {tour} — la charge de Bailli est vacante."
+        "vacance": "Tour {tour} — la charge de Bailli est vacante.",
+        "abolie": "Tour {tour} — {de}, gracié, perd la charge de Bailli : Brumecombe n'aura plus de Bailli."
       },
       "Declaration": "Tour {tour} — {nom} déclare : « {texte} »",
       "Refus": {
@@ -834,7 +863,17 @@
         "neige": "Tour {tour} — la neige est tombée : les traces sont effacées.",
         "defile": "Tour {tour} — au défilé du Carnaval, le masque de {role}, que personne ne porte."
       },
-      "Vacance": "Tour {tour} — {nom} est mort : ses bâtiments deviennent vacants ({batiments})."
+      "Vacance": "Tour {tour} — {nom} est mort : ses bâtiments deviennent vacants ({batiments}).",
+      "VoixPlume": "(la plume noire : deux voix contre {cible})",
+      "SouffreDouleur": "(égalité : {nom} la paie)",
+      "Pacte": {
+        "grace": "Tour {tour} — {nom}, l'Innocent, est gracié : il ne votera plus.",
+        "sagesse": "Tour {tour} — {nom}, l'Aïeul, est tombé de la main du village : les villageois ont perdu leurs pouvoirs.",
+        "votants": "Tour {tour} — {nom}, tombé pour l'égalité, désigne les votants de demain : {noms}.",
+        "plume": "Tour {tour} — une plume noire désigne {nom}.",
+        "oies": "Tour {tour} — les oies de {nom} cacardent.",
+        "second-vote": "Tour {tour} — un second vote d'exécution, sans débat."
+      }
     },
     "Masques": {
       "Titre": "Masques de veillée",
@@ -1083,6 +1122,11 @@
         "Invite": "Tu tombes, mais tes collets tiennent encore : désigne, en secret, le vivant que tu emportes dans la tombe (ou passe).",
         "Choisi": "Dernier geste : {nom} emporte {cibles} dans la tombe.",
         "Personne": "{nom} n'a désigné personne (ou n'a pas pu répondre à temps) : à vous de trancher qui est emporté, ou de dire « Personne »."
+      },
+      "votants": {
+        "Invite": "L'égalité t'a coûté la vie : désigne, en secret, ceux qui voteront demain (un au moins). Les autres se tairont au vote.",
+        "Choisi": "Dernier geste : {nom} désigne ceux qui voteront demain : {cibles}.",
+        "Personne": "{nom} n'a désigné personne (ou n'a pas pu répondre à temps) : tout le village votera demain, sauf si vous dictez sa liste (designerVotants)."
       }
     },
     "Public": {
@@ -1093,6 +1137,22 @@
         "cle": "Quel bâtiment ? (clé manquante)",
         "mort": "{nom} est mort : il ne peut plus tenir de bâtiment."
       }
+    },
+    "Pacte": {
+      "Grace": "{nom} est l'Innocent : le village le gracie. Il reste parmi vous, mais ne votera plus jamais.",
+      "BailliAboli": "{nom} était Bailli : gracié, il perd la charge, et personne ne la reprendra. Brumecombe n'aura plus de Bailli.",
+      "Sagesse": "{nom}, l'Aïeul, est tombé de la main du village : Brumecombe a perdu sa sagesse. Jusqu'à la fin de la veillée, plus aucun villageois n'a de pouvoir, ni de son rôle ni de son métier.",
+      "Egalite": "Égalité : c'est {nom} qui paie pour les ex æquo.",
+      "Votants": "{nom}, tombé pour l'égalité, a désigné ceux qui voteront demain : {noms}. Les autres se tairont au vote.",
+      "PlumeMatin": "Une plume noire désigne {nom} : au vote d'exécution de ce jour, deux voix de plus contre lui.",
+      "PlumeVoix": "La plume noire pèse deux voix contre {nom}.",
+      "Oies": "Les oies de {nom} cacardent !",
+      "SecondVote": "Un second vote d'exécution s'ouvre aussitôt, sans débat.",
+      "GreffierNote": "{nom}, le Greffier bègue, a fait son signe : un second vote suivra l'exécution.",
+      "FratrieReconnue": "Cette nuit, vous ouvrez les yeux en même temps que les vôtres : {noms}. Même sang, même camp ; personne d'autre ne le sait.",
+      "FratrieRetrouvee": "Vous vous retrouvez en silence avec {noms} : le temps de votre réveil, vous pouvez vous parler entre vous.",
+      "FratrieSeule": "Vous vous réveillez seul : les vôtres ne sont plus.",
+      "PriveDeVote": "Vous ne votez pas à ce vote."
     }
   }
 }

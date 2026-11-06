@@ -20,11 +20,15 @@
 //   entre eux. table.villageois[].souffle : vrai tant qu'il le garde.
 // - Les camps ne sont connus que du MJ actif : sans ses secrets (secretsMJ null, chez un autre navigateur), on ne compte
 //   comme loups que ceux que ce navigateur connaît (table.loupsConnus : la meute, pour un loup), sinon personne.
+// - Les fratries du Pacte (pacte.mjs : les Lavandières, les Bûcherons) : les nuits où elles veillent (la première, puis une sur
+//   deux), leurs membres vivants se parlent entre eux, dans le salon « fratrie » (les morts qui voient tout les entendent, comme la
+//   tanière). table.villageois[].fratrie : la clé du rôle qui veille cette nuit ("" sinon), calculée par le MJ actif ; ailleurs, un
+//   frère ne connaît que les siens (table.freresConnus, reçus dans sa ligne). Un loup reste dans la tanière.
 //
 // audibilite(etatPublic, secretsMJ, locuteur, table) -> { peutParler, auditeurs: [userId], acteursAuditeurs: [acteurId], salon }
 //   locuteur : un userId, { userId } ou { acteurId } (compagnon IA, ou villageois d'un joueur) ;
-//   table : { villageois: [{ id, joueur, vivant, silence, camp, role: { camp } }], utilisateurs: [{ id, mj }],
-//             mortsVoientTout, automatique (réglage « Salons vocaux automatiques », vrai par défaut), loupsConnus }.
+//   table : { villageois: [{ id, joueur, vivant, silence, camp, role: { camp }, fratrie }], utilisateurs: [{ id, mj }],
+//             mortsVoientTout, automatique (réglage « Salons vocaux automatiques », vrai par défaut), loupsConnus, freresConnus }.
 // ligneDe(etatPublic, secretsMJ, userId, table) -> la ligne d'un navigateur : { salon, peutParler, auditeurs, entend, loups? }.
 
 export const PHASES_LIBRES = ["preparation", "fin"];
@@ -32,9 +36,9 @@ export const PHASES_DE_NUIT = ["nuit"];
 export const PHASES_DU_JOUR_MUET = ["jour", "vote"];
 // Les salons : « mj » (entend tout, parle à tous), « libre » (préparatifs, fin, salons coupés), « village » (le jour, un
 // vivant parle à tous), « taniere » (la nuit, un loup parle aux loups), « morts » (un mort ou un spectateur parle aux morts),
-// « nuit » (la nuit, un vivant se tait), « silence » (réduit au silence).
-export const SALONS = ["mj", "libre", "village", "taniere", "morts", "nuit", "silence"];
-export const SALONS_QUI_PARLENT = ["mj", "libre", "village", "taniere", "morts"];
+// « nuit » (la nuit, un vivant se tait), « silence » (réduit au silence), « fratrie » (la nuit d'une fratrie, ses membres entre eux).
+export const SALONS = ["mj", "libre", "village", "taniere", "morts", "nuit", "silence", "fratrie"];
+export const SALONS_QUI_PARLENT = ["mj", "libre", "village", "taniere", "morts", "fratrie"];
 
 const ids = liste => [...new Set(liste.filter(Boolean))];
 
@@ -42,6 +46,14 @@ function estLoup(v, secrets, table) {
   if (secrets === null || secrets === undefined) return (table.loupsConnus ?? []).includes(v.id);
   const camp = v.camp || v.role?.camp || "";
   return camp === "meute";
+}
+
+// La fratrie qui veille cette nuit pour ce villageois ("" sinon). Sans les secrets du MJ, seulement les frères que ce navigateur
+// connaît (les siens), et lui-même.
+function fratrieDe(v, secrets, table) {
+  const f = String(v.fratrie ?? "");
+  if (secrets === null || secrets === undefined) return f && ((table.freresConnus ?? []).includes(v.id) || v.joueur === table.moi) ? f : "";
+  return f;
 }
 
 // Les participants : chaque utilisateur (MJ, joueur, spectateur) et chaque villageois sans utilisateur (compagnon IA).
@@ -54,13 +66,15 @@ export function participants(etatPublic, secretsMJ, table = {}) {
   for (const u of utilisateurs) {
     const v = villageois.find(x => x.joueur === u.id) ?? null;
     if (mjs.has(u.id)) liste.push({ userId: u.id, acteurId: v?.id ?? "", mj: true, vivant: true, silence: false, loup: false });
-    else if (v) liste.push({ userId: u.id, acteurId: v.id, mj: false, vivant: v.vivant !== false, silence: Boolean(v.silence), loup: estLoup(v, secretsMJ, table), souffle: Boolean(v.souffle) });
+    else if (v) liste.push({ userId: u.id, acteurId: v.id, mj: false, vivant: v.vivant !== false, silence: Boolean(v.silence), loup: estLoup(v, secretsMJ, table), souffle: Boolean(v.souffle),
+      fratrie: fratrieDe(v, secretsMJ, table) });
     else liste.push({ userId: u.id, acteurId: "", mj: false, vivant: false, silence: false, loup: false, spectateur: true, souffle: Boolean(table.souffleActif) });
   }
   const connus = new Set(utilisateurs.map(u => u.id));
   for (const v of villageois) {
     if (v.joueur && connus.has(v.joueur)) continue;
-    liste.push({ userId: "", acteurId: v.id, mj: false, vivant: v.vivant !== false, silence: Boolean(v.silence), loup: estLoup(v, secretsMJ, table), souffle: Boolean(v.souffle) });
+    liste.push({ userId: "", acteurId: v.id, mj: false, vivant: v.vivant !== false, silence: Boolean(v.silence), loup: estLoup(v, secretsMJ, table), souffle: Boolean(v.souffle),
+      fratrie: fratrieDe(v, secretsMJ, table) });
   }
   return liste;
 }
@@ -72,6 +86,7 @@ export function salonDe(p, phase, { automatique = true } = {}) {
   if (!automatique || !phase || PHASES_LIBRES.includes(phase)) return "libre";
   if (!p.vivant) return "morts";
   if (p.silence && (PHASES_DU_JOUR_MUET.includes(phase) || PHASES_DE_NUIT.includes(phase))) return "silence";
+  if (PHASES_DE_NUIT.includes(phase) && p.fratrie && !p.loup) return "fratrie";
   if (PHASES_DE_NUIT.includes(phase)) return p.loup ? "taniere" : "nuit";
   return "village";
 }
@@ -88,6 +103,8 @@ function entend(a, l, salonL, mortsVoientTout) {
   if (salonL === "taniere" && a.spectateur) return false;
   if (salonL === "morts" && mortsVoientTout && Boolean(a.souffle) !== Boolean(l.souffle)) return false;
   if (salonL === "taniere") return (a.vivant && a.loup) || (!a.vivant && Boolean(mortsVoientTout));
+  // La fratrie : ses membres vivants (même clé) ; les morts qui voient tout, sauf ceux qui gardent leur souffle et les spectateurs.
+  if (salonL === "fratrie") return (a.vivant && !a.loup && a.fratrie === l.fratrie) || (!a.vivant && Boolean(mortsVoientTout) && !a.souffle && !a.spectateur);
   if (salonL === "morts") return !a.vivant;
   return false;
 }
@@ -126,6 +143,7 @@ export function ligneDe(etatPublic, secretsMJ, userId, table = {}) {
   const entendus = moi ? liste.filter(l => l.userId && entend(moi, l, salonDe(l, phase, options), table.mortsVoientTout)) : [];
   const ligne = { phase, salon: a.salon, peutParler: a.peutParler, auditeurs: a.auditeurs, entend: ids(entendus.map(l => l.userId)) };
   if (a.salon === "taniere") ligne.loups = ids(liste.filter(p => p.vivant && p.loup && !p.mj).map(p => p.acteurId));
+  if (a.salon === "fratrie") ligne.freres = ids(liste.filter(p => p.vivant && !p.loup && !p.mj && p.fratrie === moi.fratrie).map(p => p.acteurId));
   return ligne;
 }
 

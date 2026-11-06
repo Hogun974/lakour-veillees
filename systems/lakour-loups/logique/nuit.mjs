@@ -7,27 +7,34 @@
 //   mordus compris ;
 // - un rôle de la meute réglé à l'ordre 40 n'a pas de réveil à lui (il agit avec la meute) ; un rôle de la meute
 //   à un autre ordre (Loup affamé, Loup hurleur…) est réveillé à part, en plus ;
-// - premiereNuitSeulement : nuit 1 seulement ; uneNuitSurDeux : les nuits paires (2, 4, 6…) ;
+// - premiereNuitSeulement : nuit 1 seulement ; uneNuitSurDeux : les nuits paires (2, 4, 6…) ; nuitsImpaires : la première nuit,
+//   puis une nuit sur deux (1, 3, 5… : les Lavandières et les Bûcherons, qui se reconnaissent puis se retrouvent) ;
 // - tantQueMeuteEntiere (le Loup affamé) : chaque nuit, tant qu'aucun membre de la meute n'a été éliminé (meuteEntiere) ; dès
 //   qu'un mort était de la meute (son camp au moment de sa mort : un loup, un mordu, plus tard un Mâtin ou un Enfant des bois
 //   devenu loup), le pouvoir est perdu pour toujours ;
 // - un pouvoir à usages comptés et épuisés n'est plus réveillé ;
+// - le village a perdu sa sagesse (l'Aïeul tombé de la main du village, pacte.mjs : sagessePerdue) : plus aucun rôle du Village
+//   (sa carte) n'est réveillé, jusqu'à la fin ;
 // - peste noire (options.peste = etat.peste, actif) : pas de meute ; à sa place, à l'ordre 40, l'étape « la peste »
 //   (clé "peste"), réveillée chaque nuit ; acteurIds : [le porteur] (la dernière victime morte de la peste, qui choisit
 //   la suivante), ou [] tant qu'il n'y en a pas (le narrateur choisit).
 
 import { ORDRE_MEUTE, CLE_MEUTE, CLE_PESTE } from "./constantes.mjs";
 import { CLE_DEUIL, ORDRE_DEUIL } from "./deuil.mjs";
+import { pouvoirPerdu } from "./pacte.mjs";
 
 // La meute est-elle encore entière ? Aucun mort (ni parti) dont le camp était « meute ».
 export const meuteEntiere = (villageois = []) => !villageois.some(v => v.vivant === false && v.camp === "meute");
 
 // entiere : la meute est-elle entière (meuteEntiere) ? Par défaut oui (sans les villageois, on ne peut pas savoir).
-export function seReveille(role, tour, { entiere = true } = {}) {
+// sansPouvoirs : le village a perdu sa sagesse (pacte.mjs) ; un rôle du Village ne se réveille plus.
+export function seReveille(role, tour, { entiere = true, sansPouvoirs = false } = {}) {
   const n = role?.nuit;
   if (!n?.actif) return false;
+  if (pouvoirPerdu(sansPouvoirs, role)) return false;
   if (n.premiereNuitSeulement && tour !== 1) return false;
   if (n.uneNuitSurDeux && tour % 2 !== 0) return false;
+  if (n.nuitsImpaires && tour % 2 !== 1) return false;
   if (n.tantQueMeuteEntiere && !entiere) return false;
   const u = role.usages;
   if (u && Number(u.max) > 0 && Number(u.restant) <= 0) return false;
@@ -42,7 +49,8 @@ export function agitAvecLaMeute(role) {
 const groupe = e => e.roleCle === CLE_MEUTE || e.roleCle === CLE_PESTE;
 
 // deuil (Glas du deuil, deuil.mjs) : la vision due cette nuit -> l'étape « deuil » (CLE_DEUIL, ordre 41), toute la meute réveillée.
-export function ordreDeNuit(villageois = [], tour = 1, { peste = null, deuil = false } = {}) {
+// sagessePerdue : le village a perdu sa sagesse (pacte.mjs, sagesseEstPerdue(etat)) — les rôles du Village ne sont plus réveillés.
+export function ordreDeNuit(villageois = [], tour = 1, { peste = null, deuil = false, sagessePerdue = false } = {}) {
   const vivants = villageois.filter(v => v.vivant !== false);
   const entiere = meuteEntiere(villageois);
   const etapes = new Map();
@@ -58,7 +66,7 @@ export function ordreDeNuit(villageois = [], tour = 1, { peste = null, deuil = f
 
   for (const v of vivants) {
     const role = v.role;
-    if (!role?.cle || agitAvecLaMeute(role) || !seReveille(role, tour, { entiere })) continue;
+    if (!role?.cle || agitAvecLaMeute(role) || !seReveille(role, tour, { entiere, sansPouvoirs: sagessePerdue })) continue;
     const etape = etapes.get(role.cle) ?? {
       roleCle: role.cle, acteurIds: [], ordre: Number(role.nuit.ordre ?? 50),
       invite: role.nuit.invite ?? "", cibles: Number(role.nuit.cibles ?? 1), soiMeme: Boolean(role.nuit.soiMeme)

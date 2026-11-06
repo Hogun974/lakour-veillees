@@ -26,6 +26,8 @@ import { aveuglePar, masqueDuCarnaval, presentDeLaNuit, neigeDuJour } from "./fe
 import { campInverse } from "./somnambule.mjs";
 import { nuitBlancheTablee } from "./tablee.mjs";
 import { elider, remplir } from "./grammaire.mjs";
+import { rendreLaPlume, sagesseEstPerdue, pouvoirPerdu, furetAveugle, candidatsDeLaPlume, normaliserPacte, normaliserPacteSecret,
+  EFFET_FURET, EFFET_PIE, CLE_GREFFIER } from "./pacte.mjs";
 
 export const MATIN = ["aube", "jour"];             // « au matin », « au début d'un débat »
 export const JOURNEE = ["aube", "jour", "vote"];   // « pendant le jour »
@@ -39,7 +41,8 @@ export const LONGUEUR_MESSAGE = 200;    // caractères d'un mot porté par le Me
 
 // source : d'où vient le pouvoir ; cibles : joueurs à désigner ; soiMeme : peut se désigner ; phases : quand ;
 // apresNuit : seulement le jour qui suit une nuit résolue ; narrateur : décidé par le village, appliqué par le MJ ;
-// texte : demande un texte ; mort : réservé aux morts ; revele : le rôle est révélé en l'utilisant.
+// texte : demande un texte ; mort : réservé aux morts ; revele : le rôle est révélé en l'utilisant ; usageDiffere : l'usage n'est
+// pas pris quand le pouvoir est annoncé, mais quand il sert (le Greffier bègue : à l'ouverture du second vote).
 export const POUVOIRS_JOUR = {
   forgeron: { source: "metier", cibles: 1, soiMeme: true, phases: JOURNEE },
   meuniere: { source: "metier", cibles: 0, phases: MATIN },
@@ -63,6 +66,9 @@ export const POUVOIRS_JOUR = {
   remouleur: { source: "role", cibles: 1, soiMeme: true, phases: JOURNEE },
   "montreur-d-ours": { source: "role", cibles: 1, soiMeme: true, phases: JOURNEE },
   pelerine: { source: "role", cibles: 1, soiMeme: false, phases: JOURNEE },
+  // Le Greffier bègue (Pacte, étape 3a) : une fois par partie, pendant un vote d'exécution ou juste après qu'il a désigné un condamné,
+  // un signe secret au narrateur : un second vote d'exécution, sans débat, dès que les condamnés sont tombés. Il ne se révèle pas.
+  [CLE_GREFFIER]: { source: "role", cibles: 0, phases: ["vote"], usageDiffere: true },
   taverne: { source: "batiment", cibles: 0, phases: JOURNEE },
   forge: { source: "batiment", cibles: 0, phases: JOURNEE },
   grange: { source: "batiment", cibles: 0, phases: JOURNEE },
@@ -128,6 +134,8 @@ export function verifierPouvoir({ villageois = [], etat: e, acteurId = "", pouvo
     if (def.mort ? vivant(acteur) : !vivant(acteur)) return non(def.mort ? "vivant" : "mort");
     const objet = def.source === "metier" ? acteur.metier : def.source === "role" ? acteur.role : null;
     if (objet && Number(objet.usages?.max) > 0 && Number(objet.usages?.restant) <= 0) return non("usage");
+    // Le village a perdu sa sagesse (l'Aïeul, pacte.mjs) : plus aucun métier, plus aucun pouvoir de rôle du Village.
+    if (sagesseEstPerdue(etat) && (def.source === "metier" || (def.source === "role" && pouvoirPerdu(true, acteur.role)))) return non("sagesse");
   }
   if (def.apresNuit && !(etat.tour >= 1 && etat.nuitResolue === etat.tour)) return non("nuit");
   // La neige de la Veillée d'hiver a recouvert les traces : ces pouvoirs du matin attendent un autre jour (l'usage n'est pas pris).
@@ -147,6 +155,16 @@ export function verifierPouvoir({ villageois = [], etat: e, acteurId = "", pouvo
       if (etat.voteDoubleDemain || (v.ouvert && v.double)) return non("deja");
       if (etat.phase === "vote" && (!v.ouvert || v.objet !== "execution" || v.banc)) return non("vote");
       break;
+    case CLE_GREFFIER: {
+      // Un signe par jour (donné, ou le second vote déjà ouvert) ; pendant le vote d'exécution, ou juste après qu'il a désigné un
+      // condamné (le dernier vote du jour, clos, départagé).
+      if (normaliserPacteSecret(etat.pacteSecret).signal?.tour === etat.tour || normaliserPacte(etat.pacte).secondVote?.tour === etat.tour) return non("deja");
+      const r = v.resultat;
+      const pendant = v.ouvert && v.objet === "execution";
+      const apres = !v.ouvert && r?.objet === "execution" && r.tour === etat.tour && r.numero === v.numero && !r.departage?.enAttente && (r.elus ?? []).length > 0;
+      if (!pendant && !apres) return non("secondVote");
+      break;
+    }
     case "taverne": {
       const lits = dormeursTaverne(etat, nuit);
       if (lits.includes(acteurId)) return non("deja");
@@ -218,7 +236,7 @@ export function appliquerPouvoir({ villageois = [], etat: e, acteurId = "", pouv
   const sortie = { ok: true, raison: "", etat, annonces: [], prives: [], changements: [], rouvrirVote: false, voteChange: false };
   const annonce = (cle, t, d = {}) => sortie.annonces.push(msg("public", cle, t, d));
   const poser = (type, cible = c ?? acteurId, origine = "") => etat.jour.effets.push({ type, acteurId, cible, nuit, ...(origine ? { origine } : {}) });
-  if (def.source === "metier" || def.source === "role") sortie.changements.push({ type: "usage", acteurId, objet: def.source });
+  if ((def.source === "metier" || def.source === "role") && !def.usageDiffere) sortie.changements.push({ type: "usage", acteurId, objet: def.source });
   if (def.revele) sortie.changements.push({ type: "revele", acteurId });
 
   switch (pouvoir) {
@@ -309,6 +327,9 @@ export function appliquerPouvoir({ villageois = [], etat: e, acteurId = "", pouv
       // Le Loup déguisé le plus désigné d'un vote annulé n'est pas exécuté : son masque tombe.
       for (const id of masquesQuiTombent({ resultat: ancien.resultat, villageois, annule: true })) sortie.changements.push({ type: "masque", acteurId: id });
       marquerAnnule(etat, ancien.numero);   // le vote annulé reste au Registre du greffier, marqué
+      // Le Pacte : la plume noire pèsera au revote ; une égalité annulée ne condamne plus le Souffre-douleur.
+      rendreLaPlume(etat, ancien.numero);
+      if (etat.pacte.egalite?.numero === ancien.numero) etat.pacte = { ...etat.pacte, egalite: null };
       const x = ouvrirVote(etat, { candidats: ancien.candidats, duree: ancien.duree, double: ancien.double, majoriteAbsolue: ancien.majoriteAbsolue,
         objet: "execution", banc: ancien.banc?.accuse ?? "", maintenant });
       Object.assign(etat, x);
@@ -340,6 +361,13 @@ export function appliquerPouvoir({ villageois = [], etat: e, acteurId = "", pouv
       sortie.prives.push(msg(acteurId, "PelerinePrive", `Votre prière s'est fait entendre : ${n} est du camp « ${camp} ».`, { nom: n, camp }));
       break;
     }
+    case CLE_GREFFIER:
+      // Le signe convenu : SECRET (ni annonce, ni révélation ; les secrets du MJ). Le second vote s'ouvre quand les condamnés de ce
+      // vote sont tombés (api.mjs, secondVoteDu) ; l'usage n'est pris qu'alors.
+      etat.pacteSecret = { ...normaliserPacteSecret(etat.pacteSecret), signal: { tour: etat.tour, numero: etat.vote.numero, par: acteurId } };
+      sortie.prives.push(msg(acteurId, "GreffierSigne", "Votre signe est passé : un second vote suivra, sans débat, dès que le condamné sera tombé."));
+      sortie.secondVote = true;
+      break;
     case "conteuse":
       // La Conteuse n'est pas nommée : le pouvoir s'annonce sans dire qui le tient.
       etat.jour.conteuse = { tour: etat.tour, cible: c, jusqua: maintenant + DUREE_CONTEUSE };
@@ -456,6 +484,10 @@ export function candidatsDeNuit({ villageois = [], etat: e, acteurId = "", roleC
     const hier = (etat.nuitPrecedente?.actions ?? []).find(a => a.acteurId === acteurId && a.roleCle === roleCle)?.cibles?.[0];
     if (hier) ids = ids.filter(id => id !== hier);
   }
+  // Le Pacte (pacte.mjs) : le Furet qui a perdu son flair est réveillé comme avant (pour ne pas se trahir), mais il n'a plus rien
+  // à désigner ; la plume noire de la Pie ne se pose ni sur elle-même ni sur un rôle exclu (EXCLUS_DE_LA_PLUME).
+  if (!groupe && role?.cle === roleCle && role.effet === EFFET_FURET && furetAveugle(etat, acteurId)) return [];
+  if (!groupe && role?.cle === roleCle && role.effet === EFFET_PIE) ids = candidatsDeLaPlume(villageois, acteurId, ids);
   return ids;
 }
 

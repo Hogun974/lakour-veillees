@@ -1,0 +1,46 @@
+{
+  "_id": "RAnGqgLIYMNRRnim",
+  "_key": "!items!RAnGqgLIYMNRRnim",
+  "name": "Lavandière",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/lavandiere.svg",
+  "system": {
+    "cle": "lavandiere",
+    "camp": "village",
+    "description": "<p>Vous êtes deux, et vous battez le linge au lavoir depuis l'enfance : vous vous connaissez mieux que personne.</p><p><strong>La première nuit</strong>, les Lavandières se réveillent ensemble et <strong>se reconnaissent</strong> : le narrateur vous dit en secret le nom de l'autre. Ensuite, <strong>une nuit sur deux</strong> (la troisième, la cinquième…), vous vous réveillez de nouveau ensemble et pouvez <strong>vous concerter</strong> en secret, le temps de votre réveil.</p><p>Vous êtes du camp du <strong>Village</strong> toutes les deux : au moins une personne à Brumecombe est digne de votre confiance.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 11,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "nuitsImpaires": true,
+      "cibles": 0,
+      "soiMeme": false,
+      "invite": "Les Lavandières se retrouvent au lavoir : le narrateur vous souffle les vôtres."
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "fratrie",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "lavandiere"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

@@ -23,7 +23,10 @@ export const CHANCE_PESTE = 1 / 30;
 export const EFFETS = [
   "tuer", "proteger", "voir-camp", "voir-role-mort", "eclairer", "silence", "vote-double", "annuler-vote",
   "remede", "poison", "lien-amour", "echanger-role", "mordre", "emporter", "asperger", "embraser",
-  "epier", "messager", "voir-actif", "voir-role"
+  "epier", "messager", "voir-actif", "voir-role",
+  // Les rôles du Village du Pacte (étape 3a, logique/pacte.mjs) : l'Aïeul, le Souffre-douleur, l'Innocent, les fratries
+  // (Lavandières, Bûcherons), le Furet, la Gardeuse d'oies, le Greffier bègue, le Vieux Sergent, la Pie.
+  "resister", "egalite", "grace", "fratrie", "flairer", "cacarder", "second-vote", "contaminer", "plume"
 ];
 
 // Celles que le système applique de lui-même : à l'aube (resoudreNuit, dont le message porté par le Messager) ou de jour
@@ -31,7 +34,7 @@ export const EFFETS = [
 export const EFFETS_AUTOMATISES = [
   "tuer", "proteger", "voir-camp", "voir-role-mort", "eclairer", "silence", "vote-double", "remede", "poison",
   "lien-amour", "echanger-role", "mordre", "emporter", "asperger", "embraser", "epier", "voir-actif", "messager", "annuler-vote",
-  "voir-role"
+  "voir-role", "resister", "egalite", "grace", "fratrie", "flairer", "cacarder", "second-vote", "contaminer", "plume"
 ];
 
 // L'Enfant de la brume qui épie la meute (effet « epier ») : sa chance d'être surprise, et alors dévorée à la place de la proie.
@@ -46,7 +49,10 @@ export const VICTOIRES = ["", "execute", "dernier-survivant", "cible-executee"];
 
 // Causes de mort normalisées.
 export const CAUSES = { meute: "meute", nuit: "nuit", poison: "poison", feu: "feu", chagrin: "chagrin", vote: "vote",
-  emporte: "emporte", epie: "epie", narrateur: "narrateur", peste: "peste", panique: "panique" };
+  emporte: "emporte", epie: "epie", narrateur: "narrateur", peste: "peste", panique: "panique",
+  // Le Pacte : le loup contaminé par le Vieux Sergent (mort la nuit suivante, cause publique : le village l'apprend, comme sur
+  // table) ; l'Innocent gracié qui tombe avec l'Aïeul (réglage « innocentSuitAieul »).
+  contamine: "contamine", sagesse: "sagesse" };
 
 // Causes qui trahiraient un rôle (la meute, l'Herboriste, le Pyromane, l'Enfant de la brume) ou la peste noire : l'état
 // public dit seulement « mort dans la nuit », comme pour une victime de la meute. La vraie cause reste chez le MJ (le Tanneur

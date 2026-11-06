@@ -45,6 +45,18 @@ export const JETONS_ROLES = {
   "pecheur-de-nuit": "lorc/harpoon-trident",
   "somnambule": "lorc/candle-light",                  // il marche la nuit, une chandelle à la main
   "rosiere": "delapouite/jewel-crown",                // la couronne de l'année
+  // --- Le Village du jeu de soirée (Le Pacte, étape 3a)
+  "franc-villageois": "delapouite/farmer",             // un paysan à visage découvert
+  "aieul": "delapouite/dwarf-face",                    // la barbe grise
+  "souffre-douleur": "skoll/goat",                     // le bouc qu'on charge de tout
+  "innocent": "delapouite/baby-face",                  // un visage sans malice
+  "lavandiere": "delapouite/empty-wood-bucket",        // le baquet du lavoir
+  "bucheron": "delapouite/miner",                      // l'homme à l'outil sur l'épaule
+  "furet": "delapouite/rat",                           // le petit museau qui se faufile
+  "gardeuse-d-oies": "delapouite/falcon-moon",         // un oiseau qui crie dans la nuit
+  "greffier-begue": "lorc/quill-ink",                  // la plume du greffier
+  "vieux-sergent": "lorc/visored-helm",                // le vieux casque
+  "pie": "lorc/raven",                                 // l'oiseau noir et blanc
   // --- Les gens de passage
   "remouleur": "lorc/circular-sawblade",              // la meule
   "montreur-d-ours": "delapouite/animal-hide",        // la peau de l'ours

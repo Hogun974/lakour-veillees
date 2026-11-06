@@ -142,6 +142,12 @@ export function enregistrerReglages(quandEtatChange) {
     name: "LAKOUR_LOUPS.Reglages.PetiteTablee.Nom", hint: "LAKOUR_LOUPS.Reglages.PetiteTablee.Aide",
     scope: "world", config: true, type: Boolean, default: false
   });
+  // L'Innocent suit l'Aïeul (Pacte, logique/pacte.mjs) : une option du livre — si l'Aïeul tombe de la main du village, un Innocent
+  // déjà gracié meurt avec lui. Non par défaut. Lu à la distribution (etat.pacte.innocentSuit).
+  game.settings.register(ID, "innocentSuitAieul", {
+    name: "LAKOUR_LOUPS.Reglages.InnocentSuitAieul.Nom", hint: "LAKOUR_LOUPS.Reglages.InnocentSuitAieul.Aide",
+    scope: "world", config: true, type: Boolean, default: false
+  });
   game.settings.register(ID, "annoncesEnChat", {
     name: "LAKOUR_LOUPS.Reglages.AnnoncesEnChat.Nom", hint: "LAKOUR_LOUPS.Reglages.AnnoncesEnChat.Aide",
     scope: "world", config: true, type: Boolean, default: true

@@ -28,9 +28,9 @@ test("le contenu fabriqué est conforme au contrat", () => {
   assert.deepEqual(verifierDocuments(docs), []);
 });
 
-test("une trentaine de rôles plus le villageois : meute, village et solitaires, clés uniques", () => {
-  // (dont les trois Gens de passage, qui n'entrent qu'en cours de partie)
-  assert.ok(roles.length >= 25 && roles.length <= 38, `${roles.length} rôles`);
+test("une quarantaine de rôles plus le villageois : meute, village et solitaires, clés uniques", () => {
+  // (dont les trois Gens de passage, qui n'entrent qu'en cours de partie, et les onze rôles du Village du Pacte, étape 3a)
+  assert.ok(roles.length >= 40 && roles.length <= 60, `${roles.length} rôles`);
   const parCamp = Object.groupBy(roles, r => r.system.camp);
   assert.deepEqual(Object.keys(parCamp).sort(), [...CAMPS].sort());
   assert.ok(parCamp.meute.length >= 5 && parCamp.solitaire.length >= 4 && parCamp.village.length >= 12);
@@ -161,7 +161,9 @@ test("automatisation de bout en bout : chaque métier a son pouvoir de jour dans
 });
 
 test("nouveaux visages (0.6.0) : jeton, poids, composition prête, fiche au guide du joueur, consignes au narrateur", async () => {
-  const { NOUVEAUX_ROLES, NOUVEAUX_METIERS } = await import("../modules/lakour-veillees/contenu/guides.mjs");
+  const { NOUVEAUX_ROLES: TOUS, NOUVEAUX_METIERS, ROLES_DU_PACTE } = await import("../modules/lakour-veillees/contenu/guides.mjs");
+  // Les rôles du Pacte (étape 3a) ont leur propre essai (pacte-village-logique.test.mjs) : pas encore de composition prête.
+  const NOUVEAUX_ROLES = TOUS.filter(c => !ROLES_DU_PACTE.includes(c));
   const equilibre = JSON.parse(readFileSync(`modules/${M}/assets/equilibre.json`, "utf8"));
   const compos = Object.values(JSON.parse(readFileSync(`modules/${M}/assets/compositions.json`, "utf8")));
   const page = (cle, titre) => docs.find(d => d.cle === `journaux:${cle}`).doc.pages.filter(p => !titre || p.name === titre).map(p => p.text.content).join(" ");

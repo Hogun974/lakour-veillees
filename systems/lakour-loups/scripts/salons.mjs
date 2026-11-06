@@ -26,19 +26,25 @@
 import { ID } from "../logique/constantes.mjs";
 import * as L from "../logique/index.mjs";
 import { estMJActif, emettre, annoncer } from "./canal.mjs";
-import { t, lirePublic, villageoisAPlat } from "./donnees.mjs";
+import { t, lirePublic, lireEtat, villageoisAPlat } from "./donnees.mjs";
 import { secretsMJ } from "./secrets.mjs";
 
 const lire = (cle, defaut) => { try { return game.settings.get(ID, cle) ?? defaut; } catch { return defaut; } };
 export const salonsAutomatiques = () => lire("salonsAutomatiques", true) !== false;
 
-// La table vue de ce navigateur (documents et réglages, que tous ont) ; loupsConnus : ce qu'un loup sait de sa meute.
-function table({ loupsConnus = [] } = {}) {
+// La table vue de ce navigateur (documents et réglages, que tous ont) ; loupsConnus : ce qu'un loup sait de sa meute ; freresConnus :
+// ce qu'un membre d'une fratrie (Lavandières, Bûcherons) sait des siens, d'après sa ligne.
+function table({ loupsConnus = [], freresConnus = [] } = {}) {
   const pub = lirePublic();
+  const etat = lireEtat();
+  const sansPouvoirs = L.sagesseEstPerdue(pub);
   return {
     // souffle : ce mort garde-t-il son Dernier souffle (logique/souffle.mjs) ? Il n'entend alors rien de ce qui trahit les rôles.
+    // fratrie : la fratrie qui veille cette nuit (le rôle n'est connu que du MJ actif, ou de son joueur).
     villageois: villageoisAPlat().map(v => ({ id: v.id, joueur: v.joueur, vivant: v.vivant, silence: v.silence, camp: v.camp,
-      role: v.role ? { camp: v.role.camp } : null, souffle: L.aSonSouffle(pub, v) })),
+      role: v.role ? { camp: v.role.camp } : null,
+      fratrie: v.vivant ? L.fratrieDeLaNuit(v.role, Math.max(1, Number(etat.tour) || 0), L.seReveille, { sansPouvoirs }) : "", souffle: L.aSonSouffle(pub, v) })),
+    moi: game.user?.id ?? "", freresConnus,
     utilisateurs: game.users.map(u => ({ id: u.id, mj: Boolean(u.isGM) })),
     mortsVoientTout: Boolean(lire("mortsVoientTout", true)), souffleActif: Boolean(pub.souffle?.actif),
     automatique: salonsAutomatiques(),
@@ -79,14 +85,15 @@ export function audibilite(userId = game.user?.id) {
   }
   const ligne = ligneAJour();
   if (ligne && userId === game.user.id) return { peutParler: Boolean(ligne.peutParler), auditeurs: [...ligne.auditeurs] };
-  const r = L.audibilite(pub, null, String(userId ?? ""), table({ loupsConnus: ligne?.loups ?? [] }));
+  const r = L.audibilite(pub, null, String(userId ?? ""), table({ loupsConnus: ligne?.loups ?? [], freresConnus: ligne?.freres ?? [] }));
   return { peutParler: r.peutParler, auditeurs: r.auditeurs };
 }
 
 export function audibiliteActeur(acteurId) {
   const pub = lirePublic();
   const secrets = estMJActif() ? secretsMJ() : null;
-  const r = L.audibilite(pub, secrets, { acteurId: String(acteurId ?? "") }, table({ loupsConnus: secrets ? [] : ligneAJour()?.loups ?? [] }));
+  const r = L.audibilite(pub, secrets, { acteurId: String(acteurId ?? "") }, table({ loupsConnus: secrets ? [] : ligneAJour()?.loups ?? [],
+    freresConnus: secrets ? [] : ligneAJour()?.freres ?? [] }));
   return { peutParler: r.peutParler, auditeurs: r.auditeurs, acteursAuditeurs: r.acteursAuditeurs };
 }
 
@@ -526,7 +533,7 @@ export function appliquerVoix() {
 }
 
 // ------------------------------------------------------------------ le bandeau
-const SALONS_AFFICHES = ["nuit", "taniere", "morts", "silence"];
+const SALONS_AFFICHES = ["nuit", "taniere", "morts", "silence", "fratrie"];
 export function salonAffiche() {
   if (game.user?.isGM || !salonsAutomatiques() || !avActif()) return null;
   const ligne = ligneAJour();

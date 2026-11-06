@@ -70,6 +70,8 @@ export function verifierEquilibre(docs, equilibre = EQUILIBRE, batiments = EQUIL
   for (const [cle, e] of Object.entries(equilibre)) {
     if (!["debutants", "classique", "chaos"].includes(e.niveau)) erreurs.push(`équilibre : ${cle}, niveau ${e.niveau}`);
     if (!Number.isFinite(e.poids) || !Number.isInteger(e.joueursMin)) erreurs.push(`équilibre : ${cle}, poids ou joueursMin invalide`);
+    // Des cartes qui vont ensemble (les Lavandières, les Bûcherons) : 2 ou plus, jamais « unique », jamais plus que le minimum de joueurs.
+    if (e.groupe !== undefined && (!Number.isInteger(e.groupe) || e.groupe < 2 || e.unique || e.groupe > e.joueursMin)) erreurs.push(`équilibre : ${cle}, groupe ${e.groupe} invalide`);
   }
   return erreurs;
 }
@@ -130,10 +132,11 @@ export function verifierDocuments(docs) {
       if (!n.invite) err(d, "rôle de nuit sans invite");
       if (!Number.isInteger(n.cibles) || n.cibles < 0 || n.cibles > 2) err(d, `nombre de cibles ${n.cibles}`);
       if (n.premiereNuitSeulement && n.uneNuitSurDeux) err(d, "première nuit seulement ET une nuit sur deux");
+      if (n.nuitsImpaires && (n.premiereNuitSeulement || n.uneNuitSurDeux)) err(d, "nuits impaires ET première nuit seulement ou une nuit sur deux");
       if (s.camp !== "meute" && n.ordre === ORDRE_MEUTE) err(d, `un rôle hors meute se réveille à ${ORDRE_MEUTE} (ordre de la meute)`);
       if (s.camp === "meute" && n.ordre < ORDRE_MEUTE) err(d, "un loup se réveille seul avant la meute");
     } else {
-      if (n.cibles !== 0 || n.premiereNuitSeulement || n.uneNuitSurDeux || n.soiMeme || n.invite) err(d, "rôle sans action de nuit, mais avec des réglages de nuit");
+      if (n.cibles !== 0 || n.premiereNuitSeulement || n.uneNuitSurDeux || n.nuitsImpaires || n.soiMeme || n.invite) err(d, "rôle sans action de nuit, mais avec des réglages de nuit");
       if (s.camp === "meute") err(d, "un loup qui ne se réveille pas la nuit");
     }
     if (s.cle === "villageois" && (n.actif || s.effet || s.usages.max || s.camp !== "village")) err(d, "le villageois n'a ni pouvoir ni action");

@@ -10,6 +10,8 @@
 // - Les morts parlent entre eux dans leur salon (logique/salons.mjs : « morts », réglage « mortsVoientTout » pour la tanière) :
 //   le souffle ne leur rend pas la parole auprès des vivants.
 
+import { filtrerVotants } from "./pacte.mjs";
+
 export const souffleInitial = (actif = false) => ({ actif: Boolean(actif), utilises: [] });
 
 export function normaliserSouffle(s) {
@@ -27,20 +29,23 @@ export const aSonSouffle = (etat, v) => Boolean(etat?.souffle?.actif) && mort(v)
 // Les morts qui ont encore leur souffle.
 export const souffleurs = ({ etat, villageois = [] }) => villageois.filter(v => aSonSouffle(etat, v)).map(v => v.id);
 
-// Qui peut voter au vote ouvert : les vivants, et à un vote d'exécution, les morts qui ont encore leur souffle.
+// Qui peut voter au vote ouvert : les vivants, et à un vote d'exécution, les morts qui ont encore leur souffle. Le Pacte
+// (pacte.mjs, filtrerVotants) : jamais un Innocent gracié ; le lendemain d'une égalité payée par le Souffre-douleur, aux votes
+// d'exécution, seulement ceux qu'il a désignés.
 export function votantsAdmis({ etat, villageois = [] }) {
-  const vivants = villageois.filter(v => !mort(v)).map(v => v.id);
+  const vivants = filtrerVotants(etat, villageois.filter(v => !mort(v)).map(v => v.id));
   if ((etat?.vote?.objet ?? "execution") !== "execution") return vivants;
-  return [...vivants, ...souffleurs({ etat, villageois })];
+  return filtrerVotants(etat, [...vivants, ...souffleurs({ etat, villageois })]);
 }
 
 // Qui a voté au vote ouvert, vivants et morts à part : { exprimes: vivants qui ont voté, attendus: vivants, souffles: morts qui
 // ont soufflé }. Les voix qui manquent sont celles des vivants ; un mort n'est jamais attendu.
 export function compteDesVoix({ etat, villageois = [] }) {
-  const vivants = new Set(villageois.filter(v => !mort(v)).map(v => v.id));
+  const vivants = new Set(filtrerVotants(etat, villageois.filter(v => !mort(v)).map(v => v.id)));
   const exprimes = etat?.vote?.exprimes ?? [];
   return { exprimes: exprimes.filter(id => vivants.has(id)).length, attendus: vivants.size, souffles: exprimes.filter(id => !vivants.has(id)).length };
 }
 
 // Ce mort peut-il souffler maintenant (bandeau, fenêtre de vote) ?
-export const peutSouffler = (etat, v) => Boolean(etat?.vote?.ouvert) && etat.vote.objet === "execution" && aSonSouffle(etat, v);
+export const peutSouffler = (etat, v) => Boolean(etat?.vote?.ouvert) && etat.vote.objet === "execution" && aSonSouffle(etat, v)
+  && filtrerVotants(etat, [v.id]).length > 0;

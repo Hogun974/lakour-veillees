@@ -1,0 +1,45 @@
+{
+  "_id": "VHebA5lEwFzWJmAC",
+  "_key": "!items!VHebA5lEwFzWJmAC",
+  "name": "Vieux Sergent",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/vieux-sergent.svg",
+  "system": {
+    "cle": "vieux-sergent",
+    "camp": "village",
+    "description": "<p>Tu as servi trente ans sous les drapeaux, et ta vieille épée rouillée ne quitte jamais ton chevet.</p><p>Si <strong>la meute te dévore</strong>, tu meurs, mais ta lame a mordu : le <strong>premier loup vivant à ta gauche</strong> autour de la table est blessé. La rouille fait son œuvre : il <strong>meurt la nuit suivante</strong>, et sa mort est annoncée au matin d'après. Rien ne le protège.</p><p>Mort d'une autre façon (le vote, le poison, les flammes…), ton épée ne sert à rien.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": false,
+      "ordre": 50,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 0,
+      "soiMeme": false,
+      "invite": ""
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "contaminer",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "vieux-sergent"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

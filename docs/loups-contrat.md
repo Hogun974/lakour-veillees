@@ -50,6 +50,7 @@ system: {
     premiereNuitSeulement: Boolean = false,
     uneNuitSurDeux: Boolean = false,
     tantQueMeuteEntiere: Boolean = false, // chaque nuit tant qu'aucun mort n'était de la meute (le Loup affamé, Pacte étape 2)
+    nuitsImpaires: Boolean = false, // la première nuit, puis une nuit sur deux : 1, 3, 5… (Lavandières, Bûcherons, Pacte étape 3a)
     cibles: Number = 1,         // nombre de joueurs à désigner (0 = action sans cible)
     soiMeme: Boolean = false,   // peut se désigner lui-même
     invite: String = ""         // question posée au joueur (« Quelle maison éclairer cette nuit ? »)
@@ -120,7 +121,9 @@ n'existe que chez le MJ actif ; il se range en deux morceaux (`logique/etat.mjs`
   places: Number,                 // public (0.11.0) : les places distribuées (humains + compagnons), annoncées
   cercle: [acteurId],             // public (socle du Pacte) : l'ordre des places autour de la table (logique/cercle.mjs)
   tenures: { cle: acteurId|null },// public (socle du Pacte) : les bâtiments tenus par un joueur, null = vacant (logique/tenures.mjs)
-  evenements: [ { cle, tire, debut, fin, type, quand } ]   // public (socle du Pacte) : les événements (logique/evenements.mjs)
+  evenements: [ { cle, tire, debut, fin, type, quand } ],  // public (socle du Pacte) : les événements (logique/evenements.mjs)
+  pacte: { innocentSuit, sagessePerdue, gracies, egalite, votants, plume, secondVote },   // public (Pacte, étape 3a ; logique/pacte.mjs)
+  pacteSecret: { aieux, furets, contamines, signal }       // SECRET (Pacte, étape 3a) : vies perdues, flair perdu, loups contaminés, signe du Greffier
 }
 ```
 `etat()` rend l'état complet chez le MJ actif, l'état public partout ailleurs.
@@ -427,6 +430,52 @@ verifierVictoire()                -> une vérification à la fois (et jamais pen
 - **Événements** : `type` `immediat` | `differe` (`delai` tours plus tard) | `permanent` (`fin: 0`), `quand` `jour` | `nuit` ;
   `evenementActif(etat, cle, tour, phase)` lit aussi le présage de l'Almanach (immédiat : le jour de son tirage, ou la nuit qui suit
   pour givre et crue), à l'identique de `presageDuJour` / `presageDeLaNuit`.
+
+Le Pacte, étape 3a — les rôles du Village du jeu de soirée (`logique/pacte.mjs`, `docs/plan-le-pacte.md`) :
+```
+pacte()                           -> { innocentSuit, sagessePerdue, gracies: [{ acteurId, tour, numero }], egalite, votants: { tour, ids, par },
+                                       plume: { cible, tour, servi }, secondVote: { tour, numero } } (tous ; l'état public)
+designerVotants([acteurId], { par }) -> la liste du Souffre-douleur mort d'une égalité, dictée par le narrateur (MJ actif) ; ferme sa
+                                       demande posthume encore ouverte ; erreur claire sans Souffre-douleur ni vivant permis
+cloreVote()                       -> + souffreDouleur (il a payé l'égalité), plume (la cible de la plume noire, deux voix sans votant)
+resoudreNuit()                    -> + aieux, furets (listes à jour, SECRÈTES), plume, contaminations ([{ sergent, loup }])
+eliminer(id, { cause: "vote" })   -> l'Innocent dont la grâce n'a pas servi n'en meurt pas : gracié, carte retournée, [] ; un Aïeul tombé
+                                       de la main du village (cause vote, poison, emporte) : la sagesse perdue, annoncée ; un signe du
+                                       Greffier fait et les condamnés tombés : le second vote s'ouvre (ouvrirVote)
+agirDeJour({ pouvoir: "greffier-begue" }) -> le signe, SECRET : ni annonce, ni révélation, ni hook public (Hooks.callAll local seulement)
+```
+- **Fratries** (Lavandières par deux, Bûcherons par trois ; effet `fratrie`, `nuit.cibles: 0`, `nuit.nuitsImpaires`) : un seul réveil pour
+  tous (ordreDeNuit) ; `noterAction` remet à chacun, une fois par nuit, le nom des autres vivants (`Pacte.FratrieReconnue` la première
+  nuit, `FratrieRetrouvee` ensuite, `FratrieSeule`) ; salon vocal « fratrie » la nuit où elles veillent (`logique/salons.mjs` : table
+  `villageois[].fratrie`, `ligne.freres` à ses seuls membres). Le générateur tire un groupe en entier ou pas du tout (`equilibre.groupe`).
+- **Aïeul** (`resister`) : la première attaque de la meute (un loup seul, la peste aussi) qui l'aurait tué, ou la première morsure de la
+  Louve mère, lui coûte sa vie de réserve, en secret (chronique du MJ) ; remède ou garde la lui laissent. Tombé de la main du village
+  (`CAUSES_SANS_SAGESSE` : vote, poison, emporte), `pacte.sagessePerdue` (public) : les rôles dont la CARTE est du Village n'ont plus de
+  pouvoir (ni réveil : `seReveille({ sansPouvoirs })`, ni action à l'aube, ni pouvoir de jour : refus `sagesse`, ni dernier geste) ; tous
+  les métiers non plus ; les charges restent. Réglage monde `innocentSuitAieul` (faux par défaut, pris à la distribution) : un Innocent
+  déjà gracié meurt avec lui (cause `sagesse`).
+- **Innocent** (`grace`) : condamné par le vote, gracié une fois (`pacte.gracies`, carte retournée) ; plus jamais votant (`filtrerVotants`,
+  `votantsAdmis`, `priveDeVote`) ; Bailli, la charge est abolie (`bailli.actif` faux, Registre `bailli` / `abolie`). L'étape « exécuter »
+  ne le propose plus pour ce vote.
+- **Souffre-douleur** (`egalite`) : à un vote d'exécution (hors Banc), une égalité qui laisse une place vide le condamne à la place des
+  ex æquo, avant la voix du Bailli et le sort (`cloreVote({ souffreDouleur })`, `pacte.egalite`). Mort ainsi, dernier geste `votants`
+  (`derniers-gestes.mjs`) : demande posthume `objet: "votants"`, `nombre` = les vivants qui votent (un au moins) ; sa liste
+  (`pacte.votants`, publique, annoncée) seule vote aux votes d'exécution du lendemain. Sans réponse : tout le monde vote (avis au MJ).
+- **Furet** (`flairer`) : le trio autour du joueur désigné (`trioAutour`), au moins un loup tel que le voient les visions ; « non » : son
+  flair est perdu (`pacteSecret.furets`), il reste dans l'ordre de nuit sans candidats (`candidatsDeNuit` -> []).
+- **Gardeuse d'oies** (`cacarder`) : chaque matin, après les morts : un loup (camp réel) parmi ses deux voisins vivants, ou elle-même
+  mordue -> annonce `Pacte.Oies` (chat, Registre `pacte`, hook `lakourLoups.pacte`).
+- **Greffier bègue** (`second-vote`, pouvoir de jour `greffier-begue`, phase « vote », `usageDiffere`) : pendant un vote d'exécution ou
+  juste après qu'il a condamné ; `pacteSecret.signal` ; quand les condamnés sont tombés (ou graciés), le second vote s'ouvre, annoncé
+  sans nom (`Pacte.SecondVote`), l'usage est pris. Refus `secondVote`, `deja`.
+- **Vieux Sergent** (`contaminer`) : mort de la cause `meute`, le premier loup vivant à sa gauche (`premierAGauche`) est contaminé
+  (`pacteSecret.contamines`) et meurt à la nuit suivante, rien ne l'en protège (cause PUBLIQUE `contamine`).
+- **Pie** (`plume`, ordre 46) : sa cible (ni elle-même, ni un rôle de `EXCLUS_DE_LA_PLUME`) vivante au matin est annoncée sans nommer la
+  Pie (`Pacte.PlumeMatin`, `pacte.plume`) ; au premier vote d'exécution du jour, deux voix sans votant (`~plume`) contre elle ; un vote
+  annulé par le Juge de paix les rend au revote.
+- **Franc-Villageois** : `role.public` (socle).
+- Registre : entrée `{ type: "pacte", quoi: "grace" | "sagesse" | "votants" | "plume" | "oies" | "second-vote", acteurId?, ids? }` ; un vote
+  porte `plume` et `souffreDouleur`. Hook PUBLIC `lakourLoups.pacte` (`{ quoi, acteurId?, ids? }`, jamais le Greffier ni la Pie).
 
 ### Petite tablée (logique/tablee.mjs, 0.11.0)
 
@@ -803,7 +852,10 @@ veillée ».
 
 `tuer`, `proteger`, `voir-camp`, `voir-role-mort`, `eclairer` (démasque un loup qui entre), `silence`, `vote-double`,
 `annuler-vote`, `remede`, `poison`, `lien-amour`, `echanger-role`, `mordre` (rejoindre la meute), `emporter` (à sa mort),
-`asperger` / `embraser`, `epier`, `messager`, `voir-actif`, `voir-role` (le rôle d'un joueur : la Liseuse de cendres). `emporter` : le mourant désigne lui-même sa cible (demande posthume,
+`asperger` / `embraser`, `epier`, `messager`, `voir-actif`, `voir-role` (le rôle d'un joueur : la Liseuse de cendres) ; Pacte, étape 3a
+(`logique/pacte.mjs`, §1 « Socle du Pacte ») : `resister` (Aïeul), `egalite` (Souffre-douleur), `grace` (Innocent), `fratrie` (Lavandières,
+Bûcherons), `flairer` (Furet), `cacarder` (Gardeuse d'oies), `second-vote` (Greffier bègue), `contaminer` (Vieux Sergent), `plume`
+(Pie). `emporter` : le mourant désigne lui-même sa cible (demande posthume,
 socle du Pacte), le MJ en repli. Toutes sont désormais appliquées par le système : à l'aube
 (`resoudreNuit()`), dont `messager` (le mot écrit par l'expéditeur, `action.texte`, remis au seul destinataire), ou de jour
 (`annuler-vote` : le Juge de paix, voir §5). Ce que le système ne connaîtrait pas reste raconté et arbitré par le MJ (`narrateur`).
@@ -863,6 +915,7 @@ est annoncé au chat avec le nom de celui qui agit.
 | `juge-de-paix` | — | juste après le dépouillement d'un vote d'exécution, avant l'exécution : se révèle, le vote se rouvre ; le Loup déguisé le plus désigné du vote annulé perd son masque |
 | `sonneur` | — | une fois, pendant le jour : à l'aube ou au débat (le prochain vote d'exécution), ou pendant un vote d'exécution ouvert (hors Banc) : se révèle, le vote désigne deux condamnés (`voteDoubleDemain` ou `vote.double`) |
 | `conteuse` | 1 (pas soi) | deux minutes sur ce joueur, qui ne peut pas répondre ; annoncé sans nommer la Conteuse |
+| `greffier-begue` | — | une fois, pendant un vote d'exécution ou juste après qu'il a condamné : signe SECRET ; le second vote s'ouvre quand les condamnés sont tombés (usage pris alors) ; refusé sans sagesse |
 | `taverne` | soi | dort à la Taverne (3 lits) : la meute n'y tue pas, sauf si un loup y dort (alors sans protection) |
 | `forge` | soi | une lame par partie : la meute qui l'atteint y laisse du sang, un loup chasseur réduit au silence |
 | `grange` | soi | une fois par joueur, deux par nuit : hors d'atteinte |

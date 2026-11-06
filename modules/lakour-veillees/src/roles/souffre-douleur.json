@@ -1,0 +1,45 @@
+{
+  "_id": "RccoUj0mFdhUqolZ",
+  "_key": "!items!RccoUj0mFdhUqolZ",
+  "name": "Souffre-douleur",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/souffre-douleur.svg",
+  "system": {
+    "cle": "souffre-douleur",
+    "camp": "village",
+    "description": "<p>On t'a toujours tout mis sur le dos, et ça ne changera pas aujourd'hui.</p><p>Si un <strong>vote d'exécution finit à égalité</strong>, aucun des ex æquo n'est exécuté : <strong>c'est toi</strong>, avant toute autre règle (avant même la voix du Bailli).</p><p>Mort ainsi, tu as un dernier mot : tu désignes en secret <strong>qui votera</strong> au vote d'exécution du lendemain (un joueur au moins). Ceux que tu n'as pas désignés ne votent pas ce jour-là. Ta liste peut sauver un innocent, ou livrer le village à la meute.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": false,
+      "ordre": 50,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 0,
+      "soiMeme": false,
+      "invite": ""
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "egalite",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "souffre-douleur"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

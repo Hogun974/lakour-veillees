@@ -101,6 +101,7 @@ const secretsEmis = (depuis = 0) => emissions.slice(depuis).filter(e => e.type =
 // Aucun chuchotement : Foundry livre chaque message de chat, chuchotements compris, à TOUS les navigateurs ; le secret
 // passe par le carnet (socket adressé). Aucun rôle secret dans un message public : un nom de rôle n'y paraît qu'à côté du
 // nom d'un villageois révélé qui l'a. Seule exception : le récit de fin, une fois la partie finie (toutes les cartes se retournent).
+const nomEntier = nom => new RegExp(`(?<![\\p{L}-])${nom.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\p{L}-])`, "u");
 function verifierMessage(m) {
   const texte = sansHTML(m.content);
   verifierTexte(texte, "chat");
@@ -111,7 +112,8 @@ function verifierMessage(m) {
   }
   for (const a of villageois()) {
     const r = roleDe(a);
-    if (!r || a.system.revele || !texte.includes(r.name)) continue;
+    // Un nom de rôle entier (« Villageois » n'est pas dans « Franc-Villageois »).
+    if (!r || a.system.revele || !nomEntier(r.name).test(texte)) continue;
     const justifie = villageois().some(b => b.system.revele && roleDe(b)?.name === r.name && texte.includes(b.name));
     assert.ok(justifie, `rôle secret « ${r.name} » (${a.name}) dans un message public : ${texte}`);
   }
@@ -570,7 +572,9 @@ ${r.contenu}`);
       const clos = await voterLeJour();
       const resultat = api.etat().vote.resultat;
       // Le compte des voix : votants vivants, bulletins des joueurs simulés pour CE vote, morts et fraudes refusés.
-      const bulletins = new Map(joueurs.journal.bulletins.filter(b => b.numero === resultat.numero && b.cible).map(b => [b.votant, b.cible]));
+      // Le Pacte : ni un Innocent gracié, ni, le lendemain du Souffre-douleur, qui n'est pas sur sa liste.
+      const bulletins = new Map(joueurs.journal.bulletins.filter(b => b.numero === resultat.numero && b.cible && !api.logique.priveDeVote(api.etat(), b.votant, "execution"))
+        .map(b => [b.votant, b.cible]));
       // Les compagnons votent par leur cerveau (résolveur), au même vote que les humains.
       for (const v of votesDesCompagnons.filter(v => v.numero === resultat.numero && v.cible)) bulletins.set(v.votant, v.cible);
       couvert("compagnons : voix", votesDesCompagnons.filter(v => v.numero === resultat.numero && v.cible).length);
@@ -578,11 +582,14 @@ ${r.contenu}`);
       for (const votant of Object.keys(resultat.votes)) assert.ok(avantVote.has(votant), "un mort a voté");
       const attendu = {};
       for (const c of bulletins.values()) attendu[c] = (attendu[c] ?? 0) + 1;
+      // La plume noire de la Pie (Pacte) : deux voix sans votant contre sa cible.
+      if (resultat.plume) { attendu[resultat.plume] = (attendu[resultat.plume] ?? 0) + 2; couvert("plume noire de la Pie"); }
       assert.deepEqual(resultat.decompte, attendu, "décompte");
       const max = Math.max(0, ...Object.values(attendu));
       // La cloche du Sonneur (vote double) : les deux premiers scores ; sinon, le plus de voix.
       const second = Math.max(0, ...Object.values(attendu).filter(n => n < max));
-      for (const elu of resultat.elus) assert.ok(api.etat().vote.majoriteAbsolue || resultat.decompte[elu] === max
+      // Le Souffre-douleur (Pacte) paie l'égalité : il est désigné sans avoir le plus de voix.
+      for (const elu of resultat.elus) assert.ok(api.etat().vote.majoriteAbsolue || resultat.decompte[elu] === max || elu === resultat.souffreDouleur
         || (api.etat().vote.double && resultat.decompte[elu] === second), "l'élu a le plus de voix");
       if (api.etat().vote.double) couvert("cloche du Sonneur (vote double)");
       for (const [id, nb] of Object.entries(resultat.decompte)) assert.ok(clos.includes(`${game.actors.get(id).name} : ${nb}`), `décompte annoncé : ${clos}`);
@@ -716,8 +723,9 @@ test("bilan des parties (reproductibles : même graine, même partie) ; chaque p
   }
   console.log(`  couverture : ${JSON.stringify(Object.fromEntries([...couverture].sort()))}`);
   // Les parties simulées exercent vraiment les métiers de jour, les rôles de jour et les bâtiments.
-  // (les Gens de passage n'entrent qu'en cours de partie : leurs pouvoirs sont éprouvés à part, essais/lot3-*.test.mjs)
-  for (const pouvoir of Object.keys(POUVOIRS_JOUR).filter(p => !ROLES_DE_PASSAGE.includes(p))) assert.ok(couverture.get(pouvoir) > 0, `pouvoir de jour jamais utilisé : ${pouvoir}`);
+  // (les Gens de passage n'entrent qu'en cours de partie : leurs pouvoirs sont éprouvés à part, essais/lot3-*.test.mjs ; le signe du
+  // Greffier bègue se fait pendant le vote, que les joueurs simulés ne jouent pas : essais/pacte-village-api.test.mjs)
+  for (const pouvoir of Object.keys(POUVOIRS_JOUR).filter(p => !ROLES_DE_PASSAGE.includes(p) && p !== "greffier-begue")) assert.ok(couverture.get(pouvoir) > 0, `pouvoir de jour jamais utilisé : ${pouvoir}`);
   for (const effet of ["mot du Messager remis", "ruban (prolongation)", "juge (revote)", "chapelle (vote)", "hors d'atteinte (nuit)", "Moulin (public)",
     "Moulin (Meunière)", "Lavoir", "Cimetière", "Forge (sang de bête)", "Pont (meute bloquée)", "verrou (attaque arrêtée)"]) {
     assert.ok(couverture.get(effet) > 0, `jamais exercé dans les parties simulées : ${effet}`);

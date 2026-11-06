@@ -36,19 +36,23 @@ relief). Fichiers produits par `outils/fabriquer-jetons-veillees.mjs` ; les corr
 | [nun-face](https://game-icons.net/1x1/cathelineau/nun-face.html) | Cathelineau | Figurant — Religieuse |
 | [hooded-figure](https://game-icons.net/1x1/darkzaitzev/hooded-figure.html) | DarkZaitzev | Figurant — Silhouette dans la brume |
 | [animal-hide](https://game-icons.net/1x1/delapouite/animal-hide.html) | Delapouite | Rôle — Montreur de marmotte ; Métier — Tanneur |
-| [baby-face](https://game-icons.net/1x1/delapouite/baby-face.html) | Delapouite | Figurant — Enfant |
+| [baby-face](https://game-icons.net/1x1/delapouite/baby-face.html) | Delapouite | Rôle — Innocent ; Figurant — Enfant |
 | [barn](https://game-icons.net/1x1/delapouite/barn.html) | Delapouite | Bâtiment — La Grange |
 | [bow-arrow](https://game-icons.net/1x1/delapouite/bow-arrow.html) | Delapouite | Métier — Chasseresse |
 | [broom](https://game-icons.net/1x1/delapouite/broom.html) | Delapouite | Métier — Ramoneuse ; Figurant — Lavandière |
 | [church](https://game-icons.net/1x1/delapouite/church.html) | Delapouite | Bâtiment — La Chapelle |
-| [empty-wood-bucket](https://game-icons.net/1x1/delapouite/empty-wood-bucket.html) | Delapouite | Bâtiment — Le Lavoir |
-| [farmer](https://game-icons.net/1x1/delapouite/farmer.html) | Delapouite | Figurant — Paysan |
+| [dwarf-face](https://game-icons.net/1x1/delapouite/dwarf-face.html) | Delapouite | Rôle — Aïeul |
+| [empty-wood-bucket](https://game-icons.net/1x1/delapouite/empty-wood-bucket.html) | Delapouite | Rôle — Lavandière ; Bâtiment — Le Lavoir |
+| [falcon-moon](https://game-icons.net/1x1/delapouite/falcon-moon.html) | Delapouite | Rôle — Gardeuse d'oies |
+| [farmer](https://game-icons.net/1x1/delapouite/farmer.html) | Delapouite | Rôle — Franc-Villageois ; Figurant — Paysan |
 | [flour](https://game-icons.net/1x1/delapouite/flour.html) | Delapouite | Métier — Meunière |
 | [fog](https://game-icons.net/1x1/delapouite/fog.html) | Delapouite | Rôle — Enfant de la brume |
 | [graveyard](https://game-icons.net/1x1/delapouite/graveyard.html) | Delapouite | Bâtiment — Le Cimetière |
 | [herbs-bundle](https://game-icons.net/1x1/delapouite/herbs-bundle.html) | Delapouite | Rôle — Herboriste |
 | [jewel-crown](https://game-icons.net/1x1/delapouite/jewel-crown.html) | Delapouite | Rôle — Rosière |
+| [miner](https://game-icons.net/1x1/delapouite/miner.html) | Delapouite | Rôle — Bûcheron |
 | [pilgrim-hat](https://game-icons.net/1x1/delapouite/pilgrim-hat.html) | Delapouite | Rôle — Pèlerine |
+| [rat](https://game-icons.net/1x1/delapouite/rat.html) | Delapouite | Rôle — Furet |
 | [sitting-dog](https://game-icons.net/1x1/delapouite/sitting-dog.html) | Delapouite | Figurant — Chien de ferme |
 | [sniffing-dog](https://game-icons.net/1x1/delapouite/sniffing-dog.html) | Delapouite | Rôle — Loup flaireur |
 | [stone-bridge](https://game-icons.net/1x1/delapouite/stone-bridge.html) | Delapouite | Rôle — Garde du pont ; Bâtiment — Le Pont |
@@ -84,16 +88,19 @@ relief). Fichiers produits par `outils/fabriquer-jetons-veillees.mjs` ; les corr
 | [open-book](https://game-icons.net/1x1/lorc/open-book.html) | Lorc | Rôle — Conteuse |
 | [paw-heart](https://game-icons.net/1x1/lorc/paw-heart.html) | Lorc | Rôle — Louve mère |
 | [prayer](https://game-icons.net/1x1/lorc/prayer.html) | Lorc | Métier — Curé |
-| [raven](https://game-icons.net/1x1/lorc/raven.html) | Lorc | Figurant — Corbeau |
+| [quill-ink](https://game-icons.net/1x1/lorc/quill-ink.html) | Lorc | Rôle — Greffier bègue |
+| [raven](https://game-icons.net/1x1/lorc/raven.html) | Lorc | Rôle — Pie ; Figurant — Corbeau |
 | [ringing-bell](https://game-icons.net/1x1/lorc/ringing-bell.html) | Lorc | Rôle — Sonneur |
 | [scroll-unfurled](https://game-icons.net/1x1/lorc/scroll-unfurled.html) | Lorc | Métier — Colporteur de nouvelles |
 | [skeleton-key](https://game-icons.net/1x1/lorc/skeleton-key.html) | Lorc | Rôle — Gardienne des clés |
 | [spectre](https://game-icons.net/1x1/lorc/spectre.html) | Lorc | Rôle — Dame du gué |
 | [swap-bag](https://game-icons.net/1x1/lorc/swap-bag.html) | Lorc | Rôle — Colporteur |
+| [visored-helm](https://game-icons.net/1x1/lorc/visored-helm.html) | Lorc | Rôle — Vieux Sergent |
 | [werewolf](https://game-icons.net/1x1/lorc/werewolf.html) | Lorc | Rôle — Loup des roseaux |
 | [wolf-head](https://game-icons.net/1x1/lorc/wolf-head.html) | Lorc | Rôle — Loup de Brumecombe |
 | [wolf-howl](https://game-icons.net/1x1/lorc/wolf-howl.html) | Lorc | Rôle — Loup hurleur |
 | [wolf-trap](https://game-icons.net/1x1/lorc/wolf-trap.html) | Lorc | Rôle — Braconnière |
+| [goat](https://game-icons.net/1x1/skoll/goat.html) | Skoll | Rôle — Souffre-douleur |
 | [hasty-grave](https://game-icons.net/1x1/skoll/hasty-grave.html) | Skoll | Rôle — Fossoyeur |
 | [pestle-mortar](https://game-icons.net/1x1/skoll/pestle-mortar.html) | Skoll | Métier — Apothicaire |
 

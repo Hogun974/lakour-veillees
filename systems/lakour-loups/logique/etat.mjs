@@ -42,6 +42,9 @@
 // Le socle du Pacte (publics) : +cercle: [acteurId] (l'ordre des places autour de la table, fixé à la distribution ; cercle.mjs),
 // +tenures: { cleBatiment: acteurId | null } (les bâtiments tenus par un joueur ; tenures.mjs), +evenements: [{ cle, tire, debut,
 // fin, type, quand }] (les événements en cours : immédiats, différés, permanents ; evenements.mjs).
+// Le Pacte, étape 3a (pacte.mjs) : +pacte (public : la sagesse perdue, les Innocents graciés, l'égalité du Souffre-douleur et sa
+// liste de votants, la plume noire de la Pie, le second vote du Greffier) et +pacteSecret [S] (les vies perdues des Aïeux, le flair
+// perdu des Furets, les loups contaminés par le Vieux Sergent, le signe du Greffier).
 
 import { PHASES, causePublique } from "./constantes.mjs";
 import { decompterVotes } from "./votes.mjs";
@@ -58,6 +61,7 @@ import { sortTranche } from "./tablee.mjs";
 import { cercleInitial, normaliserCercle } from "./cercle.mjs";
 import { tenuresInitiales, normaliserTenures, libererALaMort } from "./tenures.mjs";
 import { evenementsInitiaux, normaliserEvenements } from "./evenements.mjs";
+import { pacteInitial, pacteSecretInitial, normaliserPacte, normaliserPacteSecret, plumeDuVote, VOIX_DE_LA_PLUME, POIDS_DE_LA_PLUME } from "./pacte.mjs";
 
 // Le votant fictif de la voix du deuil (jamais un acteur).
 export const VOIX_DU_DEUIL = "~deuil";
@@ -90,7 +94,9 @@ export function etatInitial() {
     // sur les figurants ni les arrivants.
     places: 0,
     // Le socle du Pacte, public : l'ordre des places (cercle.mjs), les bâtiments tenus (tenures.mjs), les événements (evenements.mjs).
-    cercle: cercleInitial(), tenures: tenuresInitiales(), evenements: evenementsInitiaux()
+    cercle: cercleInitial(), tenures: tenuresInitiales(), evenements: evenementsInitiaux(),
+    // Le Pacte, étape 3a (pacte.mjs) : les rôles du Village du jeu de soirée — le public, et les secrets du MJ.
+    pacte: pacteInitial(), pacteSecret: pacteSecretInitial()
   };
 }
 
@@ -130,6 +136,8 @@ export function normaliserEtat(e) {
   etat.cercle = normaliserCercle(etat.cercle);
   etat.tenures = normaliserTenures(etat.tenures);
   etat.evenements = normaliserEvenements(etat.evenements);
+  etat.pacte = normaliserPacte(etat.pacte);
+  etat.pacteSecret = normaliserPacteSecret(etat.pacteSecret);
   etat.tour = Number(etat.tour) || 0;
   return etat;
 }
@@ -153,13 +161,14 @@ export function separerEtat(e) {
     composition: etat.composition, peste: etat.peste, masques: etat.masques, somnambules: etat.somnambules, bonneEtoile: etat.bonneEtoile,
     aConsigner: etat.aConsigner, pouvoirsDeuil: etat.pouvoirsDeuil, autel: etat.autel,
     fiches: etat.fiches, pont: etat.pont, voteDoubleDemain: etat.voteDoubleDemain, secretsIncomplets: etat.secretsIncomplets,
-    secretsDeFete: etat.secretsDeFete
+    secretsDeFete: etat.secretsDeFete, pacteSecret: etat.pacteSecret
   };
   const pub = copie(etat);
   pub.nuit = base.nuit;
   pub.nuitPrecedente = base.nuitPrecedente;
   for (const cle of ["asperges", "primes", "fioles", "journalSecret", "masques", "somnambules", "bonneEtoile", "aConsigner", "pouvoirsDeuil", "autel", "carnets", "causes", "composition",
     "fiches", "pont", "voteDoubleDemain", "secretsIncomplets", "secretsDeFete"]) pub[cle] = base[cle] && typeof base[cle] === "object" ? copie(base[cle]) : base[cle];
+  pub.pacteSecret = pacteSecretInitial();   // le Pacte : vies des Aïeux, flair des Furets, contaminés, signe du Greffier
   // La peste noire n'existe pas dans l'état public avant la fin (ni même la clé) ; à la fin, la partie se dévoile.
   delete pub.peste;
   if (etat.phase === "fin" && etat.peste) pub.peste = copie(etat.peste);
@@ -196,6 +205,7 @@ export function fusionnerEtat(pub, secret) {
   if (s.pont && typeof s.pont === "object") etat.pont = { bloqueNuit: Number(s.pont.bloqueNuit) || 0 };
   if (typeof s.voteDoubleDemain === "boolean") etat.voteDoubleDemain = s.voteDoubleDemain;
   if (s.secretsDeFete) etat.secretsDeFete = normaliserSecretsDeFete(s.secretsDeFete);
+  if (s.pacteSecret) etat.pacteSecret = normaliserPacteSecret(s.pacteSecret);
   etat.secretsIncomplets = Boolean(s.secretsIncomplets);
   etat.causes = s.causes ?? {};
   etat.morts = etat.morts.map(m => (etat.causes[m.acteurId] ? { ...m, cause: etat.causes[m.acteurId] } : m));
@@ -311,20 +321,31 @@ export function enregistrerVote(e, { votant, cible, votants = null, maintenant =
 // souffles : les morts qui ont encore leur Dernier souffle (souffle.mjs) ; leur voix rendue au dépouillement est consommée.
 // hasard : la voix du deuil (deuil.mjs) sans choix secret de la meute va à un candidat au hasard. Un jugement du Banc des accusés
 // (vote.banc) se tranche par verdictDuBanc : condamné si les « pour » pèsent la moitié des voix des vivants.
-export function cloreVote(e, { votants = null, poids = {}, maintenant = Date.now(), prolongation = 60000, souffles = [], hasard = Math.random } = {}) {
+// Le Pacte (pacte.mjs) : la plume noire de la Pie pèse POIDS_DE_LA_PLUME voix contre sa cible au premier vote d'exécution du jour
+// (une voix sans votant, comme celle du deuil ; resultat.plume) ; souffreDouleur : le Souffre-douleur vivant (rôle connu du MJ) —
+// une égalité qui laisse une place vide à un vote d'exécution le condamne, lui, à la place des ex æquo, avant toute autre règle
+// de départage (ni Bailli, ni sort) : resultat.souffreDouleur, etat.pacte.egalite (son dernier geste, derniers-gestes.mjs).
+export function cloreVote(e, { votants = null, poids = {}, maintenant = Date.now(), prolongation = 60000, souffles = [], hasard = Math.random, souffreDouleur = "" } = {}) {
   const etat = normaliserEtat(e);
   const v = etat.vote;
   const pesees = { ...poidsDesVoix(etat, votants), ...poids };
   const bailli = v.objet === "execution" && !v.banc ? bailliEnCharge(etat, votants) : "";
   // La voix du deuil : une voix sans visage, qui ne pèse qu'une fois.
   const deuil = voixDuDeuil({ etat, candidats: v.candidats, hasard });
+  // La plume noire de la Pie : deux voix sans visage contre sa cible, si elle est candidate.
+  const plume = v.objet === "execution" ? plumeDuVote(etat) : "";
+  const plumee = plume && (!v.candidats.length || v.candidats.includes(plume)) ? plume : "";
   const votes = deuil ? { ...v.votes, [VOIX_DU_DEUIL]: deuil } : v.votes;
   const admis = deuil && votants ? [...votants, VOIX_DU_DEUIL] : votants;
-  const r = decompterVotes({ votes, candidats: v.candidats, votants: admis, double: v.double, poids: pesees, majoriteAbsolue: v.majoriteAbsolue });
+  if (plumee) pesees[VOIX_DE_LA_PLUME] = POIDS_DE_LA_PLUME;
+  const r = decompterVotes({ votes: plumee ? { ...votes, [VOIX_DE_LA_PLUME]: plumee } : votes, candidats: v.candidats,
+    votants: plumee && admis ? [...admis, VOIX_DE_LA_PLUME] : admis, double: v.double, poids: pesees, majoriteAbsolue: v.majoriteAbsolue });
   delete r.votes[VOIX_DU_DEUIL];
+  delete r.votes[VOIX_DE_LA_PLUME];
   if (v.banc) {
     const vivants = (votants ?? Object.keys(v.votes)).filter(id => !souffles.includes(id));
-    const vd = verdictDuBanc({ accuse: v.banc.accuse, votes: { ...r.votes, ...(deuil ? { [VOIX_DU_DEUIL]: deuil } : {}) }, vivants, poids: pesees, strict: v.majoriteAbsolue });
+    const vd = verdictDuBanc({ accuse: v.banc.accuse, votes: { ...r.votes, ...(deuil ? { [VOIX_DU_DEUIL]: deuil } : {}), ...(plumee ? { [VOIX_DE_LA_PLUME]: plumee } : {}) },
+      vivants, poids: pesees, strict: v.majoriteAbsolue });
     Object.assign(r, { elus: vd.condamne ? [v.banc.accuse] : [], elu: vd.condamne ? v.banc.accuse : null, egalite: false, departage: null,
       banc: { accuse: v.banc.accuse, pour: vd.pour, total: vd.total } });
   }
@@ -338,12 +359,25 @@ export function cloreVote(e, { votants = null, poids = {}, maintenant = Date.now
       return { etat, resultat: null, prolonge: porteur };
     }
   }
+  // La plume a pesé à ce vote (dépouillé) : elle ne pèsera plus, sauf si le Juge de paix l'annule (rendreLaPlume).
+  if (plumee) etat.pacte = { ...etat.pacte, plume: { ...etat.pacte.plume, servi: v.numero } };
   const souffle = v.objet === "execution" ? souffles.filter(id => id in r.votes) : [];
   etat.souffle.utilises = [...new Set([...etat.souffle.utilises, ...souffle])];
   const resultat = { decompte: r.decompte, elu: r.elu, elus: r.elus, votes: r.votes, egalite: r.egalite,
-    objet: v.objet, numero: v.numero, tour: etat.tour, souffles: souffle, ...(r.banc ? { banc: r.banc } : {}), ...(deuil ? { deuil } : {}),
+    objet: v.objet, numero: v.numero, tour: etat.tour, souffles: souffle, ...(r.banc ? { banc: r.banc } : {}), ...(deuil ? { deuil } : {}), ...(plumee ? { plume: plumee } : {}),
     poids: Object.fromEntries(Object.entries(pesees).filter(([id]) => id in r.votes)),
     departage: bailli && r.departage ? { par: bailli, candidats: r.departage.candidats, places: r.departage.places, enAttente: true, choix: [] } : null };
+  // Le Souffre-douleur paie l'égalité, avant toute autre règle (la voix du Bailli, son choix, le sort) : il prend la place laissée
+  // vide, à la place des ex æquo. Déjà condamné (vote double), il n'en prend pas une seconde.
+  const bouc = v.objet === "execution" && !v.banc && r.departage && souffreDouleur && !resultat.elus.includes(souffreDouleur) ? souffreDouleur : "";
+  if (bouc) {
+    resultat.elus = [...resultat.elus, bouc];
+    resultat.elu = resultat.elus[0] ?? null;
+    resultat.departage = null;
+    r.departage = null;   // l'égalité est payée : ni Bailli ni sort
+    resultat.souffreDouleur = bouc;
+    etat.pacte = { ...etat.pacte, egalite: { acteurId: bouc, tour: etat.tour, numero: v.numero } };
+  }
   // La voix du Bailli tranche d'elle-même : il a voté pour l'un des ex aequo, c'est lui qui est désigné.
   const sienne = resultat.departage ? r.votes[bailli] : "";
   if (sienne && resultat.departage.candidats.includes(sienne)) {

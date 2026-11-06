@@ -33,7 +33,11 @@ ${versTexte(b.system.regle)}`
 
 // Les nouveaux visages de la veillée (0.6.0) : leur texte complet, repris des objets (roles.mjs, metiers.mjs), en dernière
 // page du guide du joueur (après les pages des bâtiments, pour garder leurs identifiants et les épingles de la carte).
-export const NOUVEAUX_ROLES = ["loup-des-roseaux", "louvetier", "pecheur-de-nuit", "dame-du-gue"];
+// Le Pacte, étape 3a : les gens du village revenus des veillées d'autrefois (le jeu de soirée), à la suite. Pas encore dans les
+// compositions prêtes (l'étape 6 les y fera entrer) : le générateur les tire aux niveaux classique et chaos.
+export const ROLES_DU_PACTE = ["franc-villageois", "aieul", "souffre-douleur", "innocent", "lavandiere", "bucheron", "furet", "gardeuse-d-oies",
+  "greffier-begue", "vieux-sergent", "pie"];
+export const NOUVEAUX_ROLES = ["loup-des-roseaux", "louvetier", "pecheur-de-nuit", "dame-du-gue", ...ROLES_DU_PACTE];
 export const NOUVEAUX_METIERS = ["ramoneuse", "eclusiere"];
 const CAMP_LISIBLE = { meute: "camp de la Meute", village: "camp du Village", solitaire: "solitaire" };
 const ficheDuRole = r => `## ${r.name} (${CAMP_LISIBLE[r.system.camp]})
@@ -52,7 +56,7 @@ const pageDesNouveaux = () => ({
   titre: "Nouveaux visages de la veillée",
   texte: `# Ce que la brume a ramené
 
-Quatre rôles et deux métiers venus des berges de la Brume. Ils ne sont pas dans toutes les compositions, et le narrateur ne dit jamais lesquels sont en jeu : à vous de le deviner.
+Quatre rôles et deux métiers venus des berges de la Brume, et onze gens du village revenus des veillées d'autrefois. Ils ne sont pas dans toutes les compositions, et le narrateur ne dit jamais lesquels sont en jeu : à vous de le deviner (seul le Franc-Villageois se montre de lui-même).
 
 ${[...NOUVEAUX_ROLES.map(c => ficheDuRole(ROLES.find(r => r.system.cle === c))),
   ...NOUVEAUX_METIERS.map(c => ficheDuMetier(METIERS.find(m => m.system.cle === c)))].join("\n\n")}`
@@ -66,6 +70,7 @@ export function ordreDeReveil() {
     const o = r.system.nuit.ordre;
     const nom = o === ORDRE_MEUTE && r.system.camp === "meute" ? "La meute (tous les loups vivants)" : r.name;
     const precisions = [r.system.nuit.premiereNuitSeulement && "première nuit seulement", r.system.nuit.uneNuitSurDeux && "une nuit sur deux",
+      r.system.nuit.nuitsImpaires && "la première nuit, puis une nuit sur deux",
       r.system.nuit.tantQueMeuteEntiere && "tant qu'aucun loup n'est mort"].filter(Boolean);
     const texte = `${nom}${precisions.length ? ` (${precisions.join(", ")})` : ""}`;
     etapes.set(`${o}:${nom}`, { o, texte, invite: o === ORDRE_MEUTE && r.system.camp === "meute" ? "Quelle maison la meute visite-t-elle cette nuit ?" : r.system.nuit.invite });
@@ -406,6 +411,10 @@ ${ordreDeReveil().map(e => `- **${e.o}** — ${e.texte} : « ${e.invite} »`).jo
 - **Dame du gué** : elle ne se réveille qu'**une nuit sur deux** (nuits paires). Sa noyade suit les mêmes règles que le harpon. La meute ne peut pas la tuer : si elle entre chez elle, elle repart bredouille, et tu n'en dis rien au matin.
 - **Fossoyeur** : il ne peut interroger qu'un mort. S'il n'y en a pas, réveille-le quand même et dis-lui « aucune tombe fraîche ».
 - **Messager** : il désigne l'expéditeur puis le destinataire. Une fenêtre s'ouvre aussitôt chez l'expéditeur, qui écrit sa phrase ; le système la remet en secret au destinataire à l'aube, avec le nom de l'expéditeur. Tu ne la lis à personne.
+- **Furet** : il désigne un joueur ; le système flaire ce joueur et ses deux voisins vivants autour de la table (le cercle des places) et lui répond en secret à l'aube. Sans loup parmi eux, il perd son flair : réveille-le quand même chaque nuit, la Table de jeu et le MJ IA ne lui proposent plus personne.
+- **Lavandières** et **Bûcherons** : réveille-les ensemble la première nuit, puis une nuit sur deux (3e, 5e…). Le système remet à chacun le nom des siens dans son carnet ; avec les salons vocaux, ils se parlent entre eux le temps de la nuit.
+- **Pie** : après la chasse, elle peut poser sa plume noire sur un joueur (pas elle-même). Le système l'annonce au matin, sans la nommer.
+- **Sagesse perdue** : si l'Aïeul est tombé de la main du village, ne réveille plus aucun rôle du Village ; la Table de jeu et le MJ IA les retirent d'eux-mêmes de l'ordre de la nuit.
 - **Effets du jour** : un joueur caché (Grange) ou passé sur l'autre rive (Passeur) ne se réveille pas et personne ne peut le désigner ; un joueur gardé à l'œil (Garde du guet) ne peut viser que sa propre maison (une tombe n'en est pas une) ; la meute ne peut viser ni l'asile de la Chapelle, ni les dormeurs de la Taverne (sauf si un loup dort parmi eux), ni l'autre rive quand le Pont est bloqué ou que l'Éclusière a fermé l'écluse. La Table de jeu et le MJ IA proposent d'eux-mêmes les bons candidats.
 
 # Ce que tu dis
@@ -421,12 +430,12 @@ Le système fait tout ceci de lui-même à l'aube (bouton « Résoudre l'aube »
 1. **Cachettes et asiles** : Grange et Passeur (personne n'y entre, ni loup, ni visite, ni feu ; celui qui s'y cache n'agit pas), Chapelle (la meute n'y entre pas), Taverne (la meute n'y tue pas, sauf si un loup y dort : alors sans protection).
 2. **Protections** : Garde du pont (contre la meute seulement), Gardienne des clés, verrou du Forgeron (la première attaque de loup échoue). L'Enfant de la brume surprise en épiant devient la proie de la meute, prise dehors : ni garde ni porte pour elle.
 3. **Morsure** : si la Louve mère a infecté la proie, elle devient loup en secret, personne ne meurt de la meute (la garde du Garde du pont ne l'empêche pas).
-4. **Attaques** : victime de la meute, seconde victime du Loup affamé, harpon du Pêcheur de nuit, noyade de la Dame du gué (ces deux-là ne sont pas des attaques de loup : seuls la porte de la Gardienne, un remède ou une absence les arrêtent).
+4. **Attaques** : victime de la meute, seconde victime du Loup affamé, harpon du Pêcheur de nuit, noyade de la Dame du gué (ces deux-là ne sont pas des attaques de loup : seuls la porte de la Gardienne, un remède ou une absence les arrêtent). L'**Aïeul** survit à la première attaque de loup qui l'aurait tué (en secret : seule ta chronique le dit) ; la première morsure de la Louve mère ne l'infecte pas, elle lui coûte cette vie.
 5. **Remède et poison** de l'Herboriste.
-6. **Feu** : si le Pyromane a embrasé, toutes les maisons aspergées brûlent (protégées ou non).
+6. **Feu** : si le Pyromane a embrasé, toutes les maisons aspergées brûlent (protégées ou non). Le loup blessé la nuit d'avant par la vieille épée du **Vieux Sergent** meurt, quoi qu'on fasse.
 7. **Lanterne** : un loup entré dans la maison éclairée est démasqué.
-8. **Cascades** : amant mort de chagrin, Braconnière qui emporte quelqu'un (elle choisit au matin).
-9. **Informations** : Liseuse (le rôle), Enfant de la brume (le nom des loups), Sourcier, Louvetier, Loup flaireur, Loup des roseaux, Ermite, Fossoyeur, mot du Messager (en secret) ; lame de la Forge (« du sang de bête sur le seuil »), Moulin, Lavoir, Cimetière (annoncés au village).
+8. **Cascades** : amant mort de chagrin, Braconnière qui emporte quelqu'un (elle choisit au matin). Le **Vieux Sergent** dévoré par la meute blesse le premier loup vivant à sa gauche, qui mourra la nuit suivante.
+9. **Informations** : Liseuse (le rôle), Enfant de la brume (le nom des loups), Sourcier, Louvetier, Loup flaireur, Loup des roseaux, Ermite, Fossoyeur, Furet, mot du Messager (en secret) ; juste après les morts, les **oies de la Gardeuse** (si un loup est l'un de ses deux voisins vivants) et la **plume noire de la Pie** ; lame de la Forge (« du sang de bête sur le seuil »), Moulin, Lavoir, Cimetière (annoncés au village).
 10. **Victoire** : vérifie-la avant d'ouvrir le jour.
 
 # Raconter une mort
@@ -472,9 +481,14 @@ Le système y inscrit seul chaque vote clos (voix par voix), chaque mort avec sa
 - Le **ruban de la Tisserande** : si le plus désigné le porte, la clôture ne dépouille pas ; il a une minute de défense de plus, puis clos de nouveau.
 - Le **Juge de paix** peut annuler le vote juste après le décompte, avant l'exécution (depuis sa Table de jeu) : il se révèle, le vote se rouvre, revote immédiat, sans débat. Demande toujours « quelqu'un s'y oppose-t-il ? » avant d'exécuter, et n'exécute que le résultat du dernier vote.
 - Avec la **Chapelle**, ouvre ensuite le vote de la Chapelle (bouton de la Table de jeu) : l'élu y dort à l'abri la nuit suivante.
+- La **plume noire de la Pie**, annoncée au matin, pèse deux voix contre son porteur au premier vote d'exécution du jour (un revote du Juge de paix compris) : le système l'ajoute au dépouillement.
+- L'**Innocent** condamné n'est pas exécuté : quand tu l'exécutes, le système retourne sa carte et le gracie ; il reste en jeu, sans voix à tous les votes. Bailli, il perd la charge, et le village n'en élira plus.
+- Le **Greffier bègue** fait son signe en secret (sa Table de jeu) pendant le vote ou juste après une condamnation : dès que les condamnés sont tombés, le système ouvre un **second vote** d'exécution, sans débat, et dit seulement « un second vote ». Ne nomme jamais le Greffier.
+- Le lendemain d'une égalité payée par le **Souffre-douleur**, seuls ceux qu'il a désignés votent aux votes d'exécution : la fenêtre de vote ne s'ouvre pas chez les autres.
 
 # Les égalités
 
+- **Le Souffre-douleur d'abord** : s'il est vivant (et le village a sa sagesse), toute égalité qui laisse une place vide le condamne, lui, à la place des ex æquo, avant le Bailli ou le sort. Mort ainsi, il désigne en secret qui votera le lendemain (une demande posthume) ; s'il ne répond pas, tout le monde votera, sauf si tu dictes sa liste (designerVotants).
 - **Avec un Bailli vivant** : sa voix tranche si elle allait à l'un des ex æquo ; sinon il tranche (le système le lui demande) ; pas de revote.
 - Sans Bailli, première égalité : les ex æquo ont **trente secondes** chacun, puis revote **entre eux seulement**.
 - Sans Bailli, seconde égalité : **personne n'est exécuté** ; la nuit tombe.
@@ -490,6 +504,7 @@ Le système y inscrit seul chaque vote clos (voix par voix), chaque mort avec sa
 - **Peste noire** : le cri juste fait gagner le village ; sinon la peste l'emporte quand il reste un vivant ou aucun (ni « plus aucun loup », ni amants, ni tueur solitaire ne finissent une peste).
 - **Pyromane** ou **Dame du gué** dernier vivant (ou avec un seul non-loup) : il gagne seul. Tant que l'un de ces deux tueurs vit, le village n'a pas gagné, même sans loup ; s'ils sont tous les deux en vie, aucun ne gagne avant que l'autre tombe.
 - **Rosière** exécutée par le vote : le Village perd aussitôt, **la meute l'emporte** (dans une peste noire : la peste). Le Revenant ou le Chasseur de primes exécutés gagnent d'abord. Morte la nuit, rien de particulier.
+- **Aïeul** tombé de la main du village (vote, poison de l'Herboriste, Braconnière) : le système annonce que Brumecombe a perdu sa sagesse ; jusqu'à la fin, plus aucun rôle du Village ni aucun métier n'a de pouvoir (le Bailli garde sa charge). Avec le réglage « L'Innocent suit l'Aïeul », un Innocent déjà gracié meurt avec lui.
 - **Glas final** (si tu l'as posé) : au soir du jour annoncé, après son vote (ou si la nuit allait tomber), la partie s'arrête : la meute gagne si un loup vit encore, sinon le tueur solitaire encore en vie, sinon le village ; dans une peste noire, la peste.
 
 # Le Dernier souffle, le Somnambule, les Saints du calendrier
@@ -604,6 +619,20 @@ Pose sur la carte quelques **figurants** pour animer le village : le garde du gu
 - **Bailli réduit au silence** : il ne parle pas, mais il vote (voix double) et tranche.
 - **Bailli loup** : rien ne change ; s'il tranche pour sauver un loup, c'est au village de s'en souvenir (le Registre le garde).
 - **Bailli mort avec son amant, ou dans la même nuit qu'un autre** : il ne remet le sceau qu'à un vivant, une fois toutes les morts tombées.
+- **Aïeul et Herboriste** : l'Herboriste apprend son nom comme celui de toute victime ; si son remède le sauve, il garde sa vie de réserve. Empoisonné par elle, il fait perdre au village sa sagesse.
+- **Aïeul et Garde du pont** : gardé, il n'est pas atteint ; sa vie de réserve reste entière.
+- **Aïeul et Louve mère** : sa première morsure ne l'infecte pas (elle lui coûte sa vie de réserve) ; la seconde, oui.
+- **Aïeul et peste noire** : la peste frappe comme la meute ; sa première attaque ne le tue pas non plus.
+- **Sagesse perdue** : les rôles du Village (même mordus) n'ont plus de pouvoir, ni de nuit, ni de jour, ni à leur mort (la Braconnière n'emporte plus personne, le Souffre-douleur ne paie plus l'égalité, l'Innocent n'est plus gracié). Les métiers se taisent pour tous (un loup qui garderait le sien se trahirait). Les loups et les solitaires gardent les leurs.
+- **Innocent et Souffre-douleur** : une égalité où l'Innocent est en tête condamne le Souffre-douleur. Seul condamné, l'Innocent est gracié ; condamné une seconde fois, il meurt.
+- **Souffre-douleur et vote double** : une égalité pour la seconde place le condamne à cette place.
+- **Vieux Sergent et Louve mère** : mordu, il ne meurt pas et son épée ne sert pas ; devenu loup, il est de la meute.
+- **Vieux Sergent sans loup à sa gauche** : on cherche le premier loup vivant en tournant à gauche autour de la table ; s'il n'y en a pas, rien.
+- **Furet et Loup déguisé** : le flair est une vision, le déguisé y échappe ; le Louvetier, lui, sent le loup.
+- **Gardeuse d'oies et Loup déguisé** : les oies sentent la bête : le déguisé les fait cacarder. Mordue, la Gardeuse fait cacarder ses oies chaque matin.
+- **Pie et Banc des accusés** : la plume ajoute deux voix « pour » quand son porteur est jugé.
+- **Greffier bègue et Juge de paix** : le Juge annule avant l'exécution ; le signe du Greffier attend le vote qui condamne pour de bon.
+- **Lavandières, Bûcherons mordus** : un loup reste dans la tanière ; les autres se retrouvent sans lui.
 
 # Changer de navigateur en pleine partie
 
@@ -674,6 +703,7 @@ const variantes = journal({
 - **Veillées de fête** (par défaut : aucune) : une variante de saison par fête — Nuit des âmes, Veillée d'hiver, Carnaval des masques, Fête des promis. La fête du jour la propose à la préparation, le narrateur décide (page « Les veillées de fête » du guide du joueur, et un journal par veillée).
 - **Glas final** et **Bonne étoile** : réglages du narrateur, à la Table de jeu (le jour où la partie s'arrête ; un débutant protégé en secret la première nuit).
 - **Somnambule** et **Rosière** : rôles « sur demande », jamais tirés d'office ; le narrateur les ajoute à la main.
+- **L'Innocent suit l'Aïeul** (par défaut : non) : si l'Aïeul tombe de la main du village, un Innocent déjà gracié meurt avec lui.
 - **Ambiance** : gothique sérieux (par défaut) ou comique.`
     },
     {

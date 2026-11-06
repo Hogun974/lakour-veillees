@@ -185,7 +185,7 @@ Wolves recognise each other on the first night and hunt together; some wake a se
 | **Sniffing wolf** | Each night, sniffs a player and learns their side. |
 | **Wolf of the reeds** | Each night, watches a house and learns whether its occupant acted. |
 
-### The Village (20 roles)
+### The Village (31 roles)
 
 | Role | Power |
 |---|---|
@@ -209,6 +209,17 @@ Wolves recognise each other on the first night and hunt together; some wake a se
 | **Sleepwalker** *(on request)* | Believes he holds a vision role, but he dreams: his visions are false. |
 | **Rose queen** *(on request)* | The village's pride: if the village executes her by vote, the Village loses at once. |
 | **Night fisherman** | Once per game, throws his harpoon: the target dies at dawn unless protected. |
+| **Plain Villager** | No power, but their card is turned face up from the deal: the whole village knows they are innocent. |
+| **Greybeard** | The pack must attack him twice to kill him; if he falls at the village's hand, the villagers lose their powers. |
+| **Whipping Boy** | If the vote ends in a tie, he is the one executed; he then chooses who will vote the next day. |
+| **Village Innocent** | If the village votes against him, he is pardoned: his card is turned over, he stays, but no longer votes. |
+| **Washerwomen** *(in pairs)* | Recognise each other on the first night, then meet every other night to confer. |
+| **Woodcutters** *(in threes)* | Recognise each other on the first night, then meet every other night to confer. |
+| **Ferret** | Each night, sniffs a player and their two neighbours: a wolf among them? If not, he loses his nose. |
+| **Goose Girl** | Each morning, her geese honk if a wolf is one of her two neighbours. |
+| **Stammering Clerk** | Once per game, right after a conviction, secretly calls for a second vote, without debate. |
+| **Old Sergeant** | If the pack devours him, his old sword kills the first wolf to his left the following night. |
+| **Magpie** | Each night, lays a black feather on a player: two more votes against them at the day's vote. |
 
 ### The loners (5 roles)
 

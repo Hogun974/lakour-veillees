@@ -7,7 +7,8 @@ import { readFileSync } from "node:fs";
 import {
   fabriquer, verifierCompositions, rolesPourCompositions, batimentsPourCompositions, FICHIER_COMPOSITIONS
 } from "../outils/fabriquer-veillees.mjs";
-import { compositions, composer, nombreDeLoups, composerTablee, nombreDeLoupsTablee, NIVEAU_PETITE_TABLEE, MIN_TABLEE, MAX_TABLEE } from "../modules/lakour-veillees/contenu/compositions.mjs";
+import { compositions, composer, nombreDeLoups, composerTablee, composerLePacte, nombreDeLoupsTablee, NIVEAU_PETITE_TABLEE, MIN_TABLEE, MAX_TABLEE, NIVEAUX, EQUILIBRE_COMPLET } from "../modules/lakour-veillees/contenu/compositions.mjs";
+import { composer as composerSysteme, equilibreDe, cibleDe } from "../systems/lakour-loups/logique/composition.mjs";
 
 const docs = fabriquer();
 const roles = rolesPourCompositions(docs), batiments = batimentsPourCompositions(docs);
@@ -63,13 +64,24 @@ test("dosage : les loups selon le nombre de joueurs, jamais la moitié ; débuta
       assert.ok(meute.every(r => r === "loup-de-brumecombe"), c.libelle);
     }
   }
-  // Les deux bornes du plan : 6 joueurs débutants et 18 joueurs classiques.
-  assert.deepEqual([...composer("debutants", 6).roles].sort(), ["garde-du-pont", "liseuse-de-cendres", "loup-de-brumecombe", "loup-de-brumecombe", "villageois", "villageois"]);
-  const grand = composer("classique", 18).roles;
-  assert.equal(grand.filter(r => camp[r] === "meute").length, 5);
-  assert.ok(grand.includes("loup-affame"));
-  assert.equal(grand.filter(r => camp[r] === "solitaire").length, 2);
-  assert.equal(grand.filter(r => r === "villageois").length, 3);
+});
+
+// Le Pacte, étape 6 : toutes les compositions prêtes sont tirées par le générateur du système, à graine fixe, sur l'équilibre calibré
+// (poids et cibles du contenu) ; les bâtiments restent ceux du niveau (Le Pacte : aucun). Contrôle d'équilibre : la somme des poids
+// de chacune est à ±2 de la cible de sa taille et de son niveau (la petite tablée : ±3, comme le générateur).
+test("équilibre : chaque composition prête est celle du générateur à graine fixe, à ±2 de la cible de sa taille et de son niveau", () => {
+  for (const [cle, c] of Object.entries(surDisque)) {
+    const n = c.joueurs[0];
+    const somme = equilibreDe(c.roles, EQUILIBRE_COMPLET), cible = cibleDe(n, c.niveau, EQUILIBRE_COMPLET);
+    assert.ok(Math.abs(somme - cible) <= (c.niveau === NIVEAU_PETITE_TABLEE ? 3 : 2), `${cle} : somme ${somme}, cible ${cible}`);
+    if (c.niveau === NIVEAU_PETITE_TABLEE) continue;
+    const graine = `${c.niveau}-${n}`;
+    assert.deepEqual(c.roles, [...composerSysteme(n, EQUILIBRE_COMPLET, { niveau: c.niveau, graine }).roles].sort(), `${cle} : le générateur, graine « ${graine} »`);
+    assert.deepEqual(c.batiments, c.niveau === "le-pacte" ? [] : NIVEAUX[c.niveau].batiments(n), `${cle} : les bâtiments du niveau`);
+  }
+  assert.deepEqual(composer("classique", 12), surDisque["classique-12"]);
+  assert.deepEqual(composerLePacte(9), surDisque["le-pacte-09"]);
+  assert.throws(() => composer("expert", 8), /Niveau inconnu/);
 });
 
 // La Petite tablée (système 0.11.0) : 4 à 12 places, meute courte, l'ombre dès 6 places, une lanterne, un village actif, ni Gibet ni Pont.
@@ -111,8 +123,10 @@ test("mutation : trop de loups, rôle unique en double, bâtiments manquants ou 
   a["classique-06"].roles = ["loup-de-brumecombe", "loup-de-brumecombe", "loup-affame", "villageois", "villageois", "villageois"];
   attendre(a, /trop de loups/);
   const b = structuredClone(surDisque);
-  b["chaos-14"].roles[b["chaos-14"].roles.indexOf("villageois")] = "herboriste";
-  attendre(b, /rôle « herboriste » en double/);
+  const unique = b["chaos-14"].roles.find(r => r !== "villageois" && r !== "loup-de-brumecombe" && camp[r] === "village" && b["chaos-14"].roles.filter(x => x === r).length === 1
+    && !["lavandiere", "bucheron"].includes(r));
+  b["chaos-14"].roles[b["chaos-14"].roles.findIndex(r => r !== unique && camp[r] === "village")] = unique;
+  attendre(b, new RegExp(`rôle « ${unique} » en double`));
   const c = structuredClone(surDisque);
   c["classique-12"].batiments = ["chapelle", "moulin", "taverne"];
   attendre(c, /3 bâtiments/);

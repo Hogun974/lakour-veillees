@@ -48,8 +48,10 @@ export const EFFETS_AUTOMATISES = [
 ];
 
 // L'Enfant de la brume qui épie la meute (effet « epier ») : sa chance d'être surprise, et alors dévorée à la place de la proie.
-// Le livre ne chiffre pas ce risque (à la table, il dépend de l'adresse de l'enfant et de l'œil des loups) : une chance sur deux,
-// à recalibrer à l'étape 6 (simulation). Le réglage monde « chanceEpier » part de cette valeur.
+// Le livre ne chiffre pas ce risque (à la table, il dépend de l'adresse de l'enfant et de l'œil des loups) : une chance sur deux.
+// Le Pacte, étape 6 (simulation, docs/equilibre-veillees.md) : gardée. Mesurée à l'adresse 1, des parties appariées avec et sans elle
+// (300 compositions par valeur) : 1/4, l'Enfant donne +22 points au village (autant qu'une Liseuse) ; 1/2, +13 (un rôle d'information
+// moyen, son poids) ; 3/4, +5. Le réglage monde « chanceEpier » part de cette valeur.
 export const RISQUE_ENFANT = 1 / 2;
 export const EFFETS_NARRATEUR = EFFETS.filter(e => !EFFETS_AUTOMATISES.includes(e));
 

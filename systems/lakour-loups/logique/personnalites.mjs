@@ -74,7 +74,9 @@ export const CLE_CHEMINEAU = "chemineau";
 // L'Incendiaire (rôle du Village, contenu lakour-veillees).
 export const CLE_INCENDIAIRE = "incendiaire";
 export const EFFET_INCENDIAIRE = "incendier";
-// La Fournière entrevoit un loup une nuit sur trois (adaptation en ligne ; à recalibrer à l'étape 6, simulation).
+// La Fournière entrevoit un loup une nuit sur trois (adaptation en ligne). Le Pacte, étape 6 (simulation, docs/equilibre-veillees.md) :
+// gardée. Mesurée à l'adresse 1 (300 compositions du Village par valeur) : le village gagne 44 % sans elle, 49 % à 1/3, 51 % à 2/3 ; Le
+// Village dans son ensemble reste à -4 ± 2 points de la partie ordinaire.
 export const CHANCE_FOURNIERE = 1 / 3;
 // Le Régent prive de vote jusqu'à deux joueurs.
 export const CIBLES_DU_REGENT = 2;

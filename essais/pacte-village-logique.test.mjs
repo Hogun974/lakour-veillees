@@ -299,7 +299,8 @@ const VERIFICATIONS = {
     }
     const voulu = L.composer(12, eq, { niveau: "chaos", inclure: ["bucheron", "lavandiere"], graine: "voulu", essais: 20 });
     assert.deepEqual(["bucheron", "lavandiere"].map(k => voulu.roles.filter(r => r === k).length), [3, 2]);
-    assert.ok(!L.composer(10, eq, { niveau: "petite-tablee", graine: "t", essais: 50 }).roles.some(r => ROLES_DU_PACTE.includes(r)), "pas encore à la petite tablée");
+    // (Plusieurs graines : une seule ne tirait parfois aucun de ces rôles, même permis — Le Pacte, étape 6, poids recalibrés.)
+    for (let g = 0; g < 12; g++) assert.ok(!L.composer(10, eq, { niveau: "petite-tablee", graine: `t${g}`, essais: 50 }).roles.some(r => ROLES_DU_PACTE.includes(r)), "pas encore à la petite tablée");
   },
   "contenu : les onze rôles, leurs effets, leurs ordres et leur équilibre": () => {
     const parCle = Object.fromEntries(ROLES.map(r => [r.system.cle, r]));

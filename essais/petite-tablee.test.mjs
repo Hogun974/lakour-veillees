@@ -372,8 +372,9 @@ const MUTATIONS = [
   ["scripts/api.mjs", `    if (tableeVoulue !== undefined && tableeVoulue !== Boolean(lireReglage("petiteTablee", false))) await game.settings.set(ID, "petiteTablee", tableeVoulue);`, ``, "le réglage ne se souvient plus"],
   ["scripts/api.mjs", `      : tableeVoulueParReglage && total <= L.TABLEE.placesMax ? L.NIVEAU_PETITE_TABLEE`,
     `      : false ? L.NIVEAU_PETITE_TABLEE`, "« Rejouer » oublie le mode"],
-  ["scripts/api.mjs", `    lireReglage("petiteTablee", false) && n <= L.TABLEE.placesMax && !options?.peste ? { ...options, niveau: L.NIVEAU_PETITE_TABLEE } : options)) },`,
-    `    options)) },`, "api.logique.composer ignore le réglage"],
+  ["scripts/api.mjs", `    lireReglage("petiteTablee", false) && n <= L.TABLEE.placesMax && !options?.peste ? { ...options, niveau: L.NIVEAU_PETITE_TABLEE }
+      : { variantes: variantesDuReglage(), ...options })) },`,
+    `    { variantes: variantesDuReglage(), ...options })) },`, "api.logique.composer ignore le réglage"],
   ["scripts/api.mjs", `      const morceaux = [t("LAKOUR_LOUPS.Tablee.AnnonceTete", { humains: h, compagnons: nomsCompagnons.length }),`,
     `      const morceaux = [t("LAKOUR_LOUPS.Tablee.AnnonceTete", { humains: h, compagnons: nomsCompagnons.length }) + " " + sortie.filter(s => !s.compagnon && campDe(game.actors.get(s.acteurId)) !== "village").map(s => game.actors.get(s.acteurId).name).join(", "),`,
     "l'annonce nomme les humains de l'ombre"],

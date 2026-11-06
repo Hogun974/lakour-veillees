@@ -1,46 +1,32 @@
-// Compositions de partie toutes prêtes, de 6 à 18 joueurs, en trois niveaux, et de 4 à 12 places pour la « Petite tablée »
-// (système 0.11.0 : peu d'humains, des compagnons IA ; celles-là sont tirées par le générateur du système, à graine fixe, pour
-// être équilibrées comme les siennes). Une composition par niveau et par nombre de joueurs (joueurs: [n, n]) :
-// sa liste de rôles en compte exactement n, complétée par des « villageois ».
+// Compositions de partie toutes prêtes, de 6 à 18 joueurs, en quatre niveaux (débutants, classique, chaos, Le Pacte), et de 4 à 12
+// places pour la « Petite tablée » (système 0.11.0 : peu d'humains, des compagnons IA). Une composition par niveau et par nombre de
+// joueurs (joueurs: [n, n]) : sa liste de rôles en compte exactement n, complétée par des « villageois ».
 // Écrites dans assets/compositions.json par outils/fabriquer-veillees.mjs (forme : docs/loups-contrat.md §2).
 //
-// Règles de dosage :
-// - loups : 2 jusqu'à 8 joueurs, 3 jusqu'à 12, 4 jusqu'à 15, 5 au-delà ;
-// - débutants : loups simples, pouvoirs faciles, aucun solitaire, la moitié du village sans pouvoir ;
-// - classique : quelques loups spéciaux, un à deux solitaires, un quart de villageois sans pouvoir ;
-// - chaos : loups spéciaux, jusqu'à trois solitaires, pouvoirs qui se croisent, peu de villageois.
+// Le Pacte, étape 6 : TOUTES sont tirées par le générateur du système (logique/composition.mjs, composer), à graine fixe
+// (« <niveau>-<n> »), sur l'équilibre calibré par simulation (equilibre.mjs : poids et cibles, docs/equilibre-veillees.md) : une
+// composition prête vaut une composition générée. Les règles de dosage sont celles du générateur (loups : 2 jusqu'à 8 joueurs, 3
+// jusqu'à 12, 4 jusqu'à 15, 5 au-delà ; débutants : loups simples, aucun solitaire ; classique : un loup à pouvoir et un solitaire au
+// plus ; chaos : un ou deux de chaque ; Le Pacte : les rôles du jeu de soirée, au dosage classique). Les choix de chaque niveau sont
+// gardés : ses bâtiments (NIVEAUX[niveau].batiments, ci-dessous ; Le Pacte et la petite tablée : ceux du générateur, aucun pour Le Pacte),
+// et les métiers (distribués à tous par la Table de jeu, sauf au Pacte).
 
 import { composer as composerSysteme } from "../../../systems/lakour-loups/logique/composition.mjs";
-import { EQUILIBRE, EQUILIBRE_BATIMENTS } from "./equilibre.mjs";
+import { EQUILIBRE, EQUILIBRE_BATIMENTS, CIBLES, AJUSTEMENTS } from "./equilibre.mjs";
 
+// L'équilibre complet du contenu (celui d'assets/equilibre.json) : poids, bâtiments, cibles.
+export const EQUILIBRE_COMPLET = { roles: EQUILIBRE, batiments: EQUILIBRE_BATIMENTS, cibles: CIBLES, ajustements: AJUSTEMENTS };
+
+// Les bâtiments de chaque niveau, choisis à la main : les plus faciles pour débutants, le Gibet dès 12 joueurs en classique, le Pont et
+// la Grange en chaos.
 export const NIVEAUX = {
-  debutants: {
-    libelle: "Débutants",
-    loupsSpeciaux: () => [],
-    solitaires: () => [],
-    village: ["liseuse-de-cendres", "garde-du-pont", "herboriste", "braconniere", "veilleuse-de-lanterne", "fossoyeur", "sonneur", "juge-de-paix"],
-    villageois: v => Math.floor(v / 2),
-    batiments: () => ["chapelle", "puits", "moulin", "lavoir"]
-  },
+  debutants: { libelle: "Débutants", batiments: () => ["chapelle", "puits", "moulin", "lavoir"] },
   classique: {
     libelle: "Classique",
-    loupsSpeciaux: n => (n >= 16 ? ["loup-affame", "loup-deguise", "loup-des-roseaux"] : n >= 14 ? ["loup-affame", "loup-des-roseaux"]
-      : n >= 12 ? ["loup-affame"] : []),
-    solitaires: n => ["revenant", "chasseur-de-primes"].slice(0, n >= 16 ? 2 : n >= 10 ? 1 : 0),
-    // Le Louvetier dès 12 joueurs : une seconde vision au village, qui brouille la première.
-    village: ["liseuse-de-cendres", "garde-du-pont", "herboriste", "braconniere", "veilleuse-de-lanterne", "louvetier", "entremetteuse",
-      "fossoyeur", "sonneur", "juge-de-paix", "conteuse", "ermite"],
-    villageois: v => Math.ceil(v / 4),
     batiments: n => (n >= 12 ? ["chapelle", "moulin", "taverne", "puits", "cimetiere", "gibet"] : ["chapelle", "moulin", "taverne", "puits", "cimetiere"])
   },
   chaos: {
     libelle: "Chaos",
-    loupsSpeciaux: () => ["loup-hurleur", "louve-mere", "loup-affame", "loup-flaireur", "loup-deguise"],
-    // Dès 15 joueurs, deux tueurs solitaires (Pyromane, Dame du gué) ; le Pêcheur de nuit, dès 12, peut les atteindre.
-    solitaires: n => ["pyromane", "colporteur", "dame-du-gue", "revenant", "chasseur-de-primes"].slice(0, n >= 15 ? 3 : n >= 11 ? 2 : n >= 7 ? 1 : 0),
-    village: ["liseuse-de-cendres", "herboriste", "enfant-de-la-brume", "entremetteuse", "messager", "pecheur-de-nuit", "gardienne-des-cles", "sourcier",
-      "conteuse", "ermite", "sonneur", "juge-de-paix", "veilleuse-de-lanterne", "braconniere", "fossoyeur"],
-    villageois: v => Math.floor(v / 5),
     batiments: n => (n >= 12 ? ["taverne", "gibet", "pont", "forge", "grange", "lavoir"] : ["taverne", "pont", "forge", "grange", "lavoir"])
   }
 };
@@ -61,37 +47,27 @@ export const nombreDeLoupsTablee = n => (n <= 7 ? 1 : n <= 10 ? 2 : 3);
 
 export function composerTablee(n) {
   if (n < MIN_TABLEE || n > MAX_TABLEE) throw new Error(`Une petite tablée compte de ${MIN_TABLEE} à ${MAX_TABLEE} places (${n}).`);
-  const c = composerSysteme(n, { roles: EQUILIBRE, batiments: EQUILIBRE_BATIMENTS }, { niveau: NIVEAU_PETITE_TABLEE, graine: `petite-tablee-${n}` });
+  const c = composerSysteme(n, EQUILIBRE_COMPLET, { niveau: NIVEAU_PETITE_TABLEE, graine: `petite-tablee-${n}` });
   return { libelle: `Petite tablée — ${n} places`, joueurs: [n, n], niveau: NIVEAU_PETITE_TABLEE, roles: [...c.roles].sort(), batiments: c.batiments };
 }
 
 // Le mode « Le Pacte » (système, logique/composition.mjs, niveau « le-pacte », Le Pacte étape 5) : seulement les rôles du jeu de
 // soirée (ROLES_DU_LIVRE), au dosage du niveau classique, sans aucun de nos bâtiments communaux ; tiré par le générateur du système à
-// graine fixe, comme la Petite tablée (les poids restent provisoires : l'étape 6 les calibrera, et ces compositions avec).
+// graine fixe, comme les autres.
 export const NIVEAU_LE_PACTE = "le-pacte";
 export function composerLePacte(n) {
   if (n < MIN_JOUEURS || n > MAX_JOUEURS) throw new Error(`Le Pacte compte de ${MIN_JOUEURS} à ${MAX_JOUEURS} joueurs (${n}).`);
-  const c = composerSysteme(n, { roles: EQUILIBRE, batiments: EQUILIBRE_BATIMENTS }, { niveau: NIVEAU_LE_PACTE, graine: `le-pacte-${n}` });
+  const c = composerSysteme(n, EQUILIBRE_COMPLET, { niveau: NIVEAU_LE_PACTE, graine: `le-pacte-${n}` });
   return { libelle: `Le Pacte — ${n} joueurs`, joueurs: [n, n], niveau: NIVEAU_LE_PACTE, roles: [...c.roles].sort(), batiments: c.batiments };
 }
 
+// Débutants, classique, chaos : le générateur du système à graine fixe, les bâtiments du niveau.
 export function composer(niveau, n) {
   const N = NIVEAUX[niveau];
   if (!N) throw new Error(`Niveau inconnu : ${niveau}`);
-  const loups = nombreDeLoups(n);
-  const speciaux = N.loupsSpeciaux(n).slice(0, loups - 1); // toujours au moins un loup simple
-  const meute = ["loup-de-brumecombe", ...speciaux, ...Array(loups - 1 - speciaux.length).fill("loup-de-brumecombe")];
-  const solitaires = N.solitaires(n);
-  const v = n - loups - solitaires.length;
-  const pouvoirs = N.village.slice(0, Math.min(N.village.length, v - N.villageois(v)));
-  const village = [...pouvoirs, ...Array(v - pouvoirs.length).fill("villageois")];
-  return {
-    libelle: `${N.libelle} — ${n} joueurs`,
-    joueurs: [n, n],
-    niveau,
-    roles: [...meute, ...village, ...solitaires],
-    batiments: N.batiments(n)
-  };
+  if (n < MIN_JOUEURS || n > MAX_JOUEURS) throw new Error(`De ${MIN_JOUEURS} à ${MAX_JOUEURS} joueurs (${n}).`);
+  const c = composerSysteme(n, EQUILIBRE_COMPLET, { niveau, graine: `${niveau}-${n}` });
+  return { libelle: `${N.libelle} — ${n} joueurs`, joueurs: [n, n], niveau, roles: [...c.roles].sort(), batiments: N.batiments(n) };
 }
 
 // Toutes les compositions, clé « <niveau>-<n> » (ex. « classique-12 », « le-pacte-09 », « petite-tablee-07 »).

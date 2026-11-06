@@ -952,6 +952,19 @@ Même contrat que lakour-40k et lakour-warcraft (`modules/lakour-mj-ia/scripts/c
   `index.json` / `index-3d.json` (jeton de joueur par clé de RÔLE ; jeton neutre `villageois` pour cacher le rôle) ;
 - `assets/compositions.json` : `{ "<cle>": { "libelle", "joueurs": [min, max], "niveau": "debutants|classique|chaos",
   "roles": ["<cle de rôle>", …] (autant que de joueurs ; « villageois » pour compléter), "batiments": [cle…] } }` ;
+- `assets/equilibre.json` (écrit depuis `contenu/equilibre.mjs`) : `{ "roles": { "<cle>": { camp, poids, niveau, joueursMin, unique,
+  information?, protection?, groupe?, surDemande?, village? } }, "batiments": { "<cle>": { niveau } }, "cibles": { "<niveau>": { "<n>":
+  cible } }, "ajustements": { "<variante>": poids } }` — `poids` : ce que le rôle apporte au village (Villageois +1, Loup de Brumecombe -6) ; **`cibles`** (Le Pacte, étape 6) :
+  pour chaque niveau (`debutants`, `classique`, `chaos`, `le-pacte`, `petite-tablee`) et chaque nombre de joueurs, la somme des poids
+  qui donne une chance sur deux au village contre la meute, mesurée par simulation (`essais/outils/calibrer-poids.mjs`,
+  `docs/equilibre-veillees.md`). Le générateur du système (`logique/composition.mjs`, `cibleDe(n, niveau, equilibre)`) vise cette somme
+  (une taille absente : la plus proche ; un niveau sans cibles : 0, la petite tablée `cibleTablee`) ; une `cible` donnée à `composer`
+  passe avant. **`ajustements`** : ce qu'une variante du jeu de soirée choisie ajoute à la cible (en poids ; `composer(n, equilibre, {
+  variantes })` ; `api.logique.composer` y met les variantes des réglages). Le MJ IA passe l'équilibre entier au générateur : il suit les
+  cibles et les ajustements sans rien changer.
+- compositions prêtes (Le Pacte, étape 6) : toutes tirées par ce générateur à graine fixe (« <niveau>-<n> »), avec les bâtiments
+  choisis pour chaque niveau (`contenu/compositions.mjs`, `NIVEAUX[niveau].batiments` ; Le Pacte : aucun) ; une composition prête
+  vaut une composition générée (`essais/veillees-compositions.test.mjs` : à ±2 de sa cible).
 - installateur (`scripts/main.js`, monde `lakour-loups` seulement) : importe guides et la scène du village, recopie les plans.
 - Petite tablée (contenu 0.13.0, système 0.11.0) : compositions prêtes « petite-tablee-04 » à « petite-tablee-12 » (niveau
   `petite-tablee`, tirées par le générateur du système à graine fixe — `composerTablee` de `contenu/compositions.mjs` importe
@@ -966,6 +979,13 @@ Même contrat que lakour-40k et lakour-warcraft (`modules/lakour-mj-ia/scripts/c
   nommés, pour que le MJ IA pose les jetons (« devant la chapelle »).
 
 ## 3. MJ IA
+
+Politiques de jeu (Le Pacte, étape 6 ; `logique/politiques.mjs`, exposées à `api.logique`) : `savoirDuJoueur` (ce qu'un joueur sait, lu
+dans son carnet, le chat public, le Registre, les rôles révélés et les annonces du débat, d'après les gabarits du dictionnaire),
+`politiqueDeNuit` (par effet de rôle, `POLITIQUES`, ou par objet de geste, `POLITIQUES_DES_GESTES`), `politiqueDeVote`, `rumeurDuJour`,
+`proieDuVoteDeLaMeute`, `politiqueDuJour` (`NATURE_DES_POUVOIRS`), `annoncesDuJoueur`, `annulerLeVote` ; une adresse de 0 (hasard) à 1
+(tout ce qu'il sait). Les joueurs simulés des essais s'en servent ; les compagnons sans modèle pourront s'en servir
+(`docs/equilibre-veillees.md`, « À brancher dans le moteur »).
 
 `CONTENUS["lakour-loups"] = "lakour-veillees"` ; adaptateur `lakour-loups` dans `adaptateurs.js` (pas de jet de dés : `lancer`
 lève une erreur claire ; `resumer` donne nom, vivant/mort, métier, rôle) ; outils de narrateur qui appellent `game.lakourLoups`.

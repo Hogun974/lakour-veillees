@@ -155,8 +155,8 @@ export function enregistrerReglages(quandEtatChange) {
   // Le Village (Pacte, étape 4, logique/personnalites.mjs) : la variante du jeu de soirée où des personnalités tiennent des bâtiments.
   // Non par défaut. Lue à la distribution (etat.village.actif) ; nouvellePartie y retient le dernier choix explicite du MJ (la case
   // « Le Village » de la Table de jeu). Publique : une règle de la veillée.
-  // La chance qu'a la Fournière d'entrevoir un loup chaque nuit (adaptation en ligne ; réglage caché, comme « chancePeste » : à
-  // recalibrer à l'étape 6, les essais le règlent).
+  // La chance qu'a la Fournière d'entrevoir un loup chaque nuit (adaptation en ligne ; réglage caché, comme « chancePeste » : mesurée
+  // à l'étape 6 du Pacte, gardée à 1/3 ; les essais et le simulateur la règlent).
   game.settings.register(ID, "chanceFourniere", { scope: "world", config: false, type: Number, default: CHANCE_FOURNIERE });
   game.settings.register(ID, "leVillage", {
     name: "LAKOUR_LOUPS.Reglages.LeVillage.Nom", hint: "LAKOUR_LOUPS.Reglages.LeVillage.Aide",

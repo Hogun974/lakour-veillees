@@ -34,17 +34,17 @@ ${versTexte(b.system.regle)}`
 
 // Les nouveaux visages de la veillée (0.6.0) : leur texte complet, repris des objets (roles.mjs, metiers.mjs), en dernière
 // page du guide du joueur (après les pages des bâtiments, pour garder leurs identifiants et les épingles de la carte).
-// Le Pacte, étape 3a : les gens du village revenus des veillées d'autrefois (le jeu de soirée), à la suite. Pas encore dans les
-// compositions prêtes (l'étape 6 les y fera entrer) : le générateur les tire aux niveaux classique et chaos.
+// Le Pacte, étape 3a : les gens du village revenus des veillées d'autrefois (le jeu de soirée), à la suite. Le générateur les tire aux
+// niveaux classique et chaos (et Le Pacte), compositions prêtes comprises depuis l'étape 6 ; pas à la petite tablée.
 export const ROLES_DU_PACTE = ["franc-villageois", "aieul", "souffre-douleur", "innocent", "lavandiere", "bucheron", "furet", "gardeuse-d-oies",
   "greffier-begue", "vieux-sergent", "pie"];
 // Le Pacte, étape 3b : les ambigus (ils peuvent changer de camp ou de rôle), les solitaires du livre et le Loup pâle. Comme ceux de
-// l'étape 3a, hors des compositions prêtes et de la petite tablée ; le générateur les tire aux niveaux classique et chaos.
+// l'étape 3a, hors de la petite tablée ; le générateur les tire aux niveaux classique et chaos (compositions prêtes comprises).
 export const AMBIGUS_DU_PACTE = ["chapardeur", "bateleur", "matin", "enfant-des-bois", "chambriere"];
 export const SOLITAIRES_DU_PACTE = ["feu-follet", "joueur-de-vielle", "illumine"];
 export const LOUPS_DU_PACTE = ["loup-pale"];
 export const ROLES_DU_PACTE_3B = [...AMBIGUS_DU_PACTE, ...SOLITAIRES_DU_PACTE, ...LOUPS_DU_PACTE];
-// Le Pacte, étape 9 : la Liseuse d'étoiles (le Spiritisme), hors des compositions prêtes (sauf Le Pacte) et de la petite tablée.
+// Le Pacte, étape 9 : la Liseuse d'étoiles (le Spiritisme), hors de la petite tablée ; le générateur la tire (compositions prêtes comprises).
 export const ROLES_DU_PACTE_9 = ["liseuse-d-etoiles"];
 export const NOUVEAUX_ROLES = ["loup-des-roseaux", "louvetier", "pecheur-de-nuit", "dame-du-gue", ...ROLES_DU_PACTE, ...ROLES_DU_PACTE_3B, ...ROLES_DU_PACTE_9];
 export const NOUVEAUX_METIERS = ["ramoneuse", "eclusiere"];
@@ -358,12 +358,15 @@ Tu es la voix de Brumecombe. Tu ne joues pour aucun camp : tu fais **vivre le vi
       titre: "Préparer la partie",
       texte: `# La composition
 
-Les compositions toutes prêtes vont de 6 à 18 joueurs, en trois niveaux :
+Les compositions toutes prêtes vont de 6 à 18 joueurs, en quatre niveaux :
 - **Débutants** : loups simples, pouvoirs faciles à expliquer, aucun solitaire. Pour une première partie ou un groupe qui découvre.
-- **Classique** : un ou deux loups spéciaux, un ou deux solitaires au-delà de dix joueurs. La partie de tous les jours.
-- **Chaos** : loups spéciaux, solitaires, pouvoirs qui se croisent. Pour un groupe qui connaît bien le jeu, et un narrateur sûr de lui.
+- **Classique** : un loup spécial et un solitaire au plus. La partie de tous les jours.
+- **Chaos** : un ou deux loups spéciaux, un ou deux solitaires, des pouvoirs qui se croisent. Pour un groupe qui connaît bien le jeu, et un narrateur sûr de lui.
+- **Le Pacte** : les seuls rôles du jeu de soirée, sans nos bâtiments ni nos métiers (page « Le Pacte »).
 
-Chaque composition indique ses bâtiments (4 à 6). Tu peux en changer un, en annonçant la liste avant la distribution.
+Toutes sortent du générateur de la Table de jeu, tirées une fois pour toutes : elles sont équilibrées comme une composition générée, d'après des poids et des cibles mesurés sur des milliers de parties simulées (une chance sur deux pour le village et pour la meute, à chaque taille et à chaque niveau).
+
+Chaque composition indique ses bâtiments (4 à 6 ; aucun pour Le Pacte). Tu peux en changer un, en annonçant la liste avant la distribution.
 
 # La petite tablée
 

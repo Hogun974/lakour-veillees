@@ -3,7 +3,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { composer, equilibreDe, nombreDeLoups, NIVEAUX, HORS_TABLEE, HORS_TABLEE_BATIMENTS, SOLITAIRES_TABLEE, villageoisTablee, cibleTablee } from "../systems/lakour-loups/logique/composition.mjs";
+import { composer, equilibreDe, nombreDeLoups, NIVEAUX, HORS_TABLEE, HORS_TABLEE_BATIMENTS, SOLITAIRES_TABLEE, villageoisTablee, cibleDe } from "../systems/lakour-loups/logique/composition.mjs";
 import { NIVEAU_PETITE_TABLEE, nombreDeLoupsTablee, ombresTablee } from "../systems/lakour-loups/logique/tablee.mjs";
 const CLASSIQUES = NIVEAUX.filter(n => n !== NIVEAU_PETITE_TABLEE);
 
@@ -12,13 +12,13 @@ const camp = c => EQ.roles[c].camp;
 const speciaux = roles => roles.filter(c => camp(c) === "meute" && c !== "loup-de-brumecombe");
 const solitaires = roles => roles.filter(c => camp(c) === "solitaire");
 
-test("toute taille de 6 à 18, tout niveau classique : bon nombre de rôles et de loups, équilibre à ±2, rôles uniques", () => {
+test("toute taille de 6 à 18, tout niveau classique : bon nombre de rôles et de loups, équilibre à ±2 de la cible du contenu, rôles uniques", () => {
   for (const niveau of CLASSIQUES) for (let n = 6; n <= 18; n++) for (let g = 0; g < 8; g++) {
     const c = composer(n, EQ, { niveau, graine: `${niveau}/${n}/${g}` });
     const ou = `${niveau}, ${n} joueurs, graine ${g}`;
     assert.equal(c.roles.length, n, ou);
     assert.equal(c.roles.filter(r => camp(r) === "meute").length, nombreDeLoups(n), `${ou} : loups`);
-    assert.ok(Math.abs(c.somme) <= 2, `${ou} : équilibre ${c.somme}`);
+    assert.ok(Math.abs(c.somme - cibleDe(n, niveau, EQ)) <= 2, `${ou} : équilibre ${c.somme} (cible ${cibleDe(n, niveau, EQ)})`);
     assert.equal(c.somme, equilibreDe(c.roles, EQ));
     for (const r of c.roles) {
       const e = EQ.roles[r];
@@ -51,7 +51,7 @@ test("petite tablée : 4 à 12 places, loups selon son barème, deux rôles de l
       assert.ok(NIVEAUX.indexOf(EQ.roles[r].niveau) <= 1 || SOLITAIRES_TABLEE.includes(r), `${ou} : ${r} hors niveau classique`);
       if (EQ.roles[r].unique) assert.equal(c.roles.filter(x => x === r).length, 1, `${ou} : ${r} en double`);
     }
-    assert.ok(Math.abs(c.somme - cibleTablee(n)) <= 3, `${ou} : équilibre ${c.somme} loin de la cible ${cibleTablee(n)}`);
+    assert.ok(Math.abs(c.somme - cibleDe(n, NIVEAU_PETITE_TABLEE, EQ)) <= 3, `${ou} : équilibre ${c.somme} loin de la cible ${cibleDe(n, NIVEAU_PETITE_TABLEE, EQ)}`);
     for (const b of c.batiments) assert.ok(!HORS_TABLEE_BATIMENTS.includes(b), `${ou} : bâtiment ${b}`);
     assert.ok(c.batiments.length >= 4);
   }
@@ -120,4 +120,26 @@ test("bâtiments : 4 à 6 selon la taille, permis par le niveau, sans doublon", 
   const d = composer(18, EQ, { niveau: "debutants", graine: 1 });
   assert.equal(d.batiments.length, Math.min(6, permis.length));
   for (const b of d.batiments) assert.ok(permis.includes(b), `${b} hors niveau débutants`);
+});
+
+// Le Pacte, étape 6 : la cible d'équilibre par niveau et par taille vient du contenu (equilibre.cibles, calibrée par simulation) ;
+// sans elle, 0 (la petite tablée : cibleTablee) ; une taille absente prend la plus proche ; une cible donnée passe avant.
+test("cibleDe : la cible du contenu par niveau et par taille, la plus proche, sinon 0 ; composer la vise", () => {
+  const eq = { ...EQ, cibles: { classique: { 8: 3, 12: -2 } } };
+  assert.equal(cibleDe(8, "classique", eq), 3);
+  assert.equal(cibleDe(11, "classique", eq), -2, "la taille la plus proche");
+  assert.equal(cibleDe(8, "chaos", eq), 0, "sans cible pour ce niveau : 0");
+  assert.equal(cibleDe(6, NIVEAU_PETITE_TABLEE, { roles: EQ.roles }), 3, "petite tablée sans cible du contenu : cibleTablee");
+  for (let g = 0; g < 6; g++) {
+    assert.ok(Math.abs(composer(8, eq, { niveau: "classique", graine: `cible/${g}` }).somme - 3) <= 2);
+    assert.ok(Math.abs(composer(8, eq, { niveau: "classique", graine: `cible/${g}`, cible: -4 }).somme + 4) <= 2, "une cible donnée passe avant");
+  }
+  // Une variante choisie ajoute son ajustement (equilibre.ajustements) ; une variante absente ou non choisie, rien.
+  const aj = { ...eq, ajustements: { vendanges: 5, chaine: -2 } };
+  assert.equal(cibleDe(8, "classique", aj, { vendanges: true, chaine: false, mur: true }), 8);
+  assert.equal(cibleDe(8, "classique", aj, { vendanges: true, chaine: true }), 6);
+  assert.equal(cibleDe(8, "classique", aj), 3);
+  for (let g = 0; g < 4; g++) assert.ok(Math.abs(composer(8, aj, { niveau: "classique", graine: `aj/${g}`, variantes: { vendanges: true } }).somme - 8) <= 2);
+  for (const [cle, x] of Object.entries(EQ.ajustements ?? {})) assert.ok(Number.isFinite(x), `ajustement ${cle} : ${x}`);
+  for (const [niveau, t] of Object.entries(EQ.cibles ?? {})) for (const [n, c] of Object.entries(t)) assert.ok(Number.isFinite(c), `${niveau} ${n} : ${c}`);
 });

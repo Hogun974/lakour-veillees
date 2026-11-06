@@ -1822,7 +1822,7 @@
       },
       "Spiritisme": {
         "SansMort": "Séance: no spirit to question yet; the card stays in the narrator's hand.",
-        "Carte": "Séance ({nom}): the Stargazer {liseuse} questions the spirit of {mort}. The questions: {questions}",
+        "Carte": "Séance ({nom}): the Stargazer questions the spirit of {mort}. The questions: {questions}",
         "InviteQuestion": "Séance: which question should the spirit hear?",
         "InviteSpirite": "Séance: who will be the Medium asking the question?",
         "InviteDesigner": "Séance: name {n} player(s) for the question “{question}”",

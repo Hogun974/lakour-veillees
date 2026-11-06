@@ -1822,7 +1822,7 @@
       },
       "Spiritisme": {
         "SansMort": "Le Spiritisme : aucun esprit à interroger encore ; la carte reste dans la main du narrateur.",
-        "Carte": "Séance de Spiritisme ({nom}) : la Liseuse d'étoiles {liseuse} interroge l'esprit de {mort}. Les questions : {questions}",
+        "Carte": "Séance de Spiritisme ({nom}) : la Liseuse d'étoiles interroge l'esprit de {mort}. Les questions : {questions}",
         "InviteQuestion": "Le Spiritisme : quelle question l'esprit doit-il entendre ?",
         "InviteSpirite": "Le Spiritisme : qui sera le Spirite, qui pose la question ?",
         "InviteDesigner": "Le Spiritisme : désignez {n} joueur(s) pour la question « {question} »",

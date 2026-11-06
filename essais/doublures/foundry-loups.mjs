@@ -7,7 +7,8 @@
 // Le plateau : des SCÈNES (ajouterScene : la carte du village, avec son plan dans les drapeaux) et leurs JETONS
 // (création, mise à jour, déplacements par moveTokens, hooks preUpdateToken / preMoveToken comme dans le navigateur qui
 // modifie). Les hooks sont appelés pour de bon (Hooks.on / Hooks.callAll / Hooks.call) ; journalHooks les note tous.
-// Utilisée par essais/loups-api.test.mjs, essais/integration-loups.test.mjs et essais/compagnons.test.mjs.
+// Utilisée par essais/loups-api.test.mjs, essais/integration-loups.test.mjs (par essais/outils/partie-loups.mjs, que le simulateur
+// d'équilibre reprend : essais/outils/simuler-veillees.mjs) et essais/compagnons.test.mjs.
 // Le coffre : celui du MJ IA (sous-module modules/lakour-mj-ia, scripts/coffre.js), le vrai, branché comme dans Foundry sur
 // game.modules.get("lakour-mj-ia").api.coffre (option moteur, vraie par défaut ; moteur: false = le module coupé).
 import { readFileSync, readdirSync } from "node:fs";
@@ -268,7 +269,10 @@ export const livreA = (emission, userId) => !emission.recipients || emission.rec
 // 0 par défaut, pour que les parties des essais restent reproductibles (la rareté s'éprouve sur L.tirerPeste).
 // dernierSouffle : le réglage « lakour-loups.dernierSouffle » (vrai dans Foundry) ; faux par défaut ici, pour que les morts
 // simulés qui tentent de voter soient refusés comme avant (ses propres essais l'activent : essais/lot2-*.test.mjs).
-export function installerFoundry({ joueurs = 6, contenu = false, chancePeste = 0, dernierSouffle = false, moteur = true } = {}) {
+// rapide (le simulateur, essais/outils/partie-loups.mjs sans vérification) : un réglage lu est recopié de son JSON (gardé jusqu'à
+// l'écriture suivante), comme Foundry qui les range en JSON, au lieu d'un clone structuré à chaque lecture (le quart du temps d'une
+// partie) ; les valeurs des réglages du système sont du JSON pur : mêmes parties.
+export function installerFoundry({ joueurs = 6, contenu = false, chancePeste = 0, dernierSouffle = false, moteur = true, rapide = false } = {}) {
   compteur = 0;
   journalHooks = []; emissions = []; messages = []; reglages = new Map();
   ecouteursMJ = []; clients = []; enVol = new Set(); erreursSocket = [];
@@ -291,8 +295,13 @@ export function installerFoundry({ joueurs = 6, contenu = false, chancePeste = 0
           : id === "lakour-loups" && cle === "dernierSouffle" ? dernierSouffle : structuredClone(conf.default);
         reglages.set(`${id}.${cle}`, { valeur, conf });
       },
-      get(id, cle) { return structuredClone(reglages.get(`${id}.${cle}`).valeur); },
-      async set(id, cle, v) { const r = reglages.get(`${id}.${cle}`); r.valeur = structuredClone(v); r.conf.onChange?.(structuredClone(v)); return v; }
+      get(id, cle) {
+        const r = reglages.get(`${id}.${cle}`);
+        if (!rapide || r.valeur === undefined) return structuredClone(r.valeur);
+        r.json ??= JSON.stringify(r.valeur);
+        return JSON.parse(r.json);
+      },
+      async set(id, cle, v) { const r = reglages.get(`${id}.${cle}`); r.valeur = structuredClone(v); r.json = undefined; r.conf.onChange?.(structuredClone(v)); return v; }
     },
     socket: {
       // Comme le serveur v14 : { recipients } restreint la livraison à ces utilisateurs (noté dans emissions).
@@ -440,6 +449,24 @@ export function creerObjetMonde(name, type, system) {
 
 
 // ------------------------------------------------------------------ joueurs simulés
+// Ce que les politiques lisent du contenu (Le Pacte, étape 6) : les noms des rôles, l'équilibre (information, protection),
+// l'invite de la chasse de la meute, les libellés des camps.
+const PAS_DE_FILTRE = () => true;
+let cacheContenu = null;
+function contenuDesPolitiques() {
+  if (!cacheContenu) {
+    let equilibre = {};
+    try { equilibre = JSON.parse(readFileSync(new URL(`modules/${MODULE_CONTENU}/assets/equilibre.json`, RACINE), "utf8")).roles ?? {}; } catch { equilibre = {}; }
+    cacheContenu = { noms: Object.fromEntries(CONTENU.roles.map(r => [r.name, r.system.cle])), equilibre,
+      invite: CONTENU.roles.find(r => r.system.cle === "loup-de-brumecombe")?.system.nuit?.invite ?? "" };
+  }
+  return cacheContenu;
+}
+const nomsDesRoles = () => contenuDesPolitiques().noms;
+const equilibreDesRoles = () => contenuDesPolitiques().equilibre;
+const INVITE_MEUTE = () => contenuDesPolitiques().invite;
+const NOMS_DES_CAMPS = Object.fromEntries(Object.entries(FR.LAKOUR_LOUPS.Camps ?? {}).map(([cle, libelle]) => [libelle, cle]));
+
 // Chaque joueur est un navigateur branché sur le socket « system.lakour-loups ». Comme le vrai serveur, la doublure ne
 // lui livre que ce qui lui est adressé (recipients) ; il répond au MJ actif avec l'identifiant que le serveur ajoute
 // (emetteur). Il reçoit ses demandes de nuit (choix, ou mot à écrire pour le Messager), son carnet secret, l'annonce du
@@ -449,10 +476,16 @@ export function creerObjetMonde(name, type, system) {
 // son rôle, sa meute s'il est loup, les rôles révélés, son carnet.
 // Options : mortsVotent (les morts tentent de voter), fraude (un joueur tente de voter ou de répondre à la place d'un
 // autre), pouvoirs (probabilité d'user d'un pouvoir de jour possible, 0 = jamais).
-export function simulerJoueurs({ graine = "joueurs", canal = "system.lakour-loups", mortsVotent = true, fraude = true, pouvoirs = 0.5 } = {}) {
+// adresse (Le Pacte, étape 6 ; absente : les joueurs au hasard de toujours, mêmes tirages) : de 0 à 1, chaque joueur suit les
+// politiques par rôle du système (logique/politiques.mjs) d'après ce qu'il sait — son carnet, le chat public, les rôles révélés et
+// ce qui s'est dit au débat (journal.annonces : un villageois adroit dit les loups qu'il a découverts, un loup ment parfois) —, et
+// use de son information avec cette probabilité. Ni fraude ni morts qui votent dans ce mode (rien ne s'y vérifie).
+export function simulerJoueurs({ graine = "joueurs", canal = "system.lakour-loups", mortsVotent = true, fraude = true, pouvoirs = 0.5, adresse = null } = {}) {
   const h = creerHasard(graine);
-  const journal = { reponses: [], bulletins: [], refusAttendus: [], demandes: [], textes: [], secrets: [], jour: [], fuites: [] };
+  const journal = { reponses: [], bulletins: [], refusAttendus: [], demandes: [], textes: [], secrets: [], jour: [], fuites: [], annonces: [] };
   let dernierVote = "";
+  const adroits = adresse !== null && adresse !== undefined;
+  if (adroits) { mortsVotent = false; fraude = false; }
   // Ce que chaque joueur sait (0.9.0) : SA fiche (rôle, usages, camp), reçue du MJ par le socket ; sa meute s'il est loup (sa
   // carte de rôle, les nouvelles du carnet) ; les rôles et camps révélés à tous (documents). Jamais le rôle d'un autre.
   const fiches = new Map();   // acteurId -> fiche reçue par son joueur
@@ -490,6 +523,84 @@ export function simulerJoueurs({ graine = "joueurs", canal = "system.lakour-loup
   };
   const envoyer = (message, qui) => envoyerAuMJ(canal, message, { emetteur: qui });
 
+  // ---- les politiques (adresse) : le savoir d'un joueur, d'après ce que son navigateur a reçu et ce qui s'est dit au débat.
+  const villageoisDuMonde = () => game.actors.filter(a => a.type === "villageois");
+  function savoirPour(userId) {
+    const moi = acteurDe(userId);
+    const camp = fiches.get(moi?.id)?.camp || "village";
+    const tous = villageoisDuMonde();
+    const vus = tous.map(a => ({ id: a.id, nom: a.name, vivant: a.system.vivant, revele: a.system.revele, camp: campPublic(a),
+      role: (a.id === moi?.id ? roleDe(a) : roleRevele(a))?.system.cle ?? "" }));
+    const noms = camp === "meute" ? meuteDe(userId) : new Set();
+    const allies = tous.filter(a => noms.has(a.name)).map(a => a.id);
+    const amour = fiches.get(moi?.id)?.amoureux;
+    const etat = etatPublic();
+    const aPlat = tous.map(a => ({ id: a.id, vivant: a.system.vivant }));
+    return L.savoirDuJoueur({ moi: moi?.id ?? "", camp, allies: [...allies, ...(amour ? [amour] : [])],
+      textes: journal.secrets.filter(s => s.userId === userId).map(s => s.texte), publics: messagesPublics(),
+      villageois: vus, gabarits: FR.LAKOUR_LOUPS, nomsDesRoles: nomsDesRoles(), nomsDesCamps: NOMS_DES_CAMPS, annonces: journal.annonces,
+      roles: equilibreDesRoles(), registre: etat?.registre ?? [], role: roleDe(moi)?.system.cle ?? "", groupes: etat?.ambigus?.groupes ?? null, voisins: id => { try { const v = L.voisins(etat, aPlat, id); return [v?.gauche, v?.droite].filter(Boolean); } catch { return []; } } });
+  }
+  // Le chat public, une fois pour toutes les lectures d'un même instant (seuls les messages qui portent un savoir public).
+  let publicsLus = { n: -1, textes: [] };
+  function messagesPublics() {
+    if (publicsLus.n !== messages.length) {
+      publicsLus = { n: messages.length, textes: messages.map(m => String(m.content ?? "")).filter(t => /tombes|cacardent|loup|camp|wolf|geese|graves/i.test(t)) };
+    }
+    return publicsLus.textes;
+  }
+  const choixPasses = (acteurId, effet) => journal.reponses.filter(r => r.acteurId === acteurId && r.effet === effet).flatMap(r => r.cibles);
+  function choixAdroit(d) {
+    const moi = game.actors.get(d.acteurId);
+    const role = roleDe(moi);
+    const chasse = Boolean(INVITE_MEUTE() && String(d.invite ?? "").endsWith(INVITE_MEUTE()));
+    const effet = chasse ? "tuer" : role?.system.effet ?? "";
+    return { effet, cibles: L.politiqueDeNuit({ effet, objet: d.objet ?? "", candidats: d.candidats, nombre: d.nombre ?? 1, invite: d.invite, savoir: savoirPour(d.destinataire),
+      adresse, hasard: h, roles: equilibreDesRoles(), nomsDesRoles: nomsDesRoles(), deja: choixPasses(d.acteurId, effet), solitaire: role?.system.camp === "solitaire" }) };
+  }
+  // Le débat : ce que chacun dit tout haut (une fois chaque loup découvert ; un loup ment parfois).
+  function debattre(etat) {
+    const vivants = villageoisDuMonde().filter(a => a.system.vivant);
+    for (const a of vivants.filter(x => x.system.joueur && !x.system.silence)) {
+      const dejaDites = journal.annonces.filter(x => x.par === a.id).map(x => x.cible);
+      for (const x of L.annoncesDuJoueur({ savoir: savoirPour(a.system.joueur), adresse, hasard: h, dejaDites, vivants: vivants.map(v => v.id) })) {
+        journal.annonces.push({ tour: etat?.tour ?? 0, par: a.id, ...x });
+      }
+    }
+  }
+  // Le Juge de paix, juste après le dépouillement : il annule s'il sait qu'un condamné est innocent (logique/politiques.mjs).
+  function annulerAdroit(etat, elus) {
+    for (const a of villageoisDuMonde().filter(x => x.system.joueur && x.system.vivant)) {
+      const villageois = villageoisDuMonde().map(aPlatPour(a.system.joueur));
+      const p = L.pouvoirsDe({ villageois, etat, acteurId: a.id }).find(x => x.possible && x.pouvoir === "juge-de-paix");
+      if (!p || !L.annulerLeVote({ elus, savoir: savoirPour(a.system.joueur), adresse, hasard: h })) continue;
+      journal.jour.push({ tour: etat.tour, acteurId: a.id, pouvoir: p.pouvoir, cibles: [] });
+      envoyer({ type: "jour", acteurId: a.id, pouvoir: p.pouvoir, cibles: [], texte: "", userId: a.system.joueur }, a.system.joueur);
+    }
+  }
+  // Le débat d'un jour (une fois par tour), juste avant son premier vote : ce que la nuit a appris est dit à temps.
+  let dernierDebat = -1;
+  function voterAdroit(etat) {
+    const v = etat.vote;
+    if (dernierDebat !== etat.tour) { dernierDebat = etat.tour; debattre(etat); }
+    const vivants = villageoisDuMonde().filter(a => a.system.vivant);
+    const humains = vivants.filter(x => x.system.joueur);
+    const savoirs = new Map(humains.map(a => [a.id, savoirPour(a.system.joueur)]));
+    const unLoup = humains.find(x => savoirs.get(x.id).camp === "meute");
+    const proie = unLoup ? L.proieDuVoteDeLaMeute({ candidats: v.candidats, savoir: savoirs.get(unLoup.id), adresse, hasard: h }) : "";
+    const public1 = savoirs.get(humains.find(x => savoirs.get(x.id).camp !== "meute")?.id) ?? { menteurs: [] };
+    const connus = v.candidats.filter(id => campPublic(game.actors.get(id)) === "meute");
+    const revele = new Map(villageoisDuMonde().filter(a => a.system.revele).map(a => [a.id, campPublic(a)]));
+    const rumeur = L.rumeurDuJour({ candidats: v.candidats, annonces: journal.annonces, menteurs: public1.menteurs ?? [], hasard: h, adresse, connus,
+      fiables: L.fiablesDesAnnonces(journal.annonces, revele) });
+    const objet = v.objet === "chapelle" ? "chapelle" : v.objet === "bailli" ? "bailli" : "execution";
+    for (const a of humains) {
+      const cible = L.politiqueDeVote({ objet, candidats: v.candidats, savoir: savoirs.get(a.id), adresse, hasard: h, place: { rumeur, proie } }) ?? "";
+      journal.bulletins.push({ tour: etat.tour, numero: v.numero, votant: a.id, cible });
+      envoyer({ type: "vote", votant: a.id, cible, userId: a.system.joueur }, a.system.joueur);
+    }
+  }
+
   function choixDeNuit(d) {
     const moi = game.actors.get(d.acteurId);
     const role = roleDe(moi);
@@ -521,6 +632,7 @@ export function simulerJoueurs({ graine = "joueurs", canal = "system.lakour-loup
     const cle = `${v?.numero}`;
     if (!v?.ouvert || dernierVote === cle) return;
     dernierVote = cle;
+    if (adroits) return voterAdroit(etat);
     const vivants = game.actors.filter(a => a.type === "villageois" && a.system.vivant);
     // La meute (vue d'un loup joueur : sa carte de rôle) se concerte sur une proie hors de la meute.
     const unLoup = vivants.find(x => x.system.joueur && estLoupPour(x.system.joueur, x));
@@ -572,11 +684,22 @@ export function simulerJoueurs({ graine = "joueurs", canal = "system.lakour-loup
   }
 
   // Les pouvoirs de jour possibles de ce joueur, vus de son navigateur (état public).
-  function usePouvoirs(etat, filtre = () => true) {
+  function usePouvoirs(etat, filtre = PAS_DE_FILTRE) {
     if (!pouvoirs) return;
     for (const a of game.actors.filter(x => x.type === "villageois" && x.system.joueur)) {
       const villageois = game.actors.filter(x => x.type === "villageois").map(aPlatPour(a.system.joueur));
       const possibles = L.pouvoirsDe({ villageois, etat, acteurId: a.id }).filter(p => p.possible && filtre(p));
+      // (Le Puits, à la mort, se choisit comme avant : un dernier mot ne change rien à la partie.)
+      if (adroits && filtre === PAS_DE_FILTRE) {
+        // La politique du jour (logique/politiques.mjs) : le pouvoir et ses cibles d'après ce qu'il sait.
+        const choix = possibles.length ? L.politiqueDuJour({ possibles, savoir: savoirPour(a.system.joueur), adresse, hasard: h, pouvoirs }) : null;
+        if (!choix) continue;
+        const p = possibles.find(x => x.pouvoir === choix.pouvoir);
+        const texte = p?.texte ? "Je n'ai rien vu venir dans la brume." : "";
+        journal.jour.push({ tour: etat.tour, acteurId: a.id, pouvoir: choix.pouvoir, cibles: choix.cibles });
+        envoyer({ type: "jour", acteurId: a.id, pouvoir: choix.pouvoir, cibles: choix.cibles, texte, userId: a.system.joueur }, a.system.joueur);
+        continue;
+      }
       if (!possibles.length || h() >= pouvoirs) continue;
       const p = choisir(possibles, h);
       const cibles = tirer(p.candidats, p.cibles);
@@ -618,8 +741,8 @@ export function simulerJoueurs({ graine = "joueurs", canal = "system.lakour-loup
         envoyer({ type: "reponse", id: m.id, cibles: [m.candidats[0].id], userId: tricheur.system.joueur }, tricheur.system.joueur);
         envoyer({ type: "reponse", id: m.id, cibles: [m.candidats[0].id], userId: m.destinataire }, tricheur.system.joueur);
       }
-      const cibles = choixDeNuit(m);
-      journal.reponses.push({ id: m.id, acteurId: m.acteurId, cibles });
+      const { effet, cibles } = adroits ? choixAdroit(m) : { effet: "", cibles: choixDeNuit(m) };
+      journal.reponses.push({ id: m.id, acteurId: m.acteurId, cibles, ...(adroits ? { effet } : {}) });
       envoyer({ type: "reponse", id: m.id, cibles, userId: m.destinataire }, m.destinataire);
     } else if (m.type === "secret") {
       for (const u of recipients ?? []) journal.secrets.push({ userId: u, texte: m.entree?.texte ?? m.entree?.html ?? "", entree: m.entree });
@@ -629,7 +752,8 @@ export function simulerJoueurs({ graine = "joueurs", canal = "system.lakour-loup
     else if (m.type === "hook" && m.nom === "lakourLoups.aube") usePouvoirs(etatPublic());
     else if (m.type === "hook" && m.nom === "lakourLoups.voteClos") {
       const r = m.args?.[0];
-      if (r?.objet === "execution" && r.elus?.length && h() < 0.6) usePouvoirs(etatPublic(), p => p.pouvoir === "juge-de-paix");
+      if (adroits && r?.objet === "execution" && r.elus?.length) annulerAdroit(etatPublic(), r.elus);
+      else if (r?.objet === "execution" && r.elus?.length && h() < 0.6) usePouvoirs(etatPublic(), p => p.pouvoir === "juge-de-paix");
     } else if (m.type === "hook" && m.nom === "lakourLoups.elimination") {
       const mort = game.actors.get(m.args?.[0]?.acteurId);
       if (mort?.system.joueur && h() < 0.7) usePouvoirs(etatPublic(), p => p.pouvoir === "puits");

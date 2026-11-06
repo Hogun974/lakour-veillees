@@ -1,9 +1,12 @@
 // Composition équilibrée et variée d'une partie, d'après l'équilibre fourni par le module de contenu
 // (lakour-veillees : assets/equilibre.json, { roles: { cle: { camp, poids, niveau, joueursMin, unique, information?, protection? } },
-// batiments: { cle: { niveau } } }).
+// batiments: { cle: { niveau } }, cibles: { niveau: { n: cible } } }).
+// Le champ « cibles » (Le Pacte, étape 6) : pour chaque niveau et chaque nombre de joueurs, la somme des poids qui donne une chance sur
+// deux au village contre la meute, mesurée par simulation (essais/outils/calibrer-poids.mjs, docs/equilibre-veillees.md) ; cibleDe
+// la lit (une taille absente : la plus proche ; un niveau sans cibles : 0, la petite tablée cibleTablee).
 // Principe : on tire de nombreuses compositions possibles qui respectent les règles du niveau (nombre de loups, loups spéciaux,
 // solitaires, au moins un rôle d'information), puis on garde l'une des meilleures selon trois critères :
-//   - l'équilibre : somme des poids proche de la cible (0 = autant de chances pour chaque camp) ;
+//   - l'équilibre : somme des poids proche de la cible de la taille et du niveau (cibleDe : autant de chances pour chaque camp) ;
 //   - la variété : les rôles et bâtiments des dernières parties sont pénalisés (historique), pour changer d'une partie à l'autre ;
 //   - les souhaits : rôles à inclure absolument, rôles exclus.
 // Pur et reproductible avec une graine.
@@ -42,8 +45,9 @@ const BASE_LOUP = "loup-de-brumecombe", BASE_VILLAGE = "villageois";
 // votes (le Colporteur ; le Chasseur de primes gagnait une partie sur cinq, sa cible exécutée par le sort, et le Revenant une sur
 // quatre, pendu par un village qui vote vite).
 export const HORS_TABLEE = ["loup-deguise", "pyromane", "dame-du-gue"];
-// Le Pacte, étape 3a : les rôles du Village du jeu de soirée ne sortent pas encore à la petite tablée, dont les dosages ont été
-// mesurés sans eux ; l'étape 6 (simulation) les y fera entrer ou non. Aux niveaux classique et chaos, le générateur les tire.
+// Le Pacte, étape 3a : les rôles du Village du jeu de soirée ne sortent pas à la petite tablée, dont les dosages ont été mesurés sans
+// eux. Étape 6 : ils y restent hors (ses compagnons IA jouent sans les politiques par rôle, que le simulateur mesure : à revoir quand
+// le moteur les branchera). Aux niveaux classique et chaos (et Le Pacte), le générateur les tire, compositions prêtes comprises.
 export const PACTE_HORS_TABLEE = ["franc-villageois", "aieul", "souffre-douleur", "innocent", "lavandiere", "bucheron", "furet", "gardeuse-d-oies",
   "greffier-begue", "vieux-sergent", "pie",
   // Le Pacte, étape 3b : les ambigus, les solitaires du livre et le Loup pâle, de même.
@@ -136,11 +140,13 @@ function tirer(n, niveau, cat, inclure, hasard, peste = false, loupsEnPlus = 0) 
   if (n >= 8) prendre(cat.solitaires, Math.max(0, entre(SOLITAIRES[niveau]) - roles.filter(c => cat.solitaires.includes(c)).length));
   // Au moins un rôle d'information pour le village.
   if (!roles.some(c => cat.information.includes(c))) prendre(cat.information, 1);
-  // Pouvoirs de village : de 15 à 70 % des places restantes, le reste en simples villageois.
+  // Pouvoirs de village : de 0 à 100 % des places restantes, le reste en simples villageois (Le Pacte, étape 6 : de 15 à 70 %
+  // avant ; les petites tables, où la meute pèse le plus, demandent un village plus armé, et les grandes tables de débutants un
+  // village moins armé, que ces bornes ne le permettaient).
   const reste = n - roles.length;
   if (reste < 0) return null;
   // Nombre de pouvoirs tiré largement : quand le niveau en offre peu (débutants), en prendre moins équilibre mieux.
-  prendre(cat.pouvoirsVillage, Math.round(reste * (0.15 + hasard() * 0.55)));
+  prendre(cat.pouvoirsVillage, Math.round(reste * hasard()));
   while (roles.length < n) roles.push(BASE_VILLAGE);
   return roles.slice(0, n);
 }
@@ -172,23 +178,45 @@ function tirerTablee(n, cat, inclure, hasard, peste = false) {
 }
 // La cible d'équilibre d'une petite tablée, sur l'échelle des poids du contenu : la meute y est courte mais va vite (deux votes
 // manqués suffisent souvent), le village doit être bien armé. Réglée par les parties simulées (essais/integration-loups.test.mjs).
+// Repli seulement (Le Pacte, étape 6) : un contenu qui donne ses cibles (equilibre.cibles, ci-dessous) les fait passer avant.
 export const cibleTablee = n => (n <= 5 ? 6 : n === 6 ? 3 : n <= 8 ? 5 : n <= 10 ? 1 : 9);
+// La cible d'équilibre d'une composition de n joueurs à ce niveau (Le Pacte, étape 6) : celle que donne le contenu
+// (equilibre.cibles[niveau][n], mesurée par simulation : essais/outils/calibrer-poids.mjs, docs/equilibre-veillees.md), sinon la cible
+// de la petite tablée (cibleTablee) à ce niveau, sinon 0. Une taille absente de la table prend la cible de la plus proche.
+// variantes (variantes.mjs, choixDesVariantes) : chaque variante active ajoute son ajustement mesuré (equilibre.ajustements[cle], en
+// poids : les Vendanges, la Chaîne des innocents ou l'Envoûtement déplacent l'équilibre ; la composition le compense).
+export function cibleDe(n, niveau, equilibre, variantes = null) {
+  const table = equilibre?.cibles?.[niveau];
+  const tailles = table && typeof table === "object" ? Object.keys(table).map(Number).filter(Number.isFinite) : [];
+  let cible = niveau === NIVEAU_PETITE_TABLEE ? cibleTablee(n) : 0;
+  if (tailles.length) {
+    const proche = tailles.reduce((m, t) => (Math.abs(t - n) < Math.abs(m - n) ? t : m), tailles[0]);
+    cible = Number(table[proche]) || 0;
+  }
+  const ajustements = equilibre?.ajustements ?? {};
+  for (const [cle, valeur] of Object.entries(variantes && typeof variantes === "object" ? variantes : {})) {
+    if (valeur && Number.isFinite(Number(ajustements[cle]))) cible += Number(ajustements[cle]);
+  }
+  return cible;
+}
 
 // Les rôles d'une liste sans la meute (peste noire) : chaque rôle du camp de la meute devient un simple villageois.
 export const sansMeute = (roles, equilibre) => roles.map(cle => (equilibre.roles?.[cle]?.camp === "meute" ? BASE_VILLAGE : cle));
 
-// Point d'entrée. options : { niveau, inclure: [cle], exclure: [cle], historique: [{ roles, batiments }], cible = 0, graine, essais = 400,
+// Point d'entrée. options : { niveau, inclure: [cle], exclure: [cle], historique: [{ roles, batiments }], cible (par défaut
+// cibleDe(n, niveau, equilibre) : la cible du contenu pour cette taille et ce niveau), graine, essais = 1200,
 // peste (true : composition de peste noire, sans meute ; l'équilibre ne compte plus, seule la variété), village (la variante « Le
 // Village » : ses rôles, l'Incendiaire, peuvent sortir ; jamais à la petite tablée), loupsEnPlus (la variante « Les Vendanges »,
-// variantes.mjs : des loups de plus que le barème ; jamais à la petite tablée) }
-// Petite tablée (niveau NIVEAU_PETITE_TABLEE, tablee.mjs) : tirerTablee, cible cibleTablee(n) sauf cible donnée, 4 à 12 places.
-export function composer(n, equilibre, { niveau = "classique", village = false, inclure = [], exclure = [], historique = [], cible = 0, graine,
-  essais = 1200, peste = false, loupsEnPlus = 0 } = {}) {
+// variantes.mjs : des loups de plus que le barème ; jamais à la petite tablée), variantes (Le Pacte, étape 6 : les variantes de la veillée,
+// { vendanges, chaine, envoutement… } : leur ajustement de cible, cibleDe) }
+// Petite tablée (niveau NIVEAU_PETITE_TABLEE, tablee.mjs) : tirerTablee, à sa cible (cibleDe), 4 à 12 places.
+export function composer(n, equilibre, { niveau = "classique", village = false, inclure = [], exclure = [], historique = [], cible, graine,
+  essais = 1200, peste = false, loupsEnPlus = 0, variantes = null } = {}) {
   if (!Number.isInteger(n) || n < 4) throw new Error(`Il faut au moins 4 joueurs (${n}).`);
   if (!NIVEAUX.includes(niveau)) throw new Error(`Niveau inconnu : ${niveau}.`);
   const tablee = niveau === NIVEAU_PETITE_TABLEE;
   if (tablee && n > 12) throw new Error(`Une petite tablée compte 12 places au plus (${n}).`);
-  if (tablee && cible === 0) cible = cibleTablee(n);
+  cible = cible === undefined || cible === null || !Number.isFinite(Number(cible)) ? cibleDe(n, niveau, equilibre, tablee ? null : variantes) : Number(cible);
   const hasard = creerHasard(graine);
   const cat = catalogue(equilibre, n, niveau, new Set(exclure), peste, village && !tablee);
   const inconnus = inclure.filter(c => !equilibre.roles?.[c]);

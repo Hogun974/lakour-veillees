@@ -126,8 +126,13 @@ const dormeursTaverne = (etat, nuit) => [...new Set([...effetsPour(etat, "tavern
 const mortsDeLaNuit = (etat, villageois) => villageois.filter(v => !vivant(v)
   && etat.morts.some(m => m.acteurId === v.id && m.tour === etat.tour && (m.phase === "nuit" || m.phase === "aube"))).map(v => v.id);
 
+// L'état déjà normalisé par pouvoirsDe (sa copie privée, que rien ne modifie) n'est pas recopié pour chaque pouvoir : la copie d'un
+// état de fin de partie coûtait plus que tout le reste (Le Pacte, étape 6 : le simulateur).
+const normalises = new WeakSet();
+const normaliserUneFois = e => (e && typeof e === "object" && normalises.has(e) ? e : normaliserEtat(e));
+
 export function candidatsDuPouvoir({ villageois = [], etat: e, acteurId = "", pouvoir }) {
-  const etat = normaliserEtat(e);
+  const etat = normaliserUneFois(e);
   const def = POUVOIRS_JOUR[pouvoir];
   if (!def || !def.cibles) return [];
   const vivants = villageois.filter(vivant);
@@ -153,7 +158,7 @@ export function candidatsDuPouvoir({ villageois = [], etat: e, acteurId = "", po
 const compterMots = t => String(t ?? "").trim().split(/\s+/).filter(Boolean).length;
 
 export function verifierPouvoir({ villageois = [], etat: e, acteurId = "", pouvoir, cibles = [], texte = "", batiments } = {}) {
-  const etat = normaliserEtat(e);
+  const etat = normaliserUneFois(e);
   const enJeu = batiments ?? etat.batimentsCles;
   const def = POUVOIRS_JOUR[pouvoir];
   const non = raison => ({ ok: false, raison, def, candidats: [] });
@@ -260,6 +265,7 @@ export function verifierPouvoir({ villageois = [], etat: e, acteurId = "", pouvo
 // Pour un joueur, les cibles ne sont pas encore choisies : on vérifie tout sauf elles.
 export function pouvoirsDe({ villageois = [], etat, acteurId, batiments } = {}) {
   const e = normaliserEtat(etat);
+  normalises.add(e);
   const enJeu = batiments ?? e.batimentsCles;
   const acteur = villageois.find(v => v.id === acteurId);
   return pouvoirsPossedes(acteur, enJeu, e).map(pouvoir => {

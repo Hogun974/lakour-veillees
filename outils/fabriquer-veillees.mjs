@@ -23,7 +23,7 @@ import { verifierModuleDeContenu } from "../modules/lakour-mj-ia/outils/contrat-
 import { APPARENCES, CAMPS, EFFETS, MODULE, VICTOIRES, VICTOIRES_DE_LOUP, ORDRE_MEUTE, cheminJeton, cleJetonBatiment, cleJetonMetier } from "../modules/lakour-veillees/contenu/aides.mjs";
 import { DOCUMENTS } from "../modules/lakour-veillees/contenu/index.mjs";
 import { compositions, MIN_JOUEURS, MAX_JOUEURS, MIN_TABLEE, MAX_TABLEE, NIVEAU_PETITE_TABLEE, NIVEAU_LE_PACTE } from "../modules/lakour-veillees/contenu/compositions.mjs";
-import { EQUILIBRE, EQUILIBRE_BATIMENTS } from "../modules/lakour-veillees/contenu/equilibre.mjs";
+import { EQUILIBRE, EQUILIBRE_BATIMENTS, CIBLES, AJUSTEMENTS } from "../modules/lakour-veillees/contenu/equilibre.mjs";
 import { FONDS, fondSVG, textesGraves } from "../modules/lakour-veillees/contenu/cartes.mjs";
 
 // Écriture atomique (fichier temporaire puis renommage) : un essai ou un serveur qui lit le fichier pendant la fabrication
@@ -375,7 +375,7 @@ export function ecrireAssetsDeContenu(racine, compos, libelles = {}) {
   mkdirSync(`${racine}/assets`, { recursive: true });
   const traduits = Object.fromEntries(Object.entries(compos).map(([cle, c]) => [cle, { ...c, libelle: libelles[c.libelle] ?? c.libelle }]));
   ecrire(`${racine}/assets/compositions.json`, `${JSON.stringify(traduits, null, 2)}\n`);
-  ecrire(`${racine}/assets/equilibre.json`, `${JSON.stringify({ roles: EQUILIBRE, batiments: EQUILIBRE_BATIMENTS }, null, 2)}\n`);
+  ecrire(`${racine}/assets/equilibre.json`, `${JSON.stringify({ roles: EQUILIBRE, batiments: EQUILIBRE_BATIMENTS, cibles: CIBLES, ajustements: AJUSTEMENTS }, null, 2)}\n`);
 }
 
 // Libellés anglais des compositions (contenu/en/compositions.json : { "libellé français": "english label" }), engendrés depuis les

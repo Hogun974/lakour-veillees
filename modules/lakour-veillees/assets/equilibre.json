@@ -16,14 +16,14 @@
     },
     "loup-affame": {
       "camp": "meute",
-      "poids": -8,
+      "poids": -11,
       "niveau": "classique",
       "joueursMin": 10,
       "unique": true
     },
     "louve-mere": {
       "camp": "meute",
-      "poids": -9,
+      "poids": -12,
       "niveau": "chaos",
       "joueursMin": 10,
       "unique": true
@@ -37,28 +37,28 @@
     },
     "loup-flaireur": {
       "camp": "meute",
-      "poids": -8,
+      "poids": -5,
       "niveau": "classique",
       "joueursMin": 9,
       "unique": true
     },
     "loup-des-roseaux": {
       "camp": "meute",
-      "poids": -7,
+      "poids": -6,
       "niveau": "classique",
       "joueursMin": 10,
       "unique": true
     },
     "loup-pale": {
       "camp": "meute",
-      "poids": -5,
+      "poids": -1,
       "niveau": "chaos",
       "joueursMin": 12,
       "unique": true
     },
     "liseuse-de-cendres": {
       "camp": "village",
-      "poids": 7,
+      "poids": 6,
       "niveau": "debutants",
       "joueursMin": 4,
       "unique": true,
@@ -66,7 +66,7 @@
     },
     "sourcier": {
       "camp": "village",
-      "poids": 4,
+      "poids": 1,
       "niveau": "classique",
       "joueursMin": 8,
       "unique": true,
@@ -74,7 +74,7 @@
     },
     "veilleuse-de-lanterne": {
       "camp": "village",
-      "poids": 5,
+      "poids": 4,
       "niveau": "classique",
       "joueursMin": 7,
       "unique": true,
@@ -82,7 +82,7 @@
     },
     "fossoyeur": {
       "camp": "village",
-      "poids": 3,
+      "poids": 1,
       "niveau": "debutants",
       "joueursMin": 7,
       "unique": true,
@@ -90,7 +90,7 @@
     },
     "ermite": {
       "camp": "village",
-      "poids": 3,
+      "poids": 1,
       "niveau": "classique",
       "joueursMin": 9,
       "unique": true,
@@ -98,7 +98,7 @@
     },
     "enfant-de-la-brume": {
       "camp": "village",
-      "poids": 3,
+      "poids": 4,
       "niveau": "classique",
       "joueursMin": 8,
       "unique": true,
@@ -114,7 +114,7 @@
     },
     "garde-du-pont": {
       "camp": "village",
-      "poids": 4,
+      "poids": 3,
       "niveau": "debutants",
       "joueursMin": 4,
       "unique": true,
@@ -122,7 +122,7 @@
     },
     "gardienne-des-cles": {
       "camp": "village",
-      "poids": 3,
+      "poids": 2,
       "niveau": "classique",
       "joueursMin": 9,
       "unique": true,
@@ -130,36 +130,36 @@
     },
     "herboriste": {
       "camp": "village",
-      "poids": 5,
+      "poids": 4,
       "niveau": "debutants",
-      "joueursMin": 7,
+      "joueursMin": 6,
       "unique": true,
       "protection": true
     },
     "braconniere": {
       "camp": "village",
-      "poids": 3,
+      "poids": 2,
       "niveau": "debutants",
       "joueursMin": 7,
       "unique": true
     },
     "sonneur": {
       "camp": "village",
-      "poids": 2,
+      "poids": 1,
       "niveau": "classique",
       "joueursMin": 8,
       "unique": true
     },
     "juge-de-paix": {
       "camp": "village",
-      "poids": 3,
+      "poids": 2,
       "niveau": "classique",
       "joueursMin": 8,
       "unique": true
     },
     "conteuse": {
       "camp": "village",
-      "poids": 2,
+      "poids": 1,
       "niveau": "classique",
       "joueursMin": 8,
       "unique": true
@@ -173,14 +173,14 @@
     },
     "pecheur-de-nuit": {
       "camp": "village",
-      "poids": 3,
+      "poids": 0,
       "niveau": "classique",
       "joueursMin": 9,
       "unique": true
     },
     "entremetteuse": {
       "camp": "village",
-      "poids": -1,
+      "poids": 0,
       "niveau": "chaos",
       "joueursMin": 8,
       "unique": true
@@ -234,35 +234,35 @@
     },
     "franc-villageois": {
       "camp": "village",
-      "poids": 2,
+      "poids": 3,
       "niveau": "classique",
       "joueursMin": 8,
       "unique": true
     },
     "aieul": {
       "camp": "village",
-      "poids": 5,
+      "poids": 2,
       "niveau": "classique",
       "joueursMin": 8,
       "unique": true
     },
     "souffre-douleur": {
       "camp": "village",
-      "poids": 2,
+      "poids": 1,
       "niveau": "classique",
       "joueursMin": 8,
       "unique": true
     },
     "innocent": {
       "camp": "village",
-      "poids": 3,
+      "poids": 2,
       "niveau": "classique",
       "joueursMin": 8,
       "unique": true
     },
     "lavandiere": {
       "camp": "village",
-      "poids": 3,
+      "poids": 0,
       "niveau": "classique",
       "joueursMin": 9,
       "unique": false,
@@ -270,7 +270,7 @@
     },
     "bucheron": {
       "camp": "village",
-      "poids": 3,
+      "poids": 1,
       "niveau": "chaos",
       "joueursMin": 12,
       "unique": false,
@@ -278,7 +278,7 @@
     },
     "furet": {
       "camp": "village",
-      "poids": 5,
+      "poids": 1,
       "niveau": "classique",
       "joueursMin": 8,
       "unique": true,
@@ -286,7 +286,7 @@
     },
     "gardeuse-d-oies": {
       "camp": "village",
-      "poids": 4,
+      "poids": 3,
       "niveau": "classique",
       "joueursMin": 8,
       "unique": true,
@@ -294,7 +294,7 @@
     },
     "greffier-begue": {
       "camp": "village",
-      "poids": 3,
+      "poids": 2,
       "niveau": "chaos",
       "joueursMin": 9,
       "unique": true
@@ -308,49 +308,49 @@
     },
     "pie": {
       "camp": "village",
-      "poids": 3,
+      "poids": 1,
       "niveau": "chaos",
       "joueursMin": 9,
       "unique": true
     },
     "chapardeur": {
       "camp": "village",
-      "poids": 0,
+      "poids": 4,
       "niveau": "chaos",
       "joueursMin": 8,
       "unique": true
     },
     "bateleur": {
       "camp": "village",
-      "poids": 4,
+      "poids": 1,
       "niveau": "chaos",
       "joueursMin": 9,
       "unique": true
     },
     "matin": {
       "camp": "village",
-      "poids": -1,
+      "poids": -3,
       "niveau": "chaos",
       "joueursMin": 9,
       "unique": true
     },
     "enfant-des-bois": {
       "camp": "village",
-      "poids": 0,
+      "poids": -4,
       "niveau": "classique",
       "joueursMin": 8,
       "unique": true
     },
     "chambriere": {
       "camp": "village",
-      "poids": 2,
+      "poids": -1,
       "niveau": "classique",
       "joueursMin": 8,
       "unique": true
     },
     "liseuse-d-etoiles": {
       "camp": "village",
-      "poids": 4,
+      "poids": 1,
       "niveau": "classique",
       "joueursMin": 8,
       "unique": true,
@@ -358,7 +358,7 @@
     },
     "incendiaire": {
       "camp": "village",
-      "poids": 2,
+      "poids": 3,
       "niveau": "classique",
       "joueursMin": 8,
       "unique": true,
@@ -366,7 +366,7 @@
     },
     "revenant": {
       "camp": "solitaire",
-      "poids": -2,
+      "poids": -1,
       "niveau": "classique",
       "joueursMin": 9,
       "unique": true
@@ -380,42 +380,42 @@
     },
     "colporteur": {
       "camp": "solitaire",
-      "poids": -1,
+      "poids": -2,
       "niveau": "chaos",
       "joueursMin": 8,
       "unique": true
     },
     "pyromane": {
       "camp": "solitaire",
-      "poids": -6,
+      "poids": -2,
       "niveau": "chaos",
       "joueursMin": 10,
       "unique": true
     },
     "dame-du-gue": {
       "camp": "solitaire",
-      "poids": -5,
+      "poids": -2,
       "niveau": "chaos",
       "joueursMin": 10,
       "unique": true
     },
     "feu-follet": {
       "camp": "solitaire",
-      "poids": 0,
+      "poids": 1,
       "niveau": "classique",
       "joueursMin": 8,
       "unique": true
     },
     "joueur-de-vielle": {
       "camp": "solitaire",
-      "poids": -4,
+      "poids": -2,
       "niveau": "chaos",
       "joueursMin": 10,
       "unique": true
     },
     "illumine": {
       "camp": "solitaire",
-      "poids": -3,
+      "poids": -2,
       "niveau": "chaos",
       "joueursMin": 10,
       "unique": true
@@ -452,5 +452,82 @@
     "gibet": {
       "niveau": "chaos"
     }
+  },
+  "cibles": {
+    "chaos": {
+      "6": 1,
+      "7": 0,
+      "8": -3,
+      "9": -3,
+      "10": -5,
+      "11": -8,
+      "12": -11,
+      "13": -13,
+      "14": -14,
+      "15": -16,
+      "16": -17,
+      "17": -19,
+      "18": -21
+    },
+    "classique": {
+      "6": 1,
+      "7": 0,
+      "8": -3,
+      "9": -3,
+      "10": -7,
+      "11": -7,
+      "12": -12,
+      "13": -12,
+      "14": -15,
+      "15": -14,
+      "16": -17,
+      "17": -17,
+      "18": -20
+    },
+    "debutants": {
+      "6": 0,
+      "7": 1,
+      "8": 0,
+      "9": -3,
+      "10": -6,
+      "11": -8,
+      "12": -8,
+      "13": -11,
+      "14": -13,
+      "15": -13,
+      "16": -16,
+      "17": -18,
+      "18": -17
+    },
+    "le-pacte": {
+      "6": 1,
+      "7": 1,
+      "8": -1,
+      "9": 0,
+      "10": -5,
+      "11": -7,
+      "12": -10,
+      "13": -12,
+      "14": -14,
+      "15": -14,
+      "16": -17,
+      "17": -17,
+      "18": -19
+    },
+    "petite-tablee": {
+      "4": 3,
+      "5": 1,
+      "6": -1,
+      "7": 0,
+      "8": 0,
+      "9": -5,
+      "10": -3,
+      "11": 1,
+      "12": 0
+    }
+  },
+  "ajustements": {
+    "vendanges": 11,
+    "envoutement": -7
   }
 }

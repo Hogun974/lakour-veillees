@@ -2115,7 +2115,9 @@ export async function attendreGazette() {
 }
 async function annoncerGazette(texte, entree = null) {
   await modifierEtat(e => L.journaliser(e, texte));
-  await annonceChat(echapper(texte));
+  // Marquée « gazette » : une carte cite des rôles en général (« la Liseuse de cendres a-t-elle… »), comme sur table ;
+  // elle ne doit jamais accoler un rôle au nom de celui qui le tient en secret (essais : partie-loups.mjs, verifierMessage).
+  await annonceChat(`<span class="loups-gazette"></span>${echapper(texte)}`);
   if (entree) annoncer("lakourLoups.gazette", [{ ...entree }]);
 }
 // Les traits d'un personnage, en clair (« femme, jeune (24 ans), lunettes, habite le bourg »).
@@ -2306,14 +2308,18 @@ async function seanceDeSpiritisme() {
   const carte = L.choisir(restantes);
   const questions = L.SEANCES[carte];
   await modifierEtat(x => { const g = L.normaliserGazette(x.gazette); g.spiritisme.restantes = g.spiritisme.restantes.filter(c => c !== carte); x.gazette = g; return x; });
-  await annoncerGazette(t("LAKOUR_LOUPS.Gazette.Spiritisme.Carte", { nom: nomDeSeance(carte), mort: nomDe(mort), liseuse: liseuse.name,
+  await annoncerGazette(t("LAKOUR_LOUPS.Gazette.Spiritisme.Carte", { nom: nomDeSeance(carte), mort: nomDe(mort),
     questions: questions.map((q, i) => `${i + 1}. « ${texteDeQuestion(q)} »`).join(" ") }), { quoi: "seance", cle: carte });
   const [q = ""] = await demandeLibre({ acteurId: s.par, invite: t("LAKOUR_LOUPS.Gazette.Spiritisme.InviteQuestion"),
     candidats: questions.map((x, i) => ({ id: x, nom: `${i + 1}. ${texteDeQuestion(x)}`, img: "" })), objet: "seance-question" });
   const question = questions.includes(q) ? q : L.choisir(questions);
   const vivants = vivantsIds();
-  const [sp = ""] = await demandeLibre({ acteurId: s.par, invite: t("LAKOUR_LOUPS.Gazette.Spiritisme.InviteSpirite"), candidats: vivants, objet: "seance-spirite" });
-  const spirite = vivants.includes(sp) ? sp : s.par;
+  // Le Spirite pose la question à voix haute : un absent du jour (Petit Commis parti, danseurs, chasseurs, cueilleuses) ne
+  // participe pas aux débats, il ne peut pas l'être (choix tranché le 7 nov. : le livre ne dit rien) ; il reste désignable.
+  const absents = new Set(L.absentsDuJour(lireEtat()));
+  const presents = vivants.filter(id => !absents.has(id));
+  const [sp = ""] = await demandeLibre({ acteurId: s.par, invite: t("LAKOUR_LOUPS.Gazette.Spiritisme.InviteSpirite"), candidats: presents, objet: "seance-spirite" });
+  const spirite = presents.includes(sp) ? sp : presents.includes(s.par) ? s.par : (presents[0] ?? s.par);
   const n = L.DESIGNATIONS_DES_QUESTIONS[question] ?? 0;
   let designes = [];
   if (n) {
@@ -2532,9 +2538,11 @@ export const api = {
   // se souvient d'une Petite tablée, une composition générée de 12 places au plus est une petite tablée, quel que soit le
   // niveau demandé (le MJ IA, qui ne connaît que les trois niveaux, suit ainsi le choix du MJ ; nouvellePartie l'écrit).
   // Il suit aussi le réglage « batimentsDuVillage » (Pacte, étape 5) : « aucun », la composition n'a pas de bâtiment ; « choisis », ceux
-  // du réglage « batimentsChoisis ».
+  // du réglage « batimentsChoisis ». Et les variantes des réglages (Pacte, étape 6) : la cible du générateur tient compte de leur
+  // ajustement mesuré (equilibre.ajustements, cibleDe), sauf variantes données.
   logique: { ...L, composer: (n, equilibre, options = {}) => batimentsDuReglage(L.composer(n, equilibre,
-    lireReglage("petiteTablee", false) && n <= L.TABLEE.placesMax && !options?.peste ? { ...options, niveau: L.NIVEAU_PETITE_TABLEE } : options)) },
+    lireReglage("petiteTablee", false) && n <= L.TABLEE.placesMax && !options?.peste ? { ...options, niveau: L.NIVEAU_PETITE_TABLEE }
+      : { variantes: variantesDuReglage(), ...options })) },
   // Résolveurs fournis par d'autres modules. compagnon(demande) -> [acteurId] (choix de nuit, vote) ou texte (mode "texte") :
   // le MJ IA y branche le cerveau de ses compagnons. demande : { type: "demande" | "vote", mode?, id, acteurId, acteurNom,
   // invite, candidats: [{ id, nom, img, maison }], nombre, max?, delai, objet?, numero? }.
@@ -2990,7 +2998,7 @@ export const api = {
     await retenirBatimentsEtMetiers({ batiments: batimentsVoulus, metiers: metiersVoulus });
     let choixVariantes = L.variantesPermises(variantesVoulues(variantes), { saintMartin: court, tablee: niv === L.NIVEAU_PETITE_TABLEE, places: total });
     const loupsEnPlus = choixVariantes.vendanges ? L.LOUPS_DES_VENDANGES : 0;
-    const genere = inclure => L.composer(total, contenu.equilibre, { niveau: niv, inclure, historique, graine, village: enVillage, loupsEnPlus });
+    const genere = inclure => L.composer(total, contenu.equilibre, { niveau: niv, inclure, historique, graine, village: enVillage, loupsEnPlus, variantes: choixVariantes });
     let compo;
     // La peste noire : choisie (true), refusée (false), ou tirée au sort quand la composition se génère d'elle-même.
     const genereeSeule = !court && !roles.length && !(composition && contenu.compositions[composition]) && equilibreOk;
@@ -3012,7 +3020,7 @@ export const api = {
       const c = contenu.compositions[composition];
       compo = { cle: composition, libelle: c.libelle ?? composition, niveau: c.niveau ?? niv, roles: enPeste ? L.sansMeute(c.roles, contenu.equilibre) : [...c.roles], batiments: [...(c.batiments ?? [])] };
     } else if (equilibreOk) {
-      const g = L.composer(total, contenu.equilibre, { niveau: niv, historique, graine, peste: enPeste, village: enVillage, loupsEnPlus });
+      const g = L.composer(total, contenu.equilibre, { niveau: niv, historique, graine, peste: enPeste, village: enVillage, loupsEnPlus, variantes: choixVariantes });
       compo = { cle: "generee", libelle: t("LAKOUR_LOUPS.NouvellePartie.Generee", { verdict: g.verdict }), niveau: niv, roles: g.roles, batiments: g.batiments, somme: g.somme, verdict: g.verdict };
     } else {
       compo = { cle: avant.composition || "reprise", libelle: t("LAKOUR_LOUPS.NouvellePartie.Reprise"), niveau: niv, roles: precedents, batiments: avant.batimentsCles ?? [] };

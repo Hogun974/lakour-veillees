@@ -41,3 +41,4 @@ export * from "./ambigus.mjs";
 export * from "./personnalites.mjs";
 export * from "./variantes.mjs";
 export * from "./gazette.mjs";
+export * from "./politiques.mjs";

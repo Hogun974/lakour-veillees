@@ -1,0 +1,45 @@
+{
+  "_id": "YFXPlrYyJ3KsYhC2",
+  "_key": "!items!YFXPlrYyJ3KsYhC2",
+  "name": "Bateleur",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/bateleur.svg",
+  "system": {
+    "cle": "bateleur",
+    "camp": "village",
+    "description": "<p>Tu as joué tous les rôles sur les tréteaux des foires, et tu sais encore les tenir le temps d'une nuit.</p><p>Avant la partie, le narrateur pose <strong>trois cartes de rôles à pouvoir</strong> (jamais de loup) <strong>face visible</strong> : tout le village les connaît.</p><p><strong>Chaque nuit</strong>, en tout début de nuit, tu peux <strong>désigner l'une de ces cartes</strong> : tu joues son pouvoir cette nuit-là, à son tour, comme si c'était ton rôle. Au matin, la carte jouée est <strong>retirée</strong> : elle ne servira plus. Tu peux aussi passer et garder tes cartes pour plus tard.</p><p>Tu restes du camp du <strong>Village</strong>, quelle que soit la carte que tu joues.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 2,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 1,
+      "soiMeme": false,
+      "invite": "Le spectacle commence : quelle carte joues-tu cette nuit ? Passe pour n'en jouer aucune."
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "emprunter",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "bateleur"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

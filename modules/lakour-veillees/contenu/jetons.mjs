@@ -24,6 +24,7 @@ export const JETONS_ROLES = {
   "loup-hurleur": "lorc/wolf-howl",
   "loup-flaireur": "delapouite/sniffing-dog",
   "loup-des-roseaux": "lorc/werewolf",                 // tapi, aux aguets
+  "loup-pale": "caro-asercion/hyena-head",             // le loup blême, qui ronge même les siens (Le Pacte, étape 3b)
   // --- Le Village
   "villageois": "lorc/cowled",                          // jeton neutre : capuchon, visage dans l'ombre
   "veilleuse-de-lanterne": "lorc/lantern-flame",
@@ -57,6 +58,12 @@ export const JETONS_ROLES = {
   "greffier-begue": "lorc/quill-ink",                  // la plume du greffier
   "vieux-sergent": "lorc/visored-helm",                // le vieux casque
   "pie": "lorc/raven",                                 // l'oiseau noir et blanc
+  // --- Les ambigus du jeu de soirée (Le Pacte, étape 3b)
+  "chapardeur": "delapouite/bandit",                   // le voleur masqué
+  "bateleur": "delapouite/carnival-mask",              // le masque des tréteaux
+  "enfant-des-bois": "lorc/imp",                       // le petit sauvage de la forêt
+  "matin": "delapouite/sitting-dog",                   // le chien de garde, assis
+  "chambriere": "lorc/robe",                           // la robe et le tablier
   // --- Les gens de passage
   "remouleur": "lorc/circular-sawblade",              // la meule
   "montreur-d-ours": "delapouite/animal-hide",        // la peau de l'ours
@@ -66,7 +73,11 @@ export const JETONS_ROLES = {
   "colporteur": "lorc/swap-bag",
   "chasseur-de-primes": "delapouite/target-poster",
   "pyromane": "delapouite/torch",
-  "dame-du-gue": "lorc/spectre"                        // la femme pâle du gué
+  "dame-du-gue": "lorc/spectre",                       // la femme pâle du gué
+  // --- Les solitaires du jeu de soirée (Le Pacte, étape 3b)
+  "feu-follet": "lorc/burning-meteor",                 // la flamme qui danse sur le marais
+  "joueur-de-vielle": "darkzaitzev/big-gear",          // la roue de la vielle
+  "illumine": "lorc/cultist"                           // l'illuminé sous sa capuche
 };
 
 // Clé du métier -> icône (fichier « metier-<cle> »).

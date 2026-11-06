@@ -1,0 +1,45 @@
+{
+  "_id": "7W5BQWZLxlmXhK4E",
+  "_key": "!items!7W5BQWZLxlmXhK4E",
+  "name": "Mâtin",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/matin.svg",
+  "system": {
+    "cle": "matin",
+    "camp": "village",
+    "description": "<p>Tu gardes les troupeaux de Brumecombe, mais le loup t'appelle chaque fois que la lune monte.</p><p><strong>La première nuit</strong>, juste avant la meute, tu choisis ton camp, <strong>pour toujours</strong> :<br>- <strong>la meute</strong> : tu te réveilles avec elle dès cette nuit, et chaque nuit ensuite, et tu chasses avec elle ; tu es un loup de la meute ;<br>- <strong>le village</strong> : tu restes un simple villageois jusqu'à la fin.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 38,
+      "premiereNuitSeulement": true,
+      "uneNuitSurDeux": false,
+      "cibles": 1,
+      "soiMeme": true,
+      "invite": "Désigne-toi pour rejoindre la meute dès cette nuit, ou passe pour rester au village."
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "choisir-camp",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "matin"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

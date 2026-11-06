@@ -37,3 +37,4 @@ export * from "./derniers-gestes.mjs";
 export * from "./tenures.mjs";
 export * from "./evenements.mjs";
 export * from "./pacte.mjs";
+export * from "./ambigus.mjs";

@@ -171,7 +171,7 @@ and every building on the map is **pinned** to its rules page.
 
 Roles are public: the player guide describes them all, as the genre requires. What is secret is who holds what.
 
-### The Pack (7 roles)
+### The Pack (8 roles)
 
 Wolves recognise each other on the first night and hunt together; some wake a second time, alone.
 
@@ -184,8 +184,9 @@ Wolves recognise each other on the first night and hunt together; some wake a se
 | **Howling wolf** | Each night, silences a player for the next day's debate. |
 | **Sniffing wolf** | Each night, sniffs a player and learns their side. |
 | **Wolf of the reeds** | Each night, watches a house and learns whether its occupant acted. |
+| **Pale wolf** | Hunts with the pack, but every other night devours one of its own alone; wins only if left the last one alive. |
 
-### The Village (31 roles)
+### The Village (36 roles)
 
 | Role | Power |
 |---|---|
@@ -220,8 +221,13 @@ Wolves recognise each other on the first night and hunt together; some wake a se
 | **Stammering Clerk** | Once per game, right after a conviction, secretly calls for a second vote, without debate. |
 | **Old Sergeant** | If the pack devours him, his old sword kills the first wolf to his left the following night. |
 | **Magpie** | Each night, lays a black feather on a player: two more votes against them at the day's vote. |
+| **Pilferer** | On the first night, may steal one of the two cards left in the middle and become that role; must do so if both are wolves. |
+| **Mountebank** | Three roles are laid face up: each night, may play the power of one of them, each one only once. |
+| **Woods child** | On the first night, chooses a model: as long as it lives, is on the Village side; if it dies, joins the pack. |
+| **Mastiff** | On the first night, chooses for good to be a wolf (hunting with the pack) or a plain villager. |
+| **Chambermaid** | When the vote eliminates a player, may reveal herself before their card is turned over and secretly take their role. |
 
-### The loners (5 roles)
+### The loners (8 roles)
 
 | Role | Power and victory |
 |---|---|
@@ -230,6 +236,9 @@ Wolves recognise each other on the first night and hunt together; some wake a se
 | **Bounty hunter** | Gets a target at the start: wins if the target is executed by day. |
 | **Arsonist** | Douses one house per night; one night, sets fire to every doused house; wins alone. |
 | **Lady of the ford** | Every other night, lures a player to the ford where they drown; the pack cannot kill her; wins alone. |
+| **Will-o'-the-wisp** | The game begins with a day; if eliminated in the first round, wins alone; otherwise, becomes a plain villager. |
+| **Hurdy-gurdy player** | Each night, charms two players; wins alone when every other living player is charmed. |
+| **Zealot** | The village is split into two groups announced to all; wins alone if the whole other group is eliminated. |
 
 ### Passers-by (3 roles)
 

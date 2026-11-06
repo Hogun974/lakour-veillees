@@ -69,13 +69,24 @@
       "cacarder": "the geese honk if a wolf is a neighbour",
       "second-vote": "secretly calls for a second execution vote",
       "contaminer": "devoured, wounds the first wolf to his left",
-      "plume": "two more votes against the target at the day's vote"
+      "plume": "two more votes against the target at the day's vote",
+      "chaparder": "on the first night, may take one of the two cards in the middle",
+      "emprunter": "each night, may play one of the face-up cards (then removed)",
+      "choisir-camp": "on the first night, chooses to be a wolf or a villager",
+      "modele": "chooses a model: if it dies, joins the pack",
+      "devouement": "may take a condemned player's card before it is turned over",
+      "charmer": "charms two players each night",
+      "trahir": "every other night, may devour a wolf"
     },
     "Victoires": {
       "aucune": "none (see text)",
       "execute": "wins if executed by the village",
       "dernier-survivant": "wins if last survivor",
-      "cible-executee": "wins if the target is executed"
+      "cible-executee": "wins if the target is executed",
+      "premier-tour": "wins if eliminated in the first round",
+      "tous-charmes": "wins when every other living player is charmed",
+      "autre-groupe": "wins when the whole other group is eliminated",
+      "seul-survivant": "wins if last one alive (never with the pack)"
     },
     "Victoire": {
       "village": "The village of Brumecombe wins: no wolf prowls the mist anymore.",
@@ -666,7 +677,8 @@
       "departage": "Waiting: the Bailiff ({nom}) breaks the tie…",
       "succession": "Waiting: {nom}, the late Bailiff, hands over the seal…",
       "LeDeuil": "the mourning pack",
-      "juger": "Judge the accused: {nom}"
+      "juger": "Judge the accused: {nom}",
+      "LesCharmes": "the charmed"
     },
     "Preparation": {
       "Titre": "Prepare the game",
@@ -872,7 +884,8 @@
         "votants": "Round {tour} — {nom}, fallen for the tie, chooses tomorrow's voters: {noms}.",
         "plume": "Round {tour} — a black feather points at {nom}.",
         "oies": "Round {tour} — {nom}'s geese are honking.",
-        "second-vote": "Round {tour} — a second execution vote, without debate."
+        "second-vote": "Round {tour} — a second execution vote, without debate.",
+        "devouement": "Round {tour} — {nom} steps forward: the Chambermaid takes {noms}'s card without showing it."
       }
     },
     "Masques": {
@@ -1153,6 +1166,47 @@
       "FratrieRetrouvee": "You meet in silence with {noms}: while you are awake, you may speak among yourselves.",
       "FratrieSeule": "You wake alone: your own are gone.",
       "PriveDeVote": "You do not vote in this vote."
+    },
+    "Ambigus": {
+      "RejointLaMeute": "Tonight {nom} joins the pack: they will hunt with you.",
+      "ChapardeurInvite": "Two cards lie face down in the middle of the table. Take one instead of yours, or pass to keep your card.",
+      "ChapardeurOblige": "Both cards in the middle belong to the pack: you must take one.",
+      "ChapardeurPris": "You slipped your card into the middle and took this one: you are now “{role}”, until the end of the evening.",
+      "ChapardeurGarde": "You looked at the cards in the middle and kept your own.",
+      "ChapardeurNote": "{nom}, the Pilferer, took the card “{role}” from the middle.",
+      "BateleurJoue": "Tonight you play the card “{role}”: the narrator will call you in its turn. In the morning, it will be removed.",
+      "BateleurNote": "{nom}, the Mountebank, plays the card “{role}” tonight.",
+      "CarteRetiree": "The Mountebank's card “{role}” was used tonight: it is removed from the table.",
+      "CartesDuBateleur": "Three cards are laid face up in the middle of the table: {roles}. Some night, someone may play one of them.",
+      "MatinMeute": "You chose the pack: you hunt with it from tonight. The wolves: {noms}.",
+      "MatinVillage": "You chose the village: you will remain a plain villager until the end.",
+      "MatinMeuteNote": "{nom}, the Mastiff, chose the pack.",
+      "MatinVillageNote": "{nom}, the Mastiff, stays with the village.",
+      "Modele": "Your model is {nom}. As long as they live, you belong to the Village; if they fall, you will join the pack.",
+      "ModeleNote": "{nom}, the Woods Child, took {modele} as a model.",
+      "Orphelin": "{nom}, your model, has fallen: you secretly join the pack, and will hunt with it from next night. The wolves: {noms}.",
+      "OrphelinNote": "{modele} has fallen: {nom}, the Woods Child, joins the pack.",
+      "Charme": "You played your hurdy-gurdy under the windows of {noms}: they are charmed.",
+      "CharmeNote": "{nom}, the Hurdy-Gurdy Player, charms {noms}.",
+      "Charmes": "A hurdy-gurdy tune has charmed you. You open your eyes with the other charmed: {noms}. Say nothing.",
+      "CharmeSeul": "A hurdy-gurdy tune has charmed you. You alone hear it, for now.",
+      "DejaCharmes": "Those the hurdy-gurdy has already charmed: {noms}.",
+      "PersonneCharme": "The hurdy-gurdy has charmed no one yet.",
+      "FeuFolletEteint": "The first night is over and you still live: your flame goes out. You are now a plain villager, and you win with the Village.",
+      "CommenceParLeJour": "This evening begins with a day: the village gathers, debates and votes before the first night.",
+      "Groupes": "The village splits into two sides, {critere}: on one side {a}; on the other {b}.",
+      "Critere": {
+        "rive": "by the bank where each one sleeps (the town and the far bank)",
+        "parite": "by house number (odd or even)"
+      },
+      "ChambriereInvite": "The village has condemned {noms}. Before the card is turned over, will you sacrifice yourself? Choose them to take their card (and your secret will be revealed), or pass.",
+      "Devouement": "Before {de}'s card is turned over, {nom} reveals herself: she was the Chambermaid. She takes the condemned's card without showing it, and will hold that role until the end.",
+      "DevouementNote": "{nom}, the Chambermaid, becomes “{role}”.",
+      "BailliPerdu": "{nom} was Bailiff: by stepping forward, she loses the office. The village will elect another Bailiff.",
+      "Refus": {
+        "tard": "The Mountebank's cards are chosen before the first night.",
+        "cartes": "Choose one to {n} cards of roles with a night power (neither wolf nor loner) that are not in the deck."
+      }
     }
   }
 }

@@ -72,9 +72,9 @@ test("ordres de nuit : meute groupée à 40, protections avant, réactions aprè
   for (const cle of ["sonneur", "juge-de-paix", "conteuse", "braconniere", "revenant", "villageois"]) assert.equal(parCle(cle).system.nuit.actif, false, cle);
 });
 
-test("solitaires : chacun a sa condition de victoire ; les autres n'en ont pas", () => {
+test("solitaires : chacun a sa condition de victoire ; les autres n'en ont pas (sauf le Loup pâle, qui ne gagne pas avec la meute)", () => {
   for (const r of roles) {
-    if (r.system.camp === "solitaire") assert.ok(r.system.victoire.length > 30, r.name);
+    if (r.system.camp === "solitaire" || r.system.cle === "loup-pale") assert.ok(r.system.victoire.length > 30, r.name);
     else assert.equal(r.system.victoire, "", r.name);
   }
 });
@@ -130,7 +130,9 @@ test("extensions du système : apparence (Loup déguisé vu village, Louvetier v
   const { apparenceDe } = await import("../systems/lakour-loups/logique/resolution.mjs");
   const { victoireCleDe } = await import("../systems/lakour-loups/logique/victoire.mjs");
   assert.deepEqual(VICTOIRES, VICTOIRES_SYSTEME, "mêmes clés de victoire que le système");
-  const attendues = { revenant: "execute", pyromane: "dernier-survivant", "dame-du-gue": "dernier-survivant", "chasseur-de-primes": "cible-executee", colporteur: "" };
+  const attendues = { revenant: "execute", pyromane: "dernier-survivant", "dame-du-gue": "dernier-survivant", "chasseur-de-primes": "cible-executee", colporteur: "",
+    // Le Pacte, étape 3b : les solitaires du livre et le Loup pâle.
+    "feu-follet": "premier-tour", "joueur-de-vielle": "tous-charmes", illumine: "autre-groupe", "loup-pale": "seul-survivant" };
   const apparences = { "loup-deguise": "village", louvetier: "meute" };
   for (const r of roles) {
     const s = r.system;
@@ -161,9 +163,9 @@ test("automatisation de bout en bout : chaque métier a son pouvoir de jour dans
 });
 
 test("nouveaux visages (0.6.0) : jeton, poids, composition prête, fiche au guide du joueur, consignes au narrateur", async () => {
-  const { NOUVEAUX_ROLES: TOUS, NOUVEAUX_METIERS, ROLES_DU_PACTE } = await import("../modules/lakour-veillees/contenu/guides.mjs");
-  // Les rôles du Pacte (étape 3a) ont leur propre essai (pacte-village-logique.test.mjs) : pas encore de composition prête.
-  const NOUVEAUX_ROLES = TOUS.filter(c => !ROLES_DU_PACTE.includes(c));
+  const { NOUVEAUX_ROLES: TOUS, NOUVEAUX_METIERS, ROLES_DU_PACTE, ROLES_DU_PACTE_3B } = await import("../modules/lakour-veillees/contenu/guides.mjs");
+  // Les rôles du Pacte (étapes 3a et 3b) ont leurs propres essais (pacte-village-*, pacte-ambigus-*) : pas encore de composition prête.
+  const NOUVEAUX_ROLES = TOUS.filter(c => !ROLES_DU_PACTE.includes(c) && !ROLES_DU_PACTE_3B.includes(c));
   const equilibre = JSON.parse(readFileSync(`modules/${M}/assets/equilibre.json`, "utf8"));
   const compos = Object.values(JSON.parse(readFileSync(`modules/${M}/assets/compositions.json`, "utf8")));
   const page = (cle, titre) => docs.find(d => d.cle === `journaux:${cle}`).doc.pages.filter(p => !titre || p.name === titre).map(p => p.text.content).join(" ");

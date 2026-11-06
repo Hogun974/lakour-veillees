@@ -1,0 +1,45 @@
+{
+  "_id": "OSDyxJ8GuNPMyYZR",
+  "_key": "!items!OSDyxJ8GuNPMyYZR",
+  "name": "Chapardeur",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/chapardeur.svg",
+  "system": {
+    "cle": "chapardeur",
+    "camp": "village",
+    "description": "<p>Tu as les doigts légers, et rien ne t'appartient longtemps, pas même ce que tu es.</p><p>Quand tu es de la partie, le paquet compte <strong>deux cartes Villageois de plus</strong> : après la distribution, <strong>deux cartes restent au centre</strong>, face cachée.</p><p><strong>La première nuit</strong>, avant tout le monde, tu les regardes en secret et tu peux <strong>échanger ta carte contre l'une d'elles</strong> : tu deviens ce rôle jusqu'à la fin, avec toutes ses règles (un rôle de la première nuit se joue encore cette nuit-là, à son tour), et tu gagnes avec son camp. Si <strong>les deux sont des loups</strong>, tu es <strong>obligé</strong> d'en prendre une. Sinon, tu peux aussi garder ta carte et rester villageois.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 1,
+      "premiereNuitSeulement": true,
+      "uneNuitSurDeux": false,
+      "cibles": 1,
+      "soiMeme": false,
+      "invite": "Deux cartes dorment au centre : laquelle prends-tu à la place de la tienne ? Passe pour garder ta carte."
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "chaparder",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "chapardeur"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

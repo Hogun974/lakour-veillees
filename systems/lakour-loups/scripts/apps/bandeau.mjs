@@ -132,7 +132,7 @@ export function contexteBandeau() {
   if (gm && !moi && !ctx.boutons.length && !v.ouvert) {
     try {
       const e = game.lakourLoups.etapeSuivante();
-      const nom = e.donnees.meute ? t("LAKOUR_LOUPS.Etapes.LaMeute") : e.donnees.peste ? t("LAKOUR_LOUPS.Etapes.LaPeste") : e.donnees.deuil ? t("LAKOUR_LOUPS.Etapes.LeDeuil") : e.donnees.nom ?? "";
+      const nom = e.donnees.meute ? t("LAKOUR_LOUPS.Etapes.LaMeute") : e.donnees.peste ? t("LAKOUR_LOUPS.Etapes.LaPeste") : e.donnees.deuil ? t("LAKOUR_LOUPS.Etapes.LeDeuil") : e.donnees.charmes ? t("LAKOUR_LOUPS.Etapes.LesCharmes") : e.donnees.nom ?? "";
       ctx.detail = `${t("LAKOUR_LOUPS.Etapes.Prochaine")} ${t(`LAKOUR_LOUPS.Etapes.${e.cle}`, { ...e.donnees, nom })}`;
     } catch { /* API pas encore prête */ }
   }

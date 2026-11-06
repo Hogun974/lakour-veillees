@@ -1,0 +1,45 @@
+{
+  "_id": "eWdDN0tCrkTMBQUR",
+  "_key": "!items!eWdDN0tCrkTMBQUR",
+  "name": "Chambrière",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/chambriere.svg",
+  "system": {
+    "cle": "chambriere",
+    "camp": "village",
+    "description": "<p>Tu as servi dans toutes les maisons du village, et tu sais reprendre le tablier d'un autre.</p><p>Quand le <strong>vote</strong> du village élimine un joueur, <strong>avant que sa carte soit retournée</strong>, tu peux <strong>te dévoiler</strong> : ta carte de Chambrière est retournée devant tous, et tu <strong>prends la carte du condamné</strong>, sans la montrer. Tu deviens ce rôle jusqu'à la fin, <strong>remis à neuf</strong> (ses usages et ses fioles pleines ; s'il agit la première nuit, le narrateur t'appelle la nuit suivante pour le faire).</p><p>Ce qui touchait le condamné ne passe pas à toi (ni son amour, ni sa morsure, ni son charme, ni sa charge) ; ce qui te touchait est perdu (un charme, la charge de Bailli), sauf une morsure : mordue, tu restes un loup. <strong>Amoureuse, tu ne peux pas te dévouer.</strong></p>",
+    "victoire": "",
+    "nuit": {
+      "actif": false,
+      "ordre": 50,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 0,
+      "soiMeme": false,
+      "invite": ""
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "devouement",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "chambriere"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

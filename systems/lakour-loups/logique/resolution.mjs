@@ -29,6 +29,8 @@
 //                qui ont déjà perdu leur première vie ; furets : [acteurId] les Furets qui ont perdu leur flair ; contamines :
 //                [acteurId] les loups contaminés par le Vieux Sergent, qui meurent cette nuit ; sagessePerdue : le village a perdu sa
 //                sagesse (les rôles du Village n'agissent plus).
+//   Le Pacte, étape 3b (ambigus.mjs) : emprunts : { acteurId: rôle à plat } — la carte jouée cette nuit par un Bateleur : une
+//                action de ce rôle (roleCle de la carte) notée par lui se résout avec ce rôle-là (son effet, ses règles).
 // -> { morts, deces, sauves, revelations, messages, changements, asperges, fioles, fiolesVides, voteDouble, enAttente, narrateur,
 //      annonces, bilan, pontFranchi }
 //    annonces : [msg] publiques (la lame de la Forge) ; bilan : { visites, sorties, victime, loup, sauves, attaques } pour les
@@ -62,6 +64,10 @@
 // - Vieux Sergent (effet "contaminer") : dévoré par la meute (cause « meute »), il contamine le premier loup vivant à sa gauche
 //   (contaminations) ; ce loup meurt la nuit suivante (contamines, cause publique « contamine »), rien ne l'en protège ;
 // - Lavandières, Bûcherons (effet "fratrie") : rien à résoudre (ils se reconnaissent au réveil : api.noterAction) ;
+// - Loup pâle (effet "trahir") : il dévore un loup ; une attaque de loup comme une autre (cause « meute », mêmes portes, même garde,
+//   même remède ; la lanterne le surprend) ;
+// - Chapardeur, Bateleur, Mâtin, Enfant des bois, Joueur de vielle : leur choix est appliqué quand il est noté (api.noterAction :
+//   la carte prise, la carte jouée, le camp choisi, le modèle, les charmés) ; rien à résoudre ici ;
 // - rôles à nuit.cibles = 0 (Ermite, Chasseur de primes) : leur réveil vaut action, même s'il n'a pas été noté ;
 // - Messager (effet "messager") : cibles [expéditeur, destinataire], action.texte = le mot écrit par l'expéditeur ;
 // - effets du jour : hors d'atteinte (Passeur, Grange) = ni visité ni agissant ; gardé à l'œil (Garde du guet) = ne vise
@@ -88,6 +94,7 @@ import { surLAutreRive } from "./distribution.mjs";
 import { CLE_DEUIL } from "./deuil.mjs";
 import { trioAutour, premierAGauche } from "./cercle.mjs";
 import { EFFET_AIEUL, EFFET_FURET, EFFET_PIE, EFFET_SERGENT, pouvoirPerdu, candidatsDeLaPlume } from "./pacte.mjs";
+import { EFFET_LOUP_PALE, CLE_CHARMES } from "./ambigus.mjs";
 
 // Un mot porté par le Messager : une ligne, sans balises, 200 caractères au plus.
 export function nettoyerMot(texte, longueur = 200) {
@@ -134,7 +141,7 @@ const msg = (destinataire, cle, texte, donnees = {}) => ({ destinataire, cle: `L
 const sansCible = role => Number(role?.nuit?.cibles ?? 1) === 0;
 
 export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges = [], precedentes = [], primes = {}, fioles = {}, hasard = Math.random, chanceEpier = RISQUE_ENFANT, jour = {},
-  somnambules = [], rolesFactices = [], nomsApparents = {}, cercle = [], aieux = [], furets = [], contamines = [], sagessePerdue = false } = {}) {
+  somnambules = [], rolesFactices = [], nomsApparents = {}, cercle = [], aieux = [], furets = [], contamines = [], sagessePerdue = false, emprunts = {} } = {}) {
   const noms = { ...NOMS_APPARENTS, ...nomsApparents };
   const reve = new Set(somnambules);
   const parId = new Map(villageois.map(v => [v.id, v]));
@@ -184,8 +191,13 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
   // d'un rôle qui doit en désigner une est un « je passe ».
   const retenues = [];
   for (const a of toutes) {
-    const acteur = parId.get(a.acteurId);
+    // Le réveil des charmés (ambigus.mjs) : une étape du système, rien à résoudre.
+    if (a.roleCle === CLE_CHARMES) continue;
     const deLaMeute = a.roleCle === CLE_MEUTE;
+    // Le Bateleur qui joue une carte cette nuit : cette action-là se résout avec le rôle de la carte.
+    const porteur = parId.get(a.acteurId);
+    const emprunt = porteur && !deLaMeute && emprunts?.[a.acteurId]?.cle === a.roleCle && porteur.role?.cle !== a.roleCle ? emprunts[a.acteurId] : null;
+    const acteur = emprunt ? { ...porteur, role: emprunt } : porteur;
     const deLaPeste = a.roleCle === CLE_PESTE;   // son porteur est mort : il agit quand même
     const duDeuil = a.roleCle === CLE_DEUIL;     // la vision du Glas du deuil : toute la meute, quel que soit le loup noté
     if (!deLaMeute && !deLaPeste && !duDeuil && (!acteur || acteur.vivant === false)) continue;
@@ -312,6 +324,11 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
   if (victimePeste) attaques.push({ cible: victimePeste, cause: CAUSES.peste, meute: true, peste: true });
   for (const a of parEffet("tuer")) {
     if (a.cibles[0]) attaques.push({ cible: a.cibles[0], cause: a.acteur?.camp === "meute" ? CAUSES.meute : CAUSES.nuit, meute: a.acteur?.camp === "meute" });
+  }
+  // Le Loup pâle dévore un loup (jamais lui-même) : une attaque de loup, avec ses portes et sa garde.
+  for (const a of parEffet(EFFET_LOUP_PALE)) {
+    const c = a.cibles[0];
+    if (c && c !== a.acteurId && parId.get(c)?.camp === "meute") attaques.push({ cible: c, cause: CAUSES.meute, meute: true, loup: a.acteurId, pale: true });
   }
 
   // Une attaque de loup arrêtée avant d'atteindre sa proie : asile de la Chapelle, Taverne sans loup, verrou du Forgeron
@@ -705,7 +722,8 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
 
 // Les proies de la nuit en cours, notées jusqu'ici (actions de etat.nuit), telles que la Louve mère peut les mordre et que
 // l'Herboriste les apprend : la proie de la meute (l'Enfant de la brume surprise à sa place), les victimes des loups qui tuent
-// seuls (le Loup affamé), celle de la peste. mordus : ceux que la Louve a déjà infectés (pas une victime : rien à sauver).
+// seuls (le Loup affamé), celle de la peste, le loup que dévore le Loup pâle. mordus : ceux que la Louve a déjà infectés (pas une
+// victime : rien à sauver).
 // -> { proies: [acteurId], mordus: [acteurId] }
 export function proiesDeLaNuit({ villageois = [], actions = [] } = {}) {
   const parId = new Map(villageois.map(v => [v.id, v]));
@@ -717,7 +735,7 @@ export function proiesDeLaNuit({ villageois = [], actions = [] } = {}) {
   if (enfant && villageois.some(v => v.vivant !== false && v.camp === "meute")) proies.push(enfant);
   else if (meute.length) proies.push(majoriteMeute(meute.map((a, i) => ({ cible: a.cibles[0], quand: a.quand ?? i }))));
   for (const a of actions) {
-    if (a.roleCle === CLE_PESTE || (propre(a) && role(a)?.camp === "meute" && role(a)?.effet === "tuer")) proies.push(...(a.cibles ?? []));
+    if (a.roleCle === CLE_PESTE || (propre(a) && role(a)?.camp === "meute" && ["tuer", EFFET_LOUP_PALE].includes(role(a)?.effet))) proies.push(...(a.cibles ?? []));
   }
   const mordus = actions.filter(a => propre(a) && role(a)?.effet === "mordre").map(a => a.cibles?.[0]).filter(Boolean);
   return { proies: [...new Set(proies.filter(Boolean))], mordus: [...new Set(mordus)] };

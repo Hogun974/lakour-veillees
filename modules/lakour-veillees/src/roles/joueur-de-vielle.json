@@ -1,0 +1,45 @@
+{
+  "_id": "SZjmRH9PYOLeYNL3",
+  "_key": "!items!SZjmRH9PYOLeYNL3",
+  "name": "Joueur de vielle",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/joueur-de-vielle.svg",
+  "system": {
+    "cle": "joueur-de-vielle",
+    "camp": "solitaire",
+    "description": "<p>Ta vielle grince sous les fenêtres, et ceux qui l'entendent ne pensent plus qu'à elle.</p><p><strong>Chaque nuit</strong>, à la fin de la nuit, tu <strong>charmes deux joueurs</strong> (jamais toi-même) qui ne l'étaient pas encore. Puis tous les charmés se réveillent ensemble et <strong>se reconnaissent</strong> ; toi, tu restes dans l'ombre.</p><p>Rien n'arrête ton air : ni la garde, ni les remèdes ; les loups l'entendent comme les autres. Les charmés gardent leurs pouvoirs et leur camp ; le charme ne passe pas d'un amant à l'autre. Si la Louve mère te mord, tu deviens un simple loup et tu oublies ton but.</p>",
+    "victoire": "<p>Tu gagnes <strong>seul</strong>, dès que <strong>tous les autres joueurs vivants sont charmés</strong>, quelle que soit la façon dont cela arrive (un charme, un vote, la meute…).</p>",
+    "nuit": {
+      "actif": true,
+      "ordre": 80,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 2,
+      "soiMeme": false,
+      "invite": "Sous quelles fenêtres joues-tu ta vielle cette nuit ? Deux joueurs pas encore charmés."
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "charmer",
+    "apparence": "",
+    "victoireCle": "tous-charmes"
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "joueur-de-vielle"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

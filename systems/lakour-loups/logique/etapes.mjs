@@ -27,6 +27,7 @@ import { estSaintMartin, saintMartinFinie } from "./saintmartin.mjs";
 import { pariteStricteTablee } from "./tablee.mjs";
 import { gestesEnAttente } from "./derniers-gestes.mjs";
 import { filtrerVotants, gracieAuVote, sagesseEstPerdue } from "./pacte.mjs";
+import { contexteDesAmbigus, nuitDesAmbigus, normaliserAmbigus, CLE_CHARMES } from "./ambigus.mjs";
 
 const etape = (cle, action, donnees = {}, extra = {}) => ({ cle, action, donnees, attente: false, detail: null, ...extra });
 
@@ -64,7 +65,7 @@ export function etapeSuivante(etatPublic, secretsMJ = null, { villageois = [], a
     // En petite tablée, au régime des deux loups, la meute doit être plus nombreuse (même règle que api.pariteStricte).
     const strict = Boolean(etat.petiteTablee) && pariteStricteTablee(etat.places || villageois.filter(v => v.vivant !== false).length);
     if (!etat.vainqueur && verifierVictoire({ villageois, morts: etat.morts, glas: glasSonne(etat), primes: etat.primes ?? {}, peste: etat.peste,
-      saintMartin: estSaintMartin(etat) ? saintMartinFinie(etat, villageois) : null, strict })) return etape("victoire", "victoire");
+      saintMartin: estSaintMartin(etat) ? saintMartinFinie(etat, villageois) : null, strict, ...contexteDesAmbigus(etat) })) return etape("victoire", "victoire");
     return null;
   };
   // La Chapelle : un asile pour la nuit qui vient, s'il n'a pas encore été choisi aujourd'hui (l'ours du Montreur n'en est pas un).
@@ -83,19 +84,24 @@ export function etapeSuivante(etatPublic, secretsMJ = null, { villageois = [], a
 
   switch (etat.phase) {
     case "preparation":
-      return etape("nuit", "phase", { phase: "nuit" });
+      // Le Feu follet au paquet (ambigus.mjs) : la veillée commence par un jour (débat et vote avant la première nuit).
+      return normaliserAmbigus(etat.ambigus).commenceParLeJour ? etape("debat", "phase", { phase: "jour" }) : etape("nuit", "phase", { phase: "nuit" });
     case "nuit": {
       const tour = Math.max(1, etat.tour);
       if (etat.nuitResolue === tour) return apresUneMort() ?? etape("debat", "phase", { phase: "jour" });
       if (!secretsMJ) return etape("aube", "aube", {}, { detail: { cle: "sansSecrets", donnees: {} } });
       const faits = new Set(etat.nuit.actions.map(a => a.roleCle));
       // Peste noire (secret du MJ) : l'étape « la peste », à la place de la meute ; qui : son porteur, s'il y en a un.
-      for (const e of ordreDeNuit(villageois, tour, { peste: etat.peste, deuil: visionDuDeuilDue(etat, villageois), sagessePerdue: sagesseEstPerdue(etat) })) {
+      for (const e of ordreDeNuit(villageois, tour, { peste: etat.peste, deuil: visionDuDeuilDue(etat, villageois), sagessePerdue: sagesseEstPerdue(etat),
+        ...nuitDesAmbigus(etat, tour) })) {
         if (faits.has(e.roleCle)) continue;
         const groupe = e.roleCle === CLE_MEUTE || e.roleCle === CLE_PESTE || e.roleCle === CLE_DEUIL;
-        const roleNom = groupe ? "" : villageois.find(v => v.id === e.acteurIds[0])?.role?.nom ?? e.roleCle;
+        // Le Pacte, étape 3b : les charmés (une étape sans rôle) ; la carte jouée par un Bateleur porte le nom de cette carte.
+        const charmes = e.roleCle === CLE_CHARMES;
+        const roleNom = groupe || charmes ? "" : e.emprunt ? nuitDesAmbigus(etat, tour).emprunts[e.acteurIds[0]]?.nom ?? e.roleCle
+          : villageois.find(v => v.id === e.acteurIds[0])?.role?.nom ?? e.roleCle;
         const donnees = { role: e.roleCle, nom: roleNom, meute: e.roleCle === CLE_MEUTE, peste: e.roleCle === CLE_PESTE, qui: e.acteurIds.map(nom).join(", "),
-          ...(e.roleCle === CLE_DEUIL ? { deuil: true } : {}) };
+          ...(e.roleCle === CLE_DEUIL ? { deuil: true } : {}), ...(charmes ? { charmes: true } : {}) };
         if (attente.includes(e.roleCle)) return etape("attendre", "", donnees, { attente: true });
         return etape("reveiller", "reveiller", donnees);
       }

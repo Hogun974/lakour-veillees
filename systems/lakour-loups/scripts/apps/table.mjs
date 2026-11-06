@@ -179,7 +179,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
     if (gm && mjActif) {
       try {
         const e = api().etapeSuivante({ ignorer: [...this.ignorer] });
-        const donnees = { ...e.donnees, nom: e.donnees.meute ? t("LAKOUR_LOUPS.Etapes.LaMeute") : e.donnees.peste ? t("LAKOUR_LOUPS.Etapes.LaPeste") : e.donnees.deuil ? t("LAKOUR_LOUPS.Etapes.LeDeuil") : e.donnees.nom ?? "" };
+        const donnees = { ...e.donnees, nom: e.donnees.meute ? t("LAKOUR_LOUPS.Etapes.LaMeute") : e.donnees.peste ? t("LAKOUR_LOUPS.Etapes.LaPeste") : e.donnees.deuil ? t("LAKOUR_LOUPS.Etapes.LeDeuil") : e.donnees.charmes ? t("LAKOUR_LOUPS.Etapes.LesCharmes") : e.donnees.nom ?? "" };
         etape = { ...e, texte: t(`LAKOUR_LOUPS.Etapes.${e.cle}`, donnees),
           detail: e.detail ? t(`LAKOUR_LOUPS.Etapes.Detail.${e.detail.cle}`, e.detail.donnees) : "" };
       } catch { etape = null; }

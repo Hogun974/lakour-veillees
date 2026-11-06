@@ -28,8 +28,8 @@ Colonne « livre » : la fonction du personnage, pour s'y retrouver ; jamais aff
 |---|---|---|---|---|
 | loup-garou simple | Loup de Brumecombe | Wolf of Brumecombe | `loup-de-brumecombe` | existe |
 | grand méchant loup | Loup affamé | Ravenous Wolf | `loup-affame` | aligné (étape 2 : chaque nuit tant qu'aucun loup n'est mort) |
-| infect père des loups | Louve mère | Wolf Mother | `louve-mere` | aligné (étape 2 : infection, la garde ne l'arrête pas) |
-| loup-garou blanc | Loup pâle | Pale Wolf | `loup-pale` | nouveau |
+| infect père des loups | Louve mère | Mother Wolf | `louve-mere` | aligné (étape 2 : infection, la garde ne l'arrête pas) |
+| loup-garou blanc | Loup pâle | Pale Wolf | `loup-pale` | fait (étape 3b : ordre 41, une nuit sur deux, dévore un loup ; victoire `seul-survivant`, jamais gagnant avec la meute) |
 
 ### Villageois
 | Livre | Chez nous | English | Clé | État |
@@ -57,18 +57,18 @@ Colonne « livre » : la fonction du personnage, pour s'y retrouver ; jamais aff
 ### Ambigus
 | Livre | Chez nous | English | Clé | État |
 |---|---|---|---|---|
-| voleur | Chapardeur | Pilferer | `chapardeur` | nouveau |
-| comédien | Bateleur | Mountebank | `bateleur` | nouveau |
-| chien-loup | Mâtin | Mastiff | `matin` | nouveau |
-| enfant sauvage | Enfant des bois | Woods Child | `enfant-des-bois` | nouveau |
-| servante dévouée | Chambrière | Chambermaid | `chambriere` | nouveau |
+| voleur | Chapardeur | Pilferer | `chapardeur` | fait (étape 3b : ordre 1 ; deux Villageois de plus au paquet, le centre secret ; obligé si deux loups) |
+| comédien | Bateleur | Mountebank | `bateleur` | fait (étape 3b : ordre 2 ; trois cartes tirées hors du paquet, annoncées, réglables (`cartesDuBateleur`) ; la carte jouée le réveille à son ordre, retirée au matin) |
+| chien-loup | Mâtin | Mastiff | `matin` | fait (étape 3b : ordre 38, première nuit ; se désigner = la meute dès cette nuit) |
+| enfant sauvage | Enfant des bois | Woods Child | `enfant-des-bois` | fait (étape 3b : ordre 13 ; modèle mort, toute cause : loup en secret) |
+| servante dévouée | Chambrière | Chambermaid | `chambriere` | fait (étape 3b : demande courte au décompte, l'exécution l'attend ; rôle remis à neuf, `nuit.debut` ; gestes du condamné ignorés) |
 
 ### Solitaires
 | Livre | Chez nous | English | Clé | État |
 |---|---|---|---|---|
-| ange | Feu follet | Will-o'-the-Wisp | `feu-follet` | nouveau |
-| joueur de flûte | Joueur de vielle | Hurdy-Gurdy Player | `joueur-de-vielle` | nouveau |
-| abominable sectaire | Illuminé | Zealot | `illumine` | nouveau |
+| ange | Feu follet | Will-o'-the-Wisp | `feu-follet` | fait (étape 3b : la veillée commence par un jour, annoncé ; victoire `premier-tour` ; villageois au matin de la nuit 1) |
+| joueur de flûte | Joueur de vielle | Hurdy-Gurdy Player | `joueur-de-vielle` | fait (étape 3b : ordre 80, deux charmés par nuit, réveil « charmes » à 81 ; victoire `tous-charmes`) |
+| abominable sectaire | Illuminé | Zealot | `illumine` | fait (étape 3b : partage par la rive, annoncé, critères branchables pour l'étape 9 ; victoire `autre-groupe`) |
 
 ### Charges et médium
 | Livre | Chez nous | English | État |
@@ -135,7 +135,7 @@ Socle à créer d'abord (servira à plusieurs rôles) :
 |---|---|---|
 | 1 | Socle (cercle, choix posthumes, rôle public, tenures, charges, événements) | fait (sauf les charges : Crieur public avec l'étape 4) ; reste au moteur MJ IA (étape 8) : ne plus dire au narrateur de « demander » à la Braconnière qui emporter (`loups_eliminer`, `loups_nuit`) et une consigne de compagnon pour l'objet `emporter` |
 | 2 | Aligner les rôles existants (Loup affamé, Louve mère, Liseuse, Herboriste, Braconnière, Enfant de la brume, Garde du pont, Entremetteuse, Bailli, Peste noire) | fait, avec nos créations corrigées (Sonneur : pouvoir de jour ; Loup déguisé : le masque tombe ; Revenant : la partie s'arrête ; garde du Garde du pont contre la meute seulement, d'où le harpon et la noyade arrêtés par la seule Gardienne) ; reste au moteur MJ IA (étape 8) : Herboriste et proies de la nuit (`api.proiesDeLaNuit`), nom du Montreur de marmotte, consigne du Sonneur |
-| 3 | Nouveaux rôles : villageois, puis ambigus, puis solitaires, puis Loup pâle | 3a fait (les onze rôles du Village, `logique/pacte.mjs`, poids provisoires, hors compositions prêtes et petite tablée) ; reste 3b ambigus, 3c solitaires, 3d Loup pâle ; reste au moteur MJ IA (étape 8) : voir plus bas |
+| 3 | Nouveaux rôles : villageois, puis ambigus, puis solitaires, puis Loup pâle | fait : 3a (les onze rôles du Village, `logique/pacte.mjs`) et 3b (les cinq ambigus, les trois solitaires du livre et le Loup pâle, `logique/ambigus.mjs`) ; poids provisoires (Mâtin -1, Enfant des bois 0, Feu follet 0 pour garder le générateur à ±2), hors compositions prêtes et petite tablée ; reste au moteur MJ IA (étape 8) : voir plus bas |
 | 4 | Personnalités du village, Chemineaux, Incendiaire ; Crieur public, Liseuse d'étoiles (la Pie est faite à l'étape 3a ; son filtre exclura le Chemineau) | à faire |
 | 5 | Variantes du livre ; mode « Le Pacte » (composition fidèle au livre) ; ordre d'appel du livre | à faire |
 | 6 | Simulateur (`essais/outils/simuler-veillees.mjs`), politiques par effet pour les joueurs simulés et les compagnons, calibration des poids par régression, cibles par taille ; compositions prêtes passées au générateur | à faire |
@@ -177,3 +177,28 @@ Relevé à l'étape 3a (les rôles du Village ; lignes de `scripts/outils.js` et
   (`api.audibiliteActeur` rend leurs auditeurs) ; aujourd'hui seule la tanière fait parler les compagnons la nuit.
 - Contexte du narrateur et des compagnons : l'état public `api.pacte()` (sagesse perdue, Innocents graciés, liste des votants, plume du
   jour) et le hook public `lakourLoups.pacte` (`{ quoi, acteurId?, ids? }`).
+
+Relevé à l'étape 3b (les ambigus, les solitaires du livre, le Loup pâle ; lignes de `scripts/outils.js` et `scripts/compagnons-jeu.js` au
+6 novembre) :
+- `loups_nuit` (outils.js l. 1494-1582) : il réveille lui-même chaque étape de `api.ordreDeNuit()` par `api.demanderAction` (sauf la peste
+  et le deuil). Pour les étapes `chapardeur`, `bateleur` et `charmes`, et pour toute étape marquée `emprunt: true` (la carte jouée par le
+  Bateleur), appeler `api.reveiller(roleCle, { delai })` : le Chapardeur et le Bateleur choisissent une CARTE (candidats `{ id, nom, img }`),
+  et la carte empruntée a son propre rôle (invite, effet, cibles, « soi-même »), que `roleLoups(acteur)` (le Bateleur) ne donne pas. Sans
+  ce changement, rien ne casse (`candidatsDeNuit` rend [] : le Chapardeur garde sa carte, sauf deux loups au centre où le système en prend
+  une au hasard ; le Bateleur ne joue jamais ; les charmés se reconnaissent quand même, `noterAction`), mais ces deux rôles ne servent à
+  rien. Le plus simple : `api.reveiller` pour toutes les étapes (il sait la meute, la peste, le deuil, le Messager, la Louve, l'Herboriste).
+- `loups_nuit` l. 1574 : la proie du Loup pâle (effet `trahir`) n'entre pas dans `proies` ; l'invite de l'Herboriste doit la nommer
+  (`api.proiesDeLaNuit().aSauver`, déjà demandé à l'étape 2, la contient).
+- `loups_distribuer` / `loups_rejouer` (l. 1341, 1451) : rendre au narrateur ce que la table voit de la mise en place (`api.ambigus()` :
+  les cartes du Bateleur, « la veillée commence par un jour » du Feu follet, les deux bords de l'Illuminé) et, pour lui seul, le centre
+  du Chapardeur (`api.ambigusSecrets().centre`) ; avec le Feu follet, lui dire d'ouvrir d'abord le débat et le vote (`loups_vote`), puis
+  seulement la nuit. La composition générée garde n rôles et porte `centre: 2` (le paquet en compte n + 2).
+- `loups_eliminer` (l. 1896-1926) : après un vote, l'exécution peut attendre la Chambrière (au plus 30 s) ; si
+  `api.ambigus().devouements` contient `{ de: condamné }`, dire au narrateur : « la Chambrière s'est dévouée ; ne révèle pas la carte du
+  condamné » et ne pas imprimer « Rôle de X » comme une révélation (l. 1922).
+- `compagnons-jeu.js` (`sujetDemandeLoups`, l. 364) : trois objets de demande nouveaux — `chapardeur` (deux cartes du centre : prendre
+  une carte, ou passer), `bateleur` (une carte face visible à jouer cette nuit, ou passer), `chambriere` (désigner le condamné = se dévouer
+  et prendre sa carte, ou passer) ; et la consigne du Mâtin (se désigner = rejoindre la meute). Aujourd'hui elles tombent dans le cas
+  général (un candidat au hasard).
+- Contexte du narrateur et des compagnons : l'état public `api.ambigus()`, les secrets `api.ambigusSecrets()` (MJ), le hook
+  `lakourLoups.pacte` (`quoi: "devouement"`) ; les compagnons charmés lisent leurs charmés dans leur carnet (`Ambigus.Charmes`).

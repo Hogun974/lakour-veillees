@@ -1,0 +1,45 @@
+{
+  "_id": "Aok4F1a671RzXISs",
+  "_key": "!items!Aok4F1a671RzXISs",
+  "name": "Feu follet",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/feu-follet.svg",
+  "system": {
+    "cle": "feu-follet",
+    "camp": "solitaire",
+    "description": "<p>Tu es la petite flamme qui danse au-dessus des marais, et tu n'as qu'une envie : qu'on t'éteigne.</p><p>Quand tu es de la partie, la veillée <strong>commence par un jour</strong> : le village débat et vote avant la première nuit.</p><p>Tu n'as aucun pouvoir. Si tu passes ce premier tour (le premier vote, puis la première nuit) sans être éliminé, ta flamme s'éteint : tu deviens un <strong>simple villageois</strong> du camp du Village, jusqu'à la fin.</p>",
+    "victoire": "<p>Tu gagnes <strong>seul et aussitôt</strong> si tu es éliminé <strong>au premier tour</strong> : par le premier vote du village, par la meute la première nuit, ou par le poison de l'Herboriste la première nuit. La partie s'arrête sur ta victoire.</p>",
+    "nuit": {
+      "actif": false,
+      "ordre": 50,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 0,
+      "soiMeme": false,
+      "invite": ""
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "",
+    "apparence": "",
+    "victoireCle": "premier-tour"
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "feu-follet"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

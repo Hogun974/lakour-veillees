@@ -37,7 +37,13 @@ ${versTexte(b.system.regle)}`
 // compositions prêtes (l'étape 6 les y fera entrer) : le générateur les tire aux niveaux classique et chaos.
 export const ROLES_DU_PACTE = ["franc-villageois", "aieul", "souffre-douleur", "innocent", "lavandiere", "bucheron", "furet", "gardeuse-d-oies",
   "greffier-begue", "vieux-sergent", "pie"];
-export const NOUVEAUX_ROLES = ["loup-des-roseaux", "louvetier", "pecheur-de-nuit", "dame-du-gue", ...ROLES_DU_PACTE];
+// Le Pacte, étape 3b : les ambigus (ils peuvent changer de camp ou de rôle), les solitaires du livre et le Loup pâle. Comme ceux de
+// l'étape 3a, hors des compositions prêtes et de la petite tablée ; le générateur les tire aux niveaux classique et chaos.
+export const AMBIGUS_DU_PACTE = ["chapardeur", "bateleur", "matin", "enfant-des-bois", "chambriere"];
+export const SOLITAIRES_DU_PACTE = ["feu-follet", "joueur-de-vielle", "illumine"];
+export const LOUPS_DU_PACTE = ["loup-pale"];
+export const ROLES_DU_PACTE_3B = [...AMBIGUS_DU_PACTE, ...SOLITAIRES_DU_PACTE, ...LOUPS_DU_PACTE];
+export const NOUVEAUX_ROLES = ["loup-des-roseaux", "louvetier", "pecheur-de-nuit", "dame-du-gue", ...ROLES_DU_PACTE, ...ROLES_DU_PACTE_3B];
 export const NOUVEAUX_METIERS = ["ramoneuse", "eclusiere"];
 const CAMP_LISIBLE = { meute: "camp de la Meute", village: "camp du Village", solitaire: "solitaire" };
 const ficheDuRole = r => `## ${r.name} (${CAMP_LISIBLE[r.system.camp]})
@@ -56,7 +62,7 @@ const pageDesNouveaux = () => ({
   titre: "Nouveaux visages de la veillée",
   texte: `# Ce que la brume a ramené
 
-Quatre rôles et deux métiers venus des berges de la Brume, et onze gens du village revenus des veillées d'autrefois. Ils ne sont pas dans toutes les compositions, et le narrateur ne dit jamais lesquels sont en jeu : à vous de le deviner (seul le Franc-Villageois se montre de lui-même).
+Quatre rôles et deux métiers venus des berges de la Brume, et onze gens du village revenus des veillées d'autrefois ; puis neuf autres de ces veillées : cinq visages changeants qui peuvent passer d'un camp à l'autre (le Chapardeur, le Bateleur, l'Enfant des bois, le Mâtin, la Chambrière), trois solitaires (le Feu follet, le Joueur de vielle, l'Illuminé) et un loup qui ne chasse que pour lui (le Loup pâle). Ils ne sont pas dans toutes les compositions, et le narrateur ne dit jamais lesquels sont en jeu : à vous de le deviner (seul le Franc-Villageois se montre de lui-même ; les cartes du Bateleur, le jour qui ouvre la veillée du Feu follet et les deux bords de l'Illuminé s'annoncent aussi).
 
 ${[...NOUVEAUX_ROLES.map(c => ficheDuRole(ROLES.find(r => r.system.cle === c))),
   ...NOUVEAUX_METIERS.map(c => ficheDuMetier(METIERS.find(m => m.system.cle === c)))].join("\n\n")}`
@@ -355,6 +361,7 @@ Ce que tu dis : la règle, et rien d'autre. **Jamais** de qui l'ombre est tombé
 - **Chasseur de primes** : tire sa cible au hasard parmi les autres joueurs (jamais un loup si possible, pour que la partie reste ouverte), et donne-la-lui la première nuit.
 - Annonce les **bâtiments en jeu** et les **variantes** choisies (révélation à la mort, durée du débat, **Bailli**).
 - **Masques de veillée** (réglage, par défaut oui) : le système remet en secret à chaque loup deux ou trois rôles du Village absents de la partie (trois pour une meute, deux pour un loup seul ; jamais dans une peste noire). Tu les vois dans ta chronique secrète ; ne les cite jamais, ne les confirme ni ne les démens.
+- **Chapardeur** : le paquet compte deux cartes Villageois de plus ; les deux cartes que la distribution ne donne pas restent au centre, face cachée (le système les garde en secret). **Bateleur** : trois cartes de rôles à pouvoir de nuit (jamais de loup), tirées au hasard hors du paquet, sont posées face visible et annoncées (tu peux les choisir toi-même avant la première nuit : cartesDuBateleur). **Feu follet** : la veillée commence par un jour (débat et vote avant la première nuit), annoncé. **Illuminé** : le système partage le village en deux bords, selon la rive où chacun dort, et l'annonce. Le système fait tout cela à la distribution ; ne dis jamais qui tient ces rôles.
 - Lis à voix haute une présentation du village (deux ou trois phrases, pas plus).`
     },
     {
@@ -415,6 +422,12 @@ ${ordreDeReveil().map(e => `- **${e.o}** — ${e.texte} : « ${e.invite} »`).jo
 - **Lavandières** et **Bûcherons** : réveille-les ensemble la première nuit, puis une nuit sur deux (3e, 5e…). Le système remet à chacun le nom des siens dans son carnet ; avec les salons vocaux, ils se parlent entre eux le temps de la nuit.
 - **Pie** : après la chasse, elle peut poser sa plume noire sur un joueur (pas elle-même). Le système l'annonce au matin, sans la nommer.
 - **Sagesse perdue** : si l'Aïeul est tombé de la main du village, ne réveille plus aucun rôle du Village ; la Table de jeu et le MJ IA les retirent d'eux-mêmes de l'ordre de la nuit.
+- **Chapardeur** : la première nuit, avant tout le monde, il voit les deux cartes du centre et peut en prendre une (obligé si ce sont deux loups ; sans réponse, le système en prend une au hasard). Il devient aussitôt ce rôle : s'il agit encore cette nuit (un loup, l'Entremetteuse, le Mâtin…), réveille-le à son tour, comme les autres.
+- **Bateleur** : en début de nuit, il peut désigner l'une de ses cartes face visible ; le système l'ajoute à l'ordre de la nuit, à l'ordre de cette carte : réveille-le alors pour ce pouvoir. Au matin, la carte jouée est retirée, devant tous.
+- **Enfant des bois** : la première nuit, il choisit son modèle. Si le modèle meurt, le système le fait passer en secret dans la meute, qui le retrouve la nuit suivante.
+- **Mâtin** : la première nuit, juste avant la meute, il se désigne pour la rejoindre (il chasse avec elle dès cette nuit) ou passe pour rester villageois.
+- **Loup pâle** : il chasse avec la meute ; une nuit sur deux (nuits paires), il se réveille ensuite seul et peut dévorer un loup (on ne lui propose que des loups). L'Herboriste apprend cette victime comme les autres.
+- **Joueur de vielle**, puis **les charmés** : à la fin de la nuit, il charme deux joueurs pas encore charmés ; puis réveille ensemble tous les charmés (étape « les charmés ») : le système remet à chacun le nom des autres. Infecté, il devient un simple loup : il n'est plus appelé, les charmés non plus.
 - **Effets du jour** : un joueur caché (Grange) ou passé sur l'autre rive (Passeur) ne se réveille pas et personne ne peut le désigner ; un joueur gardé à l'œil (Garde du guet) ne peut viser que sa propre maison (une tombe n'en est pas une) ; la meute ne peut viser ni l'asile de la Chapelle, ni les dormeurs de la Taverne (sauf si un loup dort parmi eux), ni l'autre rive quand le Pont est bloqué ou que l'Éclusière a fermé l'écluse. La Table de jeu et le MJ IA proposent d'eux-mêmes les bons candidats.
 
 # Ce que tu dis
@@ -485,6 +498,8 @@ Le système y inscrit seul chaque vote clos (voix par voix), chaque mort avec sa
 - L'**Innocent** condamné n'est pas exécuté : quand tu l'exécutes, le système retourne sa carte et le gracie ; il reste en jeu, sans voix à tous les votes. Bailli, il perd la charge, et le village n'en élira plus.
 - Le **Greffier bègue** fait son signe en secret (sa Table de jeu) pendant le vote ou juste après une condamnation : dès que les condamnés sont tombés, le système ouvre un **second vote** d'exécution, sans débat, et dit seulement « un second vote ». Ne nomme jamais le Greffier.
 - Le lendemain d'une égalité payée par le **Souffre-douleur**, seuls ceux qu'il a désignés votent aux votes d'exécution : la fenêtre de vote ne s'ouvre pas chez les autres.
+- La **Chambrière** : dès le décompte d'un vote qui condamne, le système lui demande en secret, une demi-minute au plus, si elle prend la carte du condamné. Quand tu l'exécutes, sa réponse est attendue : si elle se dévoue, sa carte de Chambrière est retournée, le condamné meurt **sans que sa carte soit montrée**, et elle tient désormais son rôle (son dernier geste ne joue pas). Amoureuse, on ne lui demande rien.
+- Le **Feu follet** : quand il est au paquet, la veillée commence par un jour. Mène ce premier débat et ce premier vote comme les autres (l'élection du Bailli comprise), puis la première nuit.
 
 # Les égalités
 
@@ -504,6 +519,9 @@ Le système y inscrit seul chaque vote clos (voix par voix), chaque mort avec sa
 - **Peste noire** : le cri juste fait gagner le village ; sinon la peste l'emporte quand il reste un vivant ou aucun (ni « plus aucun loup », ni amants, ni tueur solitaire ne finissent une peste).
 - **Pyromane** ou **Dame du gué** dernier vivant (ou avec un seul non-loup) : il gagne seul. Tant que l'un de ces deux tueurs vit, le village n'a pas gagné, même sans loup ; s'ils sont tous les deux en vie, aucun ne gagne avant que l'autre tombe.
 - **Rosière** exécutée par le vote : le Village perd aussitôt, **la meute l'emporte** (dans une peste noire : la peste). Le Revenant ou le Chasseur de primes exécutés gagnent d'abord. Morte la nuit, rien de particulier.
+- **Feu follet** éliminé au premier tour (le premier vote, ou la meute ou le poison de la première nuit) : il gagne seul, la partie s'arrête. Sinon, au matin de la première nuit, il devient simple villageois (le système le lui dit) et gagne avec le Village.
+- **Joueur de vielle** vivant, quand tous les autres vivants sont charmés : il gagne seul, quelle que soit la façon (un charme, un vote, une nuit). **Illuminé** vivant, quand tout l'autre bord est éliminé : il gagne seul. Mordus, l'un et l'autre deviennent de simples loups.
+- **Loup pâle** : il gagne seul s'il est le dernier vivant ; si la meute l'emporte, il n'est pas parmi les gagnants.
 - **Aïeul** tombé de la main du village (vote, poison de l'Herboriste, Braconnière) : le système annonce que Brumecombe a perdu sa sagesse ; jusqu'à la fin, plus aucun rôle du Village ni aucun métier n'a de pouvoir (le Bailli garde sa charge). Avec le réglage « L'Innocent suit l'Aïeul », un Innocent déjà gracié meurt avec lui.
 - **Glas final** (si tu l'as posé) : au soir du jour annoncé, après son vote (ou si la nuit allait tomber), la partie s'arrête : la meute gagne si un loup vit encore, sinon le tueur solitaire encore en vie, sinon le village ; dans une peste noire, la peste.
 
@@ -633,6 +651,12 @@ Pose sur la carte quelques **figurants** pour animer le village : le garde du gu
 - **Pie et Banc des accusés** : la plume ajoute deux voix « pour » quand son porteur est jugé.
 - **Greffier bègue et Juge de paix** : le Juge annule avant l'exécution ; le signe du Greffier attend le vote qui condamne pour de bon.
 - **Lavandières, Bûcherons mordus** : un loup reste dans la tanière ; les autres se retrouvent sans lui.
+- **Chambrière et Braconnière, Souffre-douleur, Aïeul** : la carte prise ne joue pas pour le condamné (ni emporté, ni liste des votants, ni sagesse perdue) ; la Chambrière en a désormais le pouvoir. Ce qui tient à la condamnation elle-même joue (Revenant, Rosière, Feu follet, cible d'un Chasseur de primes).
+- **Chambrière Bailli** : en se dévouant, elle perd la charge ; le village élit un autre Bailli. Le condamné Bailli remet son sceau comme tout Bailli qui meurt.
+- **Enfant des bois et amants** : si son modèle meurt de chagrin, il rejoint aussi la meute.
+- **Mâtin, Enfant des bois devenus loups** : ils comptent dans la meute (le Loup affamé perd sa faim si l'un d'eux meurt).
+- **Loup pâle et Louve mère** : la Louve ne mord jamais un loup ; la proie du Loup pâle n'est pas une proie pour elle.
+- **Joueur de vielle et Chambrière** : si elle reprend sa carte, elle apprend qui est déjà charmé et continue ; elle-même, charmée, ne l'est plus.
 
 # Changer de navigateur en pleine partie
 

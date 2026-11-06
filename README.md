@@ -164,7 +164,7 @@ raconte l'univers : la vallée, l'histoire du village, ses maisons, sa foi, ce q
 
 Les rôles sont publics : le guide du joueur les décrit tous, c'est le propre du genre. Ce qui est secret, c'est qui tient quoi.
 
-### La Meute (7 rôles)
+### La Meute (8 rôles)
 
 Les loups se reconnaissent dès la première nuit et chassent ensemble ; certains se réveillent une seconde fois, seuls.
 
@@ -177,8 +177,9 @@ Les loups se reconnaissent dès la première nuit et chassent ensemble ; certain
 | **Loup hurleur** | Chaque nuit, impose le silence à un joueur pour le débat du lendemain. |
 | **Loup flaireur** | Chaque nuit, flaire un joueur et apprend son camp. |
 | **Loup des roseaux** | Chaque nuit, guette une maison et apprend si son occupant a agi. |
+| **Loup pâle** | Chasse avec la meute, mais une nuit sur deux dévore seul l'un des siens ; ne gagne que s'il reste le dernier vivant. |
 
-### Le Village (31 rôles)
+### Le Village (36 rôles)
 
 | Rôle | Pouvoir |
 |---|---|
@@ -213,8 +214,13 @@ Les loups se reconnaissent dès la première nuit et chassent ensemble ; certain
 | **Greffier bègue** | Une fois par partie, juste après une condamnation, déclenche en secret un second vote, sans débat. |
 | **Vieux Sergent** | Si la meute le dévore, sa vieille épée tue le premier loup à sa gauche la nuit suivante. |
 | **Pie** | Chaque nuit, pose une plume noire sur un joueur : deux voix de plus contre lui au vote du jour. |
+| **Chapardeur** | La première nuit, peut voler l'une des deux cartes restées au centre et devenir ce rôle ; obligé si ce sont deux loups. |
+| **Bateleur** | Trois rôles sont posés face visible : chaque nuit, il peut jouer le pouvoir de l'un d'eux, une seule fois chacun. |
+| **Enfant des bois** | La première nuit, choisit un modèle : tant qu'il vit, il est du Village ; s'il meurt, il rejoint la meute. |
+| **Mâtin** | La première nuit, choisit pour toujours d'être loup (il chasse avec la meute) ou simple villageois. |
+| **Chambrière** | Quand le vote élimine un joueur, peut se dévoiler avant qu'on retourne sa carte et prendre son rôle en secret. |
 
-### Les solitaires (5 rôles)
+### Les solitaires (8 rôles)
 
 | Rôle | Pouvoir et victoire |
 |---|---|
@@ -223,6 +229,9 @@ Les loups se reconnaissent dès la première nuit et chassent ensemble ; certain
 | **Chasseur de primes** | Reçoit une cible au début : gagne si elle est exécutée de jour. |
 | **Pyromane** | Asperge une maison par nuit ; une nuit, met le feu à toutes les maisons aspergées ; gagne seul. |
 | **Dame du gué** | Une nuit sur deux, attire un joueur au gué où il se noie ; la meute ne peut pas la tuer ; gagne seule. |
+| **Feu follet** | La partie commence par un jour ; éliminé au premier tour, il gagne seul ; sinon, il devient simple villageois. |
+| **Joueur de vielle** | Chaque nuit, charme deux joueurs ; gagne seul quand tous les autres vivants sont charmés. |
+| **Illuminé** | Le village est partagé en deux groupes annoncés à tous ; gagne seul si tout l'autre groupe est éliminé. |
 
 ### Les gens de passage (3 rôles)
 

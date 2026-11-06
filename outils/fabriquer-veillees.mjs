@@ -20,7 +20,7 @@ import { join, relative } from "node:path";
 import { FETES_VEILLEES, imageDeFete } from "../modules/lakour-veillees/scripts/fetes.js";
 import { appliquer, extraire, fusionner, resumerRapport } from "../modules/lakour-mj-ia/outils/traduction.mjs";
 import { verifierModuleDeContenu } from "../modules/lakour-mj-ia/outils/contrat-contenu.mjs";
-import { APPARENCES, CAMPS, EFFETS, MODULE, VICTOIRES, ORDRE_MEUTE, cheminJeton, cleJetonBatiment, cleJetonMetier } from "../modules/lakour-veillees/contenu/aides.mjs";
+import { APPARENCES, CAMPS, EFFETS, MODULE, VICTOIRES, VICTOIRES_DE_LOUP, ORDRE_MEUTE, cheminJeton, cleJetonBatiment, cleJetonMetier } from "../modules/lakour-veillees/contenu/aides.mjs";
 import { DOCUMENTS } from "../modules/lakour-veillees/contenu/index.mjs";
 import { compositions, MIN_JOUEURS, MAX_JOUEURS, MIN_TABLEE, MAX_TABLEE, NIVEAU_PETITE_TABLEE } from "../modules/lakour-veillees/contenu/compositions.mjs";
 import { EQUILIBRE, EQUILIBRE_BATIMENTS } from "../modules/lakour-veillees/contenu/equilibre.mjs";
@@ -119,10 +119,13 @@ export function verifierDocuments(docs) {
     const s = d.doc.system, n = s.nuit;
     if (!CAMPS.includes(s.camp)) err(d, `camp « ${s.camp} » inconnu`);
     if (s.camp === "solitaire" && !sansBalises(s.victoire)) err(d, "solitaire sans condition de victoire");
-    if (s.camp !== "solitaire" && s.victoire) err(d, "victoire propre hors solitaire");
+    // Le Loup pâle (Le Pacte, étape 3b) : un loup à victoire propre (« seul-survivant ») porte son texte de victoire.
+    const loupSolitaire = s.camp === "meute" && VICTOIRES_DE_LOUP.includes(s.victoireCle);
+    if (loupSolitaire && !sansBalises(s.victoire)) err(d, "loup à victoire propre sans condition de victoire");
+    if (s.camp !== "solitaire" && s.victoire && !loupSolitaire) err(d, "victoire propre hors solitaire");
     if (typeof s.apparence !== "string" || !APPARENCES.includes(s.apparence)) err(d, `apparence « ${s.apparence} » inconnue`);
     if (typeof s.victoireCle !== "string" || !VICTOIRES.includes(s.victoireCle)) err(d, `clé de victoire « ${s.victoireCle} » inconnue`);
-    else if (s.victoireCle && s.camp !== "solitaire") err(d, "clé de victoire hors solitaire");
+    else if (s.victoireCle && s.camp !== "solitaire" && !loupSolitaire) err(d, "clé de victoire hors solitaire");
     if (s.apparence && s.apparence === s.camp) err(d, "apparence identique au camp réel (laisser vide)");
     if (s.public !== undefined && s.public !== true) err(d, "rôle public : « public: true », ou rien");
     if (!sansBalises(s.description)) err(d, "pouvoir sans description");

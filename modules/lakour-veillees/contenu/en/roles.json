@@ -7,7 +7,7 @@
     },
     "system.description": {
       "fr": "<p>Tu as vu passer plus d'hivers que quiconque à Brumecombe, et ta peau est dure comme l'écorce.</p><p><strong>La première fois que la meute t'attaque</strong>, tu survis, en secret : ta carte reste cachée et le village n'en sait rien. <strong>La seconde fois</strong>, tu meurs. La première morsure de la Louve mère compte pour cette première attaque : elle ne fait pas de toi un loup. Si un remède de l'Herboriste te sauve d'une attaque, tu gardes ta vie de réserve.</p><p>Mais tu es la sagesse du village : si <strong>le village</strong> te fait mourir (le vote, le poison de l'Herboriste, la Braconnière), Brumecombe perd la tête, et <strong>tous les villageois perdent leurs pouvoirs</strong> jusqu'à la fin de la partie : les rôles du Village comme les métiers. Le Bailli garde sa charge.</p>",
-      "en": "<p>You have seen more winters than anyone in Brumecombe, and your skin is as tough as bark.</p><p><strong>The first time the pack attacks you</strong>, you survive, in secret: your card stays hidden and the village knows nothing of it. <strong>The second time</strong>, you die. The Wolf Mother's first bite counts as that first attack: it does not make you a wolf. If one of the Herbalist's remedies saves you from an attack, you keep your spare life.</p><p>But you are the village's wisdom: if <strong>the village</strong> brings about your death (the vote, the Herbalist's poison, the Poacher), Brumecombe loses its head, and <strong>all the villagers lose their powers</strong> until the end of the game: the Village roles as well as the trades. The Bailiff keeps his office.</p>"
+      "en": "<p>You have seen more winters than anyone in Brumecombe, and your skin is as tough as bark.</p><p><strong>The first time the pack attacks you</strong>, you survive, in secret: your card stays hidden and the village knows nothing of it. <strong>The second time</strong>, you die. The Mother Wolf's first bite counts as that first attack: it does not make you a wolf. If one of the Herbalist's remedies saves you from an attack, you keep your spare life.</p><p>But you are the village's wisdom: if <strong>the village</strong> brings about your death (the vote, the Herbalist's poison, the Poacher), Brumecombe loses its head, and <strong>all the villagers lose their powers</strong> until the end of the game: the Village roles as well as the trades. The Bailiff keeps his office.</p>"
     }
   },
   "roles/7ExCekbrqwBvDll1": {
@@ -23,6 +23,21 @@
     "system.nuit.invite": {
       "fr": "Sur quel seuil poses-tu ta plume noire cette nuit ? Passe pour n'en poser aucune.",
       "en": "On which doorstep do you lay your black feather tonight? Pass to lay none."
+    }
+  },
+  "roles/7W5BQWZLxlmXhK4E": {
+    "_nom": "Mâtin",
+    "name": {
+      "fr": "Mâtin",
+      "en": "Mastiff"
+    },
+    "system.description": {
+      "fr": "<p>Tu gardes les troupeaux de Brumecombe, mais le loup t'appelle chaque fois que la lune monte.</p><p><strong>La première nuit</strong>, juste avant la meute, tu choisis ton camp, <strong>pour toujours</strong> :<br>- <strong>la meute</strong> : tu te réveilles avec elle dès cette nuit, et chaque nuit ensuite, et tu chasses avec elle ; tu es un loup de la meute ;<br>- <strong>le village</strong> : tu restes un simple villageois jusqu'à la fin.</p>",
+      "en": "<p>You guard the flocks of Brumecombe, but the wolf calls you every time the moon rises.</p><p><strong>On the first night</strong>, just before the pack, you choose your side, <strong>for good</strong>:<br>- <strong>the pack</strong>: you wake with it from this very night, and every night after, and you hunt with it; you are a wolf of the pack;<br>- <strong>the village</strong>: you remain a plain villager until the end.</p>"
+    },
+    "system.nuit.invite": {
+      "fr": "Désigne-toi pour rejoindre la meute dès cette nuit, ou passe pour rester au village.",
+      "en": "Choose yourself to join the pack from tonight, or pass to stay with the village."
     }
   },
   "roles/8ybiOVnPr6CdCI7C": {
@@ -66,6 +81,21 @@
       "en": "Your song rises over the river: who follows your voice to the ford tonight?"
     }
   },
+  "roles/Aok4F1a671RzXISs": {
+    "_nom": "Feu follet",
+    "name": {
+      "fr": "Feu follet",
+      "en": "Will-o'-the-Wisp"
+    },
+    "system.description": {
+      "fr": "<p>Tu es la petite flamme qui danse au-dessus des marais, et tu n'as qu'une envie : qu'on t'éteigne.</p><p>Quand tu es de la partie, la veillée <strong>commence par un jour</strong> : le village débat et vote avant la première nuit.</p><p>Tu n'as aucun pouvoir. Si tu passes ce premier tour (le premier vote, puis la première nuit) sans être éliminé, ta flamme s'éteint : tu deviens un <strong>simple villageois</strong> du camp du Village, jusqu'à la fin.</p>",
+      "en": "<p>You are the little flame that dances over the marshes, and you have only one wish: to be put out.</p><p>When you are in the game, the evening <strong>begins with a day</strong>: the village debates and votes before the first night.</p><p>You have no power. If you get through this first round (the first vote, then the first night) without being eliminated, your flame goes out: you become a <strong>plain villager</strong> on the Village side, until the end.</p>"
+    },
+    "system.victoire": {
+      "fr": "<p>Tu gagnes <strong>seul et aussitôt</strong> si tu es éliminé <strong>au premier tour</strong> : par le premier vote du village, par la meute la première nuit, ou par le poison de l'Herboriste la première nuit. La partie s'arrête sur ta victoire.</p>",
+      "en": "<p>You win <strong>alone and at once</strong> if you are eliminated <strong>in the first round</strong>: by the village's first vote, by the pack on the first night, or by the Herbalist's poison on the first night. The game stops on your victory.</p>"
+    }
+  },
   "roles/BV59CvnztDht98LJ": {
     "_nom": "Braconnière",
     "name": {
@@ -90,6 +120,21 @@
     "system.nuit.invite": {
       "fr": "La meute a choisi sa proie. Désigne-la pour l'infecter au lieu de la tuer, ou passe.",
       "en": "The pack has chosen its prey. Designate it to infect it instead of killing it, or pass."
+    }
+  },
+  "roles/CKyrn2UpA9bEaNwd": {
+    "_nom": "Illuminé",
+    "name": {
+      "fr": "Illuminé",
+      "en": "Zealot"
+    },
+    "system.description": {
+      "fr": "<p>Tu as vu la lumière, et elle t'a dit que la moitié du village était maudite.</p><p>Avant la partie, le narrateur partage le village <strong>en deux groupes</strong>, selon un critère que tout le monde voit (à Brumecombe : la rive où chacun dort), et l'annonce à tous. Tu appartiens à l'un d'eux.</p><p>Tu n'as aucun pouvoir de nuit : ta parole et ton vote suffisent. Si la Louve mère te mord, tu deviens un simple loup et tu oublies ton but.</p>",
+      "en": "<p>You have seen the light, and it told you that half the village was cursed.</p><p>Before the game, the narrator splits the village <strong>into two groups</strong>, by a criterion everyone can see (in Brumecombe: the bank where each one sleeps), and announces it to all. You belong to one of them.</p><p>You have no night power: your word and your vote are enough. If the Mother Wolf bites you, you become a plain wolf and forget your goal.</p>"
+    },
+    "system.victoire": {
+      "fr": "<p>Tu gagnes <strong>seul</strong>, vivant, dès que <strong>tous les joueurs de l'autre groupe</strong> sont éliminés.</p>",
+      "en": "<p>You win <strong>alone</strong>, alive, as soon as <strong>every player of the other group</strong> is eliminated.</p>"
     }
   },
   "roles/DFwCH3McvuG7izJy": {
@@ -172,6 +217,21 @@
     "system.description": {
       "fr": "<p>Tu portes un visage d'emprunt cousu de patience.</p><p>Tu chasses chaque nuit avec la meute. <strong>Toute vision te voit comme un villageois du camp du Village</strong> (Liseuse de cendres, Sourcier, Loup flaireur…). La Veilleuse de lanterne te démasque comme les autres si tu entres dans la maison qu'elle éclaire.</p><p>Si tu es <strong>le plus désigné d'un vote sans être exécuté</strong> (égalité, vote annulé, majorité manquée), le masque tombe : à partir de là, les visions disent la vérité sur toi.</p>",
       "en": "<p>You wear a borrowed face, stitched with patience.</p><p>You hunt each night with the pack. <strong>Every vision sees you as a villager of the Village side</strong> (Ash Reader, Dowser, Scenting Wolf…). The Lantern Keeper unmasks you like any other wolf if you enter the house she lights.</p><p>If you are <strong>the most designated in a vote without being executed</strong> (a tie, a cancelled vote, a missed majority), the mask falls: from then on, visions tell the truth about you.</p>"
+    }
+  },
+  "roles/OSDyxJ8GuNPMyYZR": {
+    "_nom": "Chapardeur",
+    "name": {
+      "fr": "Chapardeur",
+      "en": "Pilferer"
+    },
+    "system.description": {
+      "fr": "<p>Tu as les doigts légers, et rien ne t'appartient longtemps, pas même ce que tu es.</p><p>Quand tu es de la partie, le paquet compte <strong>deux cartes Villageois de plus</strong> : après la distribution, <strong>deux cartes restent au centre</strong>, face cachée.</p><p><strong>La première nuit</strong>, avant tout le monde, tu les regardes en secret et tu peux <strong>échanger ta carte contre l'une d'elles</strong> : tu deviens ce rôle jusqu'à la fin, avec toutes ses règles (un rôle de la première nuit se joue encore cette nuit-là, à son tour), et tu gagnes avec son camp. Si <strong>les deux sont des loups</strong>, tu es <strong>obligé</strong> d'en prendre une. Sinon, tu peux aussi garder ta carte et rester villageois.</p>",
+      "en": "<p>Your fingers are light, and nothing stays yours for long, not even who you are.</p><p>When you are in the game, the deck holds <strong>two more Villager cards</strong>: after the deal, <strong>two cards remain in the middle</strong>, face down.</p><p><strong>On the first night</strong>, before anyone else, you look at them in secret and may <strong>swap your card for one of them</strong>: you become that role until the end, with all its rules (a first-night role is still played that night, in its turn), and you win with its side. If <strong>both are wolves</strong>, you <strong>must</strong> take one. Otherwise, you may also keep your card and remain a villager.</p>"
+    },
+    "system.nuit.invite": {
+      "fr": "Deux cartes dorment au centre : laquelle prends-tu à la place de la tienne ? Passe pour garder ta carte.",
+      "en": "Two cards lie in the middle: which one do you take instead of yours? Pass to keep your card."
     }
   },
   "roles/OpNwFB8BnMiJLbw0": {
@@ -267,6 +327,25 @@
       "en": "<p>You have always been blamed for everything, and today will be no different.</p><p>If an <strong>execution vote ends in a tie</strong>, none of those tied is executed: <strong>you are</strong>, before any other rule (even before the Bailiff's vote).</p><p>Dying that way, you have a last word: you secretly choose <strong>who will vote</strong> in the next day's execution vote (at least one player). Those you did not choose do not vote that day. Your list can save an innocent, or hand the village over to the pack.</p>"
     }
   },
+  "roles/SZjmRH9PYOLeYNL3": {
+    "_nom": "Joueur de vielle",
+    "name": {
+      "fr": "Joueur de vielle",
+      "en": "Hurdy-Gurdy Player"
+    },
+    "system.description": {
+      "fr": "<p>Ta vielle grince sous les fenêtres, et ceux qui l'entendent ne pensent plus qu'à elle.</p><p><strong>Chaque nuit</strong>, à la fin de la nuit, tu <strong>charmes deux joueurs</strong> (jamais toi-même) qui ne l'étaient pas encore. Puis tous les charmés se réveillent ensemble et <strong>se reconnaissent</strong> ; toi, tu restes dans l'ombre.</p><p>Rien n'arrête ton air : ni la garde, ni les remèdes ; les loups l'entendent comme les autres. Les charmés gardent leurs pouvoirs et leur camp ; le charme ne passe pas d'un amant à l'autre. Si la Louve mère te mord, tu deviens un simple loup et tu oublies ton but.</p>",
+      "en": "<p>Your hurdy-gurdy creaks under the windows, and those who hear it can think of nothing else.</p><p><strong>Each night</strong>, at the end of the night, you <strong>charm two players</strong> (never yourself) who were not charmed yet. Then all the charmed wake together and <strong>recognise one another</strong>; you stay in the shadows.</p><p>Nothing stops your tune: neither guard nor remedy; the wolves hear it like everyone else. The charmed keep their powers and their side; the charm does not pass from one lover to the other. If the Mother Wolf bites you, you become a plain wolf and forget your goal.</p>"
+    },
+    "system.victoire": {
+      "fr": "<p>Tu gagnes <strong>seul</strong>, dès que <strong>tous les autres joueurs vivants sont charmés</strong>, quelle que soit la façon dont cela arrive (un charme, un vote, la meute…).</p>",
+      "en": "<p>You win <strong>alone</strong> as soon as <strong>every other living player is charmed</strong>, however it comes about (a charm, a vote, the pack…).</p>"
+    },
+    "system.nuit.invite": {
+      "fr": "Sous quelles fenêtres joues-tu ta vielle cette nuit ? Deux joueurs pas encore charmés.",
+      "en": "Under which windows do you play your hurdy-gurdy tonight? Two players not yet charmed."
+    }
+  },
   "roles/TPjAhSGCDL5HVFtO": {
     "_nom": "Gardeuse d'oies",
     "name": {
@@ -275,7 +354,7 @@
     },
     "system.description": {
       "fr": "<p>Tes oies ne suivent que toi, et elles ne supportent pas l'odeur du loup.</p><p><strong>Chaque matin</strong>, juste après l'annonce des morts de la nuit, si <strong>un loup</strong> est l'un de tes <strong>deux voisins vivants</strong> (à ta gauche et à ta droite autour de la table), le narrateur annonce à tout le village : « <strong>les oies de</strong> <em>(ton nom)</em> <strong>cacardent</strong> ». Sinon, il ne dit rien.</p><p>Si la meute fait de toi un loup (la morsure de la Louve mère), tes oies cacardent chaque matin, tant que tu vis.</p>",
-      "en": "<p>Your geese follow no one but you, and they cannot stand the smell of wolf.</p><p><strong>Each morning</strong>, right after the night's deaths are announced, if <strong>a wolf</strong> is one of your <strong>two living neighbours</strong> (to your left and to your right around the table), the narrator announces to the whole village: “<strong>the geese of</strong> <em>(your name)</em> <strong>are honking</strong>”. Otherwise, he says nothing.</p><p>If the pack makes a wolf of you (the Wolf Mother's bite), your geese honk every morning, as long as you live.</p>"
+      "en": "<p>Your geese follow no one but you, and they cannot stand the smell of wolf.</p><p><strong>Each morning</strong>, right after the night's deaths are announced, if <strong>a wolf</strong> is one of your <strong>two living neighbours</strong> (to your left and to your right around the table), the narrator announces to the whole village: “<strong>the geese of</strong> <em>(your name)</em> <strong>are honking</strong>”. Otherwise, he says nothing.</p><p>If the pack makes a wolf of you (the Mother Wolf's bite), your geese honk every morning, as long as you live.</p>"
     }
   },
   "roles/Uz9e9vNGNh8w7jNm": {
@@ -357,6 +436,21 @@
       "en": "With whom do you swap your satchel tonight? Pass to keep it."
     }
   },
+  "roles/YFXPlrYyJ3KsYhC2": {
+    "_nom": "Bateleur",
+    "name": {
+      "fr": "Bateleur",
+      "en": "Mountebank"
+    },
+    "system.description": {
+      "fr": "<p>Tu as joué tous les rôles sur les tréteaux des foires, et tu sais encore les tenir le temps d'une nuit.</p><p>Avant la partie, le narrateur pose <strong>trois cartes de rôles à pouvoir</strong> (jamais de loup) <strong>face visible</strong> : tout le village les connaît.</p><p><strong>Chaque nuit</strong>, en tout début de nuit, tu peux <strong>désigner l'une de ces cartes</strong> : tu joues son pouvoir cette nuit-là, à son tour, comme si c'était ton rôle. Au matin, la carte jouée est <strong>retirée</strong> : elle ne servira plus. Tu peux aussi passer et garder tes cartes pour plus tard.</p><p>Tu restes du camp du <strong>Village</strong>, quelle que soit la carte que tu joues.</p>",
+      "en": "<p>You have played every part on the trestles of the fairs, and you can still hold one for a night.</p><p>Before the game, the narrator lays <strong>three cards of roles with a power</strong> (never a wolf) <strong>face up</strong>: the whole village knows them.</p><p><strong>Each night</strong>, at the very start of the night, you may <strong>choose one of these cards</strong>: you play its power that night, in its turn, as if it were your role. In the morning, the card played is <strong>removed</strong>: it will not serve again. You may also pass and keep your cards for later.</p><p>You remain on the <strong>Village</strong> side, whatever card you play.</p>"
+    },
+    "system.nuit.invite": {
+      "fr": "Le spectacle commence : quelle carte joues-tu cette nuit ? Passe pour n'en jouer aucune.",
+      "en": "The show begins: which card do you play tonight? Pass to play none."
+    }
+  },
   "roles/YdI25qY9jqzCUtcU": {
     "_nom": "Loup hurleur",
     "name": {
@@ -411,6 +505,36 @@
     "system.nuit.invite": {
       "fr": "Désigne-toi pour te glisser hors du lit et épier la meute, ou passe.",
       "en": "Designate yourself to slip out of bed and spy on the pack, or pass."
+    }
+  },
+  "roles/cb8c2tsn2D1wDBFO": {
+    "_nom": "Loup pâle",
+    "name": {
+      "fr": "Loup pâle",
+      "en": "Pale Wolf"
+    },
+    "system.description": {
+      "fr": "<p>Ton pelage a blanchi avant l'âge, et la meute croit que c'est la neige. Elle se trompe : c'est la faim de tout ce qui respire, les loups compris.</p><p><strong>Chaque nuit</strong>, tu chasses avec la meute, comme un loup parmi les autres : ils te croient des leurs, et toute vision te voit loup.</p><p><strong>Une nuit sur deux</strong> (la deuxième, la quatrième…), quand la meute s'est rendormie, tu te réveilles seul et tu peux <strong>dévorer un loup</strong> (jamais toi-même). C'est une attaque de loup comme une autre : une garde ou un remède peuvent la déjouer, et la lanterne de la Veilleuse peut te surprendre.</p>",
+      "en": "<p>Your coat turned white before its time, and the pack thinks it is snow. The pack is wrong: it is hunger for everything that breathes, wolves included.</p><p><strong>Each night</strong>, you hunt with the pack, a wolf among the others: they believe you are one of them, and every vision sees you as a wolf.</p><p><strong>Every other night</strong> (the second, the fourth…), once the pack has gone back to sleep, you wake alone and may <strong>devour a wolf</strong> (never yourself). It is a wolf attack like any other: a guard or a remedy can thwart it, and the Lantern Keeper's light can catch you.</p>"
+    },
+    "system.victoire": {
+      "fr": "<p>Tu gagnes <strong>seul</strong>, si tu es <strong>le dernier vivant</strong>. Si la meute l'emporte, ce n'est pas ta victoire : tu ne gagnes jamais avec elle.</p>",
+      "en": "<p>You win <strong>alone</strong> if you are <strong>the last one alive</strong>. If the pack wins, it is not your victory: you never win with it.</p>"
+    },
+    "system.nuit.invite": {
+      "fr": "La meute dort. Quel loup dévores-tu seul cette nuit ? Passe pour l'épargner.",
+      "en": "The pack is asleep. Which wolf do you devour alone tonight? Pass to spare them."
+    }
+  },
+  "roles/eWdDN0tCrkTMBQUR": {
+    "_nom": "Chambrière",
+    "name": {
+      "fr": "Chambrière",
+      "en": "Chambermaid"
+    },
+    "system.description": {
+      "fr": "<p>Tu as servi dans toutes les maisons du village, et tu sais reprendre le tablier d'un autre.</p><p>Quand le <strong>vote</strong> du village élimine un joueur, <strong>avant que sa carte soit retournée</strong>, tu peux <strong>te dévoiler</strong> : ta carte de Chambrière est retournée devant tous, et tu <strong>prends la carte du condamné</strong>, sans la montrer. Tu deviens ce rôle jusqu'à la fin, <strong>remis à neuf</strong> (ses usages et ses fioles pleines ; s'il agit la première nuit, le narrateur t'appelle la nuit suivante pour le faire).</p><p>Ce qui touchait le condamné ne passe pas à toi (ni son amour, ni sa morsure, ni son charme, ni sa charge) ; ce qui te touchait est perdu (un charme, la charge de Bailli), sauf une morsure : mordue, tu restes un loup. <strong>Amoureuse, tu ne peux pas te dévouer.</strong></p>",
+      "en": "<p>You have served in every house in the village, and you know how to take up someone else's apron.</p><p>When the village's <strong>vote</strong> eliminates a player, <strong>before their card is turned over</strong>, you may <strong>reveal yourself</strong>: your Chambermaid card is turned over for all to see, and you <strong>take the condemned player's card</strong>, without showing it. You become that role until the end, <strong>as good as new</strong> (its uses and its vials full; if it acts on the first night, the narrator calls you the next night to do so).</p><p>What touched the condemned does not pass to you (neither their love, nor their bite, nor their charm, nor their office); what touched you is lost (a charm, the Bailiff's office), except a bite: if you were bitten, you remain a wolf. <strong>If you are in love, you cannot step forward.</strong></p>"
     }
   },
   "roles/ehZ9XdQ07PApf0mn": {
@@ -579,6 +703,21 @@
     "system.nuit.invite": {
       "fr": "Quelle maison la meute visite-t-elle cette nuit ?",
       "en": "Which house does the pack visit tonight?"
+    }
+  },
+  "roles/oeWWoqQQ3C42V0yo": {
+    "_nom": "Enfant des bois",
+    "name": {
+      "fr": "Enfant des bois",
+      "en": "Woods Child"
+    },
+    "system.description": {
+      "fr": "<p>On t'a trouvé au bord de la forêt, et tu as grandi en imitant ceux qui voulaient bien de toi.</p><p><strong>La première nuit</strong>, tu désignes en secret un <strong>modèle</strong> parmi les autres joueurs. Tant que ton modèle vit, tu es un villageois du camp du <strong>Village</strong>.</p><p>Mais si ton modèle <strong>meurt</strong>, de quelque façon que ce soit, plus rien ne te retient : tu <strong>rejoins la meute</strong> en secret, et tu te réveilles avec elle dès la nuit suivante. Tu peux même aider à faire tomber ton modèle.</p>",
+      "en": "<p>You were found at the edge of the forest, and you grew up copying those who would have you.</p><p><strong>On the first night</strong>, you secretly choose a <strong>model</strong> among the other players. As long as your model lives, you are a villager on the <strong>Village</strong> side.</p><p>But if your model <strong>dies</strong>, in any way at all, nothing holds you back any more: you <strong>join the pack</strong> in secret, and you wake with it from the next night on. You may even help bring your model down.</p>"
+    },
+    "system.nuit.invite": {
+      "fr": "Qui prends-tu pour modèle ? Tant qu'il vivra, tu resteras au village.",
+      "en": "Whom do you take as your model? As long as they live, you will stay with the village."
     }
   },
   "roles/q4anrYcTzDxWlW2V": {

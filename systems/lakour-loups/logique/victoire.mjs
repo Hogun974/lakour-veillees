@@ -11,10 +11,15 @@
 // Dans l'ordre :
 // 1. solitaire « exécuté » (le Revenant) : gagne s'il a été exécuté par le vote ;
 //    solitaire « cible-executee » (le Chasseur de primes) : gagne si sa cible a été exécutée par le vote ;
+//    solitaire « premier-tour » (le Feu follet, ambigus.mjs) : gagne s'il a été éliminé au premier tour (le premier vote, ou la meute
+//    ou le poison de la première nuit) ;
 // 1 bis. la Rosière (somnambule.mjs) exécutée par le vote : le Village perd aussitôt -> la meute (dans une peste noire : la peste) ;
 // 2. peste noire (logique/peste.mjs) : reconnue (cri juste) -> le village ; sinon, un vivant ou moins -> la peste ; sinon
 //    rien (ni « plus de loup » ni amants ni tueur solitaire ne finissent une partie de peste) ;
 //    personne en vie : pas de vainqueur ("") ;
+// 2 bis. le Pacte, étape 3b (ambigus.mjs, victoireDesAmbigus) : le Joueur de vielle vivant (pas devenu loup) dont tous les autres
+//    vivants sont charmés (charmes) ; l'Illuminé vivant (pas devenu loup) quand tout l'autre groupe est éliminé (groupes) ; le
+//    Loup pâle dernier vivant ;
 // 3. les deux derniers vivants sont amoureux : ils gagnent ensemble (leur camp s'ils en partagent un, sinon l'id
 //    du premier des deux) ; deux amants de camps différents ne gagnent que de cette façon (bilanDePartie ne les compte jamais
 //    parmi les gagnants de leur camp) ;
@@ -28,6 +33,7 @@
 import { VAINQUEUR_PESTE } from "./constantes.mjs";
 import { CLE_ROSIERE } from "./somnambule.mjs";
 import { victoireSaintMartin } from "./saintmartin.mjs";
+import { VICTOIRE_FEU_FOLLET, VICTOIRE_LOUP_PALE, feuFolletGagne, victoireDesAmbigus } from "./ambigus.mjs";
 
 export function victoireCleDe(role) {
   if (!role) return "";
@@ -41,7 +47,9 @@ export function victoireCleDe(role) {
 
 // saintMartin : null (partie ordinaire) ; false (Nuit de la Saint-Martin, avant la fin : rien ne tombe) ; true (sa fin :
 // victoireSaintMartin, saintmartin.mjs).
-export function verifierVictoire({ villageois = [], morts = [], primes = {}, peste = null, glas = false, saintMartin = null, strict = false } = {}) {
+// charmes : les charmés du Joueur de vielle (secret du MJ) ; groupes : le partage annoncé pour l'Illuminé (ambigus.mjs,
+// contexteDesAmbigus).
+export function verifierVictoire({ villageois = [], morts = [], primes = {}, peste = null, glas = false, saintMartin = null, strict = false, charmes = [], groupes = null } = {}) {
   if (saintMartin !== null) return saintMartin ? victoireSaintMartin({ villageois, morts }) : "";
   const executes = new Set(morts.filter(m => m.cause === "vote").map(m => m.acteurId));
 
@@ -49,6 +57,7 @@ export function verifierVictoire({ villageois = [], morts = [], primes = {}, pes
     const cle = victoireCleDe(v.role);
     if (cle === "execute" && executes.has(v.id)) return v.id;
     if (cle === "cible-executee" && primes[v.id] && executes.has(primes[v.id])) return v.id;
+    if (cle === VICTOIRE_FEU_FOLLET && feuFolletGagne(v, morts)) return v.id;
   }
 
   if (villageois.some(v => v.role?.cle === CLE_ROSIERE && executes.has(v.id))) return peste?.active ? VAINQUEUR_PESTE : "meute";
@@ -62,6 +71,9 @@ export function verifierVictoire({ villageois = [], morts = [], primes = {}, pes
   // Personne en vie : pas de vainqueur, sauf au Glas final, qui doit finir la partie : sans loup ni tueur solitaire vivant, le
   // village (règle 7 ci-dessous). Une Braconnière qui emporte le dernier loup en mourant vide le village (petite tablée, parité stricte).
   if (!vivants.length) return glas ? "village" : "";
+
+  const ambigu = victoireDesAmbigus({ villageois, vivants, charmes, groupes, victoireCleDe });
+  if (ambigu) return ambigu;
 
   if (vivants.length === 2) {
     const [a, b] = vivants;
@@ -110,8 +122,11 @@ export function bilanDePartie({ villageois = [], morts = [], causes = {}, vainqu
   const gagnants = new Set();
   // Deux amants de camps différents (l'Entremetteuse) ne gagnent qu'en restant les deux derniers vivants : jamais avec leur camp.
   const desAmantsMeles = v => { const lie = parId.get(v.amoureux); return Boolean(lie && lie.amoureux === v.id && lie.camp !== v.camp); };
+  // Le Loup pâle (ambigus.mjs) chasse avec la meute, mais ne gagne qu'en dernier vivant : jamais avec elle.
+  const pale = v => victoireCleDe(v.role) === VICTOIRE_LOUP_PALE;
   if (vainqueur === "village" || vainqueur === "meute") {
     for (const v of villageois) if (v.camp === vainqueur && !desAmantsMeles(v)) gagnants.add(v.id);
+    for (const v of villageois) if (pale(v)) gagnants.delete(v.id);
   } else if (parId.has(vainqueur)) {
     const v = parId.get(vainqueur), lie = parId.get(v.amoureux);
     gagnants.add(v.id);

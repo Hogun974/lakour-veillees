@@ -257,7 +257,9 @@ function verifierVictoireFinale(texte) {
   // Le vainqueur est celui que dicte la règle sur l'état final.
   const aPlat = villageois().map(a => ({ id: a.id, vivant: a.system.vivant, camp: secretDuMJ.camp(a), amoureux: secretDuMJ.amoureux(a),
     role: { cle: roleDe(a).system.cle, victoireCle: roleDe(a).system.victoireCle } }));
-  assert.equal(verifierVictoire({ villageois: aPlat, morts: e.morts, primes: e.primes, glas: glasAFini(e), strict: e.petiteTablee && api.logique.pariteStricteTablee(villageois().length) }), e.vainqueur);
+  // (Le Pacte, étape 3b : les charmés du Joueur de vielle et les deux bords de l'Illuminé comptent aussi.)
+  assert.equal(verifierVictoire({ villageois: aPlat, morts: e.morts, primes: e.primes, glas: glasAFini(e), strict: e.petiteTablee && api.logique.pariteStricteTablee(villageois().length),
+    ...api.logique.contexteDesAmbigus(e) }), e.vainqueur);
 }
 
 // Le Glas final a-t-il fini la partie (phase « fin » comprise : glasSonne ne regarde qu'une partie en cours) ?
@@ -435,7 +437,11 @@ ${r.contenu}`);
     }
     // Composition générée : bon nombre de loups, équilibre des poids proche de zéro (de sa cible, en petite tablée).
     const equilibre = EQUILIBRE;
-    const distribues = villageois().map(a => roleDe(a).system.cle);
+    // Le Chapardeur (Le Pacte, étape 3b) : deux cartes Villageois de plus au paquet, les deux non distribuées au centre ; on compte
+    // la composition entière (distribuée et centre), sans ces deux cartes ajoutées.
+    const centre = api.etat().ambigusSecret.centre.map(r => r.system.cle);
+    const distribues = [...villageois().map(a => roleDe(a).system.cle), ...centre];
+    if (centre.length) for (let i = 0; i < 2; i++) distribues.splice(distribues.lastIndexOf("villageois"), 1);
     assert.equal(distribues.filter(c => equilibre.roles[c].camp === "meute").length, tablee ? api.logique.nombreDeLoupsTablee(total) : api.logique.nombreDeLoups(total));
     assert.ok(Math.abs(distribues.reduce((s, c) => s + equilibre.roles[c].poids, 0) - (tablee ? api.logique.cibleTablee(total) : 0)) <= 3, `déséquilibrée : ${distribues.join(", ")}`);
     // La Petite tablée : publique, glas d'office, tirage contraint (le partage des camps), annonce sans nom.
@@ -530,7 +536,8 @@ ${r.contenu}`);
       // Les effets du jour ont tenu cette nuit.
       const mortsDeLaNuit = etatNuit.morts.filter(m => m.tour === etatNuit.tour && avantNuit.has(m.acteurId));
       for (const m of mortsDeLaNuit) {
-        if (m.cause !== "chagrin" && m.cause !== "emporte") assert.ok(!fx.horsDAtteinte.includes(m.acteurId), `${game.actors.get(m.acteurId).name}, hors d'atteinte, meurt (${m.cause})`);
+        // (Le loup blessé par la vieille épée du Vieux Sergent meurt où qu'il dorme : rien ne l'en protège.)
+        if (!["chagrin", "emporte", "contamine"].includes(m.cause)) assert.ok(!fx.horsDAtteinte.includes(m.acteurId), `${game.actors.get(m.acteurId).name}, hors d'atteinte, meurt (${m.cause})`);
         if (m.cause === "meute") {
           assert.ok(!fx.asiles.includes(m.acteurId), "la meute tue à la Chapelle");
           const loupATaverne = fx.taverneEnJeu && fx.taverne.some(id => avant.get(id)?.camp === "meute");
@@ -828,6 +835,13 @@ test("loups_nuit : le Fossoyeur interroge les tombes (les morts), pas les vivant
 });
 
 test("loups_nuit : le Messager fait écrire l'expéditeur, le destinataire seul reçoit le mot ; rien ne fuit", async () => {
+  // Le hasard du système (qui la meute dévore, l'Enfant surprise, le Pyromane…) tiré d'une graine : l'essai rejoue toujours la même partie (il échouait
+  // une fois sur deux : un Messager dévoré la nuit même de son mot était compté comme n'ayant rien porté).
+  const hasardOrigine = Math.random;
+  Math.random = creerHasard("messager-monde");
+  try { await essaiDuMessager(); } finally { Math.random = hasardOrigine; }
+});
+async function essaiDuMessager() {
   await preparer(10, "chaos-10");
   // Un Messager à coup sûr : celui de la composition, sinon le premier villageois sans pouvoir de nuit le devient.
   let messager = acteurDuRole("messager");
@@ -842,7 +856,8 @@ test("loups_nuit : le Messager fait écrire l'expéditeur, le destinataire seul 
     await outil("loups_nuit").executer({ delai_secondes: 20 });
     if (api.etat().vainqueur) break;
     const porte = api.etat().nuitPrecedente.actions.find(x => x.acteurId === messager.id && x.texte);
-    if (!porte || !messager.system.vivant) continue;
+    // (Un Messager dévoré cette nuit-là a porté son mot quand même : un mort de la nuit agit encore cette nuit.)
+    if (!porte) continue;
     const [exp, dest] = porte.cibles;
     const demande = emissions.slice(depuis).find(e => e.type === "demande" && e.mode === "texte");
     assert.deepEqual(demande.recipients, [game.actors.get(exp).system.joueur], "seul l'expéditeur écrit");
@@ -855,7 +870,7 @@ test("loups_nuit : le Messager fait écrire l'expéditeur, le destinataire seul 
     return;
   }
   assert.fail("le Messager n'a porté aucun mot en quatre nuits");
-});
+}
 
 test("loups_vote sous le Gibet : sans majorité absolue, le texte le dit (ni « égalité » ni « aucun vote »)", async () => {
   await calme();   // rien de l'essai précédent ne doit arriver dans ce monde-ci
@@ -1064,7 +1079,11 @@ async function jouerPeste({ n, graine, nbCompagnons = 0, crierAuJour = 0 }) {
       } else {
         const p = game.actors.get(porteur);
         assert.equal(p.system.vivant, false, "le porteur est mort");
-        if (p.system.joueur) {
+        if (!peste[0].cibles.length) {
+          // Personne à frapper (tous les vivants à l'abri : Taverne, Grange, Chapelle…) : rien à demander au porteur.
+          assert.equal(demandes.length, 0, "personne à désigner : le porteur n'est pas réveillé");
+          couvert("peste : personne à frapper");
+        } else if (p.system.joueur) {
           // Le porteur, mort, reçoit SA demande (à lui seul) ; son choix est noté, ou le hasard s'il passe.
           assert.equal(demandes.length, 1, "le porteur est réveillé, mort");
           assert.deepEqual(demandes[0].recipients, [p.system.joueur]);
@@ -1109,6 +1128,8 @@ async function jouerPeste({ n, graine, nbCompagnons = 0, crierAuJour = 0 }) {
         const t = await appeler("loups_eliminer", { villageois: nom, cause: "vote", reveler: true });
         if (/VICTOIRE/.test(t)) { fin = t; break; }
       }
+      // Une Braconnière exécutée a emporté quelqu'un d'elle-même (dernier geste) : la partie a pu finir là.
+      if (!fin && api.etat().vainqueur) fin = api.etat().vainqueur === "peste" ? "VICTOIRE : la peste noire (dernier geste d'une Braconnière)." : victoireDuGeste();
       chatSansPeste(`jour ${tour}`);
     }
     const e = api.etat();

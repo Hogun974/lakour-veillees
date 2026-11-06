@@ -14,13 +14,18 @@ export const EFFETS = [
   "remede", "poison", "lien-amour", "echanger-role", "mordre", "emporter", "asperger", "embraser",
   "epier", "messager", "voir-actif", "voir-role",
   // Les rôles du Village du Pacte (système : logique/pacte.mjs).
-  "resister", "egalite", "grace", "fratrie", "flairer", "cacarder", "second-vote", "contaminer", "plume"
+  "resister", "egalite", "grace", "fratrie", "flairer", "cacarder", "second-vote", "contaminer", "plume",
+  // Les ambigus, les solitaires du livre et le Loup pâle (système : logique/ambigus.mjs).
+  "chaparder", "emprunter", "choisir-camp", "modele", "devouement", "charmer", "trahir"
 ];
 // Extensions du système lakour-loups (systems/lakour-loups/scripts/modeles.mjs, logique/constantes.mjs) :
 // role.apparence = camp vu par une vision « voir-camp » ("" = camp réel) ; role.victoireCle = victoire d'un solitaire ;
 // role.public = rôle connu de tous dès la distribution (retourné face visible par le système ; écrit seulement quand il est vrai).
 export const APPARENCES = ["", "village", "meute"];
-export const VICTOIRES = ["", "execute", "dernier-survivant", "cible-executee"];
+// Le Pacte, étape 3b : le Feu follet, le Joueur de vielle, l'Illuminé, et le Loup pâle (« seul-survivant » : la seule victoire propre
+// hors des solitaires — un loup qui ne gagne pas avec la meute ; il porte alors son texte de victoire).
+export const VICTOIRES = ["", "execute", "dernier-survivant", "cible-executee", "premier-tour", "tous-charmes", "autre-groupe", "seul-survivant"];
+export const VICTOIRES_DE_LOUP = ["seul-survivant"];
 
 // La meute se réveille ensemble à cet ordre (contrat §1, nuit.ordre).
 export const ORDRE_MEUTE = 40;
@@ -66,9 +71,9 @@ export function role({ cle, nom, camp, pouvoir, victoire = "", victoireCle = "",
   if (!CAMPS.includes(camp)) throw new Error(`${cle} : camp « ${camp} » inconnu`);
   if (!APPARENCES.includes(apparence)) throw new Error(`${cle} : apparence « ${apparence} » inconnue`);
   if (!VICTOIRES.includes(victoireCle)) throw new Error(`${cle} : clé de victoire « ${victoireCle} » inconnue`);
-  if (victoireCle && camp !== "solitaire") throw new Error(`${cle} : une clé de victoire est réservée aux solitaires`);
+  if (victoireCle && camp !== "solitaire" && !(camp === "meute" && VICTOIRES_DE_LOUP.includes(victoireCle))) throw new Error(`${cle} : une clé de victoire est réservée aux solitaires (et au Loup pâle)`);
   verifierEffet(cle, effet);
-  if (camp === "solitaire" && !victoire) throw new Error(`${cle} : un solitaire doit avoir sa condition de victoire`);
+  if ((camp === "solitaire" || victoireCle) && !victoire) throw new Error(`${cle} : un solitaire doit avoir sa condition de victoire`);
   if (nuit && !nuit.invite) throw new Error(`${cle} : un rôle de nuit doit poser une question (invite)`);
   const _id = identifiant(`roles:${cle}`);
   return {

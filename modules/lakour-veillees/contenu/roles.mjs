@@ -6,6 +6,10 @@
 // Le Pacte, étape 3a (docs/plan-le-pacte.md) : les rôles du Village du jeu de soirée, placés dans l'ordre d'appel du livre entre nos
 // ordres : le Furet après l'Entremetteuse (7), les Lavandières et les Bûcherons après le Messager (11, 12), la Pie juste après la
 // chasse (46). Leurs règles vivent dans le système (logique/pacte.mjs).
+// Le Pacte, étape 3b : les ambigus, les solitaires du livre et le Loup pâle, à leur place dans l'ordre d'appel du livre : le Chapardeur
+// et le Bateleur en tout début de nuit (1, 2), l'Enfant des bois après les Bûcherons (13), le Mâtin juste avant la meute (38), le Loup
+// pâle juste après elle (41, avant la Louve mère, même ordre), le Joueur de vielle à la fin (80, puis ses charmés à 81, avant le
+// Fossoyeur). Leurs règles vivent dans le système (logique/ambigus.mjs).
 import { ORDRE_MEUTE, role } from "./aides.mjs";
 
 // ======================================================================= La Meute
@@ -38,6 +42,18 @@ Tu chasses chaque nuit avec la meute. **Toute vision te voit comme un villageois
 
 Si tu es **le plus désigné d'un vote sans être exécuté** (égalité, vote annulé, majorité manquée), le masque tombe : à partir de là, les visions disent la vérité sur toi.`,
     nuit: { ordre: ORDRE_MEUTE, cibles: 1, invite: "Quelle maison la meute visite-t-elle cette nuit ?" }
+  }),
+  // Le loup du jeu de soirée (Le Pacte, étape 3b), placé avant la Louve mère : même ordre de nuit (41), et il passe avant elle.
+  role({
+    cle: "loup-pale", nom: "Loup pâle", camp: "meute", effet: "trahir", victoireCle: "seul-survivant",
+    resume: "chasse avec la meute, mais une nuit sur deux dévore seul l'un des siens ; ne gagne que s'il reste le dernier vivant.",
+    pouvoir: `Ton pelage a blanchi avant l'âge, et la meute croit que c'est la neige. Elle se trompe : c'est la faim de tout ce qui respire, les loups compris.
+
+**Chaque nuit**, tu chasses avec la meute, comme un loup parmi les autres : ils te croient des leurs, et toute vision te voit loup.
+
+**Une nuit sur deux** (la deuxième, la quatrième…), quand la meute s'est rendormie, tu te réveilles seul et tu peux **dévorer un loup** (jamais toi-même). C'est une attaque de loup comme une autre : une garde ou un remède peuvent la déjouer, et la lanterne de la Veilleuse peut te surprendre.`,
+    victoire: `Tu gagnes **seul**, si tu es **le dernier vivant**. Si la meute l'emporte, ce n'est pas ta victoire : tu ne gagnes jamais avec elle.`,
+    nuit: { ordre: 41, cibles: 1, uneNuitSurDeux: true, invite: "La meute dort. Quel loup dévores-tu seul cette nuit ? Passe pour l'épargner." }
   }),
   role({
     cle: "louve-mere", nom: "Louve mère", camp: "meute", effet: "mordre", usages: 1,
@@ -353,6 +369,59 @@ Mort d'une autre façon (le vote, le poison, les flammes…), ton épée ne sert
 
 Passe si tu ne veux désigner personne.`,
     nuit: { ordre: 46, cibles: 1, invite: "Sur quel seuil poses-tu ta plume noire cette nuit ? Passe pour n'en poser aucune." }
+  }),
+
+  // --------------------------------------------------------------- les ambigus du jeu de soirée (Le Pacte, étape 3b)
+  role({
+    cle: "chapardeur", nom: "Chapardeur", camp: "village", effet: "chaparder",
+    resume: "la première nuit, peut voler l'une des deux cartes restées au centre et devenir ce rôle ; obligé si ce sont deux loups.",
+    pouvoir: `Tu as les doigts légers, et rien ne t'appartient longtemps, pas même ce que tu es.
+
+Quand tu es de la partie, le paquet compte **deux cartes Villageois de plus** : après la distribution, **deux cartes restent au centre**, face cachée.
+
+**La première nuit**, avant tout le monde, tu les regardes en secret et tu peux **échanger ta carte contre l'une d'elles** : tu deviens ce rôle jusqu'à la fin, avec toutes ses règles (un rôle de la première nuit se joue encore cette nuit-là, à son tour), et tu gagnes avec son camp. Si **les deux sont des loups**, tu es **obligé** d'en prendre une. Sinon, tu peux aussi garder ta carte et rester villageois.`,
+    nuit: { ordre: 1, cibles: 1, premiereNuitSeulement: true, invite: "Deux cartes dorment au centre : laquelle prends-tu à la place de la tienne ? Passe pour garder ta carte." }
+  }),
+  role({
+    cle: "bateleur", nom: "Bateleur", camp: "village", effet: "emprunter",
+    resume: "trois rôles sont posés face visible : chaque nuit, il peut jouer le pouvoir de l'un d'eux, une seule fois chacun.",
+    pouvoir: `Tu as joué tous les rôles sur les tréteaux des foires, et tu sais encore les tenir le temps d'une nuit.
+
+Avant la partie, le narrateur pose **trois cartes de rôles à pouvoir** (jamais de loup) **face visible** : tout le village les connaît.
+
+**Chaque nuit**, en tout début de nuit, tu peux **désigner l'une de ces cartes** : tu joues son pouvoir cette nuit-là, à son tour, comme si c'était ton rôle. Au matin, la carte jouée est **retirée** : elle ne servira plus. Tu peux aussi passer et garder tes cartes pour plus tard.
+
+Tu restes du camp du **Village**, quelle que soit la carte que tu joues.`,
+    nuit: { ordre: 2, cibles: 1, invite: "Le spectacle commence : quelle carte joues-tu cette nuit ? Passe pour n'en jouer aucune." }
+  }),
+  role({
+    cle: "enfant-des-bois", nom: "Enfant des bois", camp: "village", effet: "modele",
+    resume: "la première nuit, choisit un modèle : tant qu'il vit, il est du Village ; s'il meurt, il rejoint la meute.",
+    pouvoir: `On t'a trouvé au bord de la forêt, et tu as grandi en imitant ceux qui voulaient bien de toi.
+
+**La première nuit**, tu désignes en secret un **modèle** parmi les autres joueurs. Tant que ton modèle vit, tu es un villageois du camp du **Village**.
+
+Mais si ton modèle **meurt**, de quelque façon que ce soit, plus rien ne te retient : tu **rejoins la meute** en secret, et tu te réveilles avec elle dès la nuit suivante. Tu peux même aider à faire tomber ton modèle.`,
+    nuit: { ordre: 13, cibles: 1, premiereNuitSeulement: true, invite: "Qui prends-tu pour modèle ? Tant qu'il vivra, tu resteras au village." }
+  }),
+  role({
+    cle: "matin", nom: "Mâtin", camp: "village", effet: "choisir-camp",
+    resume: "la première nuit, choisit pour toujours d'être loup (il chasse avec la meute) ou simple villageois.",
+    pouvoir: `Tu gardes les troupeaux de Brumecombe, mais le loup t'appelle chaque fois que la lune monte.
+
+**La première nuit**, juste avant la meute, tu choisis ton camp, **pour toujours** :
+- **la meute** : tu te réveilles avec elle dès cette nuit, et chaque nuit ensuite, et tu chasses avec elle ; tu es un loup de la meute ;
+- **le village** : tu restes un simple villageois jusqu'à la fin.`,
+    nuit: { ordre: 38, cibles: 1, soiMeme: true, premiereNuitSeulement: true, invite: "Désigne-toi pour rejoindre la meute dès cette nuit, ou passe pour rester au village." }
+  }),
+  role({
+    cle: "chambriere", nom: "Chambrière", camp: "village", effet: "devouement",
+    resume: "quand le vote élimine un joueur, peut se dévoiler avant qu'on retourne sa carte et prendre son rôle en secret.",
+    pouvoir: `Tu as servi dans toutes les maisons du village, et tu sais reprendre le tablier d'un autre.
+
+Quand le **vote** du village élimine un joueur, **avant que sa carte soit retournée**, tu peux **te dévoiler** : ta carte de Chambrière est retournée devant tous, et tu **prends la carte du condamné**, sans la montrer. Tu deviens ce rôle jusqu'à la fin, **remis à neuf** (ses usages et ses fioles pleines ; s'il agit la première nuit, le narrateur t'appelle la nuit suivante pour le faire).
+
+Ce qui touchait le condamné ne passe pas à toi (ni son amour, ni sa morsure, ni son charme, ni sa charge) ; ce qui te touchait est perdu (un charme, la charge de Bailli), sauf une morsure : mordue, tu restes un loup. **Amoureuse, tu ne peux pas te dévouer.**`
   })
 ];
 
@@ -408,6 +477,39 @@ La meute ne peut pas te tuer : quand elle entre chez toi, elle repart bredouille
 La meute ne peut pas te tuer : quand elle entre chez toi, elle n'y trouve que de l'eau froide. Le vote, le poison, le feu et le harpon, si.`,
     victoire: `Tu gagnes **seule** si tu es la dernière vivante, ou la dernière avec un seul autre joueur qui n'est pas un loup.`,
     nuit: { ordre: 47, cibles: 1, uneNuitSurDeux: true, invite: "Ton chant monte sur la rivière : qui suit ta voix jusqu'au gué cette nuit ?" }
+  }),
+
+  // --------------------------------------------------------------- les solitaires du jeu de soirée (Le Pacte, étape 3b)
+  role({
+    cle: "feu-follet", nom: "Feu follet", camp: "solitaire", victoireCle: "premier-tour",
+    resume: "la partie commence par un jour ; s'il est éliminé au premier tour, il gagne seul ; sinon, il devient simple villageois.",
+    pouvoir: `Tu es la petite flamme qui danse au-dessus des marais, et tu n'as qu'une envie : qu'on t'éteigne.
+
+Quand tu es de la partie, la veillée **commence par un jour** : le village débat et vote avant la première nuit.
+
+Tu n'as aucun pouvoir. Si tu passes ce premier tour (le premier vote, puis la première nuit) sans être éliminé, ta flamme s'éteint : tu deviens un **simple villageois** du camp du Village, jusqu'à la fin.`,
+    victoire: `Tu gagnes **seul et aussitôt** si tu es éliminé **au premier tour** : par le premier vote du village, par la meute la première nuit, ou par le poison de l'Herboriste la première nuit. La partie s'arrête sur ta victoire.`
+  }),
+  role({
+    cle: "joueur-de-vielle", nom: "Joueur de vielle", camp: "solitaire", effet: "charmer", victoireCle: "tous-charmes",
+    resume: "chaque nuit, charme deux joueurs ; gagne seul quand tous les autres vivants sont charmés.",
+    pouvoir: `Ta vielle grince sous les fenêtres, et ceux qui l'entendent ne pensent plus qu'à elle.
+
+**Chaque nuit**, à la fin de la nuit, tu **charmes deux joueurs** (jamais toi-même) qui ne l'étaient pas encore. Puis tous les charmés se réveillent ensemble et **se reconnaissent** ; toi, tu restes dans l'ombre.
+
+Rien n'arrête ton air : ni la garde, ni les remèdes ; les loups l'entendent comme les autres. Les charmés gardent leurs pouvoirs et leur camp ; le charme ne passe pas d'un amant à l'autre. Si la Louve mère te mord, tu deviens un simple loup et tu oublies ton but.`,
+    victoire: `Tu gagnes **seul**, dès que **tous les autres joueurs vivants sont charmés**, quelle que soit la façon dont cela arrive (un charme, un vote, la meute…).`,
+    nuit: { ordre: 80, cibles: 2, invite: "Sous quelles fenêtres joues-tu ta vielle cette nuit ? Deux joueurs pas encore charmés." }
+  }),
+  role({
+    cle: "illumine", nom: "Illuminé", camp: "solitaire", victoireCle: "autre-groupe",
+    resume: "le village est partagé en deux groupes annoncés à tous ; il gagne seul si tout l'autre groupe est éliminé.",
+    pouvoir: `Tu as vu la lumière, et elle t'a dit que la moitié du village était maudite.
+
+Avant la partie, le narrateur partage le village **en deux groupes**, selon un critère que tout le monde voit (à Brumecombe : la rive où chacun dort), et l'annonce à tous. Tu appartiens à l'un d'eux.
+
+Tu n'as aucun pouvoir de nuit : ta parole et ton vote suffisent. Si la Louve mère te mord, tu deviens un simple loup et tu oublies ton but.`,
+    victoire: `Tu gagnes **seul**, vivant, dès que **tous les joueurs de l'autre groupe** sont éliminés.`
   })
 ];
 

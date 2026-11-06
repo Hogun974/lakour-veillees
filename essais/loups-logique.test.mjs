@@ -676,9 +676,10 @@ test("état : morts uniques, vainqueur -> fin, état public sans secrets", () =>
 });
 
 test("constantes : toutes les clés d'effet du contrat, partagées entre automatisées et narrateur", () => {
-  assert.deepEqual([...L.EFFETS].sort(), ["annuler-vote", "asperger", "cacarder", "contaminer", "echanger-role", "eclairer", "egalite", "embraser",
-    "emporter", "epier", "flairer", "fratrie", "grace", "lien-amour", "messager", "mordre", "plume", "poison", "proteger", "remede", "resister",
-    "second-vote", "silence", "tuer", "voir-actif", "voir-camp", "voir-role", "voir-role-mort", "vote-double"]);
+  assert.deepEqual([...L.EFFETS].sort(), ["annuler-vote", "asperger", "cacarder", "chaparder", "charmer", "choisir-camp", "contaminer", "devouement",
+    "echanger-role", "eclairer", "egalite", "embraser", "emporter", "emprunter", "epier", "flairer", "fratrie", "grace", "lien-amour", "messager", "modele",
+    "mordre", "plume", "poison", "proteger", "remede", "resister", "second-vote", "silence", "trahir", "tuer", "voir-actif", "voir-camp", "voir-role",
+    "voir-role-mort", "vote-double"]);
   assert.deepEqual([...L.EFFETS_NARRATEUR], [], "tous automatisés : le Messager à l'aube, le Juge de paix de jour");
 });
 

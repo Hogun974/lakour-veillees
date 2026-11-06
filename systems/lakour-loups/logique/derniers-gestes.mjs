@@ -13,8 +13,10 @@
 // tard) : chaque mort de cette cause sert le plus ancien mourant qui attend encore (deux Braconnières tombées la même nuit demandent
 // deux morts). L'étape « emporter » de la Table (etapes.mjs, emporteursEnAttente) lit ce même compte.
 // Un geste qui ne tue pas (« votants ») dit lui-même quand il est dû (quand : sa mort le permet-elle ?) et quand il est fait (fait).
-// Le village qui a perdu sa sagesse (pacte.mjs) : plus aucun rôle du Village n'a de dernier geste.
+// Le village qui a perdu sa sagesse (pacte.mjs) : plus aucun rôle du Village n'a de dernier geste. Un condamné dont la Chambrière a
+// pris la carte (ambigus.mjs, carteReprise) non plus : sa carte est partie avec elle avant d'être retournée.
 import { EFFET_SOUFFRE_DOULEUR, normaliserPacte, pouvoirPerdu, sagesseEstPerdue, estGracie } from "./pacte.mjs";
+import { carteReprise } from "./ambigus.mjs";
 
 export const GESTES = {
   // La Braconnière : elle emporte un vivant dans la tombe (une cible, elle-même exclue).
@@ -45,7 +47,7 @@ export function gestesEnAttente(etat, villageois = [], ignorer = []) {
   const sortie = [];
   for (const geste of CLES_DES_GESTES) {
     const { cause, quand, fait } = GESTES[geste];
-    const porte = m => gesteDuRole(parId.get(m.acteurId)?.role, sans) === geste && !ignorer.includes(`${geste}:${m.acteurId}`);
+    const porte = m => gesteDuRole(parId.get(m.acteurId)?.role, sans) === geste && !ignorer.includes(`${geste}:${m.acteurId}`) && !carteReprise(etat, m.acteurId);
     if (fait) {
       for (const m of morts) if (porte(m) && quand(etat, m) && !fait(etat, m.acteurId)) sortie.push({ acteurId: m.acteurId, geste });
       continue;

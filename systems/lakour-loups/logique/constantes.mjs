@@ -26,7 +26,10 @@ export const EFFETS = [
   "epier", "messager", "voir-actif", "voir-role",
   // Les rôles du Village du Pacte (étape 3a, logique/pacte.mjs) : l'Aïeul, le Souffre-douleur, l'Innocent, les fratries
   // (Lavandières, Bûcherons), le Furet, la Gardeuse d'oies, le Greffier bègue, le Vieux Sergent, la Pie.
-  "resister", "egalite", "grace", "fratrie", "flairer", "cacarder", "second-vote", "contaminer", "plume"
+  "resister", "egalite", "grace", "fratrie", "flairer", "cacarder", "second-vote", "contaminer", "plume",
+  // Les ambigus, les solitaires du livre et le Loup pâle (étape 3b, logique/ambigus.mjs) : le Chapardeur, le Bateleur, le Mâtin,
+  // l'Enfant des bois, la Chambrière, le Joueur de vielle, le Loup pâle.
+  "chaparder", "emprunter", "choisir-camp", "modele", "devouement", "charmer", "trahir"
 ];
 
 // Celles que le système applique de lui-même : à l'aube (resoudreNuit, dont le message porté par le Messager) ou de jour
@@ -34,7 +37,8 @@ export const EFFETS = [
 export const EFFETS_AUTOMATISES = [
   "tuer", "proteger", "voir-camp", "voir-role-mort", "eclairer", "silence", "vote-double", "remede", "poison",
   "lien-amour", "echanger-role", "mordre", "emporter", "asperger", "embraser", "epier", "voir-actif", "messager", "annuler-vote",
-  "voir-role", "resister", "egalite", "grace", "fratrie", "flairer", "cacarder", "second-vote", "contaminer", "plume"
+  "voir-role", "resister", "egalite", "grace", "fratrie", "flairer", "cacarder", "second-vote", "contaminer", "plume",
+  "chaparder", "emprunter", "choisir-camp", "modele", "devouement", "charmer", "trahir"
 ];
 
 // L'Enfant de la brume qui épie la meute (effet « epier ») : sa chance d'être surprise, et alors dévorée à la place de la proie.
@@ -45,7 +49,9 @@ export const EFFETS_NARRATEUR = EFFETS.filter(e => !EFFETS_AUTOMATISES.includes(
 
 // Conditions de victoire lisibles par la machine pour les solitaires (champ de rôle `victoireCle`, extension
 // du contrat ; à défaut, déduite de la clé du rôle, voir victoire.mjs).
-export const VICTOIRES = ["", "execute", "dernier-survivant", "cible-executee"];
+// Le Pacte, étape 3b (ambigus.mjs) : le Feu follet (« premier-tour »), le Joueur de vielle (« tous-charmes »), l'Illuminé
+// (« autre-groupe ») et le Loup pâle (« seul-survivant », un loup : la seule clé de victoire hors des solitaires).
+export const VICTOIRES = ["", "execute", "dernier-survivant", "cible-executee", "premier-tour", "tous-charmes", "autre-groupe", "seul-survivant"];
 
 // Causes de mort normalisées.
 export const CAUSES = { meute: "meute", nuit: "nuit", poison: "poison", feu: "feu", chagrin: "chagrin", vote: "vote",

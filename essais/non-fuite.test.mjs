@@ -81,6 +81,10 @@ function crible(etat) {
   if (Number(p.pont?.bloqueNuit) || p.voteDoubleDemain) fuite("*", "Pont bloqué ou cloche à venir publics");
   if ((p.masques ?? []).length || Object.keys(p.somnambules ?? {}).length || (p.journalSecret ?? []).length) fuite("*", "masques, rêves ou chronique secrète publics");
   if (Object.values(p.secretsDeFete ?? {}).some(x => (Array.isArray(x) ? x.length : x))) fuite("*", "secrets de fête publics");
+  // Le Pacte, étape 3b : le centre du Chapardeur, la carte jouée par le Bateleur, le camp du Mâtin, le modèle de l'Enfant des bois,
+  // les charmés ne sortent jamais dans l'état public.
+  if (p.ambigusSecret && JSON.stringify(L.normaliserAmbigusSecret(p.ambigusSecret)) !== JSON.stringify(L.ambigusSecretInitial())) fuite("*", "secrets des ambigus publics");
+  const charmes = api.etat().ambigusSecret?.charmes ?? [];
   // La Petite tablée : son annonce (chat) ne porte que des nombres, jamais un nom de villageois.
   for (const m of nouveauxMessages) {
     const t = decoder(m.content);
@@ -156,6 +160,8 @@ function crible(etat) {
       if (/ton cœur s'est lié/.test(t) && !(fete.promis ?? []).includes(moi?.id)) fuite(u, "une promesse qui n'est pas la sienne");
       if (/(une âme a frappé à la porte|Les promis de la fête s'affichent)/.test(t) && !loup) fuite(u, "ce que la meute entend, à un non-loup");
       if (/s'est assise au pied de votre lit/.test(t) && etat.murmures) etat.murmures.push(u);
+      // Le Pacte, étape 3b : le réveil des charmés, à eux seuls.
+      if (/Un air de vielle vous a charmés/.test(t) && !charmes.includes(moi?.id)) fuite(u, "le charme d'un autre");
     }
   }
   return fuites;
@@ -242,7 +248,8 @@ async function partie({ graine, peste = false, gens = false, compagnons = 0, rev
   await etape("fin");
   return { fuites, nocturnes: etat.ecrituresNocturnes, vainqueur: api.etat().vainqueur, morts: api.etat().morts.length, fete: api.etat().fete.cle, tablee: api.etat().petiteTablee,
     secretsDeFete: api.etat().secretsDeFete, murmures: etat.murmures, publicsReveles, autresReveles,
-    cles: villageois().map(a => secretDuMJ.role(a)?.system.cle) };
+    cles: villageois().map(a => secretDuMJ.role(a)?.system.cle), centre: api.etat().ambigusSecret.centre.map(r => r.system?.cle),
+    devouements: api.ambigus().devouements.length };
 }
 
 // Des compositions variées : rôles d'information, de lien, d'échange, solitaires, loups spéciaux, Somnambule.
@@ -258,6 +265,10 @@ const PARTIES = [
   // Le Pacte, étape 3a : les rôles du Village du jeu de soirée (fratrie et son salon, Furet, Pie, Greffier, Aïeul…), avec des compagnons IA.
   { graine: "pacte-village", joueurs: 8, compagnons: 7, roles: ["loup-de-brumecombe", "loup-de-brumecombe", "loup-de-brumecombe", "loup-de-brumecombe", "revenant",
     "aieul", "souffre-douleur", "innocent", "lavandiere", "lavandiere", "furet", "gardeuse-d-oies", "greffier-begue", "vieux-sergent", "pie"] },
+  // Le Pacte, étape 3b : les ambigus, les solitaires du livre et le Loup pâle (le centre du Chapardeur, les cartes du Bateleur, le
+  // camp du Mâtin, le modèle de l'Enfant des bois, les charmés, la Chambrière), avec des compagnons IA.
+  { graine: "pacte-ambigus", joueurs: 8, compagnons: 6, roles: ["loup-de-brumecombe", "loup-de-brumecombe", "loup-de-brumecombe", "loup-pale", "chapardeur", "bateleur",
+    "matin", "enfant-des-bois", "chambriere", "joueur-de-vielle", "illumine", "feu-follet", "liseuse-de-cendres", "herboriste"] },
   // Les veillées de fête (0.10.0), dont une avec des compagnons IA et une en peste noire.
   { graine: "ames", joueurs: 7, fete: "nuit-des-ames" },
   { graine: "hiver", joueurs: 6, compagnons: 2, fete: "veillee-d-hiver" },
@@ -276,7 +287,8 @@ for (const p of PARTIES) {
     assert.ok(r.morts > 0, "la partie a eu lieu");
     assert.ok(r.vainqueur, "jusqu'à la victoire");
     assert.equal(r.tablee, p.niveau === "petite-tablee", "le mode public de la petite tablée");
-    for (const cle of p.roles ?? []) if (!p.peste) assert.ok(r.cles.includes(cle) || cle === "somnambule", `${cle} distribué`);
+    // (Avec le Chapardeur, deux cartes du paquet restent au centre ; une Chambrière dévouée tient désormais un autre rôle.)
+    for (const cle of p.roles ?? []) if (!p.peste) assert.ok(r.cles.includes(cle) || r.centre.includes(cle) || cle === "somnambule" || (cle === "chambriere" && r.devouements), `${cle} distribué`);
     if (p.publics?.length) {
       assert.ok(r.publicsReveles.length && r.publicsReveles.every(Boolean), "le rôle public est retourné dès la distribution");
       assert.equal(r.autresReveles, 0, "aucun autre rôle retourné à la distribution");
@@ -394,7 +406,10 @@ const MUTATIONS = [
     "petite tablée : l'annonce nomme les humains de l'ombre", PARTIES.findIndex(p => p.graine === "tablee-trois")],
   // Le Pacte, étape 3a : la ligne de salon d'une fratrie, à ses seuls membres.
   ["logique/salons.mjs", "  if (a.salon === \"fratrie\") ligne.freres = ids(liste.filter(p => p.vivant && !p.loup && !p.mj && p.fratrie === moi.fratrie).map(p => p.acteurId));",
-    "  ligne.freres = ids(liste.filter(p => p.fratrie).map(p => p.acteurId));", "fratries : les siens à eux seuls", PARTIES.findIndex(p => p.graine === "pacte-village")]
+    "  ligne.freres = ids(liste.filter(p => p.fratrie).map(p => p.acteurId));", "fratries : les siens à eux seuls", PARTIES.findIndex(p => p.graine === "pacte-village")],
+  // Le Pacte, étape 3b : les secrets des ambigus hors de l'état public ; le réveil des charmés, à eux seuls.
+  ["logique/etat.mjs", "  pub.ambigusSecret = ambigusSecretInitial();", "", "ambigus : leurs secrets hors de l'état public", PARTIES.findIndex(p => p.graine === "pacte-ambigus")],
+  ["scripts/api.mjs", "  const ids = L.charmesVivants(villageoisAPlat(), etat.ambigusSecret.charmes);", "  const ids = villageoisAPlat().filter(v => v.vivant).map(v => v.id);", "charmés : à eux seuls", PARTIES.findIndex(p => p.graine === "pacte-ambigus")]
 ];
 
 async function chargerMutant(fichier, avant, apres) {

@@ -11,7 +11,11 @@
 // places vont au village (et aux solitaires que le niveau permet), au moins un rôle d'information comme d'habitude.
 // Les cartes qui vont ensemble (equilibre.roles[cle].groupe : les Lavandières par deux, les Bûcherons par trois, Le Pacte) : tirées
 // toutes ou aucune, jamais au-delà des places ; un groupe demandé (inclure) entre en entier.
+// Le Pacte, étape 3b : avec le Chapardeur (ambigus.mjs), le paquet comptera DEUX cartes Villageois de plus (n + 2 cartes), ajoutées
+// à la distribution (api.distribuer, cartesAAjouter) ; les deux non distribuées resteront au centre. La composition, elle, garde ses
+// n rôles (les outils qui la lisent, le MJ IA compris, comptent n places) et le signale : centre: 2. L'équilibre se compte sur ces n.
 import { creerHasard, melanger } from "./hasard.mjs";
+import { cartesAAjouter, CARTES_DU_CENTRE } from "./ambigus.mjs";
 import { NIVEAU_PETITE_TABLEE, nombreDeLoupsTablee, ombresTablee } from "./tablee.mjs";
 
 // Les niveaux : les trois classiques, et la « petite tablée » (tablee.mjs : peu d'humains, des compagnons IA), qui puise dans les
@@ -38,7 +42,9 @@ export const HORS_TABLEE = ["loup-deguise", "pyromane", "dame-du-gue"];
 // Le Pacte, étape 3a : les rôles du Village du jeu de soirée ne sortent pas encore à la petite tablée, dont les dosages ont été
 // mesurés sans eux ; l'étape 6 (simulation) les y fera entrer ou non. Aux niveaux classique et chaos, le générateur les tire.
 export const PACTE_HORS_TABLEE = ["franc-villageois", "aieul", "souffre-douleur", "innocent", "lavandiere", "bucheron", "furet", "gardeuse-d-oies",
-  "greffier-begue", "vieux-sergent", "pie"];
+  "greffier-begue", "vieux-sergent", "pie",
+  // Le Pacte, étape 3b : les ambigus, les solitaires du livre et le Loup pâle, de même.
+  "chapardeur", "bateleur", "matin", "enfant-des-bois", "chambriere", "feu-follet", "joueur-de-vielle", "illumine", "loup-pale"];
 export const SOLITAIRES_TABLEE = ["colporteur"];
 export const HORS_TABLEE_BATIMENTS = ["gibet", "pont"];
 function catalogue(equilibre, n, niveau, exclure, peste = false) {
@@ -190,8 +196,10 @@ export function composer(n, equilibre, { niveau = "classique", inclure = [], exc
     .map(cle => ({ cle, p: penaliteHistorique([cle], historique, "batiments") + hasard() * 0.3 }))
     .sort((a, b) => a.p - b.p).slice(0, nombreDeBatiments(n)).map(b => b.cle);
   const compte = c => choix.roles.filter(r => equilibre.roles[r]?.camp === c).length;
+  // Le Chapardeur : deux cartes Villageois de plus au paquet (le centre), ajoutées à la distribution.
+  const centre = cartesAAjouter(choix.roles, n);
   return {
-    roles: melanger(choix.roles, hasard), batiments, somme: choix.somme, niveau,
+    roles: melanger(choix.roles, hasard), batiments, somme: choix.somme, niveau, ...(centre.length ? { centre: CARTES_DU_CENTRE } : {}),
     camps: { meute: compte("meute"), village: compte("village"), solitaire: compte("solitaire") },
     verdict: peste ? "peste noire" : Math.abs(choix.somme - cible) <= 2 ? "équilibrée" : choix.somme > cible ? "favorable au village" : "favorable à la meute",
     ...(peste ? { peste: true } : {})

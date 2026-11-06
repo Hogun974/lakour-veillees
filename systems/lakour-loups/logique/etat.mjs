@@ -45,6 +45,9 @@
 // Le Pacte, étape 3a (pacte.mjs) : +pacte (public : la sagesse perdue, les Innocents graciés, l'égalité du Souffre-douleur et sa
 // liste de votants, la plume noire de la Pie, le second vote du Greffier) et +pacteSecret [S] (les vies perdues des Aïeux, le flair
 // perdu des Furets, les loups contaminés par le Vieux Sergent, le signe du Greffier).
+// Le Pacte, étape 3b (ambigus.mjs) : +ambigus (public : les cartes du Bateleur face visible, le Feu follet qui fait commencer par un
+// jour, le partage du village pour l'Illuminé, les dévouements de la Chambrière) et +ambigusSecret [S] (les cartes du centre du
+// Chapardeur, les cartes jouées par le Bateleur, les modèles des Enfants des bois, le choix des Mâtins, les charmés).
 
 import { PHASES, causePublique } from "./constantes.mjs";
 import { decompterVotes } from "./votes.mjs";
@@ -61,6 +64,7 @@ import { sortTranche } from "./tablee.mjs";
 import { cercleInitial, normaliserCercle } from "./cercle.mjs";
 import { tenuresInitiales, normaliserTenures, libererALaMort } from "./tenures.mjs";
 import { evenementsInitiaux, normaliserEvenements } from "./evenements.mjs";
+import { ambigusInitial, ambigusSecretInitial, normaliserAmbigus, normaliserAmbigusSecret } from "./ambigus.mjs";
 import { pacteInitial, pacteSecretInitial, normaliserPacte, normaliserPacteSecret, plumeDuVote, VOIX_DE_LA_PLUME, POIDS_DE_LA_PLUME } from "./pacte.mjs";
 
 // Le votant fictif de la voix du deuil (jamais un acteur).
@@ -96,7 +100,9 @@ export function etatInitial() {
     // Le socle du Pacte, public : l'ordre des places (cercle.mjs), les bâtiments tenus (tenures.mjs), les événements (evenements.mjs).
     cercle: cercleInitial(), tenures: tenuresInitiales(), evenements: evenementsInitiaux(),
     // Le Pacte, étape 3a (pacte.mjs) : les rôles du Village du jeu de soirée — le public, et les secrets du MJ.
-    pacte: pacteInitial(), pacteSecret: pacteSecretInitial()
+    pacte: pacteInitial(), pacteSecret: pacteSecretInitial(),
+    // Le Pacte, étape 3b (ambigus.mjs) : les ambigus, les solitaires du livre et le Loup pâle — le public, et les secrets du MJ.
+    ambigus: ambigusInitial(), ambigusSecret: ambigusSecretInitial()
   };
 }
 
@@ -138,6 +144,8 @@ export function normaliserEtat(e) {
   etat.evenements = normaliserEvenements(etat.evenements);
   etat.pacte = normaliserPacte(etat.pacte);
   etat.pacteSecret = normaliserPacteSecret(etat.pacteSecret);
+  etat.ambigus = normaliserAmbigus(etat.ambigus);
+  etat.ambigusSecret = normaliserAmbigusSecret(etat.ambigusSecret);
   etat.tour = Number(etat.tour) || 0;
   return etat;
 }
@@ -161,7 +169,7 @@ export function separerEtat(e) {
     composition: etat.composition, peste: etat.peste, masques: etat.masques, somnambules: etat.somnambules, bonneEtoile: etat.bonneEtoile,
     aConsigner: etat.aConsigner, pouvoirsDeuil: etat.pouvoirsDeuil, autel: etat.autel,
     fiches: etat.fiches, pont: etat.pont, voteDoubleDemain: etat.voteDoubleDemain, secretsIncomplets: etat.secretsIncomplets,
-    secretsDeFete: etat.secretsDeFete, pacteSecret: etat.pacteSecret
+    secretsDeFete: etat.secretsDeFete, pacteSecret: etat.pacteSecret, ambigusSecret: etat.ambigusSecret
   };
   const pub = copie(etat);
   pub.nuit = base.nuit;
@@ -169,6 +177,7 @@ export function separerEtat(e) {
   for (const cle of ["asperges", "primes", "fioles", "journalSecret", "masques", "somnambules", "bonneEtoile", "aConsigner", "pouvoirsDeuil", "autel", "carnets", "causes", "composition",
     "fiches", "pont", "voteDoubleDemain", "secretsIncomplets", "secretsDeFete"]) pub[cle] = base[cle] && typeof base[cle] === "object" ? copie(base[cle]) : base[cle];
   pub.pacteSecret = pacteSecretInitial();   // le Pacte : vies des Aïeux, flair des Furets, contaminés, signe du Greffier
+  pub.ambigusSecret = ambigusSecretInitial();   // le centre du Chapardeur, les cartes jouées, les modèles, les Mâtins, les charmés
   // La peste noire n'existe pas dans l'état public avant la fin (ni même la clé) ; à la fin, la partie se dévoile.
   delete pub.peste;
   if (etat.phase === "fin" && etat.peste) pub.peste = copie(etat.peste);
@@ -206,6 +215,7 @@ export function fusionnerEtat(pub, secret) {
   if (typeof s.voteDoubleDemain === "boolean") etat.voteDoubleDemain = s.voteDoubleDemain;
   if (s.secretsDeFete) etat.secretsDeFete = normaliserSecretsDeFete(s.secretsDeFete);
   if (s.pacteSecret) etat.pacteSecret = normaliserPacteSecret(s.pacteSecret);
+  if (s.ambigusSecret) etat.ambigusSecret = normaliserAmbigusSecret(s.ambigusSecret);
   etat.secretsIncomplets = Boolean(s.secretsIncomplets);
   etat.causes = s.causes ?? {};
   etat.morts = etat.morts.map(m => (etat.causes[m.acteurId] ? { ...m, cause: etat.causes[m.acteurId] } : m));

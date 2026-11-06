@@ -1,0 +1,45 @@
+{
+  "_id": "cb8c2tsn2D1wDBFO",
+  "_key": "!items!cb8c2tsn2D1wDBFO",
+  "name": "Loup pâle",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/loup-pale.svg",
+  "system": {
+    "cle": "loup-pale",
+    "camp": "meute",
+    "description": "<p>Ton pelage a blanchi avant l'âge, et la meute croit que c'est la neige. Elle se trompe : c'est la faim de tout ce qui respire, les loups compris.</p><p><strong>Chaque nuit</strong>, tu chasses avec la meute, comme un loup parmi les autres : ils te croient des leurs, et toute vision te voit loup.</p><p><strong>Une nuit sur deux</strong> (la deuxième, la quatrième…), quand la meute s'est rendormie, tu te réveilles seul et tu peux <strong>dévorer un loup</strong> (jamais toi-même). C'est une attaque de loup comme une autre : une garde ou un remède peuvent la déjouer, et la lanterne de la Veilleuse peut te surprendre.</p>",
+    "victoire": "<p>Tu gagnes <strong>seul</strong>, si tu es <strong>le dernier vivant</strong>. Si la meute l'emporte, ce n'est pas ta victoire : tu ne gagnes jamais avec elle.</p>",
+    "nuit": {
+      "actif": true,
+      "ordre": 41,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": true,
+      "cibles": 1,
+      "soiMeme": false,
+      "invite": "La meute dort. Quel loup dévores-tu seul cette nuit ? Passe pour l'épargner."
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "trahir",
+    "apparence": "",
+    "victoireCle": "seul-survivant"
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "loup-pale"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

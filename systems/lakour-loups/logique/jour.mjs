@@ -26,6 +26,8 @@ import { aveuglePar, masqueDuCarnaval, presentDeLaNuit, neigeDuJour } from "./fe
 import { campInverse } from "./somnambule.mjs";
 import { nuitBlancheTablee } from "./tablee.mjs";
 import { elider, remplir } from "./grammaire.mjs";
+import { roleEmprunte, normaliserAmbigusSecret, candidatsDuCharme, CLE_CHARMES, EFFET_CHAPARDEUR, EFFET_BATELEUR, EFFET_MATIN, EFFET_VIELLE,
+  EFFET_LOUP_PALE } from "./ambigus.mjs";
 import { rendreLaPlume, sagesseEstPerdue, pouvoirPerdu, furetAveugle, candidatsDeLaPlume, normaliserPacte, normaliserPacteSecret,
   EFFET_FURET, EFFET_PIE, CLE_GREFFIER } from "./pacte.mjs";
 
@@ -454,6 +456,10 @@ export function loupsQuiChassent(villageois = [], e, tour) {
 // Jamais deux nuits de suite la même cible (Garde du pont, Gardienne des clés, Loup hurleur) : celle de la nuit d'avant est
 // RETIRÉE des candidats (l'aube la refuserait aussi : resolution.mjs). Un loup qui tue seul (le Loup affamé) choisit une AUTRE
 // victime que la proie de la meute de cette nuit.
+// Le Pacte, étape 3b (ambigus.mjs) : le Chapardeur et le Bateleur choisissent une CARTE, pas un joueur (api.reveiller la leur
+// propose) : [] ici ; le Mâtin se désigne lui-même pour rejoindre la meute ; le Joueur de vielle, deux vivants pas encore charmés
+// (jamais lui) ; le Loup pâle, un loup vivant (jamais lui) ; les charmés n'ont rien à désigner ; le Bateleur qui joue une carte
+// cette nuit choisit selon le rôle de cette carte.
 export function candidatsDeNuit({ villageois = [], etat: e, acteurId = "", roleCle = "", tour } = {}) {
   const etat = normaliserEtat(e);
   const n = tour ?? etat.tour;
@@ -479,7 +485,14 @@ export function candidatsDeNuit({ villageois = [], etat: e, acteurId = "", roleC
       ids = ids.filter(id => !proies.has(id));
     }
   }
-  const role = acteur?.role;
+  if (roleCle === CLE_CHARMES) return [];
+  const role = roleEmprunte(etat, acteurId, roleCle, n) ?? acteur?.role;
+  if (!groupe && role?.cle === roleCle) {
+    if ([EFFET_CHAPARDEUR, EFFET_BATELEUR].includes(role.effet)) return [];
+    if (role.effet === EFFET_MATIN) return ids.includes(acteurId) ? [acteurId] : [];
+    if (role.effet === EFFET_VIELLE) ids = candidatsDuCharme(ids, acteurId, normaliserAmbigusSecret(etat.ambigusSecret).charmes);
+    if (role.effet === EFFET_LOUP_PALE) ids = ids.filter(id => id !== acteurId && parId.get(id)?.camp === "meute");
+  }
   if (!groupe && role?.cle === roleCle && JAMAIS_DEUX_NUITS.includes(role.effet)) {
     const hier = (etat.nuitPrecedente?.actions ?? []).find(a => a.acteurId === acteurId && a.roleCle === roleCle)?.cibles?.[0];
     if (hier) ids = ids.filter(id => id !== hier);

@@ -42,9 +42,10 @@ test("guide du narrateur : mener, rythme, ambiance gothique d'automne, conseils 
   for (const mot of ["Mener la nuit", "rythme", "automne", "gothique", "MJ IA", "message privé", "égalité", "Raconter une mort", "Cas particuliers", "chronique"]) {
     assert.ok(t.toLowerCase().includes(mot.toLowerCase()), mot);
   }
-  // L'ordre de réveil du guide suit les rôles : la meute groupée, l'Entremetteuse d'abord, le Fossoyeur en dernier.
+  // L'ordre de réveil du guide suit les rôles : la meute groupée, le Chapardeur d'abord (Le Pacte, étape 3b ; l'Entremetteuse après
+  // lui et le Bateleur), le Fossoyeur en dernier.
   const ordre = ordreDeReveil();
-  assert.equal(ordre[0].texte, "Entremetteuse (première nuit seulement)");
+  assert.deepEqual(ordre.slice(0, 3).map(e => e.texte), ["Chapardeur (première nuit seulement)", "Bateleur", "Entremetteuse (première nuit seulement)"]);
   assert.equal(ordre.at(-1).texte, "Fossoyeur");
   assert.equal(ordre.filter(e => e.texte.startsWith("La meute")).length, 1);
   for (const e of ordre) assert.ok(t.includes(e.texte), e.texte);

@@ -17,6 +17,8 @@ export const EQUILIBRE = {
   "loup-hurleur": { camp: "meute", poids: -7, niveau: "classique", joueursMin: 8, unique: true },
   "loup-flaireur": { camp: "meute", poids: -8, niveau: "classique", joueursMin: 9, unique: true },
   "loup-des-roseaux": { camp: "meute", poids: -7, niveau: "classique", joueursMin: 10, unique: true },
+  // Le Loup pâle (Le Pacte, étape 3b ; poids provisoire) : un loup qui dévore aussi les siens, une nuit sur deux.
+  "loup-pale": { camp: "meute", poids: -5, niveau: "chaos", joueursMin: 12, unique: true },
   // --- Village : information
   "liseuse-de-cendres": { camp: "village", poids: 7, niveau: "debutants", joueursMin: 4, unique: true, information: true },
   "sourcier": { camp: "village", poids: 4, niveau: "classique", joueursMin: 8, unique: true, information: true },
@@ -61,13 +63,26 @@ export const EQUILIBRE = {
   "greffier-begue": { camp: "village", poids: 3, niveau: "chaos", joueursMin: 9, unique: true },
   "vieux-sergent": { camp: "village", poids: 3, niveau: "classique", joueursMin: 8, unique: true },
   "pie": { camp: "village", poids: 3, niveau: "chaos", joueursMin: 9, unique: true },
+  // --- Ambigus (Le Pacte, étape 3b ; poids provisoires). Le Chapardeur ajoute deux cartes Villageois au paquet (le centre) : elles
+  // ne comptent pas dans l'équilibre (logique/composition.mjs). Le Mâtin et l'Enfant des bois, qui peuvent passer à la meute, sont
+  // montés de -2 et -1 à -1 et 0 pour garder le générateur à ±2 (comme les poids de l'étape 3a, à calibrer à l'étape 6).
+  "chapardeur": { camp: "village", poids: 0, niveau: "chaos", joueursMin: 8, unique: true },
+  "bateleur": { camp: "village", poids: 4, niveau: "chaos", joueursMin: 9, unique: true },
+  "matin": { camp: "village", poids: -1, niveau: "chaos", joueursMin: 9, unique: true },
+  "enfant-des-bois": { camp: "village", poids: 0, niveau: "classique", joueursMin: 8, unique: true },
+  "chambriere": { camp: "village", poids: 2, niveau: "classique", joueursMin: 8, unique: true },
   // --- Solitaires
   "revenant": { camp: "solitaire", poids: -2, niveau: "classique", joueursMin: 9, unique: true },
   "chasseur-de-primes": { camp: "solitaire", poids: -2, niveau: "classique", joueursMin: 9, unique: true },
   "colporteur": { camp: "solitaire", poids: -1, niveau: "chaos", joueursMin: 8, unique: true },
   "pyromane": { camp: "solitaire", poids: -6, niveau: "chaos", joueursMin: 10, unique: true },
   // Ne tue qu'une nuit sur deux (le Pyromane peut tout embraser d'un coup), mais la meute ne peut pas la tuer.
-  "dame-du-gue": { camp: "solitaire", poids: -5, niveau: "chaos", joueursMin: 10, unique: true }
+  "dame-du-gue": { camp: "solitaire", poids: -5, niveau: "chaos", joueursMin: 10, unique: true },
+  // Les solitaires du jeu de soirée (Le Pacte, étape 3b ; poids provisoires). Le Feu follet gagne rarement, puis rejoint le Village
+  // (0 plutôt que -1 : le générateur reste à ±2).
+  "feu-follet": { camp: "solitaire", poids: 0, niveau: "classique", joueursMin: 8, unique: true },
+  "joueur-de-vielle": { camp: "solitaire", poids: -4, niveau: "chaos", joueursMin: 10, unique: true },
+  "illumine": { camp: "solitaire", poids: -3, niveau: "chaos", joueursMin: 10, unique: true }
 };
 
 // Bâtiments : niveau minimal (les plus perturbants attendent le niveau classique ou chaos).

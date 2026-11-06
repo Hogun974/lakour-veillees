@@ -1,0 +1,45 @@
+{
+  "_id": "oeWWoqQQ3C42V0yo",
+  "_key": "!items!oeWWoqQQ3C42V0yo",
+  "name": "Enfant des bois",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/enfant-des-bois.svg",
+  "system": {
+    "cle": "enfant-des-bois",
+    "camp": "village",
+    "description": "<p>On t'a trouvé au bord de la forêt, et tu as grandi en imitant ceux qui voulaient bien de toi.</p><p><strong>La première nuit</strong>, tu désignes en secret un <strong>modèle</strong> parmi les autres joueurs. Tant que ton modèle vit, tu es un villageois du camp du <strong>Village</strong>.</p><p>Mais si ton modèle <strong>meurt</strong>, de quelque façon que ce soit, plus rien ne te retient : tu <strong>rejoins la meute</strong> en secret, et tu te réveilles avec elle dès la nuit suivante. Tu peux même aider à faire tomber ton modèle.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 13,
+      "premiereNuitSeulement": true,
+      "uneNuitSurDeux": false,
+      "cibles": 1,
+      "soiMeme": false,
+      "invite": "Qui prends-tu pour modèle ? Tant qu'il vivra, tu resteras au village."
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "modele",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "enfant-des-bois"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

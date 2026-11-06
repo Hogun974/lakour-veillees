@@ -69,13 +69,24 @@
       "cacarder": "les oies cacardent si un loup est voisin",
       "second-vote": "déclenche en secret un second vote d'exécution",
       "contaminer": "dévoré, blesse le premier loup à sa gauche",
-      "plume": "deux voix de plus contre sa cible au vote du jour"
+      "plume": "deux voix de plus contre sa cible au vote du jour",
+      "chaparder": "la première nuit, peut prendre l'une des deux cartes du centre",
+      "emprunter": "chaque nuit, peut jouer l'une des cartes face visible (retirée ensuite)",
+      "choisir-camp": "la première nuit, choisit d'être loup ou villageois",
+      "modele": "choisit un modèle : s'il meurt, rejoint la meute",
+      "devouement": "peut prendre la carte d'un condamné avant qu'elle soit retournée",
+      "charmer": "charme deux joueurs par nuit",
+      "trahir": "une nuit sur deux, peut dévorer un loup"
     },
     "Victoires": {
       "aucune": "aucune (selon le texte)",
       "execute": "gagne s'il est exécuté par le village",
       "dernier-survivant": "gagne s'il est le dernier survivant",
-      "cible-executee": "gagne si sa cible est exécutée"
+      "cible-executee": "gagne si sa cible est exécutée",
+      "premier-tour": "gagne s'il est éliminé au premier tour",
+      "tous-charmes": "gagne quand tous les autres vivants sont charmés",
+      "autre-groupe": "gagne quand tout l'autre groupe est éliminé",
+      "seul-survivant": "gagne s'il est le dernier vivant (jamais avec la meute)"
     },
     "Victoire": {
       "village": "Le village de Brumecombe l'emporte : plus aucun loup ne rôde dans la brume.",
@@ -666,7 +677,8 @@
       "departage": "En attente : le Bailli ({nom}) tranche l'égalité…",
       "succession": "En attente : {nom}, Bailli défunt, remet le sceau…",
       "LeDeuil": "la meute en deuil",
-      "juger": "Juger l'accusé : {nom}"
+      "juger": "Juger l'accusé : {nom}",
+      "LesCharmes": "les charmés"
     },
     "Preparation": {
       "Titre": "Préparer la partie",
@@ -872,7 +884,8 @@
         "votants": "Tour {tour} — {nom}, tombé pour l'égalité, désigne les votants de demain : {noms}.",
         "plume": "Tour {tour} — une plume noire désigne {nom}.",
         "oies": "Tour {tour} — les oies de {nom} cacardent.",
-        "second-vote": "Tour {tour} — un second vote d'exécution, sans débat."
+        "second-vote": "Tour {tour} — un second vote d'exécution, sans débat.",
+        "devouement": "Tour {tour} — {nom} se dévoue : la Chambrière prend la carte de {noms}, sans la montrer."
       }
     },
     "Masques": {
@@ -1153,6 +1166,47 @@
       "FratrieRetrouvee": "Vous vous retrouvez en silence avec {noms} : le temps de votre réveil, vous pouvez vous parler entre vous.",
       "FratrieSeule": "Vous vous réveillez seul : les vôtres ne sont plus.",
       "PriveDeVote": "Vous ne votez pas à ce vote."
+    },
+    "Ambigus": {
+      "RejointLaMeute": "Cette nuit, {nom} rejoint la meute : il chassera avec vous.",
+      "ChapardeurInvite": "Deux cartes dorment au centre de la table. Prends-en une à la place de la tienne, ou passe pour garder ta carte.",
+      "ChapardeurOblige": "Les deux cartes du centre sont de la meute : tu dois en prendre une.",
+      "ChapardeurPris": "Tu as glissé ta carte au centre et pris celle-ci : tu es désormais « {role} », jusqu'à la fin de la veillée.",
+      "ChapardeurGarde": "Tu as regardé les cartes du centre et gardé la tienne.",
+      "ChapardeurNote": "{nom}, le Chapardeur, a pris au centre la carte « {role} ».",
+      "BateleurJoue": "Cette nuit, tu joues la carte « {role} » : le narrateur t'appellera à son tour. Au matin, elle sera retirée.",
+      "BateleurNote": "{nom}, le Bateleur, joue cette nuit la carte « {role} ».",
+      "CarteRetiree": "La carte « {role} » du Bateleur a servi cette nuit : elle est retirée de la table.",
+      "CartesDuBateleur": "Trois cartes sont posées face visible au milieu de la table : {roles}. Une nuit, quelqu'un pourra jouer l'une d'elles.",
+      "MatinMeute": "Tu as choisi la meute : tu chasses avec elle dès cette nuit. Les loups : {noms}.",
+      "MatinVillage": "Tu as choisi le village : tu resteras simple villageois jusqu'à la fin.",
+      "MatinMeuteNote": "{nom}, le Mâtin, a choisi la meute.",
+      "MatinVillageNote": "{nom}, le Mâtin, reste au village.",
+      "Modele": "Ton modèle est {nom}. Tant qu'il vit, tu es du Village ; s'il tombe, tu rejoindras la meute.",
+      "ModeleNote": "{nom}, l'Enfant des bois, a pris {modele} pour modèle.",
+      "Orphelin": "{nom}, ton modèle, est tombé : tu rejoins la meute en secret, et tu chasseras avec elle dès la nuit prochaine. Les loups : {noms}.",
+      "OrphelinNote": "{modele} est tombé : {nom}, l'Enfant des bois, rejoint la meute.",
+      "Charme": "Tu as joué de ta vielle sous les fenêtres de {noms} : les voilà charmés.",
+      "CharmeNote": "{nom}, le Joueur de vielle, charme {noms}.",
+      "Charmes": "Un air de vielle vous a charmés. Vous ouvrez les yeux avec les autres charmés : {noms}. Ne dites rien.",
+      "CharmeSeul": "Un air de vielle t'a charmé. Tu es seul à l'entendre, pour l'instant.",
+      "DejaCharmes": "Ceux que la vielle a déjà charmés : {noms}.",
+      "PersonneCharme": "La vielle n'a encore charmé personne.",
+      "FeuFolletEteint": "La première nuit est passée et tu vis encore : ta flamme s'éteint. Tu n'es plus qu'un simple villageois, et tu gagnes avec le Village.",
+      "CommenceParLeJour": "Cette veillée commence par un jour : le village se réunit, débat et vote avant la première nuit.",
+      "Groupes": "Le village se partage en deux bords, {critere} : d'un côté {a} ; de l'autre {b}.",
+      "Critere": {
+        "rive": "selon la rive où chacun dort (le bourg et l'autre rive)",
+        "parite": "selon le numéro de sa maison (impair ou pair)"
+      },
+      "ChambriereInvite": "Le village a condamné {noms}. Avant qu'on retourne sa carte, veux-tu te dévouer ? Désigne-le pour prendre sa carte (et ton secret sera dévoilé), ou passe.",
+      "Devouement": "Avant qu'on retourne la carte de {de}, {nom} se dévoile : c'était la Chambrière. Elle prend la carte du condamné sans la montrer, et en tiendra le rôle jusqu'à la fin.",
+      "DevouementNote": "{nom}, la Chambrière, devient « {role} ».",
+      "BailliPerdu": "{nom} était Bailli : en se dévouant, elle perd la charge. Le village élira un autre Bailli.",
+      "Refus": {
+        "tard": "Les cartes du Bateleur se choisissent avant la première nuit.",
+        "cartes": "Choisis une à {n} cartes de rôles à pouvoir de nuit (ni loup, ni solitaire), qui ne sont pas au paquet."
+      }
     }
   }
 }

@@ -123,7 +123,10 @@ n'existe que chez le MJ actif ; il se range en deux morceaux (`logique/etat.mjs`
   tenures: { cle: acteurId|null },// public (socle du Pacte) : les bâtiments tenus par un joueur, null = vacant (logique/tenures.mjs)
   evenements: [ { cle, tire, debut, fin, type, quand } ],  // public (socle du Pacte) : les événements (logique/evenements.mjs)
   pacte: { innocentSuit, sagessePerdue, gracies, egalite, votants, plume, secondVote },   // public (Pacte, étape 3a ; logique/pacte.mjs)
-  pacteSecret: { aieux, furets, contamines, signal }       // SECRET (Pacte, étape 3a) : vies perdues, flair perdu, loups contaminés, signe du Greffier
+  pacteSecret: { aieux, furets, contamines, signal },      // SECRET (Pacte, étape 3a) : vies perdues, flair perdu, loups contaminés, signe du Greffier
+  ambigus: { bateleur, retirees, commenceParLeJour, groupes, devouements },   // public (Pacte, étape 3b ; logique/ambigus.mjs)
+  ambigusSecret: { centre, chapardes, emprunts, modeles, matins, charmes }    // SECRET (Pacte, étape 3b) : centre du Chapardeur, carte jouée
+                                                                              //   par le Bateleur, modèles, choix des Mâtins, charmés
 }
 ```
 `etat()` rend l'état complet chez le MJ actif, l'état public partout ailleurs.
@@ -476,6 +479,55 @@ agirDeJour({ pouvoir: "greffier-begue" }) -> le signe, SECRET : ni annonce, ni r
 - **Franc-Villageois** : `role.public` (socle).
 - Registre : entrée `{ type: "pacte", quoi: "grace" | "sagesse" | "votants" | "plume" | "oies" | "second-vote", acteurId?, ids? }` ; un vote
   porte `plume` et `souffreDouleur`. Hook PUBLIC `lakourLoups.pacte` (`{ quoi, acteurId?, ids? }`, jamais le Greffier ni la Pie).
+
+Le Pacte, étape 3b — les ambigus, les solitaires du livre et le Loup pâle (`logique/ambigus.mjs`, `docs/plan-le-pacte.md`) :
+```
+ambigus()                         -> { bateleur: [{ cle, nom, img }], retirees: [cle], commenceParLeJour, groupes: null | { critere, a: [{ id, nom }],
+                                       b }, devouements: [{ acteurId, de, tour }] } (tous ; l'état public)
+ambigusSecrets()                  -> { centre: [{ cle, nom }], modeles, matins, charmes, emprunts: { acteurId: { cle, tour } } } (MJ actif ; SECRET)
+cartesDuBateleur([cle])           -> le narrateur pose lui-même les cartes du Bateleur (1 à 3 rôles permis, pas au paquet), avant la
+                                       première nuit ; annoncé ; erreur claire sinon (Ambigus.Refus.tard, Ambigus.Refus.cartes)
+distribuer({ roles })             -> avec un Chapardeur au paquet : deux cartes Villageois ajoutées s'il n'y a pas déjà n + 2 cartes ; les deux
+                                       non distribuées au centre (ambigusSecret.centre) ; le paquet entier (distribué et centre) décide des
+                                       cartes du Bateleur (tirées hors du paquet), du jour du Feu follet et des bords de l'Illuminé (annoncés)
+nouvellePartie({ … })             -> une composition avec le Chapardeur garde n rôles (composer : centre: 2) ; le paquet en compte n + 2
+reveiller("chapardeur" | "bateleur") -> une demande dont les candidats sont des CARTES ({ id: "centre-0" | clé, nom, img }) ; la réponse est
+                                       notée avec la carte (noterAction({ carte })) ; reveiller("charmes") : les charmés, sans choix
+noterAction({ …, carte })         -> applique aussitôt : la carte prise (Chapardeur ; deux loups au centre et rien de choisi : une au hasard),
+                                       la carte jouée (Bateleur : son étape s'ajoute à l'ordre de la nuit, `emprunt: true`), le camp du
+                                       Mâtin (se désigner = la meute), le modèle de l'Enfant des bois, les deux charmés du Joueur de vielle,
+                                       la reconnaissance des charmés (étape « charmes ») ; une action d'une carte empruntée porte son effet
+demanderAction({ soiMeme })       -> le « soi-même » d'une carte jouée par le Bateleur
+cloreVote()                       -> une Chambrière qui peut se dévouer reçoit aussitôt une demande courte (objet "chambriere", candidats : les
+                                       condamnés, au plus DELAI_CHAMBRIERE) ; eliminer(id, { cause: "vote" }) attend sa réponse
+eliminer(id, { cause: "vote" })   -> dévouée : le condamné meurt sans que sa carte soit montrée, sa carte de Chambrière est retournée, elle
+                                       prend son rôle remis à neuf ; ses derniers gestes et la sagesse de l'Aïeul ne jouent pas ; un modèle
+                                       qui meurt (toute cause) fait passer son Enfant des bois à la meute
+resoudreNuit()                    -> les cartes jouées par le Bateleur sont retirées au matin (annonce) ; au matin de la première nuit, le
+                                       Feu follet vivant devient villageois (camp du Village, carnet)
+verifierVictoire()                -> + Feu follet (premier tour), Joueur de vielle (tous charmés), Illuminé (l'autre groupe éliminé), Loup
+                                       pâle (dernier vivant) ; la victoire de la meute ne compte jamais le Loup pâle (bilanDePartie)
+```
+- **Chapardeur** (`chaparder`, ordre 1, première nuit) : les deux cartes du centre lui sont montrées ; obligé si ce sont deux loups. Pris,
+  le rôle est remis à neuf ; un rôle de première nuit encore à jouer cette nuit-là se joue à son tour (l'ordre de la nuit est recalculé).
+- **Bateleur** (`emprunter`, ordre 2, chaque nuit) : ses cartes (`rolesDuBateleur` : village, pouvoir de nuit chaque nuit, ni groupe, ni
+  première nuit, ni lien d'amour ni échange, pas au paquet), trois au hasard (`tirerCartesDuBateleur`, graine) ; la carte jouée cette
+  nuit (`ambigusSecret.emprunts`) le réveille à son ordre et se résout avec son rôle (`resoudreNuit({ emprunts })`, `candidatsDeNuit`).
+- **Mâtin** (`choisir-camp`, ordre 38, première nuit, `soiMeme`) : candidats = lui seul ; se désigner = la meute, dès cette nuit.
+- **Enfant des bois** (`modele`, ordre 13, première nuit) : `enfantsOrphelins` à chaque mort.
+- **Chambrière** (`devouement`) : `chambriereDisponible` (vivante, pas amoureuse, pas condamnée, sagesse), `ficheDeLaChambriere` (rôle remis à
+  neuf ; `nuit.debut` = la nuit suivante pour un rôle de première nuit, lu par `seReveille` ; infectée, elle le reste), `devouer` (public :
+  `ambigus.devouements`, Registre `pacte` / `devouement` ; charme et charge de Bailli perdus), `carteReprise` (gestes du condamné ignorés).
+- **Feu follet** (`victoireCle: "premier-tour"`) : `commenceParLeJour` (étape « debat » après la distribution) ; `feuFolletGagne` : mort
+  par le vote au tour 0, ou par la meute ou le poison la nuit 1 (phase de nuit ou d'aube).
+- **Joueur de vielle** (`charmer`, ordre 80, deux cibles ; `victoireCle: "tous-charmes"`) : `candidatsDuCharme` (ni lui ni un charmé) ;
+  étape « charmes » (`CLE_CHARMES`, ordre 81) tant qu'il joue (`vielleEnJeu`) ; mordu : ni réveil ni victoire.
+- **Illuminé** (`victoireCle: "autre-groupe"`) : `partagerLeVillage` (`CRITERES_DE_PARTAGE` : la rive, la parité en repli ; d'autres
+  critères s'y brancheront, les traits visibles de l'étape 9) ; vivant, pas devenu loup.
+- **Loup pâle** (`trahir`, ordre 41, une nuit sur deux ; `victoireCle: "seul-survivant"`, la seule clé de victoire d'un loup) :
+  candidats = les loups vivants (lui exclu) ; une attaque de loup (cause `meute`) ; sa proie entre dans `proiesDeLaNuit` (l'Herboriste).
+- Registre : entrée `{ type: "pacte", quoi: "devouement", acteurId, ids: [condamné] }` ; hook PUBLIC `lakourLoups.pacte`
+  (`{ quoi: "devouement", acteurId, ids }`). Réglages : aucun (la fenêtre de la Chambrière suit `delaiChoix`, au plus 30 s).
 
 ### Petite tablée (logique/tablee.mjs, 0.11.0)
 
@@ -855,7 +907,8 @@ veillée ».
 `asperger` / `embraser`, `epier`, `messager`, `voir-actif`, `voir-role` (le rôle d'un joueur : la Liseuse de cendres) ; Pacte, étape 3a
 (`logique/pacte.mjs`, §1 « Socle du Pacte ») : `resister` (Aïeul), `egalite` (Souffre-douleur), `grace` (Innocent), `fratrie` (Lavandières,
 Bûcherons), `flairer` (Furet), `cacarder` (Gardeuse d'oies), `second-vote` (Greffier bègue), `contaminer` (Vieux Sergent), `plume`
-(Pie). `emporter` : le mourant désigne lui-même sa cible (demande posthume,
+(Pie) ; Pacte, étape 3b (`logique/ambigus.mjs`) : `chaparder` (Chapardeur), `emprunter` (Bateleur), `choisir-camp` (Mâtin), `modele` (Enfant
+des bois), `devouement` (Chambrière), `charmer` (Joueur de vielle), `trahir` (Loup pâle). `emporter` : le mourant désigne lui-même sa cible (demande posthume,
 socle du Pacte), le MJ en repli. Toutes sont désormais appliquées par le système : à l'aube
 (`resoudreNuit()`), dont `messager` (le mot écrit par l'expéditeur, `action.texte`, remis au seul destinataire), ou de jour
 (`annuler-vote` : le Juge de paix, voir §5). Ce que le système ne connaîtrait pas reste raconté et arbitré par le MJ (`narrateur`).
@@ -887,7 +940,9 @@ n'a pas besoin de code tant qu'il s'en tient à ces clés. Conventions de `resou
   suivent le camp réel. Le masque du Loup déguisé tombe (`masquesQuiTombent`, jour.mjs) quand il est le plus désigné d'un vote
   d'exécution sans être condamné (égalité non tranchée, majorité manquée, vote annulé par le Juge de paix) : sa fiche perd
   l'apparence (""), le narrateur le note (`Deguise.MasqueTombe`), le loup l'apprend (`Deguise.Carnet`) ;
-- `victoireCle: "dernier-survivant"` (Pyromane, Dame du gué) : la meute ne peut pas le tuer ; le village ne gagne pas tant qu'il vit.
+- `victoireCle: "dernier-survivant"` (Pyromane, Dame du gué) : la meute ne peut pas le tuer ; le village ne gagne pas tant qu'il vit ;
+- `victoireCle` du Pacte, étape 3b : `premier-tour` (Feu follet), `tous-charmes` (Joueur de vielle), `autre-groupe` (Illuminé),
+  `seul-survivant` (Loup pâle : un loup, avec son texte de victoire ; il ne gagne jamais avec la meute).
 
 ## 5. Pouvoirs de jour (`logique/jour.mjs`)
 

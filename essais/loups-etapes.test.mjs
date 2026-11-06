@@ -137,7 +137,8 @@ const MUTATIONS_ETAPES = [
   ["if (faits.has(e.roleCle)) continue;", "", "rôles déjà réveillés"],
   ["if (etat.nuitResolue !== Math.max(1, etat.tour)) return etape(\"aube\", \"aube\");", "", "résoudre l'aube"],
   ["if (emporteur) return etape(", "if (false) return etape(", "Braconnière"],
-  ["if (suivis <= avant && !ignorer.includes(`emporter:${m.acteurId}`)) enAttente.push(m.acteurId);", "enAttente.push(m.acteurId);", "Braconnière servie"],
+  // (Le compte des gestes faits vit dans derniers-gestes.mjs, éprouvé par essais/socle-logique.test.mjs.)
+  ["return gestesEnAttente(etat, villageois, ignorer).filter(", "return gestesEnAttente(etat, villageois, []).filter(", "Braconnière : « personne »"],
   ["if (!etat.vainqueur && verifierVictoire(", "if (false && verifierVictoire(", "victoire"],
   ["const strict = Boolean(etat.petiteTablee) && pariteStricteTablee(", "const strict = false && pariteStricteTablee(", "parité stricte de la petite tablée"],
   ["const manquent = Math.max(0, vivants.length - v.exprimes.filter(id => ids.has(id)).length);", "const manquent = 0;", "voix manquantes"],
@@ -171,7 +172,7 @@ test("étape suivante : chaque règle cassée est détectée", async () => {
 });
 
 // ================================================================== la Table du MJ humain, sur la doublure
-const { api } = await import("../systems/lakour-loups/scripts/api.mjs");
+const { api, attendreGestes } = await import("../systems/lakour-loups/scripts/api.mjs");
 const { ecouterSocket } = await import("../systems/lakour-loups/scripts/socket.mjs");
 const { enregistrerReglages } = await import("../systems/lakour-loups/scripts/reglages.mjs");
 const plateau = await import("../systems/lakour-loups/scripts/plateau.mjs");
@@ -274,6 +275,9 @@ async function partieHumaine(graine) {
   const vues = new Set();
   while (!fin) {
     assert.ok(++pas < 400, "la partie ne finit pas");
+    await calme();
+    // Une Braconnière tombée choisit elle-même (derniers gestes) : son choix fait, la Table propose la suite.
+    await attendreGestes();
     await calme();
     await api.plateau.attendre();
     const e = api.etapeSuivante({ ignorer });

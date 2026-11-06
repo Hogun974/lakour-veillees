@@ -14,6 +14,8 @@
 // La Petite tablée (0.11.0) : son annonce publique ne nomme personne (le tirage contraint — qui est de l'ombre, qui tient la
 // lanterne — ne sort que par ses nombres) ; ses parties (2 à 4 humains, des compagnons IA) passent au même crible.
 // Et la migration d'une partie d'avant 0.9.0 (rôles sur les fiches, joueurs propriétaires) les retire des documents.
+// Le socle du Pacte : un rôle PUBLIC dès la distribution (role.public) est retourné face visible, et rien d'autre ne sort avec lui ;
+// la Braconnière qui tombe reçoit seule sa demande posthume.
 // Lancer : npm run essais
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -165,8 +167,12 @@ function espionnerEcritures(etat) {
 }
 
 // ------------------------------------------------------------------ une partie complète
-async function partie({ graine, peste = false, gens = false, compagnons = 0, revelerALaMort = true, joueurs = 7, roles = [], fete = "", niveau = "chaos" } = {}) {
+// publics : les clés de rôle du contenu rendues publiques pour cette partie (role.public, le Franc-Villageois du livre).
+async function partie({ graine, peste = false, gens = false, compagnons = 0, revelerALaMort = true, joueurs = 7, roles = [], fete = "", niveau = "chaos", publics = [] } = {}) {
   installerFoundry({ joueurs: 8, contenu: true });
+  for (const pack of game.packs.contents ?? [...game.packs.values()]) {
+    for (const d of pack.documents?.contents ?? []) if (d.type === "role" && publics.includes(d.system?.cle)) d.system = { ...d.system, public: true };
+  }
   enregistrerReglages(() => {});
   ecouterSocket();
   game.lakourLoups = api;
@@ -188,6 +194,10 @@ async function partie({ graine, peste = false, gens = false, compagnons = 0, rev
   const fuites = [];
   const etape = async nom => { await calme(); await rangement(); etat.etape = nom; fuites.push(...crible(etat)); };
   await etape("distribution");
+  // Les rôles publics : retournés dès la distribution (l'objet de rôle au document, le camp du rôle), et eux seuls.
+  const publicsReveles = villageois().filter(a => publics.includes(secretDuMJ.role(a)?.system.cle))
+    .map(a => a.system.revele && a.items.some(i => i.type === "role" && i.system.cle === secretDuMJ.role(a).system.cle));
+  const autresReveles = villageois().filter(a => !publics.includes(secretDuMJ.role(a)?.system.cle) && (a.system.revele || a.items.some(i => i.type === "role"))).length;
   for (let tour = 1; tour <= 12 && !api.etat().vainqueur; tour++) {
     await api.changerPhase("nuit");
     await etape(`nuit ${tour}`);
@@ -227,7 +237,7 @@ async function partie({ graine, peste = false, gens = false, compagnons = 0, rev
   }
   await etape("fin");
   return { fuites, nocturnes: etat.ecrituresNocturnes, vainqueur: api.etat().vainqueur, morts: api.etat().morts.length, fete: api.etat().fete.cle, tablee: api.etat().petiteTablee,
-    secretsDeFete: api.etat().secretsDeFete, murmures: etat.murmures,
+    secretsDeFete: api.etat().secretsDeFete, murmures: etat.murmures, publicsReveles, autresReveles,
     cles: villageois().map(a => secretDuMJ.role(a)?.system.cle) };
 }
 
@@ -239,6 +249,8 @@ const PARTIES = [
   { graine: "fievre", joueurs: 7, peste: true },
   { graine: "passage", joueurs: 7, gens: true, roles: ["loup-de-brumecombe", "loup-hurleur", "veilleuse-de-lanterne", "pyromane", "ermite", "sourcier", "garde-du-pont"] },
   { graine: "roseaux", joueurs: 5, compagnons: 3, roles: ["loup-affame", "loup-flaireur", "dame-du-gue", "pecheur-de-nuit", "braconniere", "gardienne-des-cles", "rosiere", "conteuse"] },
+  // Le socle du Pacte : un rôle public dès la distribution (ici la Conteuse, rendue publique pour l'essai), une Braconnière qui choisit.
+  { graine: "public", joueurs: 7, compagnons: 1, publics: ["conteuse"], roles: ["loup-de-brumecombe", "loup-hurleur", "conteuse", "braconniere", "liseuse-de-cendres", "garde-du-pont", "herboriste", "villageois"] },
   // Les veillées de fête (0.10.0), dont une avec des compagnons IA et une en peste noire.
   { graine: "ames", joueurs: 7, fete: "nuit-des-ames" },
   { graine: "hiver", joueurs: 6, compagnons: 2, fete: "veillee-d-hiver" },
@@ -258,6 +270,10 @@ for (const p of PARTIES) {
     assert.ok(r.vainqueur, "jusqu'à la victoire");
     assert.equal(r.tablee, p.niveau === "petite-tablee", "le mode public de la petite tablée");
     for (const cle of p.roles ?? []) if (!p.peste) assert.ok(r.cles.includes(cle) || cle === "somnambule", `${cle} distribué`);
+    if (p.publics?.length) {
+      assert.ok(r.publicsReveles.length && r.publicsReveles.every(Boolean), "le rôle public est retourné dès la distribution");
+      assert.equal(r.autresReveles, 0, "aucun autre rôle retourné à la distribution");
+    }
     assert.deepEqual(r.fuites.slice(0, 15), [], `${r.fuites.length} fuite(s)`);
     assert.deepEqual(r.nocturnes, [], "aucun réglage monde écrit pendant la nuit");
     if (p.fete) {

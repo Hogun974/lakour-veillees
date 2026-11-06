@@ -12,6 +12,7 @@
 // - les morts : au cimetière, rangés dans l'ordre des morts ;
 // - l'image : neutre tant que le rôle n'est pas révélé ; celle du rôle s'il l'est, et pour tous à la fin.
 import { numeroDeMaison } from "./distribution.mjs";
+import { cercleDe } from "./cercle.mjs";
 
 // Obscurité de la scène selon la phase (0 = plein jour, 1 = nuit noire).
 export const LUMIERE = { preparation: 0, nuit: 0.85, aube: 0.4, jour: 0, vote: 0.15, fin: 0.3 };
@@ -137,7 +138,9 @@ export const imageDuJeton = (v, phase) => (v?.revele || phase === "fin" ? "role"
 // des morts). -> { phase, obscurite, jetons: [{ id, x, y, ou: "maison" | "cercle" | "cimetiere" | "reste", image, mort,
 // silence }] }. Un villageois sans place connue (maison inconnue de la carte, carte sans cimetière) a ou: "reste" et
 // x, y null : son jeton ne bouge pas.
-export function miseEnScene({ plateau, phase = "preparation", villageois = [], morts = [] } = {}) {
+// cercle : l'ordre des places de la partie (etat.cercle, cercle.mjs) ; donné, le cercle de la place le suit (chacun y retrouve ses
+// voisins de table) ; absent ou vide, l'ordre des maisons (ordreDuCercle).
+export function miseEnScene({ plateau, phase = "preparation", villageois = [], morts = [], cercle: ordreDeTable = null } = {}) {
   const jetons = [];
   const morts_ = villageois.filter(v => v.vivant === false);
   const rang = id => {
@@ -147,7 +150,8 @@ export function miseEnScene({ plateau, phase = "preparation", villageois = [], m
   const vivants = villageois.filter(v => v.vivant !== false);
   const cercle = PHASES_DU_CERCLE.includes(phase);
   const places = cercle ? placesEnCercle(plateau, vivants.length) : [];
-  const rangDuCercle = new Map(ordreDuCercle(vivants).map((v, i) => [v.id, i]));
+  const ordre = Array.isArray(ordreDeTable) && ordreDeTable.length ? cercleDe({ cercle: ordreDeTable }, vivants) : ordreDuCercle(vivants).map(v => v.id);
+  const rangDuCercle = new Map(ordre.map((id, i) => [id, i]));
   // Deux villageois sur le même seuil (deux dormeurs d'une même maison) : le second se range à côté.
   const pris = new Map();
   const seuilLibre = v => {

@@ -15,7 +15,8 @@ export const EFFETS = [
   "epier", "messager", "voir-actif"
 ];
 // Extensions du système lakour-loups (systems/lakour-loups/scripts/modeles.mjs, logique/constantes.mjs) :
-// role.apparence = camp vu par une vision « voir-camp » ("" = camp réel) ; role.victoireCle = victoire d'un solitaire.
+// role.apparence = camp vu par une vision « voir-camp » ("" = camp réel) ; role.victoireCle = victoire d'un solitaire ;
+// role.public = rôle connu de tous dès la distribution (retourné face visible par le système ; écrit seulement quand il est vrai).
 export const APPARENCES = ["", "village", "meute"];
 export const VICTOIRES = ["", "execute", "dernier-survivant", "cible-executee"];
 
@@ -58,7 +59,7 @@ const usagesDe = max => ({ max, restant: max });
 
 // ---------- Objet « role »
 // nuit : { ordre, cibles, soiMeme, premiereNuitSeulement, uneNuitSurDeux, invite } (absent = n'agit pas la nuit).
-export function role({ cle, nom, camp, pouvoir, victoire = "", victoireCle = "", apparence = "", nuit = null, usages = 0, effet = "", resume }) {
+export function role({ cle, nom, camp, pouvoir, victoire = "", victoireCle = "", apparence = "", nuit = null, usages = 0, effet = "", resume, public: estPublic = false }) {
   if (!CAMPS.includes(camp)) throw new Error(`${cle} : camp « ${camp} » inconnu`);
   if (!APPARENCES.includes(apparence)) throw new Error(`${cle} : apparence « ${apparence} » inconnue`);
   if (!VICTOIRES.includes(victoireCle)) throw new Error(`${cle} : clé de victoire « ${victoireCle} » inconnue`);
@@ -77,7 +78,7 @@ export function role({ cle, nom, camp, pouvoir, victoire = "", victoireCle = "",
         premiereNuitSeulement: nuit?.premiereNuitSeulement ?? false, uneNuitSurDeux: nuit?.uneNuitSurDeux ?? false,
         cibles: nuit ? (nuit.cibles ?? 1) : 0, soiMeme: nuit?.soiMeme ?? false, invite: nuit?.invite ?? ""
       },
-      usages: usagesDe(usages), effet, apparence, victoireCle
+      usages: usagesDe(usages), effet, apparence, victoireCle, ...(estPublic ? { public: true } : {})
     },
     effects: [], folder: null, sort: 0, ownership: { default: 0 },
     flags: { [MODULE]: { cle } }, _stats: STATS

@@ -122,6 +122,7 @@ export function verifierDocuments(docs) {
     if (typeof s.victoireCle !== "string" || !VICTOIRES.includes(s.victoireCle)) err(d, `clé de victoire « ${s.victoireCle} » inconnue`);
     else if (s.victoireCle && s.camp !== "solitaire") err(d, "clé de victoire hors solitaire");
     if (s.apparence && s.apparence === s.camp) err(d, "apparence identique au camp réel (laisser vide)");
+    if (s.public !== undefined && s.public !== true) err(d, "rôle public : « public: true », ou rien");
     if (!sansBalises(s.description)) err(d, "pouvoir sans description");
     if (d.doc.img !== cheminJeton(s.cle)) err(d, `image ${d.doc.img} au lieu de ${cheminJeton(s.cle)}`);
     if (n.actif) {

@@ -18,6 +18,7 @@ import { choisir } from "./hasard.mjs";
 import { normaliserEtat } from "./etat.mjs";
 import { nombreDeLoups } from "./composition.mjs";
 import { inscrire } from "./registre.mjs";
+import { ajouterAuCercle } from "./cercle.mjs";
 
 export const ROLES_DE_PASSAGE = ["remouleur", "montreur-d-ours", "pelerine"];
 export const PHASES_ARRIVEE = ["aube", "jour"];
@@ -67,7 +68,8 @@ export function accueillir(e, { acteurId, cle }) {
   const etat = normaliserEtat(e);
   etat.passage.gens[acteurId] = { cle, tour: etat.tour };
   inscrire(etat, { type: "passage", acteurId, comment: "arrivee", cle });
-  return etat;
+  // Il s'assoit au bout du cercle (cercle.mjs) : les voisins des autres ne changent pas.
+  return ajouterAuCercle(etat, acteurId);
 }
 
 // Un villageois quitte la veillée (départ, ou exil voté) : ni mort ni révélé ; sa voix en cours retirée, et celles qui le

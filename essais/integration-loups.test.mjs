@@ -20,7 +20,7 @@ import {
 import { PLAN_VILLAGE, PLATEAU_VILLAGE, PLACE, BATIMENTS_CARTE } from "../modules/lakour-veillees/contenu/village.mjs";
 
 installerFoundry({ contenu: true });
-const { api } = await import("../systems/lakour-loups/scripts/api.mjs");
+const { api, attendreGestes } = await import("../systems/lakour-loups/scripts/api.mjs");
 const { ecouterSocket } = await import("../systems/lakour-loups/scripts/socket.mjs");
 const { enregistrerReglages } = await import("../systems/lakour-loups/scripts/reglages.mjs");
 const { creerHasard, choisir, melanger, verifierVictoire, CAUSES_SECRETES, POUVOIRS_JOUR, effetsDeLaNuit, surLAutreRive, ROLES_DE_PASSAGE, CLES_DE_FETE, voteExecutionDuJour } = await import("../systems/lakour-loups/logique/index.mjs");
@@ -300,6 +300,23 @@ function verifierSavoirDesCompagnons(ou) {
 // tablee : la Petite tablée (0.11.0) : le réglage monde « petiteTablee » est coché (comme le fait la Table du MJ), et le narrateur
 // distribue au niveau « petite-tablee » ; le tirage contraint, le glas d'office et le sort qui tranche sont vérifiés en chemin.
 // composition : une composition prête du contenu (clé), au lieu de la composition générée.
+// Les derniers gestes en cours (logique/derniers-gestes.mjs : la Braconnière qui choisit sa cible) faits, et leur mise en scène.
+async function gestesFaits() {
+  for (let i = 0; i < 20; i++) {
+    await calme();
+    const g = attendreGestes();
+    await g;
+    await calme();
+    if (g === attendreGestes()) break;
+  }
+  await api.plateau.attendre();
+}
+// Le texte d'une victoire tombée du geste d'une Braconnière (le système l'a déclarée), comme le dirait le narrateur.
+function victoireDuGeste() {
+  const v = api.etat().vainqueur;
+  return `VICTOIRE : ${v === "village" || v === "meute" ? v : game.actors.get(v)?.name ?? v} (dernier geste d'une Braconnière).`;
+}
+
 async function jouerPartie({ n, niveau, graine, nbCompagnons = 0, fete = "", tablee = false, composition = "" }) {
   const joueurs = monde(n, graine);
   if (fete) await game.settings.set("lakour-loups", "veilleeDeFete", fete);
@@ -314,6 +331,9 @@ async function jouerPartie({ n, niveau, graine, nbCompagnons = 0, fete = "", tab
   const textes = [];
   const appeler = async (nom, args) => {
     const r = await outil(nom).executer(args);
+    // Une Braconnière tombée choisit elle-même qui elle emporte (derniers gestes du système) : son choix est fait avant qu'on
+    // regarde le village.
+    await gestesFaits();
     textes.push(`${nom} ${JSON.stringify(args)}\n${r.contenu}`);
     if (process.env.TRACE_LOUPS) console.log(`${textes.at(-1)}\n`);
     assert.ok(!r.erreur, `${nom} en erreur : ${r.contenu}`);
@@ -331,8 +351,15 @@ async function jouerPartie({ n, niveau, graine, nbCompagnons = 0, fete = "", tab
     if (emporte) return emporter([emporte[1].split(" et ").at(-1)]);
     return "";
   };
+  // La Braconnière désigne elle-même sa cible (demande posthume du système, déjà faite : appeler l'attend) ; le narrateur n'emporte
+  // à sa place que si elle n'a désigné personne. Une victoire tombée de son geste se lit dans l'état.
   const emporter = async noms => {
+    await gestesFaits();
+    if (api.etat().vainqueur) return victoireDuGeste();
     for (const nom of noms) {
+      const mourant = villageois().find(a => a.name === nom);
+      if (!api.derniersGestes().some(g => g.acteurId === mourant?.id)) { couvert("Braconnière : elle choisit elle-même"); continue; }
+      couvert("Braconnière : le narrateur choisit à sa place");
       const cible = choisir(villageois().filter(a => a.system.vivant).map(a => a.name), h);
       if (!cible) return "";
       const t = await eliminer(cible, "emporte");
@@ -449,7 +476,8 @@ ${r.contenu}`);
       }
       const actions = etatNuit.nuitPrecedente.actions;
       const proies = actions.filter(x => x.roleCle === "meute" || ROLES[x.roleCle]?.system.camp === "meute" && ROLES[x.roleCle].system.effet === "tuer").flatMap(x => x.cibles);
-      for (const d of emissions.slice(nbDemandes).filter(e => e.type === "demande")) {
+      // (Hors la demande posthume d'une Braconnière tombée cette nuit : elle choisit parmi tous les vivants.)
+      for (const d of emissions.slice(nbDemandes).filter(e => e.type === "demande" && !(e.posthume && e.objet === "emporter"))) {
         assert.ok(avantNuit.has(d.acteurId), `un mort (${d.acteurNom}) est réveillé la nuit`);
         assert.ok(!fx.horsDAtteinte.includes(d.acteurId) || d.mode === "texte", `${d.acteurNom}, hors d'atteinte, est réveillé`);
         for (const c of d.candidats.filter(c => avantNuit.has(c.id))) assert.ok(!fx.horsDAtteinte.includes(c.id), `${d.acteurNom} peut viser ${c.nom}, hors d'atteinte`);
@@ -497,7 +525,7 @@ ${r.contenu}`);
       // Les effets du jour ont tenu cette nuit.
       const mortsDeLaNuit = etatNuit.morts.filter(m => m.tour === etatNuit.tour && avantNuit.has(m.acteurId));
       for (const m of mortsDeLaNuit) {
-        if (m.cause !== "chagrin") assert.ok(!fx.horsDAtteinte.includes(m.acteurId), `${game.actors.get(m.acteurId).name}, hors d'atteinte, meurt (${m.cause})`);
+        if (m.cause !== "chagrin" && m.cause !== "emporte") assert.ok(!fx.horsDAtteinte.includes(m.acteurId), `${game.actors.get(m.acteurId).name}, hors d'atteinte, meurt (${m.cause})`);
         if (m.cause === "meute") {
           assert.ok(!fx.asiles.includes(m.acteurId), "la meute tue à la Chapelle");
           const loupATaverne = fx.taverneEnJeu && fx.taverne.some(id => avant.get(id)?.camp === "meute");
@@ -970,6 +998,7 @@ async function jouerPeste({ n, graine, nbCompagnons = 0, crierAuJour = 0 }) {
   const textes = [];
   const appeler = async (nom, args) => {
     const r = await outil(nom).executer(args);
+    await gestesFaits();   // une Braconnière tombée a choisi qui elle emporte (derniers gestes)
     textes.push(`${nom} ${JSON.stringify(args)}\n${r.contenu}`);
     assert.ok(!r.erreur, `${nom} en erreur : ${r.contenu}`);
     verifierTexte(r.contenu, nom);
@@ -1009,7 +1038,8 @@ async function jouerPeste({ n, graine, nbCompagnons = 0, crierAuJour = 0 }) {
       assert.equal(peste.length, 1, "une étape de la peste par nuit");
       assert.ok(!e.nuitPrecedente.actions.some(x => x.roleCle === "meute"), "pas de meute");
       assert.equal(peste[0].acteurId, porteur, "notée au nom du porteur (aucun la première fois)");
-      const demandes = emissions.slice(nbEmis).filter(x => x.type === "demande" && x.posthume);
+      // (Les demandes posthumes du porteur : pas celle d'une Braconnière qui choisit qui elle emporte.)
+      const demandes = emissions.slice(nbEmis).filter(x => x.type === "demande" && x.posthume && x.objet !== "emporter");
       if (!porteur) {
         assert.equal(demandes.length, 0, "pas de porteur : personne n'est réveillé pour la peste");
         // La victime choisie par le narrateur (sauf si elle était hors d'atteinte : alors le hasard).
@@ -1075,7 +1105,14 @@ async function jouerPeste({ n, graine, nbCompagnons = 0, crierAuJour = 0 }) {
     assert.ok(chat.includes(FR.LAKOUR_LOUPS.Causes.peste), "la vraie cause, au récit");
     const journal = game.journal.find(j => j.getFlag("lakour-loups", "chroniques"));
     assert.ok(journal.pages.some(p => p.name.includes(FR.LAKOUR_LOUPS.Peste.Chronique)), "les Chroniques : Peste noire");
-    if (crierAuJour) {
+    if (game.actors.get(e.vainqueur)) {
+      // Un solitaire l'emporte avant le cri ou l'extinction (le Chasseur de primes dont la cible est exécutée) : la règle de la
+      // peste le permet (les solitaires d'abord). Depuis que la Braconnière choisit elle-même qui elle emporte, les parties
+      // tirées changent, et il arrive.
+      assert.equal(roleDe(game.actors.get(e.vainqueur)).system.camp, "solitaire", "un solitaire vainqueur");
+      assert.match(fin, /VICTOIRE/);
+      couvert("peste : solitaire");
+    } else if (crierAuJour) {
       assert.equal(e.vainqueur, "village");
       assert.match(fin, /VICTOIRE : village/);
       assert.ok(chat.includes(FR.LAKOUR_LOUPS.Victoire.villagePeste));

@@ -307,7 +307,7 @@
       "Mort": "{nom} n’est plus : {cause}.",
       "MortRevele": "{nom} n’est plus : {cause}. Son rôle : <strong>{role}</strong>.",
       "Silence": "Une ombre vous a pris la voix : vous ne parlerez pas au prochain débat.",
-      "Emporter": "{nom} meurt et peut emporter quelqu'un dans la tombe : demandez-lui son choix."
+      "Emporter": "{nom} meurt et peut emporter quelqu'un dans la tombe : son choix lui est demandé ; sans réponse, à vous de trancher."
     },
     "Journal": {
       "Distribution": "Les rôles sont distribués à {n} villageois.",
@@ -622,7 +622,8 @@
         "juge": "Le Juge de paix ({nom}) peut encore annuler ce vote.",
         "emporter": "{nom} désigne qui il emporte (ou personne).",
         "sansSecrets": "Ce navigateur n'a pas les secrets de la nuit.",
-        "bancVide": "(Personne n'est accusé : attendez les accusations du débat, ou laissez tomber la nuit.)"
+        "bancVide": "(Personne n'est accusé : attendez les accusations du débat, ou laissez tomber la nuit.)",
+        "emporterDemande": "{nom} choisit en ce moment qui il emporte ; vous pouvez trancher à sa place."
       },
       "LaPeste": "la peste",
       "bailli": "Élire le Bailli",
@@ -823,7 +824,8 @@
         "ouverture": "Tour {tour} — la veillée de fête commence : {fete}.",
         "neige": "Tour {tour} — la neige est tombée : les traces sont effacées.",
         "defile": "Tour {tour} — au défilé du Carnaval, le masque de {role}, que personne ne porte."
-      }
+      },
+      "Vacance": "Tour {tour} — {nom} est mort : ses bâtiments deviennent vacants ({batiments})."
     },
     "Masques": {
       "Titre": "Masques de veillée",
@@ -1061,6 +1063,22 @@
         "Carnet": "Pour la Fête des promis, ton cœur s'est lié à celui de {nom} : vous êtes tous deux du Village à l'heure de la distribution. Toi seul le sais… et la meute, qui vous a vus.",
         "Meute": "Les promis de la fête s'affichent sans pudeur : {a} et {b}, tous deux du Village.",
         "AnnonceSans": "C'est la Fête des promis, mais cette année aucun cœur du Village ne s'est trouvé : personne n'est promis."
+      }
+    },
+    "Gestes": {
+      "emporter": {
+        "Invite": "Tu tombes, mais tes collets tiennent encore : désigne, en secret, le vivant que tu emportes dans la tombe (ou passe).",
+        "Choisi": "Dernier geste : {nom} emporte {cibles} dans la tombe.",
+        "Personne": "{nom} n'a désigné personne (ou n'a pas pu répondre à temps) : à vous de trancher qui est emporté, ou de dire « Personne »."
+      }
+    },
+    "Public": {
+      "Annonce": "{nom} tient un rôle connu de tous : {role}."
+    },
+    "Tenures": {
+      "Refus": {
+        "cle": "Quel bâtiment ? (clé manquante)",
+        "mort": "{nom} est mort : il ne peut plus tenir de bâtiment."
       }
     }
   }

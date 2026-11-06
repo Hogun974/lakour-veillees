@@ -162,11 +162,15 @@ function diffuserVus({ forcer = false, seul = "" } = {}) {
 // - campPublie : ce que l'annonce dit déjà (la lanterne démasque un loup : « meute ») ;
 // - à sa mort (mort : true, réglage « revelerALaMort ») et à la fin (fin : true) : le vrai rôle et le camp actuel ; à la fin,
 //   l'amoureux aussi (le récit de fin le dit déjà).
-async function revelerPubliquement(acteurId, { marquer = true, fin = false, mort = false, campPublie = "" } = {}) {
+// Le rôle SEUL (sansCamp : true ; la variante Double visage, plus tard) : l'objet de rôle entre au document, rien n'est écrit à
+// son camp public (system.camp reste ""). L'objet porte le camp que les règles donnent à ce rôle — su de tous dès qu'on nomme le
+// rôle —, jamais le camp actuel du villageois. role : les données d'objet à montrer (le visage montré d'un Double visage) au lieu
+// du rôle de sa fiche.
+async function revelerPubliquement(acteurId, { marquer = true, fin = false, mort = false, campPublie = "", sansCamp = false, role = null } = {}) {
   const a = game.actors.get(acteurId);
   if (!a) return false;
   const f = lireEtat().fiches[acteurId];
-  const objet = f ? L.objetDeRole(f) : null;
+  const objet = role ? L.objetDeRole({ role }) : f ? L.objetDeRole(f) : null;
   const toutDire = fin || mort;
   if (objet) {
     const deja = a.items.filter(i => i.type === "role");
@@ -179,7 +183,7 @@ async function revelerPubliquement(acteurId, { marquer = true, fin = false, mort
   const camp = toutDire ? f?.camp : campPublie || a.system.camp || publie?.system?.camp || objet?.system.camp;
   const maj = {};
   if (marquer && !a.system.revele) maj["system.revele"] = true;
-  if (camp && a.system.camp !== camp) maj["system.camp"] = camp;
+  if (camp && !sansCamp && a.system.camp !== camp) maj["system.camp"] = camp;
   if (fin && f && (a.system.amoureux ?? "") !== f.amoureux) maj["system.amoureux"] = f.amoureux;
   if (Object.keys(maj).length) await a.update(maj);
   return true;
@@ -597,6 +601,8 @@ export function ligneDuRegistre(x) {
     case "mort": return t("LAKOUR_LOUPS.Registre.Mort", { tour, nom: nom(x.acteurId), cause: libelleCause(x.cause) });
     case "bailli": return t(`LAKOUR_LOUPS.Registre.Bailli.${x.comment}`, { tour, nom: nom(x.acteurId), de: x.de ? nom(x.de) : "" });
     case "declaration": return t("LAKOUR_LOUPS.Registre.Declaration", { tour, nom: nom(x.acteurId), texte: x.texte });
+    case "vacance": return t("LAKOUR_LOUPS.Registre.Vacance", { tour, nom: nom(x.acteurId),
+      batiments: (x.batiments ?? []).map(c => (game.i18n.has(`LAKOUR_LOUPS.Batiments.${c}`) ? t(`LAKOUR_LOUPS.Batiments.${c}`) : c)).join(", ") });
     default: return "";
   }
 }
@@ -779,6 +785,92 @@ async function appliquerDepartage(resultat, choix) {
 // Tant que le Bailli n'a pas tranché, ni nouveau vote ni changement de phase.
 function exigerSansDepartage() {
   if (L.departageEnAttente(lireEtat())) throw new Error(t("LAKOUR_LOUPS.Bailli.Refus.departage"));
+}
+
+// ------------------------------------------------------------------ les derniers gestes (logique/derniers-gestes.mjs)
+// Un mourant qui porte un geste (la Braconnière emporte quelqu'un) choisit LUI-MÊME : une demande posthume à son joueur (ou à son
+// compagnon IA), les vivants pour candidats, puis le geste appliqué (la cible meurt, cause « emporte »). Sans réponse au délai, ou
+// s'il passe, le MJ garde la main (étape « emporter » de la Table, outil du narrateur) ; s'il tranche avant la réponse, la demande
+// est close et la réponse tardive ignorée (le geste est fait). Une demande à la fois, une seule par mort ; la nuit, une fois
+// toutes ses morts tombées (comme la succession du Bailli). Gardé en mémoire seulement : une page du MJ rechargée ne redemande
+// pas, l'étape de la Table reste là.
+const gestesEnCours = new Map();   // acteurId -> geste dont la demande est chez le mourant
+const gestesDemandes = new Set();  // « partie|geste:acteurId|tour » : déjà demandé (une demande par mort)
+let gestes = Promise.resolve();
+
+function suivreGestes() {
+  if (mortsDeLaNuit) return gestes;
+  gestes = gestes.then(menerGestes).catch(e => console.warn(`${ID} | derniers gestes`, e));
+  return gestes;
+}
+
+async function menerGestes() {
+  for (let i = 0; i < 40; i++) {
+    const avant = lireEtat();
+    if (!avant.partie || avant.vainqueur || avant.phase === "fin") return;
+    const cle = g => `${avant.partie}|${g.geste}:${g.acteurId}|${avant.tour}`;
+    const g = L.gestesEnAttente(avant, villageoisAPlat()).find(x => !gestesDemandes.has(cle(x)));
+    if (!g) return;
+    gestesDemandes.add(cle(g));
+    await demanderLeGeste(avant, g);
+  }
+}
+
+async function demanderLeGeste(avant, { acteurId, geste }) {
+  const def = L.GESTES[geste];
+  const candidats = L.candidatsDuGeste(villageoisAPlat(), acteurId);
+  if (!candidats.length || !game.actors.get(acteurId)) return;
+  gestesEnCours.set(acteurId, geste);
+  let choix = [];
+  try {
+    choix = await demandeLibre({ acteurId, invite: t(`LAKOUR_LOUPS.Gestes.${geste}.Invite`), candidats, nombre: def.nombre, posthume: true, objet: def.objet });
+  } finally {
+    gestesEnCours.delete(acteurId);
+  }
+  const nom = id => game.actors.get(id)?.name ?? id;
+  // Vérifié puis appliqué sous le verrou de la victoire : une victoire déclarée entre-temps l'arrête, et aucune vérification ne
+  // lit le village pendant qu'il change.
+  const fait = await sousVerrou(async () => {
+    const v = L.verifierGeste({ etat: lireEtat(), villageois: villageoisAPlat(), acteurId, geste, cibles: choix, partie: avant.partie });
+    if (!v.ok) {
+      // Il passe, ou ne répond pas à temps : au MJ de trancher (ou de dire « personne »). Déjà fait, partie finie ou autre : rien.
+      if (v.raison === "personne") await noterPourMJ(t(`LAKOUR_LOUPS.Gestes.${geste}.Personne`, { nom: nom(acteurId) }), { notifier: true });
+      return false;
+    }
+    await noterPourMJ(t(`LAKOUR_LOUPS.Gestes.${geste}.Choisi`, { nom: nom(acteurId), cibles: v.cibles.map(nom).join(", ") }));
+    for (const id of v.cibles) await api.eliminer(id, { cause: def.cause });
+    return true;
+  });
+  if (fait) await api.verifierVictoire();
+}
+
+// Pour les essais et les outils qui doivent attendre que les derniers gestes en cours soient faits (ou rendus au MJ).
+export const attendreGestes = () => gestes;
+
+// Le MJ (ou le narrateur) vient de faire le geste à la place du mourant (une mort de sa cause) : la demande encore ouverte chez
+// le mourant est close (sa fenêtre aussi) ; un compagnon IA qui répondrait encore serait ignoré (verifierGeste : « fait »).
+function fermerGestes(cause) {
+  const geste = L.gesteDeLaCause(cause);
+  if (!geste) return;
+  for (const [id, p] of [...enAttente.entries()]) {
+    if (p.demande.posthume && p.demande.objet === L.GESTES[geste].objet && gestesEnCours.get(p.demande.acteurId) === geste) terminer(id, [], true);
+  }
+}
+
+// ------------------------------------------------------------------ les rôles publics (role.public)
+// Un rôle PUBLIC dès la distribution (le Franc-Villageois du livre, les personnalités au jeton « rôle visible ») : sa carte est
+// retournée devant tous (revelerPubliquement : l'objet de rôle et le camp DU RÔLE au document, rien d'autre), annoncée au chat.
+// Rien des autres ne bouge. Un Somnambule n'est jamais retourné ainsi (il porte un rôle rêvé, pas le sien).
+async function revelerLesRolesPublics(ids) {
+  const etat = lireEtat();
+  for (const id of ids) {
+    const role = L.normaliserFiche(etat.fiches?.[id]).role;
+    if (!role?.system?.public || etat.somnambules?.[id]) continue;
+    await revelerPubliquement(id);
+    const nom = game.actors.get(id)?.name ?? id;
+    await modifierEtat(e => L.journaliser(e, t("LAKOUR_LOUPS.Public.Annonce", { nom, role: role.name })));
+    await annonceChat(echapper(t("LAKOUR_LOUPS.Public.Annonce", { nom, role: role.name })));
+  }
 }
 
 // ------------------------------------------------------------------ le Glas du deuil (logique/deuil.mjs)
@@ -1009,6 +1101,8 @@ function annulerDemandes() {
   succession = Promise.resolve();
   mortsDeLaNuit = false;
   departageEnCours = null;
+  gestes = Promise.resolve();
+  gestesDemandes.clear();
 }
 
 // Le contenu disponible : rôles, métiers et bâtiments (compendiums d'objets, puis objets du monde) par clé, et, du module
@@ -1085,6 +1179,55 @@ function cleDeRole(texte, contenu) {
 const reveilsEnCours = new Set();
 let pointCompagnons = null;
 
+// ------------------------------------------------------------------ la victoire, une vérification à la fois
+// sousVerrou(fn) : fn ne court qu'après les précédentes (la victoire vérifiée, un dernier geste appliqué) ; une erreur ne bloque
+// pas les suivantes.
+let verrou = Promise.resolve();
+function sousVerrou(fn) {
+  const suite = verrou.then(fn);
+  verrou = suite.catch(() => {});
+  return suite;
+}
+
+// La vérification elle-même (api.verifierVictoire la passe sous le verrou).
+const victoire = {
+  async verifier({ finDuJour = false } = {}) {
+    exigerMJ();
+    // Sans les secrets à jour, aucun rôle n'est connu ici : jamais de victoire déclarée sur du vide (le coffre est cherché).
+    if (ecritureBloquee()) {
+      try { exigerSecretsAJour(t("LAKOUR_LOUPS.Erreurs.SecretsAbsents")); } catch (err) { ui.notifications?.warn(err.message); }
+      return "";
+    }
+    const e = lireEtat();
+    const glas = L.glasSonne(e) || (finDuJour && e.glas > 0 && e.tour >= e.glas && !e.vainqueur);
+    // La Nuit de la Saint-Martin : rien ne tombe avant son unique vote (et ses exécutions), ou avant que la seconde nuit tombe.
+    const saintMartin = L.estSaintMartin(e) ? (L.saintMartinFinie(e, villageoisAPlat()) || (finDuJour && e.tour >= 1)) : null;
+    // Petite tablée, régime des deux loups : la meute doit être plus nombreuse que les autres (strict).
+    const g = L.verifierVictoire({ villageois: villageoisAPlat(), glas, morts: e.morts, primes: e.primes, peste: e.peste, saintMartin, strict: pariteStricte(e) });
+    if (g && e.vainqueur !== g) {
+      // Les cartes se retournent : chaque Somnambule est découvert avant le récit et les jetons de la fin.
+      for (const id of L.reveurs(e.somnambules)) await devoilerSomnambule(id);
+      await consignerComposition();
+      const libelle = libelleVainqueur(g, e);
+      const etat = await modifierEtat(x => L.journaliser(L.declarerVainqueur(x, g), libelle));
+      // Les cartes se retournent pour de bon : chaque rôle, camp et lien d'amour entre aux documents (public, enfin).
+      for (const id of Object.keys(etat.fiches ?? {})) if (game.actors.get(id)) await revelerPubliquement(id, { marquer: false, fin: true });
+      // La partie est finie : l'état public dévoile maintenant la peste noire, s'il y en avait une.
+      annoncer("lakourLoups.victoire", [g, etat], [g, L.etatPublic(etat)]);
+      await annonceChat(`<strong>${echapper(libelle)}</strong>`);
+      // La partie est finie : le récit retourne toutes les cartes (le plateau montre déjà chaque rôle sur son jeton), et
+      // la veillée entre dans les Chroniques de Brumecombe (un échec n'empêche pas le récit).
+      const lignes = lignesDeFin(etat);
+      const chroniques = await consignerVeillee({ quand: Date.now(), tours: etat.tour, vainqueur: libelle, lignes, ...(L.estPeste(etat) ? { peste: true } : {}) })
+        .catch(e => { console.warn(`${ID} | chroniques`, e); return null; });
+      await annonceChat(recitDeFin(etat, lignes, chroniques));
+      diffuserVus();
+      await sceller();
+    }
+    return g;
+  }
+};
+
 // ------------------------------------------------------------------ l'API
 export const api = {
   // Point d'enregistrement des compagnons IA, déposé par le MJ IA (s'il est actif, même sans séance de narrateur) :
@@ -1149,6 +1292,8 @@ export const api = {
     }).filter(c => c.acteurId || c.nom);
     const nomsCompagnons = placesIA.map(c => c.nom);
     if (!joueurs.length && !nomsCompagnons.length) throw new Error(t("LAKOUR_LOUPS.Erreurs.PasDeJoueurs"));
+    // Une partie neuve : les derniers gestes déjà demandés sont ceux d'une autre partie.
+    gestesDemandes.clear();
     await consignerComposition();   // la partie précédente, abandonnée
     const cache = new Map();
     for (const uuid of [...roles, ...metiers]) {
@@ -1256,9 +1401,13 @@ export const api = {
       e.somnambules = somnambules;
       e.petiteTablee = enTablee;
       e.places = sortie.length;
+      // L'ordre des places autour de la table (logique/cercle.mjs) : celui des maisons, fixé pour toute la partie.
+      e.cercle = L.ordreDesPlaces(enJeu);
       return L.journaliser(e, t("LAKOUR_LOUPS.Journal.Distribution", { n: sortie.length }));
     }, { sansSecrets: true });   // une partie neuve : elle ne doit rien aux secrets d'avant
     for (const s of sortie) await envoyerRole(game.actors.get(s.acteurId));
+    // Les rôles PUBLICS dès la distribution (role.public) : retournés face visible, devant tous.
+    await revelerLesRolesPublics(sortie.map(s => s.acteurId));
     // Les Masques de veillée : la meute (jamais une peste noire) reçoit en secret des rôles du Village absents de la partie.
     const loups = sortie.map(s => game.actors.get(s.acteurId)).filter(a => a && campDe(a) === "meute");
     if (!peste && loups.length && lireReglage("masques", true)) {
@@ -1540,9 +1689,10 @@ export const api = {
 
   // L'étape suivante pour le MJ humain (logique/etapes.mjs) : { cle, action, donnees, attente, detail }.
   // ignorer : étapes écartées par le MJ (« emporter:<id> » quand la Braconnière n'emporte personne).
+  // attente : les réveils en cours, et les derniers gestes demandés au mourant (« geste:<acteurId> »).
   etapeSuivante({ ignorer = [] } = {}) {
     return L.etapeSuivante(lirePublic(), estMJActif() ? secretsMJ() : null,
-      { villageois: villageoisAPlat(), attente: [...reveilsEnCours], ignorer });
+      { villageois: villageoisAPlat(), attente: [...reveilsEnCours, ...[...gestesEnCours.keys()].map(id => `geste:${id}`)], ignorer });
   },
 
   // Le contenu de la partie (rôles, métiers, bâtiments, équilibre, compositions prêtes), pour la préparation sur la Table.
@@ -1754,6 +1904,7 @@ export const api = {
       await envoyerSecret(porteur, { texte: t("LAKOUR_LOUPS.Peste.CarnetPorteur") });
     }
     annoncer("lakourLoups.aube", [{ tour, morts: r.morts, annonces }]);
+    suivreGestes();
     suivreSuccession();
     const presage = await tirerLePresage(r.bilan);
     await sceller();   // la nuit est finie : ses choix entrent au coffre
@@ -1893,6 +2044,8 @@ export const api = {
     if (montrer) await revelerPubliquement(acteurId, { marquer: false, mort: true });
     await acteur.update({ "system.vivant": false, ...(montrer ? { "system.revele": true } : {}) });
     await modifierEtat(e => L.journaliser(L.ajouterMort(e, { acteurId, cause }), t("LAKOUR_LOUPS.Journal.Mort", { nom: acteur.name, cause: libelleCause(visible) })));
+    // Un geste fait par le MJ (Braconnière : il emporte à sa place) : la demande au mourant se ferme (logique/derniers-gestes.mjs).
+    fermerGestes(cause);
     try { await acteur.toggleStatusEffect("dead", { active: true, overlay: true }); } catch { /* sans jeton */ }
     const role = roleDe(acteur);
     const infos = { acteurId, revele: montrer, roleCle: montrer ? (role?.system.cle ?? "") : "" };
@@ -1909,7 +2062,9 @@ export const api = {
     const lieId = amoureuxDe(acteur);
     const lie = lieId ? game.actors.get(lieId) : null;
     if (lie?.system.vivant) morts.push(...await api.eliminer(lie.id, { cause: "chagrin", reveler }));
-    // Le Bailli mort remet le sceau (sans attendre ici : la demande court pendant que la partie continue).
+    // Le Bailli mort remet le sceau, le mourant qui porte un geste le fait (sans attendre ici : les demandes courent pendant que
+    // la partie continue).
+    suivreGestes();
     suivreSuccession();
     diffuserVus();   // ce mort voit peut-être tout, désormais
     await sceller();
@@ -1981,40 +2136,12 @@ export const api = {
   },
 
   // finDuJour : la nuit allait tomber (changerPhase) — le Glas final sonne alors dès le jour N, même sans vote ce jour-là.
+  // Une vérification à la fois, et jamais pendant qu'un dernier geste s'applique (sousVerrou) : deux vérifications lancées
+  // ensemble (le narrateur, et le geste d'une Braconnière qui vient de répondre) déclareraient deux fois la victoire, ou une
+  // victoire lue sur un village qui change sous elle.
   async verifierVictoire({ finDuJour = false } = {}) {
     exigerMJ();
-    // Sans les secrets à jour, aucun rôle n'est connu ici : jamais de victoire déclarée sur du vide (le coffre est cherché).
-    if (ecritureBloquee()) {
-      try { exigerSecretsAJour(t("LAKOUR_LOUPS.Erreurs.SecretsAbsents")); } catch (err) { ui.notifications?.warn(err.message); }
-      return "";
-    }
-    const e = lireEtat();
-    const glas = L.glasSonne(e) || (finDuJour && e.glas > 0 && e.tour >= e.glas && !e.vainqueur);
-    // La Nuit de la Saint-Martin : rien ne tombe avant son unique vote (et ses exécutions), ou avant que la seconde nuit tombe.
-    const saintMartin = L.estSaintMartin(e) ? (L.saintMartinFinie(e, villageoisAPlat()) || (finDuJour && e.tour >= 1)) : null;
-    // Petite tablée, régime des deux loups : la meute doit être plus nombreuse que les autres (strict).
-    const g = L.verifierVictoire({ villageois: villageoisAPlat(), glas, morts: e.morts, primes: e.primes, peste: e.peste, saintMartin, strict: pariteStricte(e) });
-    if (g && e.vainqueur !== g) {
-      // Les cartes se retournent : chaque Somnambule est découvert avant le récit et les jetons de la fin.
-      for (const id of L.reveurs(e.somnambules)) await devoilerSomnambule(id);
-      await consignerComposition();
-      const libelle = libelleVainqueur(g, e);
-      const etat = await modifierEtat(x => L.journaliser(L.declarerVainqueur(x, g), libelle));
-      // Les cartes se retournent pour de bon : chaque rôle, camp et lien d'amour entre aux documents (public, enfin).
-      for (const id of Object.keys(etat.fiches ?? {})) if (game.actors.get(id)) await revelerPubliquement(id, { marquer: false, fin: true });
-      // La partie est finie : l'état public dévoile maintenant la peste noire, s'il y en avait une.
-      annoncer("lakourLoups.victoire", [g, etat], [g, L.etatPublic(etat)]);
-      await annonceChat(`<strong>${echapper(libelle)}</strong>`);
-      // La partie est finie : le récit retourne toutes les cartes (le plateau montre déjà chaque rôle sur son jeton), et
-      // la veillée entre dans les Chroniques de Brumecombe (un échec n'empêche pas le récit).
-      const lignes = lignesDeFin(etat);
-      const chroniques = await consignerVeillee({ quand: Date.now(), tours: etat.tour, vainqueur: libelle, lignes, ...(L.estPeste(etat) ? { peste: true } : {}) })
-        .catch(e => { console.warn(`${ID} | chroniques`, e); return null; });
-      await annonceChat(recitDeFin(etat, lignes, chroniques));
-      diffuserVus();
-      await sceller();
-    }
-    return g;
+    return sousVerrou(() => victoire.verifier({ finDuJour }));
   },
 
   // ---------------------------------------------------------------- pouvoirs de jour
@@ -2354,6 +2481,48 @@ export const api = {
     return lireEtat().autel.map(cle => ({ cle, nom: nomDeRole(cle) }));
   },
 
+  // ---------------------------------------------------------------- le socle du Pacte : cercle, gestes, tenures, événements
+  // L'ordre des places autour de la table (logique/cercle.mjs ; public, tous les navigateurs) : [{ acteurId, nom, vivant }].
+  cercle() {
+    const villageois = villageoisAPlat();
+    return L.cercleDe(lirePublic(), villageois).map(id => ({ acteurId: id, nom: game.actors.get(id)?.name ?? id,
+      vivant: villageois.find(v => v.id === id)?.vivant !== false }));
+  },
+  // Les voisins d'une place (public) : { gauche, droite } (acteurId, "" si personne) ; vivantsSeulement : les morts sautés.
+  voisins(acteurId, { vivantsSeulement = true } = {}) {
+    return L.voisins(lirePublic(), villageoisAPlat(), acteurId, { vivantsSeulement });
+  },
+  // Les derniers gestes qui attendent leur mourant (MJ actif : le geste dit son rôle) : [{ acteurId, nom, geste, demande }]
+  // (demande : la question est en ce moment chez lui).
+  derniersGestes() {
+    exigerMJ();
+    return L.gestesEnAttente(lireEtat(), villageoisAPlat()).map(g => ({ ...g, nom: game.actors.get(g.acteurId)?.name ?? g.acteurId,
+      demande: gestesEnCours.get(g.acteurId) === g.geste }));
+  },
+  // Les bâtiments tenus (logique/tenures.mjs ; public) : [{ cle, acteurId (null : vacant), nom }].
+  tenures() {
+    return Object.entries(lirePublic().tenures).map(([cle, acteurId]) => ({ cle, acteurId, nom: acteurId ? game.actors.get(acteurId)?.name ?? acteurId : "" }));
+  },
+  // Confie un bâtiment à un vivant (acteurId "" ou null : le bâtiment devient vacant). MJ actif ; public (Registre non touché :
+  // la réattribution par le Prévôt viendra avec lui). -> les tenures
+  async tenir(cle, acteurId = null) {
+    exigerMJ();
+    if (!cle) throw new Error(t("LAKOUR_LOUPS.Tenures.Refus.cle"));
+    if (acteurId) {
+      const a = acteurOuErreur(acteurId);
+      if (!a.system.vivant) throw new Error(t("LAKOUR_LOUPS.Tenures.Refus.mort", { nom: a.name }));
+    }
+    await modifierEtat(e => (acteurId ? L.tenir(e, cle, acteurId) : L.liberer(e, cle)));
+    await sceller();
+    return api.tenures();
+  },
+  // Les événements en cours ou à venir (logique/evenements.mjs ; public), le présage de l'Almanach compris :
+  // [{ cle, type, quand, tire, debut, fin, source?, actif }] (actif : il vaut à ce tour, à cette phase).
+  evenements() {
+    const e = lirePublic();
+    return L.evenementsEnCours(e).map(ev => ({ ...ev, actif: L.evenementVaut(ev, e.tour, e.phase) }));
+  },
+
   // ---------------------------------------------------------------- le Registre du greffier (public, tous les navigateurs)
   // -> [{ type: "vote" | "mort" | "bailli" | "declaration", tour, phase, quand, …, ligne }] (ligne : l'entrée lisible, langue du
   //    monde ; une déclaration garde son texte dans « texte ») ; max : les dernières seulement ; depuis : à partir de ce tour.
@@ -2544,10 +2713,11 @@ export const api = {
     return api.fiche(acteurId);
   },
   // Révèle à tous le rôle de ce villageois (case « Révélé » de la fiche du MJ, narrateur) : l'objet de rôle entre au document.
-  async reveler(acteurId) {
+  // roleSeul : le rôle sans son camp public (revelerPubliquement, sansCamp ; la variante Double visage, plus tard).
+  async reveler(acteurId, { roleSeul = false } = {}) {
     exigerMJ();
     acteurOuErreur(acteurId);
-    await revelerPubliquement(acteurId);
+    await revelerPubliquement(acteurId, { sansCamp: Boolean(roleSeul) });
     await sceller();
     return true;
   },

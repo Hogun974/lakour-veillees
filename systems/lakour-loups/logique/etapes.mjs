@@ -5,7 +5,8 @@
 //   etatPublic : le réglage monde « partie » ; secretsMJ : les secrets du MJ actif (null ailleurs : la nuit se mène
 //   alors sans savoir qui a déjà agi) ;
 //   contexte : { villageois: [villageois à plat, rôles compris], attente: [roleCle] (réveils en cours : demandes
-//   envoyées aux joueurs, sans réponse), ignorer: [cle d'étape écartée par le MJ, ex. « emporter:<id> »] }.
+//   envoyées aux joueurs, sans réponse ; « geste:<acteurId> » : un dernier geste demandé au mourant, derniers-gestes.mjs),
+//   ignorer: [cle d'étape écartée par le MJ, ex. « emporter:<id> »] }.
 //
 // cle : distribuer | nuit | reveiller | attendre | aube | emporter | victoire | debat | bailli | ouvrirVote | juger | cloreVote
 //       | departage | succession | executer | chapelle | rejouer
@@ -24,22 +25,15 @@ import { visionDuDeuilDue, CLE_DEUIL } from "./deuil.mjs";
 import { prochainAccuse } from "./banc.mjs";
 import { estSaintMartin, saintMartinFinie } from "./saintmartin.mjs";
 import { pariteStricteTablee } from "./tablee.mjs";
+import { gestesEnAttente } from "./derniers-gestes.mjs";
 
 const etape = (cle, action, donnees = {}, extra = {}) => ({ cle, action, donnees, attente: false, detail: null, ...extra });
 
-// Ceux qui, morts, doivent encore désigner qui ils emportent (rôle à effet « emporter », la Braconnière) : un par mort
-// « emporteur », tant qu'autant de morts « emporte » ne l'ont pas suivi ; seulement le tour de sa mort.
+// Ceux qui, morts, doivent encore désigner qui ils emportent (rôle à effet « emporter », la Braconnière) : le compte des
+// derniers gestes (derniers-gestes.mjs) — un par mort « emporteur », servi par la première mort « emporte » qui le suit ;
+// seulement le tour de sa mort.
 export function emporteursEnAttente(etat, villageois = [], ignorer = []) {
-  const parId = new Map(villageois.map(v => [v.id, v]));
-  const enAttente = [];
-  etat.morts.forEach((m, i) => {
-    const v = parId.get(m.acteurId);
-    if (v?.role?.effet !== "emporter" || m.cause === "emporte" || m.tour !== etat.tour) return;
-    const suivis = etat.morts.slice(i + 1).filter(x => x.cause === "emporte").length;
-    const avant = enAttente.length;
-    if (suivis <= avant && !ignorer.includes(`emporter:${m.acteurId}`)) enAttente.push(m.acteurId);
-  });
-  return enAttente;
+  return gestesEnAttente(etat, villageois, ignorer).filter(g => g.geste === "emporter").map(g => g.acteurId);
 }
 
 // Un vote ouvert : le clore (avec les voix qui manquent encore).
@@ -57,10 +51,12 @@ export function etapeSuivante(etatPublic, secretsMJ = null, { villageois = [], a
   if (!etat.partie || !villageois.length) return etape("distribuer", "distribuer");
   if (etat.phase === "fin") return etape("rejouer", "rejouer", { vainqueur: etat.vainqueur });
 
-  // Ce qui passe avant tout, hors de la nuit : une Braconnière qui doit emporter quelqu'un, puis la victoire.
+  // Ce qui passe avant tout, hors de la nuit : une Braconnière qui doit emporter quelqu'un, puis la victoire. Elle choisit
+  // elle-même (derniers-gestes.mjs) : tant que la question est chez elle, on l'attend — le bouton reste, le MJ peut trancher.
   const apresUneMort = () => {
     const [emporteur] = emporteursEnAttente(etat, villageois, ignorer);
-    if (emporteur) return etape("emporter", "emporter", { id: emporteur, nom: nom(emporteur) }, { detail: { cle: "emporter", donnees: { nom: nom(emporteur) } } });
+    const demande = Boolean(emporteur) && attente.includes(`geste:${emporteur}`);
+    if (emporteur) return etape("emporter", "emporter", { id: emporteur, nom: nom(emporteur) }, { attente: demande, detail: { cle: demande ? "emporterDemande" : "emporter", donnees: { nom: nom(emporteur) } } });
     // Le Glas final (calendrier.mjs) : le jour N fini, la partie s'arrête.
     // En petite tablée, au régime des deux loups, la meute doit être plus nombreuse (même règle que api.pariteStricte).
     const strict = Boolean(etat.petiteTablee) && pariteStricteTablee(etat.places || villageois.filter(v => v.vivant !== false).length);

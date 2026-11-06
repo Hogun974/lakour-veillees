@@ -32,3 +32,7 @@ export * from "./notes.mjs";
 export * from "./fetes.mjs";
 export * from "./tablee.mjs";
 export * from "./grammaire.mjs";
+export * from "./cercle.mjs";
+export * from "./derniers-gestes.mjs";
+export * from "./tenures.mjs";
+export * from "./evenements.mjs";

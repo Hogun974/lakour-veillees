@@ -114,7 +114,8 @@ export function voulu(scene = sceneDuVillage()) {
   const etat = lireEtat();
   // Les partis (départ, exil : logique/passage.mjs) quittent le plateau : ni place, ni jeton.
   const partis = new Set((etat.partis ?? []).map(p => p.acteurId));
-  const plan = L.miseEnScene({ plateau, phase: etat.phase, villageois: villageoisAPlat().filter(v => !partis.has(v.id)), morts: etat.morts });
+  // Le cercle de la place suit l'ordre des places de la partie (etat.cercle, logique/cercle.mjs).
+  const plan = L.miseEnScene({ plateau, phase: etat.phase, villageois: villageoisAPlat().filter(v => !partis.has(v.id)), morts: etat.morts, cercle: etat.cercle });
   const g = grilleDe(scene);
   const jetons = new Map();
   for (const j of plan.jetons) {

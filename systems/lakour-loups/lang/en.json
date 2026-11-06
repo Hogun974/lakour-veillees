@@ -307,7 +307,7 @@
       "Mort": "{nom} is dead: {cause}.",
       "MortRevele": "{nom} is dead: {cause}. They were <strong>{role}</strong>.",
       "Silence": "A shadow took your voice: you will not speak at the next debate.",
-      "Emporter": "{nom} dies and may take someone into the grave: ask for their choice."
+      "Emporter": "{nom} dies and may take someone into the grave: they are being asked; without an answer, it is up to you."
     },
     "Journal": {
       "Distribution": "Roles dealt to {n} villagers.",
@@ -622,7 +622,8 @@
         "juge": "The Justice of the Peace ({nom}) may still cancel this vote.",
         "emporter": "{nom} chooses whom to take along (or no one).",
         "sansSecrets": "This browser does not hold the night's secrets.",
-        "bancVide": "(Nobody is accused: wait for accusations during the debate, or let night fall.)"
+        "bancVide": "(Nobody is accused: wait for accusations during the debate, or let night fall.)",
+        "emporterDemande": "{nom} is choosing whom to take along right now; you may decide in their stead."
       },
       "LaPeste": "the plague",
       "bailli": "Elect the Bailiff",
@@ -823,7 +824,8 @@
         "ouverture": "Round {tour} — the holiday vigil begins: {fete}.",
         "neige": "Round {tour} — snow fell: the tracks are gone.",
         "defile": "Round {tour} — at the Carnival parade, the mask of {role}, which nobody wears."
-      }
+      },
+      "Vacance": "Turn {tour} — {nom} has died: their buildings stand vacant ({batiments})."
     },
     "Masques": {
       "Titre": "Vigil masks",
@@ -1061,6 +1063,22 @@
         "Carnet": "For the Feast of the Betrothed, your heart is bound to {nom}'s: you were both of the Village when the roles were dealt. Only you know it… and the pack, who saw you.",
         "Meute": "The betrothed of the feast show off shamelessly: {a} and {b}, both of the Village.",
         "AnnonceSans": "It is the Feast of the Betrothed, but this year no Village hearts found each other: nobody is betrothed."
+      }
+    },
+    "Gestes": {
+      "emporter": {
+        "Invite": "You fall, but your snares still hold: secretly choose the living villager you take into the grave (or pass).",
+        "Choisi": "Last act: {nom} takes {cibles} into the grave.",
+        "Personne": "{nom} chose no one (or could not answer in time): it is up to you to decide who is taken, or to say “No one”."
+      }
+    },
+    "Public": {
+      "Annonce": "{nom} holds a role known to all: {role}."
+    },
+    "Tenures": {
+      "Refus": {
+        "cle": "Which building? (missing key)",
+        "mort": "{nom} is dead and can no longer hold a building."
       }
     }
   }

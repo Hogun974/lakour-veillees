@@ -16,6 +16,7 @@
 //   accusation : { par, contre } (Banc des accusés)  deuil : { compte } (le Glas du deuil sonne)
 //   fete : { quoi: "ouverture" | "neige" | "defile", cle (la veillée de fête), role? (le masque du défilé, un rôle absent) } —
 //          ce que la veillée de fête annonce à tous (fetes.mjs) ; jamais un de ses secrets
+//   vacance : { acteurId, batiments: [cle] } — un tenancier meurt, ses bâtiments tenus deviennent vacants (tenures.mjs)
 import { causePublique } from "./constantes.mjs";
 import { PHASES_DU_SILENCE } from "./parole.mjs";
 import { presageDuJour } from "./almanach.mjs";
@@ -24,7 +25,7 @@ export const LONGUEUR_DECLARATION = 160;
 export const DECLARATIONS_PAR_JOUR = 3;
 export const TAILLE_DU_REGISTRE = 300;
 export const PHASES_DECLARATION = ["aube", "jour", "vote"];
-export const TYPES_DU_REGISTRE = ["vote", "mort", "bailli", "declaration", "passage", "accusation", "deuil", "fete"];
+export const TYPES_DU_REGISTRE = ["vote", "mort", "bailli", "declaration", "passage", "accusation", "deuil", "fete", "vacance"];
 
 // Inscrit une entrée (etat déjà normalisé, modifié sur place). Une mort n'y entre qu'avec sa cause publique.
 export function inscrire(etat, entree, quand = Date.now()) {

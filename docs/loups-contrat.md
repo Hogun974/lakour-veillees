@@ -116,7 +116,10 @@ n'existe que chez le MJ actif ; il se range en deux morceaux (`logique/etat.mjs`
   secretsDeFete: { masque, masqueTombe, present, presentOuvert, promis },  // SECRET (0.10.0) : qui porte le masque du Carnaval (tombé ?), qui a reçu le présent
                                                          //   d'hiver (et s'il s'est ouvert), qui sont les promis
   petiteTablee: Boolean,          // public (0.11.0) : la Petite tablée (§1 « Petite tablée ») — une règle de la veillée, jamais un secret
-  places: Number                  // public (0.11.0) : les places distribuées (humains + compagnons), annoncées
+  places: Number,                 // public (0.11.0) : les places distribuées (humains + compagnons), annoncées
+  cercle: [acteurId],             // public (socle du Pacte) : l'ordre des places autour de la table (logique/cercle.mjs)
+  tenures: { cle: acteurId|null },// public (socle du Pacte) : les bâtiments tenus par un joueur, null = vacant (logique/tenures.mjs)
+  evenements: [ { cle, tire, debut, fin, type, quand } ]   // public (socle du Pacte) : les événements (logique/evenements.mjs)
 }
 ```
 `etat()` rend l'état complet chez le MJ actif, l'état public partout ailleurs.
@@ -386,6 +389,32 @@ nombres, jamais un nom, et seulement les règles qui valent pour la table) + `Ta
 petite-tablee : la composition retombe sur le niveau classique (avis au MJ), sans le mode. Une Saint-Martin ne touche pas au réglage. Table de jeu : niveau « Petite
 tablée » (pré-sélectionné si le réglage s'en souvient), rappel des règles et avis hors des clous (1 à 4 humains, 2 à 8 IA), pastille
 « Petite tablée » pendant la partie.
+
+Socle du Pacte (étape 1 de `docs/plan-le-pacte.md`, sans rôle nouveau) :
+```
+cercle()                          -> [{ acteurId, nom, vivant }] (tous) : l'ordre des places, fixé à la distribution (ordre des maisons,
+                                     départage par l'id ; un gens de passage s'assoit au bout) ; le jour, le cercle de la place le suit
+voisins(acteurId, { vivantsSeulement = true }) -> { gauche, droite } (tous ; gauche = place précédente, le cercle se referme, morts sautés)
+derniersGestes()                  -> [{ acteurId, nom, geste, demande }] (MJ actif) : les mourants dont le geste attend (Braconnière)
+tenures() / tenir(cle, acteurId)  -> [{ cle, acteurId, nom }] (tous) / confie un bâtiment à un vivant ("" : vacant) (MJ actif)
+evenements()                      -> [{ cle, type, quand, tire, debut, fin, source?, actif }] (tous), le présage de l'Almanach compris
+reveler(acteurId, { roleSeul })   -> roleSeul : l'objet de rôle au document, sans camp public (variante Double visage, plus tard)
+verifierVictoire()                -> une vérification à la fois (et jamais pendant qu'un dernier geste s'applique)
+```
+- **Derniers gestes** (`logique/derniers-gestes.mjs`) : un rôle à effet `emporter` qui meurt (hors cause `emporte`) reçoit une demande
+  `type: "demande"`, `posthume: true`, `objet: "emporter"`, candidats = les vivants (lui exclu ; la nuit, une fois toutes ses morts
+  tombées), à son seul joueur (compagnon IA : `api.resolveurs.compagnon`) ; sa réponse tue la cible (cause `emporte`), puis la victoire
+  est vérifiée. Sans réponse au délai, ou s'il passe : avis au MJ (chronique secrète), l'étape `emporter` reste (repli du MJ). Le MJ qui
+  emporte avant la réponse ferme la demande (`annuler`) ; une réponse tardive est ignorée. Étape de la Table : `emporter` avec
+  `attente: true` et détail `emporterDemande` tant que la question est chez le mourant (le bouton reste). Une mort `emporte` sert le
+  plus ancien mourant qui attend. Gardé en mémoire : une page du MJ rechargée ne redemande pas (l'étape reste).
+- **Rôle public** : champ d'extension `role.public` (Boolean) ; à la distribution, un tel rôle est retourné devant tous
+  (`revelerPubliquement` : objet de rôle, `system.revele`, camp DU RÔLE) et annoncé au chat (`Public.Annonce`) ; jamais un Somnambule.
+- **Bâtiments tenus** : à la mort de l'occupant (`ajouterMort`), ses bâtiments deviennent vacants ; Registre : entrée
+  `{ type: "vacance", acteurId, batiments }`. Les dix bâtiments communaux (`batimentsCles`) n'y sont pas.
+- **Événements** : `type` `immediat` | `differe` (`delai` tours plus tard) | `permanent` (`fin: 0`), `quand` `jour` | `nuit` ;
+  `evenementActif(etat, cle, tour, phase)` lit aussi le présage de l'Almanach (immédiat : le jour de son tirage, ou la nuit qui suit
+  pour givre et crue), à l'identique de `presageDuJour` / `presageDeLaNuit`.
 
 ### Petite tablée (logique/tablee.mjs, 0.11.0)
 
@@ -762,7 +791,8 @@ veillée ».
 
 `tuer`, `proteger`, `voir-camp`, `voir-role-mort`, `eclairer` (démasque un loup qui entre), `silence`, `vote-double`,
 `annuler-vote`, `remede`, `poison`, `lien-amour`, `echanger-role`, `mordre` (rejoindre la meute), `emporter` (à sa mort),
-`asperger` / `embraser`, `epier`, `messager`, `voir-actif`. Toutes sont désormais appliquées par le système : à l'aube
+`asperger` / `embraser`, `epier`, `messager`, `voir-actif`. `emporter` : le mourant désigne lui-même sa cible (demande posthume,
+socle du Pacte), le MJ en repli. Toutes sont désormais appliquées par le système : à l'aube
 (`resoudreNuit()`), dont `messager` (le mot écrit par l'expéditeur, `action.texte`, remis au seul destinataire), ou de jour
 (`annuler-vote` : le Juge de paix, voir §5). Ce que le système ne connaîtrait pas reste raconté et arbitré par le MJ (`narrateur`).
 

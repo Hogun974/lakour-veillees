@@ -39,6 +39,9 @@
 // voteDoubleDemain [S] (la cloche du Sonneur : publique seulement quand le vote s'ouvre, vote.double).
 // 0.10.0 : +fete: { cle, neige, defile } (la veillée de fête en jeu, publique ; fetes.mjs) et +secretsDeFete [S]: { masque, present,
 // presentOuvert, promis } (qui porte le masque du Carnaval, qui a reçu le présent d'hiver, qui sont les promis).
+// Le socle du Pacte (publics) : +cercle: [acteurId] (l'ordre des places autour de la table, fixé à la distribution ; cercle.mjs),
+// +tenures: { cleBatiment: acteurId | null } (les bâtiments tenus par un joueur ; tenures.mjs), +evenements: [{ cle, tire, debut,
+// fin, type, quand }] (les événements en cours : immédiats, différés, permanents ; evenements.mjs).
 
 import { PHASES, causePublique } from "./constantes.mjs";
 import { decompterVotes } from "./votes.mjs";
@@ -52,6 +55,9 @@ import { bancInitial, normaliserBanc, verdictDuBanc } from "./banc.mjs";
 import { deuilInitial, pouvoirsDeuilInitiaux, normaliserDeuil, normaliserPouvoirsDeuil, voixDuDeuil } from "./deuil.mjs";
 import { feteInitiale, normaliserFete, secretsDeFeteInitiaux, normaliserSecretsDeFete } from "./fetes.mjs";
 import { sortTranche } from "./tablee.mjs";
+import { cercleInitial, normaliserCercle } from "./cercle.mjs";
+import { tenuresInitiales, normaliserTenures, libererALaMort } from "./tenures.mjs";
+import { evenementsInitiaux, normaliserEvenements } from "./evenements.mjs";
 
 // Le votant fictif de la voix du deuil (jamais un acteur).
 export const VOIX_DU_DEUIL = "~deuil";
@@ -82,7 +88,9 @@ export function etatInitial() {
     petiteTablee: false,
     // 0.11.0 : les places distribuées (public, annoncé) : le régime des deux loups de la Petite tablée se compte sur elles, jamais
     // sur les figurants ni les arrivants.
-    places: 0
+    places: 0,
+    // Le socle du Pacte, public : l'ordre des places (cercle.mjs), les bâtiments tenus (tenures.mjs), les événements (evenements.mjs).
+    cercle: cercleInitial(), tenures: tenuresInitiales(), evenements: evenementsInitiaux()
   };
 }
 
@@ -119,6 +127,9 @@ export function normaliserEtat(e) {
   etat.secretsDeFete = normaliserSecretsDeFete(etat.secretsDeFete);
   etat.petiteTablee = Boolean(etat.petiteTablee);
   etat.places = Math.max(0, Math.floor(Number(etat.places) || 0));
+  etat.cercle = normaliserCercle(etat.cercle);
+  etat.tenures = normaliserTenures(etat.tenures);
+  etat.evenements = normaliserEvenements(etat.evenements);
   etat.tour = Number(etat.tour) || 0;
   return etat;
 }
@@ -346,13 +357,15 @@ export function cloreVote(e, { votants = null, poids = {}, maintenant = Date.now
   return { etat, resultat };
 }
 
-// Une mort : au Registre avec sa cause PUBLIQUE ; le Bailli qui meurt laisse la charge à son successeur (bailli.mjs).
+// Une mort : au Registre avec sa cause PUBLIQUE ; le Bailli qui meurt laisse la charge à son successeur (bailli.mjs) ; les
+// bâtiments qu'il tenait deviennent vacants (tenures.mjs).
 export function ajouterMort(e, { acteurId, cause = "", quand = Date.now() }) {
   const etat = normaliserEtat(e);
   if (!etat.morts.some(m => m.acteurId === acteurId)) {
     etat.morts.push({ acteurId, tour: etat.tour, phase: etat.phase, cause });
     inscrire(etat, { type: "mort", acteurId, cause }, quand);   // le Registre n'en garde que la cause publique (registre.mjs)
     ouvrirSuccession(etat, acteurId, quand);
+    libererALaMort(etat, acteurId, quand);
   }
   return etat;
 }

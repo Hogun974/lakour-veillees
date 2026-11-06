@@ -1,5 +1,5 @@
 // Modèles de données (TypeDataModel) des acteurs et objets du système, conformes au contrat (docs/loups-contrat.md).
-// Champs d'extension (absents du contrat, sans effet si on les laisse vides) : role.apparence, role.victoireCle.
+// Champs d'extension (absents du contrat, sans effet si on les laisse vides) : role.apparence, role.victoireCle, role.public.
 
 import { CAMPS } from "../logique/constantes.mjs";
 import { roleDe } from "./donnees.mjs";
@@ -54,7 +54,9 @@ export class ModeleRole extends foundry.abstract.TypeDataModel {
       // Extensions : apparence aux visions ("" = son camp ; "village" pour un loup déguisé),
       // condition de victoire lisible par la machine pour un solitaire ("" | "execute" | "dernier-survivant" | "cible-executee").
       apparence: texte(),
-      victoireCle: texte()
+      victoireCle: texte(),
+      // Rôle PUBLIC dès la distribution (le Franc-Villageois du livre) : retourné face visible devant tous (api.mjs).
+      public: bool(false)
     };
   }
 }

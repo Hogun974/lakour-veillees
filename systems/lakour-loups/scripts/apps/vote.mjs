@@ -26,6 +26,9 @@ export class FenetreVote extends HandlebarsApplicationMixin(ApplicationV2) {
     const v = etat.vote;
     const moi = monVillageois();
     const monChoix = !moi ? "" : game.user.isGM ? v.votes[moi.id] ?? "" : monVote(v.numero);
+    // La Gazette (étape 9) : la Grande Défiance (deux amis : un tableau), le vote à tour de rôle (à qui est-ce ?).
+    const mesChoix = [].concat(monChoix ?? []).filter(Boolean);
+    const tourDe = v.mode === "suite" ? game.actors.get((v.ordre ?? [])[v.rang ?? 0])?.name ?? "" : "";
     const vivants = game.actors.filter(a => a.type === "villageois" && a.system.vivant);
     return {
       ouvert: v.ouvert, double: v.double, majoriteAbsolue: v.majoriteAbsolue, chapelle: v.objet === "chapelle", bailli: v.objet === "bailli",
@@ -38,18 +41,19 @@ export class FenetreVote extends HandlebarsApplicationMixin(ApplicationV2) {
       // Le Pacte (logique/pacte.mjs) : un Innocent gracié ne vote plus ; le lendemain du Souffre-douleur, seuls ceux de sa liste.
       // La Chaîne des innocents (Pacte, étape 5) : pas de voix, la chaîne désigne.
       peutVoter: Boolean(v.ouvert && !v.chaine && moi && (moi.system.vivant || L.peutSouffler(etat, { id: moi.id, vivant: false })) && !L.priveDeVote(etat, moi.id)),
+      defiance: v.mode === "defiance", tourDe,
       priveDeVote: Boolean(v.ouvert && moi && L.priveDeVote(etat, moi.id)),
       souffle: Boolean(moi && !moi.system.vivant && v.ouvert), mainLevee: Boolean(v.mainLevee),
       moi: moi?.name ?? "",
-      aVote: Boolean(monChoix),
+      aVote: mesChoix.length > 0,
       // Les vivants qui ont voté ; les souffles des morts, à part.
       exprimes: v.exprimes.filter(id => vivants.some(a => a.id === id)).length, votants: vivants.length,
       souffles: v.exprimes.filter(id => !vivants.some(a => a.id === id)).length,
       candidats: v.candidats.map(id => game.actors.get(id)).filter(Boolean).map(a => ({
         id: a.id, nom: a.name, img: a.img, maison: libelleRepere(a.system.maison), metier: metierDe(a)?.name ?? "",
-        choisi: a.id === monChoix, moi: a.id === moi?.id
+        choisi: mesChoix.includes(a.id), moi: a.id === moi?.id
       })),
-      monChoixNom: monChoix ? game.actors.get(monChoix)?.name ?? "" : t("LAKOUR_LOUPS.Vote.Personne")
+      monChoixNom: mesChoix.length ? mesChoix.map(id => game.actors.get(id)?.name ?? "").join(", ") : t("LAKOUR_LOUPS.Vote.Personne")
     };
   }
 

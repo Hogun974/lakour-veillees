@@ -129,8 +129,8 @@
       "en": "Zealot"
     },
     "system.description": {
-      "fr": "<p>Tu as vu la lumière, et elle t'a dit que la moitié du village était maudite.</p><p>Avant la partie, le narrateur partage le village <strong>en deux groupes</strong>, selon un critère que tout le monde voit (à Brumecombe : la rive où chacun dort), et l'annonce à tous. Tu appartiens à l'un d'eux.</p><p>Tu n'as aucun pouvoir de nuit : ta parole et ton vote suffisent. Si la Louve mère te mord, tu deviens un simple loup et tu oublies ton but.</p>",
-      "en": "<p>You have seen the light, and it told you that half the village was cursed.</p><p>Before the game, the narrator splits the village <strong>into two groups</strong>, by a criterion everyone can see (in Brumecombe: the bank where each one sleeps), and announces it to all. You belong to one of them.</p><p>You have no night power: your word and your vote are enough. If the Mother Wolf bites you, you become a plain wolf and forget your goal.</p>"
+      "fr": "<p>Tu as vu la lumière, et elle t'a dit que la moitié du village était maudite.</p><p>Avant la partie, le narrateur partage le village <strong>en deux groupes</strong>, selon un critère que tout le monde voit (à Brumecombe : la rive où chacun dort, ou, s'il le décide, un trait visible des personnages : le genre, l'âge, les lunettes), et l'annonce à tous. Tu appartiens à l'un d'eux.</p><p>Tu n'as aucun pouvoir de nuit : ta parole et ton vote suffisent. Si la Louve mère te mord, tu deviens un simple loup et tu oublies ton but.</p>",
+      "en": "<p>You have seen the light, and it told you that half the village was cursed.</p><p>Before the game, the narrator splits the village <strong>into two groups</strong>, by a criterion everyone can see (in Brumecombe: the bank where each one sleeps, or, if the narrator so decides, a visible trait of the characters: gender, age, spectacles), and announces it to all. You belong to one of them.</p><p>You have no night power: your word and your vote are enough. If the Mother Wolf bites you, you become a plain wolf and forget your goal.</p>"
     },
     "system.victoire": {
       "fr": "<p>Tu gagnes <strong>seul</strong>, vivant, dès que <strong>tous les joueurs de l'autre groupe</strong> sont éliminés.</p>",
@@ -759,6 +759,21 @@
     "system.description": {
       "fr": "<p>Tu passes de village en village avec ta meule à pédale, et tu repars avant l'hiver.</p><p>Ton rôle est <strong>connu de tous</strong>, ton camp <strong>ne l'est pas</strong> : le narrateur te l'a dit en secret (Village ou Meute).</p><p><strong>Une fois</strong>, pendant le jour, tu affûtes la serrure et le couteau d'une maison (la tienne comprise) : la nuit suivante, <strong>la première attaque de loup contre elle échoue</strong>, et si la meute la touche malgré tout, elle y laisse du sang.</p>",
       "en": "<p>You go from village to village with your treadle grindstone, and you leave before winter.</p><p>Your role is <strong>known to all</strong>, your side <strong>is not</strong>: the narrator told it to you in secret (Village or Pack).</p><p><strong>Once</strong>, during the day, you sharpen the lock and the knife of a house (yours included): the following night, <strong>the first wolf attack against it fails</strong>, and if the pack touches it all the same, it leaves blood behind.</p>"
+    }
+  },
+  "roles/r2nVhw4jwjkdonZG": {
+    "_nom": "Liseuse d'étoiles",
+    "name": {
+      "fr": "Liseuse d'étoiles",
+      "en": "Stargazer"
+    },
+    "system.description": {
+      "fr": "<p>Tu lis le ciel au-dessus de Brumecombe, et quand les étoiles s'alignent, les morts te répondent.</p><p>Le narrateur garde <strong>cinq cartes Spiritisme</strong> ; chacune porte quatre questions. <strong>Chaque nuit</strong>, il te demande si tu veux t'en servir : désigne-toi pour dire oui, ou passe.</p><p><strong>Au matin</strong>, la carte est lue devant tous. Tu choisis <strong>une</strong> de ses quatre questions et tu désignes le <strong>Spirite</strong>, un vivant (toi comprise), qui la pose à <strong>l'esprit du premier mort</strong> de la partie. L'esprit répond <strong>oui ou non</strong>, et ne ment jamais. La carte est ensuite défaussée : cinq séances au plus. Tant que personne n'est mort, aucun esprit ne répond, et la carte reste dans la main du narrateur.</p><p>Certaines questions parlent de l'allure des gens (lunettes, bijou, sabots, coiffe, pipe, maison au bourg ou à l'écart, homme ou femme) : ce sont les traits visibles de chaque personnage, sur sa fiche.</p>",
+      "en": "<p>You read the sky above Brumecombe, and when the stars line up, the dead answer you.</p><p>The narrator keeps <strong>five Séance cards</strong>; each one bears four questions. <strong>Every night</strong>, they ask you whether you want to use one: name yourself to say yes, or pass.</p><p><strong>In the morning</strong>, the card is read out to all. You choose <strong>one</strong> of its four questions and name the <strong>Medium</strong>, a living player (you included), who puts it to <strong>the spirit of the first dead</strong> of the game. The spirit answers <strong>yes or no</strong>, and never lies. The card is then discarded: five séances at most. As long as nobody has died, no spirit answers, and the card stays in the narrator's hand.</p><p>Some questions are about how people look (spectacles, jewel, clogs, headdress, pipe, house in the village or on an outlying farm, man or woman): these are each character's visible traits, on their sheet.</p>"
+    },
+    "system.nuit.invite": {
+      "fr": "Une séance de Spiritisme au matin ? Désigne-toi pour dire oui, ou passe.",
+      "en": "A séance in the morning? Name yourself to say yes, or pass."
     }
   },
   "roles/sGhOdB31nHy1oazW": {

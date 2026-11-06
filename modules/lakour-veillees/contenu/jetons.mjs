@@ -66,6 +66,8 @@ export const JETONS_ROLES = {
   "enfant-des-bois": "lorc/imp",                       // le petit sauvage de la forêt
   "matin": "delapouite/sitting-dog",                   // le chien de garde, assis
   "chambriere": "lorc/robe",                           // la robe et le tablier
+  // --- La Liseuse d'étoiles (Le Pacte, étape 9)
+  "liseuse-d-etoiles": "lorc/crystal-ball",            // la boule où passent les esprits
   // --- Les gens de passage
   "remouleur": "lorc/circular-sawblade",              // la meule
   "montreur-d-ours": "delapouite/animal-hide",        // la peau de l'ours

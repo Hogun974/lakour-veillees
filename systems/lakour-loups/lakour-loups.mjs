@@ -223,6 +223,15 @@ Hooks.on("lakourLoups.voteClos", resultat => {
   if (resultat?.decompte) plateauLocal.montrerBulles(resultat.decompte);
 });
 
+// La Gazette de la lune (étape 9) : « Ni loup ni moi » — un mot défendu écrit au chat par un joueur retire son vote ce jour-là (le MJ
+// actif relève ; à l'oral, c'est le narrateur). Le villageois est celui de l'auteur du message (ou l'acteur qui parle).
+Hooks.on("createChatMessage", message => {
+  if (!estMJActif() || !api.gazette?.().conduite?.includes("ni-loup-ni-moi")) return;
+  const auteur = message.author ?? game.users.get(message.user ?? "");
+  const acteur = game.actors.get(message.speaker?.actor ?? "") ?? game.actors.find(a => a.type === "villageois" && a.system.joueur && a.system.joueur === auteur?.id);
+  if (acteur?.type === "villageois" && !auteur?.isGM) api.releverLaParole(acteur.id, message.content ?? "").catch(e => console.warn(`${ID} | ni loup ni moi`, e));
+});
+
 // Une nouvelle partie : tout ce qui était local s'efface, le bandeau l'annonce.
 Hooks.on("lakourLoups.nouvellePartie", () => {
   plateauLocal.remettreAZero();

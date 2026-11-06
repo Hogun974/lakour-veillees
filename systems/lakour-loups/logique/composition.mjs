@@ -47,7 +47,9 @@ export const HORS_TABLEE = ["loup-deguise", "pyromane", "dame-du-gue"];
 export const PACTE_HORS_TABLEE = ["franc-villageois", "aieul", "souffre-douleur", "innocent", "lavandiere", "bucheron", "furet", "gardeuse-d-oies",
   "greffier-begue", "vieux-sergent", "pie",
   // Le Pacte, étape 3b : les ambigus, les solitaires du livre et le Loup pâle, de même.
-  "chapardeur", "bateleur", "matin", "enfant-des-bois", "chambriere", "feu-follet", "joueur-de-vielle", "illumine", "loup-pale"];
+  "chapardeur", "bateleur", "matin", "enfant-des-bois", "chambriere", "feu-follet", "joueur-de-vielle", "illumine", "loup-pale",
+  // Le Pacte, étape 9 : la Liseuse d'étoiles (le Spiritisme), de même.
+  "liseuse-d-etoiles"];
 export const SOLITAIRES_TABLEE = ["colporteur"];
 export const HORS_TABLEE_BATIMENTS = ["gibet", "pont"];
 // Le mode « Le Pacte » (étape 5) : les rôles du livre de règles du jeu de soirée, dans nos clés (docs/plan-le-pacte.md), jamais nos
@@ -57,7 +59,7 @@ export const HORS_TABLEE_BATIMENTS = ["gibet", "pont"];
 export const ROLES_DU_LIVRE = ["loup-de-brumecombe", "loup-affame", "louve-mere", "loup-pale",
   "villageois", "franc-villageois", "liseuse-de-cendres", "entremetteuse", "herboriste", "braconniere", "enfant-de-la-brume", "garde-du-pont",
   "aieul", "souffre-douleur", "innocent", "lavandiere", "bucheron", "furet", "gardeuse-d-oies", "greffier-begue", "vieux-sergent", "pie",
-  "incendiaire", "chapardeur", "bateleur", "matin", "enfant-des-bois", "chambriere", "feu-follet", "joueur-de-vielle", "illumine"];
+  "incendiaire", "chapardeur", "bateleur", "matin", "enfant-des-bois", "chambriere", "feu-follet", "joueur-de-vielle", "illumine", "liseuse-d-etoiles"];
 export const estDuLivre = cle => ROLES_DU_LIVRE.includes(cle);
 // Le Pacte, étape 4 : un rôle marqué village (equilibre.roles[cle].village, l'Incendiaire) ne sort que dans la variante « Le Village »
 // (option village du générateur) : sans bâtiments tenus, il n'aurait rien à faire. Jamais à la petite tablée (composer n'y passe pas

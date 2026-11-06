@@ -733,8 +733,9 @@ test("bilan des parties (reproductibles : même graine, même partie) ; chaque p
   // (les Gens de passage n'entrent qu'en cours de partie : leurs pouvoirs sont éprouvés à part, essais/lot3-*.test.mjs ; le signe du
   // Greffier bègue se fait pendant le vote, que les joueurs simulés ne jouent pas : essais/pacte-village-api.test.mjs ; les pouvoirs des
   // personnalités, source « tenure », ne vivent que dans la variante « Le Village », que ces parties ne jouent pas :
-  // essais/pacte-personnalites-api.test.mjs et la partie « le-village » de essais/non-fuite.test.mjs)
-  for (const pouvoir of Object.keys(POUVOIRS_JOUR).filter(p => !ROLES_DE_PASSAGE.includes(p) && p !== "greffier-begue" && POUVOIRS_JOUR[p].source !== "tenure")) assert.ok(couverture.get(pouvoir) > 0, `pouvoir de jour jamais utilisé : ${pouvoir}`);
+  // essais/pacte-personnalites-api.test.mjs et la partie « le-village » de essais/non-fuite.test.mjs ; le pouvoir d'une charge, source
+  // « charge » — le Bailli qui révoque le Crieur public —, ne vit qu'avec le Crieur : essais/gazette-api.test.mjs)
+  for (const pouvoir of Object.keys(POUVOIRS_JOUR).filter(p => !ROLES_DE_PASSAGE.includes(p) && p !== "greffier-begue" && !["tenure", "charge"].includes(POUVOIRS_JOUR[p].source))) assert.ok(couverture.get(pouvoir) > 0, `pouvoir de jour jamais utilisé : ${pouvoir}`);
   for (const effet of ["mot du Messager remis", "ruban (prolongation)", "juge (revote)", "chapelle (vote)", "hors d'atteinte (nuit)", "Moulin (public)",
     "Moulin (Meunière)", "Lavoir", "Cimetière", "Forge (sang de bête)", "Pont (meute bloquée)", "verrou (attaque arrêtée)"]) {
     assert.ok(couverture.get(effet) > 0, `jamais exercé dans les parties simulées : ${effet}`);

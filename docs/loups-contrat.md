@@ -134,6 +134,13 @@ n'existe que chez le MJ actif ; il se range en deux morceaux (`logique/etat.mjs`
                                    //   d'une meute en désaccord, la Chaîne du vote ouvert, le mur du dernier matin (sans auteur)
   variantesSecret: { souffles, murmures, envoutes, triangle, cartes }          // SECRET (Pacte, étape 5) : les chandelles soufflées cette nuit,
                                    //   les murmures de la nuit SANS auteur, les envoûtés, le triangle des Vendanges, les cartes de Double visage
+  traits: { acteurId: { genre, ans, age, lunettes, bijou, sabots, coiffe, pipe, bourg } }   // public (Pacte, étape 9 ; logique/gazette.mjs) :
+                                   //   les traits visibles des personnages, tirés à la distribution
+  gazette: { actif, rythme, choix, tirees, restantes, marques, prives, marches, commis, variante, crieur, executeur, spiritisme },
+                                   // public (Pacte, étape 9) : la Gazette de la lune (cartes lues, absents, privés de vote, marchés du Malin),
+                                   //   le Crieur public, l'Exécuteur, les cartes Spiritisme du narrateur et la dernière séance
+  gazetteSecret: { paquet, main, sots, allies, vuUnLoup, seance }   // SECRET (Pacte, étape 9) : l'ordre du paquet, la main du Crieur, les
+                                   //   pouvoirs échangés du Jour des sots, les alliés de la meute, la Liseuse de cendres a lu un loup, la séance due
 }
 ```
 `etat()` rend l'état complet chez le MJ actif, l'état public partout ailleurs.
@@ -616,6 +623,47 @@ agirDeJour()                        -> refus pour un envoûté (Variantes.Envout
 - Ordre de nuit du livre (contenu) : Chapardeur 1, Bateleur 2, Entremetteuse 3, Liseuse 4, Furet 7, Lavandières 11, Bûcherons 12, Enfant
   des bois 13, Pie 14, Incendiaire 19, Garde du pont 20, Mâtin 38, meute 40, Enfant de la brume 41, Loup pâle 42, Louve mère 43, Loup
   affamé 44, Herboriste 50, Joueur de vielle 80 (charmés 81) ; guides : `ORDRE_D_APPEL`.
+
+Le Pacte, étape 9 — la Gazette de la lune, les traits visibles, le Crieur public, l'Exécuteur, la Liseuse d'étoiles (`logique/gazette.mjs`,
+`docs/gazette-de-la-lune.md`) :
+```
+distribuer({ gazette }) / nouvellePartie({ gazette })
+                                    -> gazette : { actif, rythme, choix, permanentes: [cle], crieur, cartesDuCrieur: n | [cle] } ; un champ absent
+                                       suit son réglage ; ni Saint-Martin ni petite tablée ; la Gazette écarte l'Almanach ; chacun reçoit ses traits
+                                       (etat.traits, au chat) ; l'Illuminé partage selon « partageIllumine » ; résumé : + gazette { actif, crieur }
+gazette()                           -> le public : { actif, rythme, choix, restantes, tirees: [{ cle, tour, lecteur, source, nom, effet }], enCours,
+                                       conduite, absents, proteges, prives, crieur, executeur, spiritisme, variante, commis, marches }
+gazetteSecrets()                    -> (MJ actif) { paquet, main, sots, allies, vuUnLoup, seance }
+traits(acteurId?)                   -> les traits (publics) d'un villageois, ou de tous, avec leur texte
+lireUneCarte(cle, { lecteur })      -> le narrateur lit une carte (aube, jour) ; priverDeVote(acteurId) -> sous une carte de conduite ;
+releverLaParole(acteurId, texte)    -> Ni loup ni moi : le mot défendu, ou "" (le chat est relevé de lui-même, lakour-loups.mjs)
+appliquerLaVarianteDuJour()         -> Dimanche de soleil, Fin des vendanges, Lundi gris : la variante pour ce seul tour (levée au matin)
+cartesDuCrieur([cle]) / nommerCrieur(acteurId) -> la main du Crieur avant la première nuit ; le Crieur nommé par le narrateur
+attendreGazette()                   -> ce qui court encore (le matin : la séance, le Crieur ; les Influences ; la charge du Crieur)
+ordreDeNuit()                       -> + étapes « toucher », « crue », « spectre » (ordre 40, après la meute, dès qu'elle a une proie), « benet »
+                                       (ordre 0, le premier mort, posthume), « sots-voyance » (ordre 4, les loups) ; Nuit des sots : la meute est la
+                                       Braconnière, l'Herboriste et la Liseuse de cendres, leurs rôles dorment
+resoudreNuit()                      -> preparerLaNuit (Toucher, Crue, Retour de flamme, Spectre, Nuit des sots, amours suspendues, intouchables) ;
+                                       au matin : les pouvoirs des sots rendus, la Somnambule, le retour du Petit Commis, la carte du jour (lue par le
+                                       dernier éliminé), puis (sans bloquer) la séance de Spiritisme et l'annonce du Crieur
+ouvrirVote({ objet })               -> + objets « executeur » (l'Exécuteur) et « chatiment » (le Châtiment : un candidat, ses soutiens votent) sans
+                                       changer de phase ; execution : la Crue refuse ; les protégés du jour ne sont pas candidats ; vote.mode
+                                       « defiance » (la Grande Défiance : votes[votant] = [a, b]) ou « suite » (le Cauchemar, les Influences :
+                                       vote.ordre, vote.rang, voix publiques) ; vote.cauchemar
+cloreVote()                         -> defiance : condamnés ceux qui n'ont aucune voix ; cauchemar : les plus cités ; chatiment : condamné sous deux
+                                       soutiens (et éliminé aussitôt, cause « chatiment ») ; executeur : l'élu (égalité : le sort) ; voix triple du
+                                       Petit Commis (poidsDeLaGazette)
+eliminer()                          -> cause « vote » : Pile ou face, Marché avec le Malin (épargné : []) ; rôle caché (Enfouissement, Exécuteur :
+                                       au carnet de l'Exécuteur) ; le Dépit, l'Enthousiasme (un vote d'exécution aussitôt) ; l'Exécuteur mort désigne
+                                       son successeur ; le Crieur mort, le Bailli désigne ; pas de chagrin sous le Jour des sots
+pouvoirsDeJour() / agirDeJour({ pouvoir: "crieur-public" })  -> le Bailli révoque le Crieur (source « charge »)
+```
+- Hook PUBLIC `lakourLoups.gazette` (`{ quoi, cle?, acteurId?, ids?, source? }`). Registre : `{ type: "gazette", quoi: "carte" | "crieur" |
+  "crieur-garde" | "executeur" | "revenante" | "marche" | "prive" | "reponse", … }` ; `{ type: "bailli", comment: "destitue" }`.
+- Réglages monde : `gazette`, `gazetteRythme` (1, 2, 3), `gazetteChoix`, `crieurPublic`, `cartesDuCrieur` (3 ; 1 à 5), `partageIllumine`
+  (rive, genre, âge, lunettes) ; cachés : `gazettePermanentes`, `cartesDuCrieurChoisies`, `exclusDuMalin`. Causes : `foudre`, `chatiment`
+  (publiques), `spectre` (secrète : « nuit »). Effet : `spiritisme` (la Liseuse d'étoiles, ordre 51). Drapeau d'acteur : `flags["lakour-loups"].traits`.
+- Bilan de fin : `bilanDePartie({ allies })` — l'allié secret du Méchant Benêt gagne avec la meute.
 
 ### Petite tablée (logique/tablee.mjs, 0.11.0)
 

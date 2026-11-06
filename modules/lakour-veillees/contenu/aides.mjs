@@ -18,7 +18,9 @@ export const EFFETS = [
   // Les ambigus, les solitaires du livre et le Loup pâle (système : logique/ambigus.mjs).
   "chaparder", "emprunter", "choisir-camp", "modele", "devouement", "charmer", "trahir",
   // La variante « Le Village » (système : logique/personnalites.mjs) : l'Incendiaire.
-  "incendier"
+  "incendier",
+  // La Gazette de la lune (système : logique/gazette.mjs) : la Liseuse d'étoiles et ses séances de Spiritisme.
+  "spiritisme"
 ];
 // Extensions du système lakour-loups (systems/lakour-loups/scripts/modeles.mjs, logique/constantes.mjs) :
 // role.apparence = camp vu par une vision « voir-camp » ("" = camp réel) ; role.victoireCle = victoire d'un solitaire ;

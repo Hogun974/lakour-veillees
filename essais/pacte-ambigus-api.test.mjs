@@ -325,7 +325,7 @@ const MUTATIONS = [
   ["scripts/api.mjs", "  await modifierEtat(e => L.journaliserSecret(L.charmer(e, ids),", "  await modifierEtat(e => L.journaliserSecret(e,", "Vielle : le charme"],
   ["scripts/api.mjs", "    const g = L.verifierVictoire({ ...L.contexteDesAmbigus(e), ...L.contexteDesVariantes(e), villageois: villageoisAPlat(), glas,", "    const g = L.verifierVictoire({ ...L.contexteDesVariantes(e), villageois: villageoisAPlat(), glas,",
     "victoire : vielle et Illuminé"],
-  ["scripts/api.mjs", "        groupes: paquet.includes(L.CLE_ILLUMINE) ? L.partagerLeVillage(enJeu) : null };", "        groupes: null };", "Illuminé : les deux bords"]
+  ["scripts/api.mjs", "        groupes: paquet.includes(L.CLE_ILLUMINE) ? L.partagerLeVillage(enJeu.map(v => ({ ...v, traits: traits[v.id] })),", "        groupes: false ? L.partagerLeVillage(enJeu.map(v => ({ ...v, traits: traits[v.id] })),", "Illuminé : les deux bords"]
 ];
 
 const dossiersARetirer = [];

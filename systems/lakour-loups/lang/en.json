@@ -40,7 +40,10 @@
       "sagesse": "gone with the Greybeard's wisdom",
       "rasoir": "victim of the Wigmaker's razor",
       "incendie": "victim of the fire",
-      "envoute": "taken along with an enthralled victim"
+      "envoute": "taken along with an enthralled victim",
+      "foudre": "struck down by the Backfire",
+      "chatiment": "victim of Retribution",
+      "spectre": "taken by the Wraith"
     },
     "Effets": {
       "aucun": "none (ruled by the narrator)",
@@ -81,7 +84,8 @@
       "charmer": "charms two players each night",
       "trahir": "every other night, may devour a wolf",
       "incendier": "once per game, sets fire to a village building (The Village)",
-      "tromperie": "the Matchmaker adds a lover (Grape Harvest)"
+      "tromperie": "the Matchmaker adds a lover (Grape Harvest)",
+      "spiritisme": "Séance: one in the morning (questions to the first dead)"
     },
     "Victoires": {
       "aucune": "none (see text)",
@@ -515,6 +519,33 @@
       "MetiersEnJeu": {
         "Nom": "Trades",
         "Aide": "Each player receives a public trade on top of their role. Unticked: a game without trades. At the “The Pact” level, never any trade."
+      },
+      "Gazette": {
+        "Nom": "The Moon Gazette (variant)",
+        "Aide": "The Event cards: every morning but the first, the last player eliminated reads one out, which changes the rule. Without the Almanac of mists. Applies from the next deal."
+      },
+      "GazetteRythme": {
+        "1": "every morning",
+        "2": "every other morning",
+        "3": "one morning in three",
+        "Nom": "The Gazette: which mornings?",
+        "Aide": "A card every morning, every other morning, or one morning in three."
+      },
+      "GazetteChoix": {
+        "Nom": "The Gazette: the narrator picks the cards",
+        "Aide": "No draw: the narrator has whichever card they want read out, whenever they want (Game Table)."
+      },
+      "CrieurPublic": {
+        "Nom": "The Town Crier (office)",
+        "Aide": "The Bailiff names a Town Crier, whom the narrator entrusts with Gazette cards; every morning, they may read one out. With or without the Gazette."
+      },
+      "CartesDuCrieur": {
+        "Nom": "The Town Crier: number of cards",
+        "Aide": "Drawn at random before the game (the book advises five at most)."
+      },
+      "PartageIllumine": {
+        "Nom": "The Zealot: how the village is split",
+        "Aide": "The criterion that splits the village into two groups, announced at the start: the bank, or a visible trait of the characters."
       }
     },
     "Erreurs": {
@@ -634,7 +665,10 @@
         "personne": "Nobody can be chosen.",
         "neige": "Snow covered the tracks: nothing to read this morning.",
         "sagesse": "The village has lost its wisdom: this power died out with the Greybeard.",
-        "secondVote": "Only during an execution vote, or right after it has condemned someone."
+        "secondVote": "Only during an execution vote, or right after it has condemned someone.",
+        "crieur": "There is no Town Crier to dismiss.",
+        "annonce": "Wait for this morning's Town Crier announcement.",
+        "apresVote": "Only before today's vote."
       },
       "Remouleur": "{qui} sharpens {nom}'s lock and knife: next night, the first wolf attack on that house will fail.",
       "Ours": "{qui} sets the marmot on {nom}'s doorstep: it will whistle at the slightest shadow, and next night the pack will not dare to enter.",
@@ -650,7 +684,8 @@
       "Regent": "{qui}, the Schoolmaster, sends {noms} to the corner: they will not vote today.",
       "Rasoir": "{qui}, the Wigmaker, opens his razor on {nom}.",
       "RasoirLoup": "{nom} was a wolf: the village congratulates {qui}.",
-      "RasoirInnocent": "{nom} was not a wolf: {qui} pays for his mistake with his life."
+      "RasoirInnocent": "{nom} was not a wolf: {qui} pays for his mistake with his life.",
+      "CrieurRevoque": "{qui}, the Bailiff, dismisses {ancien}: {nom} becomes Town Crier."
     },
     "Plateau": {
       "ChoisisSurLaCarte": "Your turn: choose on the map (click a glowing token), then \"Confirm\" in the banner."
@@ -759,7 +794,8 @@
         "sansSecrets": "This browser does not hold the night's secrets.",
         "bancVide": "(Nobody is accused: wait for accusations during the debate, or let night fall.)",
         "emporterDemande": "{nom} is choosing whom to take along right now; you may decide in their stead.",
-        "chaine": "Chain of Innocents: {nom} names an innocent; closing waits for the last one standing."
+        "chaine": "Chain of Innocents: {nom} names an innocent; closing waits for the last one standing.",
+        "inondation": "(The Flood: no vote today; let night fall.)"
       },
       "LaPeste": "the plague",
       "bailli": "Elect the Bailiff",
@@ -768,7 +804,8 @@
       "LeDeuil": "the mourning pack",
       "juger": "Judge the accused: {nom}",
       "LesCharmes": "the charmed",
-      "LeMur": "the Whispering Wall (everyone alive)"
+      "LeMur": "the Whispering Wall (everyone alive)",
+      "executeur": "Elect the Executioner"
     },
     "Preparation": {
       "Titre": "Prepare the game",
@@ -816,7 +853,12 @@
         "Aide": "None: a simple game, with the characters only (nothing depends on buildings, the map markers stay inert). Drawn: those of the setup. Chosen: tick those of the vigil."
       },
       "Metiers": "Trades",
-      "MetiersAide": "Untick for a game without trades (each player has only their role)."
+      "MetiersAide": "Untick for a game without trades (each player has only their role).",
+      "Gazette": "The Moon Gazette",
+      "GazetteAide": "An Event card every morning but the first (pace and choice of cards: world settings). Without the Almanac.",
+      "Crieur": "The Town Crier",
+      "CrieurAide": "An office named by the Bailiff, holding Gazette cards.",
+      "Permanentes": "Permanent cards laid down from the start:"
     },
     "Recit": {
       "Titre": "The tale of the vigil",
@@ -940,7 +982,9 @@
         "execution": "execution vote",
         "chapelle": "Chapel vote",
         "bailli": "Bailiff election",
-        "exil": "exile vote"
+        "exil": "exile vote",
+        "executeur": "Executioner election",
+        "chatiment": "Retribution"
       },
       "Mort": "Round {tour} — death of {nom}: {cause}.",
       "Bailli": {
@@ -950,7 +994,8 @@
         "nomme": "Round {tour} — the narrator names {nom} Bailiff.",
         "vacance": "Round {tour} — the office of Bailiff is vacant.",
         "abolie": "Round {tour} — {de}, pardoned, loses the office of Bailiff: Brumecombe will have no Bailiff any more.",
-        "metayers": "Round {tour} — {de}, the last Tenant Farmer, is dead: Brumecombe will have no Bailiff anymore."
+        "metayers": "Round {tour} — {de}, the last Tenant Farmer, is dead: Brumecombe will have no Bailiff anymore.",
+        "destitue": "Round {tour} — Bailiff {de} is removed from office (Saint Vincent's Day)."
       },
       "Declaration": "Round {tour} — {nom} declares: “{texte}”",
       "Refus": {
@@ -1010,6 +1055,16 @@
         "chandelles": "Night {tour}: the candles of {noms} went out together; the pack had no victim.",
         "envoutement": "Day {tour}: {nom}, condemned, was enthralled; {noms} fall along.",
         "bailli": "Day {tour}: the Bailiff {nom} votes first, openly ({noms})."
+      },
+      "Gazette": {
+        "carte": "Round {tour} — {nom} reads out a Gazette card: {carte}.",
+        "crieur": "Round {tour} — {nom} becomes Town Crier.",
+        "crieur-garde": "Round {tour} — {nom} remains Town Crier.",
+        "executeur": "Round {tour} — {nom} becomes Executioner.",
+        "revenante": "Round {tour} — {nom} comes back among the living, as a mere Villager.",
+        "marche": "Round {tour} — {nom} strikes a deal with the Devil.",
+        "prive": "Round {tour} — {nom} loses their vote for the day.",
+        "reponse": "Round {tour} — séance ({carte}): {nom} questions the spirit, who answers {reponse}."
       }
     },
     "Masques": {
@@ -1323,7 +1378,10 @@
       "Groupes": "The village splits into two sides, {critere}: on one side {a}; on the other {b}.",
       "Critere": {
         "rive": "by the bank where each one sleeps (the town and the far bank)",
-        "parite": "by house number (odd or even)"
+        "parite": "by house number (odd or even)",
+        "genre": "by gender (the women and the men)",
+        "age": "by age (the young and the old)",
+        "lunettes": "by spectacles (without and with)"
       },
       "ChambriereInvite": "The village has condemned {noms}. Before the card is turned over, will you sacrifice yourself? Choose them to take their card (and your secret will be revealed), or pass.",
       "Devouement": "Before {de}'s card is turned over, {nom} reveals herself: she was the Chambermaid. She takes the condemned's card without showing it, and will hold that role until the end.",
@@ -1504,6 +1562,392 @@
       "Jour": "Your day power:",
       "Personnalite": "Your personality (known to all): {personnalite}",
       "Relire": "This explanation stays in your secret notebook: reopen it at any time (“Secret notebook” button of the Game Table)."
+    },
+    "Gazette": {
+      "Titre": "The Moon Gazette",
+      "Cartes": {
+        "somnambule": {
+          "Nom": "Sleepwalker",
+          "Effet": "From now on, every morning, the narrator tells everyone which role the Ash Reader read during the night, without saying whose."
+        },
+        "inondation": {
+          "Nom": "The Flood",
+          "Effet": "The village is under water: the women take shelter in the priory, the men in the alehouse. No vote today. Next night, the pack strikes in one of the two shelters only, and may claim two victims there. (Only if at least six are still alive.)"
+        },
+        "marche-du-malin": {
+          "Nom": "A Deal with the Devil",
+          "Effet": "Today, right after the verdict, each condemned player may strike a deal: this vote does not eliminate them. If they end up on the losing side, they sit out the next game."
+        },
+        "lune-noire": {
+          "Nom": "Black Moon",
+          "Effet": "The village sulks: the debate happens without looking at one another (cameras off, or text only); whoever turns towards the others loses their vote today. Everyone faces the circle again to vote."
+        },
+        "bal-du-samedi": {
+          "Nom": "Saturday Dance",
+          "Effet": "The younger half of the village goes dancing: the dancers neither debate nor vote, and nobody may vote against them. Next night, a dancing wolf does not hunt, and no dancer can be devoured."
+        },
+        "cueillette": {
+          "Nom": "Foraging in the Woods",
+          "Effet": "The women go foraging for the Herbalist until evening: they neither debate nor vote, and nobody may vote against them. When they return, the Herbalist refills an empty phial."
+        },
+        "dimanche-de-soleil": {
+          "Nom": "Sunny Sunday",
+          "Effet": "Nothing special… unless the narrator decides to apply The Thrall for this round only."
+        },
+        "pile-ou-face": {
+          "Nom": "Heads or Tails",
+          "Effet": "Today, right after the verdict, a coin is tossed for each condemned player: heads, they are spared; tails, they are eliminated."
+        },
+        "saint-vincent": {
+          "Nom": "Saint Vincent's Day",
+          "Effet": "The village wants a real leader: the current Bailiff is removed from office, and a new Bailiff is elected today."
+        },
+        "revenante": {
+          "Nom": "Back Among the Living",
+          "Effet": "The pack's last victim had only fainted: they come straight back among the living, but as a mere Villager."
+        },
+        "bonnes-manieres": {
+          "Nom": "Good Manners",
+          "Effet": "No interrupting: everyone speaks in turn, under the narrator's eye; whoever breaks the rule loses their vote today."
+        },
+        "toucher-mortel": {
+          "Nom": "The Deadly Touch",
+          "Effet": "From now on, to devour its prey the pack must also mark it: after its choice, a wolf names the prey a second time; otherwise the prey is spared."
+        },
+        "jour-des-sots": {
+          "Nom": "Fools' Day",
+          "Effet": "Until morning, some swap their powers: the Herbalist and the Ash Reader, the Poacher and the Mist Child, the Bridge Warden and the Greybeard. The lovers loathe each other: each must vote against the other; if one dies before morning, the other lives on."
+        },
+        "fin-des-vendanges": {
+          "Nom": "End of the Harvest",
+          "Effet": "Nothing special… unless the narrator decides to apply Grape Harvest for this round only."
+        },
+        "petit-commis": {
+          "Nom": "The Errand Boy",
+          "Effet": "The youngest goes to fetch help from the next village: today they neither debate nor vote, and next night they cannot be devoured. Back in the morning, their vote counts triple in that day's vote."
+        },
+        "retour-de-flamme": {
+          "Nom": "Backfire",
+          "Effet": "Next night, if the pack names a mere Villager, they do not die: they become a wolf. If it names anyone else, the prey survives and the first wolf to their left is struck down. If the pack cannot agree, nobody dies."
+        },
+        "grande-defiance": {
+          "Nom": "The Great Distrust",
+          "Effet": "Today's vote changes: everyone gives two votes to their two favourite friends, all at once; those who receive none are eliminated."
+        },
+        "banquet-des-veterans": {
+          "Nom": "The Veterans' Banquet",
+          "Effet": "The older half of the village goes feasting until evening: the veterans neither debate nor vote, and nobody may vote against them."
+        },
+        "depit": {
+          "Nom": "Spite",
+          "Effet": "If the next player the village eliminates is not a wolf, the village votes again at once, without debate, to eliminate a second suspect."
+        },
+        "executeur": {
+          "Nom": "The Executioner",
+          "Effet": "The village elects an Executioner. From now on, only they learn the role of those condemned by vote, which is no longer shown to anyone; they may talk about it as they please. If they die, they name a successor."
+        },
+        "influences": {
+          "Nom": "Influence",
+          "Effet": "The next vote is held in turn and in the open: the last player eliminated picks the first voter, then everyone votes in turn going left, with no taking it back. Votes are counted as usual."
+        },
+        "nuit-des-sots": {
+          "Nom": "Fools' Night",
+          "Effet": "Next night, the wolves become readers: each reads the role of one player. The Poacher, the Herbalist and the Ash Reader become wolves: together, they eliminate a player. In the morning, everything is back to normal."
+        },
+        "chatiment": {
+          "Nom": "Retribution",
+          "Effet": "The last player eliminated names a player: that player is eliminated, unless at least two players vouch for them. If they are slow to do so, the accused may call for help."
+        },
+        "battue": {
+          "Nom": "The Hunt",
+          "Effet": "The men go hunting until dawn: they neither debate nor vote, and nobody may vote against them. Next night, a hunting wolf does not devour, and no hunter can be devoured."
+        },
+        "enthousiasme": {
+          "Nom": "Enthusiasm",
+          "Effet": "If the next player the village eliminates is a wolf, the village votes again at once, without debate, to eliminate a second suspect."
+        },
+        "enfouissement": {
+          "Nom": "The Burial",
+          "Effet": "From now on, the role of the pack's victims is never shown again."
+        },
+        "mechant-benet": {
+          "Nom": "The Wicked Simpleton",
+          "Effet": "Next night, the first player eliminated in the game names a player who is not a wolf: that player learns who the wolves are and becomes their secret ally. They stay with the Village, do not wake with the wolves, and win if the wolves win."
+        },
+        "ni-loup-ni-moi": {
+          "Nom": "Neither Wolf nor Me",
+          "Effet": "Out of superstition, nobody may say “wolf” or “me” today (in the chat the system notices; aloud, the narrator does): whoever says them loses their vote."
+        },
+        "lundi-gris": {
+          "Nom": "Grey Monday",
+          "Effet": "Nothing special… unless the narrator decides to apply Chain of Innocents for this round only."
+        },
+        "spectre": {
+          "Nom": "The Wraith",
+          "Effet": "The pack's next prey does not die: they become a wolf and name one of the former wolves, who dies at once in their place, holding the prey's former card."
+        },
+        "cauchemar": {
+          "Nom": "The Nightmare",
+          "Effet": "On waking, no debate: starting to the left of the last player eliminated, each in turn accuses a villager; the most named are eliminated. This is the day's vote."
+        }
+      },
+      "Seances": {
+        "seance-1": "Séance I",
+        "seance-2": "Séance II",
+        "seance-3": "Séance III",
+        "seance-4": "Séance IV",
+        "seance-5": "Séance V"
+      },
+      "Questions": {
+        "meme-camp": "Are the two players I name on the same side?",
+        "loup-lunettes": "Does at least one wolf wear spectacles?",
+        "herboriste-homme": "Is the Herbalist a man?",
+        "bailli-villageois": "Is the Bailiff a mere Villager?",
+        "loup-homme": "Is one of the wolves a man?",
+        "loup-femme": "Is one of the wolves a woman?",
+        "voisin-loup": "Is one of the two neighbours of the player I name a wolf?",
+        "designe-villageois": "Is the player I name a mere Villager?",
+        "suis-je-villageois": "Am I a mere Villager?",
+        "loup-bailli": "Is one of the wolves the Bailiff?",
+        "loup-bourg": "Does one of the wolves live in the village proper (not an outlying farm)?",
+        "loup-pipe": "Does one of the wolves smoke a pipe?",
+        "liseuse-a-vu-loup": "Has the Ash Reader uncovered at least one wolf?",
+        "loups-voisins": "Are any wolves seated next to each other?",
+        "loup-bijou": "Does a wolf wear at least one visible jewel?",
+        "suis-je-loup": "Am I a wolf?",
+        "loup-sabots": "Does one of the wolves wear clogs?",
+        "loup-coiffe": "Does one of the wolves wear a dark headdress?",
+        "loups-hommes": "Are the living wolves all men?",
+        "loups-femmes": "Are the living wolves all women?"
+      },
+      "Oui": "yes",
+      "Non": "no",
+      "Lue": "The Moon Gazette, read out by {lecteur} — {nom}: {effet}",
+      "LueParLeCrieur": "The Town Crier {lecteur} makes an announcement — {nom}: {effet}",
+      "PoseeDesLeDebut": "The Moon Gazette, laid down from the start by {lecteur} — {nom}: {effet}",
+      "Annonce": "The Moon Gazette is part of this vigil: every morning but the first (one morning in {n}), the last player eliminated reads out a card, which applies at once.",
+      "AnnonceChoix": "The Moon Gazette is part of this vigil: the narrator picks the cards and has them read out whenever they like.",
+      "PaquetVide": "The Moon Gazette has no card left to read.",
+      "SansEffet": "Fewer than {n} are still alive: the card has no effect.",
+      "Refuges": "In the priory: {femmes}. In the alehouse: {hommes}.",
+      "Absents": "Away for the day: {noms}.",
+      "Commis": {
+        "Retour": "{nom} is back from the next village: their vote counts {n} times in today's vote."
+      },
+      "SansBailli": "Brumecombe has no Bailiff in this vigil: the feast changes nobody.",
+      "Destitue": "Bailiff {nom} is removed from office: the village will elect a new Bailiff today.",
+      "PersonneARevenir": "The pack has claimed no victim: nobody comes back.",
+      "PersonnePourChatier": "Nobody has fallen yet: the card has no effect.",
+      "SotsPouvoir": "Fools' Day: until morning, you hold the power of the “{role}” card (your card remains your own).",
+      "Fiole": {
+        "remede": "The foraging brings back enough to refill your remedy phial.",
+        "poison": "The foraging brings back enough to refill your poison phial."
+      },
+      "Revenante": "{nom} had only fainted: they come back among the living, as a mere Villager.",
+      "Nuit": {
+        "PasTouchee": "No wolf marked {nom}: the prey is spared.",
+        "Desaccord": "The pack did not agree: no victim tonight."
+      },
+      "Etapes": {
+        "Noms": {
+          "toucher": "the pack's touch (Deadly Touch)",
+          "crue": "the second prey (the Flood)",
+          "spectre": "the prey (the Wraith)",
+          "benet": "the first eliminated (the Wicked Simpleton)",
+          "sots-voyance": "the wolves turned readers (Fools' Night)",
+          "matin": "the morning Gazette"
+        },
+        "Invite": {
+          "toucher": "The Deadly Touch: a wolf must mark the prey ({nom}) to devour them. Name them again, or they are spared.",
+          "crue": "The Flood: a second prey in the same shelter as {nom}?",
+          "spectre": "The Wraith: you open your eyes and become a wolf. Name the former wolf who will die in your place.",
+          "benet": "The Wicked Simpleton: name a player who is not a wolf; they will become the pack's secret ally.",
+          "sots-voyance": "Fools' Night: you are a reader tonight. Whose role do you read?"
+        }
+      },
+      "Chatiment": {
+        "Invite": "Retribution: name the player the village must punish.",
+        "Designe": "Retribution: {qui} names {nom}. At least two players must vouch for them, or they will be eliminated.",
+        "Sort": "Retribution: {qui} named nobody; fate names {nom}. At least two players must vouch for them, or they will be eliminated.",
+        "InviteAppel": "Retribution: call on the village for help? (naming yourself calls)",
+        "Appel": "{nom} calls out: who will vouch for me?",
+        "InviteVote": "Retribution: vouch for {nom} (name them); choosing nothing means staying silent.",
+        "Journal": "Retribution: the village vouches.",
+        "Condamne": "Retribution: {n} voice(s) for {nom}, not enough; {nom} is eliminated.",
+        "Epargne": "Retribution: {n} players vouch for {nom}, who is spared."
+      },
+      "Suite": {
+        "PasTonTour": "This vote goes in turn: it is {nom}'s turn.",
+        "Designe": "{qui} names {nom}.",
+        "Passe": "{qui} names nobody.",
+        "AToi": "{nom}'s turn to vote.",
+        "ACauchemar": "{nom}'s turn to accuse a villager.",
+        "InviteCauchemar": "The Nightmare: accuse a villager.",
+        "OuvertureCauchemar": "The Nightmare: no debate; each in turn, going left, accuses a villager. The most named will be eliminated.",
+        "OuvertureInfluences": "Influence: the vote goes in turn, in the open; the last player eliminated chooses who votes first.",
+        "Cites": "Most named: {noms}.",
+        "Fenetre": "Voting in turn: it is {nom}'s turn."
+      },
+      "Influences": {
+        "Invite": "Influence: who votes first?",
+        "Premier": "Influence: {qui} picks {nom} to vote first; then each player to their left."
+      },
+      "Defiance": {
+        "Invite": "The Great Distrust: give your two votes to your two favourite friends.",
+        "Soi": "The Great Distrust: you cannot name yourself.",
+        "Deux": "The Great Distrust: two friends, no more (name a friend again to take them back).",
+        "Ouverture": "The Great Distrust: everyone gives two votes to two friends; those who receive none will be eliminated.",
+        "SansVoix": "The Great Distrust: with no vote at all, {noms} are eliminated.",
+        "Personne": "The Great Distrust: everyone received at least one vote; nobody is eliminated.",
+        "Fenetre": "The Great Distrust: choose two friends (a second click takes one back)."
+      },
+      "Crieur": {
+        "Titre": "The Town Crier",
+        "Invite": {
+          "nommer": "Name the Town Crier (never yourself).",
+          "transmettre": "You are Bailiff: hand your Town Crier office to someone else.",
+          "garder": "Do you keep {nom} as Town Crier? (naming them keeps them; anyone else replaces them)"
+        },
+        "Nomme": "Bailiff {qui} names {nom} Town Crier.",
+        "Transmis": "{qui}, now Bailiff, hands the Town Crier office to {nom}.",
+        "Garde": "Bailiff {qui} keeps {nom} as Town Crier.",
+        "Sort": "Bailiff {qui} named nobody: fate makes {nom} the Town Crier.",
+        "NommeParLeNarrateur": "The narrator names {nom} Town Crier.",
+        "Main": "The cards of your office (secret): {cartes}. Every morning you will be asked whether you have an announcement.",
+        "MainVide": "Your Town Crier office has no card left to announce.",
+        "InviteAnnonce": "Town Crier: do you have an announcement this morning? Pick a card, or pass.",
+        "Rien": "Town Crier {nom} has nothing to announce this morning.",
+        "Annonce": "The Town Crier is part of this vigil: the Bailiff will name them; the narrator has entrusted them with {n} Gazette card(s).",
+        "NoteMain": "The cards entrusted to the Town Crier: {cartes}."
+      },
+      "Spiritisme": {
+        "SansMort": "Séance: no spirit to question yet; the card stays in the narrator's hand.",
+        "Carte": "Séance ({nom}): the Stargazer {liseuse} questions the spirit of {mort}. The questions: {questions}",
+        "InviteQuestion": "Séance: which question should the spirit hear?",
+        "InviteSpirite": "Séance: who will be the Medium asking the question?",
+        "InviteDesigner": "Séance: name {n} player(s) for the question “{question}”",
+        "Designes": " (named: {noms})",
+        "Reponse": "{spirite} asks the spirit of {mort}: “{question}”{designes} — the spirit answers: {reponse}.",
+        "ReponseHumain": "{spirite} asks the spirit of {mort}: “{question}”{designes} — the spirit answers: {reponse}. ({mort} may confirm it, without lying.)"
+      },
+      "Sots": {
+        "Rendu": "Day breaks: you have your own power back.",
+        "VoteImpose": "Fools' Day: you must vote against {nom}."
+      },
+      "Variante": {
+        "Appliquee": "The narrator applies {nom} for this round.",
+        "Levee": "{nom} no longer applies: the round is over."
+      },
+      "Somnambule": {
+        "Matin": "The Sleepwalker talked in her sleep: tonight, the Ash Reader read “{roles}”.",
+        "Rien": "The Sleepwalker slept a dreamless sleep: the Ash Reader read nothing tonight."
+      },
+      "PileOuFace": {
+        "Pile": "Heads or tails for {nom}: heads! {nom} is spared.",
+        "Face": "Heads or tails for {nom}: tails. The sentence stands."
+      },
+      "Marche": {
+        "Invite": "A Deal with the Devil: strike the deal to escape this vote? (naming yourself accepts) If your side loses, you will sit out the next game.",
+        "Accepte": "{nom} strikes a deal with the Devil: this vote does not eliminate them.",
+        "Exclus": "The Devil claims his due: {noms} will sit out the next game.",
+        "Absents": "The Devil has taken his due: {noms} sit out this game."
+      },
+      "Executeur": {
+        "Titre": "Executioner",
+        "Carnet": "Only you know it: {nom} was {role}.",
+        "InviteSuccession": "You were the Executioner: name your successor.",
+        "Successeur": "{de}, the Executioner, names {nom} as successor.",
+        "SuccesseurSort": "{de}, the Executioner, named nobody: fate makes {nom} the Executioner.",
+        "InviteVote": "Who will be the Executioner?",
+        "Journal": "The village elects its Executioner.",
+        "Ouverture": "The village elects its Executioner: one vote each.",
+        "Elu": "{nom} is elected Executioner: from now on, only they learn the role of the condemned.",
+        "EluSort": "A tie: fate makes {nom} the Executioner.",
+        "Personne": "Nobody is elected Executioner today."
+      },
+      "Revote": {
+        "depit": "Spite: {nom} was not a wolf. The village votes again at once, without debate.",
+        "enthousiasme": "Enthusiasm: {nom} was a wolf! The village votes again at once, without debate."
+      },
+      "Benet": {
+        "Note": "The Wicked Simpleton: {qui} names {nom}, now the pack's secret ally.",
+        "Carnet": "You open your eyes: the wolves are {noms}. You are now their secret ally; you stay with the Village, and you win if they win.",
+        "Gagne": "The Wicked Simpleton: {noms}, the pack's secret ally, wins with it.",
+        "Perd": "The Wicked Simpleton: {noms} was the pack's secret ally."
+      },
+      "Retour": {
+        "Loup": "Backfire: the pack chose you, but you do not die. You become a wolf: your card is now a Wolf of Brumecombe.",
+        "NoteLoup": "Backfire: {nom}, a mere Villager, becomes a wolf.",
+        "NoteFoudre": "Backfire: {nom} survives; {loup}, the first wolf to their left, is struck down."
+      },
+      "Spectre": {
+        "Carnet": "The Wraith: you are now a wolf, holding the card of {nom}, who dies in your place.",
+        "Note": "The Wraith: {nom} becomes a wolf; {loup} dies holding {nom}'s former card."
+      },
+      "Conduite": {
+        "Prive": "The narrator takes away {nom}'s vote for today.",
+        "Mot": "{nom} said “{mot}”: their vote is taken away for today."
+      },
+      "Pouvoirs": {
+        "crieur-public": {
+          "Nom": "Dismiss the Town Crier",
+          "Aide": "After the Crier's announcement and before the vote, the Bailiff may dismiss them and name another Town Crier (never themselves)."
+        }
+      },
+      "Refus": {
+        "inondation": "The Flood: no vote today.",
+        "executeur": "The Executioner's election is not due.",
+        "chatiment": "Retribution judges a single accused.",
+        "carte": "Unknown card: {cle}.",
+        "moment": "A card is read in the morning or during the debate.",
+        "conduite": "No conduct card applies today.",
+        "variante": "No variant to apply for this round.",
+        "crieur": "No Town Crier in this vigil.",
+        "avant": "The Crier's cards are handed over before the first night.",
+        "nommer": "{nom} cannot be named Town Crier."
+      },
+      "Table": {
+        "EnJeu": "Cards in play: {noms}",
+        "Derniere": "Last card: {nom}, read out by {lecteur} — {effet}",
+        "Restantes": "{n} card(s) left in the deck",
+        "CrieurLigne": "Town Crier: {nom} ({n} card(s) in hand)",
+        "CrieurAttente": "Town Crier: not yet named ({n} card(s))",
+        "ExecuteurLigne": "Executioner: {nom}",
+        "ExecuteurAttendu": "Executioner: to be elected",
+        "Seances": "Narrator's Séance cards: {n}",
+        "Reponse": "Last séance: “{question}” — {reponse}",
+        "Main": "Crier's hand (secret): {cartes}",
+        "Paquet": "Deck (secret, top first): {cartes}",
+        "Lire": "Read the card",
+        "Priver": "Take away their vote",
+        "PriverAide": "A conduct card applies today: take away the vote of whoever breaks the rule.",
+        "Variante": "Apply {nom} for this round",
+        "ElireExecuteur": "Elect the Executioner",
+        "Crieur": "Town Crier",
+        "Absent": "Away today",
+        "Prive": "No vote today",
+        "Danseur": "Cannot be targeted by the vote"
+      }
+    },
+    "Traits": {
+      "Titre": "Visible traits",
+      "Aide": "Drawn at the deal, seen by all: the Moon Gazette cards and séances read them.",
+      "Genre": {
+        "femme": "woman",
+        "homme": "man"
+      },
+      "Age": {
+        "jeune": "young ({ans})",
+        "vieux": "old ({ans})"
+      },
+      "lunettes": "spectacles",
+      "bijou": "visible jewel",
+      "sabots": "clogs",
+      "coiffe": "dark headdress",
+      "pipe": "pipe",
+      "Bourg": "lives in the village",
+      "Ecart": "lives on an outlying farm",
+      "Annonce": "Everyone's traits, seen by all: {liste}."
     }
   }
 }

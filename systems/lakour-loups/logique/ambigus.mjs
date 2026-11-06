@@ -247,13 +247,19 @@ export const vielleEnJeu = (villageois = []) => villageois.some(v => vivant(v) &
 export const charmesVivants = (villageois = [], charmes = []) => villageois.filter(v => vivant(v) && charmes.includes(v.id)).map(v => v.id);
 
 // ------------------------------------------------------------------ l'Illuminé
-// Les critères de partage : (villageois) -> "a" | "b". Adaptation en ligne : la rive (maisons du bourg, maisons de l'autre rive)
-// en attendant les traits visibles des personnages (étape 9 : genre, âge…), qui s'ajouteront ici ; la parité des maisons sert de
-// repli quand une rive est vide (un village sans autre rive).
+// Les critères de partage : (villageois) -> "a" | "b". Adaptation en ligne : la rive (maisons du bourg, maisons de l'autre rive) ;
+// depuis l'étape 9, les traits visibles des personnages (gazette.mjs : v.traits) — le genre, l'âge, les lunettes — au choix du
+// narrateur (réglage « partageIllumine ») ; la parité des maisons sert de repli quand un groupe est vide.
 export const CRITERES_DE_PARTAGE = {
   rive: v => (surLAutreRive(v.maison) ? "b" : "a"),
+  genre: v => (v.traits?.genre === "homme" ? "b" : "a"),
+  age: v => (v.traits?.age === "vieux" ? "b" : "a"),
+  lunettes: v => (v.traits?.lunettes ? "b" : "a"),
   parite: v => (numeroDeMaison(v.maison) % 2 === 0 ? "b" : "a")
 };
+// Les critères que le narrateur peut choisir (réglage « partageIllumine »), annoncés au début.
+export const CRITERES_DE_L_ILLUMINE = ["rive", "genre", "age", "lunettes"];
+export const criteresDuPartage = choix => [...new Set([CRITERES_DE_L_ILLUMINE.includes(choix) ? choix : "rive", "rive", "parite"])];
 // Le partage du village en deux groupes : { critere, a: [acteurId], b: [acteurId] }. Un critère qui laisse un groupe vide cède la
 // place au suivant ; aucun : null.
 export function partagerLeVillage(villageois = [], criteres = ["rive", "parite"]) {

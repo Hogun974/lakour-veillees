@@ -14,7 +14,9 @@ const api = () => game.lakourLoups;
 //   fete: null (pas encore choisie : la Table pré-sélectionne la veillée proposée, veilleeProposee) | "" (aucune) | clé de veillée,
 //   village: la variante « Le Village » (Pacte, étape 4 ; pré-cochée si le réglage « leVillage » s'en souvient),
 //   variantes: { chandelles?, angoissante?, chaine?, mur?, doubleVisage?, vendanges?, envoutement? } (Pacte, étape 5 : les variantes du jeu de
-//   soirée ; une case non touchée suit son réglage monde, qui se souvient du dernier choix) }
+//   soirée ; une case non touchée suit son réglage monde, qui se souvient du dernier choix),
+//   gazette: { actif?, crieur?, permanentes? } (Pacte, étape 9 : la Gazette de la lune, le Crieur public, les cartes permanentes posées dès
+//   le début ; une case non touchée suit son réglage) }
 // Le niveau pré-sélectionné : la Petite tablée si le réglage monde s'en souvient (0.11.0), sinon « Le Pacte » (étape 5 : les rôles du
 // jeu de soirée, le niveau proposé d'abord).
 const niveauParDefaut = () => { try { return game.settings.get("lakour-loups", "petiteTablee") ? "petite-tablee" : "le-pacte"; } catch { return "le-pacte"; } };
@@ -34,6 +36,18 @@ export function basculerBatiment(prep, cle) {
   if (liste.has(cle)) liste.delete(cle); else liste.add(cle);
   prep.batimentsChoisis = [...liste];
   return prep;
+}
+// La Gazette de la lune et le Crieur public (étape 9) : les cases du MJ, sinon les réglages.
+export const gazettePreparee = prep => ({ actif: lireMonde("gazette", false) === true, crieur: lireMonde("crieurPublic", false) === true,
+  permanentes: [...(lireMonde("gazettePermanentes", []) ?? [])], ...(prep.gazette ?? {}) });
+export function changerGazette(prep, cle, valeur) {
+  prep.gazette = { ...(prep.gazette ?? {}), [cle]: valeur };
+  return prep;
+}
+export function basculerPermanente(prep, cle) {
+  const liste = new Set(gazettePreparee(prep).permanentes);
+  if (liste.has(cle)) liste.delete(cle); else liste.add(cle);
+  return changerGazette(prep, "permanentes", [...liste]);
 }
 export const variantesPreparees = prep => choixDesVariantes({ ...Object.fromEntries(CLES_DES_VARIANTES.map(c => [c, lireVariante(c)])), ...(prep.variantes ?? {}) });
 export function changerVariante(prep, cle, valeur) {
@@ -109,6 +123,7 @@ export async function distribuer(prep) {
     roles: prep.mode === "manuel" ? rolesManuels(prep, total) : [], ...(prep.peste ? { peste: true } : {}),
     ...(prep.niveau === "petite-tablee" ? {} : { village: villagePrepare(prep) }),
     variantes: variantesPreparees(prep),
+    ...(prep.niveau === "petite-tablee" ? {} : { gazette: gazettePreparee(prep) }),
     batiments: batimentsPrepares(prep) === "choisis" ? batimentsChoisisPrepares(prep) : batimentsPrepares(prep), metiers: metiersPrepares(prep),
     fete: prep.fete ?? veilleeProposee() });
 }

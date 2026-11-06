@@ -1,0 +1,45 @@
+{
+  "_id": "r2nVhw4jwjkdonZG",
+  "_key": "!items!r2nVhw4jwjkdonZG",
+  "name": "Liseuse d'étoiles",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/liseuse-d-etoiles.svg",
+  "system": {
+    "cle": "liseuse-d-etoiles",
+    "camp": "village",
+    "description": "<p>Tu lis le ciel au-dessus de Brumecombe, et quand les étoiles s'alignent, les morts te répondent.</p><p>Le narrateur garde <strong>cinq cartes Spiritisme</strong> ; chacune porte quatre questions. <strong>Chaque nuit</strong>, il te demande si tu veux t'en servir : désigne-toi pour dire oui, ou passe.</p><p><strong>Au matin</strong>, la carte est lue devant tous. Tu choisis <strong>une</strong> de ses quatre questions et tu désignes le <strong>Spirite</strong>, un vivant (toi comprise), qui la pose à <strong>l'esprit du premier mort</strong> de la partie. L'esprit répond <strong>oui ou non</strong>, et ne ment jamais. La carte est ensuite défaussée : cinq séances au plus. Tant que personne n'est mort, aucun esprit ne répond, et la carte reste dans la main du narrateur.</p><p>Certaines questions parlent de l'allure des gens (lunettes, bijou, sabots, coiffe, pipe, maison au bourg ou à l'écart, homme ou femme) : ce sont les traits visibles de chaque personnage, sur sa fiche.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 51,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 1,
+      "soiMeme": true,
+      "invite": "Une séance de Spiritisme au matin ? Désigne-toi pour dire oui, ou passe."
+    },
+    "usages": {
+      "max": 0,
+      "restant": 0
+    },
+    "effet": "spiritisme",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "liseuse-d-etoiles"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

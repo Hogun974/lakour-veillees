@@ -299,7 +299,7 @@ const MUTATIONS = [
   ["bailli.mjs", "    if (x) x.elus = [elu];\n", "", "le sort au Registre"],
   ["bailli.mjs", "return Math.max(0, delai - Math.max(0, maintenant - (Number(s.quand) || 0)));", "return delai;", "succession : reste du délai"],
   ["bailli.mjs", "Boolean(!etat?.vote?.ouvert && etat?.vote?.resultat?.departage?.enAttente)", "Boolean(etat?.vote?.resultat?.departage?.enAttente)", "départage en attente"],
-  ["etat.mjs", "  if (sujet !== \"bailli\") etat.phase = \"vote\";", "  etat.phase = \"vote\";", "élection sans changer de phase"],
+  ["etat.mjs", "  if (!VOTES_SANS_PHASE.includes(sujet)) etat.phase = \"vote\";", "  etat.phase = \"vote\";", "élection sans changer de phase"],
   ["etapes.mjs", "      if (etat.vote.ouvert) return cloture(etat.vote, vivants, etat);\n", "", "étape : clore l'élection du débat"],
   ["etapes.mjs", "      if (s) return etape(\"succession\", \"\", { nom: nom(s.de) }, { attente: true });\n", "", "étape : attendre la succession"],
   ["bailli.mjs", "  inscrire(etat, entreeDeVote(r));\n", "", "Registre après le départage"],

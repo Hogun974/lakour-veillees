@@ -309,7 +309,7 @@ const MUTATIONS = [
   ["victoire.mjs", "    for (const v of villageois) if (pale(v)) gagnants.delete(v.id);\n", "", "Loup pâle : jamais avec la meute"],
   ["etat.mjs", "  pub.ambigusSecret = ambigusSecretInitial();", "", "état : les secrets des ambigus"],
   ["composition.mjs", "...(centre.length ? { centre: CARTES_DU_CENTRE } : {})", "...{}", "générateur : le centre signalé"],
-  ["composition.mjs", "  \"chapardeur\", \"bateleur\", \"matin\", \"enfant-des-bois\", \"chambriere\", \"feu-follet\", \"joueur-de-vielle\", \"illumine\", \"loup-pale\"];", "];", "générateur : pas à la petite tablée"]
+  ["composition.mjs", "  \"chapardeur\", \"bateleur\", \"matin\", \"enfant-des-bois\", \"chambriere\", \"feu-follet\", \"joueur-de-vielle\", \"illumine\", \"loup-pale\",\n  // Le Pacte, étape 9 : la Liseuse d'étoiles (le Spiritisme), de même.\n  \"liseuse-d-etoiles\"];", "];", "générateur : pas à la petite tablée"]
 ];
 
 async function chargerMutant(fichier, avant, apres) {

@@ -33,7 +33,9 @@ export const EFFETS = [
   // La variante « Le Village » (étape 4, logique/personnalites.mjs) : l'Incendiaire.
   "incendier",
   // Les variantes (étape 5, logique/variantes.mjs) : la seconde désignation de l'Entremetteuse aux Vendanges (une étape, pas un rôle).
-  "tromperie"
+  "tromperie",
+  // La Gazette de la lune (étape 9, logique/gazette.mjs) : la Liseuse d'étoiles (elle demande une séance de Spiritisme).
+  "spiritisme"
 ];
 
 // Celles que le système applique de lui-même : à l'aube (resoudreNuit, dont le message porté par le Messager) ou de jour
@@ -42,7 +44,7 @@ export const EFFETS_AUTOMATISES = [
   "tuer", "proteger", "voir-camp", "voir-role-mort", "eclairer", "silence", "vote-double", "remede", "poison",
   "lien-amour", "echanger-role", "mordre", "emporter", "asperger", "embraser", "epier", "voir-actif", "messager", "annuler-vote",
   "voir-role", "resister", "egalite", "grace", "fratrie", "flairer", "cacarder", "second-vote", "contaminer", "plume",
-  "chaparder", "emprunter", "choisir-camp", "modele", "devouement", "charmer", "trahir", "incendier", "tromperie"
+  "chaparder", "emprunter", "choisir-camp", "modele", "devouement", "charmer", "trahir", "incendier", "tromperie", "spiritisme"
 ];
 
 // L'Enfant de la brume qui épie la meute (effet « epier ») : sa chance d'être surprise, et alors dévorée à la place de la proie.
@@ -68,10 +70,13 @@ export const CAUSES = { meute: "meute", nuit: "nuit", poison: "poison", feu: "fe
   rasoir: "rasoir", incendie: "incendie",
   // L'Envoûtement (variantes.mjs) : les envoûtés qui tombent avec une envoûtée condamnée par le village. Publique : la table les voit
   // tomber ensemble.
-  envoute: "envoute" };
+  envoute: "envoute",
+  // La Gazette de la lune (gazette.mjs) : le loup foudroyé du Retour de flamme et le condamné du Châtiment (publics : la carte a été lue
+  // devant tous) ; l'ancien loup que le Spectre désigne (secret : publiquement, une mort de la nuit).
+  foudre: "foudre", chatiment: "chatiment", spectre: "spectre" };
 
 // Causes qui trahiraient un rôle (la meute, l'Herboriste, le Pyromane, l'Enfant de la brume) ou la peste noire : l'état
 // public dit seulement « mort dans la nuit », comme pour une victime de la meute. La vraie cause reste chez le MJ (le Tanneur
 // la lit pour dire s'il y a des traces de crocs ; le récit de fin et les Chroniques la dévoilent).
-export const CAUSES_SECRETES = ["meute", "poison", "feu", "epie", "peste"];
+export const CAUSES_SECRETES = ["meute", "poison", "feu", "epie", "peste", "spectre"];
 export const causePublique = cause => (CAUSES_SECRETES.includes(cause) ? CAUSES.nuit : cause);

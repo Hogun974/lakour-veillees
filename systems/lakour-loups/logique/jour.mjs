@@ -17,6 +17,8 @@
 // (la nuit qui suit ce jour). effetsDeLaNuit(etat, tour) les regroupe pour resoudreNuit().
 
 import { CLE_MEUTE, CLE_PESTE } from "./constantes.mjs";
+import { EFFET_SPIRITISME, raisonDeLaRevocation, nommerLeCrieur, normaliserGazette } from "./gazette.mjs";
+import { voteExecutionDuJour } from "./bailli.mjs";
 import { choisir } from "./hasard.mjs";
 import { normaliserEtat, ouvrirVote } from "./etat.mjs";
 import { numeroDeMaison, surLAutreRive } from "./distribution.mjs";
@@ -86,6 +88,9 @@ export const POUVOIRS_JOUR = {
   masure: { source: "tenure", cibles: 1, soiMeme: false, phases: JOURNEE, unique: true },
   ecole: { source: "tenure", cibles: CIBLES_DU_REGENT, ciblesMin: 1, soiMeme: false, phases: ["jour"] },
   echoppe: { source: "tenure", cibles: 1, soiMeme: false, phases: JOURNEE, unique: true },
+  // Le Crieur public (Le Pacte, étape 9, gazette.mjs) : le Bailli peut le révoquer, après son annonce et avant le vote, et en nommer un
+  // autre (source « charge » : le pouvoir de la charge de Bailli tant qu'il y a un Crieur).
+  "crieur-public": { source: "charge", cibles: 1, soiMeme: false, phases: MATIN },
   taverne: { source: "batiment", cibles: 0, phases: JOURNEE },
   forge: { source: "batiment", cibles: 0, phases: JOURNEE },
   grange: { source: "batiment", cibles: 0, phases: JOURNEE },
@@ -109,6 +114,9 @@ export function pouvoirsPossedes(acteur, batiments = [], etat = null) {
   if (POUVOIRS_JOUR[r]?.source === "role") liste.push(r);
   for (const b of BATIMENTS_DES_JOUEURS) if (batiments.includes(b)) liste.push(b);
   if (etat) for (const [cle, def] of Object.entries(POUVOIRS_JOUR)) if (def.source === "tenure" && occupant(etat, cle) === acteur.id) liste.push(cle);
+  // Le Bailli en charge, quand un Crieur public est nommé : il peut le révoquer.
+  const crieur = etat ? normaliserGazette(etat.gazette).crieur : null;
+  if (crieur?.actif && crieur.acteurId && etat.bailli?.actif && etat.bailli.acteurId === acteur.id) liste.push("crieur-public");
   return liste;
 }
 const ciblesMin = def => def.ciblesMin ?? def.cibles;
@@ -135,6 +143,8 @@ export function candidatsDuPouvoir({ villageois = [], etat: e, acteurId = "", po
     case "ecole":
     case "echoppe": return candidatsDuVillageois(etat, villageois, acteurId, { sansChemineaux: true });
     case "masure": return candidatsDuRemegeux(etat, villageois, acteurId);
+    // Le Crieur public : un autre vivant que le Bailli et que le Crieur révoqué.
+    case "crieur-public": return vivants.filter(v => v.id !== acteurId && v.id !== normaliserGazette(etat.gazette).crieur.acteurId).map(v => v.id);
     default: return vivants.filter(v => def.soiMeme || v.id !== acteurId).map(v => v.id);
   }
 }
@@ -224,6 +234,12 @@ export function verifierPouvoir({ villageois = [], etat: e, acteurId = "", pouvo
     case "eclusiere":
       if (effetsPour(etat, "ecluse", nuit).length) return non("deja");
       break;
+    case "crieur-public": {
+      const raison = raisonDeLaRevocation(etat, villageois);
+      if (raison) return non(raison);
+      if (voteExecutionDuJour(etat) || v.ouvert) return non("apresVote");
+      break;
+    }
     case "ecole":
       // Le Régent : une fois par jour, avant le vote (au débat).
       if (normaliserVillage(etat.village).regent?.tour === etat.tour) return non("deja");
@@ -439,6 +455,13 @@ export function appliquerPouvoir({ villageois = [], etat: e, acteurId = "", pouv
       sortie.village = { quoi: "perruquier", acteurId, ids: [c], loup };
       break;
     }
+    case "crieur-public": {
+      const ancien = normaliserGazette(etat.gazette).crieur.acteurId;
+      nommerLeCrieur(etat, { acteurId: c, par: acteurId });
+      annonce("CrieurRevoque", `${qui}, le Bailli, révoque ${nom(ancien)} : ${n} devient Crieur public.`, { qui, ancien: nom(ancien), nom: n });
+      sortie.gazette = { quoi: "crieur", acteurId: c, ancien };
+      break;
+    }
     case "conteuse":
       // La Conteuse n'est pas nommée : le pouvoir s'annonce sans dire qui le tient.
       etat.jour.conteuse = { tour: etat.tour, cible: c, jusqua: maintenant + DUREE_CONTEUSE };
@@ -580,6 +603,9 @@ export function candidatsDeNuit({ villageois = [], etat: e, acteurId = "", roleC
       ids = ids.filter(id => permis.has(id));
     }
     if (role.effet === EFFET_MATIN) return ids.includes(acteurId) ? [acteurId] : [];
+    // La Liseuse d'étoiles (gazette.mjs) : se désigner, c'est demander une séance de Spiritisme au matin.
+    // Plus de carte Spiritisme dans la main du narrateur : rien à demander (elle est réveillée comme avant, sans rien à désigner).
+    if (role.effet === EFFET_SPIRITISME) return vivants.some(v => v.id === acteurId) && normaliserGazette(etat.gazette).spiritisme.restantes.length ? [acteurId] : [];
     if (role.effet === EFFET_VIELLE) ids = candidatsDuCharme(ids, acteurId, normaliserAmbigusSecret(etat.ambigusSecret).charmes);
     if (role.effet === EFFET_LOUP_PALE) ids = ids.filter(id => id !== acteurId && parId.get(id)?.camp === "meute");
     if (role.effet === EFFET_LOUP_PALE && cabaretier) ids = ids.filter(id => id !== cabaretier);   // Le Village : le Cabaretier

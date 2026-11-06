@@ -72,6 +72,8 @@ export const EQUILIBRE = {
   "matin": { camp: "village", poids: -1, niveau: "chaos", joueursMin: 9, unique: true },
   "enfant-des-bois": { camp: "village", poids: 0, niveau: "classique", joueursMin: 8, unique: true },
   "chambriere": { camp: "village", poids: 2, niveau: "classique", joueursMin: 8, unique: true },
+  // --- La Liseuse d'étoiles (Le Pacte, étape 9 ; poids provisoire) : cinq questions au premier mort, au plus ; hors petite tablée.
+  "liseuse-d-etoiles": { camp: "village", poids: 4, niveau: "classique", joueursMin: 8, unique: true, information: true },
   // --- La variante « Le Village » (Le Pacte, étape 4 ; poids provisoire). village : le générateur ne tire l'Incendiaire que si la
   // variante est choisie (il n'aurait rien à brûler sans elle) ; jamais à la petite tablée.
   "incendiaire": { camp: "village", poids: 2, niveau: "classique", joueursMin: 8, unique: true, village: true },

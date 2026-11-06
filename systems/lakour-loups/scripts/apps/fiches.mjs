@@ -6,6 +6,7 @@ import { t, roleDe, campDe, amoureuxDe, protectionsDe, metierDe, libelleCamp, li
 import { mesSecrets } from "../prive.mjs";
 import { estMJActif } from "../canal.mjs";
 import { personnaliteDe, batimentDe } from "../../logique/personnalites.mjs";
+import { normaliserGazette, traitsDe } from "../../logique/gazette.mjs";
 
 // Les champs SECRETS de la fiche (0.9.0) : ils ne vivent pas dans le document, mais dans les secrets du MJ actif. Le formulaire
 // du MJ les nomme « secret.* » ; à l'envoi, ils partent à game.lakourLoups.reglerFiche (jamais au document).
@@ -89,6 +90,8 @@ export class FicheVillageois extends HandlebarsApplicationMixin(ActorSheetV2) {
     const insigne = (classe, icone, texte, bulle = "") => ({ classe, icone, texte, bulle });
     // Le Village (Pacte, étape 4) : sa personnalité, publique (le jeton « rôle visible » posé devant lui), avec son bâtiment.
     const perso = s.vivant ? personnaliteDe(etat, a.id) : "";
+    const gazette = normaliserGazette(etat.gazette);
+    const traits = traitsDe(etat, a.id) ? game.lakourLoups?.traits?.(a.id)?.texte ?? "" : "";
     const batiment = perso ? batimentDe(etat, a.id) : "";
     const etats = [
       perso && insigne("personnalite", "fa-house-chimney-window", batiment ? `${t(`LAKOUR_LOUPS.Village.Personnalites.${perso}.Nom`)} — ${t(`LAKOUR_LOUPS.Batiments.${batiment}`)}`
@@ -98,7 +101,11 @@ export class FicheVillageois extends HandlebarsApplicationMixin(ActorSheetV2) {
       s.silence && insigne("silence", "fa-comment-slash", t("LAKOUR_LOUPS.Table.Silence")),
       s.vivant && etat.bailli?.actif && etat.bailli.acteurId === a.id && insigne("bailli", "fa-stamp", t("LAKOUR_LOUPS.Bailli.Titre"), t("LAKOUR_LOUPS.Bailli.Aide")),
       gm && protections > 0 && insigne("protege", "fa-shield-halved", t("LAKOUR_LOUPS.Fiche.Protege", { n: protections }), t("LAKOUR_LOUPS.Fiche.Protections")),
-      amoureuxNom && insigne("amoureux", "fa-heart", amoureuxNom, t("LAKOUR_LOUPS.Fiche.Amoureux"))
+      amoureuxNom && insigne("amoureux", "fa-heart", amoureuxNom, t("LAKOUR_LOUPS.Fiche.Amoureux")),
+      // La Gazette (Pacte, étape 9) : les traits visibles (publics), le Crieur public, l'Exécuteur.
+      traits && insigne("traits", "fa-user-tag", traits, t("LAKOUR_LOUPS.Traits.Aide")),
+      s.vivant && gazette.crieur.acteurId === a.id && insigne("charge", "fa-bullhorn", t("LAKOUR_LOUPS.Gazette.Table.Crieur")),
+      s.vivant && gazette.executeur.acteurId === a.id && insigne("charge", "fa-gavel", t("LAKOUR_LOUPS.Gazette.Executeur.Titre"))
     ].filter(Boolean);
     const vueRole = voitRole && role ? await atout(role, gm) : null;
     const vueMetier = metier ? await atout(metier, gm) : null;

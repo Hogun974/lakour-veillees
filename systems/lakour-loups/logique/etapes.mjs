@@ -29,6 +29,7 @@ import { gestesEnAttente } from "./derniers-gestes.mjs";
 import { filtrerVotants, gracieAuVote, sagesseEstPerdue } from "./pacte.mjs";
 import { contexteDesAmbigus, nuitDesAmbigus, normaliserAmbigus, CLE_CHARMES } from "./ambigus.mjs";
 import { nuitDesVariantes, contexteDesVariantes, chaineEnCours, CLE_MUR } from "./variantes.mjs";
+import { nuitDeLaGazette, electionExecuteurDue, voteEmpeche, ETAPES_DE_LA_GAZETTE } from "./gazette.mjs";
 
 const etape = (cle, action, donnees = {}, extra = {}) => ({ cle, action, donnees, attente: false, detail: null, ...extra });
 
@@ -82,6 +83,9 @@ export function etapeSuivante(etatPublic, secretsMJ = null, { villageois = [], a
   // Le vote d'exécution du jour : avec le Banc des accusés, le jugement du prochain accusé ; sans accusé, la Chapelle si elle
   // est due, puis la nuit peut tomber.
   const voteDuJour = () => {
+    // La Gazette : l'élection de l'Exécuteur d'abord (la carte vient d'être lue) ; la Crue : pas de vote ce jour.
+    if (electionExecuteurDue(etat, villageois)) return etape("executeur", "voteExecuteur");
+    if (voteEmpeche(etat) && !voteExecutionDuJour(etat)) return etape("nuit", "phase", { phase: "nuit" }, { detail: { cle: "inondation", donnees: {} } });
     if (!etat.banc?.actif) return etape("ouvrirVote", "ouvrirVote");
     const accuse = prochainAccuse(etat, villageois);
     if (accuse) return etape("juger", "ouvrirVote", { id: accuse, nom: nom(accuse) });
@@ -100,18 +104,20 @@ export function etapeSuivante(etatPublic, secretsMJ = null, { villageois = [], a
       const faits = new Set(etat.nuit.actions.map(a => a.roleCle));
       // Peste noire (secret du MJ) : l'étape « la peste », à la place de la meute ; qui : son porteur, s'il y en a un.
       for (const e of ordreDeNuit(villageois, tour, { peste: etat.peste, deuil: visionDuDeuilDue(etat, villageois), sagessePerdue: sagesseEstPerdue(etat),
-        ...nuitDesAmbigus(etat, tour), ...nuitDesVariantes(etat, tour) })) {
+        ...nuitDesAmbigus(etat, tour), ...nuitDesVariantes(etat, tour), gazette: nuitDeLaGazette(etat, tour, villageois) })) {
         if (faits.has(e.roleCle)) continue;
         const groupe = e.roleCle === CLE_MEUTE || e.roleCle === CLE_PESTE || e.roleCle === CLE_DEUIL;
         // Le Pacte, étape 3b : les charmés (une étape sans rôle) ; la carte jouée par un Bateleur porte le nom de cette carte.
         const charmes = e.roleCle === CLE_CHARMES;
         // Le Pacte, étape 5 : le mur (tous les vivants) ; la seconde carte d'un joueur (Double visage) porte le nom de cette carte.
         const mur = e.roleCle === CLE_MUR;
-        const roleNom = groupe || charmes || mur ? "" : e.seconde ? villageois.find(v => v.id === e.acteurIds[0])?.seconde?.nom ?? e.roleCle
+        // Le Pacte, étape 9 : les étapes de la Gazette (le Toucher, la Crue, le Spectre, le Méchant Benêt, la Nuit des sots).
+        const gazette = ETAPES_DE_LA_GAZETTE.includes(e.roleCle) ? e.roleCle : "";
+        const roleNom = groupe || charmes || mur || gazette ? "" : e.seconde ? villageois.find(v => v.id === e.acteurIds[0])?.seconde?.nom ?? e.roleCle
           : e.emprunt ? nuitDesAmbigus(etat, tour).emprunts[e.acteurIds[0]]?.nom ?? e.roleCle
           : villageois.find(v => v.id === e.acteurIds[0])?.role?.nom ?? e.roleCle;
         const donnees = { role: e.roleCle, nom: roleNom, meute: e.roleCle === CLE_MEUTE, peste: e.roleCle === CLE_PESTE, qui: e.acteurIds.map(nom).join(", "),
-          ...(e.roleCle === CLE_DEUIL ? { deuil: true } : {}), ...(charmes ? { charmes: true } : {}), ...(mur ? { mur: true } : {}) };
+          ...(e.roleCle === CLE_DEUIL ? { deuil: true } : {}), ...(charmes ? { charmes: true } : {}), ...(mur ? { mur: true } : {}), ...(gazette ? { gazette } : {}) };
         if (attente.includes(e.roleCle)) return etape("attendre", "", donnees, { attente: true });
         return etape("reveiller", "reveiller", donnees);
       }
@@ -126,6 +132,8 @@ export function etapeSuivante(etatPublic, secretsMJ = null, { villageois = [], a
       if (etat.vote.ouvert) return cloture(etat.vote, vivants, etat);
       const apres = apresUneMort();
       if (apres) return apres;
+      // La Gazette du matin : une séance de Spiritisme, l'annonce du Crieur, le Châtiment… attendent une réponse.
+      if (attente.includes("gazette")) return etape("attendre", "", { gazette: "matin" }, { attente: true });
       // Le Bailli défunt remet le sceau (au plus le délai des choix) : on l'attend avant d'élire ou de voter.
       const s = etat.bailli?.succession;
       if (s) return etape("succession", "", { nom: nom(s.de) }, { attente: true });

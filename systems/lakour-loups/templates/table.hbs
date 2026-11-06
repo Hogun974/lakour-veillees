@@ -86,6 +86,14 @@
         <select name="prepDoubleVisage">{{#each preparation.variantes.doubleVisage}}<option value="{{cle}}" {{#if choisi}}selected{{/if}}>{{nom}}</option>{{/each}}</select></label>{{/if}}
     </div>
     {{/if}}
+    {{#if preparation.gazette}}
+    <div class="loups-prep-ligne loups-prep-gazette">
+      <label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.Preparation.GazetteAide'}}"><input type="checkbox" data-action="prepGazette" data-cle="actif" {{#if preparation.gazette.actif}}checked{{/if}}> <i class="fa-solid fa-newspaper"></i> {{localize "LAKOUR_LOUPS.Preparation.Gazette"}}</label>
+      <label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.Preparation.CrieurAide'}}"><input type="checkbox" data-action="prepGazette" data-cle="crieur" {{#if preparation.gazette.crieur}}checked{{/if}}> <i class="fa-solid fa-bullhorn"></i> {{localize "LAKOUR_LOUPS.Preparation.Crieur"}}</label>
+      {{#if preparation.gazette.permanentes.length}}<span class="loups-etiquette">{{localize "LAKOUR_LOUPS.Preparation.Permanentes"}}</span>
+      {{#each preparation.gazette.permanentes}}<label class="loups-prep-joueur" data-tooltip="{{aide}}"><input type="checkbox" data-action="prepPermanente" data-cle="{{cle}}" {{#if coche}}checked{{/if}}> {{nom}}</label>{{/each}}{{/if}}
+    </div>
+    {{/if}}
     {{#if preparation.tablee}}
     <div class="loups-prep-ligne loups-prep-tablee">
       <small>{{preparation.tablee.aide}}</small>
@@ -160,6 +168,11 @@
             {{#if metier}}<div class="loups-detail metier"><i class="fa-solid fa-hammer"></i> {{metier}}</div>{{/if}}
             {{#if chandelle}}<div class="loups-detail chandelle {{chandelle.cle}}" data-tooltip="{{chandelle.aide}}"><i class="fa-solid {{chandelle.icone}}"></i> {{chandelle.texte}}</div>{{/if}}
             {{#if personnalite}}<div class="loups-detail personnalite" data-tooltip="{{personnaliteAide}}"><i class="fa-solid fa-house-chimney-window"></i> {{personnalite}}</div>{{/if}}
+            {{#if traits}}<div class="loups-detail traits" data-tooltip="{{localize 'LAKOUR_LOUPS.Traits.Aide'}}"><i class="fa-solid fa-user-tag"></i> {{traits}}</div>{{/if}}
+            {{#if crieur}}<div class="loups-detail charge"><i class="fa-solid fa-bullhorn"></i> {{localize "LAKOUR_LOUPS.Gazette.Table.Crieur"}}</div>{{/if}}
+            {{#if executeur}}<div class="loups-detail charge"><i class="fa-solid fa-gavel"></i> {{localize "LAKOUR_LOUPS.Gazette.Executeur.Titre"}}</div>{{/if}}
+            {{#if absent}}<div class="loups-detail absent"><i class="fa-solid fa-person-walking-arrow-right"></i> {{localize "LAKOUR_LOUPS.Gazette.Table.Absent"}}{{#if protegeGazette}} · {{localize "LAKOUR_LOUPS.Gazette.Table.Danseur"}}{{/if}}</div>{{/if}}
+            {{#if priveGazette}}<div class="loups-detail absent"><i class="fa-solid fa-ban"></i> {{localize "LAKOUR_LOUPS.Gazette.Table.Prive"}}</div>{{/if}}
             {{#if voitRole}}{{#if roleNom}}<div class="loups-role {{#if revele}}revele{{/if}}"><i class="fa-solid fa-mask"></i> {{roleNom}} <span class="loups-camp">{{camp}}</span></div>{{/if}}{{/if}}
             {{#unless voitRole}}{{#if passage}}<div class="loups-role passage" data-tooltip="{{localize 'LAKOUR_LOUPS.Passage.Aide'}}"><i class="fa-solid fa-person-walking-luggage"></i> {{passage}}</div>{{/if}}{{/unless}}
             {{#if amoureux}}<div class="loups-detail mj"><i class="fa-solid fa-heart"></i> {{amoureux}}</div>{{/if}}
@@ -237,6 +250,25 @@
         <h3><i class="fa-solid fa-book-open"></i> {{variantes.titre}}</h3>
         {{#if variantes.chaine}}<p><strong>{{localize "LAKOUR_LOUPS.Variantes.Chaine.Nom"}}</strong> — {{variantes.chaine.debout}}<br><small>{{variantes.chaine.designateur}}</small></p>{{/if}}
         {{#if variantes.mur}}<p><strong>{{localize "LAKOUR_LOUPS.Variantes.Mur.Nom"}}</strong></p><ul class="loups-journal">{{#each variantes.mur}}<li>« {{this}} »</li>{{/each}}</ul>{{/if}}
+      </section>
+      {{/if}}
+      {{#if gazette}}
+      <section class="loups-encart loups-gazette-encart">
+        <h3 data-tooltip="{{gazette.aides}}"><i class="fa-solid fa-newspaper"></i> {{localize "LAKOUR_LOUPS.Gazette.Titre"}}</h3>
+        {{#if gazette.derniere}}<p>{{gazette.derniere}}</p>{{/if}}
+        {{#if gazette.enJeu}}<p><small>{{gazette.enJeu}}</small></p>{{/if}}
+        {{#if gazette.restantes}}<p><small>{{gazette.restantes}}</small></p>{{/if}}
+        {{#if gazette.crieur}}<p><i class="fa-solid fa-bullhorn"></i> {{gazette.crieur}}</p>{{/if}}
+        {{#if gazette.executeur}}<p><i class="fa-solid fa-gavel"></i> {{gazette.executeur}}</p>{{/if}}
+        {{#if gazette.seances}}<p><small>{{gazette.seances}}</small></p>{{/if}}
+        {{#if gazette.reponse}}<p><small>{{gazette.reponse}}</small></p>{{/if}}
+        {{#each gazette.secrets}}<p class="loups-mj-seul"><small>{{this}}</small></p>{{/each}}
+        {{#if gazette.lire}}<div class="loups-ligne"><select name="gazetteCarte" aria-label="{{localize 'LAKOUR_LOUPS.Gazette.Table.Lire'}}">{{#each gazette.lire}}<option value="{{cle}}">{{nom}}</option>{{/each}}</select>
+          <button type="button" class="loups-bouton discret" data-action="gazetteLire"><i class="fa-solid fa-newspaper"></i> {{localize "LAKOUR_LOUPS.Gazette.Table.Lire"}}</button></div>{{/if}}
+        {{#if gazette.priver}}<div class="loups-ligne" data-tooltip="{{localize 'LAKOUR_LOUPS.Gazette.Table.PriverAide'}}"><select name="gazettePrive" aria-label="{{localize 'LAKOUR_LOUPS.Gazette.Table.Priver'}}">{{#each gazette.priver}}<option value="{{id}}">{{nom}}</option>{{/each}}</select>
+          <button type="button" class="loups-bouton discret" data-action="gazettePriver"><i class="fa-solid fa-ban"></i> {{localize "LAKOUR_LOUPS.Gazette.Table.Priver"}}</button></div>{{/if}}
+        {{#if gazette.variante}}<button type="button" class="loups-bouton discret" data-action="gazetteVariante"><i class="fa-solid fa-book-open"></i> {{loupsT "LAKOUR_LOUPS.Gazette.Table.Variante" nom=gazette.variante}}</button>{{/if}}
+        {{#if gazette.elireExecuteur}}<button type="button" class="loups-bouton" data-action="voteExecuteur"><i class="fa-solid fa-gavel"></i> {{localize "LAKOUR_LOUPS.Gazette.Table.ElireExecuteur"}}</button>{{/if}}
       </section>
       {{/if}}
       {{#if village}}

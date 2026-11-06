@@ -27,6 +27,9 @@
 //   options.tromperie — les Vendanges, la première nuit : l'Entremetteuse se réveille une seconde fois (étape « tromperie », deux
 //   cibles), juste après elle ; la seconde carte d'un joueur (Double visage, grande complication : v.seconde) le réveille EN PLUS à son
 //   ordre, pour son pouvoir, comme la carte jouée par un Bateleur (emprunt).
+// - Le Pacte, étape 9 (gazette.mjs, nuitDeLaGazette) : options.gazette — { etapes (le Toucher mortel, la Crue, le Spectre, le Méchant
+//   Benêt, les loups devenus liseuses de la Nuit des sots), sansReveil (ceux dont le rôle ne se réveille pas cette nuit), meute (qui
+//   chasse à la place des loups : la Nuit des sots ; [] : personne) }.
 
 import { ORDRE_MEUTE, CLE_MEUTE, CLE_PESTE } from "./constantes.mjs";
 import { CLE_DEUIL, ORDRE_DEUIL } from "./deuil.mjs";
@@ -74,7 +77,8 @@ const groupe = e => e.roleCle === CLE_MEUTE || e.roleCle === CLE_PESTE;
 // deuil (Glas du deuil, deuil.mjs) : la vision due cette nuit -> l'étape « deuil » (CLE_DEUIL, ordre 41), toute la meute réveillée.
 // sagessePerdue : le village a perdu sa sagesse (pacte.mjs, sagesseEstPerdue(etat)) — les rôles du Village ne sont plus réveillés.
 // emprunts, charmes : le Pacte, étape 3b (ambigus.mjs, nuitDesAmbigus) — les cartes jouées par un Bateleur, les charmés.
-export function ordreDeNuit(villageois = [], tour = 1, { peste = null, deuil = false, sagessePerdue = false, emprunts = {}, charmes = [], mur = false, tromperie = false } = {}) {
+export function ordreDeNuit(villageois = [], tour = 1, { peste = null, deuil = false, sagessePerdue = false, emprunts = {}, charmes = [], mur = false, tromperie = false,
+  gazette = null } = {}) {
   const vivants = villageois.filter(v => v.vivant !== false);
   const entiere = meuteEntiere(villageois);
   const etapes = new Map();
@@ -106,6 +110,21 @@ export function ordreDeNuit(villageois = [], tour = 1, { peste = null, deuil = f
     const seconde = v.seconde;
     if (!seconde?.cle || seconde.cle === v.role?.cle || agitAvecLaMeute(seconde) || !seReveille(seconde, tour, { entiere, sansPouvoirs: sagessePerdue })) continue;
     ajouter(etapes, seconde, v.id, { emprunt: true, seconde: true });
+  }
+  // La Gazette de la lune : des rôles qui ne se réveillent pas (la Nuit des sots), une autre meute, des étapes en plus.
+  if (gazette) {
+    const sans = new Set(gazette.sansReveil ?? []);
+    for (const [cle, e] of [...etapes]) {
+      if (cle === CLE_MEUTE || cle === CLE_PESTE || cle === CLE_DEUIL || !sans.size) continue;
+      e.acteurIds = e.acteurIds.filter(id => !sans.has(id));
+      if (!e.acteurIds.length) etapes.delete(cle);
+    }
+    if (Array.isArray(gazette.meute) && !peste?.active) {
+      if (gazette.meute.length) etapes.set(CLE_MEUTE, { roleCle: CLE_MEUTE, acteurIds: [...gazette.meute], ordre: ORDRE_MEUTE, invite: "", cibles: 1, soiMeme: false, gazette: true });
+      else etapes.delete(CLE_MEUTE);
+      etapes.delete(CLE_DEUIL);
+    }
+    for (const e of gazette.etapes ?? []) etapes.set(e.roleCle, { ...e, acteurIds: [...e.acteurIds] });
   }
   // Les Vendanges : la première nuit, l'Entremetteuse qui vient de réveiller ses amants désigne l'un d'eux et un autre joueur.
   const entremetteuses = tromperie ? etapes.get("entremetteuse")?.acteurIds ?? [] : [];

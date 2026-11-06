@@ -77,7 +77,7 @@ relief). Fichiers produits par `outils/fabriquer-jetons-veillees.mjs` ; les corr
 | [cat](https://game-icons.net/1x1/lorc/cat.html) | Lorc | Figurant — Chat |
 | [circular-sawblade](https://game-icons.net/1x1/lorc/circular-sawblade.html) | Lorc | Rôle — Rémouleur |
 | [cowled](https://game-icons.net/1x1/lorc/cowled.html) | Lorc | Villageois (rôle caché) |
-| [crystal-ball](https://game-icons.net/1x1/lorc/crystal-ball.html) | Lorc | Rôle — Liseuse de cendres |
+| [crystal-ball](https://game-icons.net/1x1/lorc/crystal-ball.html) | Lorc | Rôle — Liseuse de cendres ; Rôle — Liseuse d'étoiles |
 | [cultist](https://game-icons.net/1x1/lorc/cultist.html) | Lorc | Rôle — Illuminé |
 | [cupidon-arrow](https://game-icons.net/1x1/lorc/cupidon-arrow.html) | Lorc | Rôle — Entremetteuse |
 | [domino-mask](https://game-icons.net/1x1/lorc/domino-mask.html) | Lorc | Rôle — Loup déguisé |

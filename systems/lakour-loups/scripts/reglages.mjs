@@ -4,6 +4,8 @@ import { etatInitial } from "../logique/etat.mjs";
 import { CLES_DE_FETE } from "../logique/fetes.mjs";
 import { CHANCE_FOURNIERE } from "../logique/personnalites.mjs";
 import { REGLAGES_DES_VARIANTES, MODES_DOUBLE_VISAGE } from "../logique/variantes.mjs";
+import { RYTHMES_DE_LA_GAZETTE, CARTES_DU_CRIEUR, CARTES_DU_CRIEUR_MAX } from "../logique/gazette.mjs";
+import { CRITERES_DE_L_ILLUMINE } from "../logique/ambigus.mjs";
 import { oublierSecrets } from "./secrets.mjs";
 import { oublierPrive } from "./prive.mjs";
 import { oublierSalons, quandReglageSalons } from "./salons.mjs";
@@ -182,6 +184,41 @@ export function enregistrerReglages(quandEtatChange) {
   game.settings.register(ID, "metiersEnJeu", {
     name: "LAKOUR_LOUPS.Reglages.MetiersEnJeu.Nom", hint: "LAKOUR_LOUPS.Reglages.MetiersEnJeu.Aide",
     scope: "world", config: true, type: Boolean, default: true
+  });
+  // La Gazette de la lune (Pacte, étape 9, logique/gazette.mjs) : les cartes Événement, une chaque matin sauf le premier (ou un matin
+  // sur deux, sur trois) ; le narrateur peut choisir ses cartes, et poser des permanentes dès le début (réglage caché, la Table les coche).
+  // Avec elle, pas d'Almanach des brumes. Le Crieur public : une charge nommée par le Bailli, avec N cartes confiées avant la partie
+  // (conseil : 5 au plus ; par défaut tirées au hasard). Non par défaut ; lus à la distribution (publics : etat.gazette).
+  game.settings.register(ID, "gazette", {
+    name: "LAKOUR_LOUPS.Reglages.Gazette.Nom", hint: "LAKOUR_LOUPS.Reglages.Gazette.Aide",
+    scope: "world", config: true, type: Boolean, default: false
+  });
+  game.settings.register(ID, "gazetteRythme", {
+    name: "LAKOUR_LOUPS.Reglages.GazetteRythme.Nom", hint: "LAKOUR_LOUPS.Reglages.GazetteRythme.Aide",
+    scope: "world", config: true, type: Number, default: 1,
+    choices: Object.fromEntries(RYTHMES_DE_LA_GAZETTE.map(n => [n, `LAKOUR_LOUPS.Reglages.GazetteRythme.${n}`]))
+  });
+  game.settings.register(ID, "gazetteChoix", {
+    name: "LAKOUR_LOUPS.Reglages.GazetteChoix.Nom", hint: "LAKOUR_LOUPS.Reglages.GazetteChoix.Aide",
+    scope: "world", config: true, type: Boolean, default: false
+  });
+  game.settings.register(ID, "gazettePermanentes", { scope: "world", config: false, type: Array, default: [] });
+  game.settings.register(ID, "crieurPublic", {
+    name: "LAKOUR_LOUPS.Reglages.CrieurPublic.Nom", hint: "LAKOUR_LOUPS.Reglages.CrieurPublic.Aide",
+    scope: "world", config: true, type: Boolean, default: false
+  });
+  game.settings.register(ID, "cartesDuCrieur", {
+    name: "LAKOUR_LOUPS.Reglages.CartesDuCrieur.Nom", hint: "LAKOUR_LOUPS.Reglages.CartesDuCrieur.Aide",
+    scope: "world", config: true, type: Number, default: CARTES_DU_CRIEUR, range: { min: 1, max: CARTES_DU_CRIEUR_MAX, step: 1 }
+  });
+  game.settings.register(ID, "cartesDuCrieurChoisies", { scope: "world", config: false, type: Array, default: [] });
+  // Qui a perdu un Marché avec le Malin : exclu de la partie suivante (nouvellePartie le lit, puis l'efface).
+  game.settings.register(ID, "exclusDuMalin", { scope: "world", config: false, type: Array, default: [] });
+  // L'Illuminé (Pacte, étape 3b) : le critère qui partage le village, annoncé au début — la rive, ou un trait visible (étape 9).
+  game.settings.register(ID, "partageIllumine", {
+    name: "LAKOUR_LOUPS.Reglages.PartageIllumine.Nom", hint: "LAKOUR_LOUPS.Reglages.PartageIllumine.Aide",
+    scope: "world", config: true, type: String, default: "rive",
+    choices: Object.fromEntries(CRITERES_DE_L_ILLUMINE.map(c => [c, `LAKOUR_LOUPS.Ambigus.Critere.${c}`]))
   });
   game.settings.register(ID, "annoncesEnChat", {
     name: "LAKOUR_LOUPS.Reglages.AnnoncesEnChat.Nom", hint: "LAKOUR_LOUPS.Reglages.AnnoncesEnChat.Aide",

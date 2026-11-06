@@ -348,6 +348,14 @@
       "joueursMin": 8,
       "unique": true
     },
+    "liseuse-d-etoiles": {
+      "camp": "village",
+      "poids": 4,
+      "niveau": "classique",
+      "joueursMin": 8,
+      "unique": true,
+      "information": true
+    },
     "incendiaire": {
       "camp": "village",
       "poids": 2,

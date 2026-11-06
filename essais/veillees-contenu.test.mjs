@@ -164,9 +164,9 @@ test("automatisation de bout en bout : chaque métier a son pouvoir de jour dans
 });
 
 test("nouveaux visages (0.6.0) : jeton, poids, composition prête, fiche au guide du joueur, consignes au narrateur", async () => {
-  const { NOUVEAUX_ROLES: TOUS, NOUVEAUX_METIERS, ROLES_DU_PACTE, ROLES_DU_PACTE_3B } = await import("../modules/lakour-veillees/contenu/guides.mjs");
+  const { NOUVEAUX_ROLES: TOUS, NOUVEAUX_METIERS, ROLES_DU_PACTE, ROLES_DU_PACTE_3B, ROLES_DU_PACTE_9 } = await import("../modules/lakour-veillees/contenu/guides.mjs");
   // Les rôles du Pacte (étapes 3a et 3b) ont leurs propres essais (pacte-village-*, pacte-ambigus-*) : pas encore de composition prête.
-  const NOUVEAUX_ROLES = TOUS.filter(c => !ROLES_DU_PACTE.includes(c) && !ROLES_DU_PACTE_3B.includes(c));
+  const NOUVEAUX_ROLES = TOUS.filter(c => !ROLES_DU_PACTE.includes(c) && !ROLES_DU_PACTE_3B.includes(c) && !ROLES_DU_PACTE_9.includes(c));
   const equilibre = JSON.parse(readFileSync(`modules/${M}/assets/equilibre.json`, "utf8"));
   const compos = Object.values(JSON.parse(readFileSync(`modules/${M}/assets/compositions.json`, "utf8")));
   const page = (cle, titre) => docs.find(d => d.cle === `journaux:${cle}`).doc.pages.filter(p => !titre || p.name === titre).map(p => p.text.content).join(" ");

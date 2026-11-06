@@ -211,7 +211,7 @@ const VERIFICATIONS = {
 
 // [fichier de logique/, avant, après, règle]
 const MUTATIONS = [
-  ["constantes.mjs", "export const CAUSES_SECRETES = [\"meute\", \"poison\", \"feu\", \"epie\", \"peste\"];", "export const CAUSES_SECRETES = [\"meute\", \"poison\", \"feu\", \"epie\"];", "cause secrète"],
+  ["constantes.mjs", "export const CAUSES_SECRETES = [\"meute\", \"poison\", \"feu\", \"epie\", \"peste\", \"spectre\"];", "export const CAUSES_SECRETES = [\"meute\", \"poison\", \"feu\", \"epie\", \"spectre\"];", "cause secrète"],
   ["etat.mjs", "  delete pub.peste;\n", "", "drapeau public"],
   ["etat.mjs", "if (etat.phase === \"fin\" && etat.peste) pub.peste", "if (etat.peste) pub.peste", "dévoilé avant la fin"],
   ["etat.mjs", "\"carnets\", \"causes\", \"composition\",\n", "\"carnets\", \"causes\",\n", "composition publique"],

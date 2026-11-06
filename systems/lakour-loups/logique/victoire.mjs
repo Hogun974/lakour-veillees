@@ -122,7 +122,8 @@ export function palmares(chroniques = []) {
 }
 
 // partis : etat.partis (passage.mjs) — un parti (départ, exil) ne gagne ni ne perd : ligne « parti », jamais gagnant.
-export function bilanDePartie({ villageois = [], morts = [], causes = {}, vainqueur = "", partis = [] } = {}) {
+// allies : les alliés secrets de la meute (la Gazette, le Méchant Benêt, gazette.mjs) — du Village, ils gagnent avec la meute.
+export function bilanDePartie({ villageois = [], morts = [], causes = {}, vainqueur = "", partis = [], allies = [] } = {}) {
   const parId = new Map(villageois.map(v => [v.id, v]));
   const gagnants = new Set();
   // Deux amants de camps différents (l'Entremetteuse) ne gagnent qu'en restant les deux derniers vivants : jamais avec leur camp.
@@ -132,6 +133,7 @@ export function bilanDePartie({ villageois = [], morts = [], causes = {}, vainqu
   if (vainqueur === "village" || vainqueur === "meute") {
     for (const v of villageois) if (v.camp === vainqueur && !desAmantsMeles(v)) gagnants.add(v.id);
     for (const v of villageois) if (pale(v)) gagnants.delete(v.id);
+    for (const id of allies) if (parId.has(id)) { if (vainqueur === "meute") gagnants.add(id); else gagnants.delete(id); }
   } else if (parId.has(vainqueur)) {
     const v = parId.get(vainqueur), lie = parId.get(v.amoureux);
     gagnants.add(v.id);

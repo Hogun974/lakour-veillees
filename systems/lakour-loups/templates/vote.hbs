@@ -11,6 +11,8 @@
         {{#if souffle}}{{#if peutVoter}}<span class="loups-pastille mort"><i class="fa-solid fa-wind"></i> {{localize "LAKOUR_LOUPS.Souffle.Voter"}}</span>{{/if}}{{/if}}
         {{#if voixDouble}}<span class="loups-pastille bailli"><i class="fa-solid fa-stamp"></i> {{localize "LAKOUR_LOUPS.Bailli.TaVoixDouble"}}</span>{{/if}}
         {{#if priveDeVote}}<span class="loups-pastille mort"><i class="fa-solid fa-ban"></i> {{localize "LAKOUR_LOUPS.Pacte.PriveDeVote"}}</span>{{/if}}
+        {{#if defiance}}<span class="loups-pastille jour"><i class="fa-solid fa-user-group"></i> {{localize "LAKOUR_LOUPS.Gazette.Defiance.Fenetre"}}</span>{{/if}}
+        {{#if tourDe}}<span class="loups-pastille jour"><i class="fa-solid fa-hand-point-right"></i> {{loupsT "LAKOUR_LOUPS.Gazette.Suite.Fenetre" nom=tourDe}}</span>{{/if}}
       </div>
     </div>
     <div class="loups-minuteur"></div>

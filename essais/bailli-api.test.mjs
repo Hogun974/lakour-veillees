@@ -614,7 +614,7 @@ const MUTATIONS = [
   ["scripts/apps/table.mjs", "voteBailli: gm && Boolean(bailli?.election?.ok),", "voteBailli: gm && Boolean(bailli?.possible?.ok),", "une élection par jour (bouton)"],
   ["scripts/apps/table.mjs", "nommerBailli: gm && Boolean(bailli?.actif) && !bailliId && !fin && Boolean(etat.partie),", "nommerBailli: false,", "bouton : nommer le Bailli"],
   ["scripts/apps/table.mjs", "candidats: gm && resultat.departage.enAttente ? resultat.departage.candidats.map(id => ({ id, nom: nomDe(id) })) : []", "candidats: []", "boutons : trancher"],
-  ["scripts/api.mjs", "    if (etat.vote.objet !== \"bailli\") annoncer(\"lakourLoups.phase\"", "    annoncer(\"lakourLoups.phase\"", "élection sans ambiance du vote"],
+  ["scripts/api.mjs", "    if (!L.VOTES_SANS_PHASE.includes(etat.vote.objet)) annoncer(\"lakourLoups.phase\"", "    annoncer(\"lakourLoups.phase\"", "élection sans ambiance du vote"],
   ["scripts/api.mjs", "    annoncer(\"lakourLoups.voteOuvert\", [{ objet: etat.vote.objet, numero: etat.vote.numero }]);\n", "", "hook du vote ouvert"],
   ["scripts/api.mjs", "PhaseInconnue\", { phase: String(phase) }));\n    exigerSansDepartage();", "PhaseInconnue\", { phase: String(phase) }));", "pas de phase pendant le départage"],
   ["scripts/api.mjs", "    exigerMJ();\n    exigerSansDepartage();\n    if (objet === \"bailli\")", "    exigerMJ();\n    if (objet === \"bailli\")", "pas de vote pendant le départage"],

@@ -55,6 +55,13 @@
 // mur des murmures, double visage, vendanges, envoûtement —, les chandelles d'une meute en désaccord, la chaîne du vote ouvert, le mur
 // du dernier matin) et +variantesSecret [S] (les chandelles soufflées cette nuit, les murmures de la nuit SANS auteur, les envoûtés,
 // le triangle des Vendanges, les cartes secrètes de Double visage).
+// Le Pacte, étape 9 (gazette.mjs) : +traits (public : les traits visibles des personnages, tirés à la distribution), +gazette (public : la
+// Gazette de la lune — les cartes lues, les absents, les privés de vote, les marchés du Malin —, le Crieur public, l'Exécuteur, les cartes
+// Spiritisme du narrateur) et +gazetteSecret [S] (l'ordre du paquet, les cartes en main du Crieur, les pouvoirs échangés du Jour des sots,
+// les alliés secrets de la meute, ce qu'a lu la Liseuse de cendres, la séance demandée par la Liseuse d'étoiles).
+// vote : +mode ("" | "defiance" : deux voix chacun, la Grande Défiance ; "suite" : à tour de rôle, les Influences, le Cauchemar), +ordre
+// (le tour de rôle), +rang (à qui de voter), +cauchemar (le ou les plus cités sont condamnés) ; objets "executeur" (l'élection de
+// l'Exécuteur) et "chatiment" (le Châtiment : les soutiens de l'accusé).
 
 import { PHASES, causePublique } from "./constantes.mjs";
 import { decompterVotes } from "./votes.mjs";
@@ -74,12 +81,20 @@ import { villageInitial, normaliserVillage, attendreLePrevot } from "./personnal
 import { evenementsInitiaux, normaliserEvenements } from "./evenements.mjs";
 import { ambigusInitial, ambigusSecretInitial, normaliserAmbigus, normaliserAmbigusSecret } from "./ambigus.mjs";
 import { variantesInitiales, variantesSecretInitial, normaliserVariantes, normaliserVariantesSecret } from "./variantes.mjs";
+import { traitsInitiaux, normaliserTraits, gazetteInitiale, gazetteSecretInitial, normaliserGazette, normaliserGazetteSecret, decompterDefiance, plusCites,
+  VOIX_DE_LA_DEFIANCE } from "./gazette.mjs";
 import { pacteInitial, pacteSecretInitial, normaliserPacte, normaliserPacteSecret, plumeDuVote, VOIX_DE_LA_PLUME, POIDS_DE_LA_PLUME } from "./pacte.mjs";
 
 // Le votant fictif de la voix du deuil (jamais un acteur).
 export const VOIX_DU_DEUIL = "~deuil";
 // Les objets d'un vote : l'exécution du jour, l'asile de la Chapelle, l'élection du Bailli, l'exil d'un gens de passage.
-export const OBJETS_DE_VOTE = ["execution", "chapelle", "bailli", "exil"];
+// Le Pacte, étape 9 (gazette.mjs) : l'élection de l'Exécuteur, le Châtiment (l'accusé du dernier éliminé : ses soutiens votent pour lui).
+export const OBJETS_DE_VOTE = ["execution", "chapelle", "bailli", "exil", "executeur", "chatiment"];
+// Les votes qui se tiennent sans changer de phase (au débat, ou à l'aube).
+export const VOTES_SANS_PHASE = ["bailli", "executeur", "chatiment"];
+export const MODES_DE_VOTE = ["", "defiance", "suite"];
+// Le Châtiment : il faut au moins tant de soutiens pour épargner l'accusé.
+export const SOUTIENS_DU_CHATIMENT = 2;
 
 export function jourInitial() {
   // effets : [{ type, acteurId, cible, nuit }] posés de jour pour la nuit n° `nuit` (verrou, surveille, gite, traversee,
@@ -115,7 +130,9 @@ export function etatInitial() {
     // Le Pacte, étape 4 (personnalites.mjs) : la variante « Le Village », publique.
     village: villageInitial(),
     // Le Pacte, étape 5 (variantes.mjs) : les variantes du jeu de soirée — le public, et les secrets du MJ.
-    variantes: variantesInitiales(), variantesSecret: variantesSecretInitial()
+    variantes: variantesInitiales(), variantesSecret: variantesSecretInitial(),
+    // Le Pacte, étape 9 (gazette.mjs) : les traits visibles (publics), la Gazette de la lune et ses charges — le public, et les secrets.
+    traits: traitsInitiaux(), gazette: gazetteInitiale(), gazetteSecret: gazetteSecretInitial()
   };
 }
 
@@ -162,6 +179,9 @@ export function normaliserEtat(e) {
   etat.village = normaliserVillage(etat.village);
   etat.variantes = normaliserVariantes(etat.variantes);
   etat.variantesSecret = normaliserVariantesSecret(etat.variantesSecret);
+  etat.traits = normaliserTraits(etat.traits);
+  etat.gazette = normaliserGazette(etat.gazette);
+  etat.gazetteSecret = normaliserGazetteSecret(etat.gazetteSecret);
   etat.tour = Number(etat.tour) || 0;
   return etat;
 }
@@ -185,7 +205,8 @@ export function separerEtat(e) {
     composition: etat.composition, peste: etat.peste, masques: etat.masques, somnambules: etat.somnambules, bonneEtoile: etat.bonneEtoile,
     aConsigner: etat.aConsigner, pouvoirsDeuil: etat.pouvoirsDeuil, autel: etat.autel,
     fiches: etat.fiches, pont: etat.pont, voteDoubleDemain: etat.voteDoubleDemain, secretsIncomplets: etat.secretsIncomplets,
-    secretsDeFete: etat.secretsDeFete, pacteSecret: etat.pacteSecret, ambigusSecret: etat.ambigusSecret, variantesSecret: etat.variantesSecret
+    secretsDeFete: etat.secretsDeFete, pacteSecret: etat.pacteSecret, ambigusSecret: etat.ambigusSecret, variantesSecret: etat.variantesSecret,
+    gazetteSecret: etat.gazetteSecret
   };
   const pub = copie(etat);
   pub.nuit = base.nuit;
@@ -195,6 +216,7 @@ export function separerEtat(e) {
   pub.pacteSecret = pacteSecretInitial();   // le Pacte : vies des Aïeux, flair des Furets, contaminés, signe du Greffier
   pub.ambigusSecret = ambigusSecretInitial();   // le centre du Chapardeur, les cartes jouées, les modèles, les Mâtins, les charmés
   pub.variantesSecret = variantesSecretInitial();   // les souffles des loups, les murmures sans auteur, les envoûtés, le triangle, les cartes
+  pub.gazetteSecret = gazetteSecretInitial();   // le paquet de la Gazette, la main du Crieur, les pouvoirs des sots, les alliés de la meute
   // La peste noire n'existe pas dans l'état public avant la fin (ni même la clé) ; à la fin, la partie se dévoile.
   delete pub.peste;
   if (etat.phase === "fin" && etat.peste) pub.peste = copie(etat.peste);
@@ -234,6 +256,7 @@ export function fusionnerEtat(pub, secret) {
   if (s.pacteSecret) etat.pacteSecret = normaliserPacteSecret(s.pacteSecret);
   if (s.ambigusSecret) etat.ambigusSecret = normaliserAmbigusSecret(s.ambigusSecret);
   if (s.variantesSecret) etat.variantesSecret = normaliserVariantesSecret(s.variantesSecret);
+  if (s.gazetteSecret) etat.gazetteSecret = normaliserGazetteSecret(s.gazetteSecret);
   etat.secretsIncomplets = Boolean(s.secretsIncomplets);
   etat.causes = s.causes ?? {};
   etat.morts = etat.morts.map(m => (etat.causes[m.acteurId] ? { ...m, cause: etat.causes[m.acteurId] } : m));
@@ -303,7 +326,10 @@ export function cloreNuit(e, { asperges, fioles, bilan, pontFranchi = false } = 
 // (l'élection du Bailli : ni Gibet, ni cloche, ni ruban, ni voix double).
 // banc : l'accusé d'un jugement du Banc des accusés (banc.mjs) : un vote d'exécution à un seul candidat, sans voix double.
 // "exil" : chasser un gens de passage (passage.mjs) : ni Gibet ni cloche.
-export function ouvrirVote(e, { candidats = [], duree = 0, double, majoriteAbsolue = false, objet = "execution", banc = "", maintenant = Date.now() } = {}) {
+// mode (Le Pacte, étape 9, gazette.mjs) : "defiance" (la Grande Défiance : deux voix chacun, sans voix double), "suite" (à tour de rôle :
+// ordre, rang ; les voix publiques au fil du vote, comme un doigt tendu) ; cauchemar : le ou les plus cités sont condamnés.
+export function ouvrirVote(e, { candidats = [], duree = 0, double, majoriteAbsolue = false, objet = "execution", banc = "", maintenant = Date.now(),
+  mode = "", ordre = [], cauchemar = false } = {}) {
   const etat = normaliserEtat(e);
   const sujet = OBJETS_DE_VOTE.includes(objet) ? objet : "execution";
   const execution = sujet === "execution";
@@ -316,12 +342,15 @@ export function ouvrirVote(e, { candidats = [], duree = 0, double, majoriteAbsol
     majoriteAbsolue: execution && (Boolean(majoriteAbsolue) || presageDuJour(etat) === "lune-rousse"), prolonge: "", resultat: null,
     mainLevee: presageDuJour(etat) === "foire"
   };
+  const m = execution && !banc && MODES_DE_VOTE.includes(mode) ? mode : "";
+  if (m) Object.assign(etat.vote, { mode: m, double: false, majoriteAbsolue: false, ...(m === "suite" ? { ordre: [...ordre], rang: 0, mainLevee: true } : {}),
+    ...(cauchemar ? { cauchemar: true } : {}) });
   if (execution) etat.voteDoubleDemain = false;
   // Le glas de l'Almanach : ce jour-là seulement (pas reporté au lendemain si l'on ne vote pas).
   if (execution && presageDuJour(etat) === "glas") etat.vote.double = true;
   if (execution && banc) Object.assign(etat.vote, { banc: { accuse: banc }, double: false });
   // L'élection du Bailli se tient au débat, sans changer de phase (les pouvoirs du matin restent permis, pas d'ambiance du vote).
-  if (sujet !== "bailli") etat.phase = "vote";
+  if (!VOTES_SANS_PHASE.includes(sujet)) etat.phase = "vote";
   return etat;
 }
 
@@ -333,6 +362,24 @@ export function enregistrerVote(e, { votant, cible, votants = null, maintenant =
   if (v.finit && maintenant > v.finit) return { etat, ok: false, raison: "temps" };
   if (votants && !votants.includes(votant)) return { etat, ok: false, raison: "votant" };
   if (cible && v.candidats.length && !v.candidats.includes(cible)) return { etat, ok: false, raison: "candidat" };
+  // La Grande Défiance : deux amis, jamais soi-même ; un second clic sur un ami le retire.
+  if (v.mode === "defiance") {
+    if (cible === votant) return { etat, ok: false, raison: "soi" };
+    const amis = [].concat(v.votes[votant] ?? []).filter(Boolean);
+    const suite = !cible ? [] : amis.includes(cible) ? amis.filter(id => id !== cible) : [...amis, cible];
+    if (suite.length > VOIX_DE_LA_DEFIANCE) return { etat, ok: false, raison: "defiance" };
+    if (suite.length) v.votes[votant] = suite; else delete v.votes[votant];
+    v.exprimes = Object.keys(v.votes);
+    return { etat, ok: true, raison: "" };
+  }
+  // À tour de rôle : seul celui dont c'est le tour vote, une fois (le doigt reste tendu) ; s'abstenir passe son tour.
+  if (v.mode === "suite") {
+    if ((v.ordre ?? [])[v.rang ?? 0] !== votant) return { etat, ok: false, raison: "tour" };
+    v.votes[votant] = cible || "";
+    v.rang = (Number(v.rang) || 0) + 1;
+    v.exprimes = Object.keys(v.votes);
+    return { etat, ok: true, raison: "" };
+  }
   if (cible) v.votes[votant] = cible;
   else delete v.votes[votant];
   v.exprimes = Object.keys(v.votes);
@@ -359,6 +406,28 @@ export function cloreVote(e, { votants = null, poids = {}, maintenant = Date.now
   boucDesVendanges = "", voisinsDuBouc = [] } = {}) {
   const etat = normaliserEtat(e);
   const v = etat.vote;
+  // La Gazette (gazette.mjs) : la Grande Défiance (ceux qui n'ont reçu aucune voix), le Cauchemar (le ou les plus cités), le Châtiment
+  // (l'accusé, sauf s'il a assez de soutiens) — ni voix double, ni plume, ni ruban, ni égalité à trancher.
+  if (v.mode === "defiance" || v.cauchemar || v.objet === "chatiment") {
+    const votes = Object.fromEntries(Object.entries(v.votes).filter(([, c]) => [].concat(c ?? []).some(Boolean)));
+    const r = v.mode === "defiance" ? decompterDefiance({ votes, candidats: v.candidats, votants })
+      : decompterVotes({ votes, candidats: v.candidats, votants });
+    if (v.cauchemar) Object.assign(r, { elus: plusCites(r.decompte), egalite: false, departage: null });
+    let soutiens = 0;
+    if (v.objet === "chatiment") {
+      const accuse = v.candidats[0] ?? "";
+      soutiens = r.decompte[accuse] ?? 0;
+      Object.assign(r, { elus: accuse && soutiens < SOUTIENS_DU_CHATIMENT ? [accuse] : [], egalite: false, departage: null });
+    }
+    const resultat = { decompte: r.decompte, elu: r.elus[0] ?? null, elus: r.elus, votes: r.votes, egalite: false, objet: v.objet, numero: v.numero, tour: etat.tour,
+      souffles: [], poids: {}, departage: null, ...(v.mode ? { mode: v.mode } : {}), ...(v.cauchemar ? { cauchemar: true } : {}),
+      ...(v.objet === "chatiment" ? { soutiens } : {}) };
+    v.ouvert = false;
+    v.exprimes = [];
+    v.resultat = resultat;
+    inscrire(etat, entreeDeVote(resultat), maintenant);
+    return { etat, resultat };
+  }
   const pesees = { ...poidsDesVoix(etat, votants), ...poids };
   const bailli = v.objet === "execution" && !v.banc ? bailliEnCharge(etat, votants) : "";
   // La voix du deuil : une voix sans visage, qui ne pèse qu'une fois.

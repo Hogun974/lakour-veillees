@@ -30,6 +30,7 @@
 import { trioAutour, voisins, premierAGauche } from "./cercle.mjs";
 import { filtrerVotantsDuVillage, gracieParLeHobereau } from "./personnalites.mjs";
 import { carteDeLEffet } from "./variantes.mjs";
+import { filtrerVotantsDeLaGazette } from "./gazette.mjs";
 
 export const EFFET_AIEUL = "resister";
 export const EFFET_SOUFFRE_DOULEUR = "egalite";
@@ -140,7 +141,8 @@ export function filtrerVotants(etat, ids = [], objet = etat?.vote?.objet ?? "exe
     const permis = new Set(p.votants.ids);
     admis = admis.filter(id => permis.has(id));
   }
-  return filtrerVotantsDuVillage(etat, admis, objet);
+  // La Gazette (gazette.mjs) : ni les absents du jour, ni les privés de vote par le narrateur, ni l'accusé du Châtiment.
+  return filtrerVotantsDeLaGazette(etat, filtrerVotantsDuVillage(etat, admis, objet), objet);
 }
 
 // Ce villageois est-il privé de ce vote (gracié, ou hors de la liste du Souffre-douleur) ? (bandeau, fenêtre de vote, Table)

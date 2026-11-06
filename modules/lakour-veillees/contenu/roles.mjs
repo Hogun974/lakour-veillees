@@ -20,6 +20,8 @@
 // nos loups à pouvoir juste après ceux du livre (45 à 47), la Dame du gué (48) et le Pêcheur de nuit (49) avant l'Herboriste, nos
 // lanternes après elle (Pyromane 55, Louvetier 61, Sourcier 62, Ermite 70), le Fossoyeur toujours le dernier (90). La résolution
 // de l'aube ne dépend pas de ces numéros (resolution.mjs : par effet), seulement l'ordre des réveils.
+// Le Pacte, étape 9 : la Liseuse d'étoiles (la gitane du livre, sans son philtre), juste après l'Herboriste (51), avant le Joueur de
+// vielle, comme dans l'ordre d'appel du livre ; ses séances de Spiritisme vivent dans le système (logique/gazette.mjs).
 import { ORDRE_MEUTE, role } from "./aides.mjs";
 
 // ======================================================================= La Meute
@@ -451,6 +453,19 @@ Mais si ton modèle **meurt**, de quelque façon que ce soit, plus rien ne te re
 Quand le **vote** du village élimine un joueur, **avant que sa carte soit retournée**, tu peux **te dévoiler** : ta carte de Chambrière est retournée devant tous, et tu **prends la carte du condamné**, sans la montrer. Tu deviens ce rôle jusqu'à la fin, **remis à neuf** (ses usages et ses fioles pleines ; s'il agit la première nuit, le narrateur t'appelle la nuit suivante pour le faire).
 
 Ce qui touchait le condamné ne passe pas à toi (ni son amour, ni sa morsure, ni son charme, ni sa charge) ; ce qui te touchait est perdu (un charme, la charge de Bailli), sauf une morsure : mordue, tu restes un loup. **Amoureuse, tu ne peux pas te dévouer.**`
+  }),
+  // Le Pacte, étape 9 : la Liseuse d'étoiles et les cinq cartes Spiritisme du narrateur.
+  role({
+    cle: "liseuse-d-etoiles", nom: "Liseuse d'étoiles", camp: "village", effet: "spiritisme",
+    resume: "chaque nuit, peut demander une séance de Spiritisme : au matin, un Spirite pose une question au premier mort, qui répond sans mentir.",
+    pouvoir: `Tu lis le ciel au-dessus de Brumecombe, et quand les étoiles s'alignent, les morts te répondent.
+
+Le narrateur garde **cinq cartes Spiritisme** ; chacune porte quatre questions. **Chaque nuit**, il te demande si tu veux t'en servir : désigne-toi pour dire oui, ou passe.
+
+**Au matin**, la carte est lue devant tous. Tu choisis **une** de ses quatre questions et tu désignes le **Spirite**, un vivant (toi comprise), qui la pose à **l'esprit du premier mort** de la partie. L'esprit répond **oui ou non**, et ne ment jamais. La carte est ensuite défaussée : cinq séances au plus. Tant que personne n'est mort, aucun esprit ne répond, et la carte reste dans la main du narrateur.
+
+Certaines questions parlent de l'allure des gens (lunettes, bijou, sabots, coiffe, pipe, maison au bourg ou à l'écart, homme ou femme) : ce sont les traits visibles de chaque personnage, sur sa fiche.`,
+    nuit: { ordre: 51, cibles: 1, soiMeme: true, invite: "Une séance de Spiritisme au matin ? Désigne-toi pour dire oui, ou passe." }
   })
 ];
 
@@ -535,7 +550,7 @@ Rien n'arrête ton air : ni la garde, ni les remèdes ; les loups l'entendent co
     resume: "le village est partagé en deux groupes annoncés à tous ; il gagne seul si tout l'autre groupe est éliminé.",
     pouvoir: `Tu as vu la lumière, et elle t'a dit que la moitié du village était maudite.
 
-Avant la partie, le narrateur partage le village **en deux groupes**, selon un critère que tout le monde voit (à Brumecombe : la rive où chacun dort), et l'annonce à tous. Tu appartiens à l'un d'eux.
+Avant la partie, le narrateur partage le village **en deux groupes**, selon un critère que tout le monde voit (à Brumecombe : la rive où chacun dort, ou, s'il le décide, un trait visible des personnages : le genre, l'âge, les lunettes), et l'annonce à tous. Tu appartiens à l'un d'eux.
 
 Tu n'as aucun pouvoir de nuit : ta parole et ton vote suffisent. Si la Louve mère te mord, tu deviens un simple loup et tu oublies ton but.`,
     victoire: `Tu gagnes **seul**, vivant, dès que **tous les joueurs de l'autre groupe** sont éliminés.`

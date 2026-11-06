@@ -14,6 +14,11 @@
 // Le Village (Pacte, étape 4, logique/personnalites.mjs) : sa case à la préparation ; la personnalité de chaque vivant sur sa carte
 // (publique, comme le métier) ; l'encart « Le Village » (qui tient quoi, les bâtiments brûlés, les privés de vote du Régent), où le
 // MJ change la proposition avant la première nuit (api.installer).
+// La Gazette de la lune (Pacte, étape 9, logique/gazette.mjs) : les traits visibles de chacun sur sa carte (publics) ; le Crieur public et
+// l'Exécuteur marqués ; les absents et les privés de vote du jour ; l'encart « La Gazette de la lune » (cartes en jeu, dernière carte lue,
+// le Crieur, l'Exécuteur, la dernière séance de Spiritisme) ; pour le MJ : lire une carte, retirer un vote (cartes de conduite), appliquer
+// la variante d'un jour, élire l'Exécuteur, et ses secrets (le paquet, la main du Crieur). À la préparation : les cases de la Gazette et
+// du Crieur, et les cartes permanentes posées dès le début.
 // Les variantes du jeu de soirée (Pacte, étape 5, logique/variantes.mjs) : leurs cases à la préparation (Double visage : un choix) ; la
 // chandelle de chacun sur sa carte (Veillée aux chandelles : allumée tant qu'il vit) ; l'encart « Variantes » (celles en jeu, la Chaîne des
 // innocents du vote ouvert, le Mur des murmures du dernier matin). Le niveau « Le Pacte » (les rôles du jeu de soirée) est proposé d'abord.
@@ -63,6 +68,38 @@ function variantesDeLaTable(etat) {
   };
 }
 
+// L'encart « La Gazette de la lune » (public ; les secrets au MJ actif seul).
+function gazetteDeLaTable(etat, { gm = false, mjActif = false } = {}) {
+  const g = tenterSync(() => api().gazette(), null);
+  if (!g || (!g.actif && !g.crieur.actif && !g.executeur.actif && !g.tirees.length && !g.spiritisme.derniere)) return null;
+  const derniere = g.tirees.at(-1);
+  const sec = mjActif ? tenterSync(() => api().gazetteSecrets(), null) : null;
+  const nomCarte = c => t(`LAKOUR_LOUPS.Gazette.Cartes.${c}.Nom`);
+  const s = g.spiritisme.derniere;
+  const vivants = tousLesVillageois().filter(a => a.system.vivant).map(a => ({ id: a.id, nom: a.name }));
+  const enJour = ["aube", "jour"].includes(etat.phase);
+  const variante = g.variante && !g.variante.appliquee && g.variante.tour === etat.tour ? t(`LAKOUR_LOUPS.Variantes.${g.variante.cle.charAt(0).toUpperCase()}${g.variante.cle.slice(1)}.Nom`) : "";
+  return {
+    gm,
+    enJeu: g.enCours.length ? t("LAKOUR_LOUPS.Gazette.Table.EnJeu", { noms: g.enCours.map(c => c.nom).join(", ") }) : "",
+    aides: g.enCours.map(c => `${c.nom} : ${c.effet}`).join("\n"),
+    derniere: derniere ? t("LAKOUR_LOUPS.Gazette.Table.Derniere", { nom: derniere.nom, effet: derniere.effet, lecteur: derniere.lecteur ? nomDe(derniere.lecteur) : t("LAKOUR_LOUPS.Narrateur") }) : "",
+    restantes: g.actif ? t("LAKOUR_LOUPS.Gazette.Table.Restantes", { n: g.restantes }) : "",
+    crieur: !g.crieur.actif ? "" : g.crieur.acteurId ? t("LAKOUR_LOUPS.Gazette.Table.CrieurLigne", { nom: g.crieur.nom, n: g.crieur.cartes })
+      : t("LAKOUR_LOUPS.Gazette.Table.CrieurAttente", { n: g.crieur.cartes }),
+    executeur: !g.executeur.actif ? "" : g.executeur.acteurId ? t("LAKOUR_LOUPS.Gazette.Table.ExecuteurLigne", { nom: g.executeur.nom }) : t("LAKOUR_LOUPS.Gazette.Table.ExecuteurAttendu"),
+    seances: g.spiritisme.restantes.length < 5 || s ? t("LAKOUR_LOUPS.Gazette.Table.Seances", { n: g.spiritisme.restantes.length }) : "",
+    reponse: s ? t("LAKOUR_LOUPS.Gazette.Table.Reponse", { question: t(`LAKOUR_LOUPS.Gazette.Questions.${s.question}`), reponse: t(s.reponse ? "LAKOUR_LOUPS.Gazette.Oui" : "LAKOUR_LOUPS.Gazette.Non") }) : "",
+    // Le MJ : lire une carte (le paquet, ou toutes en mode « le narrateur choisit »), retirer un vote, la variante d'un jour, l'Exécuteur.
+    lire: gm && g.actif && enJour && !etat.vainqueur ? (sec?.paquet?.length ? sec.paquet : L.CLES_DE_LA_GAZETTE).map(c => ({ cle: c, nom: nomCarte(c) })) : null,
+    priver: gm && g.conduite.length && !etat.vainqueur ? vivants.filter(v => !g.prives.includes(v.id)) : null,
+    variante,
+    elireExecuteur: gm && L.electionExecuteurDue(etat, villageoisAPlat()),
+    secrets: sec ? [sec.main.length ? t("LAKOUR_LOUPS.Gazette.Table.Main", { cartes: sec.main.map(nomCarte).join(", ") }) : "",
+      g.actif && sec.paquet.length ? t("LAKOUR_LOUPS.Gazette.Table.Paquet", { cartes: sec.paquet.slice(0, 5).map(nomCarte).join(", ") + (sec.paquet.length > 5 ? "…" : "") }) : ""].filter(Boolean) : []
+  };
+}
+
 async function tenter(fn) {
   try { return await fn(); } catch (e) { ui.notifications.error(e.message); console.error(e); }
 }
@@ -105,7 +142,9 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
       accuser: TableDeJeu.#accuser, quitter: TableDeJeu.#quitter, faireQuitter: TableDeJeu.#faireQuitter,
       accueillir: TableDeJeu.#accueillir, voteExil: TableDeJeu.#voteExil, prepSaintMartin: TableDeJeu.#prepSaintMartin,
       voixActiver: TableDeJeu.#voixActiver, voixMicro: TableDeJeu.#voixMicro,
-      prepVillage: TableDeJeu.#prepVillage, prepVariante: TableDeJeu.#prepVariante, prepBatiment: TableDeJeu.#prepBatiment, prepMetiers: TableDeJeu.#prepMetiers
+      prepVillage: TableDeJeu.#prepVillage, prepVariante: TableDeJeu.#prepVariante, prepBatiment: TableDeJeu.#prepBatiment, prepMetiers: TableDeJeu.#prepMetiers,
+      prepGazette: TableDeJeu.#prepGazette, prepPermanente: TableDeJeu.#prepPermanente, gazetteLire: TableDeJeu.#gazetteLire, gazettePriver: TableDeJeu.#gazettePriver,
+      gazetteVariante: () => tenter(() => api().appliquerLaVarianteDuJour()), voteExecuteur: () => tenter(() => api().ouvrirVote({ objet: "executeur" }))
     }
   };
 
@@ -143,6 +182,10 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
     };
     // La Veillée aux chandelles (Pacte, étape 5) : publique.
     const chandelles = Boolean(etat.partie) && L.chandellesActives(etat);
+    // La Gazette (étape 9) : les traits de chacun, le Crieur, l'Exécuteur, les absents du jour (publics).
+    const gazette = etat.partie ? tenterSync(() => api().gazette(), null) : null;
+    const lesTraits = etat.partie ? tenterSync(() => api().traits(), {}) : {};
+    const traitsDe = id => lesTraits?.[id]?.texte ?? "";
     const fiche = a => {
       const role = roleDe(a), metier = metierDe(a);
       const voitRole = fin || roleVisible(a);
@@ -158,6 +201,10 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
         chandelle: chandelles ? (a.system.vivant ? { cle: "allumee", icone: "fa-fire", texte: t("LAKOUR_LOUPS.Variantes.Chandelles.Allumee"), aide: t("LAKOUR_LOUPS.Variantes.Chandelles.Aide") }
           : { cle: "soufflee", icone: "fa-smog", texte: t("LAKOUR_LOUPS.Variantes.Chandelles.Soufflee"), aide: t("LAKOUR_LOUPS.Variantes.Chandelles.Aide") }) : null,
         personnalite: a.system.vivant ? personnaliteDe(a) : "",
+        // La Gazette (étape 9) : les traits visibles (publics), le Crieur public, l'Exécuteur, absent ou sans vote aujourd'hui.
+        traits: traitsDe(a.id), crieur: Boolean(gazette?.crieur.acteurId) && gazette.crieur.acteurId === a.id && a.system.vivant,
+        executeur: Boolean(gazette?.executeur.acteurId) && gazette.executeur.acteurId === a.id && a.system.vivant,
+        absent: Boolean(gazette?.absents.includes(a.id)), priveGazette: Boolean(gazette?.prives.includes(a.id)), protegeGazette: Boolean(gazette?.proteges.includes(a.id)),
         personnaliteAide: a.system.vivant && villageActif ? t(`LAKOUR_LOUPS.Village.Personnalites.${L.personnaliteDe(etat, a.id)}.Aide`) : "",
         voitRole, roleNom: voitRole ? role?.name ?? "" : "", roleImg: voitRole ? role?.img ?? "" : "",
         camp: voitRole ? libelleCamp(campDe(a)) : "", campCle: voitRole ? campDe(a) : "",
@@ -170,7 +217,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
         cause: mort ? libelleCause(mort.cause) : "", tourMort: mort?.tour ?? "",
         candidat: v.ouvert && v.candidats.includes(a.id),
         aVote: v.ouvert && v.exprimes.includes(a.id),
-        monChoix: v.ouvert && monChoix === a.id,
+        monChoix: v.ouvert && [].concat(monChoix ?? []).includes(a.id),
         // Jour de foire (Almanach) : à main levée, les voix se comptent pendant le vote.
         voix: resultat ? resultat.decompte?.[a.id] ?? 0
           : v.mainLevee ? Object.entries(v.votes ?? {}).filter(([, c]) => c === a.id).reduce((s, [votant]) => s + (pesees[votant] ?? 1), 0) : null,
@@ -237,7 +284,8 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
     if (gm && mjActif) {
       try {
         const e = api().etapeSuivante({ ignorer: [...this.ignorer] });
-        const donnees = { ...e.donnees, nom: e.donnees.meute ? t("LAKOUR_LOUPS.Etapes.LaMeute") : e.donnees.peste ? t("LAKOUR_LOUPS.Etapes.LaPeste") : e.donnees.deuil ? t("LAKOUR_LOUPS.Etapes.LeDeuil") : e.donnees.charmes ? t("LAKOUR_LOUPS.Etapes.LesCharmes") : e.donnees.mur ? t("LAKOUR_LOUPS.Etapes.LeMur") : e.donnees.nom ?? "" };
+        const donnees = { ...e.donnees, nom: e.donnees.meute ? t("LAKOUR_LOUPS.Etapes.LaMeute") : e.donnees.peste ? t("LAKOUR_LOUPS.Etapes.LaPeste") : e.donnees.deuil ? t("LAKOUR_LOUPS.Etapes.LeDeuil") : e.donnees.charmes ? t("LAKOUR_LOUPS.Etapes.LesCharmes") : e.donnees.mur ? t("LAKOUR_LOUPS.Etapes.LeMur")
+          : e.donnees.gazette ? t(`LAKOUR_LOUPS.Gazette.Etapes.Noms.${e.donnees.gazette}`) : e.donnees.nom ?? "" };
         etape = { ...e, texte: t(`LAKOUR_LOUPS.Etapes.${e.cle}`, donnees),
           detail: e.detail ? t(`LAKOUR_LOUPS.Etapes.Detail.${e.detail.cle}`, e.detail.donnees) : "" };
       } catch { etape = null; }
@@ -284,6 +332,13 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
                 aide: t(`LAKOUR_LOUPS.Variantes.${cle === "angoissante" ? "Chandelles.AngoissanteAide" : `${cle.charAt(0).toUpperCase()}${cle.slice(1)}.Aide`}`) })),
             doubleVisage: sansMeute ? null : ["", ...L.MODES_DOUBLE_VISAGE].map(m => ({ cle: m, nom: t(`LAKOUR_LOUPS.Variantes.DoubleVisage.${m || "Aucune"}`), choisi: v.doubleVisage === m }))
           };
+        })(),
+        // La Gazette de la lune et le Crieur public (étape 9) : jamais dans une Saint-Martin ni à la petite tablée.
+        gazette: p.format === L.FORMAT_SAINT_MARTIN || p.niveau === L.NIVEAU_PETITE_TABLEE ? null : (() => {
+          const g = MJ.gazettePreparee(p);
+          return { actif: Boolean(g.actif), crieur: Boolean(g.crieur),
+            permanentes: g.actif ? L.CARTES_PERMANENTES.map(c => ({ cle: c, nom: t(`LAKOUR_LOUPS.Gazette.Cartes.${c}.Nom`), aide: t(`LAKOUR_LOUPS.Gazette.Cartes.${c}.Effet`),
+              coche: g.permanentes.includes(c) })) : [] };
         })(),
         // Les bâtiments du village (aucun, tirés, choisis) et les métiers (étape 5) : une partie « simple, avec les seuls personnages ».
         batiments: p.format === L.FORMAT_SAINT_MARTIN ? null : (() => {
@@ -375,6 +430,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
       },
       historique: chronique,
       variantes: etat.partie ? variantesDeLaTable(etat) : null,
+      gazette: etat.partie ? gazetteDeLaTable(etat, { gm, mjActif }) : null,
       village: villageActif && etat.partie ? villageDeLaTable(etat, { gm, preparation: gm && etat.phase === "preparation" && etat.tour === 0 }) : null,
       etape, preparation, nuit,
       emporteur: etape?.cle === "emporter" ? { id: etape.donnees.id, nom: etape.donnees.nom } : null,
@@ -581,6 +637,21 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
   static #prepVillage() { this.preparation.village = !MJ.villagePrepare(this.preparation); this.render(); }
   static #prepBatiment(event, cible) { MJ.basculerBatiment(this.preparation, cible.dataset.cle); this.render(); }
   static #prepMetiers() { this.preparation.metiers = !MJ.metiersPrepares(this.preparation); this.render(); }
+  // La Gazette de la lune et le Crieur public (étape 9) : les cases de la préparation ; le MJ lit une carte, retire un vote.
+  static #prepGazette(event, cible) {
+    const cle = cible.dataset.cle;
+    MJ.changerGazette(this.preparation, cle, !MJ.gazettePreparee(this.preparation)[cle]);
+    this.render();
+  }
+  static #prepPermanente(event, cible) { MJ.basculerPermanente(this.preparation, cible.dataset.cle); this.render(); }
+  static #gazetteLire() {
+    const cle = this.element.querySelector("select[name=gazetteCarte]")?.value ?? "";
+    if (cle) return tenter(() => api().lireUneCarte(cle));
+  }
+  static #gazettePriver() {
+    const id = this.element.querySelector("select[name=gazettePrive]")?.value ?? "";
+    if (id) return tenter(() => api().priverDeVote(id));
+  }
   static #prepVariante(event, cible) {
     const cle = cible.dataset.cle;
     MJ.changerVariante(this.preparation, cle, !MJ.variantesPreparees(this.preparation)[cle]);

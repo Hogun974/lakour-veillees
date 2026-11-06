@@ -9,6 +9,7 @@ import { ALMANACH } from "./tables.mjs";
 import { JOURNAUX_DE_FETE, RESUMES_DE_FETE } from "./fetes.mjs";
 import { FETES_VEILLEES } from "../scripts/fetes.js";
 import { LIVRE_DE_BRUMECOMBE } from "./livre-univers.mjs";
+import { CARTES_DE_LA_GAZETTE, SEANCES_DE_SPIRITISME } from "./gazette.mjs";
 
 const ligne = d => `- **${d.name}** — ${d.__resume}`;
 const rolesDu = camp => ROLES.filter(r => r.system.camp === camp);
@@ -43,7 +44,9 @@ export const AMBIGUS_DU_PACTE = ["chapardeur", "bateleur", "matin", "enfant-des-
 export const SOLITAIRES_DU_PACTE = ["feu-follet", "joueur-de-vielle", "illumine"];
 export const LOUPS_DU_PACTE = ["loup-pale"];
 export const ROLES_DU_PACTE_3B = [...AMBIGUS_DU_PACTE, ...SOLITAIRES_DU_PACTE, ...LOUPS_DU_PACTE];
-export const NOUVEAUX_ROLES = ["loup-des-roseaux", "louvetier", "pecheur-de-nuit", "dame-du-gue", ...ROLES_DU_PACTE, ...ROLES_DU_PACTE_3B];
+// Le Pacte, étape 9 : la Liseuse d'étoiles (le Spiritisme), hors des compositions prêtes (sauf Le Pacte) et de la petite tablée.
+export const ROLES_DU_PACTE_9 = ["liseuse-d-etoiles"];
+export const NOUVEAUX_ROLES = ["loup-des-roseaux", "louvetier", "pecheur-de-nuit", "dame-du-gue", ...ROLES_DU_PACTE, ...ROLES_DU_PACTE_3B, ...ROLES_DU_PACTE_9];
 export const NOUVEAUX_METIERS = ["ramoneuse", "eclusiere"];
 const CAMP_LISIBLE = { meute: "camp de la Meute", village: "camp du Village", solitaire: "solitaire" };
 const ficheDuRole = r => `## ${r.name} (${CAMP_LISIBLE[r.system.camp]})
@@ -62,7 +65,7 @@ const pageDesNouveaux = () => ({
   titre: "Nouveaux visages de la veillée",
   texte: `# Ce que la brume a ramené
 
-Quatre rôles et deux métiers venus des berges de la Brume, et onze gens du village revenus des veillées d'autrefois ; puis neuf autres de ces veillées : cinq visages changeants qui peuvent passer d'un camp à l'autre (le Chapardeur, le Bateleur, l'Enfant des bois, le Mâtin, la Chambrière), trois solitaires (le Feu follet, le Joueur de vielle, l'Illuminé) et un loup qui ne chasse que pour lui (le Loup pâle). Ils ne sont pas dans toutes les compositions, et le narrateur ne dit jamais lesquels sont en jeu : à vous de le deviner (seul le Franc-Villageois se montre de lui-même ; les cartes du Bateleur, le jour qui ouvre la veillée du Feu follet et les deux bords de l'Illuminé s'annoncent aussi).
+Quatre rôles et deux métiers venus des berges de la Brume, et onze gens du village revenus des veillées d'autrefois ; puis neuf autres de ces veillées : cinq visages changeants qui peuvent passer d'un camp à l'autre (le Chapardeur, le Bateleur, l'Enfant des bois, le Mâtin, la Chambrière), trois solitaires (le Feu follet, le Joueur de vielle, l'Illuminé), un loup qui ne chasse que pour lui (le Loup pâle), et la Liseuse d'étoiles, qui fait parler les morts. Ils ne sont pas dans toutes les compositions, et le narrateur ne dit jamais lesquels sont en jeu : à vous de le deviner (seul le Franc-Villageois se montre de lui-même ; les cartes du Bateleur, le jour qui ouvre la veillée du Feu follet et les deux bords de l'Illuminé s'annoncent aussi).
 
 ${[...NOUVEAUX_ROLES.map(c => ficheDuRole(ROLES.find(r => r.system.cle === c))),
   ...NOUVEAUX_METIERS.map(c => ficheDuMetier(METIERS.find(m => m.system.cle === c)))].join("\n\n")}`
@@ -76,11 +79,11 @@ export const ORDRE_D_APPEL = {
     "les amoureux (le système leur souffle leur lien au carnet)", "le Greffier bègue (son signe, ici un pouvoir de jour secret)",
     "les Lavandières", "les Bûcherons", "l'Enfant des bois", "la Gardeuse d'oies (au matin)", "la Pie", "l'Incendiaire", "le Garde du pont",
     "la meute (avec le Mâtin s'il l'a rejointe)", "l'Enfant de la brume", "la Fournière (le système lui souffle ce qu'elle entrevoit)",
-    "la Louve mère", "le Loup affamé", "l'Herboriste", "la Liseuse d'étoiles (plus tard, avec les cartes)", "le Joueur de vielle", "les charmés"],
+    "la Louve mère", "le Loup affamé", "l'Herboriste", "la Liseuse d'étoiles", "le Joueur de vielle", "les charmés"],
   chaque: ["le Bateleur", "la Liseuse de cendres", "le Furet", "la Pie", "l'Incendiaire", "le Garde du pont", "la meute", "l'Enfant de la brume",
     "la Fournière", "le Loup pâle (une nuit sur deux)", "la Louve mère", "le Loup affamé (tant qu'aucun loup n'est mort)", "l'Herboriste",
     "la Liseuse d'étoiles", "le Joueur de vielle", "les charmés"],
-  jour: ["les victimes révélées", "le grognement des oies", "le Spiritisme (plus tard)", "le Crieur public (plus tard)", "le débat",
+  jour: ["les victimes révélées", "le grognement des oies", "la carte de la Gazette de la lune", "le Spiritisme", "le Crieur public", "le débat",
     "le vote, et l'appel à la Chambrière", "le Feu follet (s'il tombe au premier tour)", "le second vote du Greffier bègue"]
 };
 
@@ -770,6 +773,27 @@ Le niveau **Le Pacte** ne tire que les personnages des veillées d'autrefois, sa
 - Ne trahis jamais une envoûtée : une nuit sans mort se raconte comme une nuit de chance.
 - Le mur se lit d'une voix égale, phrase après phrase, sans commentaire.
 - Aux Vendanges, la veillée est une fête : raconte le vin, les chants, les pas qui hésitent — et laisse le sort de la fiole faire rire ou trembler.`
+    },
+    {
+      titre: "Mener la Gazette de la lune",
+      texte: `# Le matin
+
+L'ordre du matin : les victimes de la nuit, les oies, **la carte de la Gazette** (lue par le dernier éliminé), **la séance de Spiritisme** (si la Liseuse d'étoiles l'a demandée), **l'annonce du Crieur public**, puis le débat. La Table attend d'elle-même les réponses du matin (« la Gazette du matin ») : laisse passer avant d'ouvrir le débat.
+
+# Ce que tu fais toi-même
+
+- **Lire une carte** : en mode « le narrateur choisit ses cartes », choisis-la dans l'encart de la Gazette et fais-la lire ; tu peux aussi en lire une de plus quand la veillée s'endort.
+- **Retirer un vote** : sous une carte de conduite (Lune noire, Bonnes manières, Ni loup ni moi), quand quelqu'un enfreint la règle à voix haute. Au chat, le système relève lui-même « loup » et « moi ».
+- **Appliquer la variante d'un jour** (Dimanche de soleil, Fin des vendanges, Lundi gris) : un bouton de l'encart, seulement le jour de la carte.
+- **Élire l'Exécuteur** : le vote s'ouvre de lui-même à la lecture de la carte ; sinon, la Table le propose avant le vote du jour.
+- **Nommer le Crieur public** à la place d'un Bailli absent, et confier ses cartes avant la première nuit (le système les tire sinon).
+
+# Raconter
+
+- Lis la carte d'une voix de gazetier, puis dis ce qu'elle change, simplement. Une permanente se rappelle de temps en temps (le Toucher mortel, l'Exécuteur, l'Enfouissement).
+- Les absents s'en vont vraiment : raconte la musique du bal, les paniers de la cueillette, les cors de la battue.
+- Ne trahis jamais ce que les cartes cachent : le Villageois devenu loup, l'allié du Méchant Benêt, ce que l'Exécuteur a lu, la main du Crieur.
+- Le Spiritisme : une table, une chandelle, la voix du mort qui répond par un seul mot. Le système donne la vraie réponse ; ne la commente pas.`
     }
   ]
 });
@@ -802,6 +826,8 @@ const variantes = journal({
 - **Somnambule** et **Rosière** : rôles « sur demande », jamais tirés d'office ; le narrateur les ajoute à la main.
 - **L'Innocent suit l'Aïeul** (par défaut : non) : si l'Aïeul tombe de la main du village, un Innocent déjà gracié meurt avec lui.
 - **Le Village** (par défaut : non ; case de la préparation) : des personnalités tiennent les bâtiments du village, un pouvoir public en plus de leur rôle (page « Le Village »).
+- **La Gazette de la lune** et **le Crieur public** (par défaut : non ; cases de la préparation) : une carte Événement chaque matin, et une charge qui en garde quelques-unes en main (page « La Gazette de la lune »). Avec la Gazette, pas d'Almanach des brumes.
+- **L'Illuminé : le partage** (par défaut : la rive) : le critère annoncé au début, la rive ou un trait visible des personnages (le genre, l'âge, les lunettes).
 - **Ambiance** : gothique sérieux (par défaut) ou comique.`
     },
     {
@@ -958,6 +984,48 @@ Elle existe déjà (case de la préparation, page « La peste noire » du guide 
 # Les Hameaux
 
 Plusieurs villages qui jouent en même temps, et des joueurs qui passent de l'un à l'autre : pas encore. Chaque monde de Foundry ne mène qu'une veillée à la fois ; le narrateur peut en ouvrir plusieurs, sans passage d'un village à l'autre.`
+    },
+    {
+      titre: "La Gazette de la lune",
+      texte: `# Une carte chaque matin
+
+Avec **La Gazette de la lune** (case de la préparation, réglage du monde), le narrateur mêle trente et une cartes Événement. **Chaque matin sauf le premier**, après l'annonce des morts, la carte du dessus est lue à tous — en ligne, par le **dernier éliminé** (« lue par… ») — et s'applique aussitôt. Le réglage du monde peut n'en faire lire qu'**un matin sur deux** ou **sur trois** ; le narrateur peut aussi **choisir lui-même** ses cartes et les faire lire quand il le veut (Table de jeu), et **poser des cartes permanentes dès le début** (cases de la préparation). Avec la Gazette, pas d'Almanach des brumes : l'un ou l'autre.
+
+Une carte vaut **ce jour** (immédiate ; parfois aussi la nuit qui suit), **la nuit qui vient**, **jusqu'à la fin** (permanente), ou **jusqu'à ce qu'elle serve** (le prochain vote, la prochaine proie). L'encart « La Gazette de la lune » de la Table montre les cartes en jeu.
+
+# Les traits visibles
+
+Beaucoup de cartes parlent de l'allure des gens. Chaque personnage reçoit, à la distribution, des **traits visibles de tous** (sur sa fiche et sa carte de la Table) : **femme ou homme**, **jeune ou vieux** (moitié-moitié autant que possible, avec un âge qui départage « le plus jeune »), et, oui ou non, **lunettes**, **bijou visible**, **sabots**, **coiffe sombre**, **pipe** ; enfin il **habite le bourg** ou **un écart** (les maisons de l'autre rive). Un trait posé à la main sur un villageois (un portrait, un genre choisi) est respecté.
+
+# Les trente et une cartes
+
+${CARTES_DE_LA_GAZETTE.map(([, nom, texte]) => `- **${nom}** — ${texte}`).join("\n")}
+
+# Comment le système les mène
+
+- **Les absents** (le Bal, la Cueillette, le Banquet, la Battue, le Petit Commis) sont réduits au silence pour le débat et ne votent pas ; personne ne peut voter contre eux (sauf le Petit Commis, qui reste candidat). La nuit, un danseur ou un chasseur loup ne chasse pas, et aucun danseur, chasseur ou commis ne peut être dévoré.
+- **La Crue** : « Ouvrir le vote » est refusé ce jour ; la nuit, après la meute, une étape « la seconde proie » propose les joueurs du même refuge que la première.
+- **Le Toucher mortel** : après la meute, une étape « le geste de la meute » : un loup doit désigner de nouveau la proie (en ligne, son geste), sinon elle est épargnée.
+- **Le Retour de flamme** et **le Spectre** se jouent à l'aube : le Villageois devenu loup l'apprend seul ; l'ancien loup désigné par la proie meurt avec la carte de la proie (une mort de la nuit, comme une autre).
+- **La Grande Défiance** : chacun choisit deux amis dans la fenêtre de vote (un second clic retire un ami). **Le Cauchemar** et **les Influences** : un vote à tour de rôle, à découvert ; chacun a le délai des choix, puis son tour passe.
+- **Le Dépit** et **l'Enthousiasme** attendent le prochain éliminé du village ; le second vote s'ouvre de lui-même, sans débat.
+- **Pile ou face** et **le Marché avec le Malin** se jouent juste après le verdict, avant que la carte du condamné soit retournée. Un marché perdu (le camp du marchand a perdu) l'exclut de la partie suivante.
+- **L'Exécuteur** s'élit aussitôt (une voix chacun ; égalité : le sort). Ensuite, la carte d'un condamné n'est plus retournée : elle va au seul carnet de l'Exécuteur.
+- **Le Châtiment** : le dernier éliminé désigne (au délai, le sort) ; un vote de soutiens s'ouvre ; avec moins de deux soutiens, l'accusé tombe. Il peut lancer un appel, annoncé au village.
+- **Le Jour des sots** : les pouvoirs passent d'une carte à l'autre jusqu'au matin (chacun l'apprend dans son carnet) ; les fioles de l'Herboriste suivent son remède. **La Nuit des sots** : les loups lisent chacun un rôle ; la Braconnière, l'Herboriste et la Liseuse de cendres forment la meute de cette nuit.
+- **Le Méchant Benêt** : le premier éliminé est appelé en tout début de nuit ; son allié secret apprend les loups dans son carnet, et gagne avec eux.
+- **Les cartes de conduite** (Lune noire, les Bonnes manières, Ni loup ni moi) : le narrateur retire son vote à qui enfreint la règle (Table de jeu, « Retirer son vote ») ; pour Ni loup ni moi, le système relève lui-même les mots « loup » et « moi » écrits au chat.
+- **Dimanche de soleil, Fin des vendanges, Lundi gris** : le narrateur peut appliquer pour ce seul tour l'Envoûtement, les Vendanges ou la Chaîne des innocents (Table de jeu) ; au matin suivant, la variante s'en va.
+
+# Le Crieur public
+
+Une **charge publique**, en plus de la carte de rôle (case de la préparation). Avant la partie, le narrateur lui confie quelques cartes de la Gazette (réglage du monde : trois par défaut, cinq au plus ; jamais de Spiritisme ; tirées au hasard) ; elles sont **secrètes**, dans son carnet. Le **Bailli le nomme** (jamais lui-même). **Chaque matin dès le lendemain**, on lui demande s'il a une annonce : s'il lit une carte, elle s'applique aussitôt. Après son annonce et avant le vote, le Bailli peut le **révoquer** et en nommer un autre (un pouvoir de jour du Bailli). Élu Bailli, le Crieur transmet sa charge à un autre ; mort, le Bailli désigne son successeur ; un nouveau Bailli garde ou change de Crieur. Avec la Gazette, ses cartes sont retirées du paquet.
+
+# La Liseuse d'étoiles et le Spiritisme
+
+Le narrateur garde **cinq cartes Spiritisme**, hors du paquet de la Gazette. Chaque nuit, la **Liseuse d'étoiles** dit si elle veut s'en servir. Au matin, la carte est lue (ses quatre questions) ; elle en choisit une et désigne le **Spirite**, qui la pose à **l'esprit du premier mort**. En ligne, le système calcule la vraie réponse et l'annonce (« l'esprit répond : oui ») ; un mort humain peut la confirmer, sans mentir. La carte est défaussée. Sans mort encore, l'esprit ne répond pas et la carte reste en main.
+
+${SEANCES_DE_SPIRITISME.map(([nom, questions]) => `- **${nom}** — ${questions.join(" · ")}`).join("\n")}`
     }
   ]
 });

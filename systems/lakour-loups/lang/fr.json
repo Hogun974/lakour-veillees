@@ -40,7 +40,10 @@
       "sagesse": "emporté avec la sagesse de l'Aïeul",
       "rasoir": "victime du rasoir du Perruquier",
       "incendie": "victime de l'incendie",
-      "envoute": "emporté avec une victime envoûtée"
+      "envoute": "emporté avec une victime envoûtée",
+      "foudre": "foudroyé par le Retour de flamme",
+      "chatiment": "victime du Châtiment",
+      "spectre": "emporté par le Spectre"
     },
     "Effets": {
       "aucun": "aucun (arbitré par le narrateur)",
@@ -81,7 +84,8 @@
       "charmer": "charme deux joueurs par nuit",
       "trahir": "une nuit sur deux, peut dévorer un loup",
       "incendier": "une fois par partie, met le feu à un bâtiment du village (Le Village)",
-      "tromperie": "l'Entremetteuse ajoute un amant (les Vendanges)"
+      "tromperie": "l'Entremetteuse ajoute un amant (les Vendanges)",
+      "spiritisme": "Spiritisme : une séance au matin (questions au premier mort)"
     },
     "Victoires": {
       "aucune": "aucune (selon le texte)",
@@ -515,6 +519,33 @@
       "MetiersEnJeu": {
         "Nom": "Métiers",
         "Aide": "Chaque joueur reçoit un métier public en plus de son rôle. Décoché : une partie sans métiers. Au niveau « Le Pacte », jamais de métier."
+      },
+      "Gazette": {
+        "Nom": "La Gazette de la lune (variante)",
+        "Aide": "Les cartes Événement : chaque matin sauf le premier, le dernier éliminé en lit une, qui change la règle. Sans l'Almanach des brumes. Pris en compte à la prochaine distribution."
+      },
+      "GazetteRythme": {
+        "1": "chaque matin",
+        "2": "un matin sur deux",
+        "3": "un matin sur trois",
+        "Nom": "La Gazette : quel matin ?",
+        "Aide": "Une carte chaque matin, un matin sur deux ou un matin sur trois."
+      },
+      "GazetteChoix": {
+        "Nom": "La Gazette : le narrateur choisit ses cartes",
+        "Aide": "Pas de tirage : le narrateur fait lire la carte qu'il veut, quand il le veut (Table de jeu)."
+      },
+      "CrieurPublic": {
+        "Nom": "Le Crieur public (charge)",
+        "Aide": "Le Bailli nomme un Crieur public, à qui le narrateur confie des cartes de la Gazette ; chaque matin, il peut en lire une. Avec ou sans la Gazette."
+      },
+      "CartesDuCrieur": {
+        "Nom": "Le Crieur public : nombre de cartes",
+        "Aide": "Tirées au hasard avant la partie (le livre conseille cinq au plus)."
+      },
+      "PartageIllumine": {
+        "Nom": "L'Illuminé : le partage du village",
+        "Aide": "Le critère qui partage le village en deux groupes, annoncé au début : la rive, ou un trait visible des personnages."
       }
     },
     "Erreurs": {
@@ -634,7 +665,10 @@
         "personne": "Personne ne peut être désigné.",
         "neige": "La neige a recouvert les traces : rien à lire ce matin.",
         "sagesse": "Le village a perdu sa sagesse : ce pouvoir s'est éteint avec l'Aïeul.",
-        "secondVote": "Seulement pendant un vote d'exécution, ou juste après qu'il a désigné un condamné."
+        "secondVote": "Seulement pendant un vote d'exécution, ou juste après qu'il a désigné un condamné.",
+        "crieur": "Il n'y a pas de Crieur public à révoquer.",
+        "annonce": "Attendez l'annonce du Crieur public de ce matin.",
+        "apresVote": "Seulement avant le vote du jour."
       },
       "Remouleur": "{qui} affûte la serrure et le couteau de {nom} : la nuit prochaine, la première attaque de loup contre sa maison échouera.",
       "Ours": "{qui} installe sa marmotte sur le seuil de {nom} : elle sifflera à la moindre ombre, et la nuit prochaine la meute n'osera pas y entrer.",
@@ -650,7 +684,8 @@
       "Regent": "{qui}, le Régent, met au coin {noms} : ils ne voteront pas aujourd'hui.",
       "Rasoir": "{qui}, le Perruquier, ouvre son rasoir sur {nom}.",
       "RasoirLoup": "{nom} était un loup : le village félicite {qui}.",
-      "RasoirInnocent": "{nom} n'était pas un loup : {qui} paie sa méprise de sa vie."
+      "RasoirInnocent": "{nom} n'était pas un loup : {qui} paie sa méprise de sa vie.",
+      "CrieurRevoque": "{qui}, le Bailli, révoque {ancien} : {nom} devient Crieur public."
     },
     "Plateau": {
       "ChoisisSurLaCarte": "À toi : choisis sur la carte (clique sur un jeton allumé), puis « Valider » dans le bandeau."
@@ -759,7 +794,8 @@
         "sansSecrets": "Ce navigateur n'a pas les secrets de la nuit.",
         "bancVide": "(Personne n'est accusé : attendez les accusations du débat, ou laissez tomber la nuit.)",
         "emporterDemande": "{nom} choisit en ce moment qui il emporte ; vous pouvez trancher à sa place.",
-        "chaine": "La Chaîne des innocents : à {nom} de désigner un innocent ; la clôture attend le dernier debout."
+        "chaine": "La Chaîne des innocents : à {nom} de désigner un innocent ; la clôture attend le dernier debout.",
+        "inondation": "(La Crue : pas de vote aujourd'hui ; laissez tomber la nuit.)"
       },
       "LaPeste": "la peste",
       "bailli": "Élire le Bailli",
@@ -768,7 +804,8 @@
       "LeDeuil": "la meute en deuil",
       "juger": "Juger l'accusé : {nom}",
       "LesCharmes": "les charmés",
-      "LeMur": "le Mur des murmures (tous les vivants)"
+      "LeMur": "le Mur des murmures (tous les vivants)",
+      "executeur": "Élire l'Exécuteur"
     },
     "Preparation": {
       "Titre": "Préparer la partie",
@@ -816,7 +853,12 @@
         "Aide": "Aucun : une partie simple, avec les seuls personnages (rien ne dépend des bâtiments, les repères de la carte restent inertes). Tirés : ceux de la composition. Choisis : cochez ceux de la veillée."
       },
       "Metiers": "Métiers",
-      "MetiersAide": "Décochez pour une partie sans métiers (chacun n'a que son rôle)."
+      "MetiersAide": "Décochez pour une partie sans métiers (chacun n'a que son rôle).",
+      "Gazette": "La Gazette de la lune",
+      "GazetteAide": "Une carte Événement chaque matin sauf le premier (rythme et choix des cartes : réglages du monde). Sans l'Almanach.",
+      "Crieur": "Le Crieur public",
+      "CrieurAide": "Une charge nommée par le Bailli, avec des cartes de la Gazette en main.",
+      "Permanentes": "Cartes permanentes posées dès le début :"
     },
     "Recit": {
       "Titre": "Le récit de la veillée",
@@ -940,7 +982,9 @@
         "execution": "vote d'exécution",
         "chapelle": "vote de la Chapelle",
         "bailli": "élection du Bailli",
-        "exil": "vote d'exil"
+        "exil": "vote d'exil",
+        "executeur": "élection de l'Exécuteur",
+        "chatiment": "Châtiment"
       },
       "Mort": "Tour {tour} — mort de {nom} : {cause}.",
       "Bailli": {
@@ -950,7 +994,8 @@
         "nomme": "Tour {tour} — le narrateur nomme {nom} Bailli.",
         "vacance": "Tour {tour} — la charge de Bailli est vacante.",
         "abolie": "Tour {tour} — {de}, gracié, perd la charge de Bailli : Brumecombe n'aura plus de Bailli.",
-        "metayers": "Tour {tour} — {de}, le dernier Métayer, est mort : Brumecombe n'aura plus de Bailli."
+        "metayers": "Tour {tour} — {de}, le dernier Métayer, est mort : Brumecombe n'aura plus de Bailli.",
+        "destitue": "Tour {tour} — le Bailli {de} est destitué (la Saint-Vincent)."
       },
       "Declaration": "Tour {tour} — {nom} déclare : « {texte} »",
       "Refus": {
@@ -1010,6 +1055,16 @@
         "chandelles": "Nuit {tour} : les chandelles de {noms} se sont éteintes ensemble ; la meute n'a pas eu de victime.",
         "envoutement": "Jour {tour} : {nom}, condamné, était envoûté ; {noms} tombent avec lui.",
         "bailli": "Jour {tour} : le Bailli {nom} vote le premier, à découvert ({noms})."
+      },
+      "Gazette": {
+        "carte": "Tour {tour} — {nom} lit une carte de la Gazette : {carte}.",
+        "crieur": "Tour {tour} — {nom} devient Crieur public.",
+        "crieur-garde": "Tour {tour} — {nom} reste Crieur public.",
+        "executeur": "Tour {tour} — {nom} devient Exécuteur.",
+        "revenante": "Tour {tour} — {nom} revient parmi les vivants, en simple Villageois.",
+        "marche": "Tour {tour} — {nom} passe un marché avec le Malin.",
+        "prive": "Tour {tour} — {nom} perd son vote pour la journée.",
+        "reponse": "Tour {tour} — séance de Spiritisme ({carte}) : {nom} interroge l'esprit, qui répond {reponse}."
       }
     },
     "Masques": {
@@ -1323,7 +1378,10 @@
       "Groupes": "Le village se partage en deux bords, {critere} : d'un côté {a} ; de l'autre {b}.",
       "Critere": {
         "rive": "selon la rive où chacun dort (le bourg et l'autre rive)",
-        "parite": "selon le numéro de sa maison (impair ou pair)"
+        "parite": "selon le numéro de sa maison (impair ou pair)",
+        "genre": "selon le genre (les femmes et les hommes)",
+        "age": "selon l'âge (les jeunes et les vieux)",
+        "lunettes": "selon les lunettes (sans et avec)"
       },
       "ChambriereInvite": "Le village a condamné {noms}. Avant qu'on retourne sa carte, veux-tu te dévouer ? Désigne-le pour prendre sa carte (et ton secret sera dévoilé), ou passe.",
       "Devouement": "Avant qu'on retourne la carte de {de}, {nom} se dévoile : c'était la Chambrière. Elle prend la carte du condamné sans la montrer, et en tiendra le rôle jusqu'à la fin.",
@@ -1504,6 +1562,392 @@
       "Jour": "Votre pouvoir de jour :",
       "Personnalite": "Votre personnalité (connue de tous) : {personnalite}",
       "Relire": "Cette explication reste dans votre carnet secret : rouvrez-le à tout moment (bouton « Carnet secret » de la Table de jeu)."
+    },
+    "Gazette": {
+      "Titre": "La Gazette de la lune",
+      "Cartes": {
+        "somnambule": {
+          "Nom": "Somnambule",
+          "Effet": "Désormais, chaque matin, le narrateur dit à tous le rôle que la Liseuse de cendres a lu dans la nuit, sans dire sur qui."
+        },
+        "inondation": {
+          "Nom": "La Crue",
+          "Effet": "Le village est sous l'eau : les femmes se réfugient au prieuré, les hommes au cabaret. Pas de vote aujourd'hui. La nuit qui vient, la meute frappe dans un seul des deux refuges et peut y faire deux victimes. (Seulement s'il reste au moins six vivants.)"
+        },
+        "marche-du-malin": {
+          "Nom": "Marché avec le Malin",
+          "Effet": "Aujourd'hui, juste après le verdict, chaque condamné peut passer un marché : il n'est pas éliminé par ce vote. S'il finit dans le camp perdant, il ne sera pas de la partie suivante."
+        },
+        "lune-noire": {
+          "Nom": "Lune noire",
+          "Effet": "Le village boude : on débat sans se regarder (caméras coupées, ou en texte seul) ; qui se tourne vers les autres perd son vote aujourd'hui. On se regarde de nouveau pour voter."
+        },
+        "bal-du-samedi": {
+          "Nom": "Bal du samedi",
+          "Effet": "La moitié la plus jeune du village part danser : les danseurs ne débattent ni ne votent, et personne ne peut voter contre eux. La nuit qui vient, un danseur loup ne chasse pas, et aucun danseur ne peut être dévoré."
+        },
+        "cueillette": {
+          "Nom": "Cueillette en forêt",
+          "Effet": "Les femmes partent cueillir pour l'Herboriste jusqu'au soir : elles ne débattent ni ne votent, et personne ne peut voter contre elles. À leur retour, l'Herboriste remplit une fiole déjà vide."
+        },
+        "dimanche-de-soleil": {
+          "Nom": "Dimanche de soleil",
+          "Effet": "Rien de particulier… sauf si le narrateur décide d'appliquer L'Envoûtement pour ce seul tour."
+        },
+        "pile-ou-face": {
+          "Nom": "Pile ou face",
+          "Effet": "Aujourd'hui, juste après le verdict, on lance une pièce pour chaque condamné : pile, il est gracié ; face, il est éliminé."
+        },
+        "saint-vincent": {
+          "Nom": "La Saint-Vincent",
+          "Effet": "Le village veut un vrai chef : le Bailli en place est destitué, et un nouveau Bailli est élu aujourd'hui."
+        },
+        "revenante": {
+          "Nom": "Revenue d'entre les vivants",
+          "Effet": "La dernière victime de la meute n'était qu'évanouie : elle revient aussitôt parmi les vivants, mais en simple Villageois."
+        },
+        "bonnes-manieres": {
+          "Nom": "Les Bonnes manières",
+          "Effet": "Interdit de couper la parole : chacun parle à son tour, sous l'œil du narrateur ; qui l'enfreint perd son vote aujourd'hui."
+        },
+        "toucher-mortel": {
+          "Nom": "Le Toucher mortel",
+          "Effet": "Désormais, pour dévorer sa proie, la meute doit aussi la marquer : après son choix, un loup la désigne une seconde fois ; sinon, elle est épargnée."
+        },
+        "jour-des-sots": {
+          "Nom": "Le Jour des sots",
+          "Effet": "Jusqu'au matin, certains échangent leur pouvoir : l'Herboriste et la Liseuse de cendres, la Braconnière et l'Enfant de la brume, le Garde du pont et l'Aïeul. Les amoureux se détestent : chacun doit voter contre l'autre ; si l'un meurt d'ici au matin, l'autre survit."
+        },
+        "fin-des-vendanges": {
+          "Nom": "Fin des vendanges",
+          "Effet": "Rien de particulier… sauf si le narrateur décide d'appliquer Les Vendanges pour ce seul tour."
+        },
+        "petit-commis": {
+          "Nom": "Le Petit Commis",
+          "Effet": "Le plus jeune part chercher de l'aide au village voisin : aujourd'hui il ne débat ni ne vote, et la nuit qui vient il ne peut pas être dévoré. Rentré au matin, sa voix compte triple au vote du jour."
+        },
+        "retour-de-flamme": {
+          "Nom": "Retour de flamme",
+          "Effet": "La nuit qui vient, si la meute désigne un simple Villageois, il ne meurt pas : il devient loup. Si elle désigne quelqu'un d'autre, sa proie survit et le premier loup à sa gauche est foudroyé. Si la meute ne s'accorde pas, personne ne meurt."
+        },
+        "grande-defiance": {
+          "Nom": "La Grande Défiance",
+          "Effet": "Le vote du jour change : chacun donne deux voix à ses deux amis préférés, tous en même temps ; ceux qui n'en reçoivent aucune sont éliminés."
+        },
+        "banquet-des-veterans": {
+          "Nom": "Le Banquet des vétérans",
+          "Effet": "La moitié la plus âgée du village part festoyer jusqu'au soir : les vétérans ne débattent ni ne votent, et personne ne peut voter contre eux."
+        },
+        "depit": {
+          "Nom": "Le Dépit",
+          "Effet": "Si le prochain éliminé par le village n'est pas un loup, le village revote aussitôt, sans débat, pour éliminer un second suspect."
+        },
+        "executeur": {
+          "Nom": "L'Exécuteur",
+          "Effet": "Le village élit un Exécuteur. Désormais, lui seul apprend le rôle des condamnés du vote, qui ne sont plus montrés à personne ; libre à lui d'en parler. S'il meurt, il désigne son successeur."
+        },
+        "influences": {
+          "Nom": "Les Influences",
+          "Effet": "Le prochain vote se fait à tour de rôle et à découvert : le dernier éliminé choisit le premier votant, puis chacun vote à son tour vers la gauche, sans pouvoir se reprendre. On compte comme d'habitude."
+        },
+        "nuit-des-sots": {
+          "Nom": "La Nuit des sots",
+          "Effet": "La nuit qui vient, les loups deviennent liseuses : chacun lit le rôle d'un joueur. La Braconnière, l'Herboriste et la Liseuse de cendres deviennent loups : ensemble, ils éliminent un joueur. Au matin, tout redevient normal."
+        },
+        "chatiment": {
+          "Nom": "Le Châtiment",
+          "Effet": "Le dernier éliminé désigne un joueur : celui-ci est éliminé, sauf si au moins deux joueurs témoignent pour lui. S'ils tardent, l'accusé peut lancer un appel."
+        },
+        "battue": {
+          "Nom": "La Battue",
+          "Effet": "Les hommes partent chasser jusqu'à l'aube : ils ne débattent ni ne votent, et personne ne peut voter contre eux. La nuit qui vient, un chasseur loup ne dévore pas, et aucun chasseur ne peut être dévoré."
+        },
+        "enthousiasme": {
+          "Nom": "L'Enthousiasme",
+          "Effet": "Si le prochain éliminé par le village est un loup, le village revote aussitôt, sans débat, pour éliminer un second suspect."
+        },
+        "enfouissement": {
+          "Nom": "L'Enfouissement",
+          "Effet": "Désormais, le rôle des victimes de la meute n'est plus jamais montré."
+        },
+        "mechant-benet": {
+          "Nom": "Le Méchant Benêt",
+          "Effet": "La nuit qui vient, le premier éliminé de la partie désigne un joueur qui n'est pas loup : celui-ci apprend qui sont les loups et devient leur allié secret. Il reste du Village, ne se réveille pas avec eux, et gagne s'ils gagnent."
+        },
+        "ni-loup-ni-moi": {
+          "Nom": "Ni loup ni moi",
+          "Effet": "Par superstition, interdit de dire « loup » et « moi » aujourd'hui (au chat, le système le relève ; à voix haute, le narrateur) : qui les dit perd son vote."
+        },
+        "lundi-gris": {
+          "Nom": "Lundi gris",
+          "Effet": "Rien de particulier… sauf si le narrateur décide d'appliquer La Chaîne des innocents pour ce seul tour."
+        },
+        "spectre": {
+          "Nom": "Le Spectre",
+          "Effet": "La prochaine proie de la meute ne meurt pas : elle devient loup et désigne un des anciens loups, qui meurt aussitôt à sa place, avec la carte qu'avait la proie."
+        },
+        "cauchemar": {
+          "Nom": "Le Cauchemar",
+          "Effet": "Au réveil, pas de débat : en partant de la gauche du dernier éliminé, chacun à son tour accuse un villageois ; le ou les plus cités sont éliminés. C'est le vote du jour."
+        }
+      },
+      "Seances": {
+        "seance-1": "Séance I",
+        "seance-2": "Séance II",
+        "seance-3": "Séance III",
+        "seance-4": "Séance IV",
+        "seance-5": "Séance V"
+      },
+      "Questions": {
+        "meme-camp": "Les deux joueurs que je désigne sont-ils du même camp ?",
+        "loup-lunettes": "Un loup au moins porte-t-il des lunettes ?",
+        "herboriste-homme": "L'Herboriste est-elle un homme ?",
+        "bailli-villageois": "Le Bailli est-il un simple Villageois ?",
+        "loup-homme": "Un des loups est-il un homme ?",
+        "loup-femme": "Un des loups est-il une femme ?",
+        "voisin-loup": "Un des deux voisins du joueur que je désigne est-il loup ?",
+        "designe-villageois": "Le joueur que je désigne est-il un simple Villageois ?",
+        "suis-je-villageois": "Suis-je un simple Villageois ?",
+        "loup-bailli": "Un des loups est-il le Bailli ?",
+        "loup-bourg": "Un des loups habite-t-il le bourg (et non un écart) ?",
+        "loup-pipe": "Un des loups fume-t-il la pipe ?",
+        "liseuse-a-vu-loup": "La Liseuse de cendres a-t-elle découvert au moins un loup ?",
+        "loups-voisins": "Des loups sont-ils voisins ?",
+        "loup-bijou": "Un loup porte-t-il au moins un bijou visible ?",
+        "suis-je-loup": "Suis-je un loup ?",
+        "loup-sabots": "Un des loups porte-t-il des sabots ?",
+        "loup-coiffe": "Un des loups porte-t-il une coiffe sombre ?",
+        "loups-hommes": "Les loups en vie sont-ils tous des hommes ?",
+        "loups-femmes": "Les loups en vie sont-ils tous des femmes ?"
+      },
+      "Oui": "oui",
+      "Non": "non",
+      "Lue": "La Gazette de la lune, lue par {lecteur} — {nom} : {effet}",
+      "LueParLeCrieur": "Le Crieur public {lecteur} fait une annonce — {nom} : {effet}",
+      "PoseeDesLeDebut": "La Gazette de la lune, posée dès le début par {lecteur} — {nom} : {effet}",
+      "Annonce": "La Gazette de la lune est de la veillée : chaque matin sauf le premier (un matin sur {n}), le dernier éliminé en lit une carte, qui s'applique aussitôt.",
+      "AnnonceChoix": "La Gazette de la lune est de la veillée : le narrateur choisit ses cartes et les fait lire quand il le veut.",
+      "PaquetVide": "La Gazette de la lune n'a plus de carte à lire.",
+      "SansEffet": "Il reste moins de {n} vivants : la carte reste sans effet.",
+      "Refuges": "Au prieuré : {femmes}. Au cabaret : {hommes}.",
+      "Absents": "Partis pour la journée : {noms}.",
+      "Commis": {
+        "Retour": "{nom} revient du village voisin : sa voix compte {n} fois au vote d'aujourd'hui."
+      },
+      "SansBailli": "Brumecombe n'a pas de Bailli dans cette veillée : la fête passe sans changer personne.",
+      "Destitue": "Le Bailli {nom} est destitué : le village élira aujourd'hui un nouveau Bailli.",
+      "PersonneARevenir": "La meute n'a fait aucune victime : personne ne revient.",
+      "PersonnePourChatier": "Personne n'est encore tombé : la carte reste sans effet.",
+      "SotsPouvoir": "Le Jour des sots : jusqu'au matin, vous avez le pouvoir de la carte « {role} » (votre carte reste la vôtre).",
+      "Fiole": {
+        "remede": "La cueillette vous rapporte de quoi remplir votre fiole de remède.",
+        "poison": "La cueillette vous rapporte de quoi remplir votre fiole de poison."
+      },
+      "Revenante": "{nom} n'était qu'évanouie : elle revient parmi les vivants, en simple Villageois.",
+      "Nuit": {
+        "PasTouchee": "Aucun loup n'a marqué {nom} : la proie est épargnée.",
+        "Desaccord": "La meute ne s'est pas accordée : aucune victime cette nuit."
+      },
+      "Etapes": {
+        "Noms": {
+          "toucher": "le geste de la meute (Toucher mortel)",
+          "crue": "la seconde proie (la Crue)",
+          "spectre": "la proie (le Spectre)",
+          "benet": "le premier éliminé (le Méchant Benêt)",
+          "sots-voyance": "les loups devenus liseuses (Nuit des sots)",
+          "matin": "la Gazette du matin"
+        },
+        "Invite": {
+          "toucher": "Le Toucher mortel : un loup doit marquer la proie ({nom}) pour la dévorer. Désignez-la de nouveau, ou elle est épargnée.",
+          "crue": "La Crue : une seconde proie dans le même refuge que {nom} ?",
+          "spectre": "Le Spectre : vous ouvrez les yeux, vous devenez loup. Désignez l'ancien loup qui mourra à votre place.",
+          "benet": "Le Méchant Benêt : désignez un joueur qui n'est pas loup ; il deviendra l'allié secret de la meute.",
+          "sots-voyance": "La Nuit des sots : vous êtes liseuse cette nuit. De quel joueur lisez-vous le rôle ?"
+        }
+      },
+      "Chatiment": {
+        "Invite": "Le Châtiment : désignez le joueur que le village doit punir.",
+        "Designe": "Le Châtiment : {qui} désigne {nom}. Qu'au moins deux joueurs témoignent pour lui, ou il sera éliminé.",
+        "Sort": "Le Châtiment : {qui} n'a désigné personne ; le sort désigne {nom}. Qu'au moins deux joueurs témoignent pour lui, ou il sera éliminé.",
+        "InviteAppel": "Le Châtiment : lancer un appel au village ? (vous désigner, c'est appeler)",
+        "Appel": "{nom} lance un appel : qui témoignera pour moi ?",
+        "InviteVote": "Le Châtiment : témoignez pour {nom} (désignez-le) ; ne rien choisir, c'est se taire.",
+        "Journal": "Le Châtiment : le village témoigne.",
+        "Condamne": "Le Châtiment : {n} témoignage(s) pour {nom}, ce n'est pas assez ; {nom} est éliminé.",
+        "Epargne": "Le Châtiment : {n} joueurs témoignent pour {nom}, qui est épargné."
+      },
+      "Suite": {
+        "PasTonTour": "Ce vote se fait à tour de rôle : c'est à {nom}.",
+        "Designe": "{qui} désigne {nom}.",
+        "Passe": "{qui} ne désigne personne.",
+        "AToi": "À {nom} de voter.",
+        "ACauchemar": "À {nom} d'accuser un villageois.",
+        "InviteCauchemar": "Le Cauchemar : accusez un villageois.",
+        "OuvertureCauchemar": "Le Cauchemar : pas de débat ; chacun à son tour, vers la gauche, accuse un villageois. Le ou les plus cités seront éliminés.",
+        "OuvertureInfluences": "Les Influences : le vote se fait à tour de rôle, à découvert ; le dernier éliminé choisit qui vote le premier.",
+        "Cites": "Les plus cités : {noms}.",
+        "Fenetre": "Vote à tour de rôle : c'est à {nom}."
+      },
+      "Influences": {
+        "Invite": "Les Influences : qui votera le premier ?",
+        "Premier": "Les Influences : {qui} choisit {nom} pour voter le premier ; puis chacun à sa gauche."
+      },
+      "Defiance": {
+        "Invite": "La Grande Défiance : donnez vos deux voix à vos deux amis préférés.",
+        "Soi": "La Grande Défiance : on ne se désigne pas soi-même.",
+        "Deux": "La Grande Défiance : deux amis, pas plus (désignez de nouveau un ami pour le retirer).",
+        "Ouverture": "La Grande Défiance : chacun donne deux voix à deux amis ; ceux qui n'en reçoivent aucune seront éliminés.",
+        "SansVoix": "La Grande Défiance : sans aucune voix, {noms} sont éliminés.",
+        "Personne": "La Grande Défiance : chacun a reçu au moins une voix ; personne n'est éliminé.",
+        "Fenetre": "La Grande Défiance : choisissez deux amis (un second clic retire un ami)."
+      },
+      "Crieur": {
+        "Titre": "Le Crieur public",
+        "Invite": {
+          "nommer": "Nommez le Crieur public (jamais vous-même).",
+          "transmettre": "Vous êtes Bailli : transmettez votre charge de Crieur public à un autre.",
+          "garder": "Gardez-vous {nom} comme Crieur public ? (le désigner, c'est le garder ; un autre, c'est le remplacer)"
+        },
+        "Nomme": "Le Bailli {qui} nomme {nom} Crieur public.",
+        "Transmis": "{qui}, devenu Bailli, transmet sa charge de Crieur public à {nom}.",
+        "Garde": "Le Bailli {qui} garde {nom} comme Crieur public.",
+        "Sort": "Le Bailli {qui} n'a désigné personne : le sort fait de {nom} le Crieur public.",
+        "NommeParLeNarrateur": "Le narrateur nomme {nom} Crieur public.",
+        "Main": "Les cartes de votre charge (secrètes) : {cartes}. Chaque matin, on vous demandera si vous avez une annonce.",
+        "MainVide": "Votre charge de Crieur public n'a plus de carte à annoncer.",
+        "InviteAnnonce": "Crieur public : avez-vous une annonce ce matin ? Choisissez une carte, ou passez.",
+        "Rien": "Le Crieur public {nom} n'a rien à annoncer ce matin.",
+        "Annonce": "Le Crieur public est de la veillée : le Bailli le nommera ; le narrateur lui a confié {n} carte(s) de la Gazette.",
+        "NoteMain": "Les cartes confiées au Crieur public : {cartes}."
+      },
+      "Spiritisme": {
+        "SansMort": "Le Spiritisme : aucun esprit à interroger encore ; la carte reste dans la main du narrateur.",
+        "Carte": "Séance de Spiritisme ({nom}) : la Liseuse d'étoiles {liseuse} interroge l'esprit de {mort}. Les questions : {questions}",
+        "InviteQuestion": "Le Spiritisme : quelle question l'esprit doit-il entendre ?",
+        "InviteSpirite": "Le Spiritisme : qui sera le Spirite, qui pose la question ?",
+        "InviteDesigner": "Le Spiritisme : désignez {n} joueur(s) pour la question « {question} »",
+        "Designes": " (désignés : {noms})",
+        "Reponse": "{spirite} demande à l'esprit de {mort} : « {question} »{designes} — l'esprit répond : {reponse}.",
+        "ReponseHumain": "{spirite} demande à l'esprit de {mort} : « {question} »{designes} — l'esprit répond : {reponse}. ({mort} peut le confirmer, sans mentir.)"
+      },
+      "Sots": {
+        "Rendu": "Le jour se lève : vous retrouvez votre propre pouvoir.",
+        "VoteImpose": "Le Jour des sots : vous devez voter contre {nom}."
+      },
+      "Variante": {
+        "Appliquee": "Le narrateur applique {nom} pour ce tour.",
+        "Levee": "{nom} ne vaut plus : le tour est passé."
+      },
+      "Somnambule": {
+        "Matin": "La Somnambule a parlé en dormant : cette nuit, la Liseuse de cendres a lu « {roles} ».",
+        "Rien": "La Somnambule a dormi d'un sommeil sans rêve : la Liseuse de cendres n'a rien lu cette nuit."
+      },
+      "PileOuFace": {
+        "Pile": "Pile ou face pour {nom} : pile ! {nom} est gracié.",
+        "Face": "Pile ou face pour {nom} : face. La sentence tombe."
+      },
+      "Marche": {
+        "Invite": "Marché avec le Malin : passer le marché pour échapper à ce vote ? (vous désigner, c'est accepter) Si votre camp perd, vous ne serez pas de la partie suivante.",
+        "Accepte": "{nom} passe un marché avec le Malin : ce vote ne l'élimine pas.",
+        "Exclus": "Le Malin réclame son dû : {noms} ne seront pas de la prochaine partie.",
+        "Absents": "Le Malin a pris son dû : {noms} ne sont pas de cette partie."
+      },
+      "Executeur": {
+        "Titre": "Exécuteur",
+        "Carnet": "Vous seul le savez : {nom} était {role}.",
+        "InviteSuccession": "Vous étiez l'Exécuteur : désignez votre successeur.",
+        "Successeur": "{de}, l'Exécuteur, désigne {nom} pour lui succéder.",
+        "SuccesseurSort": "{de}, l'Exécuteur, n'a désigné personne : le sort fait de {nom} l'Exécuteur.",
+        "InviteVote": "Qui sera l'Exécuteur ?",
+        "Journal": "Le village élit son Exécuteur.",
+        "Ouverture": "Le village élit son Exécuteur : une voix chacun.",
+        "Elu": "{nom} est élu Exécuteur : désormais, lui seul apprend le rôle des condamnés.",
+        "EluSort": "Égalité : le sort fait de {nom} l'Exécuteur.",
+        "Personne": "Personne n'est élu Exécuteur aujourd'hui."
+      },
+      "Revote": {
+        "depit": "Le Dépit : {nom} n'était pas un loup. Le village revote aussitôt, sans débat.",
+        "enthousiasme": "L'Enthousiasme : {nom} était un loup ! Le village revote aussitôt, sans débat."
+      },
+      "Benet": {
+        "Note": "Le Méchant Benêt : {qui} désigne {nom}, désormais allié secret de la meute.",
+        "Carnet": "Vous ouvrez les yeux : les loups sont {noms}. Vous voilà leur allié secret ; vous restez du Village, et vous gagnez s'ils gagnent.",
+        "Gagne": "Le Méchant Benêt : {noms}, allié secret de la meute, gagne avec elle.",
+        "Perd": "Le Méchant Benêt : {noms} était l'allié secret de la meute."
+      },
+      "Retour": {
+        "Loup": "Retour de flamme : la meute vous a choisi, mais vous ne mourez pas. Vous devenez loup : votre carte est désormais celle d'un Loup de Brumecombe.",
+        "NoteLoup": "Retour de flamme : {nom}, simple Villageois, devient loup.",
+        "NoteFoudre": "Retour de flamme : {nom} survit ; {loup}, le premier loup à sa gauche, est foudroyé."
+      },
+      "Spectre": {
+        "Carnet": "Le Spectre : vous êtes loup, avec la carte de {nom}, qui meurt à votre place.",
+        "Note": "Le Spectre : {nom} devient loup ; {loup} meurt avec l'ancienne carte de {nom}."
+      },
+      "Conduite": {
+        "Prive": "Le narrateur retire son vote à {nom} pour aujourd'hui.",
+        "Mot": "{nom} a dit « {mot} » : son vote lui est retiré pour aujourd'hui."
+      },
+      "Pouvoirs": {
+        "crieur-public": {
+          "Nom": "Révoquer le Crieur public",
+          "Aide": "Après l'annonce du Crieur et avant le vote, le Bailli peut le révoquer et nommer un autre Crieur public (jamais lui-même)."
+        }
+      },
+      "Refus": {
+        "inondation": "La Crue : pas de vote aujourd'hui.",
+        "executeur": "L'élection de l'Exécuteur n'est pas due.",
+        "chatiment": "Le Châtiment juge un seul accusé.",
+        "carte": "Carte inconnue : {cle}.",
+        "moment": "Une carte se lit le matin ou pendant le débat.",
+        "conduite": "Aucune carte de conduite ne vaut aujourd'hui.",
+        "variante": "Aucune variante à appliquer pour ce tour.",
+        "crieur": "Pas de Crieur public dans cette veillée.",
+        "avant": "Les cartes du Crieur se confient avant la première nuit.",
+        "nommer": "{nom} ne peut pas être nommé Crieur public."
+      },
+      "Table": {
+        "EnJeu": "Cartes en jeu : {noms}",
+        "Derniere": "Dernière carte : {nom}, lue par {lecteur} — {effet}",
+        "Restantes": "{n} carte(s) au paquet",
+        "CrieurLigne": "Crieur public : {nom} ({n} carte(s) en main)",
+        "CrieurAttente": "Crieur public : pas encore nommé ({n} carte(s))",
+        "ExecuteurLigne": "Exécuteur : {nom}",
+        "ExecuteurAttendu": "Exécuteur : à élire",
+        "Seances": "Cartes Spiritisme du narrateur : {n}",
+        "Reponse": "Dernière séance : « {question} » — {reponse}",
+        "Main": "Main du Crieur (secret) : {cartes}",
+        "Paquet": "Paquet (secret, le dessus d'abord) : {cartes}",
+        "Lire": "Lire la carte",
+        "Priver": "Retirer son vote",
+        "PriverAide": "Une carte de conduite vaut aujourd'hui : retirez son vote à qui enfreint la règle.",
+        "Variante": "Appliquer {nom} pour ce tour",
+        "ElireExecuteur": "Élire l'Exécuteur",
+        "Crieur": "Crieur public",
+        "Absent": "Absent aujourd'hui",
+        "Prive": "Sans vote aujourd'hui",
+        "Danseur": "Ne peut pas être visé par le vote"
+      }
+    },
+    "Traits": {
+      "Titre": "Traits visibles",
+      "Aide": "Tirés à la distribution, vus de tous : les cartes de la Gazette de la lune et le Spiritisme les lisent.",
+      "Genre": {
+        "femme": "femme",
+        "homme": "homme"
+      },
+      "Age": {
+        "jeune": "jeune ({ans} ans)",
+        "vieux": "vieux ({ans} ans)"
+      },
+      "lunettes": "lunettes",
+      "bijou": "bijou visible",
+      "sabots": "sabots",
+      "coiffe": "coiffe sombre",
+      "pipe": "pipe",
+      "Bourg": "habite le bourg",
+      "Ecart": "habite un écart",
+      "Annonce": "Les traits de chacun, vus de tous : {liste}."
     }
   }
 }

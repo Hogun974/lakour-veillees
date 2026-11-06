@@ -7,7 +7,7 @@
   "system": {
     "cle": "illumine",
     "camp": "solitaire",
-    "description": "<p>Tu as vu la lumière, et elle t'a dit que la moitié du village était maudite.</p><p>Avant la partie, le narrateur partage le village <strong>en deux groupes</strong>, selon un critère que tout le monde voit (à Brumecombe : la rive où chacun dort), et l'annonce à tous. Tu appartiens à l'un d'eux.</p><p>Tu n'as aucun pouvoir de nuit : ta parole et ton vote suffisent. Si la Louve mère te mord, tu deviens un simple loup et tu oublies ton but.</p>",
+    "description": "<p>Tu as vu la lumière, et elle t'a dit que la moitié du village était maudite.</p><p>Avant la partie, le narrateur partage le village <strong>en deux groupes</strong>, selon un critère que tout le monde voit (à Brumecombe : la rive où chacun dort, ou, s'il le décide, un trait visible des personnages : le genre, l'âge, les lunettes), et l'annonce à tous. Tu appartiens à l'un d'eux.</p><p>Tu n'as aucun pouvoir de nuit : ta parole et ton vote suffisent. Si la Louve mère te mord, tu deviens un simple loup et tu oublies ton but.</p>",
     "victoire": "<p>Tu gagnes <strong>seul</strong>, vivant, dès que <strong>tous les joueurs de l'autre groupe</strong> sont éliminés.</p>",
     "nuit": {
       "actif": false,

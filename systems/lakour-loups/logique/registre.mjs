@@ -34,7 +34,7 @@ export const TAILLE_DU_REGISTRE = 300;
 export const PHASES_DECLARATION = ["aube", "jour", "vote"];
 // Le Pacte, étape 5 (variantes.mjs) : « variante » — { quoi: "chandelles" | "mur" | "envoutement" | "fiole" | "bailli", ids?, acteurId? } ;
 // un vote de la Chaîne des innocents porte chaine ({ assis: [{ id, par, hasard? }], condamne }).
-export const TYPES_DU_REGISTRE = ["vote", "mort", "bailli", "declaration", "passage", "accusation", "deuil", "fete", "vacance", "pacte", "village", "variante"];
+export const TYPES_DU_REGISTRE = ["vote", "mort", "bailli", "declaration", "passage", "accusation", "deuil", "fete", "vacance", "pacte", "village", "variante", "gazette"];
 
 // Inscrit une entrée (etat déjà normalisé, modifié sur place). Une mort n'y entre qu'avec sa cause publique.
 export function inscrire(etat, entree, quand = Date.now()) {

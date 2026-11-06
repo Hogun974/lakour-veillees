@@ -16,8 +16,8 @@ classique avec ses extensions (personnages, bâtiments du village, événements 
 - **tout rééquilibré**, mesuré par simulation et non plus seulement par poids posés à la main ;
 - ensuite, musiques par ComfyStudio pour les modules et mondes (contenu IA : version interne Forgejo seulement).
 
-Les 36 cartes Événement de nouvelle lune et les cartes Spiritisme attendent les photos de Jordan : leurs effets seront repris à
-l'identique avec nos propres textes. Le cadre (tirage, effets immédiats / différés / permanents) se construit avant.
+Les cartes Événement de nouvelle lune (31, plus 5 cartes Spiritisme) sont reprises à l'identique avec nos propres textes (photos de
+Jordan du 6 novembre ; cahier des charges : `docs/gazette-de-la-lune.md`) : fait à l'étape 9.
 
 ## Les noms (français / anglais)
 
@@ -74,8 +74,8 @@ Colonne « livre » : la fonction du personnage, pour s'y retrouver ; jamais aff
 | Livre | Chez nous | English | État |
 |---|---|---|---|
 | capitaine | Bailli (charge élue) | Bailiff | aligné (étape 2 : sa voix tranche l'égalité d'office) ; étape 4 : dans « Le Village », désigné par les Métayers parmi eux à partir du deuxième jour, succession parmi eux, aboli avec le dernier |
-| garde champêtre | Crieur public | Town Crier | nouveau (passe à l'étape 9, avec les cartes) |
-| gitane (sans philtre) | Liseuse d'étoiles | Stargazer | nouveau (cartes Spiritisme : passe à l'étape 9, avec les cartes) |
+| garde champêtre | Crieur public | Town Crier | fait (étape 9 : charge publique nommée par le Bailli, jamais lui-même ; N cartes secrètes confiées avant la partie, retirées du paquet de la Gazette ; une annonce chaque matin dès le lendemain ; révocable par le Bailli après l'annonce et avant le vote, pouvoir de jour `crieur-public` ; transmise s'il devient Bailli ; remplacé s'il meurt ; un nouveau Bailli garde ou change ; réglages « crieurPublic », « cartesDuCrieur ») |
+| gitane (sans philtre) | Liseuse d'étoiles | Stargazer | fait (étape 9 : `liseuse-d-etoiles`, effet `spiritisme`, ordre 51 ; se désigner = une séance au matin ; 5 cartes Spiritisme du narrateur, hors du paquet ; la réponse vraie de l'esprit du premier mort, calculée ; poids provisoire +4, classique, 8 joueurs ; hors petite tablée et compositions prêtes, sauf Le Pacte) |
 
 ### Personnalités du village (bâtiments tenus par un joueur)
 | Livre | Personnage / bâtiment | English | État |
@@ -102,7 +102,7 @@ Colonne « livre » : la fonction du personnage, pour s'y retrouver ; jamais aff
 | fête de la moisson | Les Vendanges | Grape Harvest | fait (étape 5 : réglage « vendanges » ; un loup de plus ; les douze pouvoirs éméchés) |
 | peste noire | Peste noire | Black Plague | vérifié (étape 2 : identique ; guide : l'appel comme d'habitude) ; étape 5 : jouable au niveau « Le Pacte » ; exclut Double visage, Vendanges, Envoûtement |
 | fascination lycanthropique | L'Envoûtement | The Thrall | fait (étape 5 : réglage « envoutement » ; envoûtés secrets, pouvoirs perdus, chute des précédents, victoire de la meute à l'avant-dernier) |
-| nouvelle lune (36 événements) | La Gazette de la lune | Moon Gazette | cadre maintenant, cartes après les photos |
+| nouvelle lune (31 événements, 5 Spiritisme) | La Gazette de la lune | Moon Gazette | fait (étape 9 : `logique/gazette.mjs` ; réglages « gazette », « gazetteRythme », « gazetteChoix », permanentes dès le début ; l'Almanach écarté ; carte par carte : `docs/gazette-de-la-lune.md`, colonne « État ») |
 
 ### Renommages de nos créations (conflits)
 - Gens de passage « Montreur d'ours » → **Montreur de marmotte** (Marmot Showman) : le nom est celui d'un rôle du livre qui fait
@@ -141,7 +141,7 @@ Socle à créer d'abord (servira à plusieurs rôles) :
 | 6 | Simulateur (`essais/outils/simuler-veillees.mjs`), politiques par effet pour les joueurs simulés et les compagnons, calibration des poids par régression, cibles par taille ; compositions prêtes passées au générateur | à faire |
 | 7 | Anglais (dictionnaires, guides retraduits), jetons, carte (repères des bâtiments), guides du joueur et du narrateur | à faire |
 | 8 | Publication (système, module, moteur si les compagnons changent), déploiement LaKour, essai en vrai | à faire |
-| 9 | Cartes Événement et Spiritisme : mécaniques consignées dans `gazette-de-la-lune.md` (photos reçues le 6 nov.) ; traits visibles des personnages ; le Crieur public (charge nommée par le Bailli, socle « charges ») et la Liseuse d'étoiles (Spiritisme), venus de l'étape 4 | à faire après l'étape 4 |
+| 9 | Cartes Événement et Spiritisme : mécaniques consignées dans `gazette-de-la-lune.md` (photos reçues le 6 nov.) ; traits visibles des personnages ; le Crieur public (charge nommée par le Bailli, socle « charges ») et la Liseuse d'étoiles (Spiritisme), venus de l'étape 4 | fait : traits visibles (publics, `etat.traits` ; un drapeau `traits` sur l'acteur respecté ; l'Illuminé partage selon la rive ou un trait, réglage « partageIllumine ») ; la Gazette (31 cartes, toutes faites, adaptations dans `gazette-de-la-lune.md` ; votes « defiance » et « suite », objets « executeur » et « chatiment » dans `etat.mjs`) ; le Crieur public ; l'Exécuteur ; la Liseuse d'étoiles et le Spiritisme (20 questions, réponse calculée) ; Table (traits, encart, cases), fiches, fenêtre de vote ; guides fr et en (pages « La Gazette de la lune », « Mener la Gazette de la lune ») ; reste au moteur MJ IA (étape 8) : voir plus bas |
 | 10 | Webcam (après les rôles) : réglage MJ « caméras permises » dans le moteur commun (tous les modules) ; aux Veillées, image de remplacement quand il le faut (nuit, morts, comme la coupure du micro de `salons.mjs` / `activite.mjs`) : logo de loup-garou fait sur ComfyStudio | à faire |
 | 11 | Musiques ComfyStudio pour les modules et mondes (version interne) | après le reste |
 | 12 | Hameaux (décision de Jordan, 6 nov.) : les DEUX options, après la publication : d'abord B (un monde Foundry par hameau, relais entre mondes : ce qui suffit à Jordan), puis A (plusieurs hameaux dans un même monde : pour la communauté). Conception chiffrée plus haut. | après la publication |
@@ -351,3 +351,39 @@ ou « passer » en repli), mais le MJ IA les mène mal :
   `variantesSecret` (envoûtés, triangle, cartes de Double visage) sont au MJ : ne jamais les raconter.
 - L'ordre de réveil a changé : les consignes du narrateur qui citent un ordre (la Liseuse en fin de nuit, la Pie après la chasse, l'Enfant
   de la brume avant la meute) sont à revoir ; `api.ordreDeNuit()` reste la référence.
+
+Relevé à l'étape 9 (la Gazette de la lune, les traits, le Crieur public, l'Exécuteur, la Liseuse d'étoiles ; `scripts/outils.js` et
+`scripts/compagnons-jeu.js` au 6 novembre) — rien ne casse sans ces changements (la Gazette se règle par le monde ; toute demande nouvelle a un
+délai, avec le sort ou « passer » en repli), mais le MJ IA la mène mal :
+- `loups_distribuer` / `loups_rejouer` (l. 1341-1490) : un paramètre `gazette` (`{ actif, crieur, rythme, choix, permanentes, cartesDuCrieur }`)
+  pour `distribuer` / `nouvellePartie` ; rendre au narrateur les traits visibles (`api.traits()` : publics, à décrire), et l'annonce de la Gazette
+  et du Crieur (au chat).
+- Après `resoudreNuit` (`loups_nuit`, l. 1494-1582) : attendre `api.attendreGazette()` avant d'ouvrir le débat (la séance de Spiritisme et
+  l'annonce du Crieur sont des demandes) ; la carte du matin est dans `api.gazette().tirees` (déjà au chat : la raconter, pas la relire). Un
+  matin peut avoir ouvert un vote de lui-même (le Cauchemar, le Châtiment, l'élection de l'Exécuteur) : si `api.etat().vote.ouvert`, ne pas
+  changer de phase (`changerPhase("jour")` le fermerait), le laisser aller à son terme.
+- `loups_nuit` : passer par `api.reveiller(roleCle)` pour les étapes nouvelles — `toucher` (le geste de la meute), `crue` (la seconde proie),
+  `spectre` (la proie désigne un ancien loup), `benet` (le premier mort, posthume), `sots-voyance` (chaque loup lit un rôle) — et pour la meute
+  d'une Nuit des sots (la Braconnière, l'Herboriste et la Liseuse de cendres : `api.reveiller("meute")` les trouve ; ne pas filtrer par camp) ;
+  la Liseuse d'étoiles se désigne pour dire oui (`candidatsDeNuit` ne propose qu'elle).
+- `loups_vote` (l. 1620-1734) : la Crue refuse le vote (`Gazette.Refus.inondation`) : aller à la nuit ; les objets `executeur` et `chatiment`
+  (sans changer de phase) ; `vote.mode` : « defiance » (deux voix par votant : `recevoirVote` deux fois, un second vote pour le même ami le
+  retire), « suite » (à tour de rôle : seul `vote.ordre[vote.rang]` peut voter ; le système appelle chacun, ne pas clore avant le dernier) ;
+  `resultat.cauchemar`, `resultat.mode`, `resultat.soutiens` ; le Jour des sots refuse à un amoureux tout vote contre un autre que son amant.
+- `loups_eliminer` (l. 1896-1926) : `eliminer` d'un condamné peut rendre `[]` (Pile ou face : pile ; Marché avec le Malin accepté) ; avec un
+  Exécuteur, la carte du condamné n'est pas retournée (ne pas écrire « Rôle de X ») ; après l'élimination, un second vote peut s'être ouvert (le
+  Dépit, l'Enthousiasme) : « un second vote, sans débat ».
+- Le narrateur : `api.priverDeVote(acteurId)` sous une carte de conduite (Lune noire, Bonnes manières, Ni loup ni moi) ; `api.releverLaParole(
+  acteurId, texte)` pour ce qui est dit à voix haute (transcriptions des salons vocaux) sous Ni loup ni moi ; `api.lireUneCarte(cle)` (mode
+  « le narrateur choisit ») ; `api.appliquerLaVarianteDuJour()` (Dimanche de soleil, Fin des vendanges, Lundi gris) ; `api.nommerCrieur`,
+  `api.cartesDuCrieur` ; un outil `loups_gazette` (lire, priver, appliquer, nommer) serait le plus simple.
+- `compagnons-jeu.js` (`sujetDemandeLoups`, l. 364) : des objets de demande nouveaux — `marche` (se désigner = accepter le marché), `appel`
+  (se désigner = appeler au secours), `chatiment` et `influences` (posthumes : un vivant), `executeur` (posthume : un successeur),
+  `crieur-nommer`, `crieur-transmettre`, `crieur-garder` (le Bailli), `crieur-annonce` (des CARTES : `{ id: clé, nom }`, ou passer),
+  `seance-question` (des questions), `seance-spirite`, `seance-designer` (1 ou 2 joueurs), `spectre`, `benet` (posthume), `toucher` et
+  `crue` (la meute) ; une demande de vote avec `mode: "defiance"` (`nombre: 2`, jamais soi) ou `mode: "suite"` (son tour). Aujourd'hui elles
+  tombent dans le cas général (un candidat au hasard : un compagnon accepte toujours le marché, lit toujours une carte).
+- Contexte du narrateur et des compagnons : les traits (`api.traits()`), les cartes en jeu et le Crieur (`api.gazette()`), le hook public
+  `lakourLoups.gazette` (`{ quoi, cle?, acteurId?, ids?, source? }`) ; pour le Crieur compagnon seul, sa main (`api.gazetteSecrets().main`) ;
+  l'allié du Méchant Benêt et ce qu'a lu l'Exécuteur sont au carnet de leur compagnon. Ne jamais raconter les secrets de la Gazette (paquet,
+  main, alliés, pouvoirs échangés).

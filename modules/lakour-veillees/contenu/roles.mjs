@@ -474,11 +474,11 @@ Certaines questions parlent de l'allure des gens (lunettes, bijou, sabots, coiff
 const SOLITAIRES = [
   role({
     cle: "revenant", nom: "Revenant", camp: "solitaire", victoireCle: "execute",
-    resume: "gagne s'il est exécuté par le village.",
+    resume: "gagne s'il est exécuté par le village, à partir du troisième jour.",
     pouvoir: `Tu es déjà mort une fois. Tu veux qu'on te le rende officiel.
 
-Tu n'as aucun pouvoir de nuit. Ton seul but : te faire **exécuter par le vote du village**. Une mort de nuit ne compte pas.`,
-    victoire: `Tu gagnes **seul et aussitôt** si le village t'exécute au vote : la partie s'arrête sur ta victoire.`
+Tu n'as aucun pouvoir de nuit. Ton seul but : te faire **exécuter par le vote du village**, mais pas trop vite : un pendu des premiers jours, personne ne le prend au sérieux. Une mort de nuit ne compte pas.`,
+    victoire: `Tu gagnes **seul et aussitôt** si le village t'exécute au vote **à partir du troisième jour** (le jour qui suit la troisième nuit) : la partie s'arrête sur ta victoire. Exécuté le premier ou le deuxième jour (ou au jour d'ouverture du Feu follet), tu meurs sans gagner.`
   }),
   role({
     cle: "colporteur", nom: "Colporteur", camp: "solitaire", effet: "echanger-role", usages: 1,
@@ -491,11 +491,11 @@ Tu n'as aucun pouvoir de nuit. Ton seul but : te faire **exécuter par le vote d
   }),
   role({
     cle: "chasseur-de-primes", nom: "Chasseur de primes", camp: "solitaire", victoireCle: "cible-executee",
-    resume: "reçoit une cible au début : gagne si elle est exécutée de jour.",
+    resume: "reçoit une cible au début : gagne si elle est exécutée de jour, au plus tard le deuxième jour.",
     pouvoir: `Quelqu'un t'a payé pour qu'un voisin finisse au gibet.
 
 **La première nuit**, le narrateur te donne en secret le nom de ta **cible**, tirée au hasard parmi les autres joueurs. Tu n'as pas d'autre pouvoir que ta langue.`,
-    victoire: `Tu gagnes **seul et aussitôt** si ta cible est exécutée par le vote du village, que tu sois vivant ou non. Si elle meurt d'une autre façon, tu deviens un simple villageois et joues avec le village.`,
+    victoire: `Tu gagnes **seul et aussitôt** si ta cible est exécutée par le vote du village **au plus tard le deuxième jour** (le jour qui suit la deuxième nuit ; le jour d'ouverture du Feu follet, s'il y en a un, vient en plus), que tu sois vivant ou non. Si elle meurt d'une autre façon, ou si le deuxième jour passe sans qu'elle tombe au vote, ta prime échoue : tu deviens un simple villageois et gagnes avec le village (le narrateur te le dit au matin).`,
     nuit: { ordre: 6, cibles: 0, premiereNuitSeulement: true, invite: "Le narrateur te glisse le nom de ta cible." }
   }),
   role({

@@ -769,7 +769,7 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
     informes.add(a.acteurId);
     const cible = primes[a.acteurId];
     sortie.messages.push(cible
-      ? msg(a.acteurId, "Prime", `Votre cible : ${nom(cible)}. Faites-la condamner par le village.`, { nom: nom(cible) })
+      ? msg(a.acteurId, "Prime", `Votre cible : ${nom(cible)}. Faites-la condamner par le village avant la fin du deuxième jour.`, { nom: nom(cible) })
       : msg("mj", "PrimeManquante", `${nom(a.acteurId)} n'a pas de cible : désignez-en une.`, { nom: nom(a.acteurId) }));
   }
 

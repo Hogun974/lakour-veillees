@@ -1,7 +1,10 @@
 # Équilibre des Veillées de Brumecombe
 
-*Le Pacte, étape 6 (novembre 2026). Les poids des rôles et la cible du générateur ne sont plus posés à la main : ils sont mesurés
-par simulation. Ce document dit comment, avec quelles graines, ce qui a été mesuré avant et après, et comment remesurer.*
+*Le Pacte, étapes 6 et 6b (novembre 2026). Les poids des rôles et la cible du générateur ne sont plus posés à la main : ils sont
+mesurés par simulation. L'étape 6 les a calibrés avec des joueurs simulés parfaits (adresse 1) ; l'étape 6b les recalibre avec une
+**adresse par niveau**, celle d'une vraie soirée (débutants 0,5 ; classique et Le Pacte 0,75 ; chaos 1), retouche deux solitaires
+(Revenant, Chasseur de primes) et chiffre les variantes du livre que leur règle déséquilibre. Ce document dit comment, avec quelles
+graines, ce qui a été mesuré avant et après, et comment remesurer.*
 
 ## La méthode
 
@@ -42,8 +45,10 @@ hasard d'avant l'étape 6 (qui restent ceux de l'essai d'intégration). Quelques
 - le Mâtin rejoint la meute deux fois sur cinq (un goût, pas une adresse) ; le Juge de paix annule si un condamné est un innocent sûr.
 
 Avec des joueurs adroits, le narrateur simulé ne joue plus au hasard les pouvoirs de jour des joueurs à leur place (chacun use des
-siens). La référence de la calibration est l'**adresse 1** : des joueurs qui se servent de tout ce qu'ils savent, ce qui reste moins
-que ce que de vrais joueurs tirent du débat (le simulateur ne lit ni les mines ni les hésitations).
+siens). La référence de la calibration est, depuis l'étape 6b, l'**adresse de chaque niveau** (`ADRESSE_DU_NIVEAU` du simulateur ;
+section suivante) ; à l'étape 6, c'était l'adresse 1 pour tous : des joueurs qui se servent de tout ce qu'ils savent, ce qui reste
+moins que ce que de vrais joueurs tirent du débat (le simulateur ne lit ni les mines ni les hésitations), mais bien plus qu'une table
+de débutants.
 
 ### Le simulateur
 
@@ -55,8 +60,8 @@ gagnent quand ils sont là), attribution par rôle (le village quand le rôle es
 ### La calibration
 
 `essais/outils/calibrer-poids.mjs` tire des compositions **variées** (le générateur du système vers des cibles tirées de -12 à +12,
-aux quatre niveaux, de 6 à 18 joueurs ; une sur six avec Le Village aux niveaux classique et chaos), les fait jouer (adresse 1), et
-ajuste une régression logistique :
+aux quatre niveaux, de 6 à 18 joueurs ; une sur six avec Le Village aux niveaux classique et chaos), les fait jouer (chacune à
+l'adresse de son niveau, `--adresse niveau` ; à l'étape 6 : adresse 1), et ajuste une régression logistique :
 
     P(village | village ou meute gagne) = σ( b(niveau, n) + Σ β_r · nombre_r + β_V · [Le Village] )
 
@@ -77,135 +82,173 @@ poids pour les rôles rares). Puis :
 Les solitaires sont traités à part : leur effet sur la balance village / meute est un poids comme un autre, et la part des parties
 qu'ils gagnent est rapportée (visée : 5 à 20 %).
 
-## La calibration (graine « cal », 12 000 parties, adresse 1)
+Les **poids sont communs à tous les niveaux** (une seule table : un rôle vaut la même chose partout) ; ce qui sépare les niveaux et
+leurs adresses passe par les **ordonnées**, donc par les **cibles** par niveau et par taille. Un rôle d'information pèse moins quand
+on s'en sert une fois sur deux : la régression lui donne un poids moyen entre les adresses (pondéré par ses parties), et la cible de
+chaque niveau absorbe le reste.
 
-Commande : `node essais/outils/calibrer-poids.mjs --parties 12000 --graine cal --adresse 1 --json cal.json` (17 minutes sur 16 fils),
-puis `--depuis cal.json --parties 0 --ecrire` (écrit les poids et le bloc `CIBLES` de `contenu/equilibre.mjs`). 11 997 parties
-jouées jusqu'au bout (3 en erreur), dont 11 211 gagnées par le village ou la meute (les autres : solitaires et amoureux).
+## L'adresse de référence par niveau (étape 6b)
 
-**L'échelle** : 5,7 poids par unité de logit — un point de poids vaut environ **4,4 points** de victoire du village autour de 50 %.
-Les poids retenus sont les poids mesurés, arrondis ; un rôle vu dans moins de 30 parties (les gens de passage, le Somnambule, la
-Rosière : jamais tirés par le générateur) garde son poids.
+À l'étape 6, calibrés à l'adresse 1, poids et cibles laissaient la meute gagner **80 à 95 %** des parties d'une table d'adresse 0,5
+(débutants 86 % à leur adresse, mesure « avant » plus bas). L'étape 6b calibre chaque niveau à l'adresse d'une vraie soirée à ce
+niveau (`ADRESSE_DU_NIVEAU`, `essais/outils/simuler-veillees.mjs`) :
 
-### Poids des rôles
+| Niveau | Adresse | Pourquoi |
+|---|---|---|
+| Débutants | 0,5 | on découvre les rôles : on se sert d'une information sur deux |
+| Classique | 0,75 | une table qui connaît le jeu, sans le jouer au couteau |
+| Le Pacte | 0,75 | le jeu de soirée, joué par une table qui le connaît |
+| Chaos | 1 | une table rompue au jeu (le chaos le suppose) |
+
+**Les débutants à 0,5 : la mesure montre une limite, pas une meilleure adresse.** Même le village le plus armé que le générateur
+sache faire aux débutants (cible +60 : toutes les places possibles en rôles du niveau ; 80 parties par case, ±11 points) perd :
+
+| Adresse | 8 | 12 | 14 | 16 | 18 |
+|---|---|---|---|---|---|
+| 0,5 | 63 % | 59 % | 69 % | 84 % | 71 % |
+| 0,6 | 48 % | 61 % | 69 % | 75 % | 59 % |
+| 0,75 | 44 % | 43 % | 39 % | 50 % | 35 % |
+
+(la part de la meute parmi les parties gagnées par la meute ou le village). Le niveau débutants n'a que cinq rôles à pouvoir (Liseuse de cendres, Fossoyeur, Garde du pont, Herboriste, Braconnière) ; à 0,5,
+aucune cible ne ramène la meute à 50 %. Calibrer les débutants à 0,75 tiendrait la promesse du tableau, mais pour une table qui
+n'existe pas : une vraie table de débutants trouverait la meute à 75-85 %. L'adresse 0,5 est **gardée** : les cibles des débutants
+sont bornées au plafond du générateur (le village le plus armé possible), ce qui rapproche le plus une vraie table de débutants
+de l'équilibre (la meute à 70 % au lieu de 86 %). Le levier qui resterait est le barème des loups (`nombreDeLoups`), **à
+décider** : avec **un loup de moins** et le village le plus armé, la meute de débutants à 0,5 retombe à 33 % (8 joueurs), 38 % (10),
+51 % (12), 63 % (14), 68 % (16), 56 % (18) (80 parties par case). De même, à **six joueurs** (deux loups), le classique et Le Pacte
+à 0,75 restent au plafond du générateur (la meute vers 60-65 %).
+
+## La calibration de l'étape 6b (graine « cal6b », 12 000 parties, adresse du niveau)
+
+Commande : `node essais/outils/calibrer-poids.mjs --parties 12000 --graine cal6b --adresse niveau --json cal6b.json` (19 minutes sur
+16 fils), puis `--depuis cal6b.json --parties 0 --adresse niveau --ecrire` (écrit les poids et le bloc `CIBLES` de
+`contenu/equilibre.mjs`). Les règles du Revenant et du Chasseur de primes y étaient retouchées, d'un jour plus douces que les règles
+finales (le Revenant gagnant dès le deuxième jour, le Chasseur jusqu'au troisième : plus bas) ; la validation « val1 » avait le
+Chasseur final, « val2 » et la mesure « après » les deux règles finales. 12 000 parties jouées jusqu'au bout, dont 11 450 gagnées par
+le village ou la meute.
+
+**L'échelle** : 6,7 poids par unité de logit (5,7 à l'étape 6) — un point de poids vaut environ **4 points** de victoire du village
+autour de 50 %. Les poids retenus sont les poids mesurés, arrondis ; un rôle vu dans moins de 30 parties (les gens de passage, le
+Somnambule, la Rosière : jamais tirés par le générateur) garde son poids.
+
+### Poids des rôles (« Ancien » : l'étape 6, adresse 1)
 
 | Rôle | Camp | Parties | Ancien | Mesuré (± 1 écart-type) | Retenu |
 |---|---|---|---|---|---|
-| liseuse-de-cendres | village | 6441 | +7 | +5.5 ± 0.3 | +6 |
-| enfant-de-la-brume | village | 2185 | +3 | +4.4 ± 0.4 | +4 |
-| chapardeur | village | 561 | +0 | +4.2 ± 0.7 | +4 |
-| louvetier | village | 1286 | +4 | +4 ± 0.5 | +4 |
-| veilleuse-de-lanterne | village | 1763 | +5 | +4 ± 0.4 | +4 |
-| herboriste | village | 3825 | +5 | +3.7 ± 0.3 | +4 |
-| gardeuse-d-oies | village | 2374 | +4 | +3.3 ± 0.4 | +3 |
-| incendiaire | village | 103 | +2 | +2.7 ± 1.4 | +3 |
-| garde-du-pont | village | 4152 | +4 | +2.6 ± 0.3 | +3 |
-| franc-villageois | village | 1262 | +2 | +2.5 ± 0.4 | +3 |
-| vieux-sergent | village | 1414 | +3 | +2.5 ± 0.4 | +3 |
-| greffier-begue | village | 964 | +3 | +2.3 ± 0.5 | +2 |
-| aieul | village | 1865 | +5 | +2.2 ± 0.4 | +2 |
-| gardienne-des-cles | village | 781 | +3 | +2.2 ± 0.6 | +2 |
-| braconniere | village | 4058 | +3 | +1.8 ± 0.3 | +2 |
-| messager | village | 718 | +2 | +1.7 ± 0.6 | +2 |
-| juge-de-paix | village | 874 | +3 | +1.6 ± 0.5 | +2 |
-| innocent | village | 1425 | +3 | +1.5 ± 0.4 | +2 |
-| furet | village | 2665 | +5 | +1.4 ± 0.3 | +1 |
-| bateleur | village | 1090 | +4 | +1.4 ± 0.5 | +1 |
-| bucheron | village | 509 | +3 | +1.1 ± 0.2 | +1 |
-| liseuse-d-etoiles | village | 2417 | +4 | +1 ± 0.4 | +1 |
-| souffre-douleur | village | 1264 | +2 | +1 ± 0.4 | +1 |
-| sourcier | village | 1402 | +4 | +0.9 ± 0.4 | +1 |
-| fossoyeur | village | 4164 | +3 | +0.8 ± 0.4 | +1 |
-| ermite | village | 1193 | +3 | +0.8 ± 0.5 | +1 |
-| sonneur | village | 759 | +2 | +0.7 ± 0.6 | +1 |
-| pie | village | 922 | +3 | +0.7 ± 0.5 | +1 |
-| feu-follet | solitaire | 1873 | +0 | +0.6 ± 0.4 | +1 |
-| conteuse | village | 728 | +2 | +0.6 ± 0.6 | +1 |
-| lavandiere | village | 1130 | +3 | +0.5 ± 0.2 | +0 |
-| entremetteuse | village | 623 | -1 | +0.4 ± 0.6 | +0 |
-| pecheur-de-nuit | village | 812 | +3 | +0.3 ± 0.5 | +0 |
-| revenant | solitaire | 730 | -2 | -0.8 ± 0.6 | -1 |
-| chambriere | village | 1268 | +2 | -0.9 ± 0.4 | -1 |
-| loup-pale | meute | 898 | -5 | -1.2 ± 0.6 | -1 |
-| colporteur | solitaire | 660 | -1 | -1.6 ± 0.7 | -2 |
-| dame-du-gue | solitaire | 171 | -5 | -1.8 ± 1.2 | -2 |
-| joueur-de-vielle | solitaire | 471 | -4 | -2 ± 0.8 | -2 |
-| pyromane | solitaire | 127 | -6 | -2.1 ± 1.3 | -2 |
-| chasseur-de-primes | solitaire | 703 | -2 | -2.2 ± 0.7 | -2 |
-| illumine | solitaire | 530 | -3 | -2.4 ± 0.7 | -2 |
-| matin | village | 543 | -1 | -3.3 ± 0.6 | -3 |
-| enfant-des-bois | village | 1174 | +0 | -3.7 ± 0.4 | -4 |
-| loup-flaireur | meute | 648 | -8 | -5.3 ± 0.6 | -5 |
-| loup-des-roseaux | meute | 681 | -7 | -6.3 ± 0.6 | -6 |
-| loup-hurleur | meute | 999 | -7 | -7 ± 0.6 | -7 |
-| loup-deguise | meute | 910 | -8 | -7.7 ± 0.6 | -8 |
-| loup-affame | meute | 912 | -8 | -11.3 ± 0.5 | -11 |
-| louve-mere | meute | 593 | -9 | -12 ± 0.6 | -12 |
+| veilleuse-de-lanterne | village | 2415 | +4 | +4.4 ± 0.5 | +4 |
+| enfant-de-la-brume | village | 3521 | +4 | +4.3 ± 0.4 | +4 |
+| liseuse-de-cendres | village | 8402 | +6 | +4.2 ± 0.4 | +4 |
+| louvetier | village | 2014 | +4 | +4.1 ± 0.5 | +4 |
+| herboriste | village | 5672 | +4 | +4 ± 0.3 | +4 |
+| chapardeur | village | 1560 | +4 | +3.8 ± 0.6 | +4 |
+| garde-du-pont | village | 4972 | +3 | +3.6 ± 0.4 | +4 |
+| incendiaire | village | 188 | +3 | +3.5 ± 1.4 | +3 |
+| juge-de-paix | village | 961 | +2 | +3 ± 0.6 | +3 |
+| vieux-sergent | village | 2089 | +3 | +2.9 ± 0.4 | +3 |
+| gardeuse-d-oies | village | 2794 | +3 | +2.9 ± 0.4 | +3 |
+| gardienne-des-cles | village | 909 | +2 | +2.8 ± 0.7 | +3 |
+| furet | village | 1593 | +1 | +2 ± 0.5 | +2 |
+| braconniere | village | 3956 | +2 | +1.9 ± 0.4 | +2 |
+| greffier-begue | village | 939 | +2 | +1.8 ± 0.7 | +2 |
+| ermite | village | 867 | +1 | +1.6 ± 0.7 | +2 |
+| bateleur | village | 702 | +1 | +1.4 ± 0.7 | +1 |
+| messager | village | 980 | +2 | +1.4 ± 0.6 | +1 |
+| feu-follet | solitaire | 2099 | +1 | +1.3 ± 0.5 | +1 |
+| liseuse-d-etoiles | village | 1654 | +1 | +1.3 ± 0.5 | +1 |
+| souffre-douleur | village | 1207 | +1 | +1.2 ± 0.5 | +1 |
+| revenant | solitaire | 580 | -1 | +1.2 ± 0.9 | +1 |
+| sourcier | village | 961 | +1 | +1.2 ± 0.6 | +1 |
+| franc-villageois | village | 2083 | +3 | +1.1 ± 0.4 | +1 |
+| innocent | village | 1608 | +2 | +1.1 ± 0.5 | +1 |
+| sonneur | village | 709 | +1 | +1.1 ± 0.7 | +1 |
+| lavandiere | village | 359 | +0 | +1 ± 0.5 | +1 |
+| conteuse | village | 678 | +1 | +1 ± 0.7 | +1 |
+| fossoyeur | village | 3686 | +1 | +0.9 ± 0.5 | +1 |
+| aieul | village | 1542 | +2 | +0.8 ± 0.5 | +1 |
+| bucheron | village | 227 | +1 | +0.8 ± 0.4 | +1 |
+| pecheur-de-nuit | village | 471 | +0 | +0.4 ± 0.8 | +0 |
+| entremetteuse | village | 565 | +0 | +0.2 ± 0.8 | +0 |
+| pie | village | 714 | +1 | +0.2 ± 0.7 | +0 |
+| loup-pale | meute | 2023 | -1 | +0 ± 0.7 | +0 |
+| chasseur-de-primes | solitaire | 389 | -2 | -0.3 ± 1.1 | +0 |
+| joueur-de-vielle | solitaire | 372 | -2 | -0.5 ± 1.2 | +0 |
+| chambriere | village | 608 | -1 | -1.8 ± 0.7 | -2 |
+| illumine | solitaire | 376 | -2 | -1.9 ± 1 | -2 |
+| matin | village | 207 | -3 | -2.2 ± 1.2 | -2 |
+| dame-du-gue | solitaire | 230 | -2 | -2.9 ± 1.4 | -3 |
+| colporteur | solitaire | 359 | -2 | -3.4 ± 1 | -3 |
+| enfant-des-bois | village | 324 | -4 | -3.9 ± 0.9 | -4 |
+| pyromane | solitaire | 231 | -2 | -5.1 ± 1.3 | -5 |
+| loup-des-roseaux | meute | 683 | -6 | -5.8 ± 0.8 | -6 |
+| loup-flaireur | meute | 1272 | -5 | -7.2 ± 0.6 | -7 |
+| loup-hurleur | meute | 787 | -7 | -7.9 ± 0.7 | -8 |
+| loup-deguise | meute | 554 | -8 | -8.9 ± 0.8 | -9 |
+| louve-mere | meute | 112 | -12 | -12.6 ± 1.5 | -13 |
+| loup-affame | meute | 160 | -11 | -14.7 ± 1.3 | -15 |
 
-Ce que la mesure dit des anciens poids : la **Louve mère** et le **Loup affamé** valent bien plus que posé (-12 et -11, contre -9 et
--8 : la morsure et la seconde victime pèsent lourd), le **Loup pâle** presque rien pour la meute (-1 : il dévore les siens) ;
-l'**Enfant des bois** (-4) et le **Mâtin** (-3) passent assez souvent à la meute pour lui profiter ; la **Liseuse de cendres** reste le
-premier rôle du Village (+6), suivie de l'Enfant de la brume, du Chapardeur, du Louvetier, de la Veilleuse et de l'Herboriste (+4) ;
-plusieurs rôles d'information que les joueurs simulés exploitent mal (Furet, Sourcier, Ermite, Fossoyeur, Liseuse d'étoiles : +1)
-et les rôles de jour (Sonneur, Conteuse, Pie : +1) rapportent peu dans le simulateur — de vrais joueurs en tireraient sans doute
-davantage (voir « Limites »).
+Ce que l'adresse du niveau change : les rôles d'**information** pèsent moins quand on s'en sert une fois sur deux ou trois sur
+quatre — la **Liseuse de cendres** passe de +6 à +4, rejointe par la Veilleuse, l'Enfant de la brume, le Louvetier, l'Herboriste,
+le Chapardeur et le **Garde du pont** (+3 → +4 : protéger compte autant que savoir quand on sait mal) ; le **Franc-Villageois** (+3 →
++1), l'Aïeul et l'Innocent (+2 → +1) aussi. Côté meute, le **Loup affamé** (-11 → -15, sur 160 parties seulement : ±1,3) et la
+Louve mère (-13) pèsent encore plus ; le **Loup pâle** ne vaut plus rien pour la meute (0). Le **Pyromane** (-2 → -5) coûte cher au
+village. Les deux solitaires retouchés pèsent maintenant pour le village (Revenant +1 : il attire les votes loin des loups) ou rien
+(Chasseur de primes 0) ; le Joueur de vielle aussi (0 au lieu de -2 : il prend ses victoires aux deux camps).
 
-**Le Village** (la variante) : -0,9 ± 0,5 poids, soit -4 ± 2 points pour le village par rapport à la partie ordinaire.
+**Le Village** (la variante) : -2,3 ± 0,6 poids, soit -9 ± 2 points pour le village par rapport à la partie ordinaire (-4 ± 2 à
+l'étape 6).
 
 ### Cibles par niveau et par taille
 
-Les cibles retenues (en gras), écrites dans `equilibre.mjs` (`CIBLES`) et visées par le générateur (`cibleDe`), qui les atteint à ±1
-partout (vérifié de 6 à 18 joueurs aux quatre niveaux) ; entre parenthèses, la cible de la régression (lissée). Entre les deux : le
-**second passage** (`--corriger`, d'après la validation à 400 parties par case des tailles paires, puis à 150 parties des tailles
-impaires), la **sécante** entre deux validations pour cinq cases que le second passage avait dépassées (débutants 10, 16 et 18, chaos 12,
-Le Pacte 12), et les **bornes** de ce que le générateur atteint (débutants 6, 15, 17 et 18 : à son plancher ou son plafond).
+Les cibles retenues (en gras), écrites dans `equilibre.mjs` (`CIBLES`) ; entre parenthèses, la cible de la régression (lissée).
+Entre les deux : deux **seconds passages** (`--corriger`, d'après une validation à 200 parties par case des tailles paires, graine
+« val1 », puis à 150 parties de toutes les tailles, graine « val2 ») et les **bornes** de ce que le générateur atteint : les
+débutants partout (le village le plus armé possible), le classique et Le Pacte à six joueurs, Le Pacte à neuf.
 
-| Niveau | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 |
+| Niveau (adresse) | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| debutants | **+0** (+1) | **+1** (+0) | **+0** (-2) | **-3** (-5) | **-6** (-6) | **-8** (-7) | **-8** (-8) | **-11** (-12) | **-13** (-12) | **-13** (-13) | **-16** (-17) | **-18** (-18) | **-17** (-18) |
-| classique | **+1** (+3) | **+0** (+0) | **-3** (-2) | **-3** (-2) | **-7** (-5) | **-7** (-9) | **-12** (-10) | **-12** (-12) | **-15** (-13) | **-14** (-15) | **-17** (-16) | **-17** (-18) | **-20** (-19) |
-| chaos | **+1** (+3) | **+0** (+1) | **-3** (-2) | **-3** (-3) | **-5** (-5) | **-8** (-8) | **-11** (-11) | **-13** (-12) | **-14** (-13) | **-16** (-14) | **-17** (-18) | **-19** (-18) | **-21** (-19) |
-| le-pacte | **+1** (+2) | **+1** (+1) | **-1** (+0) | **+0** (-2) | **-5** (-5) | **-7** (-7) | **-10** (-9) | **-12** (-12) | **-14** (-14) | **-14** (-14) | **-17** (-18) | **-17** (-19) | **-19** (-19) |
+| debutants (0,5) | **+1** (+9) | **+3** (+7) | **+4** (+6) | **-2** (+7) | **-1** (+7) | **+0** (+5) | **+1** (+4) | **-5** (+3) | **-4** (+2) | **-3** (+1) | **-9** (-1) | **-8** (-1) | **-7** (-2) |
+| classique (0,75) | **+1** (+5) | **+3** (+4) | **-2** (+2) | **+1** (+1) | **+0** (-1) | **-2** (-3) | **-6** (-4) | **-6** (-7) | **-8** (-8) | **-9** (-9) | **-12** (-11) | **-14** (-12) | **-15** (-13) |
+| chaos (1) | **+1** (+1) | **+1** (+0) | **-5** (-2) | **-3** (-5) | **-8** (-8) | **-10** (-11) | **-14** (-13) | **-14** (-15) | **-16** (-17) | **-18** (-19) | **-20** (-20) | **-21** (-19) | **-23** (-18) |
+| le-pacte (0,75) | **+1** (+5) | **+3** (+3) | **+1** (+1) | **+2** (+1) | **+0** (-1) | **-3** (-3) | **-5** (-6) | **-8** (-8) | **-8** (-9) | **-10** (-10) | **-13** (-15) | **-15** (-16) | **-15** (-17) |
 
-Petite tablée (4 à 12 places) : 4 → +3, 5 → +1, 6 → -1, 7 → +0, 8 → +0, 9 → -5, 10 → -3, 11 → +1, 12 → +0.
-Ajustements des variantes (`AJUSTEMENTS`) : vendanges +11, envoutement -7 (section « Les variantes »).
+Petite tablée : 4 → +5, 5 → +5, 6 → +2, 7 → +4, 8 → +4, 9 → +1, 10 → +0, 11 → +2, 12 → +4.
 
-À six joueurs (deux loups contre quatre), aucune composition n'atteignait sa cible : l'**Herboriste** sort maintenant dès 6 joueurs
-(`joueursMin` 6 au lieu de 7). Aux grandes tables, le village l'emporte même peu armé : le générateur peut désormais prendre de **0 à
-100 %** des places restantes en rôles à pouvoir (de 15 à 70 % avant), ce qui lui laisse atteindre les cibles des deux bouts (une table
-de 18 débutants à sa cible : 5 loups, un Fossoyeur, 12 Villageois). Si ces grandes tables trop simples déplaisent, l'autre levier est
-le barème des loups (`nombreDeLoups` : 5 dès 16 joueurs), à décider.
+### Solitaires
 
-**Petite tablée** : ses compagnons IA jouent sans les politiques (le moteur ne les a pas encore), le simulateur ne la mesure donc pas ;
-ses cibles sont celles qui gardent ses compositions d'avant aux nouveaux poids (de 4 à 12 places : 4 → +3, 5 → +1, 6 → -1, 7 → +0, 8 → +0, 9 → -5, 10 → -3, 11 → +1, 12 → +0),
-et l'essai d'intégration la mesure toujours (bornes 30-72 %). Les rôles du jeu de soirée y restent hors (`PACTE_HORS_TABLEE`), pour la
-même raison.
+La part des parties qu'un solitaire gagne quand il est distribué (visée : 10 à 20 %), compositions générées, chacune à l'adresse de
+son niveau : **avant** (règles et poids de l'étape 6, graine « 6b », 200 parties par case) et **après** (graine « 6b-apres », 400
+parties par case) :
 
-### Solitaires (dans l'échantillon de calibration)
+| Rôle | Niveaux | Avant : parties | Il gagne | Après : parties | Il gagne |
+|---|---|---|---|---|---|
+| revenant | classique, chaos | 376 | 26 % | 732 | **17 %** |
+| chasseur-de-primes | classique, chaos | 462 | 29 % | 665 | **14 %** |
+| joueur-de-vielle | chaos, Le Pacte | 352 | 33 % | 715 | **32 %** |
+| illumine | chaos, Le Pacte | 338 | 6 % | 573 | 7 % |
+| feu-follet | classique, chaos, Le Pacte | 889 | 10 % | 1761 | 11 % |
+| dame-du-gue | chaos | 154 | 16 % | 303 | 11 % |
+| pyromane | chaos | 145 | 6 % | 265 | 11 % |
 
-La part des parties qu'un solitaire gagne quand il est distribué (visée : 5 à 20 %) :
+(le Colporteur ne gagne jamais « seul » — il gagne avec son nouveau camp — et le Loup pâle jamais : la meute ou le village
+l'emportent avant ; marges : ±4 points sur 400 parties, ±3 sur 700).
 
-| Rôle | Parties | Il gagne |
-|---|---|---|
-| revenant | 730 | 24 % |
-| chasseur-de-primes | 703 | 28 % |
-| colporteur | 660 | 0 % |
-| pyromane | 127 | 9 % |
-| dame-du-gue | 171 | 16 % |
-| feu-follet | 1873 | 10 % |
-| joueur-de-vielle | 471 | 32 % |
-| illumine | 530 | 6 % |
-| loup-pale | 898 | 0 % |
+- **Revenant** : il ne gagne plus qu'exécuté **à partir du troisième jour** (`JOUR_DU_REVENANT`, `logique/victoire.mjs` : le tour de
+  sa mort, 3 au moins ; exécuté plus tôt, il meurt sans gagner). Ses victoires tombaient des premiers votes, quand le village ne sait
+  rien : avant, 26 % (un tiers au premier jour) ; à partir du deuxième jour, 17 à 22 % selon l'échantillon (encore au-dessus de 20 %
+  dans la validation « val1 ») ; à partir du troisième, **17 %**.
+- **Chasseur de primes** : sa cible doit tomber au vote **au plus tard le deuxième jour** (`JOUR_LIMITE_DE_LA_PRIME` ; le jour
+  d'ouverture du Feu follet vient en plus) ; sinon, ou si elle meurt autrement, **sa prime échoue** : au matin, le système le fait
+  simple villageois (camp du Village) et le lui dit (`primesEchues`, `echoirLesPrimes` dans `api.mjs` ; c'était déjà la règle
+  écrite pour une cible morte la nuit, que le système n'appliquait pas). Avant, 29 % (dont un tiers après le troisième jour) ; avec
+  le troisième jour pour limite, 20 à 22 % (pas assez) ; avec le deuxième, **14 %**.
+- **Joueur de vielle** (règle du livre, inchangée) : il était **déjà** réservé aux tables d'au moins 10 joueurs (`joueursMin` 10,
+  niveau chaos) ; son poids passe de -2 à 0 (mesuré : -0,5 ± 1,2). Il reste au-dessus de 20 % (32 %), **à toutes les tailles** (de
+  10 à 18 joueurs : un tiers des parties, sans seuil où il retomberait) : ni le minimum de joueurs ni le poids n'y peuvent rien. Ce
+  qui le rend fort est la règle (deux charmes par nuit) ou le jeu des charmés simulés (ils le cherchent parmi les non-charmés dès que
+  la moitié du village l'est, sans s'accorder sur qui) : **à décider** — un charme par nuit (comme aux Vendanges), ou des charmés qui
+  s'accordent au vote (une politique).
 
-Le **Colporteur** ne gagne jamais « seul » : après son échange, il gagne avec son nouveau camp (compté avec la meute ou le village) ;
-le **Loup pâle** ne finit jamais dernier vivant (la meute ou le village l'emportent avant). Trois solitaires dépassent 20 % : le
-**Joueur de vielle** (deux charmes par nuit, règle du livre ; les charmés simulés le cherchent parmi les non-charmés dès que la moitié
-du village l'est, sans assez de succès), le **Chasseur de primes** et le **Revenant** (leurs victoires tombent des premiers votes, au
-hasard, avant que le village sache quoi que ce soit). Les poids ne changent pas la part d'un solitaire : il faudrait une règle (un
-charme par nuit, une cible tirée parmi les rôles à pouvoir, un Revenant qui ne gagne pas au premier vote…). **Non changé** : à décider
-(la règle du Joueur de vielle est celle du livre).
-
-## Les constantes recalibrées
+## Les constantes recalibrées (étape 6, adresse 1)
 
 - **`RISQUE_ENFANT`** (l'Enfant de la brume surprise en épiant ; réglage `chanceEpier`) : **gardé à 1/2**. Parties appariées (la même
   composition avec l'Enfant, puis avec un Villageois à sa place ; 300 compositions classique et chaos de 8 à 16 joueurs, adresse 1) :
@@ -223,7 +266,143 @@ charme par nuit, une cible tirée parmi les rôles à pouvoir, un Revenant qui n
 - Commandes : `node essais/outils/calibrer-poids.mjs --constante chanceEpier --valeurs 0.25,0.5,0.75 --role enfant-de-la-brume --parties
   300 --graine epier` et `--constante chanceFourniere --valeurs 0,0.334,0.667 --variante village --parties 300 --graine fourniere`.
 
-## Les mesures
+## Les mesures de l'étape 6b (chaque niveau à son adresse)
+
+**Avant** : les poids, les cibles et les règles de l'étape 6 (commit `452fb50`), graine « 6b », 200 parties par case ; **après** : les
+poids et les cibles de l'étape 6b, le Revenant et le Chasseur de primes retouchés, graine « 6b-apres », 400 parties par case. Chaque
+niveau joue à son adresse (débutants 0,5 ; classique et Le Pacte 0,75 ; chaos 1). La colonne qui compte est entre parenthèses : la
+part de la meute parmi les parties que gagne la meute ou le village (visée : 50 % ± 10).
+
+### Compositions générées — par niveau et par taille
+
+| Case | Parties | Avant : meute / village / solitaires (meute parmi meute et village) | Parties | Après | Marge après (95 %) |
+|---|---|---|---|---|---|
+| Débutants (adresse 0,5) | 1400 | 86 % / 14 % / 0 % (86 %) | 2799 | 70 % / 30 % / 0 % (**70 %**) | ±2 |
+| Classique (adresse 0,75) | 1400 | 63 % / 26 % / 11 % (71 %) | 2800 | 51 % / 44 % / 5 % (**54 %**) | ±2 |
+| Chaos (adresse 1) | 1400 | 40 % / 42 % / 18 % (49 %) | 2799 | 43 % / 41 % / 16 % (**51 %**) | ±2 |
+| Le Pacte (adresse 0,75) | 1400 | 62 % / 32 % / 6 % (66 %) | 2800 | 46 % / 48 % / 6 % (**49 %**) | ±2 |
+| 6 joueurs | 800 | 66 % / 35 % / 0 % (66 %) | 1600 | 61 % / 39 % / 0 % (**61 %**) | ±2 |
+| 8 joueurs | 800 | 56 % / 38 % / 6 % (59 %) | 1600 | 51 % / 43 % / 6 % (**54 %**) | ±3 |
+| 10 joueurs | 800 | 64 % / 28 % / 8 % (70 %) | 1600 | 50 % / 43 % / 7 % (**54 %**) | ±3 |
+| 12 joueurs | 800 | 60 % / 27 % / 13 % (69 %) | 1600 | 50 % / 41 % / 9 % (**55 %**) | ±3 |
+| 14 joueurs | 800 | 65 % / 25 % / 11 % (73 %) | 1599 | 50 % / 43 % / 7 % (**54 %**) | ±3 |
+| 16 joueurs | 800 | 65 % / 25 % / 10 % (72 %) | 1599 | 56 % / 35 % / 9 % (**61 %**) | ±3 |
+| 18 joueurs | 800 | 63 % / 23 % / 14 % (74 %) | 1600 | 50 % / 41 % / 10 % (**55 %**) | ±3 |
+| **Toutes** | 5600 | 63 % / 29 % / 9 % (69 %) | 11198 | 52 % / 41 % / 7 % (**56 %**) | ±1 |
+
+Par case (niveau × taille), avant → après (±5 points après) :
+
+| Niveau (adresse) | 6 | 8 | 10 | 12 | 14 | 16 | 18 |
+|---|---|---|---|---|---|---|---|
+| Débutants (0,5) | 76 → **75** | 73 → **57** | 87 → **76** | 85 → **64** | 92 → **69** | 95 → **80** | 93 → **70** |
+| Classique (0,75) | 67 → **63** | 58 → **57** | 74 → **47** | 76 → **49** | 77 → **52** | 73 → **54** | 75 → **53** |
+| Chaos (1) | 53 → **46** | 41 → **49** | 45 → **49** | 51 → **60** | 49 → **51** | 43 → **58** | 57 → **46** |
+| Le Pacte (0,75) | 67 → **60** | 63 → **51** | 68 → **43** | 59 → **46** | 68 → **41** | 72 → **51** | 65 → **48** |
+
+(2 parties en erreur sur 11 200 après : une partie de chaos à 16 joueurs sans vainqueur en 30 tours ; une erreur « Converting circular structure to JSON » dans `loups_eliminer`, débutants à 14 joueurs, qui ne se reproduit pas en rejouant le même fil seul — un aléa de la doublure ; aucune sur 5 600 avant.)
+
+**Dans la fourchette** (50 % ± 10) : toutes les cases du classique, du chaos et de Le Pacte sauf les tables de six joueurs du classique (63 %) et, de justesse, de Le Pacte (60 %) et le chaos à 12 joueurs (60 %). **Hors de la fourchette** : les
+débutants (le village le plus armé que sache le générateur ne suffit pas à l'adresse 0,5, voir plus haut ; la meute passe tout de même
+de 86 à 70 %) et les tables de six joueurs du classique et de Le Pacte (cibles au plafond du générateur).
+
+### Tailles impaires (après ; 150 parties par case, ±8 points)
+
+| Niveau (adresse) | 7 | 9 | 11 | 13 | 15 | 17 |
+|---|---|---|---|---|---|---|
+| Débutants (0,5) | 70 % | 77 % | 69 % | 77 % | 75 % | 70 % |
+| Classique (0,75) | 53 % | 51 % | 47 % | 51 % | 43 % | 47 % |
+| Chaos (1) | 50 % | 44 % | 52 % | 57 % | 46 % | 55 % |
+| Le Pacte (0,75) | 47 % | 53 % | 50 % | 51 % | 42 % | 63 % |
+
+### Compositions prêtes (après ; 30 parties chacune, de 6 à 18 joueurs, ±18 points)
+
+Toutes tirées par le générateur (graine « <niveau>-<n> ») : débutants 67 %, classique 49 %, chaos 50 %, Le Pacte 49 % (390 parties par
+niveau, ±5). Les plus éloignées de 50 % hors débutants : chaos-16 30 %, classique-13 32 %, classique-10 37 %, classique-18 37 %,
+le-pacte-7 67 % (une seule composition par taille, 30 parties : du bruit pour la plupart).
+
+### Aux autres adresses (pour information ; après, 60 parties par case)
+
+Les mêmes poids et cibles, joués à une autre adresse que celle de leur niveau : la part de la meute, toutes tailles paires (420 parties
+par case, ±5) :
+
+| Niveau (son adresse) | adresse 0,5 | adresse 0,75 | adresse 1 |
+|---|---|---|---|
+| Débutants (0,5) | **73 %** | 47 % | 26 % |
+| Classique (0,75) | 74 % | **52 %** | 31 % |
+| Chaos (1) | 82 % | 69 % | **48 %** |
+| Le Pacte (0,75) | 72 % | **48 %** | 30 % |
+
+(en gras : l'adresse du niveau ; 1 partie en erreur sur 5 040.) Une table d'un quart d'adresse au-dessous de la référence de son
+niveau laisse la meute à 70-80 % ; un quart au-dessus, le village à 70 %. Aux grandes tables l'écart est le plus fort (un débutant
+d'adresse 1 à 18 joueurs : la meute à 5 %).
+
+### Les variantes (étape 6b)
+
+Mesurées contre la partie ordinaire, aux poids et cibles de l'étape 6b (classique et Le Pacte, 8, 12 et 16 joueurs, adresse 0,75,
+50 parties par case : 300 par variante, mêmes graines « variantes » ; ±8 points) :
+
+| Variante | Parties | Meute / village / solitaires | Meute parmi meute et village | Écart à l'ordinaire (points) |
+|---|---|---|---|---|
+| ordinaire | 299 | 49 % / 44 % / 6 % | 53 % | — |
+| chandelles | 299 | 49 % / 46 % / 4 % | 52 % | -1 |
+| angoissante | 300 | 41 % / 52 % / 6 % | 44 % | -9 |
+| chaine | 300 | 77 % / 18 % / 5 % | 81 % | **+28** |
+| mur | 300 | 47 % / 48 % / 5 % | 49 % | -4 |
+| petite (Double visage) | 300 | 38 % / 60 % / 0 % | 39 % | **-14** |
+| grande (Double visage) | 300 | 35 % / 63 % / 0 % | 36 % | **-17** |
+| vendanges (ajustement +11) | 300 | 72 % / 27 % / 1 % | 72 % | **+19** |
+| envoutement (ajustement -7) | 300 | 35 % / 61 % / 4 % | 36 % | **-17** |
+| envoutement (ajustement **-12**) | 300 | 45 % / 52 % / 3 % | 46 % | -7 |
+| gazette | 300 | 56 % / 37 % / 7 % | 60 % | +7 |
+| village | 300 | 56 % / 39 % / 4 % | 59 % | +6 |
+
+À l'adresse 0,75, les ajustements de l'étape 6 (mesurés à l'adresse 1) ne suffisent plus : l'**Envoûtement** passe de -7 à **-12**
+(mesuré : -7 points) ; les **Vendanges** gardent **+11** (+19 points pour la meute ; un ajustement de +16 donnait le même +20 : aux
+tailles moyennes et grandes, la cible des Vendanges est déjà au plafond du générateur, qui ne sait pas armer davantage un village
+face à un loup de plus). Leur levier serait, comme pour la Chaîne, le nombre de loups : **à décider** (le loup de plus des Vendanges
+est la règle du livre). L'angoissante (-9), la Gazette (+7) et Le Village (+6) restent dans la marge (±8).
+
+**Les deux variantes du livre que leur règle déséquilibre** (règles gardées ; un avertissement chiffré et un conseil de dosage dans
+les guides du joueur et du narrateur, fr et en) :
+
+- **La Chaîne des innocents** favorise beaucoup la meute. Parties appariées (graine « dosage » : la même composition du générateur,
+  ordinaire, avec la Chaîne, puis avec la Chaîne et un ou deux Loups de Brumecombe remplacés par des Villageois ; classique et Le
+  Pacte, 100 parties par case, ±6 à ±10 points) — la part de la meute :
+
+| Joueurs | Ordinaire | Chaîne | Chaîne, un loup de moins | Chaîne, deux loups de moins |
+|---|---|---|---|---|
+| 8 (2 loups) | 54 % | 69 % | 26 % | — |
+| 10 (3 loups) | 42 % | 85 % | 53 % | — |
+| 12 (3 loups) | 43 % | 84 % | 60 % | 20 % |
+| 14 (4 loups) | 47 % | 85 % | 72 % | 42 % |
+| 16 (5 loups) | 58 % | 94 % | 80 % | 61 % |
+| 8, 12 et 16 | 52 % | 83 % | 55 % | — |
+
+  L'écart (+31 points) grandit avec la table : plus de loups, plus de blanchiments entre eux, et une chaîne plus longue où un
+  innocent finit debout. Il ne bouge pas avec la composition (un ajustement de cible de +7 n'y changeait rien à l'étape 6) : le levier
+  est le nombre de loups. **Conseil des guides** : de 9 à 12 joueurs, un loup de moins ; dès 13, deux de moins ; à 8 et moins, le
+  compte habituel (un seul loup renverserait la partie). En ligne, le narrateur compose alors la veillée à la main (rôles choisis à la
+  Table de jeu) : le générateur garde le barème des loups.
+
+- **Double visage** favorise le village. Elle fait sa propre composition (le paquet du livre : ni le générateur ni sa cible
+  n'y entrent) ; mesurée contre la partie ordinaire (mêmes graines « variantes », 100 parties par taille), puis avec **une carte
+  d'allégeance loup de plus** (mesure faite en changeant le temps d'une course `loupsDoubleVisage`, `logique/variantes.mjs`, de +1 ;
+  la règle n'a pas changé) — la part de la meute :
+
+| Joueurs | Ordinaire | Petite complication | Petite, un loup de plus | Grande complication | Grande, un loup de plus |
+|---|---|---|---|---|---|
+| 8 (2 loups) | 59 % | 51 % | 78 % | 46 % | 77 % |
+| 12 (3 loups) | 50 % | 36 % | 69 % | 36 % | 56 % |
+| 16 (4 loups) | 48 % | 31 % | 45 % | 25 % | 42 % |
+| 8, 12 et 16 | 53 % | 39 % | 64 % | 36 % | 58 % |
+
+  Le village y gagne d'autant plus que la table est grande (chacun a un rôle à pouvoir visible ou deux cartes ; la Liseuse lit les
+  allégeances). **Conseil des guides** : dès 14 joueurs, une carte d'allégeance loup de plus ; à 10-13 joueurs, en grande complication
+  seulement ; jusqu'à 9 joueurs, le paquet du livre (un loup de plus y donne huit parties sur dix à la meute). **En ligne**, le système
+  distribue le paquet du livre et ne sait pas ajouter cette carte : le conseil vaut autour d'une table, et pour le narrateur en ligne,
+  l'avertissement seul (prévenir la meute qu'elle part de loin). Un réglage « allégeance loup de plus » serait à décider.
+
+## Les mesures de l'étape 6 (adresse 1, pour mémoire)
 
 **Avant** : les poids posés à la main, la cible 0, les compositions prêtes du dernier commit (débutants, classique et chaos composées à
 la main) ; **après** : les poids et les cibles calibrés, les compositions prêtes tirées par le générateur. Mêmes joueurs simulés de
@@ -356,12 +535,13 @@ Non corrigé, et pourquoi :
 
 ## L'essai rapide
 
-`essais/veillees-equilibre.test.mjs` (dans `npm run essais`, une minute sur 8 fils) : 16 parties par case, graine « rapide », adresse 1,
-quatre niveaux × 6, 10, 14 et 18 joueurs, compositions générées. Il échoue si la meute sort de **30-70 %** (des parties gagnées par la
-meute ou le village) à un niveau ou à une taille, si une partie finit en erreur, si les solitaires gagnent plus d'une partie sur trois
-de celles où ils sont (ou l'un d'eux plus d'une sur deux, sur 20 parties au moins), et vérifie que le simulateur est déterministe.
-Mesuré à l'écriture : débutants 34 %, classique 45 %, chaos 52 %, Le Pacte 42 % ; 6 joueurs 38 %, 10 : 37 %, 14 : 45 %, 18 : 55 % ;
-solitaires 24 victoires sur 102 parties. Deux autres essais : `essais/politiques-veillees.test.mjs` (le contrat : chaque effet de rôle,
+`essais/veillees-equilibre.test.mjs` (dans `npm run essais`, une à deux minutes sur 8 fils) : 16 parties par case, graine « rapide »,
+chaque niveau à son adresse (étape 6b), quatre niveaux × 6, 10, 14 et 18 joueurs, compositions générées. Il échoue si la meute
+s'écarte de plus de **20 points** de la mesure longue à un niveau (référence : débutants 70 %, les trois autres 50 %), sort de
+**30-80 %** à une taille, si une partie finit en erreur, si les solitaires gagnent plus d'une partie sur trois de celles où ils sont
+(ou l'un d'eux plus d'une sur deux, sur 20 parties au moins), et vérifie que le simulateur est déterministe. Mesuré à l'écriture :
+débutants 72 %, classique 47 %, chaos 41 %, Le Pacte 39 % ; 6 joueurs 58 %, 10 : 44 %, 14 : 47 %, 18 : 50 % ; solitaires 12
+victoires sur 87 parties. Deux autres essais : `essais/politiques-veillees.test.mjs` (le contrat : chaque effet de rôle,
 pouvoir de jour et geste a sa politique ; le savoir lu en français et en anglais ; les choix de l'adresse 1 et de l'adresse 0) et
 `essais/calibration-veillees.test.mjs` (la régression retrouve des effets connus ; l'échelle, la cible, l'échantillon). Les compositions
 prêtes sont contrôlées par `essais/veillees-compositions.test.mjs` (chacune est celle du générateur, à ±2 de sa cible).
@@ -372,11 +552,14 @@ prêtes sont contrôlées par `essais/veillees-compositions.test.mjs` (chacune e
   prétend tenir, la Gazette autrement qu'au hasard (ses demandes au narrateur et aux joueurs se tranchent au hasard), les pouvoirs
   narratifs (Conteuse, Maîtresse d'école : sans effet mécanique ici). Les rôles qui vivent de ce que les joueurs en font (Furet,
   Sourcier, Ermite, Liseuse d'étoiles, Pie, Sonneur) y valent sans doute moins qu'à une vraie table : leurs poids sont des planchers.
-- **L'adresse 1 est la référence, et elle pèse lourd** : à l'adresse 0,5, la meute gagne 80 à 95 % des parties gagnées par la meute
-  ou le village, surtout aux grandes tables, que la calibration arme peu (le village d'adresse 1 s'y accorde si bien qu'il lui faut peu de
-  rôles). Une table qui se sert mal de ce qu'elle sait trouvera la meute bien plus forte que ne le promet la cible. **À décider** : une
-  adresse de référence par niveau (par exemple 0,5 pour les débutants, 0,75 pour le classique, 1 pour le chaos et Le Pacte), ou une
-  seule plus basse ; l'outil recalibre à n'importe quelle adresse (`--adresse`), une heure et demie de calcul.
+- **L'adresse pèse lourd** : une table moins adroite que la référence de son niveau trouvera la meute plus forte que ne le promet la
+  cible, une table plus adroite le village (tableau « Aux autres adresses »). L'adresse de chaque niveau (étape 6b) est une
+  supposition sur de vraies soirées, pas une mesure : quand on aura des parties en vrai (la Chronique), les comparer aux tableaux et
+  ajuster `ADRESSE_DU_NIVEAU` (l'outil recalibre à n'importe quelle adresse : `--adresse niveau` ou un nombre, deux heures de calcul).
+- **Les débutants restent au-dessus de 60 %** à leur adresse (0,5) : le générateur n'a pas de quoi armer davantage leur village. Le
+  levier restant est le barème des loups (un loup de moins aux débutants : mesuré plus haut), **à décider** ; de même pour les tables
+  de six joueurs du classique et de Le Pacte.
+- **Le Joueur de vielle** gagne toujours un tiers des parties où il est (règle du livre inchangée) : **à décider** (voir « Solitaires »).
 - **Une graine, une partie** : les mesures se rejouent à l'identique (mêmes graines, même code). Une règle, une politique ou un poids
   qui change déplace tout : remesurer avant de conclure (commandes plus bas).
 
@@ -400,25 +583,39 @@ sans modèle (repli) jouent comme les joueurs simulés :
    pas de vote aujourd'hui ») ; l'outil la laisse remonter au lieu de rendre `{ erreur: true }` (le simulateur la rattrape).
 4. Une fois les compagnons branchés : mesurer la petite tablée au simulateur (ses cibles, et l'entrée des rôles du jeu de soirée,
    `PACTE_HORS_TABLEE`).
+5. Étape 6b : l'adresse d'un compagnon peut suivre le niveau de la veillée (`ADRESSE_DU_NIVEAU`) plutôt que son seul tempérament ;
+   et ce que le moteur dit au narrateur et aux compagnons du Revenant (il ne gagne qu'exécuté à partir du troisième jour) et du
+   Chasseur de primes (sa prime échoue après le deuxième jour : il devient villageois, au matin) est à revoir avec ces règles.
 
 ## Remesurer
 
-Toutes les mesures se rejouent à l'identique (mêmes graines, même code ; 16 fils, une machine de 32 cœurs logiques) :
+Toutes les mesures se rejouent à l'identique (mêmes graines, même code ; 16 fils, une machine de 32 cœurs logiques). Étape 6b, chaque
+niveau à son adresse (`--adresse niveau`) :
 
-    # avant / après, compositions générées (400 parties par case à l'adresse 1 : ±5 points ; 150 à l'adresse 0,5)
-    node essais/outils/simuler-veillees.mjs --parties 400 --adresse 1 --graine apres --json apres-1.json            (~25 min)
-    node essais/outils/simuler-veillees.mjs --parties 150 --adresse 0.5 --graine apres --json apres-05.json         (~8 min)
-    node essais/outils/simuler-veillees.mjs --parties 150 --tailles 7,9,11,13,15,17 --adresse 1 --graine apres      (~6 min)
-    # compositions prêtes (30 parties chacune)
-    node essais/outils/simuler-veillees.mjs --pretes --parties 30 --tailles 6,7,8,9,10,11,12,13,14,15,16,17,18 --adresse 1 --graine apres
-    # variantes contre la partie ordinaire
-    node essais/outils/simuler-veillees.mjs --variantes ordinaire,chandelles,angoissante,chaine,mur,petite,grande,vendanges,envoutement,gazette,village \
-      --niveaux classique,le-pacte --tailles 8,12,16 --parties 50 --adresse 1 --graine variantes
-    # recalibrer : poids et cibles (régression), puis second passage des cibles d'après une validation
-    node essais/outils/calibrer-poids.mjs --parties 12000 --graine cal --adresse 1 --json cal.json
-    node essais/outils/calibrer-poids.mjs --depuis cal.json --parties 0 --ecrire
-    node essais/outils/simuler-veillees.mjs --parties 400 --adresse 1 --graine apres --json validation.json
-    node essais/outils/calibrer-poids.mjs --corriger validation.json --echelle 5.68 --ecrire
+    # recalibrer : poids et cibles (régression), puis deux seconds passages des cibles d'après des validations
+    node essais/outils/calibrer-poids.mjs --parties 12000 --graine cal6b --adresse niveau --json cal6b.json            (~20 min)
+    node essais/outils/calibrer-poids.mjs --depuis cal6b.json --parties 0 --adresse niveau --ecrire
+    npm run fabriquer-veillees
+    node essais/outils/simuler-veillees.mjs --parties 200 --adresse niveau --graine val1 --json val1.json               (~15 min)
+    node essais/outils/calibrer-poids.mjs --corriger val1.json --echelle 6.73 --adresse niveau --ecrire
+    npm run fabriquer-veillees
+    node essais/outils/simuler-veillees.mjs --parties 150 --tailles 6,7,8,9,10,11,12,13,14,15,16,17,18 --adresse niveau --graine val2 --json val2.json
+    node essais/outils/calibrer-poids.mjs --corriger val2.json --echelle 6.73 --adresse niveau --ecrire
     npm run fabriquer-veillees && npm run fabriquer-veillees-en
+    # avant (au commit 452fb50) / après, compositions générées (un niveau à la fois : une course de 11 200 parties d'un seul tenant a
+    # planté une fois, « segmentation fault », vers la 7 000e)
+    node essais/outils/simuler-veillees.mjs --parties 200 --adresse niveau --graine 6b --json avant.json                (~13 min)
+    node essais/outils/simuler-veillees.mjs --parties 400 --niveaux classique --adresse niveau --graine 6b-apres --json apres-classique.json
+    node essais/outils/simuler-veillees.mjs --parties 150 --tailles 7,9,11,13,15,17 --adresse niveau --graine 6b-apres  (~10 min)
+    node essais/outils/simuler-veillees.mjs --pretes --parties 30 --tailles 6,7,8,9,10,11,12,13,14,15,16,17,18 --adresse niveau --graine 6b-apres
+    node essais/outils/simuler-veillees.mjs --parties 60 --adresse 0.5,0.75,1 --graine 6b-info                           (les autres adresses)
+    # variantes contre la partie ordinaire ; le dosage de la Chaîne (parties appariées)
+    node essais/outils/simuler-veillees.mjs --variantes ordinaire,chandelles,angoissante,chaine,mur,petite,grande,vendanges,envoutement,gazette,village       --niveaux classique,le-pacte --tailles 8,12,16 --parties 50 --adresse niveau --graine variantes
+    node essais/outils/simuler-veillees.mjs --variantes ordinaire,chaine --loups-de-moins 0,1,2 --niveaux classique,le-pacte       --tailles 8,10,12,14,16 --parties 100 --adresse niveau --graine dosage
+    # le maximum du générateur aux débutants (cible +60), à plusieurs adresses : composer(n, …, { cible: 60 }) puis jouerTaches
+    # (tableau de « L'adresse de référence par niveau »)
+
+Étape 6 (adresse 1) : les mêmes commandes avec `--adresse 1` (ou `0.5`) et les graines « cal », « avant », « apres », « variantes »,
+au commit `452fb50` ; `--corriger … --echelle 5.68`.
 
 Le simulateur écrit ses tableaux en markdown (`--json` : chaque partie, pour les recouper) ; `--rapide` joue 16 parties par case.

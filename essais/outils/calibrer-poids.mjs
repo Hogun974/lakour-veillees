@@ -17,6 +17,7 @@
 // nouveaux poids, des compositions que tiraient les anciens.
 //
 //   node essais/outils/calibrer-poids.mjs --parties 16000 --graine cal --adresse 1          (simule, ajuste, propose)
+//             (--adresse niveau : chaque niveau à son adresse de référence, ADRESSE_DU_NIVEAU du simulateur ; Le Pacte, étape 6b)
 //   node essais/outils/calibrer-poids.mjs --depuis a.json,b.json --parties 0                (ajuste des parties déjà jouées, à cette
 //             adresse : --json du simulateur ou de la calibration ; avec --parties N, en joue N de plus)
 //   node essais/outils/calibrer-poids.mjs --corriger validation.json --echelle 5.68 --ecrire      (second passage des cibles, d'après
@@ -33,7 +34,7 @@ import { cpus } from "node:os";
 import { composer, nombreDeLoups, cibleTablee, equilibreDe } from "../../systems/lakour-loups/logique/composition.mjs";
 import { creerHasard } from "../../systems/lakour-loups/logique/hasard.mjs";
 import { EQUILIBRE, EQUILIBRE_BATIMENTS } from "../../modules/lakour-veillees/contenu/equilibre.mjs";
-import { jouerTaches, NIVEAUX_SIMULES, solitairesDe } from "./simuler-veillees.mjs";
+import { jouerTaches, NIVEAUX_SIMULES, solitairesDe, adresseDe } from "./simuler-veillees.mjs";
 
 export const REFERENCES = { village: "villageois", meute: "loup-de-brumecombe" };
 export const ANCRES = { village: 1, solitaire: 1, meute: -6 };
@@ -51,7 +52,7 @@ export function echantillon(parties, { graine = "cal", adresse = 1, equilibre = 
     const cible = Math.round(-12 + 24 * h());
     const village = (niveau === "classique" || niveau === "chaos") && h() < 1 / 6;
     const c = composer(n, equilibre, { niveau, cible, graine: `cal|${graine}|${i}`, village, essais: 400 });
-    taches.push({ c: { niveau, n, adresse, variante: village ? "village" : "ordinaire", roles: c.roles, batiments: c.batiments, somme: c.somme, cible }, i });
+    taches.push({ c: { niveau, n, adresse: adresseDe(adresse, niveau), variante: village ? "village" : "ordinaire", roles: c.roles, batiments: c.batiments, somme: c.somme, cible }, i });
   }
   return taches;
 }
@@ -221,7 +222,7 @@ export function tachesDeConstante({ constante, valeurs, role = "", variante = "o
     const c = composer(n, equilibre, { niveau, graine: `constante|${graine}|${i}`, inclure: role ? [role] : [], village: variante === "village", essais: 400 });
     for (const v of valeurs) for (const avec of role ? [true, false] : [true]) {
       const roles = avec ? c.roles : c.roles.map(r => (r === role ? "villageois" : r));
-      taches.push({ c: { niveau, n, adresse, variante, roles, batiments: c.batiments, reglages: { [constante]: v }, valeur: v, avec, etiquette: taches.length }, i });
+      taches.push({ c: { niveau, n, adresse: adresseDe(adresse, niveau), variante, roles, batiments: c.batiments, reglages: { [constante]: v }, valeur: v, avec, etiquette: taches.length }, i });
     }
   }
   return taches;
@@ -247,7 +248,7 @@ export function bilanDeConstante(taches, resultats) {
 // est bornée à ce que le générateur atteint (au-delà, il prendrait la composition la plus proche : la cible ne serait qu'un vœu).
 // interpoler (vrai par défaut) : faux, seules les tailles mesurées bougent (une validation des seules tailles impaires, par exemple).
 export function corrigerCibles(resultats, { u, cibles, adresse = 1, equilibre = EQ, amorti = 0.8, interpoler = true } = {}) {
-  const r = resultats.filter(x => !x.erreur && Number(x.adresse) === adresse && (x.camp === "village" || x.camp === "meute"));
+  const r = resultats.filter(x => !x.erreur && Number(x.adresse) === adresseDe(adresse, x.niveau) && (x.camp === "village" || x.camp === "meute"));
   const sortie = {}, bornees = [];
   for (const [niveau, t] of Object.entries(cibles)) {
     const ici = r.filter(x => x.niveau === niveau);
@@ -322,7 +323,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     const a = argv[i];
     if (a === "--parties") o.parties = Number(argv[++i]);
     else if (a === "--graine") o.graine = String(argv[++i]);
-    else if (a === "--adresse") o.adresse = Number(argv[++i]);
+    else if (a === "--adresse") o.adresse = argv[++i] === "niveau" ? "niveau" : Number(argv[i]);
     else if (a === "--fils") o.fils = Number(argv[++i]);
     else if (a === "--json") o.json = argv[++i];
     else if (a === "--depuis") o.depuis = argv[++i];
@@ -366,7 +367,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   }
   const debut = performance.now();
   // Des parties déjà jouées (--depuis a.json,b.json : celles de cette adresse, compositions générées ou tirées), et d'autres à jouer.
-  let resultats = (o.depuis ? o.depuis.split(",") : []).flatMap(f => JSON.parse(readFileSync(f, "utf8")).resultats.filter(r => Number(r.adresse) === o.adresse && !r.erreur));
+  let resultats = (o.depuis ? o.depuis.split(",") : []).flatMap(f => JSON.parse(readFileSync(f, "utf8")).resultats.filter(r => Number(r.adresse) === adresseDe(o.adresse, r.niveau) && !r.erreur));
   if (o.parties > 0) {
     const taches = echantillon(o.parties, { graine: o.graine, adresse: o.adresse });
     let dernier = 0;

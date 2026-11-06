@@ -546,16 +546,35 @@ test("victoire : meute quand elle est aussi nombreuse que les autres", () => {
   assert.equal(L.verifierVictoire({ villageois: vs }), "meute");
 });
 
-test("victoire : le Revenant exécuté par le vote gagne ; tué la nuit, non", () => {
+test("victoire : le Revenant exécuté par le vote à partir du troisième jour gagne ; aux deux premiers jours ou tué la nuit, non", () => {
   const vs = [v("r", "revenant", { vivant: false }), v("l", "loup"), v("a", "villageois"), v("b", "villageois")];
-  assert.equal(L.verifierVictoire({ villageois: vs, morts: [{ acteurId: "r", cause: "vote" }] }), "r");
-  assert.equal(L.verifierVictoire({ villageois: vs, morts: [{ acteurId: "r", cause: "meute" }] }), "");
+  assert.equal(L.verifierVictoire({ villageois: vs, morts: [{ acteurId: "r", cause: "vote", tour: 3 }] }), "r");
+  assert.equal(L.verifierVictoire({ villageois: vs, morts: [{ acteurId: "r", cause: "vote", tour: 5 }] }), "r");
+  assert.equal(L.verifierVictoire({ villageois: vs, morts: [{ acteurId: "r", cause: "vote", tour: 2 }] }), "");
+  assert.equal(L.verifierVictoire({ villageois: vs, morts: [{ acteurId: "r", cause: "vote", tour: 1 }] }), "");
+  assert.equal(L.verifierVictoire({ villageois: vs, morts: [{ acteurId: "r", cause: "vote", tour: 0 }] }), "", "le jour d'ouverture du Feu follet");
+  assert.equal(L.verifierVictoire({ villageois: vs, morts: [{ acteurId: "r", cause: "meute", tour: 3 }] }), "");
+  assert.equal(L.JOUR_DU_REVENANT, 3);
 });
 
-test("victoire : le chasseur de primes gagne si sa cible est exécutée", () => {
+test("victoire : le chasseur de primes gagne si sa cible est exécutée avant la fin du deuxième jour", () => {
   const vs = [v("ch", "chasseur"), v("l", "loup"), v("a", "villageois", { vivant: false }), v("b", "villageois"), v("c", "villageois")];
-  assert.equal(L.verifierVictoire({ villageois: vs, morts: [{ acteurId: "a", cause: "vote" }], primes: { ch: "a" } }), "ch");
-  assert.equal(L.verifierVictoire({ villageois: vs, morts: [{ acteurId: "a", cause: "meute" }], primes: { ch: "a" } }), "");
+  assert.equal(L.verifierVictoire({ villageois: vs, morts: [{ acteurId: "a", cause: "vote", tour: 1 }], primes: { ch: "a" } }), "ch");
+  assert.equal(L.verifierVictoire({ villageois: vs, morts: [{ acteurId: "a", cause: "vote", tour: 2 }], primes: { ch: "a" } }), "ch");
+  assert.equal(L.verifierVictoire({ villageois: vs, morts: [{ acteurId: "a", cause: "vote", tour: 3 }], primes: { ch: "a" } }), "", "trop tard");
+  assert.equal(L.verifierVictoire({ villageois: vs, morts: [{ acteurId: "a", cause: "meute", tour: 1 }], primes: { ch: "a" } }), "");
+  assert.equal(L.JOUR_LIMITE_DE_LA_PRIME, 2);
+});
+
+test("victoire : la prime échoue (le Chasseur devient simple villageois) — cible morte autrement, ou le deuxième jour passé", () => {
+  const vs = [v("ch", "chasseur"), v("l", "loup"), v("a", "villageois"), v("b", "villageois")];
+  const echues = (morts, tour, liste = vs) => L.primesEchues({ villageois: liste, morts, primes: { ch: "a" }, tour });
+  assert.deepEqual(echues([], 1), []);
+  assert.deepEqual(echues([], 2), [], "le deuxième jour reste à jouer");
+  assert.deepEqual(echues([], 3), ["ch"], "au matin de la troisième nuit");
+  assert.deepEqual(echues([{ acteurId: "a", cause: "meute", tour: 2 }], 2), ["ch"], "cible dévorée");
+  assert.deepEqual(echues([{ acteurId: "a", cause: "vote", tour: 2 }], 3), [], "cible exécutée : il a gagné");
+  assert.deepEqual(echues([], 5, [{ ...vs[0], camp: "village" }, ...vs.slice(1)]), [], "déjà villageois");
 });
 
 test("victoire : deux amoureux derniers vivants gagnent ensemble", () => {

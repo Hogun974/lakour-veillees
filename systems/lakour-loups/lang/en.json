@@ -310,7 +310,7 @@
       "Immunite": "The pack left {nom}'s house empty-handed.",
       "MemeCamp": "{a} and {b} are on the same side.",
       "PasMemeCamp": "{a} and {b} are not on the same side.",
-      "Prime": "Your target: {nom}. Get the village to condemn them.",
+      "Prime": "Your target: {nom}. Get the village to condemn them before the end of the second day.",
       "PrimeManquante": "{nom} has no target: choose one.",
       "SilenceRefuse": "You cannot silence {nom} two nights in a row.",
       "FiolesBouchees": "You were not in danger tonight: your vials stay corked.",
@@ -1374,6 +1374,7 @@
       "DejaCharmes": "Those the hurdy-gurdy has already charmed: {noms}.",
       "PersonneCharme": "The hurdy-gurdy has charmed no one yet.",
       "FeuFolletEteint": "The first night is over and you still live: your flame goes out. You are now a plain villager, and you win with the Village.",
+      "PrimeEchue": "Your bounty has failed: your target did not fall to the village's vote in time (before the end of the second day). You are now a plain villager, and you win with the Village.",
       "CommenceParLeJour": "This evening begins with a day: the village gathers, debates and votes before the first night.",
       "Groupes": "The village splits into two sides, {critere}: on one side {a}; on the other {b}.",
       "Critere": {

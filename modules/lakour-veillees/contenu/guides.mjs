@@ -380,7 +380,7 @@ Ce que tu dis : la règle, et rien d'autre. **Jamais** de qui l'ombre est tombé
 
 - Distribue les rôles et les métiers au hasard (la Table de jeu s'en charge). Chaque joueur reçoit son rôle en message privé.
 - Attribue une maison à chacun, dans l'ordre (« Maison 1 », « Maison 2 »…). Avec le Pont en jeu, rappelle que les maisons 13 à 18 sont sur l'autre rive.
-- **Chasseur de primes** : tire sa cible au hasard parmi les autres joueurs (jamais un loup si possible, pour que la partie reste ouverte), et donne-la-lui la première nuit.
+- **Chasseur de primes** : tire sa cible au hasard parmi les autres joueurs (jamais un loup si possible, pour que la partie reste ouverte), et donne-la-lui la première nuit (le système le fait) : elle doit tomber au vote au plus tard le deuxième jour.
 - Annonce les **bâtiments en jeu** et les **variantes** choisies (révélation à la mort, durée du débat, **Bailli**).
 - **Masques de veillée** (réglage, par défaut oui) : le système remet en secret à chaque loup deux ou trois rôles du Village absents de la partie (trois pour une meute, deux pour un loup seul ; jamais dans une peste noire). Tu les vois dans ta chronique secrète ; ne les cite jamais, ne les confirme ni ne les démens.
 - **Chapardeur** : le paquet compte deux cartes Villageois de plus ; les deux cartes que la distribution ne donne pas restent au centre, face cachée (le système les garde en secret). **Bateleur** : trois cartes de rôles à pouvoir de nuit (jamais de loup), tirées au hasard hors du paquet, sont posées face visible et annoncées (tu peux les choisir toi-même avant la première nuit : cartesDuBateleur). **Feu follet** : la veillée commence par un jour (débat et vote avant la première nuit), annoncé. **Illuminé** : le système partage le village en deux bords, selon la rive où chacun dort, et l'annonce. Le système fait tout cela à la distribution ; ne dis jamais qui tient ces rôles.
@@ -409,7 +409,7 @@ Pendant le jour, tout vivant (pas réduit au silence) peut crier **« C'est la p
 
 # La fin
 
-Sans cri juste, quand il ne reste qu'**un vivant ou aucun**, **la peste l'emporte** : « Brumecombe s'éteint dans la fièvre ». Personne ne gagne. (Le Revenant exécuté ou la cible du Chasseur de primes exécutée gagnent comme d'habitude.)`
+Sans cri juste, quand il ne reste qu'**un vivant ou aucun**, **la peste l'emporte** : « Brumecombe s'éteint dans la fièvre ». Personne ne gagne. (Le Revenant exécuté ou la cible du Chasseur de primes exécutée gagnent comme d'habitude, dans les mêmes délais.)`
     },
     {
       titre: "Mener la nuit",
@@ -544,7 +544,7 @@ Le système y inscrit seul chaque vote clos (voix par voix), chaque mort avec sa
 
 - Plus aucun loup : victoire du **Village**.
 - Loups aussi nombreux que les autres vivants : victoire de la **Meute**.
-- **Revenant** exécuté, cible du **Chasseur de primes** exécutée : victoire immédiate du solitaire, et la partie s'arrête.
+- **Revenant** exécuté à partir du troisième jour, cible du **Chasseur de primes** exécutée au plus tard le deuxième jour : victoire immédiate du solitaire, et la partie s'arrête. Un Revenant exécuté le premier ou le deuxième jour meurt sans gagner ; une prime qui n'est pas tombée à temps échoue (le Chasseur devient simple villageois, le système le lui dit au matin).
 - **Amants** derniers vivants : ils gagnent ensemble. Deux amants de camps différents ne gagnent que de cette façon, jamais avec leur camp.
 - **Peste noire** : le cri juste fait gagner le village ; sinon la peste l'emporte quand il reste un vivant ou aucun (ni « plus aucun loup », ni amants, ni tueur solitaire ne finissent une peste).
 - **Pyromane** ou **Dame du gué** dernier vivant (ou avec un seul non-loup) : il gagne seul. Tant que l'un de ces deux tueurs vit, le village n'a pas gagné, même sans loup ; s'ils sont tous les deux en vie, aucun ne gagne avant que l'autre tombe.
@@ -653,8 +653,8 @@ Pose sur la carte quelques **figurants** pour animer le village : le garde du gu
 - **Braconnière tuée par le poison** : elle emporte quand même quelqu'un.
 - **Gardienne des clés sur une maison loup** : le loup chasse quand même avec la meute (la meute sort d'une autre maison), mais il ne peut pas utiliser son pouvoir propre.
 - **Garde du guet sur un loup** : la meute chasse sans lui ; son vote de meute ne compte pas.
-- **Cible du Chasseur de primes tuée la nuit** : le Chasseur devient villageois (camp Village).
-- **Revenant tué la nuit** : il a perdu, simplement.
+- **Cible du Chasseur de primes tuée la nuit**, ou **deuxième jour passé** sans qu'elle tombe au vote : le Chasseur devient villageois (camp Village) ; le système change son camp et le lui dit au matin.
+- **Revenant tué la nuit**, ou **exécuté le premier ou le deuxième jour** (ou au jour d'ouverture du Feu follet) : il a perdu, simplement.
 - **Pyromane ou Dame du gué attaqués par la meute** : rien ne se passe, la meute repart bredouille ; ne dis rien au matin.
 - **Louvetier et visions** : la Liseuse qui le lit voit « Meute », le Sourcier le dit du même camp qu'un loup. C'est voulu : ne corrige jamais, même quand le village s'apprête à l'exécuter. Le Cimetière, lui, annonce son vrai camp.
 - **Louvetier mordu** : il rejoint la meute et sa vision lit désormais pour elle ; les visions le voient toujours « Meute ».
@@ -765,9 +765,9 @@ Le niveau **Le Pacte** ne tire que les personnages des veillées d'autrefois, sa
 # Ce que le système fait seul
 
 - **Veillée aux chandelles** : chaque carte de la Table porte sa chandelle ; à chaque mort, le chat dit qu'elle s'éteint. Version angoissante : chaque loup choisit seul sa chandelle (le vote de la meute) ; s'ils ne s'accordent pas, il n'y a pas de victime, et l'aube annonce les chandelles éteintes.
-- **La Chaîne des innocents** : « Ouvrir le vote » lance la chaîne. Chaque désignation est demandée à son joueur, puis annoncée ; sans réponse, le sort désigne. « Clore le vote » attend le dernier debout, qui est le condamné : exécute-le comme d'habitude.
+- **La Chaîne des innocents** : « Ouvrir le vote » lance la chaîne. Chaque désignation est demandée à son joueur, puis annoncée ; sans réponse, le sort désigne. « Clore le vote » attend le dernier debout, qui est le condamné : exécute-le comme d'habitude. **Elle avantage beaucoup la meute** (mesuré : huit parties sur dix pour la meute, contre une sur deux à la veillée ordinaire ; davantage aux grandes tables) : de 9 à 12 joueurs, compose la veillée toi-même à la Table de jeu avec **un loup de moins** (un Loup de Brumecombe remplacé par un Villageois ; le générateur, lui, garde le barème des loups) ; dès 13 joueurs, **deux de moins** ; à 8 joueurs et moins, garde les deux loups. Rappelle au village, au premier jour, que la chaîne se lit : qui garantit qui.
 - **Le Mur des murmures** : la dernière étape de la nuit réveille tous les vivants, chacun avec une fenêtre d'écriture. Au matin, le mur est lu au chat. Tu ne sais pas qui a écrit quoi : ne cherche pas, ne devine pas à voix haute.
-- **Double visage** : la distribution retourne les rôles visibles (petite complication) et remet à chacun ses cartes secrètes, au carnet. Les joueurs d'allégeance loup se réveillent avec la meute, puis à l'ordre de leur rôle. Grande complication : un joueur à deux pouvoirs est réveillé deux fois, une par carte.
+- **Double visage** : la distribution retourne les rôles visibles (petite complication) et remet à chacun ses cartes secrètes, au carnet. Les joueurs d'allégeance loup se réveillent avec la meute, puis à l'ordre de leur rôle. Grande complication : un joueur à deux pouvoirs est réveillé deux fois, une par carte. **Elle avantage le village** (mesuré : la meute n'y gagne que quatre parties sur dix en petite complication, un peu plus d'une sur trois en grande, contre une sur deux à la veillée ordinaire ; moins encore aux grandes tables). Le système distribue le paquet du livre et ne sait pas y ajouter de loup : préviens la meute qu'elle part de loin ; autour d'une vraie table, ajoute une carte d'allégeance loup dès 14 joueurs (dès 10 en grande complication).
 - **Les Vendanges** : la Table et le MJ IA proposent d'eux-mêmes les bons candidats (les voisins des loups pour la meute, le Garde et ses voisins, les voisins de la Braconnière). La première nuit, l'Entremetteuse est réveillée une seconde fois (« la tromperie ») : un amant et un autre joueur. Au vote, le Bailli vote d'abord, à découvert ; les votes interdits par l'amour sont refusés. Le sort de la fiole de l'Herboriste est tiré à l'aube : tu le lis dans ta chronique.
 - **L'Envoûtement** : la proie de la meute ne meurt pas ; l'aube est calme. Le système la prive de ses pouvoirs et le lui dit, à elle seule. Si une envoûtée est condamnée, celles d'avant elle tombent aussitôt, annoncées. La meute gagne quand il ne reste plus qu'un villageois libre.
 
@@ -947,6 +947,10 @@ Une chandelle brûle devant chaque joueur (en ligne : sur sa carte, à la Table 
 
 Le condamné du jour n'est pas voté. Tous les vivants sont debout. Le voisin de gauche du dernier éliminé désigne un villageois debout dont il **garantit l'innocence** ; celui-ci s'assied et désigne à son tour un autre villageois debout, et ainsi de suite. **Le dernier debout est condamné.** Les loups peuvent se blanchir entre eux : c'est voulu. En ligne, chacun désigne dans une fenêtre ; s'il ne répond pas à temps, le sort désigne pour lui. Sans mort encore, la chaîne part du Bailli, sinon du premier de la table. Pas de Banc des accusés avec elle.
 
+**À savoir : elle avantage beaucoup la meute.** Mesuré sur nos parties simulées (tables classiques et du jeu de soirée, des joueurs qui se servent assez bien de ce qu'ils savent ; Le Pacte, étape 6b) : avec les mêmes compositions, la meute gagne **huit parties sur dix** avec la Chaîne, contre une sur deux à la veillée ordinaire, et l'écart grandit avec la table (sept sur dix à 8 joueurs, plus de neuf sur dix à 16). Les loups se blanchissent entre eux, et un village qui ne retient pas qui a garanti qui finit presque toujours par condamner un innocent.
+
+**Conseil de dosage** (même mesure) : de 9 à 12 joueurs, mettez **un loup de moins** (la meute retombe à cinq ou six parties sur dix) ; dès 13 joueurs, **deux de moins** (quatre parties sur dix à 14 joueurs, six sur dix à 16 : la meute garde un peu d'avance) ; à 8 joueurs et moins, gardez vos deux loups (avec un seul, la meute ne gagne plus qu'une partie sur quatre). Et regardez la chaîne : qui garantit qui, chaque jour, est la seule piste qu'elle laisse.
+
 # Le Mur des murmures
 
 Chaque nuit, chaque vivant peut écrire une **courte phrase anonyme** sur le mur (une fenêtre s'ouvre en fin de nuit ; on peut passer). Au matin, le narrateur lit toutes les phrases, mêlées. **Personne ne saura jamais qui a écrit quoi**, pas même le narrateur. Elle se joue avec toutes les autres.
@@ -956,6 +960,10 @@ Chaque nuit, chaque vivant peut écrire une **courte phrase anonyme** sur le mur
 - **Petite complication** : chaque joueur reçoit un **rôle visible**, retourné devant tous, parmi la Liseuse de cendres, la Braconnière, l'Herboriste, l'Entremetteuse, le Garde du pont, l'Aïeul, le Souffre-douleur et jusqu'à deux Villageois ; puis une **carte d'allégeance** secrète (deux loups, le reste villageois) qui fait son camp. Un joueur d'allégeance loup se réveille avec la meute et **garde son pouvoir visible**. La Liseuse lit l'allégeance, pas le rôle visible.
 - **Grande complication** : les mêmes cartes, mêlées, **deux par joueur**, face cachée. Une carte de loup fait un loup ; une carte à pouvoir donne son pouvoir (deux cartes à pouvoir : les deux, par exemple Herboriste et Liseuse, ou Aïeul et Souffre-douleur). La Liseuse lit les deux cartes.
 - De 7 à 9 joueurs avec un paquet ; de 10 à 18, un second paquet s'ajoute (trois loups jusqu'à 13 joueurs, quatre au-delà). Ni à la petite tablée, ni avec la peste noire.
+
+**À savoir : elle avantage le village.** Mesuré sur nos parties simulées (les mêmes tables que pour la Chaîne) : la meute n'y gagne que **quatre parties sur dix** en petite complication et **un peu plus d'une sur trois** en grande, contre une sur deux à la veillée ordinaire — et à peine une sur quatre à 16 joueurs en grande complication : chacun a un pouvoir visible (ou deux cartes), et la Liseuse lit les allégeances.
+
+**Conseil de dosage**, autour d'une table avec de vraies cartes : dès 14 joueurs, **une carte d'allégeance loup de plus** (la meute revient à quatre ou cinq parties sur dix) ; de 10 à 13 joueurs, en grande complication seulement ; jusqu'à 9 joueurs, le paquet tel quel (un loup de plus y donnerait huit parties sur dix à la meute). En ligne, le système distribue le paquet du livre, sans carte de plus : la meute part de loin, qu'elle le sache.
 
 # Les Vendanges
 

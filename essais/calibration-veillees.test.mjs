@@ -5,6 +5,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { logistique, calibrer, echantillon, ciblesDeLaTablee, ANCRES } from "./outils/calibrer-poids.mjs";
+import { ADRESSE_DU_NIVEAU } from "./outils/simuler-veillees.mjs";
 import { creerHasard } from "../systems/lakour-loups/logique/hasard.mjs";
 import { nombreDeLoups } from "../systems/lakour-loups/logique/composition.mjs";
 import { EQUILIBRE } from "../modules/lakour-veillees/contenu/equilibre.mjs";
@@ -54,6 +55,9 @@ test("échantillon : varié (niveaux, tailles, cibles), reproductible ; la petit
   assert.ok(new Set(a.map(t => t.c.n)).size >= 8, "des tailles variées");
   assert.ok(Math.max(...a.map(t => t.c.somme)) - Math.min(...a.map(t => t.c.somme)) >= 10, "des sommes variées");
   for (const t of a) assert.equal(t.c.roles.length, t.c.n);
+  // L'adresse de référence de chaque niveau (Le Pacte, étape 6b) : --adresse niveau.
+  for (const t of echantillon(8, { graine: "essai", adresse: "niveau" })) assert.equal(t.c.adresse, ADRESSE_DU_NIVEAU[t.c.niveau], t.c.niveau);
+  assert.deepEqual(ADRESSE_DU_NIVEAU, { debutants: 0.5, classique: 0.75, chaos: 1, "le-pacte": 0.75 });
   // Aux poids actuels, les cibles de la petite tablée sont les anciennes (à l'arrondi près : les compositions ne bougent pas).
   const memes = ciblesDeLaTablee(Object.fromEntries(Object.entries(EQUILIBRE).map(([k, r]) => [k, r.poids])), { tirages: 30 });
   for (let n = 4; n <= 12; n++) assert.ok(Number.isInteger(memes[n]), `${n} : ${memes[n]}`);

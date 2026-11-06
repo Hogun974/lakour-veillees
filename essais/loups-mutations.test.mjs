@@ -160,7 +160,9 @@ const VERIFICATIONS = {
     actions: [{ acteurId: "en", roleCle: "enfant-de-la-brume", cibles: [] }, meute("x")] }).morts, ["x"]),
   "victoire de la meute à égalité": L => assert.equal(L.verifierVictoire({ villageois: [v("l", "loup"), v("a", "villageois")] }), "meute"),
   "revenant exécuté": L => assert.equal(L.verifierVictoire({ villageois: [v("r", "revenant", { vivant: false }), v("l", "loup"), v("a", "villageois"), v("b", "villageois")],
-    morts: [{ acteurId: "r", cause: "vote" }] }), "r"),
+    morts: [{ acteurId: "r", cause: "vote", tour: 3 }] }), "r"),
+  "revenant exécuté trop tôt ne gagne pas": L => assert.equal(L.verifierVictoire({ villageois: [v("r", "revenant", { vivant: false }), v("l", "loup"), v("a", "villageois"), v("b", "villageois")],
+    morts: [{ acteurId: "r", cause: "vote", tour: 2 }] }), ""),
   "revenant tué la nuit ne gagne pas": L => assert.equal(L.verifierVictoire({ villageois: [v("r", "revenant", { vivant: false }), v("l", "loup"), v("a", "villageois"), v("b", "villageois")],
     morts: [{ acteurId: "r", cause: "meute" }] }), ""),
   "amants de camps différents : jamais gagnants avec leur camp": L => {
@@ -172,7 +174,14 @@ const VERIFICATIONS = {
   },
   "amoureux derniers vivants": L => assert.equal(L.verifierVictoire({ villageois: [v("l", "loup", { amoureux: "a" }), v("a", "villageois", { amoureux: "l" })] }), "l"),
   "chasseur de primes": L => assert.equal(L.verifierVictoire({ villageois: [v("c", "chasseur"), v("l", "loup"), v("a", "villageois", { vivant: false }), v("b", "villageois"), v("d", "villageois")],
-    morts: [{ acteurId: "a", cause: "vote" }], primes: { c: "a" } }), "c"),
+    morts: [{ acteurId: "a", cause: "vote", tour: 2 }], primes: { c: "a" } }), "c"),
+  "chasseur de primes : cible tuée la nuit ou exécutée trop tard": L => {
+    const vs = [v("c", "chasseur"), v("l", "loup"), v("a", "villageois", { vivant: false }), v("b", "villageois"), v("d", "villageois")];
+    assert.equal(L.verifierVictoire({ villageois: vs, morts: [{ acteurId: "a", cause: "meute", tour: 1 }], primes: { c: "a" } }), "");
+    assert.equal(L.verifierVictoire({ villageois: vs, morts: [{ acteurId: "a", cause: "vote", tour: 3 }], primes: { c: "a" } }), "");
+    assert.deepEqual(L.primesEchues({ villageois: vs, morts: [], primes: { c: "a" }, tour: 3 }), ["c"]);
+    assert.deepEqual(L.primesEchues({ villageois: vs, morts: [], primes: { c: "a" }, tour: 2 }), []);
+  },
   "distribution reproductible et mélangée": L => {
     const roles = ["a", "b", "c", "d", "e", "f"], joueurs = ["1", "2", "3", "4", "5", "6"];
     assert.deepEqual(L.distribuer({ roles, joueurs, graine: 3 }), L.distribuer({ roles, joueurs, graine: 3 }));
@@ -256,11 +265,14 @@ const MUTATIONS = [
   ["resolution.mjs", "for (const v of nouveaux) v.protections = 0;", "", "protections remises à 0"],
   ["victoire.mjs", "if (meute === 0 && tueurs.length === 0) return \"village\";", "if (meute === 0) return \"village\";", "pyromane"],
   ["victoire.mjs", "meute >= vivants.length - meute", "meute > vivants.length - meute", "meute à égalité"],
-  ["victoire.mjs", "if (cle === \"execute\" && executes.has(v.id)) return v.id;", "", "revenant"],
-  ["victoire.mjs", "morts.filter(m => m.cause === \"vote\")", "morts", "exécuté par le vote seulement"],
+  ["victoire.mjs", "if (cle === \"execute\" && executesTard.has(v.id)) return v.id;", "", "revenant"],
+  ["victoire.mjs", "m.cause === \"vote\" && Number(m.tour) >= JOUR_DU_REVENANT", "m.cause === \"vote\"", "revenant exécuté trop tôt ne gagne pas"],
+  ["victoire.mjs", "morts.filter(m => m.cause === \"vote\" && Number(m.tour) <= ", "morts.filter(m => Number(m.tour) <= ", "exécuté par le vote seulement"],
   ["victoire.mjs", "if (a.amoureux === b.id && b.amoureux === a.id) {", "if (false) {", "amoureux"],
   ["victoire.mjs", "if (v.camp === vainqueur && !desAmantsMeles(v)) gagnants.add(v.id);", "if (v.camp === vainqueur) gagnants.add(v.id);", "amants mêlés"],
-  ["victoire.mjs", "if (cle === \"cible-executee\" && primes[v.id] && executes.has(primes[v.id])) return v.id;", "", "chasseur de primes"],
+  ["victoire.mjs", "if (cle === \"cible-executee\" && primes[v.id] && executesATemps.has(primes[v.id])) return v.id;", "", "chasseur de primes"],
+  ["victoire.mjs", "Number(m.tour) <= JOUR_LIMITE_DE_LA_PRIME", "true", "chasseur de primes : cible tuée la nuit ou exécutée trop tard"],
+  ["victoire.mjs", "return Boolean(m) || Number(tour) > JOUR_LIMITE_DE_LA_PRIME;", "return Boolean(m);", "chasseur de primes : cible tuée la nuit ou exécutée trop tard"],
   ["distribution.mjs", "const r = melanger(roles, h);", "const r = [...roles];", "rôles mélangés"],
   ["hasard.mjs", "if (graine === undefined || graine === null || graine === \"\") return Math.random;", "return Math.random;", "graine"],
   ["etat.mjs", "etat.tour += 1;", "", "tour"],

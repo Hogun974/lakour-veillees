@@ -8,7 +8,7 @@
     "cle": "chasseur-de-primes",
     "camp": "solitaire",
     "description": "<p>Quelqu'un t'a payé pour qu'un voisin finisse au gibet.</p><p><strong>La première nuit</strong>, le narrateur te donne en secret le nom de ta <strong>cible</strong>, tirée au hasard parmi les autres joueurs. Tu n'as pas d'autre pouvoir que ta langue.</p>",
-    "victoire": "<p>Tu gagnes <strong>seul et aussitôt</strong> si ta cible est exécutée par le vote du village, que tu sois vivant ou non. Si elle meurt d'une autre façon, tu deviens un simple villageois et joues avec le village.</p>",
+    "victoire": "<p>Tu gagnes <strong>seul et aussitôt</strong> si ta cible est exécutée par le vote du village <strong>au plus tard le deuxième jour</strong> (le jour qui suit la deuxième nuit ; le jour d'ouverture du Feu follet, s'il y en a un, vient en plus), que tu sois vivant ou non. Si elle meurt d'une autre façon, ou si le deuxième jour passe sans qu'elle tombe au vote, ta prime échoue : tu deviens un simple villageois et gagnes avec le village (le narrateur te le dit au matin).</p>",
     "nuit": {
       "actif": true,
       "ordre": 6,

@@ -187,7 +187,7 @@ const VERIFICATIONS = {
     assert.equal(L.verifierVictoire({ villageois: vivants(["x", "y"]), morts: [], peste: { ...PESTE, decouverte: true } }), "village");
     // Le Revenant exécuté gagne quand même.
     const r = [...vs, v("rv", "revenant", { vivant: false })];
-    assert.equal(L.verifierVictoire({ villageois: r, morts: [{ acteurId: "rv", cause: "vote" }], peste: PESTE }), "rv");
+    assert.equal(L.verifierVictoire({ villageois: r, morts: [{ acteurId: "rv", cause: "vote", tour: 3 }], peste: PESTE }), "rv");
     // Personne ne gagne avec la peste (récit de fin).
     assert.ok(L.bilanDePartie({ villageois: vs, vainqueur: "peste" }).every(l => !l.gagnant));
   },

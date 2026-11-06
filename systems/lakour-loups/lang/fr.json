@@ -310,7 +310,7 @@
       "Immunite": "La meute est repartie bredouille de chez {nom}.",
       "MemeCamp": "{a} et {b} sont du même camp.",
       "PasMemeCamp": "{a} et {b} ne sont pas du même camp.",
-      "Prime": "Votre cible : {nom}. Faites-la condamner par le village.",
+      "Prime": "Votre cible : {nom}. Faites-la condamner par le village avant la fin du deuxième jour.",
       "PrimeManquante": "{nom} n'a pas de cible : désignez-en une.",
       "SilenceRefuse": "Vous ne pouvez pas faire taire {nom} deux nuits de suite.",
       "FiolesBouchees": "Vous n'étiez pas en danger cette nuit : vos fioles restent bouchées.",
@@ -1374,6 +1374,7 @@
       "DejaCharmes": "Ceux que la vielle a déjà charmés : {noms}.",
       "PersonneCharme": "La vielle n'a encore charmé personne.",
       "FeuFolletEteint": "La première nuit est passée et tu vis encore : ta flamme s'éteint. Tu n'es plus qu'un simple villageois, et tu gagnes avec le Village.",
+      "PrimeEchue": "Ta prime a échoué : ta cible n'est pas tombée au vote du village à temps (avant la fin du deuxième jour). Tu n'es plus qu'un simple villageois, et tu gagnes avec le Village.",
       "CommenceParLeJour": "Cette veillée commence par un jour : le village se réunit, débat et vote avant la première nuit.",
       "Groupes": "Le village se partage en deux bords, {critere} : d'un côté {a} ; de l'autre {b}.",
       "Critere": {

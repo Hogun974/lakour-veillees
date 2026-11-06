@@ -174,7 +174,11 @@ test("loups_distribuer, 18 joueurs : un métier pour chacun (12 métiers), rôle
 });
 
 test("loups_nuit : la meute chasse avec l'invite des loups, même si la Louve mère est la première de la meute ; la Louve ne mord que la proie", async () => {
-  await preparer(...preteAvec("louve-mere"));
+  // Depuis l'étape 6b du Pacte, la Louve mère (poids -13) ne sort plus d'aucune composition prête : une composition choisie.
+  monde(10, "cible");
+  const r = await outil("loups_distribuer").executer({ joueurs: [], mode: "roles", niveau: "chaos", composition: "", batiments: [], inclure: [], exclure: [],
+    roles: ["louve-mere", "loup-de-brumecombe", "loup-de-brumecombe", "liseuse-de-cendres", "herboriste"] });
+  assert.ok(!r.erreur, r.contenu);
   const premier = api.ordreDeNuit().find(e => e.roleCle === "meute").acteurIds[0];
   const louve = acteurDuRole("louve-mere");
   if (louve.id !== premier) await api.echangerRoles(premier, louve.id);   // entre deux loups : les camps ne bougent pas

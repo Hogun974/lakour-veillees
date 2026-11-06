@@ -1,20 +1,23 @@
-// L'équilibre des Veillées (Le Pacte, étape 6, docs/equilibre-veillees.md) : le simulateur (essais/outils/simuler-veillees.mjs) en
-// mode rapide — 16 parties par case, graine fixe, quatre niveaux, quatre tailles, des joueurs d'adresse 1 (ils usent de tout ce
-// qu'ils savent), des compositions générées aux poids et aux cibles calibrés — doit rester dans des bornes LARGES : la meute gagne
-// entre 30 et 70 % des parties que gagne la meute ou le village (ce que la calibration vise : 50 % ; les solitaires à part), par niveau
-// (toutes tailles, 64 parties) et par taille (tous niveaux, 64 parties). Ces bornes détectent une dérive franche (un
-// rôle, une règle, une politique qui fait basculer la partie) sans casser au moindre souffle du hasard ; les valeurs mesurées à
-// l'écriture sont rappelées en commentaire. La mesure longue (400 parties par case, deux adresses) est hors de la suite :
-//   node essais/outils/simuler-veillees.mjs --parties 400 --adresse 1,0.5 --graine apres
+// L'équilibre des Veillées (Le Pacte, étapes 6 et 6b, docs/equilibre-veillees.md) : le simulateur (essais/outils/simuler-veillees.mjs)
+// en mode rapide — 16 parties par case, graine fixe, quatre niveaux, quatre tailles, chaque niveau joué à son ADRESSE DE RÉFÉRENCE
+// (ADRESSE_DU_NIVEAU : débutants 0,5 ; classique et Le Pacte 0,75 ; chaos 1), des compositions générées aux poids et aux cibles
+// calibrés — doit rester dans des bornes LARGES autour de la mesure longue : la part de la meute parmi les parties que gagne la meute
+// ou le village (la calibration vise 50 % ; les débutants, que le générateur ne sait pas armer assez, restent au-dessus ; les solitaires
+// à part), par niveau (toutes tailles, 64 parties : à 20 points de la référence) et par taille (tous niveaux, 64 parties : de 30 à
+// 80 %). Ces bornes détectent une dérive franche (un rôle, une règle, une politique qui fait basculer la partie) sans casser au moindre
+// souffle du hasard ; les valeurs mesurées à l'écriture sont rappelées en commentaire. La mesure longue est hors de la suite :
+//   node essais/outils/simuler-veillees.mjs --parties 400 --adresse niveau --graine 6b-apres
 // Lancer : npm run essais
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { simuler, mesurer, bilanDe, solitairesDe } from "./outils/simuler-veillees.mjs";
+import { simuler, mesurer, bilanDe, solitairesDe, ADRESSE_DU_NIVEAU } from "./outils/simuler-veillees.mjs";
 
 const TAILLES = [6, 10, 14, 18];
 const NIVEAUX = ["debutants", "classique", "chaos", "le-pacte"];
 const PARTIES = 16;
-const resultats = await simuler({ parties: PARTIES, graine: "rapide", tailles: TAILLES, niveaux: NIVEAUX, adresses: [1], fils: 8 });
+// La part de la meute dans la mesure longue (docs/equilibre-veillees.md, « Après »), à l'adresse de chaque niveau.
+const REFERENCE = { debutants: 0.7, classique: 0.5, chaos: 0.5, "le-pacte": 0.5 };
+const resultats = await simuler({ parties: PARTIES, graine: "rapide", tailles: TAILLES, niveaux: NIVEAUX, adresses: ["niveau"], fils: 8 });
 const m = mesurer(resultats);
 // La part de la meute parmi les parties gagnées par la meute ou le village.
 const part = l => { const b = bilanDe(l); return b.meute / Math.max(1, b.meute + b.village); };
@@ -25,27 +28,28 @@ test("équilibre rapide : aucune partie en erreur, toutes jouées jusqu'à la vi
   for (const r of resultats) assert.ok(r.vainqueur, `${r.cas} #${r.i} : pas de vainqueur`);
 });
 
-test("équilibre rapide : la meute gagne entre 30 et 70 % des parties à chaque niveau (toutes tailles)", () => {
-  // mesuré à l'écriture : débutants 34 %, classique 45 %, chaos 52 %, Le Pacte 42 % (la mesure longue, 2 800 parties par niveau :
-  // 45, 50, 48, 48 % ; docs/equilibre-veillees.md)
+test("équilibre rapide : à chaque niveau (toutes tailles, à son adresse), la meute reste à 20 points de la mesure longue", () => {
+  // mesuré à l'écriture : débutants 72 %, classique 47 %, chaos 41 %, Le Pacte 39 % (la mesure longue, 2 800 parties
+  // par niveau : 70, 54, 51, 49 % ; docs/equilibre-veillees.md)
   for (const niveau of NIVEAUX) {
     const l = resultats.filter(r => r.niveau === niveau);
-    assert.ok(part(l) >= 0.3 && part(l) <= 0.7, `${niveau} : meute ${Math.round(100 * part(l))} % sur ${l.length} parties`);
+    assert.ok(l.every(r => r.adresse === ADRESSE_DU_NIVEAU[niveau]), `${niveau} : à l'adresse ${ADRESSE_DU_NIVEAU[niveau]}`);
+    assert.ok(Math.abs(part(l) - REFERENCE[niveau]) <= 0.2, `${niveau} : meute ${Math.round(100 * part(l))} % sur ${l.length} parties (référence ${100 * REFERENCE[niveau]} %)`);
   }
 });
 
-test("équilibre rapide : la meute gagne entre 30 et 70 % des parties à chaque taille (tous niveaux)", () => {
-  // mesuré à l'écriture : 6 joueurs 38 %, 10 : 37 %, 14 : 45 %, 18 : 55 % (la mesure longue : 49, 53, 50, 43 %)
+test("équilibre rapide : la meute gagne entre 30 et 80 % des parties à chaque taille (tous niveaux, chacun à son adresse)", () => {
+  // mesuré à l'écriture : 6 joueurs 58 %, 10 : 44 %, 14 : 47 %, 18 : 50 % (la mesure longue : 61, 54, 54, 55 %)
   for (const n of TAILLES) {
     const l = resultats.filter(r => r.n === n);
-    assert.ok(part(l) >= 0.3 && part(l) <= 0.7, `${n} joueurs : meute ${Math.round(100 * part(l))} % sur ${l.length} parties`);
+    assert.ok(part(l) >= 0.3 && part(l) <= 0.8, `${n} joueurs : meute ${Math.round(100 * part(l))} % sur ${l.length} parties`);
   }
 });
 
 test("équilibre rapide : les solitaires ne raflent pas la mise (au plus une partie sur trois là où l'un d'eux est)", () => {
-  // Chacun, sur trop peu de parties pour une borne serrée (le Chasseur de primes gagne 28 % des parties où il est, sur 700 :
+  // Chacun, sur trop peu de parties pour une borne serrée (le Joueur de vielle gagne 32 % des parties où il est, sur 700 :
   // docs/equilibre-veillees.md) : tous ensemble, puis chacun à au plus une sur deux quand il a joué au moins 20 parties. Mesuré à
-  // l'écriture : 24 victoires sur 102 parties ; le Revenant 9 sur 24.
+  // l'écriture : 12 victoires sur 87 parties ; le Revenant 3 sur 27, le Chasseur de primes 3 sur 13.
   const avecUn = resultats.filter(r => !r.erreur && r.roles.some(c => c in solitairesDe([r])));
   const gagnees = avecUn.filter(r => r.camp !== "meute" && r.camp !== "village");
   assert.ok(gagnees.length <= avecUn.length / 3, `solitaires : ${gagnees.length} victoires sur ${avecUn.length} parties`);
@@ -57,7 +61,7 @@ test("équilibre rapide : les solitaires ne raflent pas la mise (au plus une par
 });
 
 test("équilibre rapide : même graine, mêmes parties (le simulateur est déterministe)", async () => {
-  const [a] = await simuler({ parties: 1, graine: "rapide", tailles: [10], niveaux: ["classique"], adresses: [1], fils: 1 });
+  const [a] = await simuler({ parties: 1, graine: "rapide", tailles: [10], niveaux: ["classique"], adresses: ["niveau"], fils: 1 });
   const b = resultats.find(r => r.niveau === "classique" && r.n === 10 && r.i === 0);
   assert.deepEqual({ camp: a.camp, tours: a.tours, roles: a.roles }, { camp: b.camp, tours: b.tours, roles: b.roles });
 });

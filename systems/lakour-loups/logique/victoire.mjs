@@ -9,8 +9,11 @@
 //   strict     : la Petite tablée (tablee.mjs) : la meute doit être PLUS nombreuse que les autres vivants (à égalité, rien)
 //
 // Dans l'ordre :
-// 1. solitaire « exécuté » (le Revenant) : gagne s'il a été exécuté par le vote ;
-//    solitaire « cible-executee » (le Chasseur de primes) : gagne si sa cible a été exécutée par le vote ;
+// 1. solitaire « exécuté » (le Revenant) : gagne s'il a été exécuté par le vote, à partir du troisième jour (Le Pacte, étape 6b :
+//    JOUR_DU_REVENANT ; exécuté plus tôt, aux deux premiers jours ou au jour d'ouverture du Feu follet, il meurt sans gagner) ;
+//    solitaire « cible-executee » (le Chasseur de primes) : gagne si sa cible a été exécutée par le vote avant la fin du deuxième jour
+//    (Le Pacte, étape 6b : JOUR_LIMITE_DE_LA_PRIME ; passé ce jour, ou sa cible morte autrement, il devient simple villageois :
+//    primesEchues) ;
 //    solitaire « premier-tour » (le Feu follet, ambigus.mjs) : gagne s'il a été éliminé au premier tour (le premier vote, ou la meute
 //    ou le poison de la première nuit) ;
 // 1 bis. la Rosière (somnambule.mjs) exécutée par le vote : le Village perd aussitôt -> la meute (dans une peste noire : la peste) ;
@@ -38,6 +41,26 @@ import { victoireSaintMartin } from "./saintmartin.mjs";
 import { VICTOIRE_FEU_FOLLET, VICTOIRE_LOUP_PALE, feuFolletGagne, victoireDesAmbigus } from "./ambigus.mjs";
 import { meuteEnvoute } from "./variantes.mjs";
 
+// Le Pacte, étape 6b (docs/equilibre-veillees.md) : le Revenant ne gagne qu'exécuté au vote du troisième jour ou plus tard (le tour
+// de sa mort : 3 au moins, le jour qui suit la troisième nuit). Pendu dès le premier vote, quand le village ne sait encore rien, il
+// gagnait une partie sur quatre (26 %) ; à partir du deuxième jour, encore plus d'une sur cinq (17 à 22 %) ; du troisième, une sur huit.
+export const JOUR_DU_REVENANT = 3;
+// Le Pacte, étape 6b : la cible du Chasseur de primes doit tomber au vote du deuxième jour au plus tard (le tour de sa mort : 2 au
+// plus ; le jour d'ouverture du Feu follet vient en plus, tour 0). Sans délai, il gagnait près de trois parties sur dix (29 %, dont
+// un tiers après le troisième jour) ; jusqu'au troisième jour, encore une sur cinq (20 à 22 %) ; jusqu'au deuxième, une sur sept.
+export const JOUR_LIMITE_DE_LA_PRIME = 2;
+
+// Les Chasseurs de primes dont la prime a échoué (Le Pacte, étape 6b), au matin du tour `tour` (après la nuit `tour`) : encore
+// solitaires, leur cible morte autrement que par le vote, ou le dernier jour passé (tour > JOUR_LIMITE_DE_LA_PRIME) sans qu'elle soit
+// tombée au vote. Le système les fait simples villageois (camp du Village). -> [acteurId]
+export function primesEchues({ villageois = [], morts = [], primes = {}, tour = 0 } = {}) {
+  return villageois.filter(v => v.camp === "solitaire" && victoireCleDe(v.role) === "cible-executee" && primes[v.id]).filter(v => {
+    const m = morts.find(x => x.acteurId === primes[v.id]);
+    if (m?.cause === "vote") return false;
+    return Boolean(m) || Number(tour) > JOUR_LIMITE_DE_LA_PRIME;
+  }).map(v => v.id);
+}
+
 export function victoireCleDe(role) {
   if (!role) return "";
   if (role.victoireCle) return role.victoireCle;
@@ -56,11 +79,13 @@ export function victoireCleDe(role) {
 export function verifierVictoire({ villageois = [], morts = [], primes = {}, peste = null, glas = false, saintMartin = null, strict = false, charmes = [], groupes = null, envoutes = [] } = {}) {
   if (saintMartin !== null) return saintMartin ? victoireSaintMartin({ villageois, morts }) : "";
   const executes = new Set(morts.filter(m => m.cause === "vote").map(m => m.acteurId));
+  const executesTard = new Set(morts.filter(m => m.cause === "vote" && Number(m.tour) >= JOUR_DU_REVENANT).map(m => m.acteurId));
+  const executesATemps = new Set(morts.filter(m => m.cause === "vote" && Number(m.tour) <= JOUR_LIMITE_DE_LA_PRIME).map(m => m.acteurId));
 
   for (const v of villageois) {
     const cle = victoireCleDe(v.role);
-    if (cle === "execute" && executes.has(v.id)) return v.id;
-    if (cle === "cible-executee" && primes[v.id] && executes.has(primes[v.id])) return v.id;
+    if (cle === "execute" && executesTard.has(v.id)) return v.id;
+    if (cle === "cible-executee" && primes[v.id] && executesATemps.has(primes[v.id])) return v.id;
     if (cle === VICTOIRE_FEU_FOLLET && feuFolletGagne(v, morts)) return v.id;
   }
 

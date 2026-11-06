@@ -7,8 +7,8 @@
   "system": {
     "cle": "revenant",
     "camp": "solitaire",
-    "description": "<p>Tu es déjà mort une fois. Tu veux qu'on te le rende officiel.</p><p>Tu n'as aucun pouvoir de nuit. Ton seul but : te faire <strong>exécuter par le vote du village</strong>. Une mort de nuit ne compte pas.</p>",
-    "victoire": "<p>Tu gagnes <strong>seul et aussitôt</strong> si le village t'exécute au vote : la partie s'arrête sur ta victoire.</p>",
+    "description": "<p>Tu es déjà mort une fois. Tu veux qu'on te le rende officiel.</p><p>Tu n'as aucun pouvoir de nuit. Ton seul but : te faire <strong>exécuter par le vote du village</strong>, mais pas trop vite : un pendu des premiers jours, personne ne le prend au sérieux. Une mort de nuit ne compte pas.</p>",
+    "victoire": "<p>Tu gagnes <strong>seul et aussitôt</strong> si le village t'exécute au vote <strong>à partir du troisième jour</strong> (le jour qui suit la troisième nuit) : la partie s'arrête sur ta victoire. Exécuté le premier ou le deuxième jour (ou au jour d'ouverture du Feu follet), tu meurs sans gagner.</p>",
     "nuit": {
       "actif": false,
       "ordre": 50,

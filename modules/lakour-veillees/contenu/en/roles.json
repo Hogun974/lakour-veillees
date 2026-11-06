@@ -409,8 +409,8 @@
       "en": "<p>Someone paid you so that a neighbour ends up on the gallows.</p><p><strong>On the first night</strong>, the narrator secretly gives you the name of your <strong>target</strong>, drawn at random among the other players. You have no power other than your tongue.</p>"
     },
     "system.victoire": {
-      "fr": "<p>Tu gagnes <strong>seul et aussitôt</strong> si ta cible est exécutée par le vote du village, que tu sois vivant ou non. Si elle meurt d'une autre façon, tu deviens un simple villageois et joues avec le village.</p>",
-      "en": "<p>You win <strong>alone and at once</strong> if your target is executed by the village's vote, whether you are alive or not. If they die any other way, you become a simple villager and play with the village.</p>"
+      "fr": "<p>Tu gagnes <strong>seul et aussitôt</strong> si ta cible est exécutée par le vote du village <strong>au plus tard le deuxième jour</strong> (le jour qui suit la deuxième nuit ; le jour d'ouverture du Feu follet, s'il y en a un, vient en plus), que tu sois vivant ou non. Si elle meurt d'une autre façon, ou si le deuxième jour passe sans qu'elle tombe au vote, ta prime échoue : tu deviens un simple villageois et gagnes avec le village (le narrateur te le dit au matin).</p>",
+      "en": "<p>You win <strong>alone and at once</strong> if your target is executed by the village's vote <strong>by the second day at the latest</strong> (the day after the second night; the Will-o'-the-Wisp's opening day, if there is one, comes on top), whether you are alive or not. If they die any other way, or if the second day goes by without them falling to the vote, your bounty fails: you become a plain villager and win with the village (the narrator tells you in the morning).</p>"
     },
     "system.nuit.invite": {
       "fr": "Le narrateur te glisse le nom de ta cible.",
@@ -559,12 +559,12 @@
       "en": "Revenant"
     },
     "system.description": {
-      "fr": "<p>Tu es déjà mort une fois. Tu veux qu'on te le rende officiel.</p><p>Tu n'as aucun pouvoir de nuit. Ton seul but : te faire <strong>exécuter par le vote du village</strong>. Une mort de nuit ne compte pas.</p>",
-      "en": "<p>You have already died once. You want it made official.</p><p>You have no night power. Your only goal: to get yourself <strong>executed by the village's vote</strong>. A death at night does not count.</p>"
+      "fr": "<p>Tu es déjà mort une fois. Tu veux qu'on te le rende officiel.</p><p>Tu n'as aucun pouvoir de nuit. Ton seul but : te faire <strong>exécuter par le vote du village</strong>, mais pas trop vite : un pendu des premiers jours, personne ne le prend au sérieux. Une mort de nuit ne compte pas.</p>",
+      "en": "<p>You have already died once. You want it made official.</p><p>You have no night power. Your only goal: to get yourself <strong>executed by the village's vote</strong>, but not too soon: nobody takes a hanging of the first days seriously. A death at night does not count.</p>"
     },
     "system.victoire": {
-      "fr": "<p>Tu gagnes <strong>seul et aussitôt</strong> si le village t'exécute au vote : la partie s'arrête sur ta victoire.</p>",
-      "en": "<p>You win <strong>alone and at once</strong> if the village executes you by vote: the game ends on your victory.</p>"
+      "fr": "<p>Tu gagnes <strong>seul et aussitôt</strong> si le village t'exécute au vote <strong>à partir du troisième jour</strong> (le jour qui suit la troisième nuit) : la partie s'arrête sur ta victoire. Exécuté le premier ou le deuxième jour (ou au jour d'ouverture du Feu follet), tu meurs sans gagner.</p>",
+      "en": "<p>You win <strong>alone and at once</strong> if the village executes you by vote <strong>from the third day on</strong> (the day after the third night): the game ends on your victory. Executed on the first or second day (or on the Will-o'-the-Wisp's opening day), you die without winning.</p>"
     }
   },
   "roles/excyVOJas5SeEGke": {

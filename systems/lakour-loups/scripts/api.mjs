@@ -1267,6 +1267,16 @@ async function eteindreLesFeuxFollets() {
   }
 }
 
+// Le Chasseur de primes dont la prime a échoué (logique/victoire.mjs, primesEchues : sa cible morte autrement que par le vote, ou le
+// troisième jour passé sans qu'elle tombe au vote) devient simple villageois (camp du Village) : il le sait, lui seul. Au matin.
+async function echoirLesPrimes(tour) {
+  const e = lireEtat();
+  for (const id of L.primesEchues({ villageois: villageoisAPlat(), morts: e.morts, primes: e.primes, tour })) {
+    await api.changerCamp(id, "village");
+    await envoyerSecret(id, { texte: t("LAKOUR_LOUPS.Ambigus.PrimeEchue") });
+  }
+}
+
 // La Chambrière : juste après le décompte d'un vote d'exécution, une demande courte (la carte d'un condamné, ou rien) ; la
 // révélation du condamné attend sa réponse (eliminer). Une à la fois : la dernière clôture la remplace.
 let devouement = null;   // { partie, numero, chambriere, promesse }
@@ -3514,6 +3524,8 @@ export const api = {
     // devient simple villageois.
     const cartesRetirees = await retirerLesCartesJouees(tour);
     if (tour === 1) await eteindreLesFeuxFollets();
+    // Le Pacte, étape 6b : le Chasseur de primes dont la cible est morte autrement, ou dont le délai est passé, devient simple villageois.
+    await echoirLesPrimes(tour);
     // Le Village : les bâtiments brûlés par l'Incendiaire tombent en cendres (leur occupant devient Chemineau).
     const incendies = await brulerLesBatiments(r.incendies ?? []);
     const oies = L.oiesQuiCacardent(lireEtat(), villageoisAPlat());

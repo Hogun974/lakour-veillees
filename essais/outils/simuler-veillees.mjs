@@ -5,7 +5,11 @@
 //
 //   node essais/outils/simuler-veillees.mjs --parties 100 --graine 1                 (tailles 6 à 18 de deux en deux, quatre niveaux)
 //   node essais/outils/simuler-veillees.mjs --rapide                                 (16 parties par case, comme essais/veillees-equilibre.test.mjs)
-//   options : --tailles 6,8,10  --niveaux debutants,classique,chaos,le-pacte  --adresse 0.4,1  --variantes ordinaire,vendanges,…
+//   node essais/outils/simuler-veillees.mjs --variantes ordinaire,chaine --loups-de-moins 0,1,2 --niveaux classique,le-pacte --tailles 8,12,16
+//             (le dosage d'une variante, Le Pacte, étape 6b : des parties APPARIÉES, la même composition du générateur — graine
+//             « dosage|<niveau>|<n>|<i> » — jouée telle quelle, puis avec 1, 2… Loups de Brumecombe remplacés par des Villageois ;
+//             la variante s'affiche « chaine-1loup »…)
+//   options : --tailles 6,8,10  --niveaux debutants,classique,chaos,le-pacte  --adresse 0.4,1 (ou niveau : ADRESSE_DU_NIVEAU)  --variantes ordinaire,vendanges,…
 //             --village (la variante « Le Village »)  --pretes (les compositions prêtes au lieu des générées)
 //             --fils 8 (fils d'exécution : une doublure par fil ; défaut : 16 au plus, au-delà les fils se gênent)  --json <fichier>
 //
@@ -21,18 +25,30 @@ import { writeFileSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { cpus } from "node:os";
 import { Worker, isMainThread, parentPort, workerData } from "node:worker_threads";
+import { composer } from "../../systems/lakour-loups/logique/composition.mjs";
 
 export const NIVEAUX_SIMULES = ["debutants", "classique", "chaos", "le-pacte"];
 export const TAILLES_SIMULEES = [6, 8, 10, 12, 14, 16, 18];
 export const PARTIES_RAPIDE = 16;
 export const ADRESSES = [0.4, 1];
+// L'adresse de RÉFÉRENCE de chaque niveau (Le Pacte, étape 6b, docs/equilibre-veillees.md) : celle d'une vraie soirée à ce niveau,
+// celle que la calibration vise (la meute à 50 % des parties gagnées par la meute ou le village). Des débutants se servent mal de ce
+// qu'ils savent (0,5) ; une table classique, ou du jeu de soirée, assez bien (0,75) ; une table de chaos, rompue au jeu, de tout (1).
+// --adresse niveau (ou adresses: ["niveau"]) : chaque niveau à la sienne.
+export const ADRESSE_DU_NIVEAU = { debutants: 0.5, classique: 0.75, chaos: 1, "le-pacte": 0.75 };
+export const adresseDe = (adresse, niveau) => (adresse === "niveau" ? ADRESSE_DU_NIVEAU[niveau] ?? 1 : adresse);
 export const VARIANTES_SIMULEES = ["ordinaire", "chandelles", "angoissante", "chaine", "mur", "petite", "grande", "vendanges", "envoutement", "gazette", "village"];
 const EQUILIBRE = JSON.parse(readFileSync(new URL("../../modules/lakour-veillees/assets/equilibre.json", import.meta.url), "utf8"));
 const COMPOSITIONS = JSON.parse(readFileSync(new URL("../../modules/lakour-veillees/assets/compositions.json", import.meta.url), "utf8"));
 
 // Les options d'une variante pour jouerPartie (la voie de api.nouvellePartie).
+// Plusieurs variantes ensemble : « chaine+petite ».
 export function optionsDeVariante(v) {
   const o = { variantes: {}, village: false, gazette: false };
+  if (String(v ?? "").includes("+")) {
+    for (const x of String(v).split("+").map(optionsDeVariante)) Object.assign(o, { village: o.village || x.village, gazette: o.gazette || x.gazette, variantes: { ...o.variantes, ...x.variantes } });
+    return o;
+  }
   if (v === "village") o.village = true;
   else if (v === "gazette") o.gazette = true;
   else if (v === "petite" || v === "grande") o.variantes.doubleVisage = v;
@@ -44,8 +60,9 @@ export function optionsDeVariante(v) {
 // Les cas : [{ niveau, n, adresse, variante, pretes }].
 export function casDe({ tailles = TAILLES_SIMULEES, niveaux = NIVEAUX_SIMULES, adresses = ADRESSES, variantes = ["ordinaire"], pretes = false, village = false } = {}) {
   const cas = [];
-  for (const niveau of niveaux) for (const n of tailles) for (const adresse of adresses) for (const variante of variantes) {
+  for (const niveau of niveaux) for (const n of tailles) for (const a of adresses) for (const variante of variantes) {
     if (pretes && !COMPOSITIONS[`${niveau}-${String(n).padStart(2, "0")}`]) continue;
+    const adresse = adresseDe(a, niveau);
     cas.push({ niveau, n, adresse, variante: village && variante === "ordinaire" ? "village" : variante, pretes });
   }
   return cas;
@@ -61,7 +78,7 @@ async function jouerUne(jouerPartie, c, i, graine) {
   const t0 = performance.now();
   try {
     const r = await jouerPartie(base);
-    return { ...r, duree: Math.round(performance.now() - t0), cas: cleDuCas(c), variante: c.variante, adresse: c.adresse, niveau: c.niveau, n: c.n, i, ...(c.somme !== undefined ? { somme: c.somme, cible: c.cible } : {}), ...(c.etiquette !== undefined ? { etiquette: c.etiquette } : {}) };
+    return { ...r, duree: Math.round(performance.now() - t0), cas: cleDuCas(c), variante: c.moins ? `${c.variante}-${c.moins}loup` : c.variante, adresse: c.adresse, niveau: c.niveau, n: c.n, i, ...(c.somme !== undefined ? { somme: c.somme, cible: c.cible } : {}), ...(c.etiquette !== undefined ? { etiquette: c.etiquette } : {}) };
   } catch (e) {
     return { erreur: String(e.message).split("\n")[0], cas: cleDuCas(c), variante: c.variante, adresse: c.adresse, niveau: c.niveau, n: c.n, i, roles: c.roles ?? [], ...(c.etiquette !== undefined ? { etiquette: c.etiquette } : {}) };
   }
@@ -95,9 +112,27 @@ export async function jouerTaches(taches, { graine = "1", fils = Math.max(1, Mat
 }
 
 // Simule les cas, `parties` parties chacun. -> Promise<[résultat]>
-export async function simuler({ parties = 100, graine = "1", fils, progres, ...options } = {}) {
-  const taches = casDe(options).flatMap(c => Array.from({ length: parties }, (_, i) => ({ c, i })));
+export async function simuler({ parties = 100, graine = "1", fils, progres, loupsDeMoins = null, ...options } = {}) {
+  const taches = loupsDeMoins ? tachesDeDosage(casDe(options), parties, loupsDeMoins)
+    : casDe(options).flatMap(c => Array.from({ length: parties }, (_, i) => ({ c, i })));
   return jouerTaches(taches, { graine, fils, progres });
+}
+
+// Le dosage (Le Pacte, étape 6b) : pour chaque cas et chaque partie, la composition du générateur (la même pour toutes les variantes
+// et tous les dosages : graine « dosage|<niveau>|<n>|<i> »), avec `k` Loups de Brumecombe remplacés par des Villageois (k parmi
+// loupsDeMoins ; 0 : telle quelle). La graine de la partie ne dépend pas de k : seules les cartes changent.
+export function tachesDeDosage(cas, parties, loupsDeMoins = [0]) {
+  const eq = { roles: EQUILIBRE.roles, batiments: EQUILIBRE.batiments, cibles: EQUILIBRE.cibles };
+  const taches = [];
+  for (const c of cas) for (let i = 0; i < parties; i++) {
+    const compo = composer(c.n, eq, { niveau: c.niveau, graine: `dosage|${c.niveau}|${c.n}|${i}`, essais: 600 });
+    for (const k of loupsDeMoins) {
+      let reste = k;
+      const roles = compo.roles.map(r => (r === "loup-de-brumecombe" && reste-- > 0 ? "villageois" : r));
+      taches.push({ c: { ...c, roles, batiments: compo.batiments, moins: k }, i });
+    }
+  }
+  return taches;
 }
 
 if (!isMainThread && workerData?.lot) {
@@ -210,13 +245,14 @@ function lireOptions(argv) {
     else if (a === "--graine") o.graine = String(argv[++i]);
     else if (a === "--tailles") o.tailles = liste(argv[++i]).map(Number);
     else if (a === "--niveaux") o.niveaux = liste(argv[++i]);
-    else if (a === "--adresse") o.adresses = liste(argv[++i]).map(Number);
+    else if (a === "--adresse") o.adresses = liste(argv[++i]).map(x => (x === "niveau" ? x : Number(x)));
     else if (a === "--variantes") o.variantes = liste(argv[++i]);
     else if (a === "--village") o.village = true;
     else if (a === "--pretes") o.pretes = true;
     else if (a === "--fils") o.fils = Number(argv[++i]);
     else if (a === "--json") o.json = argv[++i];
     else if (a === "--rapide") o.parties = PARTIES_RAPIDE;
+    else if (a === "--loups-de-moins") o.loupsDeMoins = liste(argv[++i]).map(Number);
   }
   return o;
 }

@@ -28,6 +28,7 @@ import { pariteStricteTablee } from "./tablee.mjs";
 import { gestesEnAttente } from "./derniers-gestes.mjs";
 import { filtrerVotants, gracieAuVote, sagesseEstPerdue } from "./pacte.mjs";
 import { contexteDesAmbigus, nuitDesAmbigus, normaliserAmbigus, CLE_CHARMES } from "./ambigus.mjs";
+import { nuitDesVariantes, contexteDesVariantes, chaineEnCours, CLE_MUR } from "./variantes.mjs";
 
 const etape = (cle, action, donnees = {}, extra = {}) => ({ cle, action, donnees, attente: false, detail: null, ...extra });
 
@@ -42,6 +43,12 @@ export function emporteursEnAttente(etat, villageois = [], ignorer = []) {
 // Les voix qui manquent : celles des vivants (le Dernier souffle d'un mort ne remplace pas une voix vivante) qui ont le droit de
 // voter (pacte.mjs : ni un Innocent gracié, ni, le lendemain du Souffre-douleur, qui n'est pas sur sa liste).
 function cloture(v, tous, etat) {
+  // La Chaîne des innocents (variantes.mjs) : pas de voix ; la chaîne avance seule, la clôture l'attend.
+  if (v.chaine) {
+    const c = chaineEnCours(etat);
+    const qui = tous.find(x => x.id === c?.designateur)?.nom ?? "";
+    return etape("cloreVote", "cloreVote", { n: 0, objet: v.objet }, c && !c.condamne ? { detail: { cle: "chaine", donnees: { nom: qui } } } : {});
+  }
   const vivants = tous.filter(x => filtrerVotants(etat, [x.id], v.objet).length);
   const ids = new Set(vivants.map(x => x.id));
   const manquent = Math.max(0, vivants.length - v.exprimes.filter(id => ids.has(id)).length);
@@ -65,7 +72,7 @@ export function etapeSuivante(etatPublic, secretsMJ = null, { villageois = [], a
     // En petite tablée, au régime des deux loups, la meute doit être plus nombreuse (même règle que api.pariteStricte).
     const strict = Boolean(etat.petiteTablee) && pariteStricteTablee(etat.places || villageois.filter(v => v.vivant !== false).length);
     if (!etat.vainqueur && verifierVictoire({ villageois, morts: etat.morts, glas: glasSonne(etat), primes: etat.primes ?? {}, peste: etat.peste,
-      saintMartin: estSaintMartin(etat) ? saintMartinFinie(etat, villageois) : null, strict, ...contexteDesAmbigus(etat) })) return etape("victoire", "victoire");
+      saintMartin: estSaintMartin(etat) ? saintMartinFinie(etat, villageois) : null, strict, ...contexteDesAmbigus(etat), ...contexteDesVariantes(etat) })) return etape("victoire", "victoire");
     return null;
   };
   // La Chapelle : un asile pour la nuit qui vient, s'il n'a pas encore été choisi aujourd'hui (l'ours du Montreur n'en est pas un).
@@ -93,15 +100,18 @@ export function etapeSuivante(etatPublic, secretsMJ = null, { villageois = [], a
       const faits = new Set(etat.nuit.actions.map(a => a.roleCle));
       // Peste noire (secret du MJ) : l'étape « la peste », à la place de la meute ; qui : son porteur, s'il y en a un.
       for (const e of ordreDeNuit(villageois, tour, { peste: etat.peste, deuil: visionDuDeuilDue(etat, villageois), sagessePerdue: sagesseEstPerdue(etat),
-        ...nuitDesAmbigus(etat, tour) })) {
+        ...nuitDesAmbigus(etat, tour), ...nuitDesVariantes(etat, tour) })) {
         if (faits.has(e.roleCle)) continue;
         const groupe = e.roleCle === CLE_MEUTE || e.roleCle === CLE_PESTE || e.roleCle === CLE_DEUIL;
         // Le Pacte, étape 3b : les charmés (une étape sans rôle) ; la carte jouée par un Bateleur porte le nom de cette carte.
         const charmes = e.roleCle === CLE_CHARMES;
-        const roleNom = groupe || charmes ? "" : e.emprunt ? nuitDesAmbigus(etat, tour).emprunts[e.acteurIds[0]]?.nom ?? e.roleCle
+        // Le Pacte, étape 5 : le mur (tous les vivants) ; la seconde carte d'un joueur (Double visage) porte le nom de cette carte.
+        const mur = e.roleCle === CLE_MUR;
+        const roleNom = groupe || charmes || mur ? "" : e.seconde ? villageois.find(v => v.id === e.acteurIds[0])?.seconde?.nom ?? e.roleCle
+          : e.emprunt ? nuitDesAmbigus(etat, tour).emprunts[e.acteurIds[0]]?.nom ?? e.roleCle
           : villageois.find(v => v.id === e.acteurIds[0])?.role?.nom ?? e.roleCle;
         const donnees = { role: e.roleCle, nom: roleNom, meute: e.roleCle === CLE_MEUTE, peste: e.roleCle === CLE_PESTE, qui: e.acteurIds.map(nom).join(", "),
-          ...(e.roleCle === CLE_DEUIL ? { deuil: true } : {}), ...(charmes ? { charmes: true } : {}) };
+          ...(e.roleCle === CLE_DEUIL ? { deuil: true } : {}), ...(charmes ? { charmes: true } : {}), ...(mur ? { mur: true } : {}) };
         if (attente.includes(e.roleCle)) return etape("attendre", "", donnees, { attente: true });
         return etape("reveiller", "reveiller", donnees);
       }

@@ -211,5 +211,7 @@ export function entreeDeVote(r) {
     elus: [...(r.elus ?? [])], egalite: Boolean(r.egalite), poids: { ...(r.poids ?? {}) }, souffles: [...(r.souffles ?? [])],
     departage: r.departage ? { par: r.departage.par, choix: [...(r.departage.choix ?? [])] } : null,
     ...(r.banc ? { banc: { ...r.banc } } : {}), ...(r.deuil ? { deuil: r.deuil } : {}),
-    ...(r.plume ? { plume: r.plume } : {}), ...(r.souffreDouleur ? { souffreDouleur: r.souffreDouleur } : {}) };
+    ...(r.plume ? { plume: r.plume } : {}), ...(r.souffreDouleur ? { souffreDouleur: r.souffreDouleur } : {}),
+    ...(r.chaine ? { chaine: { assis: (r.chaine.assis ?? []).map(x => ({ ...x })), condamne: r.chaine.condamne ?? "" } } : {}),
+    ...(r.remplace ? { remplace: r.remplace } : {}) };
 }

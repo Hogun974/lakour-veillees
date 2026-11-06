@@ -31,7 +31,7 @@
 // - Illuminé (victoire « autre-groupe ») : le village est partagé en deux groupes par un critère évident, annoncé à tous à la
 //   distribution (partagerLeVillage) ; il gagne seul, vivant, quand tous ceux de l'AUTRE groupe sont éliminés. Infecté, il devient loup.
 // Loup :
-// - Loup pâle (« trahir », ordre 41, une nuit sur deux ; victoire « seul-survivant ») : il chasse chaque nuit avec la meute (elle le
+// - Loup pâle (« trahir », ordre 42, une nuit sur deux ; victoire « seul-survivant ») : il chasse chaque nuit avec la meute (elle le
 //   croit des siens ; les visions le voient loup) ; une nuit sur deux, après la meute, il se réveille seul et peut dévorer un loup.
 //   Il gagne seul s'il est le dernier vivant ; la victoire de la meute ne le compte pas parmi les gagnants.
 //

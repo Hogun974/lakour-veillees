@@ -26,7 +26,7 @@ test("compositions.json est à jour et conforme", () => {
 test("chaque composition : forme du contrat, autant de rôles que de joueurs pour chaque taille, rôles qui existent", () => {
   for (const [cle, c] of Object.entries(surDisque)) {
     assert.deepEqual(Object.keys(c).sort(), ["batiments", "joueurs", "libelle", "niveau", "roles"], cle);
-    assert.ok(["debutants", "classique", "chaos", NIVEAU_PETITE_TABLEE].includes(c.niveau), cle);
+    assert.ok(["debutants", "classique", "chaos", "le-pacte", NIVEAU_PETITE_TABLEE].includes(c.niveau), cle);
     const [min, max] = c.joueurs;
     for (let n = min; n <= max; n++) {
       const completes = [...c.roles, ...Array(Math.max(0, n - c.roles.length)).fill("villageois")];
@@ -34,7 +34,9 @@ test("chaque composition : forme du contrat, autant de rôles que de joueurs pou
       for (const r of completes) assert.ok(r in camp, `${cle} : rôle ${r} inconnu`);
     }
     for (const b of c.batiments) assert.ok(batiments.includes(b), `${cle} : bâtiment ${b}`);
-    assert.ok(c.batiments.length >= 4 && c.batiments.length <= 6, cle);
+    // Le Pacte (étape 5) : aucun de nos bâtiments communaux.
+    if (c.niveau === "le-pacte") assert.deepEqual(c.batiments, [], cle);
+    else assert.ok(c.batiments.length >= 4 && c.batiments.length <= 6, cle);
   }
 });
 

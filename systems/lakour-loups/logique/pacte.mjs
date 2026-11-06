@@ -29,6 +29,7 @@
 //     signal: null | { tour, numero, par } (le signe du Greffier, avant que le second vote ne s'ouvre) }
 import { trioAutour, voisins, premierAGauche } from "./cercle.mjs";
 import { filtrerVotantsDuVillage, gracieParLeHobereau } from "./personnalites.mjs";
+import { carteDeLEffet } from "./variantes.mjs";
 
 export const EFFET_AIEUL = "resister";
 export const EFFET_SOUFFRE_DOULEUR = "egalite";
@@ -152,10 +153,11 @@ export function designerVotants(etat, { par, ids = [] } = {}) {
 }
 
 // ------------------------------------------------------------------ le Souffre-douleur
-// Celui qui paiera une égalité : un Souffre-douleur vivant qui a son pouvoir (villageois à plat, rôles connus du MJ) ; "" sinon.
+// Celui qui paiera une égalité : un Souffre-douleur vivant qui a son pouvoir (villageois à plat, rôles connus du MJ ; sa carte, ou
+// sa seconde carte : Double visage) ; "" sinon.
 export function souffreDouleur(etat, villageois = []) {
   const perdue = sagesseEstPerdue(etat);
-  return villageois.find(v => vivant(v) && v.role?.effet === EFFET_SOUFFRE_DOULEUR && !pouvoirPerdu(perdue, v.role))?.id ?? "";
+  return villageois.find(v => { const c = carteDeLEffet(v, EFFET_SOUFFRE_DOULEUR); return vivant(v) && c && !pouvoirPerdu(perdue, c); })?.id ?? "";
 }
 
 // ------------------------------------------------------------------ la Pie

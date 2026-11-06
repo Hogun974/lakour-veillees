@@ -133,6 +133,44 @@
         "default": -1
       },
       "flags": {}
+    },
+    {
+      "_id": "hfy9Y3zJHB4NfA9t",
+      "_key": "!journal.pages!PImyfSaT7Yt7S2ab.hfy9Y3zJHB4NfA9t",
+      "name": "Le Pacte",
+      "type": "text",
+      "sort": 700,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>Les veillées d'autrefois, telles quelles</h2><p>Le niveau <strong>Le Pacte</strong> (proposé d'abord à la préparation) compose la veillée avec les seuls personnages des veillées d'autrefois : les loups (Loup de Brumecombe, Loup affamé, Louve mère, Loup pâle), les gens du village (Villageois, Franc-Villageois, Liseuse de cendres, Entremetteuse, Herboriste, Braconnière, Enfant de la brume, Garde du pont, Aïeul, Souffre-douleur, Innocent, Lavandières, Bûcherons, Furet, Gardeuse d'oies, Greffier bègue, Vieux Sergent, Pie), les visages changeants (Chapardeur, Bateleur, Mâtin, Enfant des bois, Chambrière) et les solitaires (Feu follet, Joueur de vielle, Illuminé). Avec <strong>Le Village</strong>, l'Incendiaire et les personnalités s'y ajoutent.</p><p>Ni nos bâtiments communaux (Chapelle, Gibet, Pont…), ni nos métiers : la veillée se joue comme autour d'une vraie table. Les autres niveaux (débutants, classique, chaos) gardent tous les rôles des Veillées. Les variantes ci-après se combinent avec n'importe quel niveau.</p><h2>Une partie simple : bâtiments et métiers</h2><p>À la préparation (et dans les réglages du monde), deux choix valent pour tous les niveaux :</p><ul><li><strong>Bâtiments du village</strong> : <em>aucun</em> (une partie simple, avec les seuls personnages : rien ne dépend des bâtiments, les repères de la carte restent de simples décors), <em>tirés au hasard</em> (ceux de la composition, comme avant) ou <em>choisis</em> (cochez ceux de la veillée). Le Pacte n'en tire aucun ; <em>choisis</em> en ajoute quand même si vous le voulez.</li><li><strong>Métiers</strong> : <em>oui</em> (chacun reçoit un métier public en plus de son rôle) ou <em>non</em>. Le Pacte n'en distribue jamais.</li></ul><p>La Table de jeu retient le dernier choix. Le Village (les personnalités) reste une case à part.</p><h2>À la distribution</h2><p>Chaque joueur reçoit dans son carnet secret, en plus de sa carte, une explication de sa place : ce que fait son rôle, quand le narrateur l'appelle et ce qu'il lui demandera, comment il gagne, puis son métier et sa personnalité s'il en a. Le carnet s'ouvre de lui-même ; on le rouvre à tout moment.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
+    },
+    {
+      "_id": "kcsOuNnVbi7q1Pwn",
+      "_key": "!journal.pages!PImyfSaT7Yt7S2ab.kcsOuNnVbi7q1Pwn",
+      "name": "Les variantes du jeu de soirée",
+      "type": "text",
+      "sort": 800,
+      "title": {
+        "show": true,
+        "level": 1
+      },
+      "text": {
+        "content": "<h2>À choisir à la préparation</h2><p>Chaque variante est une case de la préparation (et un réglage du monde, qui retient le dernier choix). Elle est annoncée à la distribution : tout le monde connaît les règles de la veillée. Aucune ne se joue dans une Nuit de la Saint-Martin.</p><h2>Veillée aux chandelles</h2><p>Une chandelle brûle devant chaque joueur (en ligne : sur sa carte, à la Table de jeu). Chaque matin, la chandelle de la victime de la meute est soufflée ; après le vote, le condamné souffle la sienne.</p><p><strong>Version angoissante</strong> : ce sont les loups eux-mêmes qui soufflent, la nuit, la chandelle de leur victime — chacun la sienne, en secret. S'ils n'ont pas tous soufflé la même, plus d'une chandelle s'éteint : la meute n'a <strong>pas de victime</strong>, et le village voit au matin quelles chandelles se sont éteintes (on les rallume ensuite). Un loup qui ne souffle rien n'éteint rien.</p><h2>La Chaîne des innocents</h2><p>Le condamné du jour n'est pas voté. Tous les vivants sont debout. Le voisin de gauche du dernier éliminé désigne un villageois debout dont il <strong>garantit l'innocence</strong> ; celui-ci s'assied et désigne à son tour un autre villageois debout, et ainsi de suite. <strong>Le dernier debout est condamné.</strong> Les loups peuvent se blanchir entre eux : c'est voulu. En ligne, chacun désigne dans une fenêtre ; s'il ne répond pas à temps, le sort désigne pour lui. Sans mort encore, la chaîne part du Bailli, sinon du premier de la table. Pas de Banc des accusés avec elle.</p><h2>Le Mur des murmures</h2><p>Chaque nuit, chaque vivant peut écrire une <strong>courte phrase anonyme</strong> sur le mur (une fenêtre s'ouvre en fin de nuit ; on peut passer). Au matin, le narrateur lit toutes les phrases, mêlées. <strong>Personne ne saura jamais qui a écrit quoi</strong>, pas même le narrateur. Elle se joue avec toutes les autres.</p><h2>Double visage</h2><ul><li><strong>Petite complication</strong> : chaque joueur reçoit un <strong>rôle visible</strong>, retourné devant tous, parmi la Liseuse de cendres, la Braconnière, l'Herboriste, l'Entremetteuse, le Garde du pont, l'Aïeul, le Souffre-douleur et jusqu'à deux Villageois ; puis une <strong>carte d'allégeance</strong> secrète (deux loups, le reste villageois) qui fait son camp. Un joueur d'allégeance loup se réveille avec la meute et <strong>garde son pouvoir visible</strong>. La Liseuse lit l'allégeance, pas le rôle visible.</li><li><strong>Grande complication</strong> : les mêmes cartes, mêlées, <strong>deux par joueur</strong>, face cachée. Une carte de loup fait un loup ; une carte à pouvoir donne son pouvoir (deux cartes à pouvoir : les deux, par exemple Herboriste et Liseuse, ou Aïeul et Souffre-douleur). La Liseuse lit les deux cartes.</li><li>De 7 à 9 joueurs avec un paquet ; de 10 à 18, un second paquet s'ajoute (trois loups jusqu'à 13 joueurs, quatre au-delà). Ni à la petite tablée, ni avec la peste noire.</li></ul><h2>Les Vendanges</h2><p>Un <strong>loup de plus</strong> que d'habitude, et tous les pouvoirs sont <strong>éméchés</strong> jusqu'à la fin :</p><ul><li>la meute ne dévore qu'un <strong>voisin d'un loup</strong> ;</li><li>la Liseuse désigne un joueur et lit les rôles de ce joueur et de ses deux voisins, <strong>sans savoir lequel est à qui</strong> ;</li><li>la Braconnière emporte l'un de ses <strong>deux voisins</strong> ;</li><li>l'Enfant de la brume n'épie plus la meute, seulement <strong>l'Herboriste</strong> (qui elle est, ce qu'elle fait), sans danger ;</li><li>le Chapardeur, la première nuit, <strong>échange sa carte</strong> avec celle d'un joueur de son choix (chacun vérifie la sienne au matin) ;</li><li>le Bailli <strong>vote seul, le premier</strong>, à découvert ; les autres attendent son vote ;</li><li>le Souffre-douleur ne meurt plus à la place des ex æquo, mais <strong>à la place d'un de ses deux voisins</strong> condamné par le vote ;</li><li>l'Innocent ne change pas ;</li><li>l'Herboriste n'a <strong>qu'une fiole</strong>, et quand elle la verse, le <strong>sort</strong> décide : guéri ; guéri et devenu simple villageois ; guéri et devenu loup ; ou mort ;</li><li>l'Entremetteuse unit les amants comme d'habitude, puis désigne l'un des deux et un autre joueur, qui s'aiment aussi : le <strong>trompé</strong> n'entraîne personne dans sa mort, chacun des deux autres entraîne les deux autres ; le trompé ne peut pas voter contre le trompeur (qui peut voter contre lui), et deux amants ne votent jamais l'un contre l'autre ;</li><li>le Garde du pont ne protège que <strong>lui-même ou un de ses deux voisins</strong> ;</li><li>le Joueur de vielle ne charme qu'<strong>un joueur à la fois</strong>.</li></ul><p>Ni à la petite tablée, ni avec la peste noire.</p><h2>L'Envoûtement</h2><p>Les victimes de la meute ne sont plus éliminées : elles <strong>perdent aussitôt tous leurs pouvoirs</strong> et restent <strong>envoûtées</strong>, en secret (seule la victime le sait). Si une victime envoûtée est condamnée par le village, <strong>toutes les envoûtées d'avant elle</strong> sont aussitôt éliminées avec elle. La meute gagne quand elle a envoûté <strong>l'avant-dernier villageois</strong>. Ni à la petite tablée, ni avec la peste noire.</p><h2>La Peste noire</h2><p>Elle existe déjà (case de la préparation, page « La peste noire » du guide du joueur) ; elle se joue aussi au niveau Le Pacte.</p><h2>Les Hameaux</h2><p>Plusieurs villages qui jouent en même temps, et des joueurs qui passent de l'un à l'autre : pas encore. Chaque monde de Foundry ne mène qu'une veillée à la fois ; le narrateur peut en ouvrir plusieurs, sans passage d'un village à l'autre.</p>",
+        "format": 1
+      },
+      "ownership": {
+        "default": -1
+      },
+      "flags": {}
     }
   ]
 }

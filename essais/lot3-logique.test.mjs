@@ -531,7 +531,7 @@ const MUTATIONS = [
   ["etat.mjs", "\"pouvoirsDeuil\", \"autel\", \"carnets\"", "\"autel\", \"carnets\"", "deuil : pouvoirs secrets"],
   ["nuit.mjs", "    if (meute.length && deuil) etapes.set(CLE_DEUIL,", "    if (meute.length) etapes.set(CLE_DEUIL,", "deuil : réveil dû"],
   ["resolution.mjs", "    if (linceul) return \"\";\n", "", "deuil : linceul (portes)"],
-  ["resolution.mjs", "    if (linceul && x.meute && !x.peste) { meurt(x.cible, x.cause); continue; }\n", "", "deuil : linceul (garde)"],
+  ["resolution.mjs", "    if (linceul && x.meute && !x.peste) { frapper(x); continue; }\n", "", "deuil : linceul (garde)"],
   ["resolution.mjs", "    for (const loup of vivantsMeute) {\n      sortie.messages.push(msg(loup, \"VisionDeuil\"", "    for (const loup of [a.acteurId]) {\n      sortie.messages.push(msg(loup, \"VisionDeuil\"", "deuil : la vision à toute la meute"],
   ["jour.mjs", "    linceul: linceulDeLaNuit(etat, tour)", "    linceul: false", "deuil : le linceul de la nuit"],
   // la Nuit de la Saint-Martin

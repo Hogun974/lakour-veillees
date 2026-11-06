@@ -12,6 +12,14 @@
 // Fossoyeur). Leurs règles vivent dans le système (logique/ambigus.mjs).
 // Le Pacte, étape 4 : l'Incendiaire de la variante « Le Village », juste avant le Garde du pont (19) ; ses règles vivent dans le
 // système (logique/personnalites.mjs).
+// Le Pacte, étape 5 : l'ordre d'appel du livre, exactement (docs/plan-le-pacte.md, « Les règles à reprendre ») — Chapardeur 1,
+// Bateleur 2, Entremetteuse 3, Liseuse de cendres 4, Furet 7, Lavandières 11, Bûcherons 12, Enfant des bois 13, Pie 14, Incendiaire
+// 19, Garde du pont 20, Mâtin 38, la meute 40, Enfant de la brume 41 (pendant la chasse), Loup pâle 42, Louve mère 43, Loup affamé
+// 44, Herboriste 50, Joueur de vielle 80 et ses charmés 81. Nos créations gardent des places voisines de leur rôle : le Chasseur de
+// primes (6), le Colporteur (8) et le Messager (10) en début de nuit, la Gardienne des clés (15) et la Veilleuse (25) près du Garde,
+// nos loups à pouvoir juste après ceux du livre (45 à 47), la Dame du gué (48) et le Pêcheur de nuit (49) avant l'Herboriste, nos
+// lanternes après elle (Pyromane 55, Louvetier 61, Sourcier 62, Ermite 70), le Fossoyeur toujours le dernier (90). La résolution
+// de l'aube ne dépend pas de ces numéros (resolution.mjs : par effet), seulement l'ordre des réveils.
 import { ORDRE_MEUTE, role } from "./aides.mjs";
 
 // ======================================================================= La Meute
@@ -33,7 +41,7 @@ const MEUTE = [
 **Chaque nuit**, quand la meute s'est rendormie, tu te réveilles seul et tu choisis une **seconde victime** : une autre que la proie de la meute, et jamais un loup.
 
 Ta faim tient à la meute entière : **dès qu'un loup est mort** (un loup de toujours ou un mordu, de quelque façon qu'il soit tombé), elle s'éteint pour toujours, et tu ne chasses plus qu'avec les autres.`,
-    nuit: { ordre: 42, cibles: 1, tantQueMeuteEntiere: true, invite: "Ta faim te ronge : quelle autre maison visites-tu seul cette nuit ?" }
+    nuit: { ordre: 44, cibles: 1, tantQueMeuteEntiere: true, invite: "Ta faim te ronge : quelle autre maison visites-tu seul cette nuit ?" }
   }),
   role({
     cle: "loup-deguise", nom: "Loup déguisé", camp: "meute", effet: "tuer", apparence: "village",
@@ -45,7 +53,7 @@ Tu chasses chaque nuit avec la meute. **Toute vision te voit comme un villageois
 Si tu es **le plus désigné d'un vote sans être exécuté** (égalité, vote annulé, majorité manquée), le masque tombe : à partir de là, les visions disent la vérité sur toi.`,
     nuit: { ordre: ORDRE_MEUTE, cibles: 1, invite: "Quelle maison la meute visite-t-elle cette nuit ?" }
   }),
-  // Le loup du jeu de soirée (Le Pacte, étape 3b), placé avant la Louve mère : même ordre de nuit (41), et il passe avant elle.
+  // Le loup du jeu de soirée (Le Pacte, étape 3b), appelé juste avant la Louve mère (42 ; elle à 43), comme dans le livre.
   role({
     cle: "loup-pale", nom: "Loup pâle", camp: "meute", effet: "trahir", victoireCle: "seul-survivant",
     resume: "chasse avec la meute, mais une nuit sur deux dévore seul l'un des siens ; ne gagne que s'il reste le dernier vivant.",
@@ -55,7 +63,7 @@ Si tu es **le plus désigné d'un vote sans être exécuté** (égalité, vote a
 
 **Une nuit sur deux** (la deuxième, la quatrième…), quand la meute s'est rendormie, tu te réveilles seul et tu peux **dévorer un loup** (jamais toi-même). C'est une attaque de loup comme une autre : une garde ou un remède peuvent la déjouer, et la lanterne de la Veilleuse peut te surprendre.`,
     victoire: `Tu gagnes **seul**, si tu es **le dernier vivant**. Si la meute l'emporte, ce n'est pas ta victoire : tu ne gagnes jamais avec elle.`,
-    nuit: { ordre: 41, cibles: 1, uneNuitSurDeux: true, invite: "La meute dort. Quel loup dévores-tu seul cette nuit ? Passe pour l'épargner." }
+    nuit: { ordre: 42, cibles: 1, uneNuitSurDeux: true, invite: "La meute dort. Quel loup dévores-tu seul cette nuit ? Passe pour l'épargner." }
   }),
   role({
     cle: "louve-mere", nom: "Louve mère", camp: "meute", effet: "mordre", usages: 1,
@@ -65,7 +73,7 @@ Si tu es **le plus désigné d'un vote sans être exécuté** (égalité, vote a
 Tu chasses chaque nuit avec la meute. **Une fois par partie**, juste après le choix de la meute, tu peux **infecter** sa proie au lieu qu'elle meure : la victime **ne meurt pas**, et devient en secret un **loup de la meute**. Le narrateur la prévient en secret ; dès la nuit suivante, elle se réveille avec la meute et chasse avec elle. Si elle avait un pouvoir de nuit, elle le garde : le narrateur l'appelle encore pour lui, et elle s'en sert désormais pour les loups.
 
 La garde du Garde du pont n'arrête pas ta morsure : elle protège de la mort, pas de toi. Une porte fermée à la meute (l'asile de la Chapelle, la clé de la Gardienne, le verrou du Forgeron), si. Une infection n'est pas une mort : cette nuit-là, il n'y a personne à sauver.`,
-    nuit: { ordre: 41, cibles: 1, invite: "La meute a choisi sa proie. Désigne-la pour l'infecter au lieu de la tuer, ou passe." }
+    nuit: { ordre: 43, cibles: 1, invite: "La meute a choisi sa proie. Désigne-la pour l'infecter au lieu de la tuer, ou passe." }
   }),
   role({
     cle: "loup-hurleur", nom: "Loup hurleur", camp: "meute", effet: "silence",
@@ -73,7 +81,7 @@ La garde du Garde du pont n'arrête pas ta morsure : elle protège de la mort, p
     pouvoir: `Ton cri traverse les volets et glace les gorges.
 
 Tu chasses chaque nuit avec la meute. Puis, **chaque nuit**, tu désignes un joueur : au matin, il est **réduit au silence** et ne pourra ni parler ni écrire pendant le débat du jour. Il peut voter. Tu ne peux pas choisir deux nuits de suite le même joueur.`,
-    nuit: { ordre: 43, cibles: 1, invite: "Ton hurlement cherche une gorge : qui se taira demain ?" }
+    nuit: { ordre: 45, cibles: 1, invite: "Ton hurlement cherche une gorge : qui se taira demain ?" }
   }),
   role({
     cle: "loup-flaireur", nom: "Loup flaireur", camp: "meute", effet: "voir-camp",
@@ -81,7 +89,7 @@ Tu chasses chaque nuit avec la meute. Puis, **chaque nuit**, tu désignes un jou
     pouvoir: `Ton museau lit les seuils mieux qu'un registre.
 
 Tu chasses chaque nuit avec la meute. Puis, **chaque nuit**, tu flaires la porte d'un joueur et le narrateur te dit en secret son **camp** (Village, Meute ou Solitaire). Tu peux partager ce que tu sais avec la meute la nuit suivante.`,
-    nuit: { ordre: 44, cibles: 1, invite: "Quel seuil veux-tu flairer cette nuit ?" }
+    nuit: { ordre: 46, cibles: 1, invite: "Quel seuil veux-tu flairer cette nuit ?" }
   }),
   role({
     cle: "loup-des-roseaux", nom: "Loup des roseaux", camp: "meute", effet: "voir-actif",
@@ -91,7 +99,7 @@ Tu chasses chaque nuit avec la meute. Puis, **chaque nuit**, tu flaires la porte
 Tu chasses chaque nuit avec la meute. Puis, **chaque nuit**, tu guettes la maison d'un joueur : le narrateur te dit en secret s'il **a agi** cette nuit (un pouvoir de nuit, ou la chasse), sans dire ce qu'il a fait. De quoi repérer ceux qui cachent un pouvoir, et les désigner à la meute la nuit suivante.
 
 Guetter, c'est rôder au seuil : si la Veilleuse de lanterne éclaire la maison que tu guettes, tu es démasqué.`,
-    nuit: { ordre: 45, cibles: 1, invite: "Depuis les roseaux, quelle porte guettes-tu cette nuit ?" }
+    nuit: { ordre: 47, cibles: 1, invite: "Depuis les roseaux, quelle porte guettes-tu cette nuit ?" }
   })
 ];
 
@@ -121,7 +129,7 @@ const VILLAGE = [
 **Chaque nuit**, tu désignes un joueur et le narrateur te dit en secret **son rôle** : la carte qu'il a reçue, et le camp de cette carte (Village, Meute ou Solitaire). À toi de choisir quand dire ce que tu sais, et à qui.
 
 Certains trompent les cendres : le Loup déguisé t'apparaît en simple Villageois, le Louvetier en Loup de Brumecombe.`,
-    nuit: { ordre: 60, cibles: 1, invite: "Dans quelles cendres lis-tu cette nuit ?" }
+    nuit: { ordre: 4, cibles: 1, invite: "Dans quelles cendres lis-tu cette nuit ?" }
   }),
   role({
     cle: "herboriste", nom: "Herboriste", camp: "village", effet: "remede", usages: 2,
@@ -187,7 +195,7 @@ Tu peux te servir des **deux fioles la même nuit** : désigne la victime et cel
 **Chaque nuit**, pendant que la meute chasse, tu peux choisir d'**épier** (ou rester sagement au lit). Si tu épies, le narrateur te dit en secret **le nom de tous les loups** sortis chasser cette nuit. Mais tu peux être **surprise** (une chance sur deux) : alors c'est **toi que la meute dévore**, en silence, à la place de la proie qu'elle avait choisie. Prise dehors, ni la garde du Garde du pont ni une porte close ne te sauvent ; un remède, si.
 
 Tu ne peux pas te faire passer pour un loup.`,
-    nuit: { ordre: 39, cibles: 1, soiMeme: true, invite: "Désigne-toi pour te glisser hors du lit et épier la meute, ou passe." }
+    nuit: { ordre: 41, cibles: 1, soiMeme: true, invite: "Désigne-toi pour te glisser hors du lit et épier la meute, ou passe." }
   }),
   role({
     cle: "ermite", nom: "Ermite", camp: "village", effet: "voir-actif",
@@ -213,7 +221,7 @@ Tu ne peux pas te faire passer pour un loup.`,
 **La première nuit**, tu désignes deux joueurs (toi comprise) : ils deviennent **amants**. Le narrateur les prévient en secret ; ils apprennent le nom l'un de l'autre, pas leur rôle. Si l'un meurt, l'autre meurt de chagrin aussitôt.
 
 Deux amants du même camp gagnent avec lui. Deux amants de **camps différents** (un loup et un villageois, par exemple) ne gagnent **qu'ensemble, en restant les deux derniers vivants** : plus avec leur camp. Toi, ensuite, tu joues avec le village.`,
-    nuit: { ordre: 5, cibles: 2, soiMeme: true, premiereNuitSeulement: true, invite: "Quels deux cœurs lies-tu cette nuit ?" }
+    nuit: { ordre: 3, cibles: 2, soiMeme: true, premiereNuitSeulement: true, invite: "Quels deux cœurs lies-tu cette nuit ?" }
   }),
   role({
     cle: "gardienne-des-cles", nom: "Gardienne des clés", camp: "village", effet: "proteger",
@@ -267,7 +275,7 @@ Tu n'as aucun pouvoir, mais **ta vie est le serment du village** : si le village
 **Une fois par partie**, la nuit, tu lances ton **harpon** sur la maison d'un joueur : celui qui y dort **meurt à l'aube**, sauf si la Gardienne des clés a fermé sa porte cette nuit ou s'il est sauvé par un remède (la garde du Garde du pont n'arrête que la meute). Ton harpon atteint aussi ceux que la meute ne peut pas tuer, et il ne laisse aucune trace de crocs.
 
 Vise juste : un harpon perdu dans la poitrine d'un voisin ne revient pas. Tant que tu passes, tu le gardes.`,
-    nuit: { ordre: 48, cibles: 1, invite: "Sur quelle maison lances-tu ton harpon cette nuit ? Passe pour le garder." }
+    nuit: { ordre: 49, cibles: 1, invite: "Sur quelle maison lances-tu ton harpon cette nuit ? Passe pour le garder." }
   }),
 
   // --------------------------------------------------------------- les rôles du Village du jeu de soirée (Le Pacte, étape 3a)
@@ -367,10 +375,10 @@ Mort d'une autre façon (le vote, le poison, les flammes…), ton épée ne sert
     resume: "chaque nuit, pose une plume noire sur un joueur : il aura deux voix de plus contre lui au vote du jour.",
     pouvoir: `Tu ramasses tout ce qui brille, et tu sais sous quel toit chacun cache ses secrets.
 
-**Chaque nuit**, après la chasse, tu peux désigner un joueur (pas toi ; avec la variante Le Village, jamais un Chemineau). Au matin, le narrateur annonce à tous : « **une plume noire désigne** *(son nom)* ». Au **vote d'exécution** de ce jour, il compte **deux voix de plus** contre lui. Personne ne sait d'où vient la plume.
+**Chaque nuit**, avant que la meute sorte, tu peux désigner un joueur (pas toi ; avec la variante Le Village, jamais un Chemineau). Au matin, le narrateur annonce à tous : « **une plume noire désigne** *(son nom)* ». Au **vote d'exécution** de ce jour, il compte **deux voix de plus** contre lui. Personne ne sait d'où vient la plume.
 
 Passe si tu ne veux désigner personne.`,
-    nuit: { ordre: 46, cibles: 1, invite: "Sur quel seuil poses-tu ta plume noire cette nuit ? Passe pour n'en poser aucune." }
+    nuit: { ordre: 14, cibles: 1, invite: "Sur quel seuil poses-tu ta plume noire cette nuit ? Passe pour n'en poser aucune." }
   }),
 
   // --------------------------------------------------------------- la variante « Le Village » (Le Pacte, étape 4)
@@ -497,7 +505,7 @@ La meute ne peut pas te tuer : quand elle entre chez toi, elle repart bredouille
 
 La meute ne peut pas te tuer : quand elle entre chez toi, elle n'y trouve que de l'eau froide. Le vote, le poison, le feu et le harpon, si.`,
     victoire: `Tu gagnes **seule** si tu es la dernière vivante, ou la dernière avec un seul autre joueur qui n'est pas un loup.`,
-    nuit: { ordre: 47, cibles: 1, uneNuitSurDeux: true, invite: "Ton chant monte sur la rivière : qui suit ta voix jusqu'au gué cette nuit ?" }
+    nuit: { ordre: 48, cibles: 1, uneNuitSurDeux: true, invite: "Ton chant monte sur la rivière : qui suit ta voix jusqu'au gué cette nuit ?" }
   }),
 
   // --------------------------------------------------------------- les solitaires du jeu de soirée (Le Pacte, étape 3b)

@@ -51,6 +51,10 @@
 // Le Pacte, étape 4 (personnalites.mjs) : +village (public : la variante « Le Village », ses bâtiments brûlés, les pouvoirs servis,
 // les bâtiments qui attendent le Prévôt, les privés de vote du Régent, les graciés du Hobereau, le vote public du Cabaretier ; qui
 // tient quel bâtiment vit dans etat.tenures).
+// Le Pacte, étape 5 (variantes.mjs) : +variantes (public : les variantes du jeu de soirée en jeu — chandelles, chaîne des innocents,
+// mur des murmures, double visage, vendanges, envoûtement —, les chandelles d'une meute en désaccord, la chaîne du vote ouvert, le mur
+// du dernier matin) et +variantesSecret [S] (les chandelles soufflées cette nuit, les murmures de la nuit SANS auteur, les envoûtés,
+// le triangle des Vendanges, les cartes secrètes de Double visage).
 
 import { PHASES, causePublique } from "./constantes.mjs";
 import { decompterVotes } from "./votes.mjs";
@@ -69,6 +73,7 @@ import { tenuresInitiales, normaliserTenures, libererALaMort, batimentsDe } from
 import { villageInitial, normaliserVillage, attendreLePrevot } from "./personnalites.mjs";
 import { evenementsInitiaux, normaliserEvenements } from "./evenements.mjs";
 import { ambigusInitial, ambigusSecretInitial, normaliserAmbigus, normaliserAmbigusSecret } from "./ambigus.mjs";
+import { variantesInitiales, variantesSecretInitial, normaliserVariantes, normaliserVariantesSecret } from "./variantes.mjs";
 import { pacteInitial, pacteSecretInitial, normaliserPacte, normaliserPacteSecret, plumeDuVote, VOIX_DE_LA_PLUME, POIDS_DE_LA_PLUME } from "./pacte.mjs";
 
 // Le votant fictif de la voix du deuil (jamais un acteur).
@@ -108,7 +113,9 @@ export function etatInitial() {
     // Le Pacte, étape 3b (ambigus.mjs) : les ambigus, les solitaires du livre et le Loup pâle — le public, et les secrets du MJ.
     ambigus: ambigusInitial(), ambigusSecret: ambigusSecretInitial(),
     // Le Pacte, étape 4 (personnalites.mjs) : la variante « Le Village », publique.
-    village: villageInitial()
+    village: villageInitial(),
+    // Le Pacte, étape 5 (variantes.mjs) : les variantes du jeu de soirée — le public, et les secrets du MJ.
+    variantes: variantesInitiales(), variantesSecret: variantesSecretInitial()
   };
 }
 
@@ -153,6 +160,8 @@ export function normaliserEtat(e) {
   etat.ambigus = normaliserAmbigus(etat.ambigus);
   etat.ambigusSecret = normaliserAmbigusSecret(etat.ambigusSecret);
   etat.village = normaliserVillage(etat.village);
+  etat.variantes = normaliserVariantes(etat.variantes);
+  etat.variantesSecret = normaliserVariantesSecret(etat.variantesSecret);
   etat.tour = Number(etat.tour) || 0;
   return etat;
 }
@@ -176,7 +185,7 @@ export function separerEtat(e) {
     composition: etat.composition, peste: etat.peste, masques: etat.masques, somnambules: etat.somnambules, bonneEtoile: etat.bonneEtoile,
     aConsigner: etat.aConsigner, pouvoirsDeuil: etat.pouvoirsDeuil, autel: etat.autel,
     fiches: etat.fiches, pont: etat.pont, voteDoubleDemain: etat.voteDoubleDemain, secretsIncomplets: etat.secretsIncomplets,
-    secretsDeFete: etat.secretsDeFete, pacteSecret: etat.pacteSecret, ambigusSecret: etat.ambigusSecret
+    secretsDeFete: etat.secretsDeFete, pacteSecret: etat.pacteSecret, ambigusSecret: etat.ambigusSecret, variantesSecret: etat.variantesSecret
   };
   const pub = copie(etat);
   pub.nuit = base.nuit;
@@ -185,6 +194,7 @@ export function separerEtat(e) {
     "fiches", "pont", "voteDoubleDemain", "secretsIncomplets", "secretsDeFete"]) pub[cle] = base[cle] && typeof base[cle] === "object" ? copie(base[cle]) : base[cle];
   pub.pacteSecret = pacteSecretInitial();   // le Pacte : vies des Aïeux, flair des Furets, contaminés, signe du Greffier
   pub.ambigusSecret = ambigusSecretInitial();   // le centre du Chapardeur, les cartes jouées, les modèles, les Mâtins, les charmés
+  pub.variantesSecret = variantesSecretInitial();   // les souffles des loups, les murmures sans auteur, les envoûtés, le triangle, les cartes
   // La peste noire n'existe pas dans l'état public avant la fin (ni même la clé) ; à la fin, la partie se dévoile.
   delete pub.peste;
   if (etat.phase === "fin" && etat.peste) pub.peste = copie(etat.peste);
@@ -223,6 +233,7 @@ export function fusionnerEtat(pub, secret) {
   if (s.secretsDeFete) etat.secretsDeFete = normaliserSecretsDeFete(s.secretsDeFete);
   if (s.pacteSecret) etat.pacteSecret = normaliserPacteSecret(s.pacteSecret);
   if (s.ambigusSecret) etat.ambigusSecret = normaliserAmbigusSecret(s.ambigusSecret);
+  if (s.variantesSecret) etat.variantesSecret = normaliserVariantesSecret(s.variantesSecret);
   etat.secretsIncomplets = Boolean(s.secretsIncomplets);
   etat.causes = s.causes ?? {};
   etat.morts = etat.morts.map(m => (etat.causes[m.acteurId] ? { ...m, cause: etat.causes[m.acteurId] } : m));
@@ -342,7 +353,10 @@ export function enregistrerVote(e, { votant, cible, votants = null, maintenant =
 // (une voix sans votant, comme celle du deuil ; resultat.plume) ; souffreDouleur : le Souffre-douleur vivant (rôle connu du MJ) —
 // une égalité qui laisse une place vide à un vote d'exécution le condamne, lui, à la place des ex æquo, avant toute autre règle
 // de départage (ni Bailli, ni sort) : resultat.souffreDouleur, etat.pacte.egalite (son dernier geste, derniers-gestes.mjs).
-export function cloreVote(e, { votants = null, poids = {}, maintenant = Date.now(), prolongation = 60000, souffles = [], hasard = Math.random, souffreDouleur = "" } = {}) {
+// Les Vendanges (variantes.mjs) : boucDesVendanges (le Souffre-douleur, qui ne paie plus l'égalité : souffreDouleur "") meurt à la place
+// d'un de ses deux voisins (voisinsDuBouc) condamné par ce vote d'exécution : resultat.remplace, resultat.souffreDouleur, etat.pacte.egalite.
+export function cloreVote(e, { votants = null, poids = {}, maintenant = Date.now(), prolongation = 60000, souffles = [], hasard = Math.random, souffreDouleur = "",
+  boucDesVendanges = "", voisinsDuBouc = [] } = {}) {
   const etat = normaliserEtat(e);
   const v = etat.vote;
   const pesees = { ...poidsDesVoix(etat, votants), ...poids };
@@ -394,6 +408,16 @@ export function cloreVote(e, { votants = null, poids = {}, maintenant = Date.now
     r.departage = null;   // l'égalité est payée : ni Bailli ni sort
     resultat.souffreDouleur = bouc;
     etat.pacte = { ...etat.pacte, egalite: { acteurId: bouc, tour: etat.tour, numero: v.numero } };
+  }
+  // Les Vendanges : le Souffre-douleur prend la place de son voisin condamné.
+  const remplace = v.objet === "execution" && !v.banc && boucDesVendanges && !resultat.elus.includes(boucDesVendanges)
+    ? resultat.elus.find(id => voisinsDuBouc.includes(id)) ?? "" : "";
+  if (remplace) {
+    resultat.elus = resultat.elus.map(id => (id === remplace ? boucDesVendanges : id));
+    resultat.elu = resultat.elus[0] ?? null;
+    resultat.souffreDouleur = boucDesVendanges;
+    resultat.remplace = remplace;
+    etat.pacte = { ...etat.pacte, egalite: { acteurId: boucDesVendanges, tour: etat.tour, numero: v.numero } };
   }
   // La voix du Bailli tranche d'elle-même : il a voté pour l'un des ex aequo, c'est lui qui est désigné.
   const sienne = resultat.departage ? r.votes[bailli] : "";

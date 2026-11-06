@@ -23,11 +23,16 @@
 //   options.emprunts : { acteurId: rôle à plat } — la carte jouée cette nuit par un Bateleur : il se réveille EN PLUS à l'ordre de
 //   cette carte, pour son pouvoir ; options.charmes : [acteurId] — les charmés vivants se réveillent ensemble à ORDRE_CHARMES
 //   (étape « charmes », sans choix), tant qu'un Joueur de vielle joue.
+// - Le Pacte, étape 5 (variantes.mjs) : options.mur — le Mur des murmures, tous les vivants à ORDRE_MUR (étape « mur », sans choix) ;
+//   options.tromperie — les Vendanges, la première nuit : l'Entremetteuse se réveille une seconde fois (étape « tromperie », deux
+//   cibles), juste après elle ; la seconde carte d'un joueur (Double visage, grande complication : v.seconde) le réveille EN PLUS à son
+//   ordre, pour son pouvoir, comme la carte jouée par un Bateleur (emprunt).
 
 import { ORDRE_MEUTE, CLE_MEUTE, CLE_PESTE } from "./constantes.mjs";
 import { CLE_DEUIL, ORDRE_DEUIL } from "./deuil.mjs";
 import { pouvoirPerdu } from "./pacte.mjs";
 import { CLE_CHARMES, ORDRE_CHARMES, EFFET_VIELLE, vielleEnJeu, charmesVivants } from "./ambigus.mjs";
+import { CLE_MUR, ORDRE_MUR, CLE_TROMPERIE } from "./variantes.mjs";
 
 // La meute est-elle encore entière ? Aucun mort (ni parti) dont le camp était « meute ».
 export const meuteEntiere = (villageois = []) => !villageois.some(v => v.vivant === false && v.camp === "meute");
@@ -69,7 +74,7 @@ const groupe = e => e.roleCle === CLE_MEUTE || e.roleCle === CLE_PESTE;
 // deuil (Glas du deuil, deuil.mjs) : la vision due cette nuit -> l'étape « deuil » (CLE_DEUIL, ordre 41), toute la meute réveillée.
 // sagessePerdue : le village a perdu sa sagesse (pacte.mjs, sagesseEstPerdue(etat)) — les rôles du Village ne sont plus réveillés.
 // emprunts, charmes : le Pacte, étape 3b (ambigus.mjs, nuitDesAmbigus) — les cartes jouées par un Bateleur, les charmés.
-export function ordreDeNuit(villageois = [], tour = 1, { peste = null, deuil = false, sagessePerdue = false, emprunts = {}, charmes = [] } = {}) {
+export function ordreDeNuit(villageois = [], tour = 1, { peste = null, deuil = false, sagessePerdue = false, emprunts = {}, charmes = [], mur = false, tromperie = false } = {}) {
   const vivants = villageois.filter(v => v.vivant !== false);
   const entiere = meuteEntiere(villageois);
   const etapes = new Map();
@@ -96,9 +101,23 @@ export function ordreDeNuit(villageois = [], tour = 1, { peste = null, deuil = f
     if (!v || !role?.cle || pouvoirPerdu(sagessePerdue, v.role) || !seReveille(role, tour, { entiere, sansPouvoirs: sagessePerdue })) continue;
     ajouter(etapes, role, id, { emprunt: true });
   }
+  // Double visage (grande complication) : la seconde carte à pouvoir réveille son porteur en plus, à son ordre.
+  for (const v of vivants) {
+    const seconde = v.seconde;
+    if (!seconde?.cle || seconde.cle === v.role?.cle || agitAvecLaMeute(seconde) || !seReveille(seconde, tour, { entiere, sansPouvoirs: sagessePerdue })) continue;
+    ajouter(etapes, seconde, v.id, { emprunt: true, seconde: true });
+  }
+  // Les Vendanges : la première nuit, l'Entremetteuse qui vient de réveiller ses amants désigne l'un d'eux et un autre joueur.
+  const entremetteuses = tromperie ? etapes.get("entremetteuse")?.acteurIds ?? [] : [];
+  if (entremetteuses.length) {
+    const e = etapes.get("entremetteuse");
+    etapes.set(CLE_TROMPERIE, { roleCle: CLE_TROMPERIE, acteurIds: [...entremetteuses], ordre: e.ordre, invite: "", cibles: 2, soiMeme: true });
+  }
   // Les charmés du Joueur de vielle, ensemble, à la fin de la nuit.
   const charmesDeLaNuit = charmes?.length && vielleEnJeu(villageois) ? charmesVivants(villageois, charmes) : [];
   if (charmesDeLaNuit.length) etapes.set(CLE_CHARMES, { roleCle: CLE_CHARMES, acteurIds: charmesDeLaNuit, ordre: ORDRE_CHARMES, invite: "", cibles: 0, soiMeme: false });
+  // Le Mur des murmures : tous les vivants, à la fin de la nuit (chacun peut écrire, ou passer).
+  if (mur && vivants.length) etapes.set(CLE_MUR, { roleCle: CLE_MUR, acteurIds: vivants.map(v => v.id), ordre: ORDRE_MUR, invite: "", cibles: 0, soiMeme: false });
 
   return [...etapes.values()].sort((a, b) =>
     a.ordre - b.ordre

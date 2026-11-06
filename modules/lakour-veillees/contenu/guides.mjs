@@ -68,6 +68,22 @@ ${[...NOUVEAUX_ROLES.map(c => ficheDuRole(ROLES.find(r => r.system.cle === c))),
   ...NOUVEAUX_METIERS.map(c => ficheDuMetier(METIERS.find(m => m.system.cle === c)))].join("\n\n")}`
 });
 
+// L'ordre d'appel du jeu de soirée (Le Pacte, étape 5 ; docs/plan-le-pacte.md), dans nos noms : celui que suivent les ordres de nuit
+// des rôles du livre (roles.mjs). Les étapes sans réveil propre (les amoureux, le signe du Greffier, les oies, la Fournière) y sont
+// dites telles que le système les mène.
+export const ORDRE_D_APPEL = {
+  premiere: ["le Chapardeur", "le Bateleur", "l'Entremetteuse", "la Liseuse de cendres", "le Furet",
+    "les amoureux (le système leur souffle leur lien au carnet)", "le Greffier bègue (son signe, ici un pouvoir de jour secret)",
+    "les Lavandières", "les Bûcherons", "l'Enfant des bois", "la Gardeuse d'oies (au matin)", "la Pie", "l'Incendiaire", "le Garde du pont",
+    "la meute (avec le Mâtin s'il l'a rejointe)", "l'Enfant de la brume", "la Fournière (le système lui souffle ce qu'elle entrevoit)",
+    "la Louve mère", "le Loup affamé", "l'Herboriste", "la Liseuse d'étoiles (plus tard, avec les cartes)", "le Joueur de vielle", "les charmés"],
+  chaque: ["le Bateleur", "la Liseuse de cendres", "le Furet", "la Pie", "l'Incendiaire", "le Garde du pont", "la meute", "l'Enfant de la brume",
+    "la Fournière", "le Loup pâle (une nuit sur deux)", "la Louve mère", "le Loup affamé (tant qu'aucun loup n'est mort)", "l'Herboriste",
+    "la Liseuse d'étoiles", "le Joueur de vielle", "les charmés"],
+  jour: ["les victimes révélées", "le grognement des oies", "le Spiritisme (plus tard)", "le Crieur public (plus tard)", "le débat",
+    "le vote, et l'appel à la Chambrière", "le Feu follet (s'il tombe au premier tour)", "le second vote du Greffier bègue"]
+};
+
 // Ordre de réveil, calculé depuis les rôles : la meute groupée à 40, puis chaque rôle qui agit seul.
 export function ordreDeReveil() {
   const actifs = ROLES.filter(r => r.system.nuit.actif);
@@ -397,6 +413,14 @@ Réveille les rôles dans cet ordre (calculé d'après les rôles du module). Sa
 
 ${ordreDeReveil().map(e => `- **${e.o}** — ${e.texte} : « ${e.invite} »`).join("\n")}
 
+# L'ordre d'appel des veillées d'autrefois
+
+Les rôles du jeu de soirée suivent exactement l'ordre d'appel d'autrefois ; ceux des Veillées se glissent entre eux, près du rôle qui leur ressemble.
+
+- **La première nuit** : ${ORDRE_D_APPEL.premiere.join(", ")}.
+- **Chaque nuit ensuite** : ${ORDRE_D_APPEL.chaque.join(", ")}.
+- **Chaque jour** : ${ORDRE_D_APPEL.jour.join(", ")}.
+
 # Comment réveiller
 
 - Une **fenêtre de choix** par rôle, avec un délai (quarante-cinq secondes par défaut ; une minute pour la meute, qui discute). Au délai, le rôle **passe**.
@@ -420,7 +444,7 @@ ${ordreDeReveil().map(e => `- **${e.o}** — ${e.texte} : « ${e.invite} »`).jo
 - **Messager** : il désigne l'expéditeur puis le destinataire. Une fenêtre s'ouvre aussitôt chez l'expéditeur, qui écrit sa phrase ; le système la remet en secret au destinataire à l'aube, avec le nom de l'expéditeur. Tu ne la lis à personne.
 - **Furet** : il désigne un joueur ; le système flaire ce joueur et ses deux voisins vivants autour de la table (le cercle des places) et lui répond en secret à l'aube. Sans loup parmi eux, il perd son flair : réveille-le quand même chaque nuit, la Table de jeu et le MJ IA ne lui proposent plus personne.
 - **Lavandières** et **Bûcherons** : réveille-les ensemble la première nuit, puis une nuit sur deux (3e, 5e…). Le système remet à chacun le nom des siens dans son carnet ; avec les salons vocaux, ils se parlent entre eux le temps de la nuit.
-- **Pie** : après la chasse, elle peut poser sa plume noire sur un joueur (pas elle-même). Le système l'annonce au matin, sans la nommer.
+- **Pie** : avant la chasse, elle peut poser sa plume noire sur un joueur (pas elle-même). Le système l'annonce au matin, sans la nommer.
 - **Sagesse perdue** : si l'Aïeul est tombé de la main du village, ne réveille plus aucun rôle du Village ; la Table de jeu et le MJ IA les retirent d'eux-mêmes de l'ordre de la nuit.
 - **Chapardeur** : la première nuit, avant tout le monde, il voit les deux cartes du centre et peut en prendre une (obligé si ce sont deux loups ; sans réponse, le système en prend une au hasard). Il devient aussitôt ce rôle : s'il agit encore cette nuit (un loup, l'Entremetteuse, le Mâtin…), réveille-le à son tour, comme les autres.
 - **Bateleur** : en début de nuit, il peut désigner l'une de ses cartes face visible ; le système l'ajoute à l'ordre de la nuit, à l'ordre de cette carte : réveille-le alors pour ce pouvoir. Au matin, la carte jouée est retirée, devant tous.
@@ -725,6 +749,27 @@ La variante **Le Village** (case « Le Village » à la préparation, réglage d
 - Les personnalités sont des visages du village : présente-les à la distribution (« la Fournière ouvre son four avant l'aube »), rappelle-les au débat.
 - Une maison qui brûle se raconte au matin, avant les autres nouvelles : fumée, cendres, l'occupant qui sort sur le chemin avec son baluchon. Ne dis jamais qui a mis le feu.
 - Si le village a perdu sa sagesse (l'Aïeul), les personnalités perdent leur pouvoir comme les métiers ; seuls les Métayers gardent la désignation du Bailli, qui est une charge.`
+    },
+    {
+      titre: "Les variantes du jeu de soirée",
+      texte: `# Le Pacte et les variantes
+
+Le niveau **Le Pacte** ne tire que les personnages des veillées d'autrefois, sans nos bâtiments communaux ni nos métiers. Les variantes se cochent à la préparation et s'annoncent à la distribution ; leurs règles complètes sont dans le journal des variantes (page « Les variantes du jeu de soirée »). Voici comment les mener.
+
+# Ce que le système fait seul
+
+- **Veillée aux chandelles** : chaque carte de la Table porte sa chandelle ; à chaque mort, le chat dit qu'elle s'éteint. Version angoissante : chaque loup choisit seul sa chandelle (le vote de la meute) ; s'ils ne s'accordent pas, il n'y a pas de victime, et l'aube annonce les chandelles éteintes.
+- **La Chaîne des innocents** : « Ouvrir le vote » lance la chaîne. Chaque désignation est demandée à son joueur, puis annoncée ; sans réponse, le sort désigne. « Clore le vote » attend le dernier debout, qui est le condamné : exécute-le comme d'habitude.
+- **Le Mur des murmures** : la dernière étape de la nuit réveille tous les vivants, chacun avec une fenêtre d'écriture. Au matin, le mur est lu au chat. Tu ne sais pas qui a écrit quoi : ne cherche pas, ne devine pas à voix haute.
+- **Double visage** : la distribution retourne les rôles visibles (petite complication) et remet à chacun ses cartes secrètes, au carnet. Les joueurs d'allégeance loup se réveillent avec la meute, puis à l'ordre de leur rôle. Grande complication : un joueur à deux pouvoirs est réveillé deux fois, une par carte.
+- **Les Vendanges** : la Table et le MJ IA proposent d'eux-mêmes les bons candidats (les voisins des loups pour la meute, le Garde et ses voisins, les voisins de la Braconnière). La première nuit, l'Entremetteuse est réveillée une seconde fois (« la tromperie ») : un amant et un autre joueur. Au vote, le Bailli vote d'abord, à découvert ; les votes interdits par l'amour sont refusés. Le sort de la fiole de l'Herboriste est tiré à l'aube : tu le lis dans ta chronique.
+- **L'Envoûtement** : la proie de la meute ne meurt pas ; l'aube est calme. Le système la prive de ses pouvoirs et le lui dit, à elle seule. Si une envoûtée est condamnée, celles d'avant elle tombent aussitôt, annoncées. La meute gagne quand il ne reste plus qu'un villageois libre.
+
+# Raconter
+
+- Ne trahis jamais une envoûtée : une nuit sans mort se raconte comme une nuit de chance.
+- Le mur se lit d'une voix égale, phrase après phrase, sans commentaire.
+- Aux Vendanges, la veillée est une fête : raconte le vin, les chants, les pas qui hésitent — et laisse le sort de la fiole faire rire ou trembler.`
     }
   ]
 });
@@ -835,6 +880,84 @@ ${ficheDuRole(ROLES.find(r => r.system.cle === "incendiaire"))}
 # Quand le village perd la tête
 
 Si l'Aïeul tombe de la main du village, les personnalités perdent leur pouvoir comme les métiers ; les Métayers gardent la désignation du Bailli, qui est une charge.`
+    },
+    {
+      titre: "Le Pacte",
+      texte: `# Les veillées d'autrefois, telles quelles
+
+Le niveau **Le Pacte** (proposé d'abord à la préparation) compose la veillée avec les seuls personnages des veillées d'autrefois : les loups (Loup de Brumecombe, Loup affamé, Louve mère, Loup pâle), les gens du village (Villageois, Franc-Villageois, Liseuse de cendres, Entremetteuse, Herboriste, Braconnière, Enfant de la brume, Garde du pont, Aïeul, Souffre-douleur, Innocent, Lavandières, Bûcherons, Furet, Gardeuse d'oies, Greffier bègue, Vieux Sergent, Pie), les visages changeants (Chapardeur, Bateleur, Mâtin, Enfant des bois, Chambrière) et les solitaires (Feu follet, Joueur de vielle, Illuminé). Avec **Le Village**, l'Incendiaire et les personnalités s'y ajoutent.
+
+Ni nos bâtiments communaux (Chapelle, Gibet, Pont…), ni nos métiers : la veillée se joue comme autour d'une vraie table. Les autres niveaux (débutants, classique, chaos) gardent tous les rôles des Veillées. Les variantes ci-après se combinent avec n'importe quel niveau.
+
+# Une partie simple : bâtiments et métiers
+
+À la préparation (et dans les réglages du monde), deux choix valent pour tous les niveaux :
+
+- **Bâtiments du village** : *aucun* (une partie simple, avec les seuls personnages : rien ne dépend des bâtiments, les repères de la carte restent de simples décors), *tirés au hasard* (ceux de la composition, comme avant) ou *choisis* (cochez ceux de la veillée). Le Pacte n'en tire aucun ; *choisis* en ajoute quand même si vous le voulez.
+- **Métiers** : *oui* (chacun reçoit un métier public en plus de son rôle) ou *non*. Le Pacte n'en distribue jamais.
+
+La Table de jeu retient le dernier choix. Le Village (les personnalités) reste une case à part.
+
+# À la distribution
+
+Chaque joueur reçoit dans son carnet secret, en plus de sa carte, une explication de sa place : ce que fait son rôle, quand le narrateur l'appelle et ce qu'il lui demandera, comment il gagne, puis son métier et sa personnalité s'il en a. Le carnet s'ouvre de lui-même ; on le rouvre à tout moment.`
+    },
+    {
+      titre: "Les variantes du jeu de soirée",
+      texte: `# À choisir à la préparation
+
+Chaque variante est une case de la préparation (et un réglage du monde, qui retient le dernier choix). Elle est annoncée à la distribution : tout le monde connaît les règles de la veillée. Aucune ne se joue dans une Nuit de la Saint-Martin.
+
+# Veillée aux chandelles
+
+Une chandelle brûle devant chaque joueur (en ligne : sur sa carte, à la Table de jeu). Chaque matin, la chandelle de la victime de la meute est soufflée ; après le vote, le condamné souffle la sienne.
+
+**Version angoissante** : ce sont les loups eux-mêmes qui soufflent, la nuit, la chandelle de leur victime — chacun la sienne, en secret. S'ils n'ont pas tous soufflé la même, plus d'une chandelle s'éteint : la meute n'a **pas de victime**, et le village voit au matin quelles chandelles se sont éteintes (on les rallume ensuite). Un loup qui ne souffle rien n'éteint rien.
+
+# La Chaîne des innocents
+
+Le condamné du jour n'est pas voté. Tous les vivants sont debout. Le voisin de gauche du dernier éliminé désigne un villageois debout dont il **garantit l'innocence** ; celui-ci s'assied et désigne à son tour un autre villageois debout, et ainsi de suite. **Le dernier debout est condamné.** Les loups peuvent se blanchir entre eux : c'est voulu. En ligne, chacun désigne dans une fenêtre ; s'il ne répond pas à temps, le sort désigne pour lui. Sans mort encore, la chaîne part du Bailli, sinon du premier de la table. Pas de Banc des accusés avec elle.
+
+# Le Mur des murmures
+
+Chaque nuit, chaque vivant peut écrire une **courte phrase anonyme** sur le mur (une fenêtre s'ouvre en fin de nuit ; on peut passer). Au matin, le narrateur lit toutes les phrases, mêlées. **Personne ne saura jamais qui a écrit quoi**, pas même le narrateur. Elle se joue avec toutes les autres.
+
+# Double visage
+
+- **Petite complication** : chaque joueur reçoit un **rôle visible**, retourné devant tous, parmi la Liseuse de cendres, la Braconnière, l'Herboriste, l'Entremetteuse, le Garde du pont, l'Aïeul, le Souffre-douleur et jusqu'à deux Villageois ; puis une **carte d'allégeance** secrète (deux loups, le reste villageois) qui fait son camp. Un joueur d'allégeance loup se réveille avec la meute et **garde son pouvoir visible**. La Liseuse lit l'allégeance, pas le rôle visible.
+- **Grande complication** : les mêmes cartes, mêlées, **deux par joueur**, face cachée. Une carte de loup fait un loup ; une carte à pouvoir donne son pouvoir (deux cartes à pouvoir : les deux, par exemple Herboriste et Liseuse, ou Aïeul et Souffre-douleur). La Liseuse lit les deux cartes.
+- De 7 à 9 joueurs avec un paquet ; de 10 à 18, un second paquet s'ajoute (trois loups jusqu'à 13 joueurs, quatre au-delà). Ni à la petite tablée, ni avec la peste noire.
+
+# Les Vendanges
+
+Un **loup de plus** que d'habitude, et tous les pouvoirs sont **éméchés** jusqu'à la fin :
+
+- la meute ne dévore qu'un **voisin d'un loup** ;
+- la Liseuse désigne un joueur et lit les rôles de ce joueur et de ses deux voisins, **sans savoir lequel est à qui** ;
+- la Braconnière emporte l'un de ses **deux voisins** ;
+- l'Enfant de la brume n'épie plus la meute, seulement **l'Herboriste** (qui elle est, ce qu'elle fait), sans danger ;
+- le Chapardeur, la première nuit, **échange sa carte** avec celle d'un joueur de son choix (chacun vérifie la sienne au matin) ;
+- le Bailli **vote seul, le premier**, à découvert ; les autres attendent son vote ;
+- le Souffre-douleur ne meurt plus à la place des ex æquo, mais **à la place d'un de ses deux voisins** condamné par le vote ;
+- l'Innocent ne change pas ;
+- l'Herboriste n'a **qu'une fiole**, et quand elle la verse, le **sort** décide : guéri ; guéri et devenu simple villageois ; guéri et devenu loup ; ou mort ;
+- l'Entremetteuse unit les amants comme d'habitude, puis désigne l'un des deux et un autre joueur, qui s'aiment aussi : le **trompé** n'entraîne personne dans sa mort, chacun des deux autres entraîne les deux autres ; le trompé ne peut pas voter contre le trompeur (qui peut voter contre lui), et deux amants ne votent jamais l'un contre l'autre ;
+- le Garde du pont ne protège que **lui-même ou un de ses deux voisins** ;
+- le Joueur de vielle ne charme qu'**un joueur à la fois**.
+
+Ni à la petite tablée, ni avec la peste noire.
+
+# L'Envoûtement
+
+Les victimes de la meute ne sont plus éliminées : elles **perdent aussitôt tous leurs pouvoirs** et restent **envoûtées**, en secret (seule la victime le sait). Si une victime envoûtée est condamnée par le village, **toutes les envoûtées d'avant elle** sont aussitôt éliminées avec elle. La meute gagne quand elle a envoûté **l'avant-dernier villageois**. Ni à la petite tablée, ni avec la peste noire.
+
+# La Peste noire
+
+Elle existe déjà (case de la préparation, page « La peste noire » du guide du joueur) ; elle se joue aussi au niveau Le Pacte.
+
+# Les Hameaux
+
+Plusieurs villages qui jouent en même temps, et des joueurs qui passent de l'un à l'autre : pas encore. Chaque monde de Foundry ne mène qu'une veillée à la fois ; le narrateur peut en ouvrir plusieurs, sans passage d'un village à l'autre.`
     }
   ]
 });

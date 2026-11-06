@@ -49,7 +49,8 @@ const VERIFICATIONS = {
       assert.equal(c.camps.meute, 0);
       assert.equal(c.peste, true);
       assert.ok(c.roles.some(cle => EQUILIBRE.roles[cle].information), "au moins un rôle d'information");
-      assert.ok(c.batiments.length >= 4, "des bâtiments comme d'habitude");
+      // (Le Pacte, étape 5 : le niveau du jeu de soirée n'a aucun de nos bâtiments communaux.)
+      assert.ok(niveau === L.NIVEAU_LE_PACTE ? !c.batiments.length : c.batiments.length >= 4, "des bâtiments comme d'habitude");
     }
   },
   "composition ordinaire : des loups, pas de peste": L => {
@@ -215,7 +216,7 @@ const MUTATIONS = [
   ["etat.mjs", "if (etat.phase === \"fin\" && etat.peste) pub.peste", "if (etat.peste) pub.peste", "dévoilé avant la fin"],
   ["etat.mjs", "\"carnets\", \"causes\", \"composition\",\n", "\"carnets\", \"causes\",\n", "composition publique"],
   ["etat.mjs", "  if (s.peste !== undefined) etat.peste = normaliserPeste(s.peste);\n", "", "secret rendu au MJ"],
-  ["composition.mjs", "essais = 1200, peste = false } = {}) {", "essais = 1200, peste: _peste = false } = {}) {\n  const peste = false;", "composition de peste ignorée"],
+  ["composition.mjs", "essais = 1200, peste = false, loupsEnPlus = 0 } = {}) {", "essais = 1200, peste: _peste = false, loupsEnPlus = 0 } = {}) {\n  const peste = false;", "composition de peste ignorée"],
   ["composition.mjs", "export const sansMeute = (roles, equilibre) => roles.map(cle => (equilibre.roles?.[cle]?.camp === \"meute\" ? BASE_VILLAGE : cle));",
     "export const sansMeute = roles => [...roles];", "rôles imposés de la meute"],
   ["peste.mjs", "return h() < chance;", "return h() < chance * 3;", "rareté"],

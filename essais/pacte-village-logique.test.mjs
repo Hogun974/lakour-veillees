@@ -315,12 +315,12 @@ const VERIFICATIONS = {
       assert.ok(JETONS_ROLES[cle], `${cle} : jeton`);
     }
     assert.equal(parCle["franc-villageois"].system.public, true);
-    assert.deepEqual(["furet", "lavandiere", "bucheron", "pie"].map(c => parCle[c].system.nuit.ordre), [7, 11, 12, 46]);
+    assert.deepEqual(["furet", "lavandiere", "bucheron", "pie"].map(c => parCle[c].system.nuit.ordre), [7, 11, 12, 14]);
     assert.ok(parCle.lavandiere.system.nuit.nuitsImpaires && parCle.bucheron.system.nuit.nuitsImpaires);
     assert.deepEqual([EQUILIBRE.lavandiere.groupe, EQUILIBRE.bucheron.groupe], [2, 3]);
     assert.equal(parCle["greffier-begue"].system.usages.max, 1);
     const ordre = ordreDeReveil().map(e => e.o);
-    for (const o of [7, 11, 12, 46]) assert.ok(ordre.includes(o), `ordre ${o} au guide`);
+    for (const o of [7, 11, 12, 14]) assert.ok(ordre.includes(o), `ordre ${o} au guide`);
   }
 };
 
@@ -337,7 +337,7 @@ const MUTATIONS = [
   ["pacte.mjs", "p.innocentSuit ? villageois", "true ? villageois", "sagesse : l'Innocent suit sur réglage"],
   ["resolution.mjs", "    if (!deLaMeute && !deLaPeste && !duDeuil && a.roleCle === acteur?.role?.cle && sansPouvoir(acteur.role)) continue;\n", "", "sagesse : les actions du Village"],
   ["jour.mjs", "    if (sagesseEstPerdue(etat) && (def.source === \"metier\" || (def.source === \"role\" && pouvoirPerdu(true, acteur.role)))) return non(\"sagesse\");\n", "", "sagesse : pouvoirs de jour et métiers"],
-  ["derniers-gestes.mjs", "gesteDuRole(parId.get(m.acteurId)?.role, sans)", "gesteDuRole(parId.get(m.acteurId)?.role)", "sagesse : derniers gestes"],
+  ["derniers-gestes.mjs", "some(r => gesteDuRole(r, sans) === geste)", "some(r => gesteDuRole(r) === geste)", "sagesse : derniers gestes"],
   ["pacte.mjs", "role?.effet === EFFET_INNOCENT && !estGracie(etat, acteurId)", "role?.effet === EFFET_INNOCENT", "Innocent : une seule grâce"],
   ["pacte.mjs", "  if (bailli) etat.bailli = { ...etat.bailli, actif: false, acteurId: \"\", succession: null };\n", "", "Innocent : la charge abolie"],
   ["pacte.mjs", "  let admis = ids.filter(id => !gracies.has(id));", "  let admis = ids;", "Innocent : sans voix"],

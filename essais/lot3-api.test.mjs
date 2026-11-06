@@ -438,7 +438,7 @@ const MUTATIONS = [
   ["scripts/api.mjs", "      e.deuil = L.deuilInitial(!court && lireReglage(\"glasDuDeuil\", false));", "      e.deuil = L.deuilInitial(!court);", "deuil : le réglage"],
   // la Nuit de la Saint-Martin
   ["scripts/api.mjs", "      e.autel = court ? [...autel] : [];", "      e.autel = [];", "saint-martin : l'autel gardé"],
-  ["scripts/api.mjs", "      e.banc = L.bancInitial(!court && lireReglage(\"banc\", false));", "      e.banc = L.bancInitial(lireReglage(\"banc\", false));", "saint-martin : sans Banc"],
+  ["scripts/api.mjs", "      e.banc = L.bancInitial(!court && lireReglage(\"banc\", false) && !choixVariantes.chaine);", "      e.banc = L.bancInitial(lireReglage(\"banc\", false) && !choixVariantes.chaine);", "saint-martin : sans Banc"],
   ["scripts/api.mjs", "      e.deuil = L.deuilInitial(!court && lireReglage(\"glasDuDeuil\", false));", "      e.deuil = L.deuilInitial(lireReglage(\"glasDuDeuil\", false));", "saint-martin : sans glas"],
   ["scripts/api.mjs", "      e.presage = L.presageInitial(!court && lireReglage(\"almanach\", false));", "      e.presage = L.presageInitial(lireReglage(\"almanach\", false));", "saint-martin : sans Almanach"],
   ["scripts/api.mjs", "    if (court) await annonceChat(echapper(t(\"LAKOUR_LOUPS.SaintMartin.Annonce\"", "    if (false) await annonceChat(echapper(t(\"LAKOUR_LOUPS.SaintMartin.Annonce\"", "saint-martin : annoncée"],

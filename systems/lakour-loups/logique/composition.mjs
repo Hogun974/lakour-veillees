@@ -18,17 +18,20 @@ import { creerHasard, melanger } from "./hasard.mjs";
 import { cartesAAjouter, CARTES_DU_CENTRE } from "./ambigus.mjs";
 import { NIVEAU_PETITE_TABLEE, nombreDeLoupsTablee, ombresTablee } from "./tablee.mjs";
 
-// Les niveaux : les trois classiques, et la « petite tablée » (tablee.mjs : peu d'humains, des compagnons IA), qui puise dans les
-// rôles permis au niveau classique avec ses propres règles de dosage (tirerTablee).
-export const NIVEAUX = ["debutants", "classique", "chaos", NIVEAU_PETITE_TABLEE];
-const RANGS = { debutants: 0, classique: 1, chaos: 2, [NIVEAU_PETITE_TABLEE]: 1 };
+// Les niveaux : les trois classiques, « Le Pacte » (Le Pacte, étape 5 : seulement les rôles du jeu de soirée, ROLES_DU_LIVRE, au
+// dosage du niveau classique ; le niveau proposé d'abord par la Table de jeu) et la « petite tablée » (tablee.mjs : peu d'humains, des
+// compagnons IA), qui puise dans les rôles permis au niveau classique avec ses propres règles de dosage (tirerTablee). La petite
+// tablée reste la dernière ; Le Pacte vient après le chaos (tous les rôles du livre, quel que soit leur niveau, y sont permis).
+export const NIVEAU_LE_PACTE = "le-pacte";
+export const NIVEAUX = ["debutants", "classique", "chaos", NIVEAU_LE_PACTE, NIVEAU_PETITE_TABLEE];
+const RANGS = { debutants: 0, classique: 1, chaos: 2, [NIVEAU_LE_PACTE]: 2, [NIVEAU_PETITE_TABLEE]: 1 };
 const rangNiveau = n => RANGS[n] ?? 0;
 
 // Loups selon le nombre de joueurs (même barème que les compositions prêtes du contenu).
 export const nombreDeLoups = n => (n <= 8 ? 2 : n <= 12 ? 3 : n <= 15 ? 4 : 5);
 // Loups à pouvoir propre et solitaires permis selon le niveau.
-const LOUPS_SPECIAUX = { debutants: [0, 0], classique: [0, 1], chaos: [1, 2] };
-const SOLITAIRES = { debutants: [0, 0], classique: [0, 1], chaos: [1, 2] };
+const LOUPS_SPECIAUX = { debutants: [0, 0], classique: [0, 1], chaos: [1, 2], [NIVEAU_LE_PACTE]: [0, 1] };
+const SOLITAIRES = { debutants: [0, 0], classique: [0, 1], chaos: [1, 2], [NIVEAU_LE_PACTE]: [0, 1] };
 const nombreDeBatiments = n => (n < 10 ? 4 : n < 14 ? 5 : 6);
 const BASE_LOUP = "loup-de-brumecombe", BASE_VILLAGE = "villageois";
 
@@ -47,13 +50,23 @@ export const PACTE_HORS_TABLEE = ["franc-villageois", "aieul", "souffre-douleur"
   "chapardeur", "bateleur", "matin", "enfant-des-bois", "chambriere", "feu-follet", "joueur-de-vielle", "illumine", "loup-pale"];
 export const SOLITAIRES_TABLEE = ["colporteur"];
 export const HORS_TABLEE_BATIMENTS = ["gibet", "pont"];
+// Le mode « Le Pacte » (étape 5) : les rôles du livre de règles du jeu de soirée, dans nos clés (docs/plan-le-pacte.md), jamais nos
+// créations — les loups, les villageois, les ambigus et les solitaires du livre ; l'Incendiaire seulement avec la variante « Le
+// Village » (equilibre.village), dont les personnalités ne sont pas des rôles. Ni nos bâtiments communaux (la Chapelle, le Gibet… :
+// une composition « Le Pacte » n'en a aucun), ni nos métiers (nouvellePartie n'en distribue pas à ce niveau).
+export const ROLES_DU_LIVRE = ["loup-de-brumecombe", "loup-affame", "louve-mere", "loup-pale",
+  "villageois", "franc-villageois", "liseuse-de-cendres", "entremetteuse", "herboriste", "braconniere", "enfant-de-la-brume", "garde-du-pont",
+  "aieul", "souffre-douleur", "innocent", "lavandiere", "bucheron", "furet", "gardeuse-d-oies", "greffier-begue", "vieux-sergent", "pie",
+  "incendiaire", "chapardeur", "bateleur", "matin", "enfant-des-bois", "chambriere", "feu-follet", "joueur-de-vielle", "illumine"];
+export const estDuLivre = cle => ROLES_DU_LIVRE.includes(cle);
 // Le Pacte, étape 4 : un rôle marqué village (equilibre.roles[cle].village, l'Incendiaire) ne sort que dans la variante « Le Village »
 // (option village du générateur) : sans bâtiments tenus, il n'aurait rien à faire. Jamais à la petite tablée (composer n'y passe pas
 // l'option), que la variante n'a pas.
 function catalogue(equilibre, n, niveau, exclure, peste = false, village = false) {
   const tablee = niveau === NIVEAU_PETITE_TABLEE;
+  const livre = niveau === NIVEAU_LE_PACTE;
   const permis = Object.entries(equilibre.roles ?? {}).filter(([cle, r]) =>
-    !exclure.has(cle) && !(peste && r.camp === "meute") && !(r.village && !village)
+    !exclure.has(cle) && !(peste && r.camp === "meute") && !(r.village && !village) && (!livre || estDuLivre(cle))
     && (tablee ? (rangNiveau(r.niveau) <= rangNiveau(niveau) || SOLITAIRES_TABLEE.includes(cle)) && !HORS_TABLEE.includes(cle) && !PACTE_HORS_TABLEE.includes(cle)
       : rangNiveau(r.niveau) <= rangNiveau(niveau) && n >= (r.joueursMin ?? 0)));
   const famille = f => permis.filter(f).map(([cle]) => cle);
@@ -107,13 +120,13 @@ function inclureDans(roles, cat, inclure) {
 }
 
 // Une composition tirée au hasard qui respecte les règles du niveau (ou null si impossible).
-function tirer(n, niveau, cat, inclure, hasard, peste = false) {
+function tirer(n, niveau, cat, inclure, hasard, peste = false, loupsEnPlus = 0) {
   const roles = [];
   const prendre = (liste, nombre) => prendreDans(roles, cat, liste, nombre, hasard, n);
   const entre = ([min, max]) => min + Math.floor(hasard() * (max - min + 1));
   // Souhaits d'abord (rôles imposés), dans la limite du nombre de joueurs.
   inclureDans(roles, cat, inclure);
-  const loups = peste ? 0 : nombreDeLoups(n);
+  const loups = peste ? 0 : nombreDeLoups(n) + loupsEnPlus;
   const loupsDeja = roles.filter(c => cat.permis.get(c)?.camp === "meute").length;
   prendre(cat.loupsSpeciaux, Math.max(0, Math.min(entre(LOUPS_SPECIAUX[niveau]), loups - 1) - roles.filter(c => cat.loupsSpeciaux.includes(c)).length));
   // (Le loup de base exclu, ou une peste noire sans meute : pas de loup ajouté, plutôt qu'une boucle sans fin.)
@@ -164,10 +177,11 @@ export const sansMeute = (roles, equilibre) => roles.map(cle => (equilibre.roles
 
 // Point d'entrée. options : { niveau, inclure: [cle], exclure: [cle], historique: [{ roles, batiments }], cible = 0, graine, essais = 400,
 // peste (true : composition de peste noire, sans meute ; l'équilibre ne compte plus, seule la variété), village (la variante « Le
-// Village » : ses rôles, l'Incendiaire, peuvent sortir ; jamais à la petite tablée) }
+// Village » : ses rôles, l'Incendiaire, peuvent sortir ; jamais à la petite tablée), loupsEnPlus (la variante « Les Vendanges »,
+// variantes.mjs : des loups de plus que le barème ; jamais à la petite tablée) }
 // Petite tablée (niveau NIVEAU_PETITE_TABLEE, tablee.mjs) : tirerTablee, cible cibleTablee(n) sauf cible donnée, 4 à 12 places.
 export function composer(n, equilibre, { niveau = "classique", village = false, inclure = [], exclure = [], historique = [], cible = 0, graine,
-  essais = 1200, peste = false } = {}) {
+  essais = 1200, peste = false, loupsEnPlus = 0 } = {}) {
   if (!Number.isInteger(n) || n < 4) throw new Error(`Il faut au moins 4 joueurs (${n}).`);
   if (!NIVEAUX.includes(niveau)) throw new Error(`Niveau inconnu : ${niveau}.`);
   const tablee = niveau === NIVEAU_PETITE_TABLEE;
@@ -180,7 +194,7 @@ export function composer(n, equilibre, { niveau = "classique", village = false, 
   const candidats = [];
   for (let i = 0; i < essais; i++) {
     const voulus = peste ? sansMeute(inclure, equilibre).filter(c => c !== BASE_VILLAGE) : inclure;
-    const roles = tablee ? tirerTablee(n, cat, voulus, hasard, peste) : tirer(n, niveau, cat, voulus, hasard, peste);
+    const roles = tablee ? tirerTablee(n, cat, voulus, hasard, peste) : tirer(n, niveau, cat, voulus, hasard, peste, Math.max(0, Number(loupsEnPlus) || 0));
     if (!roles) continue;
     const somme = equilibreDe(roles, equilibre);
     const score = (peste ? 0 : Math.abs(somme - cible) * 2) + penaliteHistorique(roles, historique, "roles") + hasard() * 0.5;
@@ -195,8 +209,10 @@ export function composer(n, equilibre, { niveau = "classique", village = false, 
   const proches = candidats.filter(c => c.score <= candidats[0].score + 1 && (peste || Math.abs(c.somme - cible) <= tolere));
   const choix = proches[Math.floor(hasard() * Math.min(8, proches.length))];
   // Bâtiments du niveau, les moins joués récemment d'abord.
-  // Petite tablée : ni Gibet (il bloque trop de votes à six) ni Pont (une seule rive, à si peu de maisons).
-  const batimentsPermis = Object.entries(equilibre.batiments ?? {}).filter(([cle, b]) => rangNiveau(b.niveau) <= rangNiveau(niveau) && !(tablee && HORS_TABLEE_BATIMENTS.includes(cle))).map(([cle]) => cle);
+  // Petite tablée : ni Gibet (il bloque trop de votes à six) ni Pont (une seule rive, à si peu de maisons). Le Pacte : aucun (le jeu de
+  // soirée n'a pas nos bâtiments communaux).
+  const batimentsPermis = niveau === NIVEAU_LE_PACTE ? []
+    : Object.entries(equilibre.batiments ?? {}).filter(([cle, b]) => rangNiveau(b.niveau) <= rangNiveau(niveau) && !(tablee && HORS_TABLEE_BATIMENTS.includes(cle))).map(([cle]) => cle);
   const batiments = melanger(batimentsPermis, hasard)
     .map(cle => ({ cle, p: penaliteHistorique([cle], historique, "batiments") + hasard() * 0.3 }))
     .sort((a, b) => a.p - b.p).slice(0, nombreDeBatiments(n)).map(b => b.cle);

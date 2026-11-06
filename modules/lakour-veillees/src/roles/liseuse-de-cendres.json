@@ -11,7 +11,7 @@
     "victoire": "",
     "nuit": {
       "actif": true,
-      "ordre": 60,
+      "ordre": 4,
       "premiereNuitSeulement": false,
       "uneNuitSurDeux": false,
       "cibles": 1,

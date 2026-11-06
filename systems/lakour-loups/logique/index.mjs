@@ -39,3 +39,4 @@ export * from "./evenements.mjs";
 export * from "./pacte.mjs";
 export * from "./ambigus.mjs";
 export * from "./personnalites.mjs";
+export * from "./variantes.mjs";

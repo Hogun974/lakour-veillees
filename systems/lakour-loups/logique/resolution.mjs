@@ -36,6 +36,15 @@
 //                pose pas sur eux) ; batimentsTenus : { acteurId: cle } le bâtiment que tient chacun (l'Incendiaire désigne son
 //                occupant) ; + sortie.incendies : [{ par, occupant, batiment, loup, proie }] — le bâtiment brûlé (l'API le détruit au
 //                matin), et, si c'était la maison de la proie de la meute (proie), le loup carbonisé (mort, cause « incendie »).
+//   Le Pacte, étape 5 (variantes.mjs) : vendanges (les pouvoirs « éméchés » : la Liseuse lit trois rôles mêlés, le joueur désigné et
+//                ses deux voisins ; l'Enfant de la brume épie l'Herboriste, pas la meute ; l'Herboriste n'a qu'une fiole, et le sort en
+//                décide — guéri, guéri et Villageois simple, guéri et loup, ou mort ; l'Entremetteuse ajoute un amant, étape
+//                « tromperie » : + changements { type: "triangle", trompeur, trompe, amant }) ; triangle (celui des nuits d'avant : le
+//                chagrin suit le triangle) ; envoutement (la victime d'une attaque de loup n'est pas tuée : + sortie.envoutes) ;
+//                visages (Double visage : ce que la Liseuse lit chez chacun, ses cartes secrètes, { acteurId: { nom, camp } }) ; la
+//                seconde carte d'un joueur (v.seconde) agit comme sa carte principale (une action notée avec sa clé se résout avec
+//                elle ; un Aïeul ou une Braconnière en seconde carte gardent leur pouvoir) ; + changements { type: "villageois",
+//                acteurId } (la fiole des Vendanges : son rôle devient Villageois simple).
 // -> { morts, deces, sauves, revelations, messages, changements, asperges, fioles, fiolesVides, voteDouble, enAttente, narrateur,
 //      annonces, bilan, pontFranchi }
 //    annonces : [msg] publiques (la lame de la Forge) ; bilan : { visites, sorties, victime, loup, sauves, attaques } pour les
@@ -105,6 +114,8 @@ import { trioAutour, premierAGauche, premierADroite } from "./cercle.mjs";
 import { EFFET_AIEUL, EFFET_FURET, EFFET_PIE, EFFET_SERGENT, pouvoirPerdu, candidatsDeLaPlume } from "./pacte.mjs";
 import { EFFET_LOUP_PALE, CLE_CHARMES } from "./ambigus.mjs";
 import { EFFET_INCENDIAIRE } from "./personnalites.mjs";
+import { CLE_TROMPERIE, triangleDesVendanges, suiteDuTriangle, trioDeLaLiseuse, issueDeLaFiole, carteDeLEffet } from "./variantes.mjs";
+import { melanger } from "./hasard.mjs";
 
 // Un mot porté par le Messager : une ligne, sans balises, 200 caractères au plus.
 export function nettoyerMot(texte, longueur = 200) {
@@ -152,7 +163,7 @@ const sansCible = role => Number(role?.nuit?.cibles ?? 1) === 0;
 
 export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges = [], precedentes = [], primes = {}, fioles = {}, hasard = Math.random, chanceEpier = RISQUE_ENFANT, jour = {},
   somnambules = [], rolesFactices = [], nomsApparents = {}, cercle = [], aieux = [], furets = [], contamines = [], sagessePerdue = false, emprunts = {},
-  immunises = [], chemineaux = [], batimentsTenus = {} } = {}) {
+  immunises = [], chemineaux = [], batimentsTenus = {}, vendanges = false, triangle: triangleAvant = null, envoutement = false, visages = {} } = {}) {
   const noms = { ...NOMS_APPARENTS, ...nomsApparents };
   const reve = new Set(somnambules);
   const parId = new Map(villageois.map(v => [v.id, v]));
@@ -185,14 +196,15 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
   const sortie = { morts: [], deces: [], sauves: [], revelations: [], messages: [], changements: [], asperges: [],
     fioles: JSON.parse(JSON.stringify(fioles ?? {})), fiolesVides: [], voteDouble: false, enAttente: [], narrateur: [],
     annonces: [], bilan: null, pontFranchi: false, deuil: "", presentOuvert: false, masqueTombe: false,
-    aieux: [...new Set(aieux)], furets: [...new Set(furets)], plume: "", contaminations: [], incendies: [] };
+    aieux: [...new Set(aieux)], furets: [...new Set(furets)], plume: "", contaminations: [], incendies: [], envoutes: [] };
   // Le Village : le Cabaretier immunisé, les Chemineaux.
   const immunes = new Set(immunises);
   const sansToit = new Set(chemineaux);
   // Le Pacte : la place de chacun autour de la table (le Furet, le Vieux Sergent) ; les rôles du Village sans pouvoir.
   const placesDuCercle = { cercle };
   const sansPouvoir = role => pouvoirPerdu(sagessePerdue, role);
-  const aieulEnVie = id => parId.get(id)?.role?.effet === EFFET_AIEUL && !sansPouvoir(parId.get(id)?.role) && !sortie.aieux.includes(id);
+  // L'Aïeul, sur sa carte (ou sa seconde carte : Double visage, grande complication).
+  const aieulEnVie = id => { const c = carteDeLEffet(parId.get(id), EFFET_AIEUL); return Boolean(c) && !sansPouvoir(c) && !sortie.aieux.includes(id); };
 
   // Les rôles sans cible réveillés cette nuit agissent d'office (l'Ermite guette, le Chasseur apprend sa cible).
   const toutes = [...actions];
@@ -210,7 +222,9 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
     const deLaMeute = a.roleCle === CLE_MEUTE;
     // Le Bateleur qui joue une carte cette nuit : cette action-là se résout avec le rôle de la carte.
     const porteur = parId.get(a.acteurId);
-    const emprunt = porteur && !deLaMeute && emprunts?.[a.acteurId]?.cle === a.roleCle && porteur.role?.cle !== a.roleCle ? emprunts[a.acteurId] : null;
+    const emprunt = (porteur && !deLaMeute && emprunts?.[a.acteurId]?.cle === a.roleCle && porteur.role?.cle !== a.roleCle ? emprunts[a.acteurId] : null)
+      // Double visage (grande complication) : la seconde carte du joueur, de même.
+      ?? (porteur && !deLaMeute && porteur.seconde?.cle === a.roleCle && porteur.role?.cle !== a.roleCle ? porteur.seconde : null);
     const acteur = emprunt ? { ...porteur, role: emprunt } : porteur;
     const deLaPeste = a.roleCle === CLE_PESTE;   // son porteur est mort : il agit quand même
     const duDeuil = a.roleCle === CLE_DEUIL;     // la vision du Glas du deuil : toute la meute, quel que soit le loup noté
@@ -221,7 +235,8 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
     const cibles = [...new Set((a.cibles ?? []).filter(id => parId.has(id)))];
     const passe = !cibles.length && !a.effet && (deLaMeute || deLaPeste || !sansCible(acteur?.role));
     if (passe) continue;
-    const effet = effetDeLAction(a, acteur);
+    // Les Vendanges : la seconde désignation de l'Entremetteuse (étape « tromperie ») n'est pas un second lien d'amour.
+    const effet = a.roleCle === CLE_TROMPERIE ? CLE_TROMPERIE : effetDeLAction(a, acteur);
     if (deLaPeste || duDeuil) {
       // Ni loup à empêcher, ni porteur à retenir (gardé à l'œil, hors d'atteinte : il est mort) ; la vision ne sort pas de chez soi.
     } else if (deLaMeute) {
@@ -278,6 +293,24 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
     sortie.messages.push(msg(x, "Amour", `Une flèche de brume vous lie à ${nom(y)} : si l'un meurt, l'autre le suit.`, { nom: nom(y) }));
     sortie.messages.push(msg(y, "Amour", `Une flèche de brume vous lie à ${nom(x)} : si l'un meurt, l'autre le suit.`, { nom: nom(x) }));
   }
+  // Les Vendanges : l'Entremetteuse désigne ensuite l'un des deux amants et un autre joueur, qui s'aiment aussi. Le trompé n'entraîne
+  // personne dans sa mort ; le trompeur et le nouvel amant entraînent les deux autres (le chagrin, plus bas).
+  let triangle = triangleAvant;
+  if (vendanges && !triangle) for (const a of parEffet(CLE_TROMPERIE)) {
+    const couple = parEffet("lien-amour").find(x => x.acteurId === a.acteurId) ?? parEffet("lien-amour")[0];
+    const amants = couple ? (couple.cibles.length >= 2 ? couple.cibles.slice(0, 2) : [couple.acteurId, couple.cibles[0]]) : [];
+    const t = triangleDesVendanges(amants, a.cibles);
+    if (!t) continue;
+    triangle = t;
+    sortie.changements.push({ type: "triangle", ...t });
+    sortie.messages.push(msg(t.trompeur, "AmourDouble", `Une seconde flèche vous lie aussi à ${nom(t.amant)}.`, { nom: nom(t.amant) }));
+    sortie.messages.push(msg(t.amant, "Amour", `Une flèche de brume vous lie à ${nom(t.trompeur)} : si l'un meurt, l'autre le suit.`, { nom: nom(t.trompeur) }));
+    sortie.messages.push(msg("mj", "Triangle", `${nom(t.trompeur)} aime aussi ${nom(t.amant)} : ${nom(t.trompe)} est trompé.`,
+      { qui: nom(t.trompeur), nom: nom(t.amant), trompe: nom(t.trompe) }));
+    break;
+  }
+  // Le triangle : le trompeur et l'amant s'entraînent l'un l'autre ; le trompé n'entraîne personne (il suit les deux autres : chagrin).
+  if (triangle) { amours.set(triangle.trompeur, triangle.amant); amours.set(triangle.amant, triangle.trompeur); amours.delete(triangle.trompe); }
 
   // 2. Protections (celles posées dans la nuit par l'API + celles des rôles), jamais deux nuits de suite la même cible.
   // La Bonne étoile du narrateur (première nuit) protège en secret ; le givre de l'Almanach glace toute protection.
@@ -310,10 +343,23 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
 
   // Épier la meute (l'Enfant de la brume) : elle apprend le nom des loups sortis chasser cette nuit. Surprise (la chance tirée
   // quand son choix a été noté, sinon ici), c'est elle que la meute dévore, en silence, à la place de la proie désignée.
-  // Adaptation en ligne : à la table, elle entrouvre les yeux pendant le réveil des loups ; ici, elle choisit d'épier juste avant
-  // (ordre 39) et apprend les noms au matin, dans son carnet.
+  // Adaptation en ligne : à la table, elle entrouvre les yeux pendant le réveil des loups ; ici, elle choisit d'épier juste après
+  // leur choix (ordre 41, l'ordre d'appel du livre) et apprend les noms au matin, dans son carnet.
   let surprise = "";
-  for (const a of parEffet("epier")) {
+  // Les Vendanges : l'Enfant de la brume n'épie plus la meute, seulement l'Herboriste (qui elle est, ce qu'elle fait cette nuit) ; elle
+  // n'y risque rien.
+  if (vendanges) for (const a of parEffet("epier")) {
+    if (!a.cibles.length) continue;
+    const herboristes = villageois.filter(v => vivant(v.id) && v.id !== a.acteurId && carteDeLEffet(v, "remede"));
+    if (!herboristes.length) { sortie.messages.push(msg(a.acteurId, "EpierSansHerboriste", "Aucune herboriste ne veille cette nuit.", {})); continue; }
+    for (const h of herboristes) {
+      const faite = retenues.find(b => b.effet === "remede" && b.acteurId === h.id && b.cibles.length);
+      sortie.messages.push(faite
+        ? msg(a.acteurId, "EpierHerboriste", `Vous voyez ${nom(h.id)} déboucher une fiole, pour ${faite.cibles.map(nom).join(", ")}.`, { nom: nom(h.id), noms: faite.cibles.map(nom).join(", ") })
+        : msg(a.acteurId, "EpierHerboristeRien", `Vous voyez ${nom(h.id)} garder ses fioles cette nuit.`, { nom: nom(h.id) }));
+    }
+  }
+  for (const a of vendanges ? [] : parEffet("epier")) {
     if (!a.cibles.length || !peutChasser.length) continue;
     if (typeof a.surprise === "boolean" ? a.surprise : hasard() < chanceEpier) {
       victimeMeute = a.acteurId;
@@ -428,7 +474,32 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
   // nuit (deux cibles : une victime et un autre joueur). Une fiole vide ne verse rien. Chaque cible qui n'a rien reçu lui rend
   // l'usage pris par noterAction (fiolesVides : une entrée par fiole restée bouchée).
   const remedies = new Set();
-  for (const a of parEffet("remede")) {
+  // Les Vendanges : une seule fiole, et le sort décide de ce qu'elle fait (issueDeLaFiole, quatre issues égales) : guéri ; guéri et
+  // devenu Villageois simple ; guéri et devenu loup ; ou mort (comme un poison). Guéri ne sauve qu'une victime de la nuit ; les autres
+  // issues touchent le désigné quel qu'il soit.
+  if (vendanges) for (const a of parEffet("remede")) {
+    const c = a.cibles[0];
+    if (!c) continue;
+    if (sortie.fioles[a.acteurId]?.remede) {
+      sortie.fiolesVides.push(a.acteurId);
+      sortie.messages.push(msg(a.acteurId, "FioleVideRemede", "Votre fiole de remède est vide : rien ne se passe.", {}));
+      continue;
+    }
+    (sortie.fioles[a.acteurId] ??= {}).remede = true;
+    const issue = issueDeLaFiole(hasard);
+    sortie.messages.push(msg(a.acteurId, "FioleVersee", `Vous avez versé votre unique fiole à ${nom(c)}.`, { nom: nom(c) }));
+    sortie.messages.push(msg("mj", `Fiole.${issue}`, `La fiole de ${nom(a.acteurId)} sur ${nom(c)} : ${issue}.`, { qui: nom(a.acteurId), nom: nom(c) }));
+    if (issue === "mort") { attaques.push({ cible: c, cause: CAUSES.poison, traverse: true }); continue; }
+    if (victimes.has(c)) remedies.add(c);
+    if (issue === "villageois") {
+      sortie.changements.push({ type: "villageois", acteurId: c });
+      sortie.messages.push(msg(c, "FioleVillageois", "Une fiole inconnue vous a guéri de tout, même de votre pouvoir : vous voilà simple villageois.", {}));
+    } else if (issue === "loup" && parId.get(c)?.camp !== "meute") {
+      sortie.changements.push({ type: "camp", acteurId: c, camp: "meute" });
+      sortie.messages.push(msg(c, "FioleLoup", "Une fiole inconnue a réveillé la bête en vous : vous rejoignez la meute, en secret.", {}));
+    }
+  }
+  for (const a of vendanges ? [] : parEffet("remede")) {
     const versees = new Set();   // les fioles ouvertes par cette action : une de chaque sorte
     for (const c of a.cibles.slice(0, 2)) {
       const voulue = victimes.has(c) ? "remede" : c !== a.acteurId ? "poison" : "";
@@ -481,6 +552,19 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
     sortie.morts.push(id);
     sortie.deces.push({ acteurId: id, cause });
   };
+  // L'Envoûtement (variantes.mjs) : la victime d'une attaque de loup (la meute, un loup qui chasse seul) n'est pas tuée, elle est
+  // envoûtée, en secret ; jamais un loup (le Loup pâle dévore pour de bon), jamais la peste.
+  const frapper = x => {
+    if (envoutement && x.meute && !x.peste && !x.pale && parId.get(x.cible)?.camp !== "meute") {
+      if (!sortie.envoutes.includes(x.cible)) {
+        sortie.envoutes.push(x.cible);
+        sortie.messages.push(msg(x.cible, "Envoute", "Des yeux jaunes vous ont fixé dans la nuit : vous êtes envoûté. Vos pouvoirs vous ont quitté ; vous seul le savez.", {}));
+        sortie.messages.push(msg("mj", "EnvouteMj", `${nom(x.cible)} est envoûté par la meute.`, { nom: nom(x.cible) }));
+      }
+      return;
+    }
+    meurt(x.cible, x.cause);
+  };
   for (const x of attaques) {
     if (!vivant(x.cible) || sortie.morts.includes(x.cible)) continue;
     // Le Cabaretier immunisé (Le Village) : la meute (la peste, un loup qui chasse) ne peut pas le dévorer.
@@ -504,7 +588,7 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
       const porte = bloqueeALaPorte(x.cible);
       if (porte) { noterBlocage(x.cible, porte, x.peste); continue; }
     }
-    if (linceul && x.meute && !x.peste) { meurt(x.cible, x.cause); continue; }
+    if (linceul && x.meute && !x.peste) { frapper(x); continue; }
     // Deux attaques sur la même maison (la meute et le Pêcheur de nuit, à une petite table) : un seul remède, un seul mot au MJ.
     const dejaSauve = par => sortie.sauves.some(s => s.acteurId === x.cible && s.par === par);
     if (remedies.has(x.cible)) {
@@ -532,7 +616,7 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
       sortie.messages.push(msg("mj", "PresentMj", `Le présent de ${nom(x.cible)} s'est ouvert : il a survécu à un coup mortel.`, { nom: nom(x.cible) }));
       continue;
     }
-    meurt(x.cible, x.cause);
+    frapper(x);
   }
 
   // Le loup carbonisé dans la maison que l'Incendiaire a brûlée (Le Village) : rien ne l'en protège.
@@ -598,15 +682,26 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
   // La Liseuse de cendres lit le RÔLE (sa carte) : roleApparent (le Loup déguisé paraît « Villageois », un masque du Carnaval
   // montre le rôle simple de l'autre camp). Le mot « meute » reste dans le message quand le rôle vu en est (camp du rôle).
   // Une Liseuse rêvée (Somnambule) se trompe toujours, sur le VRAI camp : un loup paraît « Villageois », tout autre « Loup ».
+  // Double visage : la Liseuse lit les cartes SECRÈTES (l'allégeance ; les deux cartes de la grande complication), pas le rôle visible.
+  const lire = id => visages[id] ?? roleApparent(parId.get(id), noms);
   for (const a of parEffet("voir-role")) {
     const c = a.cibles[0];
     if (!c) continue;
+    // Les Vendanges : le joueur désigné et ses deux voisins, leurs rôles mêlés, sans dire à qui est quoi.
+    if (vendanges && !reve.has(a.acteurId)) {
+      const trio = trioDeLaLiseuse(placesDuCercle, villageois, c);
+      if (!trio.length) continue;
+      const lus = melanger(trio.map(id => `« ${lire(id).nom} »`), hasard).join(", ");
+      sortie.messages.push(msg(a.acteurId, "VoirRoleVendanges", `Les cendres se brouillent : chez ${trio.map(nom).join(", ")}, on lit ${lus}, dans le désordre.`,
+        { noms: trio.map(nom).join(", "), roles: lus }));
+      continue;
+    }
     let lu;
     if (reve.has(a.acteurId)) lu = parId.get(c)?.camp === "meute" ? { nom: noms.village, camp: "village" } : { nom: noms.meute, camp: "meute" };
     else {
       const avant = sortie.masqueTombe;
       const camp = vu(c, a.acteurId);   // le masque du Carnaval : la première vision du Village le fait tomber
-      lu = !avant && sortie.masqueTombe ? { nom: noms[camp] ?? noms.village, camp } : roleApparent(parId.get(c), noms);
+      lu = !avant && sortie.masqueTombe ? { nom: noms[camp] ?? noms.village, camp } : lire(c);
     }
     sortie.messages.push(msg(a.acteurId, "VoirRole", `Les cendres parlent : ${nom(c)} est « ${lu.nom} », du camp « ${lu.camp} ».`,
       { nom: nom(c), role: lu.nom, camp: lu.camp }));
@@ -723,6 +818,8 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
   for (let i = 0; i < sortie.morts.length; i++) {
     const lie = amours.get(sortie.morts[i]);
     if (lie) meurt(lie, CAUSES.chagrin);
+    // Les Vendanges : le trompeur ou le nouvel amant entraînent aussi le trompé.
+    for (const id of suiteDuTriangle(triangle, sortie.morts[i])) meurt(id, CAUSES.chagrin);
   }
 
   // Le Vieux Sergent dévoré par la meute : le premier loup vivant à sa gauche (après les morts et les morsures de la nuit) est
@@ -741,7 +838,7 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
   }
 
   // 12. Emporter : un mort qui emporte quelqu'un doit encore choisir (le narrateur le lui demande).
-  for (const id of sortie.morts) if (parId.get(id)?.role?.effet === "emporter") sortie.enAttente.push({ acteurId: id, effet: "emporter" });
+  for (const id of sortie.morts) if (carteDeLEffet(parId.get(id), "emporter")) sortie.enAttente.push({ acteurId: id, effet: "emporter" });
 
   // Le reste : raconté et arbitré par le narrateur.
   for (const a of retenues) {

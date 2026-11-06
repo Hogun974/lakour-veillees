@@ -3,6 +3,7 @@ import { ID, CHANCE_PESTE, RISQUE_ENFANT } from "../logique/constantes.mjs";
 import { etatInitial } from "../logique/etat.mjs";
 import { CLES_DE_FETE } from "../logique/fetes.mjs";
 import { CHANCE_FOURNIERE } from "../logique/personnalites.mjs";
+import { REGLAGES_DES_VARIANTES, MODES_DOUBLE_VISAGE } from "../logique/variantes.mjs";
 import { oublierSecrets } from "./secrets.mjs";
 import { oublierPrive } from "./prive.mjs";
 import { oublierSalons, quandReglageSalons } from "./salons.mjs";
@@ -158,6 +159,29 @@ export function enregistrerReglages(quandEtatChange) {
   game.settings.register(ID, "leVillage", {
     name: "LAKOUR_LOUPS.Reglages.LeVillage.Nom", hint: "LAKOUR_LOUPS.Reglages.LeVillage.Aide",
     scope: "world", config: true, type: Boolean, default: false
+  });
+  // Les variantes du jeu de soirée (Pacte, étape 5, logique/variantes.mjs) : une règle de la veillée chacune, non par défaut, lue à la
+  // distribution (etat.variantes, publique) ; nouvellePartie y retient le dernier choix explicite du MJ (les cases de la Table de jeu).
+  for (const [cle, reglageCle] of Object.entries(REGLAGES_DES_VARIANTES)) {
+    const nom = reglageCle.charAt(0).toUpperCase() + reglageCle.slice(1);
+    game.settings.register(ID, reglageCle, {
+      name: `LAKOUR_LOUPS.Reglages.${nom}.Nom`, hint: `LAKOUR_LOUPS.Reglages.${nom}.Aide`, scope: "world", config: true,
+      ...(cle === "doubleVisage"
+        ? { type: String, default: "", choices: { "": "LAKOUR_LOUPS.Variantes.DoubleVisage.Aucune", ...Object.fromEntries(MODES_DOUBLE_VISAGE.map(m => [m, `LAKOUR_LOUPS.Variantes.DoubleVisage.${m}`])) } }
+        : { type: Boolean, default: false })
+    });
+  }
+  // Les bâtiments du village et les métiers d'une partie (Pacte, étape 5) : « Bâtiments du village : aucun / tirés au hasard / choisis »
+  // (par défaut : tirés, comme avant) et « Métiers » (oui par défaut). Lus par nouvellePartie ; la Table de jeu les retient.
+  game.settings.register(ID, "batimentsDuVillage", {
+    name: "LAKOUR_LOUPS.Reglages.BatimentsDuVillage.Nom", hint: "LAKOUR_LOUPS.Reglages.BatimentsDuVillage.Aide",
+    scope: "world", config: true, type: String, default: "hasard",
+    choices: { hasard: "LAKOUR_LOUPS.Preparation.Batiments.hasard", aucun: "LAKOUR_LOUPS.Preparation.Batiments.aucun", choisis: "LAKOUR_LOUPS.Preparation.Batiments.choisis" }
+  });
+  game.settings.register(ID, "batimentsChoisis", { scope: "world", config: false, type: Array, default: [] });
+  game.settings.register(ID, "metiersEnJeu", {
+    name: "LAKOUR_LOUPS.Reglages.MetiersEnJeu.Nom", hint: "LAKOUR_LOUPS.Reglages.MetiersEnJeu.Aide",
+    scope: "world", config: true, type: Boolean, default: true
   });
   game.settings.register(ID, "annoncesEnChat", {
     name: "LAKOUR_LOUPS.Reglages.AnnoncesEnChat.Nom", hint: "LAKOUR_LOUPS.Reglages.AnnoncesEnChat.Aide",

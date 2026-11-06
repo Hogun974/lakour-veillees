@@ -239,7 +239,7 @@ test("nouvellePartie({ niveau: petite-tablee }) : composition du mode, tirage co
   await calme();
   assert.equal(rejouee.composition.niveau, "classique", "réglage décoché : plus de petite tablée au Rejouer");
   assert.equal(game.settings.get("lakour-loups", "petiteTablee"), false, "le réglage n'est pas recoché");
-  assert.equal(nouvellePreparation().niveau, "classique");
+  assert.equal(nouvellePreparation().niveau, "le-pacte", "Le Pacte (étape 5) : le niveau proposé d'abord");
 });
 
 test("le MJ IA : api.logique.composer suit le réglage ; une composition prête « petite-tablee-n » choisit le mode d'elle-même ; distribuer({ tablee })", async () => {
@@ -372,8 +372,8 @@ const MUTATIONS = [
   ["scripts/api.mjs", `    if (tableeVoulue !== undefined && tableeVoulue !== Boolean(lireReglage("petiteTablee", false))) await game.settings.set(ID, "petiteTablee", tableeVoulue);`, ``, "le réglage ne se souvient plus"],
   ["scripts/api.mjs", `      : tableeVoulueParReglage && total <= L.TABLEE.placesMax ? L.NIVEAU_PETITE_TABLEE`,
     `      : false ? L.NIVEAU_PETITE_TABLEE`, "« Rejouer » oublie le mode"],
-  ["scripts/api.mjs", `    lireReglage("petiteTablee", false) && n <= L.TABLEE.placesMax && !options?.peste ? { ...options, niveau: L.NIVEAU_PETITE_TABLEE } : options) },`,
-    `    options) },`, "api.logique.composer ignore le réglage"],
+  ["scripts/api.mjs", `    lireReglage("petiteTablee", false) && n <= L.TABLEE.placesMax && !options?.peste ? { ...options, niveau: L.NIVEAU_PETITE_TABLEE } : options)) },`,
+    `    options)) },`, "api.logique.composer ignore le réglage"],
   ["scripts/api.mjs", `      const morceaux = [t("LAKOUR_LOUPS.Tablee.AnnonceTete", { humains: h, compagnons: nomsCompagnons.length }),`,
     `      const morceaux = [t("LAKOUR_LOUPS.Tablee.AnnonceTete", { humains: h, compagnons: nomsCompagnons.length }) + " " + sortie.filter(s => !s.compagnon && campDe(game.actors.get(s.acteurId)) !== "village").map(s => game.actors.get(s.acteurId).name).join(", "),`,
     "l'annonce nomme les humains de l'ombre"],

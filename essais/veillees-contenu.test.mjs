@@ -61,7 +61,8 @@ test("ordres de nuit : meute groupée à 40, protections avant, réactions aprè
   assert.ok(o("entremetteuse") < o("garde-du-pont") && o("garde-du-pont") < ORDRE_MEUTE);
   assert.ok(o("gardienne-des-cles") < ORDRE_MEUTE && o("veilleuse-de-lanterne") < ORDRE_MEUTE);
   assert.ok(o("louve-mere") > ORDRE_MEUTE && o("herboriste") > ORDRE_MEUTE);
-  assert.ok(o("enfant-de-la-brume") < ORDRE_MEUTE, "l'enfant se glisse dehors avant la chasse");
+  // Le Pacte, étape 5 : l'ordre d'appel du livre — elle épie pendant la chasse, juste après le choix de la meute.
+  assert.ok(o("enfant-de-la-brume") > ORDRE_MEUTE && o("enfant-de-la-brume") < o("louve-mere"), "l'enfant épie pendant la chasse");
   assert.equal(Math.max(...actifs.map(r => r.system.nuit.ordre)), o("fossoyeur"));
   assert.ok(parCle("entremetteuse").system.nuit.premiereNuitSeulement);
   assert.ok(parCle("loup-affame").system.nuit.tantQueMeuteEntiere && !parCle("loup-affame").system.nuit.uneNuitSurDeux, "le Loup affamé : chaque nuit, tant que la meute est entière");

@@ -39,7 +39,8 @@
       "contamine": "felled by the old sword's wound",
       "sagesse": "gone with the Greybeard's wisdom",
       "rasoir": "victim of the Wigmaker's razor",
-      "incendie": "victim of the fire"
+      "incendie": "victim of the fire",
+      "envoute": "taken along with an enthralled victim"
     },
     "Effets": {
       "aucun": "none (ruled by the narrator)",
@@ -79,7 +80,8 @@
       "devouement": "may take a condemned player's card before it is turned over",
       "charmer": "charms two players each night",
       "trahir": "every other night, may devour a wolf",
-      "incendier": "once per game, sets fire to a village building (The Village)"
+      "incendier": "once per game, sets fire to a village building (The Village)",
+      "tromperie": "the Matchmaker adds a lover (Grape Harvest)"
     },
     "Victoires": {
       "aucune": "none (see text)",
@@ -345,7 +347,24 @@
       "Incendie": "{nom}'s building burns tonight.",
       "IncendieProie": "{nom} was the night's prey: the pack has no victim.",
       "Cabaret": "{nom}, the Alehouse Keeper, cannot be devoured: the pack leaves empty-handed.",
-      "Carbonise": "{nom}, the first wolf to the right of {proie}, is caught in the flames."
+      "Carbonise": "{nom}, the first wolf to the right of {proie}, is caught in the flames.",
+      "AmourDouble": "A second arrow binds you to {nom} as well.",
+      "Triangle": "{qui} also loves {nom}: {trompe} is betrayed.",
+      "EpierSansHerboriste": "No herbalist is awake tonight.",
+      "EpierHerboriste": "You see {nom} uncork a vial, for {noms}.",
+      "EpierHerboristeRien": "You see {nom} keep her vials tonight.",
+      "FioleVersee": "You poured your only vial on {nom}.",
+      "Fiole": {
+        "gueri": "The vial of {qui} on {nom}: fate says “cured”.",
+        "villageois": "The vial of {qui} on {nom}: fate says “cured, and a plain villager”.",
+        "loup": "The vial of {qui} on {nom}: fate says “cured, and turned wolf”.",
+        "mort": "The vial of {qui} on {nom}: fate says “dead”."
+      },
+      "FioleVillageois": "An unknown vial cured you of everything, even your power: you are now a plain villager.",
+      "FioleLoup": "An unknown vial woke the beast in you: you join the pack, in secret.",
+      "Envoute": "Yellow eyes held you in the night: you are enthralled. Your powers have left you; only you know it.",
+      "EnvouteMj": "{nom} is enthralled by the pack.",
+      "VoirRoleVendanges": "The ashes blur: among {noms}, they read {roles}, in no order."
     },
     "Messages": {
       "Mort": "{nom} is dead: {cause}.",
@@ -460,6 +479,42 @@
       "LeVillage": {
         "Nom": "The Village (variant)",
         "Aide": "Personalities (Prior, Alehouse Keeper, Tenant Farmers…) hold the village buildings: a public power on top of their secret role; the other players are Drifters. Kept from one game to the next (the “The Village” box of the Game Table changes it)."
+      },
+      "Chandelles": {
+        "Nom": "Candlelight vigil (variant)",
+        "Aide": "A candle before each player, on their card of the Game Table: blown out at their death (the pack's victim in the morning, the condemned after the vote). Kept from one game to the next (the “Variants” boxes of the Game Table change it)."
+      },
+      "ChandellesAngoissantes": {
+        "Nom": "Candlelight vigil: dreadful version",
+        "Aide": "With the candles: each wolf blows out a candle himself at night; if they did not all blow out the same one, the pack has no victim, and the village sees the dark candles in the morning."
+      },
+      "ChaineDesInnocents": {
+        "Nom": "Chain of Innocents (variant)",
+        "Aide": "The day's condemned is not voted: standing, each in turn seats a villager whose innocence they vouch for, starting from the left neighbour of the last eliminated; the last one standing is condemned. No Dock with it."
+      },
+      "MurDesMurmures": {
+        "Nom": "Whispering Wall (variant)",
+        "Aide": "Each night, every living player may write a short anonymous sentence; in the morning the wall is read to all, sentences mixed. The authors are never known, not even to the narrator."
+      },
+      "DoubleVisage": {
+        "Nom": "Two Faces (variant)",
+        "Aide": "Small twist: a visible role for each, and a secret allegiance card that sets their side. Big twist: two secret cards per player. 7 to 18 players; neither at the small table nor with the black plague."
+      },
+      "Vendanges": {
+        "Nom": "Grape Harvest (variant)",
+        "Aide": "One more wolf, and every power tipsy until the end of the vigil (see the variant rules). Neither at the small table nor with the black plague."
+      },
+      "Envoutement": {
+        "Nom": "The Thrall (variant)",
+        "Aide": "The pack's victims do not die: they lose their powers and stay enthralled, in secret. An enthralled victim condemned drags the earlier ones along; the pack wins once it has enthralled the second-to-last villager. Neither at the small table nor with the black plague."
+      },
+      "BatimentsDuVillage": {
+        "Nom": "Village buildings",
+        "Aide": "None (a simple game, with the characters only), drawn at random by the setup (as before), or chosen by the GM at the Game Table. The Table keeps the last choice."
+      },
+      "MetiersEnJeu": {
+        "Nom": "Trades",
+        "Aide": "Each player receives a public trade on top of their role. Unticked: a game without trades. At the “The Pact” level, never any trade."
       }
     },
     "Erreurs": {
@@ -703,7 +758,8 @@
         "emporter": "{nom} chooses whom to take along (or no one).",
         "sansSecrets": "This browser does not hold the night's secrets.",
         "bancVide": "(Nobody is accused: wait for accusations during the debate, or let night fall.)",
-        "emporterDemande": "{nom} is choosing whom to take along right now; you may decide in their stead."
+        "emporterDemande": "{nom} is choosing whom to take along right now; you may decide in their stead.",
+        "chaine": "Chain of Innocents: {nom} names an innocent; closing waits for the last one standing."
       },
       "LaPeste": "the plague",
       "bailli": "Elect the Bailiff",
@@ -711,7 +767,8 @@
       "succession": "Waiting: {nom}, the late Bailiff, hands over the seal…",
       "LeDeuil": "the mourning pack",
       "juger": "Judge the accused: {nom}",
-      "LesCharmes": "the charmed"
+      "LesCharmes": "the charmed",
+      "LeMur": "the Whispering Wall (everyone alive)"
     },
     "Preparation": {
       "Titre": "Prepare the game",
@@ -728,7 +785,8 @@
         "debutants": "Beginners",
         "classique": "Classic",
         "chaos": "Chaos",
-        "petite-tablee": "Small table (few humans, AI players)"
+        "petite-tablee": "Small table (few humans, AI players)",
+        "le-pacte": "The Pact (the party game's roles)"
       },
       "Equilibre": {
         "equilibree": "Balanced ({somme})",
@@ -749,7 +807,16 @@
         "Micro": "Give players the microphone",
         "MicroAide": "Grants \"Broadcast Audio\" to the Player role (by default only trusted players have it).",
         "MicroDonne": "Players can now broadcast their microphone."
-      }
+      },
+      "Batiments": {
+        "Titre": "Village buildings",
+        "aucun": "None (simple game)",
+        "hasard": "Drawn at random",
+        "choisis": "Chosen",
+        "Aide": "None: a simple game, with the characters only (nothing depends on buildings, the map markers stay inert). Drawn: those of the setup. Chosen: tick those of the vigil."
+      },
+      "Metiers": "Trades",
+      "MetiersAide": "Untick for a game without trades (each player has only their role)."
     },
     "Recit": {
       "Titre": "The tale of the vigil",
@@ -935,6 +1002,14 @@
         "perruquier": "Round {tour} — {nom}, the Wigmaker, strikes {noms}.",
         "grace": "Round {tour} — {nom}, the Squire, pardons {noms}.",
         "cabaret": "Round {tour} — {nom}, the Alehouse Keeper, loses his immunity."
+      },
+      "Chaine": "Chain of Innocents: {chaine}; left standing: {nom}.",
+      "ChaineSort": "{nom} (by lot)",
+      "Variante": {
+        "distribution": "Turn {tour}: the variants of the vigil are announced.",
+        "chandelles": "Night {tour}: the candles of {noms} went out together; the pack had no victim.",
+        "envoutement": "Day {tour}: {nom}, condemned, was enthralled; {noms} fall along.",
+        "bailli": "Day {tour}: the Bailiff {nom} votes first, openly ({noms})."
       }
     },
     "Masques": {
@@ -1339,6 +1414,96 @@
       "Detruits": "Burned down: {noms}",
       "Epuise": "power spent",
       "Prives": "Barred from voting today: {noms}"
+    },
+    "Variantes": {
+      "Titre": "Variants",
+      "PreparationAide": "The party game's variants: each one is a public rule of the vigil, announced at the deal, and kept for the next one.",
+      "Annonce": "Variants of this vigil: {noms}.",
+      "EnJeu": "Variants: {noms}",
+      "Chandelles": {
+        "Nom": "Candlelight vigil",
+        "Angoissante": "dreadful",
+        "Aide": "A candle per player, blown out at their death.",
+        "AngoissanteAide": "Each wolf blows out a candle; more than one out: no victim.",
+        "Ratees": "This morning, the candles of {noms} went out together: the pack had no victim. They are lit again.",
+        "Eteinte": "The candle of {nom} goes out.",
+        "Allumee": "Their candle still burns.",
+        "Soufflee": "Their candle is blown out."
+      },
+      "Chaine": {
+        "Nom": "Chain of Innocents",
+        "Aide": "The execution vote is made by the chain: each seats an innocent; the last one standing is condemned.",
+        "Invite": "Chain of Innocents: name a villager still standing whose innocence you vouch for; they sit down.",
+        "Ouverture": "Chain of Innocents: the whole village stands up. {nom}, on the left of the last eliminated, names the first innocent.",
+        "Assis": "{qui} vouches for {nom}, who sits down.",
+        "Sort": "{qui} named no one: fate seats {nom}.",
+        "Debout": "{nom} is the only one left standing: the village condemns them.",
+        "PasDeVote": "Chain of Innocents: no vote today, the chain names the condemned.",
+        "Debouts": "Standing: {noms}",
+        "Designateur": "{nom} names an innocent."
+      },
+      "Mur": {
+        "Nom": "Whispering Wall",
+        "Aide": "Each night, one anonymous sentence per living player; the wall is read in the morning.",
+        "Invite": "Whispering Wall: write a short sentence, without your name, or pass.",
+        "Matin": "On the Whispering Wall, this morning: {textes}",
+        "Muet": "The Whispering Wall stayed silent tonight."
+      },
+      "DoubleVisage": {
+        "Nom": "Two Faces",
+        "Aucune": "No",
+        "petite": "small twist",
+        "grande": "big twist",
+        "Aide": "A visible role and a secret allegiance (small twist), or two secret cards (big twist).",
+        "Composition": "Two Faces ({mode}) — {n} players",
+        "Visible": "Two Faces: {nom} shows their visible role, {role}.",
+        "CarnetPetite": "Two Faces: your allegiance card is “{allegeance}”; you are of the side {camp}. Your visible role keeps its power.",
+        "CarnetGrande": "Two Faces: your two secret cards are {cartes}; you are of the side {camp}.",
+        "Seconde": "{nom} also held the card {role}."
+      },
+      "Vendanges": {
+        "Nom": "Grape Harvest",
+        "Aide": "One more wolf, and every power tipsy.",
+        "InviteTromperie": "Grape Harvest: name one of your two lovers and another player, who will love each other too, or pass.",
+        "BailliDabord": "Grape Harvest: {nom}, the Bailiff, votes alone and first; the others wait for that vote.",
+        "BailliVote": "The Bailiff {nom} voted first: against {cible}.",
+        "BailliPasse": "The Bailiff {nom} voted against no one.",
+        "AttendreLeBailli": "Grape Harvest: the Bailiff votes first; wait for that vote.",
+        "Amour": "Grape Harvest: your love forbids you to vote against this player.",
+        "Bouc": "{nom}, the Whipping Boy, dies in place of their neighbour {voisin}.",
+        "Triangle": "Grape Harvest: {qui} also loves {nom}; {trompe} is betrayed."
+      },
+      "Envoutement": {
+        "Nom": "The Thrall",
+        "Aide": "The pack's victims are enthralled, in secret, instead of dying.",
+        "Journal": "Enthralled tonight: {noms}.",
+        "Chute": "{nom} was enthralled: {noms} fall along.",
+        "Refus": "You are enthralled: your powers have left you."
+      }
+    },
+    "Explication": {
+      "Titre": "How to play: {role}",
+      "Role": "Your role: {role}",
+      "QuandTitre": "When the narrator calls you:",
+      "Quand": {
+        "jamais": "never at night: your power plays by day, at your death, or on its own.",
+        "meute": "every night, with the whole pack, to choose the victim together.",
+        "premiere": "the first night only.",
+        "uneSurDeux": "every other night (the second, the fourth…).",
+        "impaires": "the first night, then every other night (the third, the fifth…).",
+        "tantQue": "every night, as long as no wolf is dead.",
+        "chaque": "every night."
+      },
+      "Question": "What they will ask you:",
+      "Usages": "This power can be used {n} times in the game.",
+      "VictoireTitre": "How you win:",
+      "VictoireVillage": "with the Village, when no wolf is left alive.",
+      "VictoireMeute": "with the pack, when the wolves are as many as all the other living players.",
+      "Seconde": "Your second card: {role}",
+      "Metier": "Your trade (known to all): {metier}",
+      "Jour": "Your day power:",
+      "Personnalite": "Your personality (known to all): {personnalite}",
+      "Relire": "This explanation stays in your secret notebook: reopen it at any time (“Secret notebook” button of the Game Table)."
     }
   }
 }

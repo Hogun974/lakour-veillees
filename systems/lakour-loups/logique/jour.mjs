@@ -30,6 +30,7 @@ import { nuitBlancheTablee } from "./tablee.mjs";
 import { elider, remplir } from "./grammaire.mjs";
 import { roleEmprunte, normaliserAmbigusSecret, candidatsDuCharme, CLE_CHARMES, EFFET_CHAPARDEUR, EFFET_BATELEUR, EFFET_MATIN, EFFET_VIELLE,
   EFFET_LOUP_PALE } from "./ambigus.mjs";
+import { vendangesActives, proiesDesVendanges, gardeDesVendanges, CLE_MUR, CLE_TROMPERIE } from "./variantes.mjs";
 import { rendreLaPlume, sagesseEstPerdue, pouvoirPerdu, furetAveugle, candidatsDeLaPlume, normaliserPacte, normaliserPacteSecret,
   EFFET_FURET, EFFET_PIE, CLE_GREFFIER } from "./pacte.mjs";
 import { occupant, raisonDuPouvoir, marquerEpuise, retablir, batimentDe, estChemineau, cabaretierImmunise, candidatsDuVillageois,
@@ -558,10 +559,26 @@ export function candidatsDeNuit({ villageois = [], etat: e, acteurId = "", roleC
   }
   const cabaretier = cabaretierImmunise(etat);
   if (cabaretier && (chasse || roleCle === CLE_PESTE)) ids = ids.filter(id => id !== cabaretier);
-  if (roleCle === CLE_CHARMES) return [];
-  const role = roleEmprunte(etat, acteurId, roleCle, n) ?? acteur?.role;
+  if (roleCle === CLE_CHARMES || roleCle === CLE_MUR) return [];
+  // Les Vendanges (variantes.mjs) : la meute (et tout loup qui chasse) ne dévore qu'un voisin d'un loup ; la seconde désignation de
+  // l'Entremetteuse, la première nuit (étape « tromperie ») : n'importe quel vivant.
+  const vendanges = vendangesActives(etat);
+  if (vendanges && chasse && roleCle !== CLE_PESTE) {
+    const permises = new Set(proiesDesVendanges(etat, villageois));
+    ids = ids.filter(id => permises.has(id));
+  }
+  if (roleCle === CLE_TROMPERIE) return vivants.map(v => v.id);
+  // La carte jouée par un Bateleur, ou la seconde carte d'un joueur (Double visage, grande complication) : l'étape est la sienne.
+  const role = roleEmprunte(etat, acteurId, roleCle, n) ?? (acteur?.seconde?.cle === roleCle ? acteur.seconde : null) ?? acteur?.role;
   if (!groupe && role?.cle === roleCle) {
+    // Les Vendanges : le Chapardeur échange sa carte avec celle d'un joueur (pas une carte du centre).
+    if (vendanges && role.effet === EFFET_CHAPARDEUR) return ids.filter(id => id !== acteurId);
     if ([EFFET_CHAPARDEUR, EFFET_BATELEUR].includes(role.effet)) return [];
+    // Les Vendanges : le Garde du pont ne garde que lui-même ou l'un de ses deux voisins.
+    if (vendanges && role.effet === "proteger" && role.cle === "garde-du-pont") {
+      const permis = new Set(gardeDesVendanges(etat, villageois, acteurId));
+      ids = ids.filter(id => permis.has(id));
+    }
     if (role.effet === EFFET_MATIN) return ids.includes(acteurId) ? [acteurId] : [];
     if (role.effet === EFFET_VIELLE) ids = candidatsDuCharme(ids, acteurId, normaliserAmbigusSecret(etat.ambigusSecret).charmes);
     if (role.effet === EFFET_LOUP_PALE) ids = ids.filter(id => id !== acteurId && parId.get(id)?.camp === "meute");

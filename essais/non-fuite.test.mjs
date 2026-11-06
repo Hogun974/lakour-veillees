@@ -16,6 +16,8 @@
 // Et la migration d'une partie d'avant 0.9.0 (rôles sur les fiches, joueurs propriétaires) les retire des documents.
 // Le socle du Pacte : un rôle PUBLIC dès la distribution (role.public) est retourné face visible, et rien d'autre ne sort avec lui ;
 // la Braconnière qui tombe reçoit seule sa demande posthume.
+// Le Pacte, étape 5 : les secrets des variantes (souffles des loups, murmures de la nuit, envoûtés, triangle, cartes de Double visage)
+// jamais dans l'état public ; le Mur des murmures ne nomme jamais ses auteurs ; l'envoûtement ne va qu'à l'envoûté.
 // Lancer : npm run essais
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -85,6 +87,10 @@ function crible(etat) {
   // les charmés ne sortent jamais dans l'état public.
   if (p.ambigusSecret && JSON.stringify(L.normaliserAmbigusSecret(p.ambigusSecret)) !== JSON.stringify(L.ambigusSecretInitial())) fuite("*", "secrets des ambigus publics");
   const charmes = api.etat().ambigusSecret?.charmes ?? [];
+  // Le Pacte, étape 5 : les secrets des variantes ; le mur sans auteur (les phrases des essais ne nomment personne).
+  if (p.variantesSecret && JSON.stringify(L.normaliserVariantesSecret(p.variantesSecret)) !== JSON.stringify(L.variantesSecretInitial())) fuite("*", "secrets des variantes publics");
+  for (const texte of p.variantes?.murmures?.textes ?? []) for (const a of villageois()) if (texte.includes(a.name)) fuite("*", `le mur nomme ${a.name}`);
+  const envoutes = (api.etat().variantesSecret?.envoutes ?? []).map(e => e.acteurId);
   // Le Pacte, étape 4 : la carte que le Prieur a vue, ce qu'a entrevu la Fournière, jamais au chat ; le hook public du village ne
   // porte que ce que la table voit.
   for (const m of nouveauxMessages) if (/vous a montré sa carte|qui rentre chez lui en rasant les murs/.test(decoder(m.content))) fuite("*", "un secret du Prieur ou de la Fournière au chat");
@@ -168,6 +174,11 @@ function crible(etat) {
       if (/s'est assise au pied de votre lit/.test(t) && etat.murmures) etat.murmures.push(u);
       // Le Pacte, étape 3b : le réveil des charmés, à eux seuls.
       if (/Un air de vielle vous a charmés/.test(t) && !charmes.includes(moi?.id)) fuite(u, "le charme d'un autre");
+      // Le Pacte, étape 5 : l'explication de sa place (« Comment jouer : son rôle »), à lui seul.
+      const titre = m.type === "secret" ? String(m.entree?.titre ?? "") : "";
+      if (/^Comment jouer : /.test(titre) && titre !== `Comment jouer : ${fiches[moi?.id]?.role?.name ?? ""}`) fuite(u, `l'explication d'un autre (${titre})`);
+      // Le Pacte, étape 5 : l'envoûtement, à l'envoûté seul.
+      if (/vous êtes envoûté/.test(t) && !envoutes.includes(moi?.id)) fuite(u, "l'envoûtement d'un autre");
     }
   }
   return fuites;
@@ -185,7 +196,7 @@ function espionnerEcritures(etat) {
 // ------------------------------------------------------------------ une partie complète
 // publics : les clés de rôle du contenu rendues publiques pour cette partie (role.public, le Franc-Villageois du livre).
 async function partie({ graine, peste = false, gens = false, compagnons = 0, revelerALaMort = true, joueurs = 7, roles = [], fete = "", niveau = "chaos", publics = [],
-  village = false } = {}) {
+  village = false, variantes = {} } = {}) {
   installerFoundry({ joueurs: 8, contenu: true });
   for (const pack of game.packs.contents ?? [...game.packs.values()]) {
     for (const d of pack.documents?.contents ?? []) if (d.type === "role" && publics.includes(d.system?.cle)) d.system = { ...d.system, public: true };
@@ -207,7 +218,7 @@ async function partie({ graine, peste = false, gens = false, compagnons = 0, rev
   // Les compagnons d'abord créés (comme par le MJ IA), puis la partie.
   const ids = [];
   for (const nom of ia) ids.push((await Actor.implementation.create({ name: nom, type: "villageois", system: { joueur: "", compagnon: true } })).id);
-  await api.nouvellePartie({ memesJoueurs: false, joueurs: humains, compagnons: ids, graine, peste, niveau, roles, fete, village });
+  await api.nouvellePartie({ memesJoueurs: false, joueurs: humains, compagnons: ids, graine, peste, niveau, roles, fete, village, variantes });
   await calme();
   await rangement();
   const fuites = [];
@@ -258,7 +269,8 @@ async function partie({ graine, peste = false, gens = false, compagnons = 0, rev
   return { fuites, nocturnes: etat.ecrituresNocturnes, vainqueur: api.etat().vainqueur, morts: api.etat().morts.length, fete: api.etat().fete.cle, tablee: api.etat().petiteTablee,
     secretsDeFete: api.etat().secretsDeFete, murmures: etat.murmures, publicsReveles, autresReveles,
     cles: villageois().map(a => secretDuMJ.role(a)?.system.cle), centre: api.etat().ambigusSecret.centre.map(r => r.system?.cle),
-    devouements: api.ambigus().devouements.length, village: api.village().actif };
+    devouements: api.ambigus().devouements.length, village: api.village().actif, variantes: L.choixDesVariantes(api.etat().variantes),
+    envoutes: (api.etat().variantesSecret?.envoutes ?? []).length };
 }
 
 // Des compositions variées : rôles d'information, de lien, d'échange, solitaires, loups spéciaux, Somnambule.
@@ -281,6 +293,10 @@ const PARTIES = [
   // Le Pacte, étape 4 : la variante « Le Village » (personnalités publiques, Chemineaux, l'Incendiaire, la Pie), avec des compagnons IA.
   { graine: "le-village", joueurs: 8, compagnons: 4, village: true, roles: ["loup-de-brumecombe", "loup-de-brumecombe", "loup-de-brumecombe", "incendiaire", "pie",
     "aieul", "liseuse-de-cendres", "herboriste", "garde-du-pont", "villageois", "villageois", "villageois"] },
+  // Le Pacte, étape 5 : le mode « Le Pacte » et les variantes du jeu de soirée (chandelles angoissantes, mur, envoûtement ; Double visage,
+  // Vendanges, Chaîne des innocents), avec des compagnons IA.
+  { graine: "pacte-variantes", joueurs: 8, compagnons: 2, niveau: "le-pacte", variantes: { chandelles: true, angoissante: true, mur: true, envoutement: true } },
+  { graine: "pacte-visages", joueurs: 8, compagnons: 1, variantes: { doubleVisage: "petite", vendanges: true, chaine: true, mur: true } },
   // Les veillées de fête (0.10.0), dont une avec des compagnons IA et une en peste noire.
   { graine: "ames", joueurs: 7, fete: "nuit-des-ames" },
   { graine: "hiver", joueurs: 6, compagnons: 2, fete: "veillee-d-hiver" },
@@ -300,6 +316,8 @@ for (const p of PARTIES) {
     assert.ok(r.vainqueur, "jusqu'à la victoire");
     assert.equal(r.tablee, p.niveau === "petite-tablee", "le mode public de la petite tablée");
     assert.equal(r.village, Boolean(p.village), "la variante « Le Village »");
+    for (const [c, valeur] of Object.entries(p.variantes ?? {})) assert.equal(r.variantes[c], valeur, `la variante « ${c} »`);
+    if (p.variantes?.envoutement) assert.ok(r.envoutes > 0, "au moins un envoûté");
     // (Avec le Chapardeur, deux cartes du paquet restent au centre ; une Chambrière dévouée tient désormais un autre rôle.)
     for (const cle of p.roles ?? []) if (!p.peste) assert.ok(r.cles.includes(cle) || r.centre.includes(cle) || cle === "somnambule" || (cle === "chambriere" && r.devouements), `${cle} distribué`);
     if (p.publics?.length) {
@@ -401,7 +419,7 @@ const MUTATIONS = [
     "      await game.actors.get(c.a)?.update({ \"system.amoureux\": c.b });", "lien d'amour secret"],
   ["scripts/api.mjs", "    if (!L.egaux(pub, brut)) await game.settings.set(ID, \"partie\", pub);", "    await game.settings.set(ID, \"partie\", pub);", "rien d'écrit la nuit"],
   ["logique/etat.mjs", "    \"fiches\", \"pont\", \"voteDoubleDemain\", \"secretsIncomplets\", \"secretsDeFete\"]) pub[cle]", "    \"pont\", \"voteDoubleDemain\", \"secretsIncomplets\", \"secretsDeFete\"]) pub[cle]", "fiches hors de l'état public"],
-  ["logique/fiches.mjs", "  return { camp: x.camp, amoureux: x.amoureux, role: x.role ? copie(x.role) : null };", "  return { ...x, role: x.role ? copie(x.role) : null };", "protections hors de la fiche du joueur"],
+  ["logique/fiches.mjs", "  return { camp: x.camp, amoureux: x.amoureux, role: x.role ? copie(x.role) : null, ...(x.seconde", "  return { ...x, role: x.role ? copie(x.role) : null, ...(x.seconde", "protections hors de la fiche du joueur"],
   // Les veillées de fête (rejouées sur leur partie : l'indice dans PARTIES).
   ["logique/etat.mjs", "\"secretsIncomplets\", \"secretsDeFete\"]) pub[cle]", "\"secretsIncomplets\"]) pub[cle]", "secrets de fête hors de l'état public", PARTIES.findIndex(p => p.graine === "hiver")],
   ["scripts/api.mjs", "    for (const loup of tousLesVillageois().filter(x => x.system.vivant && campDe(x) === \"meute\")) {\n      await prevenir(loup.id",
@@ -425,7 +443,13 @@ const MUTATIONS = [
   ["scripts/api.mjs", "  const ids = L.charmesVivants(villageoisAPlat(), etat.ambigusSecret.charmes);", "  const ids = villageoisAPlat().filter(v => v.vivant).map(v => v.id);", "charmés : à eux seuls", PARTIES.findIndex(p => p.graine === "pacte-ambigus")],
   // Le Pacte, étape 4 : la Fournière entrevoit un loup en secret (son carnet), jamais au chat.
   ["scripts/api.mjs", "      if (game.actors.get(x.acteurId)?.system.vivant) messages.push({ acteurId: x.acteurId, texte: t(\"LAKOUR_LOUPS.Village.Fourniere\", { nom: nomDe(x.loup) }) });",
-    "      await annonceChat(echapper(t(\"LAKOUR_LOUPS.Village.Fourniere\", { nom: nomDe(x.loup) })));", "Fournière : son carnet, pas le chat", PARTIES.findIndex(p => p.graine === "le-village")]
+    "      await annonceChat(echapper(t(\"LAKOUR_LOUPS.Village.Fourniere\", { nom: nomDe(x.loup) })));", "Fournière : son carnet, pas le chat", PARTIES.findIndex(p => p.graine === "le-village")],
+  // Le Pacte, étape 5 : l'explication de la distribution, à son seul joueur.
+  ["scripts/api.mjs", "  return envoyerSecret(acteur.id, { html: parties.join(\"\"),", "  return envoyerSecret(tousLesVillageois().find(x => x.system.joueur && x.id !== acteur.id)?.id ?? acteur.id, { html: parties.join(\"\"),", "explication : à son seul joueur", 0],
+  // Le Pacte, étape 5 : les secrets des variantes hors de l'état public ; le mur sans auteur ; l'envoûtement à l'envoûté seul.
+  ["logique/etat.mjs", "  pub.variantesSecret = variantesSecretInitial();", "", "variantes : leurs secrets hors de l'état public", PARTIES.findIndex(p => p.graine === "pacte-variantes")],
+  ["scripts/api.mjs", "      if (texte) await modifierEtat(e => L.graverUnMurmure(e, texte));", "      if (texte) await modifierEtat(e => L.graverUnMurmure(e, \`\${nomDe(id)} : \${texte}\`));", "mur : sans auteur", PARTIES.findIndex(p => p.graine === "pacte-variantes")],
+  ["scripts/api.mjs", "    if (envoyer) for (const m of messages) await envoyerSecret(m.acteurId, { texte: m.texte });", "    if (envoyer) for (const m of messages) await envoyerSecret(m.texte.includes(\"envoûté\") ? villageoisAPlat().filter(v => v.vivant && v.joueur && v.id !== m.acteurId).at(-1)?.id ?? m.acteurId : m.acteurId, { texte: m.texte });", "envoûtement : à l'envoûté seul", PARTIES.findIndex(p => p.graine === "pacte-variantes")]
 ];
 
 async function chargerMutant(fichier, avant, apres) {

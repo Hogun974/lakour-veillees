@@ -313,7 +313,7 @@ const MUTATIONS = [
   ["scripts/api.mjs", "    if (sagesse.perdue) await perdreLaSagesse(acteur, sagesse.innocents);\n", "", "Aïeul : la sagesse perdue"],
   ["scripts/api.mjs", "      e.pacte = L.pacteInitial({ innocentSuit: lireReglage(\"innocentSuitAieul\", false) });\n", "", "Innocent : le réglage pris à la distribution"],
   ["scripts/api.mjs", "aieux: [...r.aieux], ", "aieux: [], ", "Aïeul : sa vie gardée en secret"],
-  ["scripts/api.mjs", "      souffreDouleur: L.souffreDouleur(e, villageoisAPlat()) });", "      souffreDouleur: \"\" });", "Souffre-douleur : à la clôture"],
+  ["scripts/api.mjs", "        souffreDouleur: vendanges ? \"\" : bouc,", "        souffreDouleur: \"\",", "Souffre-douleur : à la clôture"],
   ["scripts/api.mjs", "    if (geste === \"votants\") await poserLesVotants(acteurId, v.cibles);", "    if (geste === \"votants\") void 0;", "Souffre-douleur : sa liste"],
   ["scripts/api.mjs", "    if (role?.system.effet === L.EFFET_FRATRIE && role.system.cle === cle) await reconnaitreLaFratrie(acteurId);\n", "", "fratries : se reconnaître"],
   ["scripts/salons.mjs", "      fratrie: v.vivant ? L.fratrieDeLaNuit(v.role, Math.max(1, Number(etat.tour) || 0), L.seReveille, { sansPouvoirs }) : \"\",", "      fratrie: \"\",", "fratries : leur salon"],

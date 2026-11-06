@@ -187,9 +187,12 @@ test("vraies causes des morts de nuit : le public lit « dans la nuit », le MJ 
 test("carnet secret : rôle, prime et messages de la nuit vont au seul joueur concerné ; il les retrouve en se reconnectant ; aucun chuchotement", async () => {
   await distribuer();
   const chasseur = acteurDe("chasseur-de-primes");
-  const cartes = emissions.filter(e => e.type === "secret");
+  // (Pacte, étape 5 : chaque joueur reçoit aussi l'explication de sa place, « Comment jouer », à lui seul : vérifiée avec les cartes.)
+  const recus = emissions.filter(e => e.type === "secret");
+  const cartes = recus.filter(e => !String(e.entree?.titre ?? "").startsWith("Comment jouer"));
   assert.equal(cartes.length, 6);
-  for (const e of cartes) assert.deepEqual(e.recipients, [game.actors.get(e.entree.acteurId).system.joueur]);
+  assert.equal(recus.length - cartes.length, 6, "une explication par joueur");
+  for (const e of recus) assert.deepEqual(e.recipients, [game.actors.get(e.entree.acteurId).system.joueur]);
   assert.deepEqual(messages.filter(m => m.whisper?.length), []);
   const prime = api.etat().primes[chasseur.id];
   assert.match(cartes.find(e => e.entree.acteurId === chasseur.id).entree.html, new RegExp(game.actors.get(prime).name));
@@ -200,18 +203,18 @@ test("carnet secret : rôle, prime et messages de la nuit vont au seul joueur co
   await calme();
   const carnet = emissions.slice(depuis).find(e => e.type === "carnet");
   assert.deepEqual(carnet.recipients, [chasseur.system.joueur]);
-  assert.equal(carnet.entrees.length, 2);
+  assert.equal(carnet.entrees.length, 3, "sa carte, son explication (étape 5), le mot du narrateur");
   assert.equal(carnet.prime, prime);
   // Chez lui : le carnet est rangé dans son navigateur (réglage client), pour CETTE partie.
   commeJoueur(chasseur.system.joueur);
   traiterMessage(carnet, "mj");
   assert.equal(mesSecrets().prime, prime);
-  assert.equal(mesSecrets().entrees.length, 2);
+  assert.equal(mesSecrets().entrees.length, 3);
   assert.equal(reglages.get("lakour-loups.carnet").conf.scope, "client");
   chargerPrive("une-autre-partie");
   assert.equal(mesSecrets().entrees.length, 0, "une autre partie, un carnet vide");
   chargerPrive(publicEtat().partie);
-  assert.equal(mesSecrets().entrees.length, 2, "relu depuis son navigateur");
+  assert.equal(mesSecrets().entrees.length, 3, "relu depuis son navigateur");
 });
 
 test("pouvoir de jour par la Table de jeu : le joueur l'envoie au MJ, qui applique et annonce ; le Juge de paix rouvre le vote", async () => {

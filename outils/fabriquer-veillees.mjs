@@ -22,7 +22,7 @@ import { appliquer, extraire, fusionner, resumerRapport } from "../modules/lakou
 import { verifierModuleDeContenu } from "../modules/lakour-mj-ia/outils/contrat-contenu.mjs";
 import { APPARENCES, CAMPS, EFFETS, MODULE, VICTOIRES, VICTOIRES_DE_LOUP, ORDRE_MEUTE, cheminJeton, cleJetonBatiment, cleJetonMetier } from "../modules/lakour-veillees/contenu/aides.mjs";
 import { DOCUMENTS } from "../modules/lakour-veillees/contenu/index.mjs";
-import { compositions, MIN_JOUEURS, MAX_JOUEURS, MIN_TABLEE, MAX_TABLEE, NIVEAU_PETITE_TABLEE } from "../modules/lakour-veillees/contenu/compositions.mjs";
+import { compositions, MIN_JOUEURS, MAX_JOUEURS, MIN_TABLEE, MAX_TABLEE, NIVEAU_PETITE_TABLEE, NIVEAU_LE_PACTE } from "../modules/lakour-veillees/contenu/compositions.mjs";
 import { EQUILIBRE, EQUILIBRE_BATIMENTS } from "../modules/lakour-veillees/contenu/equilibre.mjs";
 import { FONDS, fondSVG, textesGraves } from "../modules/lakour-veillees/contenu/cartes.mjs";
 
@@ -266,8 +266,9 @@ export function verifierCompositions(compos, roles, batiments) {
   const erreurs = [];
   const camp = Object.fromEntries(roles.map(r => [r.cle, r.camp]));
   const niveaux = new Set();
-  // Les niveaux classiques couvrent 6 à 18 joueurs ; la Petite tablée (système 0.11.0), 4 à 12 places.
-  const plages = { debutants: [MIN_JOUEURS, MAX_JOUEURS], classique: [MIN_JOUEURS, MAX_JOUEURS], chaos: [MIN_JOUEURS, MAX_JOUEURS], [NIVEAU_PETITE_TABLEE]: [MIN_TABLEE, MAX_TABLEE] };
+  // Les niveaux classiques et Le Pacte (étape 5) couvrent 6 à 18 joueurs ; la Petite tablée (système 0.11.0), 4 à 12 places.
+  const plages = { debutants: [MIN_JOUEURS, MAX_JOUEURS], classique: [MIN_JOUEURS, MAX_JOUEURS], chaos: [MIN_JOUEURS, MAX_JOUEURS],
+    [NIVEAU_LE_PACTE]: [MIN_JOUEURS, MAX_JOUEURS], [NIVEAU_PETITE_TABLEE]: [MIN_TABLEE, MAX_TABLEE] };
   const couvert = Object.fromEntries(Object.keys(plages).map(n => [n, new Set()]));
   for (const [cle, c] of Object.entries(compos)) {
     const e = m => erreurs.push(`${cle} : ${m}`);
@@ -290,8 +291,15 @@ export function verifierCompositions(compos, roles, batiments) {
     const meute = c.roles.filter(r => camp[r] === "meute").length;
     if (meute < 1) e("aucun loup");
     if (meute * 2 >= c.roles.length) e(`trop de loups (${meute} sur ${c.roles.length})`);
-    for (const r of new Set(c.roles)) if (!["villageois", "loup-de-brumecombe"].includes(r) && c.roles.filter(x => x === r).length > 1) e(`rôle « ${r} » en double`);
-    if (!Array.isArray(c.batiments) || c.batiments.length < 4 || c.batiments.length > 6) e(`${c.batiments?.length} bâtiments (4 à 6 attendus)`);
+    // Les cartes qui vont ensemble (EQUILIBRE[cle].groupe : les Lavandières par deux, les Bûcherons par trois) entrent par groupe entier.
+    for (const r of new Set(c.roles)) {
+      const groupe = Number(EQUILIBRE[r]?.groupe) || 0;
+      const n = c.roles.filter(x => x === r).length;
+      if (groupe > 1 ? n !== groupe : !["villageois", "loup-de-brumecombe"].includes(r) && n > 1) e(`rôle « ${r} » en double`);
+    }
+    // Le Pacte : aucun bâtiment communal (le jeu de soirée n'en a pas) ; les autres niveaux, 4 à 6.
+    const [bMin, bMax] = c.niveau === NIVEAU_LE_PACTE ? [0, 0] : [4, 6];
+    if (!Array.isArray(c.batiments) || c.batiments.length < bMin || c.batiments.length > bMax) e(`${c.batiments?.length} bâtiments (${bMin} à ${bMax} attendus)`);
     for (const b of c.batiments ?? []) if (!batiments.includes(b)) e(`bâtiment « ${b} » inconnu`);
     if (new Set(c.batiments).size !== c.batiments?.length) e("bâtiment en double");
   }

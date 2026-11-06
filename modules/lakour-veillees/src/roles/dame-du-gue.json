@@ -11,7 +11,7 @@
     "victoire": "<p>Tu gagnes <strong>seule</strong> si tu es la dernière vivante, ou la dernière avec un seul autre joueur qui n'est pas un loup.</p>",
     "nuit": {
       "actif": true,
-      "ordre": 47,
+      "ordre": 48,
       "premiereNuitSeulement": false,
       "uneNuitSurDeux": true,
       "cibles": 1,

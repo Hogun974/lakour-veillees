@@ -17,6 +17,7 @@
 // pris la carte (ambigus.mjs, carteReprise) non plus : sa carte est partie avec elle avant d'être retournée.
 import { EFFET_SOUFFRE_DOULEUR, normaliserPacte, pouvoirPerdu, sagesseEstPerdue, estGracie } from "./pacte.mjs";
 import { carteReprise } from "./ambigus.mjs";
+import { vendangesActives, voisinsDeLaBraconniere } from "./variantes.mjs";
 
 export const GESTES = {
   // La Braconnière : elle emporte un vivant dans la tombe (une cible, elle-même exclue).
@@ -47,7 +48,9 @@ export function gestesEnAttente(etat, villageois = [], ignorer = []) {
   const sortie = [];
   for (const geste of CLES_DES_GESTES) {
     const { cause, quand, fait } = GESTES[geste];
-    const porte = m => gesteDuRole(parId.get(m.acteurId)?.role, sans) === geste && !ignorer.includes(`${geste}:${m.acteurId}`) && !carteReprise(etat, m.acteurId);
+    // Le Pacte, étape 5 (Double visage, grande complication) : le geste peut venir de la seconde carte.
+    const porte = m => [parId.get(m.acteurId)?.role, parId.get(m.acteurId)?.seconde].some(r => gesteDuRole(r, sans) === geste)
+      && !ignorer.includes(`${geste}:${m.acteurId}`) && !carteReprise(etat, m.acteurId);
     if (fait) {
       for (const m of morts) if (porte(m) && quand(etat, m) && !fait(etat, m.acteurId)) sortie.push({ acteurId: m.acteurId, geste });
       continue;
@@ -67,7 +70,9 @@ export const gesteEnAttente = (etat, villageois, acteurId, geste) => gestesEnAtt
 
 // Ceux que le mourant peut désigner : les vivants, lui excepté ; pour la liste des votants (etat donné), pas un Innocent gracié (il
 // ne vote plus).
+// Les Vendanges (variantes.mjs) : la Braconnière n'emporte que l'un de ses deux voisins vivants.
 export const candidatsDuGeste = (villageois = [], acteurId, { etat = null, geste = "" } = {}) => {
+  if (geste === "emporter" && etat && vendangesActives(etat)) return voisinsDeLaBraconniere(etat, villageois, acteurId);
   const ids = villageois.filter(v => v.vivant !== false && v.id !== acteurId).map(v => v.id);
   return geste === "votants" && etat ? ids.filter(id => !estGracie(etat, id)) : ids;
 };

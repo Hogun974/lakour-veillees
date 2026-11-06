@@ -3,6 +3,7 @@
 // vérifier la victoire, rejouer. La mise en scène (jetons, lumière, statuts, ambiances) suit d'elle-même chaque changement : elle est
 // branchée sur les hooks du système, pas sur le MJ IA. Ici, pas de boîte de dialogue : la Table les pose avant d'appeler.
 import { t, tousLesVillageois, lireEtat } from "./donnees.mjs";
+import { REGLAGES_DES_VARIANTES, CLES_DES_VARIANTES, choixDesVariantes } from "../logique/variantes.mjs";
 
 const api = () => game.lakourLoups;
 
@@ -11,13 +12,35 @@ const api = () => game.lakourLoups;
 //   peste: partie de peste noire choisie par le MJ (sinon, une partie générée le devient rarement d'elle-même),
 //   format: "" ou "saint-martin" (la Nuit de la Saint-Martin : sa propre composition, ni peste ni rôles choisis),
 //   fete: null (pas encore choisie : la Table pré-sélectionne la veillée proposée, veilleeProposee) | "" (aucune) | clé de veillée,
-//   village: la variante « Le Village » (Pacte, étape 4 ; pré-cochée si le réglage « leVillage » s'en souvient) }
-// Le niveau pré-sélectionné : la Petite tablée si le réglage monde s'en souvient (0.11.0), sinon classique.
-const niveauParDefaut = () => { try { return game.settings.get("lakour-loups", "petiteTablee") ? "petite-tablee" : "classique"; } catch { return "classique"; } };
+//   village: la variante « Le Village » (Pacte, étape 4 ; pré-cochée si le réglage « leVillage » s'en souvient),
+//   variantes: { chandelles?, angoissante?, chaine?, mur?, doubleVisage?, vendanges?, envoutement? } (Pacte, étape 5 : les variantes du jeu de
+//   soirée ; une case non touchée suit son réglage monde, qui se souvient du dernier choix) }
+// Le niveau pré-sélectionné : la Petite tablée si le réglage monde s'en souvient (0.11.0), sinon « Le Pacte » (étape 5 : les rôles du
+// jeu de soirée, le niveau proposé d'abord).
+const niveauParDefaut = () => { try { return game.settings.get("lakour-loups", "petiteTablee") ? "petite-tablee" : "le-pacte"; } catch { return "le-pacte"; } };
 const villageParDefaut = () => { try { return Boolean(game.settings.get("lakour-loups", "leVillage")); } catch { return false; } };
 export const nouvellePreparation = () => ({ coches: null, mode: "auto", niveau: niveauParDefaut(), roles: {}, peste: false, format: "", fete: null });
 // La case « Le Village » : celle que le MJ a cochée, sinon le réglage (village absent de la préparation neuve : il suit le réglage).
 export const villagePrepare = prep => (typeof prep.village === "boolean" ? prep.village : villageParDefaut());
+// Les variantes cochées : celles que le MJ a touchées, sinon leurs réglages.
+const lireVariante = c => { try { return game.settings.get("lakour-loups", REGLAGES_DES_VARIANTES[c]); } catch { return c === "doubleVisage" ? "" : false; } };
+// Les bâtiments du village et les métiers (étape 5) : ceux que le MJ a choisis, sinon les réglages.
+const lireMonde = (cle, defaut) => { try { return game.settings.get("lakour-loups", cle) ?? defaut; } catch { return defaut; } };
+export const batimentsPrepares = prep => (["hasard", "aucun", "choisis"].includes(prep.batiments) ? prep.batiments : lireMonde("batimentsDuVillage", "hasard"));
+export const batimentsChoisisPrepares = prep => (Array.isArray(prep.batimentsChoisis) ? prep.batimentsChoisis : [...(lireMonde("batimentsChoisis", []) ?? [])]);
+export const metiersPrepares = prep => (typeof prep.metiers === "boolean" ? prep.metiers : lireMonde("metiersEnJeu", true) !== false);
+export function basculerBatiment(prep, cle) {
+  const liste = new Set(batimentsChoisisPrepares(prep));
+  if (liste.has(cle)) liste.delete(cle); else liste.add(cle);
+  prep.batimentsChoisis = [...liste];
+  return prep;
+}
+export const variantesPreparees = prep => choixDesVariantes({ ...Object.fromEntries(CLES_DES_VARIANTES.map(c => [c, lireVariante(c)])), ...(prep.variantes ?? {}) });
+export function changerVariante(prep, cle, valeur) {
+  if (!CLES_DES_VARIANTES.includes(cle)) return prep;
+  prep.variantes = { ...(prep.variantes ?? {}), [cle]: valeur };
+  return prep;
+}
 
 // La veillée de fête que la Table propose au MJ (pré-sélectionnée, jamais imposée) : celle du réglage s'il en nomme une, sinon
 // celle de la fête du calendrier du moteur ce jour-là ("" : aucune).
@@ -85,6 +108,8 @@ export async function distribuer(prep) {
   return api().nouvellePartie({ memesJoueurs: false, joueurs, compagnons, niveau: prep.niveau, format: "",
     roles: prep.mode === "manuel" ? rolesManuels(prep, total) : [], ...(prep.peste ? { peste: true } : {}),
     ...(prep.niveau === "petite-tablee" ? {} : { village: villagePrepare(prep) }),
+    variantes: variantesPreparees(prep),
+    batiments: batimentsPrepares(prep) === "choisis" ? batimentsChoisisPrepares(prep) : batimentsPrepares(prep), metiers: metiersPrepares(prep),
     fete: prep.fete ?? veilleeProposee() });
 }
 

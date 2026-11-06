@@ -70,6 +70,22 @@
       <label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.SaintMartin.PreparationAide'}}"><input type="checkbox" data-action="prepSaintMartin" {{#if preparation.saintMartin}}checked{{/if}}> <i class="fa-solid fa-church"></i> {{localize "LAKOUR_LOUPS.SaintMartin.Preparation"}}</label>
       {{#if preparation.villagePossible}}<label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.Village.PreparationAide'}}"><input type="checkbox" data-action="prepVillage" {{#if preparation.village}}checked{{/if}}> <i class="fa-solid fa-house-chimney-window"></i> {{localize "LAKOUR_LOUPS.Village.Preparation"}}</label>{{/if}}
     </div>
+    {{#if preparation.batiments}}
+    <div class="loups-prep-ligne loups-prep-batiments">
+      <span class="loups-etiquette" data-tooltip="{{localize 'LAKOUR_LOUPS.Preparation.Batiments.Aide'}}">{{localize "LAKOUR_LOUPS.Preparation.Batiments.Titre"}}</span>
+      <select name="prepBatiments">{{#each preparation.batiments.modes}}<option value="{{cle}}" {{#if choisi}}selected{{/if}}>{{nom}}</option>{{/each}}</select>
+      {{#each preparation.batiments.liste}}<label class="loups-prep-joueur"><input type="checkbox" data-action="prepBatiment" data-cle="{{cle}}" {{#if coche}}checked{{/if}}> {{nom}}</label>{{/each}}
+      <label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.Preparation.MetiersAide'}}"><input type="checkbox" data-action="prepMetiers" {{#if preparation.batiments.metiers}}checked{{/if}}> <i class="fa-solid fa-hammer"></i> {{localize "LAKOUR_LOUPS.Preparation.Metiers"}}</label>
+    </div>
+    {{/if}}
+    {{#if preparation.variantes}}
+    <div class="loups-prep-ligne loups-prep-variantes">
+      <span class="loups-etiquette" data-tooltip="{{localize 'LAKOUR_LOUPS.Variantes.PreparationAide'}}">{{localize "LAKOUR_LOUPS.Variantes.Titre"}}</span>
+      {{#each preparation.variantes.cases}}<label class="loups-prep-joueur" data-tooltip="{{aide}}"><input type="checkbox" data-action="prepVariante" data-cle="{{cle}}" {{#if coche}}checked{{/if}}> <i class="fa-solid {{icone}}"></i> {{nom}}</label>{{/each}}
+      {{#if preparation.variantes.doubleVisage}}<label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.Variantes.DoubleVisage.Aide'}}"><i class="fa-solid fa-masks-theater"></i> {{localize "LAKOUR_LOUPS.Variantes.DoubleVisage.Nom"}}
+        <select name="prepDoubleVisage">{{#each preparation.variantes.doubleVisage}}<option value="{{cle}}" {{#if choisi}}selected{{/if}}>{{nom}}</option>{{/each}}</select></label>{{/if}}
+    </div>
+    {{/if}}
     {{#if preparation.tablee}}
     <div class="loups-prep-ligne loups-prep-tablee">
       <small>{{preparation.tablee.aide}}</small>
@@ -142,6 +158,7 @@
             <div class="loups-nom" data-action="fiche" data-id="{{id}}">{{nom}}</div>
             <div class="loups-detail">{{#if maison}}<i class="fa-solid fa-door-closed"></i> {{maison}}{{/if}}</div>
             {{#if metier}}<div class="loups-detail metier"><i class="fa-solid fa-hammer"></i> {{metier}}</div>{{/if}}
+            {{#if chandelle}}<div class="loups-detail chandelle {{chandelle.cle}}" data-tooltip="{{chandelle.aide}}"><i class="fa-solid {{chandelle.icone}}"></i> {{chandelle.texte}}</div>{{/if}}
             {{#if personnalite}}<div class="loups-detail personnalite" data-tooltip="{{personnaliteAide}}"><i class="fa-solid fa-house-chimney-window"></i> {{personnalite}}</div>{{/if}}
             {{#if voitRole}}{{#if roleNom}}<div class="loups-role {{#if revele}}revele{{/if}}"><i class="fa-solid fa-mask"></i> {{roleNom}} <span class="loups-camp">{{camp}}</span></div>{{/if}}{{/if}}
             {{#unless voitRole}}{{#if passage}}<div class="loups-role passage" data-tooltip="{{localize 'LAKOUR_LOUPS.Passage.Aide'}}"><i class="fa-solid fa-person-walking-luggage"></i> {{passage}}</div>{{/if}}{{/unless}}
@@ -213,6 +230,13 @@
           <button type="button" class="loups-bouton discret" data-action="accuser" data-tooltip="{{localize 'LAKOUR_LOUPS.Banc.AccuserAide'}}"><i class="fa-solid fa-hand-point-right"></i> {{localize "LAKOUR_LOUPS.Banc.Accuser"}}</button>
         </div>
         {{else}}{{#if accusation.raison}}<p class="loups-vide"><small>{{accusation.raison}}</small></p>{{/if}}{{/if}}{{/if}}
+      </section>
+      {{/if}}
+      {{#if variantes}}
+      <section class="loups-encart loups-variantes-encart">
+        <h3><i class="fa-solid fa-book-open"></i> {{variantes.titre}}</h3>
+        {{#if variantes.chaine}}<p><strong>{{localize "LAKOUR_LOUPS.Variantes.Chaine.Nom"}}</strong> — {{variantes.chaine.debout}}<br><small>{{variantes.chaine.designateur}}</small></p>{{/if}}
+        {{#if variantes.mur}}<p><strong>{{localize "LAKOUR_LOUPS.Variantes.Mur.Nom"}}</strong></p><ul class="loups-journal">{{#each variantes.mur}}<li>« {{this}} »</li>{{/each}}</ul>{{/if}}
       </section>
       {{/if}}
       {{#if village}}

@@ -90,6 +90,8 @@ export function texteBrut(html) {
     .replace(/&[a-z#0-9]+;/gi, e => ENTITES[e] ?? e).replace(/\s+/g, " ").trim();
 }
 
+const secondeAPlat = r => ({ cle: r.system?.cle ?? "", nom: r.name ?? "", camp: r.system?.camp ?? "village", effet: r.system?.effet ?? "",
+  apparence: r.system?.apparence ?? "", victoireCle: r.system?.victoireCle ?? "", nuit: { ...(r.system?.nuit ?? {}) }, usages: { ...(r.system?.usages ?? {}) } });
 export function aPlat(acteur, fiches = fichesDuMJ()) {
   const s = acteur.system;
   const role = roleDe(acteur, fiches), metier = metierDe(acteur);
@@ -98,7 +100,9 @@ export function aPlat(acteur, fiches = fichesDuMJ()) {
     amoureux: amoureuxDe(acteur, fiches), silence: s.silence, protections: protectionsDe(acteur, fiches),
     role: role ? { cle: role.system.cle, nom: role.name, camp: role.system.camp, effet: role.system.effet, apparence: role.system.apparence,
       victoireCle: role.system.victoireCle, nuit: { ...role.system.nuit }, usages: { ...role.system.usages } } : null,
-    metier: metier ? { cle: metier.system.cle, nom: metier.name, effet: metier.system.effet, usages: { ...metier.system.usages } } : null
+    metier: metier ? { cle: metier.system.cle, nom: metier.name, effet: metier.system.effet, usages: { ...metier.system.usages } } : null,
+    // Le Pacte, étape 5 (Double visage, grande complication) : la seconde carte à pouvoir, dans la fiche secrète (MJ actif seulement).
+    ...(fiches?.[acteur.id]?.seconde ? { seconde: secondeAPlat(fiches[acteur.id].seconde) } : {})
   };
 }
 

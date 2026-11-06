@@ -246,7 +246,7 @@ const VERIFICATIONS = {
     const parCle = Object.fromEntries(ROLES.map(r => [r.system.cle, r]));
     const attendu = { chapardeur: ["village", "chaparder", "", 1], bateleur: ["village", "emprunter", "", 2], matin: ["village", "choisir-camp", "", 38],
       "enfant-des-bois": ["village", "modele", "", 13], chambriere: ["village", "devouement", "", 0], "feu-follet": ["solitaire", "", "premier-tour", 0],
-      "joueur-de-vielle": ["solitaire", "charmer", "tous-charmes", 80], illumine: ["solitaire", "", "autre-groupe", 0], "loup-pale": ["meute", "trahir", "seul-survivant", 41] };
+      "joueur-de-vielle": ["solitaire", "charmer", "tous-charmes", 80], illumine: ["solitaire", "", "autre-groupe", 0], "loup-pale": ["meute", "trahir", "seul-survivant", 42] };
     assert.deepEqual(Object.keys(attendu).sort(), [...ROLES_DU_PACTE_3B].sort());
     for (const [cle, [camp, effet, victoire, ordre]] of Object.entries(attendu)) {
       const r = parCle[cle];
@@ -263,7 +263,7 @@ const VERIFICATIONS = {
     assert.equal(parCle["joueur-de-vielle"].system.nuit.cibles, 2);
     assert.equal(AMBIGUS_DU_PACTE.length + SOLITAIRES_DU_PACTE.length, 8);
     const ordre = ordreDeReveil().map(e => e.o);
-    for (const o of [1, 2, 13, 38, 41, 80]) assert.ok(ordre.includes(o), `ordre ${o} au guide`);
+    for (const o of [1, 2, 13, 38, 42, 80]) assert.ok(ordre.includes(o), `ordre ${o} au guide`);
     assert.ok(ordre.indexOf(80) < ordre.indexOf(90), "le Fossoyeur reste le dernier");
   }
 };

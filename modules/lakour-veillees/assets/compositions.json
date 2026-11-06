@@ -1131,6 +1131,305 @@
       "lavoir"
     ]
   },
+  "le-pacte-06": {
+    "libelle": "Le Pacte — 6 joueurs",
+    "joueurs": [
+      6,
+      6
+    ],
+    "niveau": "le-pacte",
+    "roles": [
+      "garde-du-pont",
+      "liseuse-de-cendres",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": []
+  },
+  "le-pacte-07": {
+    "libelle": "Le Pacte — 7 joueurs",
+    "joueurs": [
+      7,
+      7
+    ],
+    "niveau": "le-pacte",
+    "roles": [
+      "braconniere",
+      "liseuse-de-cendres",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "villageois",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": []
+  },
+  "le-pacte-08": {
+    "libelle": "Le Pacte — 8 joueurs",
+    "joueurs": [
+      8,
+      8
+    ],
+    "niveau": "le-pacte",
+    "roles": [
+      "chapardeur",
+      "garde-du-pont",
+      "gardeuse-d-oies",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "souffre-douleur",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": []
+  },
+  "le-pacte-09": {
+    "libelle": "Le Pacte — 9 joueurs",
+    "joueurs": [
+      9,
+      9
+    ],
+    "niveau": "le-pacte",
+    "roles": [
+      "furet",
+      "garde-du-pont",
+      "gardeuse-d-oies",
+      "innocent",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": []
+  },
+  "le-pacte-10": {
+    "libelle": "Le Pacte — 10 joueurs",
+    "joueurs": [
+      10,
+      10
+    ],
+    "niveau": "le-pacte",
+    "roles": [
+      "enfant-de-la-brume",
+      "greffier-begue",
+      "herboriste",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "souffre-douleur",
+      "vieux-sergent",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": []
+  },
+  "le-pacte-11": {
+    "libelle": "Le Pacte — 11 joueurs",
+    "joueurs": [
+      11,
+      11
+    ],
+    "niveau": "le-pacte",
+    "roles": [
+      "furet",
+      "liseuse-de-cendres",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": []
+  },
+  "le-pacte-12": {
+    "libelle": "Le Pacte — 12 joueurs",
+    "joueurs": [
+      12,
+      12
+    ],
+    "niveau": "le-pacte",
+    "roles": [
+      "aieul",
+      "enfant-de-la-brume",
+      "enfant-des-bois",
+      "garde-du-pont",
+      "gardeuse-d-oies",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "matin",
+      "villageois",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": []
+  },
+  "le-pacte-13": {
+    "libelle": "Le Pacte — 13 joueurs",
+    "joueurs": [
+      13,
+      13
+    ],
+    "niveau": "le-pacte",
+    "roles": [
+      "gardeuse-d-oies",
+      "herboriste",
+      "innocent",
+      "liseuse-de-cendres",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": []
+  },
+  "le-pacte-14": {
+    "libelle": "Le Pacte — 14 joueurs",
+    "joueurs": [
+      14,
+      14
+    ],
+    "niveau": "le-pacte",
+    "roles": [
+      "braconniere",
+      "herboriste",
+      "innocent",
+      "liseuse-de-cendres",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": []
+  },
+  "le-pacte-15": {
+    "libelle": "Le Pacte — 15 joueurs",
+    "joueurs": [
+      15,
+      15
+    ],
+    "niveau": "le-pacte",
+    "roles": [
+      "bateleur",
+      "enfant-de-la-brume",
+      "enfant-des-bois",
+      "furet",
+      "gardeuse-d-oies",
+      "illumine",
+      "liseuse-de-cendres",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": []
+  },
+  "le-pacte-16": {
+    "libelle": "Le Pacte — 16 joueurs",
+    "joueurs": [
+      16,
+      16
+    ],
+    "niveau": "le-pacte",
+    "roles": [
+      "bateleur",
+      "gardeuse-d-oies",
+      "herboriste",
+      "liseuse-de-cendres",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-pale",
+      "vieux-sergent",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": []
+  },
+  "le-pacte-17": {
+    "libelle": "Le Pacte — 17 joueurs",
+    "joueurs": [
+      17,
+      17
+    ],
+    "niveau": "le-pacte",
+    "roles": [
+      "bateleur",
+      "bucheron",
+      "bucheron",
+      "bucheron",
+      "enfant-des-bois",
+      "franc-villageois",
+      "garde-du-pont",
+      "liseuse-de-cendres",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": []
+  },
+  "le-pacte-18": {
+    "libelle": "Le Pacte — 18 joueurs",
+    "joueurs": [
+      18,
+      18
+    ],
+    "niveau": "le-pacte",
+    "roles": [
+      "furet",
+      "gardeuse-d-oies",
+      "liseuse-de-cendres",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "loup-de-brumecombe",
+      "pie",
+      "vieux-sergent",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois",
+      "villageois"
+    ],
+    "batiments": []
+  },
   "petite-tablee-04": {
     "libelle": "Petite tablée — 4 places",
     "joueurs": [

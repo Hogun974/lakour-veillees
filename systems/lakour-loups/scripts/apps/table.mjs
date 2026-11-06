@@ -14,6 +14,9 @@
 // Le Village (Pacte, étape 4, logique/personnalites.mjs) : sa case à la préparation ; la personnalité de chaque vivant sur sa carte
 // (publique, comme le métier) ; l'encart « Le Village » (qui tient quoi, les bâtiments brûlés, les privés de vote du Régent), où le
 // MJ change la proposition avant la première nuit (api.installer).
+// Les variantes du jeu de soirée (Pacte, étape 5, logique/variantes.mjs) : leurs cases à la préparation (Double visage : un choix) ; la
+// chandelle de chacun sur sa carte (Veillée aux chandelles : allumée tant qu'il vit) ; l'encart « Variantes » (celles en jeu, la Chaîne des
+// innocents du vote ouvert, le Mur des murmures du dernier matin). Le niveau « Le Pacte » (les rôles du jeu de soirée) est proposé d'abord.
 import { ID, PHASES } from "../../logique/constantes.mjs";
 import * as L from "../../logique/index.mjs";
 import { LONGUEUR_DECLARATION as LONGUEUR } from "../../logique/registre.mjs";
@@ -37,7 +40,28 @@ const api = () => game.lakourLoups;
 const nomDe = id => game.actors.get(id)?.name ?? id;
 const TYPES_EFFETS = ["verrou", "surveille", "gite", "traversee", "taverne", "lame", "cachette", "asile", "ecluse"];
 const ICONES_REGISTRE = { vote: "fa-scale-balanced", mort: "fa-cross", bailli: "fa-stamp", declaration: "fa-feather-pointed",
-  passage: "fa-person-walking-luggage", accusation: "fa-hand-point-right", deuil: "fa-bell", fete: "fa-star", village: "fa-house-chimney-window" };
+  passage: "fa-person-walking-luggage", accusation: "fa-hand-point-right", deuil: "fa-bell", fete: "fa-star", village: "fa-house-chimney-window",
+  variante: "fa-book-open" };
+// Les cases des variantes à la préparation (Double visage a son propre choix) : clé, icône.
+const CASES_DES_VARIANTES = [["chandelles", "fa-fire"], ["angoissante", "fa-wind"], ["chaine", "fa-link"], ["mur", "fa-feather"],
+  ["vendanges", "fa-wine-glass"], ["envoutement", "fa-eye"]];
+const nomDeVariante = c => t(`LAKOUR_LOUPS.Variantes.${c === "angoissante" ? "Chandelles.Angoissante" : `${c.charAt(0).toUpperCase()}${c.slice(1)}.Nom`}`);
+
+// L'encart « Variantes » (public) : celles en jeu, la Chaîne en cours, le mur du dernier matin.
+function variantesDeLaTable(etat) {
+  const enJeu = L.variantesEnJeu(etat);
+  if (!enJeu.length) return null;
+  const v = L.normaliserVariantes(etat.variantes);
+  const noms = enJeu.map(c => (c === "doubleVisage" ? `${t("LAKOUR_LOUPS.Variantes.DoubleVisage.Nom")} (${t(`LAKOUR_LOUPS.Variantes.DoubleVisage.${v.doubleVisage}`)})`
+    : c === "chandelles" && v.angoissante ? `${nomDeVariante(c)} (${nomDeVariante("angoissante")})` : nomDeVariante(c)));
+  const c = v.chaineEnCours;
+  return {
+    titre: t("LAKOUR_LOUPS.Variantes.EnJeu", { noms: noms.join(", ") }),
+    chaine: c && etat.vote?.ouvert ? { debout: t("LAKOUR_LOUPS.Variantes.Chaine.Debouts", { noms: c.debout.map(nomDe).join(", ") }),
+      designateur: c.condamne ? t("LAKOUR_LOUPS.Variantes.Chaine.Debout", { nom: nomDe(c.condamne) }) : t("LAKOUR_LOUPS.Variantes.Chaine.Designateur", { nom: nomDe(c.designateur) }) } : null,
+    mur: v.mur && v.murmures?.tour === etat.tour && v.murmures.textes.length ? [...v.murmures.textes] : null
+  };
+}
 
 async function tenter(fn) {
   try { return await fn(); } catch (e) { ui.notifications.error(e.message); console.error(e); }
@@ -81,7 +105,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
       accuser: TableDeJeu.#accuser, quitter: TableDeJeu.#quitter, faireQuitter: TableDeJeu.#faireQuitter,
       accueillir: TableDeJeu.#accueillir, voteExil: TableDeJeu.#voteExil, prepSaintMartin: TableDeJeu.#prepSaintMartin,
       voixActiver: TableDeJeu.#voixActiver, voixMicro: TableDeJeu.#voixMicro,
-      prepVillage: TableDeJeu.#prepVillage
+      prepVillage: TableDeJeu.#prepVillage, prepVariante: TableDeJeu.#prepVariante, prepBatiment: TableDeJeu.#prepBatiment, prepMetiers: TableDeJeu.#prepMetiers
     }
   };
 
@@ -117,6 +141,8 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
       const p = L.personnaliteDe(etat, a.id);
       return p ? t(`LAKOUR_LOUPS.Village.Personnalites.${p}.Nom`) : "";
     };
+    // La Veillée aux chandelles (Pacte, étape 5) : publique.
+    const chandelles = Boolean(etat.partie) && L.chandellesActives(etat);
     const fiche = a => {
       const role = roleDe(a), metier = metierDe(a);
       const voitRole = fin || roleVisible(a);
@@ -128,6 +154,9 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
         faireQuitter: gm && a.system.vivant && Boolean(etat.partie) && !fin,
         id: a.id, nom: a.name, img: a.img, vivant: a.system.vivant, maison: libelleRepere(a.system.maison),
         metier: metier?.name ?? "", metierImg: metier?.img ?? "",
+        // La Veillée aux chandelles : la chandelle de chacun (adaptation en ligne : sur sa carte), soufflée à sa mort.
+        chandelle: chandelles ? (a.system.vivant ? { cle: "allumee", icone: "fa-fire", texte: t("LAKOUR_LOUPS.Variantes.Chandelles.Allumee"), aide: t("LAKOUR_LOUPS.Variantes.Chandelles.Aide") }
+          : { cle: "soufflee", icone: "fa-smog", texte: t("LAKOUR_LOUPS.Variantes.Chandelles.Soufflee"), aide: t("LAKOUR_LOUPS.Variantes.Chandelles.Aide") }) : null,
         personnalite: a.system.vivant ? personnaliteDe(a) : "",
         personnaliteAide: a.system.vivant && villageActif ? t(`LAKOUR_LOUPS.Village.Personnalites.${L.personnaliteDe(etat, a.id)}.Aide`) : "",
         voitRole, roleNom: voitRole ? role?.name ?? "" : "", roleImg: voitRole ? role?.img ?? "" : "",
@@ -208,7 +237,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
     if (gm && mjActif) {
       try {
         const e = api().etapeSuivante({ ignorer: [...this.ignorer] });
-        const donnees = { ...e.donnees, nom: e.donnees.meute ? t("LAKOUR_LOUPS.Etapes.LaMeute") : e.donnees.peste ? t("LAKOUR_LOUPS.Etapes.LaPeste") : e.donnees.deuil ? t("LAKOUR_LOUPS.Etapes.LeDeuil") : e.donnees.charmes ? t("LAKOUR_LOUPS.Etapes.LesCharmes") : e.donnees.nom ?? "" };
+        const donnees = { ...e.donnees, nom: e.donnees.meute ? t("LAKOUR_LOUPS.Etapes.LaMeute") : e.donnees.peste ? t("LAKOUR_LOUPS.Etapes.LaPeste") : e.donnees.deuil ? t("LAKOUR_LOUPS.Etapes.LeDeuil") : e.donnees.charmes ? t("LAKOUR_LOUPS.Etapes.LesCharmes") : e.donnees.mur ? t("LAKOUR_LOUPS.Etapes.LeMur") : e.donnees.nom ?? "" };
         etape = { ...e, texte: t(`LAKOUR_LOUPS.Etapes.${e.cle}`, donnees),
           detail: e.detail ? t(`LAKOUR_LOUPS.Etapes.Detail.${e.detail.cle}`, e.detail.donnees) : "" };
       } catch { etape = null; }
@@ -230,8 +259,11 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
         joueurs: MJ.joueursConnectes().map(u => ({ id: u.id, nom: u.name, coche: coches.has(u.id) })),
         ia: { disponible: MJ.iaDisponible(), n: ia.length, noms: ia.map(a => a.name).join(", ") },
         total, auto: p.mode === "auto", manuel: p.mode === "manuel",
-        niveaux: (contenu?.niveaux ?? ["debutants", "classique", "chaos"]).map(n => ({ cle: n, libelle: t(`LAKOUR_LOUPS.Preparation.Niveaux.${n}`), choisi: n === p.niveau })),
-        roles: (contenu?.roles ?? []).map(r => ({ ...r, n: p.roles[r.cle] ?? 0, campLibelle: libelleCamp(r.camp) })),
+        // Le Pacte (étape 5) d'abord : le niveau proposé par défaut ; à ce niveau, seuls les rôles du jeu de soirée se choisissent.
+        niveaux: [...(contenu?.niveaux ?? ["debutants", "classique", "chaos"])].sort((a, b) => (b === L.NIVEAU_LE_PACTE) - (a === L.NIVEAU_LE_PACTE))
+          .map(n => ({ cle: n, libelle: t(`LAKOUR_LOUPS.Preparation.Niveaux.${n}`), choisi: n === p.niveau })),
+        roles: (contenu?.roles ?? []).filter(r => p.niveau !== L.NIVEAU_LE_PACTE || L.estDuLivre(r.cle))
+          .map(r => ({ ...r, n: p.roles[r.cle] ?? 0, campLibelle: libelleCamp(r.camp) })),
         choisis: Object.values(p.roles).reduce((a, b) => a + b, 0),
         equilibre: eq && p.mode === "manuel" ? { ...eq, texte: t(`LAKOUR_LOUPS.Preparation.Equilibre.${eq.verdict}`, { somme: eq.somme >= 0 ? `+${eq.somme}` : String(eq.somme) }),
           loupsTexte: t("LAKOUR_LOUPS.Preparation.Loups", { n: eq.loups, conseil: eq.loupsConseilles }) } : null,
@@ -241,6 +273,29 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
         saintMartin: p.format === L.FORMAT_SAINT_MARTIN,
         // Le Village (Pacte, étape 4) : jamais à la petite tablée ni dans une Nuit de la Saint-Martin.
         village: MJ.villagePrepare(p), villagePossible: p.format !== L.FORMAT_SAINT_MARTIN && p.niveau !== L.NIVEAU_PETITE_TABLEE,
+        // Les variantes du jeu de soirée : jamais dans une Saint-Martin ; à la petite tablée ou avec la peste, ni Double visage, ni
+        // Vendanges, ni Envoûtement.
+        variantes: p.format === L.FORMAT_SAINT_MARTIN ? null : (() => {
+          const v = MJ.variantesPreparees(p);
+          const sansMeute = p.niveau === L.NIVEAU_PETITE_TABLEE || p.peste;
+          return {
+            cases: CASES_DES_VARIANTES.filter(([c]) => !(sansMeute && ["vendanges", "envoutement"].includes(c)) && (c !== "angoissante" || v.chandelles))
+              .map(([cle, icone]) => ({ cle, icone, nom: nomDeVariante(cle), coche: Boolean(v[cle]),
+                aide: t(`LAKOUR_LOUPS.Variantes.${cle === "angoissante" ? "Chandelles.AngoissanteAide" : `${cle.charAt(0).toUpperCase()}${cle.slice(1)}.Aide`}`) })),
+            doubleVisage: sansMeute ? null : ["", ...L.MODES_DOUBLE_VISAGE].map(m => ({ cle: m, nom: t(`LAKOUR_LOUPS.Variantes.DoubleVisage.${m || "Aucune"}`), choisi: v.doubleVisage === m }))
+          };
+        })(),
+        // Les bâtiments du village (aucun, tirés, choisis) et les métiers (étape 5) : une partie « simple, avec les seuls personnages ».
+        batiments: p.format === L.FORMAT_SAINT_MARTIN ? null : (() => {
+          const mode = MJ.batimentsPrepares(p);
+          const choisis = new Set(MJ.batimentsChoisisPrepares(p));
+          return {
+            modes: ["aucun", "hasard", "choisis"].map(m => ({ cle: m, nom: t(`LAKOUR_LOUPS.Preparation.Batiments.${m}`), choisi: m === mode })),
+            liste: mode === "choisis" ? Object.keys(contenu?.equilibre?.batiments ?? {}).map(cle => ({ cle, coche: choisis.has(cle),
+              nom: game.i18n.has(`LAKOUR_LOUPS.Batiments.${cle}`) ? t(`LAKOUR_LOUPS.Batiments.${cle}`) : cle })) : [],
+            metiers: MJ.metiersPrepares(p)
+          };
+        })(),
         fetes: veilleesAPreparer(p),
         // La Petite tablée (0.11.0) : un rappel de ses règles, et un avis si la table sort de ses clous (1 à 4 humains, 2 à 8 IA).
         tablee: p.niveau === L.NIVEAU_PETITE_TABLEE ? (() => {
@@ -309,7 +364,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
         voixDouble: v.objet === "execution" && bailliId && pesees[bailliId] > 1 ? nomDe(bailliId) : "",
         exprimes: v.exprimes.filter(id => vivants.some(x => x.id === id)).length, votants: vivants.length,
         souffles: v.exprimes.filter(id => !vivants.some(x => x.id === id)).length,
-        peutVoter: Boolean(v.ouvert && moi && (moi.system.vivant || tenterSync(() => api().peutSouffler(moi.id).ok, false)) && !L.priveDeVote(etat, moi.id)), minuteur: Boolean(v.finit),
+        peutVoter: Boolean(v.ouvert && !v.chaine && moi && (moi.system.vivant || tenterSync(() => api().peutSouffler(moi.id).ok, false)) && !L.priveDeVote(etat, moi.id)), minuteur: Boolean(v.finit),
         souffle: Boolean(v.ouvert && moi && !moi.system.vivant), mainLevee: Boolean(v.mainLevee),
         resultat: resultat ? { lignes, egalite: resultat.egalite, personne: !resultat.elus?.length, bailli: resultat.objet === "bailli", sort: Boolean(resultat.sort), departage,
           banc: resultat.banc ? { nom: nomDe(resultat.banc.accuse), pour: resultat.banc.pour, total: resultat.banc.total, condamne: Boolean(resultat.elus?.length) } : null,
@@ -319,6 +374,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
             ? (resultat.elus ?? []).filter(id => game.actors.get(id)?.system.vivant).map(id => ({ id, nom: nomDe(id) })) : [] } : null
       },
       historique: chronique,
+      variantes: etat.partie ? variantesDeLaTable(etat) : null,
       village: villageActif && etat.partie ? villageDeLaTable(etat, { gm, preparation: gm && etat.phase === "preparation" && etat.tour === 0 }) : null,
       etape, preparation, nuit,
       emporteur: etape?.cle === "emporter" ? { id: etape.donnees.id, nom: etape.donnees.nom } : null,
@@ -337,6 +393,14 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
     }
     this.element.querySelector("select[name=prepNiveau]")?.addEventListener("change", ev => {
       this.preparation.niveau = ev.currentTarget.value;
+      this.render();
+    });
+    this.element.querySelector("select[name=prepBatiments]")?.addEventListener("change", ev => {
+      this.preparation.batiments = ev.currentTarget.value;
+      this.render();
+    });
+    this.element.querySelector("select[name=prepDoubleVisage]")?.addEventListener("change", ev => {
+      MJ.changerVariante(this.preparation, "doubleVisage", ev.currentTarget.value);
       this.render();
     });
     this.element.querySelector("select[name=prepFete]")?.addEventListener("change", ev => {
@@ -515,6 +579,13 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
   static #prepRole(event, cible) { MJ.changerRole(this.preparation, cible.dataset.cle, Number(cible.dataset.delta)); this.render(); }
   static #prepPeste() { this.preparation.peste = !this.preparation.peste; this.render(); }
   static #prepVillage() { this.preparation.village = !MJ.villagePrepare(this.preparation); this.render(); }
+  static #prepBatiment(event, cible) { MJ.basculerBatiment(this.preparation, cible.dataset.cle); this.render(); }
+  static #prepMetiers() { this.preparation.metiers = !MJ.metiersPrepares(this.preparation); this.render(); }
+  static #prepVariante(event, cible) {
+    const cle = cible.dataset.cle;
+    MJ.changerVariante(this.preparation, cle, !MJ.variantesPreparees(this.preparation)[cle]);
+    this.render();
+  }
   static async #distribuer() {
     const enCours = !["preparation", "fin"].includes(lireEtat().phase) && lireEtat().partie;
     if (enCours) {

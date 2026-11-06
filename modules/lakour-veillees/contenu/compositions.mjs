@@ -65,6 +65,16 @@ export function composerTablee(n) {
   return { libelle: `Petite tablée — ${n} places`, joueurs: [n, n], niveau: NIVEAU_PETITE_TABLEE, roles: [...c.roles].sort(), batiments: c.batiments };
 }
 
+// Le mode « Le Pacte » (système, logique/composition.mjs, niveau « le-pacte », Le Pacte étape 5) : seulement les rôles du jeu de
+// soirée (ROLES_DU_LIVRE), au dosage du niveau classique, sans aucun de nos bâtiments communaux ; tiré par le générateur du système à
+// graine fixe, comme la Petite tablée (les poids restent provisoires : l'étape 6 les calibrera, et ces compositions avec).
+export const NIVEAU_LE_PACTE = "le-pacte";
+export function composerLePacte(n) {
+  if (n < MIN_JOUEURS || n > MAX_JOUEURS) throw new Error(`Le Pacte compte de ${MIN_JOUEURS} à ${MAX_JOUEURS} joueurs (${n}).`);
+  const c = composerSysteme(n, { roles: EQUILIBRE, batiments: EQUILIBRE_BATIMENTS }, { niveau: NIVEAU_LE_PACTE, graine: `le-pacte-${n}` });
+  return { libelle: `Le Pacte — ${n} joueurs`, joueurs: [n, n], niveau: NIVEAU_LE_PACTE, roles: [...c.roles].sort(), batiments: c.batiments };
+}
+
 export function composer(niveau, n) {
   const N = NIVEAUX[niveau];
   if (!N) throw new Error(`Niveau inconnu : ${niveau}`);
@@ -84,12 +94,13 @@ export function composer(niveau, n) {
   };
 }
 
-// Toutes les compositions, clé « <niveau>-<n> » (ex. « classique-12 », « petite-tablee-07 »).
+// Toutes les compositions, clé « <niveau>-<n> » (ex. « classique-12 », « le-pacte-09 », « petite-tablee-07 »).
 export function compositions() {
   const toutes = {};
   for (const niveau of Object.keys(NIVEAUX)) {
     for (let n = MIN_JOUEURS; n <= MAX_JOUEURS; n++) toutes[`${niveau}-${String(n).padStart(2, "0")}`] = composer(niveau, n);
   }
+  for (let n = MIN_JOUEURS; n <= MAX_JOUEURS; n++) toutes[`${NIVEAU_LE_PACTE}-${String(n).padStart(2, "0")}`] = composerLePacte(n);
   for (let n = MIN_TABLEE; n <= MAX_TABLEE; n++) toutes[`${NIVEAU_PETITE_TABLEE}-${String(n).padStart(2, "0")}`] = composerTablee(n);
   return toutes;
 }

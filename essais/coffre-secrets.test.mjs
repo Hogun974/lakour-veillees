@@ -377,7 +377,8 @@ const VERIFICATIONS = {
     assert.notEqual(b, a);
     assert.equal(M.coffre.enAttenteDeParts(), false, "les parts de l'ancienne partie ne sont plus attendues");
     assert.equal(M.api.ecritureBloquee(), false);
-    assert.equal(emissions.slice(n).filter(e => e.type === "secret").length, 4, "les cartes de rôle sont parties");
+    // (Pacte, étape 5 : chaque joueur reçoit aussi l'explication de sa place, « Comment jouer » : elle n'est pas une carte.)
+    assert.equal(emissions.slice(n).filter(e => e.type === "secret" && !String(e.entree?.titre ?? "").startsWith("Comment jouer")).length, 4, "les cartes de rôle sont parties");
     const fichesB = structuredClone(M.secrets.secretsMJ().fiches);
     reglages.get("lakour-mj-ia.cleCarnet").valeur = cleMoteur;   // la clé revient
     await M.coffre.surCoffreRouvert();

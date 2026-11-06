@@ -11,7 +11,7 @@
     "victoire": "<p>Tu gagnes <strong>seul</strong>, si tu es <strong>le dernier vivant</strong>. Si la meute l'emporte, ce n'est pas ta victoire : tu ne gagnes jamais avec elle.</p>",
     "nuit": {
       "actif": true,
-      "ordre": 41,
+      "ordre": 42,
       "premiereNuitSeulement": false,
       "uneNuitSurDeux": true,
       "cibles": 1,

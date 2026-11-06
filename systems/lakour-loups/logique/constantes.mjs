@@ -31,7 +31,9 @@ export const EFFETS = [
   // l'Enfant des bois, la Chambrière, le Joueur de vielle, le Loup pâle.
   "chaparder", "emprunter", "choisir-camp", "modele", "devouement", "charmer", "trahir",
   // La variante « Le Village » (étape 4, logique/personnalites.mjs) : l'Incendiaire.
-  "incendier"
+  "incendier",
+  // Les variantes (étape 5, logique/variantes.mjs) : la seconde désignation de l'Entremetteuse aux Vendanges (une étape, pas un rôle).
+  "tromperie"
 ];
 
 // Celles que le système applique de lui-même : à l'aube (resoudreNuit, dont le message porté par le Messager) ou de jour
@@ -40,7 +42,7 @@ export const EFFETS_AUTOMATISES = [
   "tuer", "proteger", "voir-camp", "voir-role-mort", "eclairer", "silence", "vote-double", "remede", "poison",
   "lien-amour", "echanger-role", "mordre", "emporter", "asperger", "embraser", "epier", "voir-actif", "messager", "annuler-vote",
   "voir-role", "resister", "egalite", "grace", "fratrie", "flairer", "cacarder", "second-vote", "contaminer", "plume",
-  "chaparder", "emprunter", "choisir-camp", "modele", "devouement", "charmer", "trahir", "incendier"
+  "chaparder", "emprunter", "choisir-camp", "modele", "devouement", "charmer", "trahir", "incendier", "tromperie"
 ];
 
 // L'Enfant de la brume qui épie la meute (effet « epier ») : sa chance d'être surprise, et alors dévorée à la place de la proie.
@@ -63,7 +65,10 @@ export const CAUSES = { meute: "meute", nuit: "nuit", poison: "poison", feu: "fe
   contamine: "contamine", sagesse: "sagesse",
   // La variante « Le Village » (personnalites.mjs) : le rasoir du Perruquier (sa victime, ou lui-même s'il s'est trompé), le loup
   // carbonisé dans la maison que l'Incendiaire a brûlée. Publiques : la table voit le rasoir et les flammes.
-  rasoir: "rasoir", incendie: "incendie" };
+  rasoir: "rasoir", incendie: "incendie",
+  // L'Envoûtement (variantes.mjs) : les envoûtés qui tombent avec une envoûtée condamnée par le village. Publique : la table les voit
+  // tomber ensemble.
+  envoute: "envoute" };
 
 // Causes qui trahiraient un rôle (la meute, l'Herboriste, le Pyromane, l'Enfant de la brume) ou la peste noire : l'état
 // public dit seulement « mort dans la nuit », comme pour une victime de la meute. La vraie cause reste chez le MJ (le Tanneur

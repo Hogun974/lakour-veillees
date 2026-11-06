@@ -35,12 +35,15 @@ export function normaliserRole(r) {
   };
 }
 
+// seconde (Le Pacte, étape 5, variante Double visage, grande complication) : la seconde carte à pouvoir du joueur (un rôle, comme
+// role) ; absente le plus souvent.
 export function normaliserFiche(f) {
   const x = f && typeof f === "object" ? f : {};
   const role = normaliserRole(x.role);
+  const seconde = normaliserRole(x.seconde);
   return {
     camp: CAMPS.includes(x.camp) ? x.camp : role?.system.camp ?? "village",
-    amoureux: String(x.amoureux ?? ""), protections: Math.max(0, Number(x.protections) || 0), role
+    amoureux: String(x.amoureux ?? ""), protections: Math.max(0, Number(x.protections) || 0), role, ...(seconde ? { seconde } : {})
   };
 }
 
@@ -54,7 +57,7 @@ export function ficheDuRole(role, { camp, source = "" } = {}) {
 export function ficheDuJoueur(f) {
   if (!f) return null;
   const x = normaliserFiche(f);
-  return { camp: x.camp, amoureux: x.amoureux, role: x.role ? copie(x.role) : null };
+  return { camp: x.camp, amoureux: x.amoureux, role: x.role ? copie(x.role) : null, ...(x.seconde ? { seconde: copie(x.seconde) } : {}) };
 }
 
 // Ce qu'un mort qui voit tout reçoit d'un autre villageois : son rôle (nom, image, clé, camp du rôle) et son camp.

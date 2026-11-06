@@ -299,7 +299,7 @@ const VERIFICATIONS = {
 };
 
 const MUTATIONS = [
-  ["scripts/api.mjs", "    await suivreLesAmbigus({ acteurId, role, cle, cibles, carte });\n", "", "ambigus : leur choix appliqué"],
+  ["scripts/api.mjs", "    if (!(vendanges && effet === \"echanger-role\")) await suivreLesAmbigus({ acteurId, role, cle, cibles, carte });\n", "", "ambigus : leur choix appliqué"],
   ["scripts/api.mjs", "    const centre = avecCentre ? restants.map(", "    const centre = false ? restants.map(", "Chapardeur : le centre"],
   ["scripts/api.mjs", "    carte = chapardeur ? (choix ? Number(choix.slice(\"centre-\".length)) : \"\") : choix;", "    carte = \"\";", "Chapardeur et Bateleur : la carte choisie"],
   ["scripts/api.mjs", "    e.fiches = { ...e.fiches, [acteurId]: { ...L.ficheDuRole(x.pris, { source: x.pris.source ?? \"\" }), amoureux: f.amoureux } };\n", "", "Chapardeur : son nouveau rôle"],
@@ -323,7 +323,7 @@ const MUTATIONS = [
   ["scripts/api.mjs", "  for (const id of ids) {\n    const cle = `${etat.partie}|${etat.tour}|${id}`;\n    if (charmesSalues.has(cle)) continue;",
     "  for (const id of []) {\n    const cle = `${etat.partie}|${etat.tour}|${id}`;\n    if (charmesSalues.has(cle)) continue;", "Vielle : les charmés se reconnaissent"],
   ["scripts/api.mjs", "  await modifierEtat(e => L.journaliserSecret(L.charmer(e, ids),", "  await modifierEtat(e => L.journaliserSecret(e,", "Vielle : le charme"],
-  ["scripts/api.mjs", "    const g = L.verifierVictoire({ ...L.contexteDesAmbigus(e), villageois: villageoisAPlat(), glas,", "    const g = L.verifierVictoire({ villageois: villageoisAPlat(), glas,",
+  ["scripts/api.mjs", "    const g = L.verifierVictoire({ ...L.contexteDesAmbigus(e), ...L.contexteDesVariantes(e), villageois: villageoisAPlat(), glas,", "    const g = L.verifierVictoire({ ...L.contexteDesVariantes(e), villageois: villageoisAPlat(), glas,",
     "victoire : vielle et Illuminé"],
   ["scripts/api.mjs", "        groupes: paquet.includes(L.CLE_ILLUMINE) ? L.partagerLeVillage(enJeu) : null };", "        groupes: null };", "Illuminé : les deux bords"]
 ];

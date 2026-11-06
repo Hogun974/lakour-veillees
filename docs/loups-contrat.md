@@ -129,6 +129,11 @@ n'existe que chez le MJ actif ; il se range en deux morceaux (`logique/etat.mjs`
                                                                               //   par le Bateleur, modèles, choix des Mâtins, charmés
   village: { actif, detruits, epuises, attente, regent, graces, cabaret }      // public (Pacte, étape 4 ; logique/personnalites.mjs) : la variante
                                                                               //   « Le Village » (qui tient quoi : tenures)
+  variantes: { chandelles, angoissante, chaine, mur, doubleVisage, vendanges, envoutement, ratees, chaineEnCours, murmures },
+                                   // public (Pacte, étape 5 ; logique/variantes.mjs) : les variantes du jeu de soirée en jeu, les chandelles
+                                   //   d'une meute en désaccord, la Chaîne du vote ouvert, le mur du dernier matin (sans auteur)
+  variantesSecret: { souffles, murmures, envoutes, triangle, cartes }          // SECRET (Pacte, étape 5) : les chandelles soufflées cette nuit,
+                                   //   les murmures de la nuit SANS auteur, les envoûtés, le triangle des Vendanges, les cartes de Double visage
 }
 ```
 `etat()` rend l'état complet chez le MJ actif, l'état public partout ailleurs.
@@ -568,6 +573,49 @@ resoudreNuit()                    -> l'Incendiaire : le bâtiment de l'occupant 
 - Registre : entrée `{ type: "village", quoi: "distribution" | "changement" | "installation" | "refus" | "incendie" | "prieur" | "remegeux" |
   "regent" | "perruquier" | "grace" | "cabaret", acteurId?, ids?, cle? }` ; hook PUBLIC `lakourLoups.village` (mêmes champs). Réglages :
   `leVillage` (monde, non par défaut), `chanceFourniere` (caché).
+
+Le Pacte, étape 5 — le mode « Le Pacte », les variantes du jeu de soirée, l'ordre d'appel du livre (`logique/variantes.mjs`,
+`docs/plan-le-pacte.md`) :
+```
+nouvellePartie({ niveau: "le-pacte" })  -> seulement les rôles du livre (composition.mjs : ROLES_DU_LIVRE, estDuLivre), sans bâtiment communal ni
+                                       métier ; compositions prêtes « le-pacte-06 » à « -18 » ; la Table de jeu le propose d'abord
+distribuer({ variantes }) / nouvellePartie({ variantes })
+                                    -> variantes : { chandelles, angoissante, chaine, mur, doubleVisage: "" | "petite" | "grande", vendanges,
+                                       envoutement } ; un champ absent suit son réglage monde ; nouvellePartie retient le choix explicite
+                                       (réglages) ; variantesPermises (ni Saint-Martin ; ni Double visage, ni Vendanges, ni Envoûtement à la
+                                       petite tablée ou dans une peste ; Double visage de 7 à 18 places) ; annoncées (chat, Registre
+                                       « variante » / « distribution ») ; résumé : + variantes
+logique.composer(n, eq, { loupsEnPlus })  -> les Vendanges : des loups de plus que le barème
+ordreDeNuit()                       -> + étape « mur » (tous les vivants, ORDRE_MUR 95), « tromperie » (Vendanges, première nuit, juste après
+                                       l'Entremetteuse, deux cibles), étapes `seconde: true` (la seconde carte de Double visage)
+reveiller("mur")                    -> une fenêtre d'écriture à chaque vivant (LONGUEUR_MURMURE) ; les phrases au secret SANS auteur ; l'étape
+                                       notée sans acteur
+demanderActionMeute()               -> chandelles angoissantes : chaque loup souffle une chandelle ; plus d'une : [] (pas de victime)
+resoudreNuit()                      -> les chandelles d'une meute en désaccord, le mur (annonces) ; l'Envoûtement (les proies envoûtées, sans
+                                       pouvoir) ; les Vendanges (fiole et son sort, triangle, Liseuse en trio, Enfant qui épie l'Herboriste,
+                                       Chapardeur qui échange avec un joueur) ; la Liseuse de Double visage lit les cartes secrètes
+ouvrirVote({ objet: "execution" })  -> la Chaîne des innocents : vote.chaine, la chaîne menée par le système (demandes objet "chaine" ; sans
+                                       réponse, le sort) ; cloreVote l'attend -> resultat.chaine { assis, condamne } ; votes refusés. Les
+                                       Vendanges : vote.bailliDabord (les autres refusés jusqu'à son vote, public ; au plus le délai des choix)
+cloreVote()                         -> Vendanges : resultat.remplace (le Souffre-douleur à la place d'un voisin condamné)
+eliminer()                          -> la chandelle éteinte (chat) ; le triangle des Vendanges ; la chute des envoûtés d'avant (cause « envoute ») ;
+                                       la seconde carte retournée avec la première
+verifierVictoire()                  -> + la meute qui a envoûté l'avant-dernier villageois (contexteDesVariantes)
+agirDeJour()                        -> refus pour un envoûté (Variantes.Envoutement.Refus)
+```
+- Bâtiments et métiers d'une partie : `nouvellePartie({ batiments: "aucun" | "hasard" | [cle], metiers: Boolean })`, retenus par les réglages
+  `batimentsDuVillage` ("hasard" par défaut), `batimentsChoisis`, `metiersEnJeu` (vrai par défaut) ; `logique.composer` suit `batimentsDuVillage`.
+- Explication à la distribution : une entrée « Comment jouer : <rôle> » au seul carnet de chaque joueur humain (rôle, appel, victoire,
+  seconde carte, métier, personnalité ; `LAKOUR_LOUPS.Explication`).
+- Fiche : + `seconde` (Double visage, grande complication) ; `aPlat` : + `seconde` (MJ actif) ; ses passifs jouent (Aïeul, Souffre-douleur,
+  Braconnière : `carteDeLEffet`, `porteLEffet`).
+- Hook PUBLIC `lakourLoups.variante` (`{ quoi: "distribution" | "chandelles" | "chaine" | "mur" | "bailli" | "envoutement", tour?, ids?,
+  acteurId? }`) ; jamais un auteur du mur, jamais un envoûté avant sa chute. Registre : entrée `{ type: "variante", quoi, ids?, acteurId? }`.
+- Réglages monde (non par défaut) : `chandelles`, `chandellesAngoissantes`, `chaineDesInnocents`, `murDesMurmures`, `doubleVisage`
+  ("" / "petite" / "grande"), `vendanges`, `envoutement`. Cause publique nouvelle : `envoute`. Effet nouveau : `tromperie` (une étape).
+- Ordre de nuit du livre (contenu) : Chapardeur 1, Bateleur 2, Entremetteuse 3, Liseuse 4, Furet 7, Lavandières 11, Bûcherons 12, Enfant
+  des bois 13, Pie 14, Incendiaire 19, Garde du pont 20, Mâtin 38, meute 40, Enfant de la brume 41, Loup pâle 42, Louve mère 43, Loup
+  affamé 44, Herboriste 50, Joueur de vielle 80 (charmés 81) ; guides : `ORDRE_D_APPEL`.
 
 ### Petite tablée (logique/tablee.mjs, 0.11.0)
 

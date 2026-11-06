@@ -26,6 +26,8 @@
 // 4. « dernier-survivant » (le Pyromane) : il gagne seul s'il est le dernier vivant, ou le dernier avec un seul autre
 //    joueur qui n'est pas un loup ;
 // 5. plus de loup ni de tueur solitaire en vie : le village gagne ;
+// 5 bis. l'Envoûtement (variantes.mjs, envoutes : les envoûtés, secret du MJ) : la meute a envoûté l'avant-dernier villageois (au plus
+//    un vivant hors de la meute qui ne soit pas envoûté) : la meute gagne ;
 // 6. la meute est au moins aussi nombreuse que tous les autres vivants : la meute gagne (strict : plus nombreuse) ;
 // 7. le Glas final a sonné sans autre vainqueur : la meute si un loup vit encore, sinon le tueur solitaire qui vit encore
 //    (le premier), sinon le village ; dans une peste noire, la peste.
@@ -34,6 +36,7 @@ import { VAINQUEUR_PESTE } from "./constantes.mjs";
 import { CLE_ROSIERE } from "./somnambule.mjs";
 import { victoireSaintMartin } from "./saintmartin.mjs";
 import { VICTOIRE_FEU_FOLLET, VICTOIRE_LOUP_PALE, feuFolletGagne, victoireDesAmbigus } from "./ambigus.mjs";
+import { meuteEnvoute } from "./variantes.mjs";
 
 export function victoireCleDe(role) {
   if (!role) return "";
@@ -50,7 +53,7 @@ export function victoireCleDe(role) {
 // victoireSaintMartin, saintmartin.mjs).
 // charmes : les charmés du Joueur de vielle (secret du MJ) ; groupes : le partage annoncé pour l'Illuminé (ambigus.mjs,
 // contexteDesAmbigus).
-export function verifierVictoire({ villageois = [], morts = [], primes = {}, peste = null, glas = false, saintMartin = null, strict = false, charmes = [], groupes = null } = {}) {
+export function verifierVictoire({ villageois = [], morts = [], primes = {}, peste = null, glas = false, saintMartin = null, strict = false, charmes = [], groupes = null, envoutes = [] } = {}) {
   if (saintMartin !== null) return saintMartin ? victoireSaintMartin({ villageois, morts }) : "";
   const executes = new Set(morts.filter(m => m.cause === "vote").map(m => m.acteurId));
 
@@ -89,6 +92,7 @@ export function verifierVictoire({ villageois = [], morts = [], primes = {}, pes
 
   const meute = vivants.filter(v => v.camp === "meute").length;
   if (meute === 0 && tueurs.length === 0) return "village";
+  if (meuteEnvoute({ villageois, envoutes })) return "meute";
   if (meute > 0 && (strict ? meute > vivants.length - meute : meute >= vivants.length - meute)) return "meute";
   if (glas) return meute > 0 ? "meute" : tueurs[0]?.id ?? "village";
   return "";

@@ -94,14 +94,14 @@ Colonne « livre » : la fonction du personnage, pour s'y retrouver ; jamais aff
 ### Variantes du livre
 | Livre | Chez nous | English | État |
 |---|---|---|---|
-| clair de lune | Veillée aux chandelles | Candlelight | nouveau |
-| communauté des hameaux | Les Hameaux | The Hamlets | nouveau |
-| « c'est sûrement pas lui » | La Chaîne des innocents | Chain of Innocents | nouveau |
-| murs-murs | Le Mur des murmures | Whispering Wall | nouveau |
-| double « je » (petite / grande complication) | Double visage | Two Faces | nouveau |
-| fête de la moisson | Les Vendanges | Grape Harvest | nouveau |
-| peste noire | Peste noire | Black Plague | vérifié (étape 2 : identique ; guide : l'appel comme d'habitude) |
-| fascination lycanthropique | L'Envoûtement | The Thrall | nouveau |
+| clair de lune | Veillée aux chandelles | Candlelight | fait (étape 5 : réglage « chandelles », la chandelle sur la carte de la Table, éteinte à la mort ; angoissante, réglage « chandellesAngoissantes » : chaque loup souffle la sienne, plus d'une éteinte = pas de victime, annoncé au matin) |
+| communauté des hameaux | Les Hameaux | The Hamlets | **pas fait** : proposition chiffrée plus bas (« Les Hameaux : proposition »), à décider |
+| « c'est sûrement pas lui » | La Chaîne des innocents | Chain of Innocents | fait (étape 5 : réglage « chaineDesInnocents » ; le vote d'exécution devient la chaîne, du voisin de gauche du dernier éliminé ; sans réponse, le sort ; pas de Banc avec elle) |
+| murs-murs | Le Mur des murmures | Whispering Wall | fait (étape 5 : réglage « murDesMurmures » ; étape « mur » en fin de nuit, tous les vivants ; phrases gardées SANS auteur, lues au matin) |
+| double « je » (petite / grande complication) | Double visage | Two Faces | fait (étape 5 : réglage « doubleVisage » = "" / "petite" / "grande" ; 7 à 18 joueurs, second paquet dès 10 : 3 loups jusqu'à 13, 4 au-delà ; la seconde carte dans la fiche) |
+| fête de la moisson | Les Vendanges | Grape Harvest | fait (étape 5 : réglage « vendanges » ; un loup de plus ; les douze pouvoirs éméchés) |
+| peste noire | Peste noire | Black Plague | vérifié (étape 2 : identique ; guide : l'appel comme d'habitude) ; étape 5 : jouable au niveau « Le Pacte » ; exclut Double visage, Vendanges, Envoûtement |
+| fascination lycanthropique | L'Envoûtement | The Thrall | fait (étape 5 : réglage « envoutement » ; envoûtés secrets, pouvoirs perdus, chute des précédents, victoire de la meute à l'avant-dernier) |
 | nouvelle lune (36 événements) | La Gazette de la lune | Moon Gazette | cadre maintenant, cartes après les photos |
 
 ### Renommages de nos créations (conflits)
@@ -137,15 +137,110 @@ Socle à créer d'abord (servira à plusieurs rôles) :
 | 2 | Aligner les rôles existants (Loup affamé, Louve mère, Liseuse, Herboriste, Braconnière, Enfant de la brume, Garde du pont, Entremetteuse, Bailli, Peste noire) | fait, avec nos créations corrigées (Sonneur : pouvoir de jour ; Loup déguisé : le masque tombe ; Revenant : la partie s'arrête ; garde du Garde du pont contre la meute seulement, d'où le harpon et la noyade arrêtés par la seule Gardienne) ; reste au moteur MJ IA (étape 8) : Herboriste et proies de la nuit (`api.proiesDeLaNuit`), nom du Montreur de marmotte, consigne du Sonneur |
 | 3 | Nouveaux rôles : villageois, puis ambigus, puis solitaires, puis Loup pâle | fait : 3a (les onze rôles du Village, `logique/pacte.mjs`) et 3b (les cinq ambigus, les trois solitaires du livre et le Loup pâle, `logique/ambigus.mjs`) ; poids provisoires (Mâtin -1, Enfant des bois 0, Feu follet 0 pour garder le générateur à ±2), hors compositions prêtes et petite tablée ; reste au moteur MJ IA (étape 8) : voir plus bas |
 | 4 | Personnalités du village, Chemineaux, Incendiaire (la variante « Le Village ») | fait : `logique/personnalites.mjs` (état public `etat.village`, tenures du socle), réglage « leVillage » et case de la Table de jeu, encart « Le Village » (le narrateur change la proposition avant la première nuit), personnalités sur les cartes de la Table et les fiches ; Incendiaire (poids provisoire +2, `equilibre.village`), hors petite tablée et compositions prêtes ; guides fr et en (page « Le Village » des variantes et du guide du narrateur). Le Crieur public et la Liseuse d'étoiles passent à l'étape 9, avec les cartes ; reste au moteur MJ IA (étape 8) : voir plus bas |
-| 5 | Variantes du livre ; mode « Le Pacte » (composition fidèle au livre) ; ordre d'appel du livre | à faire |
+| 5 | Variantes du livre ; mode « Le Pacte » (composition fidèle au livre) ; ordre d'appel du livre | fait, sauf les Hameaux (proposition chiffrée ci-dessous, à décider) : `logique/variantes.mjs` (état public `etat.variantes`, secrets `etat.variantesSecret`), un réglage monde par variante (non par défaut) et ses cases à la préparation de la Table, recopiées à la distribution ; niveau `le-pacte` du générateur (`ROLES_DU_LIVRE`, ni bâtiment ni métier ; compositions prêtes `le-pacte-06` à `-18`), proposé d'abord par la Table ; ordres de nuit du livre (Entremetteuse 3, Liseuse 4, Pie 14, Enfant de la brume 41, Loup pâle 42, Louve mère 43, Loup affamé 44…), page « Mener la nuit » ; guides fr et en (« Le Pacte », « Les variantes du jeu de soirée ») ; reste au moteur MJ IA (étape 8) : voir plus bas |
 | 6 | Simulateur (`essais/outils/simuler-veillees.mjs`), politiques par effet pour les joueurs simulés et les compagnons, calibration des poids par régression, cibles par taille ; compositions prêtes passées au générateur | à faire |
 | 7 | Anglais (dictionnaires, guides retraduits), jetons, carte (repères des bâtiments), guides du joueur et du narrateur | à faire |
 | 8 | Publication (système, module, moteur si les compagnons changent), déploiement LaKour, essai en vrai | à faire |
 | 9 | Cartes Événement et Spiritisme : mécaniques consignées dans `gazette-de-la-lune.md` (photos reçues le 6 nov.) ; traits visibles des personnages ; le Crieur public (charge nommée par le Bailli, socle « charges ») et la Liseuse d'étoiles (Spiritisme), venus de l'étape 4 | à faire après l'étape 4 |
 | 10 | Webcam (après les rôles) : réglage MJ « caméras permises » dans le moteur commun (tous les modules) ; aux Veillées, image de remplacement quand il le faut (nuit, morts, comme la coupure du micro de `salons.mjs` / `activite.mjs`) : logo de loup-garou fait sur ComfyStudio | à faire |
 | 11 | Musiques ComfyStudio pour les modules et mondes (version interne) | après le reste |
+| 12 | Hameaux (décision de Jordan, 6 nov.) : les DEUX options, après la publication : d'abord B (un monde Foundry par hameau, relais entre mondes : ce qui suffit à Jordan), puis A (plusieurs hameaux dans un même monde : pour la communauté). Conception chiffrée plus haut. | après la publication |
 
 Chaque étape : essais verts (`npm run essais`), fabrication fr et en, un commit par étape.
+
+## Étape 5 : choix tranchés et adaptations
+
+- **Ordre d'appel** : les rôles du livre suivent l'ordre résumé plus haut (première nuit, chaque nuit). Les étapes du livre sans réveil
+  propre restent où le système les mène : les amoureux apprennent leur lien au carnet ; le signe du Greffier bègue est un pouvoir de jour
+  secret ; les oies grognent au matin ; la Fournière n'a pas d'étape (le système lui souffle ce qu'elle entrevoit). Nos créations sont à
+  côté du rôle qui leur ressemble ; la résolution de l'aube ne dépend pas des numéros (par effet).
+- **Mode « Le Pacte »** : niveau `le-pacte` (après le chaos dans `NIVEAUX`, la petite tablée reste la dernière ; la Table l'affiche en premier
+  et le présélectionne). Dosage du niveau classique (0 à 1 loup spécial, 0 à 1 solitaire), tous les rôles du livre quel que soit leur niveau,
+  `joueursMin` gardé ; ni bâtiments communaux ni métiers (le jeu de soirée n'en a pas). Générateur à ±2 vérifié (6 à 18 joueurs). Les
+  poids restent ceux posés à la main (étape 6).
+- **Veillée aux chandelles** : adaptation : la chandelle est sur la carte de chacun à la Table de jeu (allumée tant qu'il vit), et le chat
+  dit qu'elle s'éteint à chaque mort ; pas de lumière sur le jeton du plateau. Angoissante : un loup qui ne souffle rien n'éteint rien
+  (seules comptent les chandelles soufflées) ; une seule chandelle soufflée sur un joueur protégé ne s'annonce pas (la garde joue comme
+  d'habitude).
+- **Chaîne des innocents** : adaptation : au délai d'une désignation, le sort assied un debout (la chaîne ne s'arrête jamais) ; sans mort
+  encore (Feu follet), elle part du Bailli, sinon de la première place du cercle ; le Cabaretier immunisé n'est pas debout ; ni voix double,
+  ni plume, ni Souffre-douleur (pas de voix) ; un Innocent gracié désigne quand même (ce n'est pas un vote) ; pas de Banc.
+- **Mur des murmures** : une étape « mur » (ordre 95, après le Fossoyeur) réveille tous les vivants : une fenêtre d'écriture chacun
+  (120 caractères). Les phrases entrent au secret du MJ sans auteur et déjà mêlées ; l'étape est notée sans acteur ; au matin, le mur est
+  public (`etat.variantes.murmures`) et lu au chat.
+- **Double visage** : 7 à 18 joueurs ; au-delà de 9, un second paquet (les sept pouvoirs puis deux Villageois, dans cet ordre) et 3 loups
+  d'allégeance jusqu'à 13 joueurs, 4 au-delà. Petite complication : le rôle visible est retourné devant tous sans camp (révélation « rôle
+  seul »), l'allégeance fait le camp de la fiche. Grande complication : les cartes visibles et les allégeances mêlées, deux par joueur ; la
+  carte principale est le pouvoir passif s'il y en a un (Aïeul, Souffre-douleur, Braconnière), la seconde vit dans la fiche
+  (`fiche.seconde`) : elle se réveille à son ordre (comme une carte du Bateleur) et ses passifs jouent (Aïeul, Souffre-douleur,
+  Braconnière) ; deux fois la même carte n'en donne qu'une. La Liseuse lit les cartes secrètes (l'allégeance, ou les deux cartes).
+- **Vendanges** : un loup de plus (le générateur, ou un Villageois d'une composition prête remplacé ; jamais les rôles choisis à la main).
+  Meute : un voisin vivant d'un loup vivant (le Loup affamé aussi). Liseuse : le désigné et ses deux voisins, rôles mêlés. Braconnière : ses
+  deux voisins vivants. Enfant de la brume : elle voit l'Herboriste (son nom, ce qu'elle verse), sans risque. Chapardeur : échange au matin
+  avec le joueur désigné, sans centre. Bailli : il vote seul et d'abord, à découvert (les autres sont refusés jusqu'à son vote, au plus le
+  délai des choix). Souffre-douleur : à la place d'un voisin condamné (son geste « votants » suit). Herboriste : une fiole, une cible, le
+  sort au matin (quatre issues égales ; « guéri » ne sauve qu'une victime de la nuit ; « Villageois » donne le rôle simple et le camp du
+  Village). Entremetteuse : la première nuit, une étape « tromperie » (un des deux amants et un autre joueur) ; le trompé est l'autre amant ;
+  le trompeur et l'amant se lient, le trompé aime le trompeur sans l'entraîner ; aux votes, deux amants ne votent pas l'un contre l'autre,
+  sauf le trompeur contre le trompé. Garde : lui ou ses deux voisins. Joueur de vielle : un charmé par nuit.
+- **Envoûtement** : toute attaque de loup sur un non-loup envoûte au lieu de tuer (la garde, le remède, la porte l'empêchent comme une mort ;
+  l'Aïeul perd d'abord sa vie de réserve) ; la carte de l'envoûté reste (même nom), sans pouvoir (ni réveil, ni effet, ni seconde carte, ni
+  pouvoir de jour) ; condamné par le village (cause « vote »), il entraîne les envoûtés d'avant lui (cause publique « envoute ») ; la meute
+  gagne quand il reste au plus un vivant hors de la meute qui ne soit pas envoûté (la parité ordinaire vaut toujours).
+- **Exclusions** : aucune variante dans une Nuit de la Saint-Martin ; ni Double visage, ni Vendanges, ni Envoûtement à la petite tablée ou
+  dans une peste noire (et elles empêchent le tirage d'une peste) ; une peste choisie les écarte.
+
+## Étape 5 : deux ajouts demandés par Jordan (faits)
+
+- **Partie simple, sans bâtiments ni métiers** : réglage monde « batimentsDuVillage » (`hasard` par défaut, comme avant ; `aucun` ; `choisis`,
+  liste dans le réglage caché « batimentsChoisis ») et réglage « metiersEnJeu » (oui par défaut) ; à la préparation de la Table, une ligne
+  « Bâtiments du village : aucun / tirés au hasard / choisis » (cases des dix bâtiments quand ils sont choisis) et une case « Métiers ».
+  `nouvellePartie({ batiments: "aucun" | "hasard" | [cle], metiers })` les applique à toute composition (générée, prête, choisie à la main)
+  et les retient ; `api.logique.composer` (le générateur du MJ IA) suit le réglage des bâtiments. Sans bâtiment, `etat.batimentsCles` est vide :
+  aucun effet de bâtiment, les repères de la carte restent des décors. Le Pacte n'en tire aucun (« choisis » en ajoute) et ne distribue
+  jamais de métier ; Le Village (personnalités) reste une case à part : Le Pacte sans Le Village se joue donc sans aucun bâtiment.
+- **Explication à la distribution** : chaque joueur HUMAIN reçoit, à son seul carnet secret (qui s'ouvre aussitôt et se rouvre par
+  « Carnet secret » ou le rôle du bandeau), une entrée « Comment jouer : <son rôle> » : ce que fait son rôle (sa description), quand le
+  narrateur l'appelle (d'après ses réglages de nuit) et ce qu'il lui demandera (l'invite), ses usages, comment il gagne (son texte de
+  victoire, sinon celle de son camp), sa seconde carte (Double visage), son métier (description, pouvoir de jour) et sa personnalité (Le
+  Village). Textes des objets du contenu installé (français ou anglais), libellés du système (`LAKOUR_LOUPS.Explication`). Les compagnons IA
+  n'en reçoivent pas. Non-fuite : le crible vérifie qu'une explication ne parle que du rôle de son destinataire (mutation : envoyée à un autre).
+
+## Les Hameaux : proposition (non faite, à décider)
+
+Sur table : plusieurs villages complets en même temps, chacun son meneur et ses loups ; un joueur quitte son village (sauf la nuit, ou juste
+désigné par le vote) avec sa carte secrète et demande à entrer ailleurs (le meneur l'autorise ; un plafond de départs par village) ; des
+personnages identiques peuvent coexister ; des loups qui désertent un village le font gagner à ses villageois.
+
+**Pourquoi pas maintenant** : un monde de Foundry ne porte qu'UNE partie. L'état (réglage monde `lakour-loups.partie`, secrets du MJ actif,
+coffre) est unique ; `tousLesVillageois()` et `villageoisAPlat()` rendent tout le village ; la phase, la nuit, le vote, le Bailli, le cercle, le
+Registre, les salons vocaux, le plateau et la Table de jeu supposent une seule veillée ; un seul MJ actif écrit. Il n'existe pas de découpage
+« sans refondre l'état ».
+
+**Option A — des hameaux dans un même monde** (la plus fidèle) :
+- état : `etat.hameaux = { cle: <état d'une partie> }` et secrets rangés par hameau (`etat.mjs` séparer/fusionner, `secrets.mjs`,
+  `coffre.mjs` : environ 300 lignes) ; un champ public `system.hameau` par villageois ;
+- API (`scripts/api.mjs`, 3 900 lignes) : un hameau courant pour chaque fonction qui lit ou écrit (environ 120 fonctions),
+  `tousLesVillageois` filtré par hameau, socket et hooks portant le hameau, nouvelles fonctions (`quitterLeHameau`, `demanderAEntrer`,
+  `accueillirDansLeHameau` : la fiche secrète suit le joueur), victoire « les loups ont déserté » : environ 1 500 lignes changées ;
+- la logique pure (`logique/*.mjs`) reçoit déjà un état et des villageois : presque rien à changer, sauf la victoire par désertion et le
+  plafond de départs (environ 150 lignes) ;
+- Table de jeu (un onglet par hameau pour le MJ, son hameau pour le joueur), salons vocaux (par hameau), plateau (une scène, ou une zone,
+  par hameau) : environ 800 lignes ;
+- plusieurs meneurs : Foundry n'a qu'un MJ actif qui écrit ; les autres meneurs passeraient par lui (demandes de socket « meneur »), ou
+  tous les hameaux seraient menés par le même MJ (humain, ou un narrateur IA par hameau dans le moteur : environ 800 lignes de plus dans
+  `lakour-mj-ia`) ;
+- essais : environ 1 500 lignes (les essais actuels gardés sur un hameau par défaut).
+- **Coût estimé** : 5 000 à 6 000 lignes touchées, 8 à 12 jours de travail d'agent, risque de régression élevé (tout le système passe par
+  l'état) ; à placer après l'étape 6 (simulateur), qui le testerait mieux.
+
+**Option B — un monde Foundry par hameau** : un serveur Foundry par monde (une licence chacun) et un relais entre mondes pour le passage
+d'un joueur (sa fiche secrète chiffrée d'un coffre à l'autre, l'accord du meneur d'arrivée, le plafond de départs) : un service sur le serveur
+LaKour, deux API (`exporterLeJoueur`, `importerLeJoueur`), la victoire par désertion annoncée d'un monde à l'autre. Coût : 2 000 à 3 000 lignes
+(service, API, Table), mais une infrastructure de plus à tenir, et les joueurs changent de monde (reconnexion) à chaque passage.
+
+**Sans rien coder** (pis-aller) : plusieurs mondes LaKour ouverts en même temps, chacun sa veillée ; un joueur qui « change de village »
+quitte sa veillée (« Quitter la veillée ») et entre dans l'autre comme gens de passage — sans garder sa carte (ce n'est pas la règle du livre).
 
 ## À faire dans le moteur commun (`lakour-mj-ia`, étape 8)
 
@@ -228,3 +323,31 @@ sans ces changements (la variante se règle par le monde : réglage « leVillage
   public.
 - Contexte du narrateur et des compagnons : l'état public `api.village()` (personnalités, Chemineaux, bâtiments brûlés, privés de vote du
   Régent, graciés du Hobereau) et le hook public `lakourLoups.village` (`{ quoi, acteurId?, ids?, cle? }`).
+
+Relevé à l'étape 5 (le mode « Le Pacte », les variantes, l'ordre d'appel ; lignes de `scripts/outils.js` et `scripts/compagnons-jeu.js` au
+6 novembre) — rien ne casse sans ces changements (les variantes se règlent par le monde ; les demandes nouvelles ont un délai, avec le sort
+ou « passer » en repli), mais le MJ IA les mène mal :
+- `loups_composer` (outils.js l. 1306-1340) : accepter le niveau `le-pacte` (le générateur du système le connaît : `api.contenu().niveaux`) et
+  passer `loupsEnPlus: 1` aux Vendanges ; `loups_distribuer` / `loups_rejouer` (l. 1341-1490) : un paramètre `variantes` pour `distribuer` /
+  `nouvellePartie` (sinon les réglages monde décident, ce qui suffit), et rendre au narrateur `résumé.variantes` (publiques, à annoncer) ;
+  Double visage : laisser `nouvellePartie` faire la composition (ne pas passer de `roles`).
+- `loups_nuit` (l. 1494-1582) : passer par `api.reveiller(roleCle)` pour les étapes nouvelles — « mur » (tous les vivants écrivent ; ne
+  JAMAIS noter ces phrases avec `noterAction` ni les garder avec leur auteur), « tromperie » (deux cibles : un des deux amants et un autre
+  joueur ; invite `Variantes.Vendanges.InviteTromperie`), les étapes `seconde: true` (la seconde carte de Double visage : `roleLoups` ne la
+  connaît pas) et le Chapardeur des Vendanges (candidats : des joueurs, `candidatsDeNuit`) ; à la meute, garder `demanderActionMeute` (la
+  Veillée aux chandelles angoissante y compte les chandelles : ne pas recompter à la majorité). Les candidats des Vendanges (meute, Garde)
+  viennent déjà de `candidatsDeNuit`.
+- `loups_vote` (l. 1620-1734) : avec la Chaîne des innocents (`api.etat().vote.chaine`), `ouvrirVote` lance la chaîne et `cloreVote` l'attend :
+  ne pas faire voter, ne pas proposer de revote ; dire au narrateur de raconter chaque innocent qui s'assied (chat) ; aux Vendanges, le
+  Bailli vote d'abord (`vote.bailliDabord`, son vote annoncé) : laisser au minuteur le temps de son délai.
+- `loups_eliminer` (l. 1896-1926) : `eliminer` peut rendre plusieurs morts (le triangle des Vendanges, la chute des envoûtés) : les raconter
+  toutes ; la chandelle qui s'éteint est déjà au chat.
+- `compagnons-jeu.js` (`sujetDemandeLoups`, l. 364) : deux demandes nouvelles — `objet: "chaine"` (désigner un debout dont on garantit
+  l'innocence ; un loup peut blanchir un loup) et le mode « texte » du mur (une courte phrase anonyme, sans se nommer, autre chose que le mot
+  du Messager : l'invite `Variantes.Mur.Invite` les distingue) ; un compagnon envoûté (sa fiche : rôle sans effet) ne doit plus se croire
+  armé ; aux Vendanges, un compagnon amoureux ne reçoit plus son amant dans ses candidats de vote (le système filtre déjà).
+- Contexte du narrateur et des compagnons : l'état public `api.etat().variantes` (les variantes en jeu, la chaîne du vote ouvert, le mur du
+  matin, les chandelles d'une meute en désaccord) et le hook public `lakourLoups.variante` (`{ quoi, tour?, ids?, acteurId? }`) ; les secrets
+  `variantesSecret` (envoûtés, triangle, cartes de Double visage) sont au MJ : ne jamais les raconter.
+- L'ordre de réveil a changé : les consignes du narrateur qui citent un ordre (la Liseuse en fin de nuit, la Pie après la chasse, l'Enfant
+  de la brume avant la meute) sont à revoir ; `api.ordreDeNuit()` reste la référence.

@@ -39,7 +39,8 @@
       "contamine": "victime de la vieille épée",
       "sagesse": "emporté avec la sagesse de l'Aïeul",
       "rasoir": "victime du rasoir du Perruquier",
-      "incendie": "victime de l'incendie"
+      "incendie": "victime de l'incendie",
+      "envoute": "emporté avec une victime envoûtée"
     },
     "Effets": {
       "aucun": "aucun (arbitré par le narrateur)",
@@ -79,7 +80,8 @@
       "devouement": "peut prendre la carte d'un condamné avant qu'elle soit retournée",
       "charmer": "charme deux joueurs par nuit",
       "trahir": "une nuit sur deux, peut dévorer un loup",
-      "incendier": "une fois par partie, met le feu à un bâtiment du village (Le Village)"
+      "incendier": "une fois par partie, met le feu à un bâtiment du village (Le Village)",
+      "tromperie": "l'Entremetteuse ajoute un amant (les Vendanges)"
     },
     "Victoires": {
       "aucune": "aucune (selon le texte)",
@@ -345,7 +347,24 @@
       "Incendie": "Le bâtiment de {nom} brûle cette nuit.",
       "IncendieProie": "{nom} était la proie de la nuit : la meute n'a pas de victime.",
       "Cabaret": "{nom}, le Cabaretier, ne peut pas être dévoré : la meute repart bredouille.",
-      "Carbonise": "{nom}, le premier loup à la droite de {proie}, est pris dans les flammes."
+      "Carbonise": "{nom}, le premier loup à la droite de {proie}, est pris dans les flammes.",
+      "AmourDouble": "Une seconde flèche vous lie aussi à {nom}.",
+      "Triangle": "{qui} aime aussi {nom} : {trompe} est trompé.",
+      "EpierSansHerboriste": "Aucune herboriste ne veille cette nuit.",
+      "EpierHerboriste": "Vous voyez {nom} déboucher une fiole, pour {noms}.",
+      "EpierHerboristeRien": "Vous voyez {nom} garder ses fioles cette nuit.",
+      "FioleVersee": "Vous avez versé votre unique fiole à {nom}.",
+      "Fiole": {
+        "gueri": "La fiole de {qui} sur {nom} : le sort dit « guéri ».",
+        "villageois": "La fiole de {qui} sur {nom} : le sort dit « guéri, et simple villageois ».",
+        "loup": "La fiole de {qui} sur {nom} : le sort dit « guéri, et devenu loup ».",
+        "mort": "La fiole de {qui} sur {nom} : le sort dit « mort »."
+      },
+      "FioleVillageois": "Une fiole inconnue vous a guéri de tout, même de votre pouvoir : vous voilà simple villageois.",
+      "FioleLoup": "Une fiole inconnue a réveillé la bête en vous : vous rejoignez la meute, en secret.",
+      "Envoute": "Des yeux jaunes vous ont fixé dans la nuit : vous êtes envoûté. Vos pouvoirs vous ont quitté ; vous seul le savez.",
+      "EnvouteMj": "{nom} est envoûté par la meute.",
+      "VoirRoleVendanges": "Les cendres se brouillent : chez {noms}, on lit {roles}, dans le désordre."
     },
     "Messages": {
       "Mort": "{nom} n’est plus : {cause}.",
@@ -460,6 +479,42 @@
       "LeVillage": {
         "Nom": "Le Village (variante)",
         "Aide": "Des personnalités (Prieur, Cabaretier, Métayers…) tiennent les bâtiments du village : un pouvoir public en plus de leur rôle secret ; les autres joueurs sont des Chemineaux. Retenu d'une partie à l'autre (la case « Le Village » de la Table de jeu le change)."
+      },
+      "Chandelles": {
+        "Nom": "Veillée aux chandelles (variante)",
+        "Aide": "Une chandelle devant chaque joueur, sur sa carte de la Table de jeu : soufflée à sa mort (la victime de la meute au matin, le condamné après le vote). Retenu d'une partie à l'autre (les cases « Variantes » de la Table de jeu le changent)."
+      },
+      "ChandellesAngoissantes": {
+        "Nom": "Veillée aux chandelles : version angoissante",
+        "Aide": "Avec les chandelles : chaque loup souffle lui-même une chandelle la nuit ; s'ils n'ont pas tous soufflé la même, la meute n'a pas de victime, et le village voit au matin les chandelles éteintes."
+      },
+      "ChaineDesInnocents": {
+        "Nom": "La Chaîne des innocents (variante)",
+        "Aide": "Le condamné du jour n'est pas voté : debout, chacun à son tour assied un villageois dont il garantit l'innocence, en partant du voisin de gauche du dernier éliminé ; le dernier debout est condamné. Pas de Banc des accusés avec elle."
+      },
+      "MurDesMurmures": {
+        "Nom": "Le Mur des murmures (variante)",
+        "Aide": "Chaque nuit, chaque vivant peut écrire une courte phrase anonyme ; au matin, le mur est lu à tous, phrases mêlées. Les auteurs ne sont jamais connus, pas même du narrateur."
+      },
+      "DoubleVisage": {
+        "Nom": "Double visage (variante)",
+        "Aide": "Petite complication : un rôle visible pour chacun, et une carte d'allégeance secrète qui fait son camp. Grande complication : deux cartes secrètes par joueur. De 7 à 18 joueurs ; ni à la petite tablée, ni avec la peste noire."
+      },
+      "Vendanges": {
+        "Nom": "Les Vendanges (variante)",
+        "Aide": "Un loup de plus, et tous les pouvoirs éméchés jusqu'à la fin de la veillée (voir les règles des variantes). Ni à la petite tablée, ni avec la peste noire."
+      },
+      "Envoutement": {
+        "Nom": "L'Envoûtement (variante)",
+        "Aide": "Les victimes de la meute ne meurent pas : elles perdent leurs pouvoirs et restent envoûtées, en secret. Une envoûtée condamnée entraîne celles d'avant elle ; la meute gagne quand elle a envoûté l'avant-dernier villageois. Ni à la petite tablée, ni avec la peste noire."
+      },
+      "BatimentsDuVillage": {
+        "Nom": "Bâtiments du village",
+        "Aide": "Aucun (une partie simple, avec les seuls personnages), tirés au hasard par la composition (comme avant), ou choisis par le MJ à la Table de jeu. La Table retient le dernier choix."
+      },
+      "MetiersEnJeu": {
+        "Nom": "Métiers",
+        "Aide": "Chaque joueur reçoit un métier public en plus de son rôle. Décoché : une partie sans métiers. Au niveau « Le Pacte », jamais de métier."
       }
     },
     "Erreurs": {
@@ -703,7 +758,8 @@
         "emporter": "{nom} désigne qui il emporte (ou personne).",
         "sansSecrets": "Ce navigateur n'a pas les secrets de la nuit.",
         "bancVide": "(Personne n'est accusé : attendez les accusations du débat, ou laissez tomber la nuit.)",
-        "emporterDemande": "{nom} choisit en ce moment qui il emporte ; vous pouvez trancher à sa place."
+        "emporterDemande": "{nom} choisit en ce moment qui il emporte ; vous pouvez trancher à sa place.",
+        "chaine": "La Chaîne des innocents : à {nom} de désigner un innocent ; la clôture attend le dernier debout."
       },
       "LaPeste": "la peste",
       "bailli": "Élire le Bailli",
@@ -711,7 +767,8 @@
       "succession": "En attente : {nom}, Bailli défunt, remet le sceau…",
       "LeDeuil": "la meute en deuil",
       "juger": "Juger l'accusé : {nom}",
-      "LesCharmes": "les charmés"
+      "LesCharmes": "les charmés",
+      "LeMur": "le Mur des murmures (tous les vivants)"
     },
     "Preparation": {
       "Titre": "Préparer la partie",
@@ -728,7 +785,8 @@
         "debutants": "Débutants",
         "classique": "Classique",
         "chaos": "Chaos",
-        "petite-tablee": "Petite tablée (peu d'humains, des joueurs IA)"
+        "petite-tablee": "Petite tablée (peu d'humains, des joueurs IA)",
+        "le-pacte": "Le Pacte (les rôles du jeu de soirée)"
       },
       "Equilibre": {
         "equilibree": "Équilibrée ({somme})",
@@ -749,7 +807,16 @@
         "Micro": "Donner le micro aux joueurs",
         "MicroAide": "Accorde « Diffuser l'audio » au rôle Joueur (par défaut, seuls les joueurs de confiance l'ont).",
         "MicroDonne": "Les joueurs peuvent maintenant diffuser leur micro."
-      }
+      },
+      "Batiments": {
+        "Titre": "Bâtiments du village",
+        "aucun": "Aucun (partie simple)",
+        "hasard": "Tirés au hasard",
+        "choisis": "Choisis",
+        "Aide": "Aucun : une partie simple, avec les seuls personnages (rien ne dépend des bâtiments, les repères de la carte restent inertes). Tirés : ceux de la composition. Choisis : cochez ceux de la veillée."
+      },
+      "Metiers": "Métiers",
+      "MetiersAide": "Décochez pour une partie sans métiers (chacun n'a que son rôle)."
     },
     "Recit": {
       "Titre": "Le récit de la veillée",
@@ -935,6 +1002,14 @@
         "perruquier": "Tour {tour} — {nom}, le Perruquier, frappe {noms}.",
         "grace": "Tour {tour} — {nom}, le Hobereau, gracie {noms}.",
         "cabaret": "Tour {tour} — {nom}, le Cabaretier, perd son immunité."
+      },
+      "Chaine": "Chaîne des innocents : {chaine} ; resté debout : {nom}.",
+      "ChaineSort": "{nom} (le sort)",
+      "Variante": {
+        "distribution": "Tour {tour} : les variantes de la veillée sont annoncées.",
+        "chandelles": "Nuit {tour} : les chandelles de {noms} se sont éteintes ensemble ; la meute n'a pas eu de victime.",
+        "envoutement": "Jour {tour} : {nom}, condamné, était envoûté ; {noms} tombent avec lui.",
+        "bailli": "Jour {tour} : le Bailli {nom} vote le premier, à découvert ({noms})."
       }
     },
     "Masques": {
@@ -1339,6 +1414,96 @@
       "Detruits": "Brûlés : {noms}",
       "Epuise": "pouvoir servi",
       "Prives": "Privés de vote aujourd'hui : {noms}"
+    },
+    "Variantes": {
+      "Titre": "Variantes",
+      "PreparationAide": "Les variantes du jeu de soirée : chacune est une règle publique de la veillée, annoncée à la distribution, et retenue pour la suivante.",
+      "Annonce": "Variantes de cette veillée : {noms}.",
+      "EnJeu": "Variantes : {noms}",
+      "Chandelles": {
+        "Nom": "Veillée aux chandelles",
+        "Angoissante": "angoissante",
+        "Aide": "Une chandelle par joueur, soufflée à sa mort.",
+        "AngoissanteAide": "Chaque loup souffle sa chandelle ; plus d'une éteinte : pas de victime.",
+        "Ratees": "Ce matin, les chandelles de {noms} se sont éteintes ensemble : la meute n'a pas eu de victime. On les rallume.",
+        "Eteinte": "La chandelle de {nom} s'éteint.",
+        "Allumee": "Sa chandelle brûle encore.",
+        "Soufflee": "Sa chandelle est soufflée."
+      },
+      "Chaine": {
+        "Nom": "La Chaîne des innocents",
+        "Aide": "Le vote d'exécution se fait par la chaîne : chacun assied un innocent ; le dernier debout est condamné.",
+        "Invite": "La Chaîne des innocents : désigne un villageois encore debout dont tu garantis l'innocence ; il s'assied.",
+        "Ouverture": "La Chaîne des innocents : tout le village se lève. {nom}, à la gauche du dernier éliminé, désigne le premier innocent.",
+        "Assis": "{qui} garantit l'innocence de {nom}, qui s'assied.",
+        "Sort": "{qui} n'a désigné personne : le sort assied {nom}.",
+        "Debout": "{nom} reste seul debout : le village le condamne.",
+        "PasDeVote": "La Chaîne des innocents : pas de vote aujourd'hui, la chaîne désigne le condamné.",
+        "Debouts": "Debout : {noms}",
+        "Designateur": "À {nom} de désigner un innocent."
+      },
+      "Mur": {
+        "Nom": "Le Mur des murmures",
+        "Aide": "Chaque nuit, une phrase anonyme par vivant ; le mur est lu au matin.",
+        "Invite": "Le Mur des murmures : écris une courte phrase, sans ton nom, ou passe.",
+        "Matin": "Sur le Mur des murmures, ce matin : {textes}",
+        "Muet": "Le Mur des murmures est resté muet cette nuit."
+      },
+      "DoubleVisage": {
+        "Nom": "Double visage",
+        "Aucune": "Non",
+        "petite": "petite complication",
+        "grande": "grande complication",
+        "Aide": "Un rôle visible et une allégeance secrète (petite complication), ou deux cartes secrètes (grande).",
+        "Composition": "Double visage ({mode}) — {n} joueurs",
+        "Visible": "Double visage : {nom} montre son rôle visible, {role}.",
+        "CarnetPetite": "Double visage : votre carte d'allégeance est « {allegeance} » ; vous êtes du camp {camp}. Votre rôle visible garde son pouvoir.",
+        "CarnetGrande": "Double visage : vos deux cartes secrètes sont {cartes} ; vous êtes du camp {camp}.",
+        "Seconde": "{nom} avait aussi la carte {role}."
+      },
+      "Vendanges": {
+        "Nom": "Les Vendanges",
+        "Aide": "Un loup de plus, et tous les pouvoirs éméchés.",
+        "InviteTromperie": "Les Vendanges : désigne l'un de tes deux amants et un autre joueur, qui s'aimeront aussi, ou passe.",
+        "BailliDabord": "Les Vendanges : {nom}, le Bailli, vote seul et le premier ; les autres attendent son vote.",
+        "BailliVote": "Le Bailli {nom} a voté le premier : contre {cible}.",
+        "BailliPasse": "Le Bailli {nom} n'a voté contre personne.",
+        "AttendreLeBailli": "Les Vendanges : le Bailli vote d'abord ; attendez son vote.",
+        "Amour": "Les Vendanges : votre amour vous interdit de voter contre ce joueur.",
+        "Bouc": "{nom}, le Souffre-douleur, meurt à la place de son voisin {voisin}.",
+        "Triangle": "Les Vendanges : {qui} aime aussi {nom} ; {trompe} est trompé."
+      },
+      "Envoutement": {
+        "Nom": "L'Envoûtement",
+        "Aide": "Les victimes de la meute sont envoûtées, en secret, au lieu de mourir.",
+        "Journal": "Envoûtés cette nuit : {noms}.",
+        "Chute": "{nom} était envoûté : {noms} tombent avec lui.",
+        "Refus": "Vous êtes envoûté : vos pouvoirs vous ont quitté."
+      }
+    },
+    "Explication": {
+      "Titre": "Comment jouer : {role}",
+      "Role": "Votre rôle : {role}",
+      "QuandTitre": "Quand le narrateur vous appelle :",
+      "Quand": {
+        "jamais": "jamais la nuit : votre pouvoir joue de jour, à votre mort, ou de lui-même.",
+        "meute": "chaque nuit, avec toute la meute, pour choisir ensemble la victime.",
+        "premiere": "la première nuit seulement.",
+        "uneSurDeux": "une nuit sur deux (la deuxième, la quatrième…).",
+        "impaires": "la première nuit, puis une nuit sur deux (la troisième, la cinquième…).",
+        "tantQue": "chaque nuit, tant qu'aucun loup n'est mort.",
+        "chaque": "chaque nuit."
+      },
+      "Question": "Ce qu'il vous demandera :",
+      "Usages": "Ce pouvoir sert {n} fois dans la partie.",
+      "VictoireTitre": "Comment vous gagnez :",
+      "VictoireVillage": "avec le Village, quand plus aucun loup ne vit.",
+      "VictoireMeute": "avec la meute, quand les loups sont aussi nombreux que tous les autres vivants.",
+      "Seconde": "Votre seconde carte : {role}",
+      "Metier": "Votre métier (connu de tous) : {metier}",
+      "Jour": "Votre pouvoir de jour :",
+      "Personnalite": "Votre personnalité (connue de tous) : {personnalite}",
+      "Relire": "Cette explication reste dans votre carnet secret : rouvrez-le à tout moment (bouton « Carnet secret » de la Table de jeu)."
     }
   }
 }

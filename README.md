@@ -171,9 +171,9 @@ Les loups se reconnaissent dès la première nuit et chassent ensemble ; certain
 | Rôle | Pouvoir |
 |---|---|
 | **Loup de Brumecombe** | Chaque nuit, avec la meute, choisit la victime. |
-| **Loup affamé** | Une nuit sur deux, tue seul une seconde victime. |
+| **Loup affamé** | Chaque nuit, tant qu'aucun loup n'est mort, tue seul une seconde victime. |
 | **Loup déguisé** | Apparaît comme villageois à toute vision ; perd son masque s'il survit à un vote qui l'a désigné. |
-| **Louve mère** | Une fois par partie, mord la victime au lieu de la tuer : elle rejoint la meute en secret. |
+| **Louve mère** | Une fois par partie, infecte la proie de la meute au lieu de la tuer : elle devient loup en secret. |
 | **Loup hurleur** | Chaque nuit, impose le silence à un joueur pour le débat du lendemain. |
 | **Loup flaireur** | Chaque nuit, flaire un joueur et apprend son camp. |
 | **Loup des roseaux** | Chaque nuit, guette une maison et apprend si son occupant a agi. |
@@ -184,15 +184,15 @@ Les loups se reconnaissent dès la première nuit et chassent ensemble ; certain
 |---|---|
 | **Villageois** | Aucun pouvoir, une voix. |
 | **Veilleuse de lanterne** | Éclaire une maison chaque nuit : un loup qui y entre est démasqué à l'aube. |
-| **Liseuse de cendres** | Chaque nuit, apprend le camp d'un joueur. |
-| **Herboriste** | Un remède (sauve la victime de la nuit) et un poison (tue), une fois chacun. |
-| **Garde du pont** | Protège un joueur par nuit, jamais deux fois de suite le même. |
-| **Sonneur** | Une fois par partie, sonne la cloche : le vote du jour désigne deux condamnés. |
+| **Liseuse de cendres** | Chaque nuit, apprend le rôle d'un joueur. |
+| **Herboriste** | Un remède (sauve la victime de la meute) et un poison (tue), une fois chacun, les deux la même nuit si elle veut. |
+| **Garde du pont** | Protège un joueur par nuit contre la meute, jamais deux fois de suite le même. |
+| **Sonneur** | Une fois par partie, de jour, sonne la cloche : le vote désigne deux condamnés. |
 | **Fossoyeur** | Chaque nuit, apprend le rôle exact d'un mort. |
 | **Braconnière** | Si elle meurt, elle emporte un joueur de son choix. |
 | **Conteuse** | Une fois par partie, impose deux minutes de débat sur un joueur, qui ne peut pas répondre. |
 | **Juge de paix** | Une fois par partie, annule un vote : le village revote. |
-| **Enfant de la brume** | Peut épier la meute la nuit, mais s'il est repéré, il devient la victime. |
+| **Enfant de la brume** | Peut épier la meute la nuit et apprendre le nom des loups ; surprise, c'est elle que la meute dévore. |
 | **Ermite** | Chaque nuit, apprend le nom d'un joueur qui a agi, sans savoir ce qu'il a fait. |
 | **Messager** | Chaque nuit, porte un message secret entre deux joueurs. |
 | **Entremetteuse** | Unit deux amants la première nuit, puis joue avec le village. |
@@ -216,7 +216,7 @@ Les loups se reconnaissent dès la première nuit et chassent ensemble ; certain
 ### Les gens de passage (3 rôles)
 
 Pour un joueur qui **arrive en cours de partie** : son rôle est public, son camp secret (tiré par le système), son pouvoir
-sert une fois, de jour. **Rémouleur** (affûte la serrure d'une maison), **Montreur d'ours** (couche son ours devant une porte),
+sert une fois, de jour. **Rémouleur** (affûte la serrure d'une maison), **Montreur de marmotte** (installe sa marmotte sur un seuil),
 **Pèlerine** (prie sur un seuil et apprend le camp). Le village peut l'exiler par un vote ; et tout joueur peut **quitter la
 veillée** sans mourir ni rien révéler.
 

@@ -64,7 +64,9 @@ test("ordres de nuit : meute groupée à 40, protections avant, réactions aprè
   assert.ok(o("enfant-de-la-brume") < ORDRE_MEUTE, "l'enfant se glisse dehors avant la chasse");
   assert.equal(Math.max(...actifs.map(r => r.system.nuit.ordre)), o("fossoyeur"));
   assert.ok(parCle("entremetteuse").system.nuit.premiereNuitSeulement);
-  assert.ok(parCle("loup-affame").system.nuit.uneNuitSurDeux);
+  assert.ok(parCle("loup-affame").system.nuit.tantQueMeuteEntiere && !parCle("loup-affame").system.nuit.uneNuitSurDeux, "le Loup affamé : chaque nuit, tant que la meute est entière");
+  assert.equal(parCle("herboriste").system.nuit.cibles, 2, "deux fioles la même nuit");
+  assert.equal(parCle("liseuse-de-cendres").system.effet, "voir-role", "la Liseuse lit le rôle");
   for (const r of actifs) assert.ok(r.system.nuit.invite.endsWith("?") || r.system.nuit.invite.endsWith("."), `${r.name} : invite`);
   // Les rôles de jour n'ont aucun réglage de nuit.
   for (const cle of ["sonneur", "juge-de-paix", "conteuse", "braconniere", "revenant", "villageois"]) assert.equal(parCle(cle).system.nuit.actif, false, cle);

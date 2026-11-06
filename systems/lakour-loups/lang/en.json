@@ -43,6 +43,7 @@
       "proteger": "protects the target tonight",
       "voir-camp": "learns the target's side",
       "voir-role-mort": "learns a dead player's role",
+      "voir-role": "learns a player's role",
       "eclairer": "unmasks the wolf entering the house",
       "silence": "silences for the next debate",
       "vote-double": "today's vote is double",
@@ -227,6 +228,7 @@
       "SoiMeme": "Can choose self",
       "PremiereNuit": "First night only",
       "UneNuitSurDeux": "Every other night (even nights)",
+      "TantQueMeuteEntiere": "Every night, as long as no wolf has died",
       "Invite": "Question asked to the player",
       "AideOrdre": "Lower order = wakes earlier. The pack wakes together at 40; a pack role set to 40 acts with it, at any other order it wakes separately."
     },
@@ -246,7 +248,7 @@
     "Nuit": {
       "Amour": "An arrow of mist binds you to {nom}: if one dies, the other follows.",
       "ProtectionRefusee": "You cannot protect {nom} two nights in a row.",
-      "EspionRepere": "{nom} was caught spying on the pack and becomes its victim.",
+      "EspionRepere": "{nom} was caught spying on the pack: the pack devours her instead.",
       "Epier": "Hidden in the mist, you hear the pack choose its prey: {nom}.",
       "MorsureEvitee": "The bite on {nom} was fended off.",
       "Mordu": "A bite in the night: you secretly join the pack.",
@@ -268,6 +270,10 @@
       "ANarrer": "To rule: {qui} ({effet}) → {cibles}.",
       "EpierRepere": "Yellow eyes turn toward you in the mist. You have been seen.",
       "EpierRien": "The pack prowls but agrees on no prey.",
+      "EpierLoups": "Hidden in the mist, you watch the pack go by: {noms}.",
+      "VoirRole": "The ashes speak: {nom} is « {role} », of the « {camp} » side.",
+      "FioleDeTrop": "You have only one vial of each kind: nothing is poured for {nom}.",
+      "AffameRassasie": "A wolf has died: {nom} no longer hunts alone.",
       "Poison": "{qui} poured poison for {nom}.",
       "Immunite": "The pack left {nom}'s house empty-handed.",
       "MemeCamp": "{a} and {b} are on the same side.",
@@ -340,7 +346,7 @@
       },
       "ChanceEpier": {
         "Nom": "Risk of being caught spying",
-        "Aide": "Probability (0 to 1) that a role spying on the pack is caught and becomes its victim."
+        "Aide": "Probability (0 to 1) that the Child of the Mist, when she spies on the pack, is caught and devoured instead of the prey (0.5 by default)."
       },
       "AnnoncesEnChat": {
         "Nom": "Chat announcements",
@@ -513,7 +519,9 @@
         "neige": "Snow covered the tracks: nothing to read this morning."
       },
       "Remouleur": "{qui} sharpens {nom}'s lock and knife: next night, the first wolf attack on that house will fail.",
-      "Ours": "{qui} lays the bear down at {nom}'s door: next night, the pack will not dare to enter.",
+      "Ours": "{qui} sets the marmot on {nom}'s doorstep: it will whistle at the slightest shadow, and next night the pack will not dare to enter.",
+      "ClocheVote": "{qui}, the Bell Ringer, pulls the rope: the bell rings, and this vote will condemn two.",
+      "ClocheJour": "{qui}, the Bell Ringer, pulls the rope: the bell rings, and the next vote will condemn two.",
       "Pelerine": "{qui} prays long on {nom}'s doorstep.",
       "PelerinePrive": "Your prayer was heard: {nom} belongs to the « {camp} » side.",
       "LavoirNeige": "The wash-house is frozen: people only talk about the snow, which covered everything."
@@ -745,6 +753,7 @@
       "EluCourt": "Bailiff elected:",
       "Personne": "Nobody is elected: the office of Bailiff stays vacant today.",
       "Departage": "A tie between {noms}: the Bailiff, {nom}, decides.",
+      "TrancheVoix": "A tie: the Bailiff, {nom}, had voted for {noms}; that vote breaks the tie.",
       "Tranche": "The Bailiff, {nom}, decides: {noms}.",
       "TranchePersonne": "The Bailiff, {nom}, did not decide: nobody is condemned.",
       "Tranchera": "A tie: the Bailiff ({nom}) decides…",
@@ -966,6 +975,10 @@
         "accuse": "This villager is already accused today.",
         "personne": "Nobody to judge: no accused waiting (or an execution already took place today)."
       }
+    },
+    "Deguise": {
+      "MasqueTombe": "{nom} was the most designated in a vote without being executed: their mask falls, visions now tell the truth about them.",
+      "Carnet": "Designated by the village without being executed, you have lost your mask: from now on, visions tell the truth about you."
     },
     "Deuil": {
       "Titre": "The mourning bell",

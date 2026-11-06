@@ -18,11 +18,13 @@ const MEUTE = [
   }),
   role({
     cle: "loup-affame", nom: "Loup affamé", camp: "meute", effet: "tuer",
-    resume: "une nuit sur deux, tue seul une seconde victime.",
+    resume: "chaque nuit, tant qu'aucun loup n'est mort, tue seul une seconde victime.",
     pouvoir: `Tu chasses avec la meute, mais ta faim ne s'apaise jamais.
 
-**Une nuit sur deux** (la deuxième, la quatrième…), après la chasse de la meute, tu te réveilles seul et tu choisis une **seconde victime**. Si tu es le dernier loup vivant, ta faim te pousse à chasser toutes les nuits.`,
-    nuit: { ordre: 42, cibles: 1, uneNuitSurDeux: true, invite: "Ta faim te ronge : quelle maison visites-tu seul cette nuit ?" }
+**Chaque nuit**, quand la meute s'est rendormie, tu te réveilles seul et tu choisis une **seconde victime** : une autre que la proie de la meute, et jamais un loup.
+
+Ta faim tient à la meute entière : **dès qu'un loup est mort** (un loup de toujours ou un mordu, de quelque façon qu'il soit tombé), elle s'éteint pour toujours, et tu ne chasses plus qu'avec les autres.`,
+    nuit: { ordre: 42, cibles: 1, tantQueMeuteEntiere: true, invite: "Ta faim te ronge : quelle autre maison visites-tu seul cette nuit ?" }
   }),
   role({
     cle: "loup-deguise", nom: "Loup déguisé", camp: "meute", effet: "tuer", apparence: "village",
@@ -36,13 +38,13 @@ Si tu es **le plus désigné d'un vote sans être exécuté** (égalité, vote a
   }),
   role({
     cle: "louve-mere", nom: "Louve mère", camp: "meute", effet: "mordre", usages: 1,
-    resume: "une fois par partie, mord la victime de la meute au lieu de la tuer : elle rejoint la meute en secret.",
+    resume: "une fois par partie, infecte la proie de la meute au lieu de la tuer : elle devient loup en secret.",
     pouvoir: `Tu as porté la meute avant qu'elle ait des noms.
 
-Tu chasses chaque nuit avec la meute. **Une fois par partie**, juste après le choix de la meute, tu peux décider de **mordre** la victime au lieu de la tuer : personne ne meurt cette nuit-là, et la victime rejoint la meute en secret. Elle garde son rôle et ses pouvoirs, mais joue désormais pour les loups ; le narrateur la prévient en secret et elle se réveille avec la meute dès la nuit suivante.
+Tu chasses chaque nuit avec la meute. **Une fois par partie**, juste après le choix de la meute, tu peux **infecter** sa proie au lieu qu'elle meure : la victime **ne meurt pas**, et devient en secret un **loup de la meute**. Le narrateur la prévient en secret ; dès la nuit suivante, elle se réveille avec la meute et chasse avec elle. Si elle avait un pouvoir de nuit, elle le garde : le narrateur l'appelle encore pour lui, et elle s'en sert désormais pour les loups.
 
-Une victime protégée ne peut pas être mordue.`,
-    nuit: { ordre: 41, cibles: 1, invite: "La meute a choisi sa proie. Désigne-la pour la mordre au lieu de la tuer, ou passe." }
+La garde du Garde du pont n'arrête pas ta morsure : elle protège de la mort, pas de toi. Une porte fermée à la meute (l'asile de la Chapelle, la clé de la Gardienne, le verrou du Forgeron), si. Une infection n'est pas une mort : cette nuit-là, il n'y a personne à sauver.`,
+    nuit: { ordre: 41, cibles: 1, invite: "La meute a choisi sa proie. Désigne-la pour l'infecter au lieu de la tuer, ou passe." }
   }),
   role({
     cle: "loup-hurleur", nom: "Loup hurleur", camp: "meute", effet: "silence",
@@ -91,39 +93,41 @@ const VILLAGE = [
     nuit: { ordre: 25, cibles: 1, soiMeme: true, invite: "Quelle maison éclaires-tu cette nuit ?" }
   }),
   role({
-    cle: "liseuse-de-cendres", nom: "Liseuse de cendres", camp: "village", effet: "voir-camp",
-    resume: "chaque nuit, apprend le camp d'un joueur.",
+    cle: "liseuse-de-cendres", nom: "Liseuse de cendres", camp: "village", effet: "voir-role",
+    resume: "chaque nuit, apprend le rôle d'un joueur.",
     pouvoir: `Tu lis l'avenir dans la cendre froide de l'âtre.
 
-**Chaque nuit**, tu désignes un joueur et le narrateur te dit en secret son **camp** : Village, Meute ou Solitaire. Pas son rôle. À toi de choisir quand dire ce que tu sais, et à qui.`,
+**Chaque nuit**, tu désignes un joueur et le narrateur te dit en secret **son rôle** : la carte qu'il a reçue, et le camp de cette carte (Village, Meute ou Solitaire). À toi de choisir quand dire ce que tu sais, et à qui.
+
+Certains trompent les cendres : le Loup déguisé t'apparaît en simple Villageois, le Louvetier en Loup de Brumecombe.`,
     nuit: { ordre: 60, cibles: 1, invite: "Dans quelles cendres lis-tu cette nuit ?" }
   }),
   role({
     cle: "herboriste", nom: "Herboriste", camp: "village", effet: "remede", usages: 2,
-    resume: "un remède (sauve la victime de la nuit) et un poison (tue), une fois chacun.",
+    resume: "un remède (sauve la victime de la meute) et un poison (tue), une fois chacun, les deux la même nuit si elle veut.",
     pouvoir: `Tes fioles dorment dans la paille, une verte et une noire.
 
-Chaque nuit, après la chasse, le narrateur te dit qui la meute a attaqué. Tu désignes alors un joueur :
-- **la victime de la nuit** : tu lui verses ton **remède**, elle survit (une fois par partie) ;
-- **n'importe qui d'autre** : tu verses ton **poison** dans son verre, il meurt à l'aube (une fois par partie).
+Chaque nuit, après la chasse, le narrateur te dit qui la meute a attaqué. Tu peux alors :
+- verser ton **remède** à la victime : elle survit (une fois par partie) ;
+- verser ton **poison** dans le verre de n'importe qui d'autre : il meurt à l'aube (une fois par partie).
 
-Une seule fiole par nuit. Si la victime, c'est toi, tu peux te sauver toi-même. Passe pour garder tes fioles.`,
-    nuit: { ordre: 50, cibles: 1, soiMeme: true, invite: "Désigne la victime pour la sauver, quelqu'un d'autre pour l'empoisonner, ou passe." }
+Tu peux te servir des **deux fioles la même nuit** : désigne la victime et celui que tu empoisonnes. Si la victime, c'est toi, tu peux te sauver toi-même. Le remède sauve de la meute, pas du feu ; et quand la Louve mère infecte sa proie au lieu de la tuer, personne ne meurt : le narrateur n'a pas de victime à te nommer. Passe pour garder tes fioles.`,
+    nuit: { ordre: 50, cibles: 2, soiMeme: true, invite: "Désigne la victime pour la sauver, quelqu'un d'autre pour l'empoisonner, les deux, ou passe." }
   }),
   role({
     cle: "garde-du-pont", nom: "Garde du pont", camp: "village", effet: "proteger",
     resume: "protège un joueur par nuit, jamais deux fois de suite le même.",
     pouvoir: `Tu tiens le pont depuis vingt hivers et tu sais rester éveillé.
 
-**Chaque nuit**, tu veilles sur un joueur (toi compris) : s'il est attaqué par la meute cette nuit, il survit. Tu ne peux pas protéger **deux nuits de suite** le même joueur. Ta garde n'arrête ni le poison ni le feu.`,
+**Chaque nuit**, avant la chasse, tu veilles sur un joueur (toi compris) : si la meute l'attaque cette nuit, il survit. Tu ne peux pas veiller **deux nuits de suite** sur le même joueur (le narrateur ne te le propose pas). Ta garde n'arrête que la meute : ni le poison, ni le feu, ni le harpon, ni la noyade, ni la morsure de la Louve mère qui fait d'une proie un loup.`,
     nuit: { ordre: 20, cibles: 1, soiMeme: true, invite: "Devant quelle porte montes-tu la garde cette nuit ?" }
   }),
   role({
     cle: "sonneur", nom: "Sonneur", camp: "village", effet: "vote-double", usages: 1,
-    resume: "une fois par partie, sonne la cloche : le vote du jour désigne deux condamnés.",
+    resume: "une fois par partie, de jour, sonne la cloche : le vote désigne deux condamnés.",
     pouvoir: `La corde de la cloche passe par ta fenêtre.
 
-**Une fois par partie**, au début d'un vote, tu peux annoncer que tu sonnes la cloche : **ce vote désigne deux condamnés** au lieu d'un (les deux villageois qui ont le plus de voix ; une égalité pour la seconde place la laisse vide). Tu te révèles en le faisant.`
+**Une fois par partie**, pendant le débat ou au début d'un vote, tu sonnes la cloche (ton pouvoir de jour, sur la Table de jeu, ou à voix haute au narrateur) : **le vote d'exécution désigne deux condamnés** au lieu d'un (les deux joueurs qui ont le plus de voix ; une égalité pour la seconde place la laisse vide, sauf si le Bailli la tranche). Tu te révèles en le faisant.`
   }),
   role({
     cle: "fossoyeur", nom: "Fossoyeur", camp: "village", effet: "voir-role-mort",
@@ -156,10 +160,12 @@ Une seule fiole par nuit. Si la victime, c'est toi, tu peux te sauver toi-même.
   }),
   role({
     cle: "enfant-de-la-brume", nom: "Enfant de la brume", camp: "village", effet: "epier",
-    resume: "peut épier la meute la nuit, mais s'il est repéré, il devient la victime.",
+    resume: "peut épier la meute la nuit et apprendre le nom des loups ; surprise, c'est elle que la meute dévore.",
     pouvoir: `Tu ne dors jamais quand il le faudrait.
 
-**Chaque nuit**, tu peux choisir d'**épier** la meute : le narrateur te montre ce que les loups se disent (sans leurs noms, sauf s'ils se trahissent). Mais à chaque fois, tu as **une chance sur trois d'être repéré** : alors la meute te prend pour victime à la place de celle qu'elle avait choisie.`,
+**Chaque nuit**, pendant que la meute chasse, tu peux choisir d'**épier** (ou rester sagement au lit). Si tu épies, le narrateur te dit en secret **le nom de tous les loups** sortis chasser cette nuit. Mais tu peux être **surprise** (une chance sur deux) : alors c'est **toi que la meute dévore**, en silence, à la place de la proie qu'elle avait choisie. Prise dehors, ni la garde du Garde du pont ni une porte close ne te sauvent ; un remède, si.
+
+Tu ne peux pas te faire passer pour un loup.`,
     nuit: { ordre: 39, cibles: 1, soiMeme: true, invite: "Désigne-toi pour te glisser hors du lit et épier la meute, ou passe." }
   }),
   role({
@@ -185,7 +191,7 @@ Une seule fiole par nuit. Si la victime, c'est toi, tu peux te sauver toi-même.
 
 **La première nuit**, tu désignes deux joueurs (toi comprise) : ils deviennent **amants**. Le narrateur les prévient en secret ; ils apprennent le nom l'un de l'autre, pas leur rôle. Si l'un meurt, l'autre meurt de chagrin aussitôt.
 
-Les amants gagnent **ensemble**, quel que soit leur camp : si l'un est loup et l'autre villageois, ils ne gagnent qu'en restant les deux derniers vivants. Toi, ensuite, tu joues avec le village.`,
+Deux amants du même camp gagnent avec lui. Deux amants de **camps différents** (un loup et un villageois, par exemple) ne gagnent **qu'ensemble, en restant les deux derniers vivants** : plus avec leur camp. Toi, ensuite, tu joues avec le village.`,
     nuit: { ordre: 5, cibles: 2, soiMeme: true, premiereNuitSeulement: true, invite: "Quels deux cœurs lies-tu cette nuit ?" }
   }),
   role({
@@ -237,7 +243,7 @@ Tu n'as aucun pouvoir, mais **ta vie est le serment du village** : si le village
     resume: "une fois par partie, lance son harpon dans la brume : sa cible meurt à l'aube, sauf si elle est protégée.",
     pouvoir: `Tu connais les eaux noires de la Brume, et ce qui y remue après minuit.
 
-**Une fois par partie**, la nuit, tu lances ton **harpon** sur la maison d'un joueur : celui qui y dort **meurt à l'aube**, sauf s'il est protégé cette nuit (Garde du pont, Gardienne des clés) ou sauvé par un remède. Ton harpon atteint aussi ceux que la meute ne peut pas tuer, et il ne laisse aucune trace de crocs.
+**Une fois par partie**, la nuit, tu lances ton **harpon** sur la maison d'un joueur : celui qui y dort **meurt à l'aube**, sauf si la Gardienne des clés a fermé sa porte cette nuit ou s'il est sauvé par un remède (la garde du Garde du pont n'arrête que la meute). Ton harpon atteint aussi ceux que la meute ne peut pas tuer, et il ne laisse aucune trace de crocs.
 
 Vise juste : un harpon perdu dans la poitrine d'un voisin ne revient pas. Tant que tu passes, tu le gardes.`,
     nuit: { ordre: 48, cibles: 1, invite: "Sur quelle maison lances-tu ton harpon cette nuit ? Passe pour le garder." }
@@ -253,7 +259,7 @@ const SOLITAIRES = [
     pouvoir: `Tu es déjà mort une fois. Tu veux qu'on te le rende officiel.
 
 Tu n'as aucun pouvoir de nuit. Ton seul but : te faire **exécuter par le vote du village**. Une mort de nuit ne compte pas.`,
-    victoire: `Tu gagnes **seul et aussitôt** si le village t'exécute au vote. La partie continue pour les autres.`
+    victoire: `Tu gagnes **seul et aussitôt** si le village t'exécute au vote : la partie s'arrête sur ta victoire.`
   }),
   role({
     cle: "colporteur", nom: "Colporteur", camp: "solitaire", effet: "echanger-role", usages: 1,
@@ -291,7 +297,7 @@ La meute ne peut pas te tuer : quand elle entre chez toi, elle repart bredouille
     resume: "une nuit sur deux, attire un joueur au gué où il se noie ; la meute ne peut pas la tuer ; gagne seule.",
     pouvoir: `À Brumecombe, on dit qu'une femme pâle lave son linge au gué quand la brume monte, et que ceux qui s'approchent pour l'aider ne reviennent pas.
 
-**Une nuit sur deux** (la deuxième, la quatrième…), tu chantes au bord de l'eau et tu désignes un joueur : il suit ta voix jusqu'au gué et **se noie**. On le trouve mort à l'aube, sauf s'il était protégé cette nuit ou sauvé par un remède.
+**Une nuit sur deux** (la deuxième, la quatrième…), tu chantes au bord de l'eau et tu désignes un joueur : il suit ta voix jusqu'au gué et **se noie**. On le trouve mort à l'aube, sauf si la Gardienne des clés a fermé sa porte cette nuit ou s'il est sauvé par un remède (la garde du Garde du pont n'arrête que la meute).
 
 La meute ne peut pas te tuer : quand elle entre chez toi, elle n'y trouve que de l'eau froide. Le vote, le poison, le feu et le harpon, si.`,
     victoire: `Tu gagnes **seule** si tu es la dernière vivante, ou la dernière avec un seul autre joueur qui n'est pas un loup.`,
@@ -315,13 +321,14 @@ Ton rôle est **connu de tous**, ton camp **ne l'est pas** : le narrateur te l'a
 **Une fois**, pendant le jour, tu affûtes la serrure et le couteau d'une maison (la tienne comprise) : la nuit suivante, **la première attaque de loup contre elle échoue**, et si la meute la touche malgré tout, elle y laisse du sang.`
   }),
   role({
-    cle: "montreur-d-ours", nom: "Montreur d'ours", camp: "village", usages: 1,
-    resume: "gens de passage : une fois, de jour, couche son ours devant une porte : la meute n'y entre pas la nuit suivante.",
-    pouvoir: `Ton ours danse sur la place et dort en travers des seuils.
+    // Le Montreur de marmotte (anciennement « Montreur d'ours », nom d'un rôle du livre qui fait autre chose) : la clé reste.
+    cle: "montreur-d-ours", nom: "Montreur de marmotte", camp: "village", usages: 1,
+    resume: "gens de passage : une fois, de jour, installe sa marmotte sur un seuil : la meute n'y entre pas la nuit suivante.",
+    pouvoir: `Ta marmotte danse sur la place au son du flageolet, et siffle dès qu'une ombre approche d'un seuil.
 
 Ton rôle est **connu de tous**, ton camp **ne l'est pas** : le narrateur te l'a dit en secret (Village ou Meute).
 
-**Une fois**, pendant le jour, tu couches ton ours devant la porte d'un joueur (toi compris) : **la meute n'entre pas** chez lui la nuit suivante.`
+**Une fois**, pendant le jour, tu installes ta marmotte sur le seuil d'un joueur (toi compris) : **la meute n'entre pas** chez lui la nuit suivante.`
   }),
   role({
     cle: "pelerine", nom: "Pèlerine", camp: "village", usages: 1,

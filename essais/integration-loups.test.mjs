@@ -191,7 +191,10 @@ async function verifierPlateau(ou) {
     } else assert.deepEqual(c, PLATEAU_VILLAGE.seuils[a.system.maison], `${ou} : ${a.name} devant ${a.system.maison}`);
     assert.equal(a.statuses.has("silence"), Boolean(a.system.vivant && a.system.silence), `${ou} : silence de ${a.name}`);
     const revele = a.system.revele || e.phase === "fin";
-    assert.equal(t[0].texture.src, revele ? roleDe(a).img : NEUTRE, `${ou} : image de ${a.name} (${roleDe(a).system.cle}, révélé : ${revele})`);
+    // En cours de partie, l'image est celle du rôle révélé au village (l'objet du document) : un loup démasqué par la lanterne, puis
+    // échangé en secret par le Colporteur, garde l'image de ce qu'on a vu ; à la fin, le vrai rôle.
+    const vu = e.phase === "fin" ? roleDe(a) : a.items.find(i => i.type === "role") ?? roleDe(a);
+    assert.equal(t[0].texture.src, revele ? vu.img : NEUTRE, `${ou} : image de ${a.name} (${roleDe(a).system.cle}, révélé : ${revele})`);
   }
   for (let i = 0; i < cercle.length; i++) for (let j = i + 1; j < cercle.length; j++) {
     assert.ok(Math.hypot(cercle[i].x - cercle[j].x, cercle[i].y - cercle[j].y) >= 1 - 1e-6, `${ou} : deux jetons du cercle se chevauchent`);
@@ -577,7 +580,11 @@ ${r.contenu}`);
       for (const c of bulletins.values()) attendu[c] = (attendu[c] ?? 0) + 1;
       assert.deepEqual(resultat.decompte, attendu, "décompte");
       const max = Math.max(0, ...Object.values(attendu));
-      for (const elu of resultat.elus) assert.ok(api.etat().vote.majoriteAbsolue || resultat.decompte[elu] === max, "l'élu a le plus de voix");
+      // La cloche du Sonneur (vote double) : les deux premiers scores ; sinon, le plus de voix.
+      const second = Math.max(0, ...Object.values(attendu).filter(n => n < max));
+      for (const elu of resultat.elus) assert.ok(api.etat().vote.majoriteAbsolue || resultat.decompte[elu] === max
+        || (api.etat().vote.double && resultat.decompte[elu] === second), "l'élu a le plus de voix");
+      if (api.etat().vote.double) couvert("cloche du Sonneur (vote double)");
       for (const [id, nb] of Object.entries(resultat.decompte)) assert.ok(clos.includes(`${game.actors.get(id).name} : ${nb}`), `décompte annoncé : ${clos}`);
       // Petite tablée : pas de jour sans verdict — une voix au moins, un condamné au moins (le sort tranche les égalités).
       if (tablee && Object.keys(resultat.decompte).length) assert.ok(resultat.elus.length >= 1, `petite tablée : égalité sans verdict : ${clos}`);

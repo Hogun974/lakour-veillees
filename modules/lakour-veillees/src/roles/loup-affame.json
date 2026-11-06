@@ -7,16 +7,17 @@
   "system": {
     "cle": "loup-affame",
     "camp": "meute",
-    "description": "<p>Tu chasses avec la meute, mais ta faim ne s'apaise jamais.</p><p><strong>Une nuit sur deux</strong> (la deuxième, la quatrième…), après la chasse de la meute, tu te réveilles seul et tu choisis une <strong>seconde victime</strong>. Si tu es le dernier loup vivant, ta faim te pousse à chasser toutes les nuits.</p>",
+    "description": "<p>Tu chasses avec la meute, mais ta faim ne s'apaise jamais.</p><p><strong>Chaque nuit</strong>, quand la meute s'est rendormie, tu te réveilles seul et tu choisis une <strong>seconde victime</strong> : une autre que la proie de la meute, et jamais un loup.</p><p>Ta faim tient à la meute entière : <strong>dès qu'un loup est mort</strong> (un loup de toujours ou un mordu, de quelque façon qu'il soit tombé), elle s'éteint pour toujours, et tu ne chasses plus qu'avec les autres.</p>",
     "victoire": "",
     "nuit": {
       "actif": true,
       "ordre": 42,
       "premiereNuitSeulement": false,
-      "uneNuitSurDeux": true,
+      "uneNuitSurDeux": false,
+      "tantQueMeuteEntiere": true,
       "cibles": 1,
       "soiMeme": false,
-      "invite": "Ta faim te ronge : quelle maison visites-tu seul cette nuit ?"
+      "invite": "Ta faim te ronge : quelle autre maison visites-tu seul cette nuit ?"
     },
     "usages": {
       "max": 0,

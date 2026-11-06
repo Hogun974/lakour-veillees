@@ -7,7 +7,7 @@
   "system": {
     "cle": "pecheur-de-nuit",
     "camp": "village",
-    "description": "<p>Tu connais les eaux noires de la Brume, et ce qui y remue après minuit.</p><p><strong>Une fois par partie</strong>, la nuit, tu lances ton <strong>harpon</strong> sur la maison d'un joueur : celui qui y dort <strong>meurt à l'aube</strong>, sauf s'il est protégé cette nuit (Garde du pont, Gardienne des clés) ou sauvé par un remède. Ton harpon atteint aussi ceux que la meute ne peut pas tuer, et il ne laisse aucune trace de crocs.</p><p>Vise juste : un harpon perdu dans la poitrine d'un voisin ne revient pas. Tant que tu passes, tu le gardes.</p>",
+    "description": "<p>Tu connais les eaux noires de la Brume, et ce qui y remue après minuit.</p><p><strong>Une fois par partie</strong>, la nuit, tu lances ton <strong>harpon</strong> sur la maison d'un joueur : celui qui y dort <strong>meurt à l'aube</strong>, sauf si la Gardienne des clés a fermé sa porte cette nuit ou s'il est sauvé par un remède (la garde du Garde du pont n'arrête que la meute). Ton harpon atteint aussi ceux que la meute ne peut pas tuer, et il ne laisse aucune trace de crocs.</p><p>Vise juste : un harpon perdu dans la poitrine d'un voisin ne revient pas. Tant que tu passes, tu le gardes.</p>",
     "victoire": "",
     "nuit": {
       "actif": true,

@@ -7,7 +7,7 @@
   "system": {
     "cle": "liseuse-de-cendres",
     "camp": "village",
-    "description": "<p>Tu lis l'avenir dans la cendre froide de l'âtre.</p><p><strong>Chaque nuit</strong>, tu désignes un joueur et le narrateur te dit en secret son <strong>camp</strong> : Village, Meute ou Solitaire. Pas son rôle. À toi de choisir quand dire ce que tu sais, et à qui.</p>",
+    "description": "<p>Tu lis l'avenir dans la cendre froide de l'âtre.</p><p><strong>Chaque nuit</strong>, tu désignes un joueur et le narrateur te dit en secret <strong>son rôle</strong> : la carte qu'il a reçue, et le camp de cette carte (Village, Meute ou Solitaire). À toi de choisir quand dire ce que tu sais, et à qui.</p><p>Certains trompent les cendres : le Loup déguisé t'apparaît en simple Villageois, le Louvetier en Loup de Brumecombe.</p>",
     "victoire": "",
     "nuit": {
       "actif": true,
@@ -22,7 +22,7 @@
       "max": 0,
       "restant": 0
     },
-    "effet": "voir-camp",
+    "effet": "voir-role",
     "apparence": "",
     "victoireCle": ""
   },

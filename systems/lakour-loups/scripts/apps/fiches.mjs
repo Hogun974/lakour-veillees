@@ -38,6 +38,7 @@ function rythmeDe(objet, gm) {
     marque("nuit", "fa-moon", gm ? t("LAKOUR_LOUPS.Fiche.NuitOrdre", { ordre: s.nuit.ordre }) : t("LAKOUR_LOUPS.Role.Actif"));
     if (s.nuit.premiereNuitSeulement) marque("nuit", "fa-hourglass-start", t("LAKOUR_LOUPS.Role.PremiereNuit"));
     if (s.nuit.uneNuitSurDeux) marque("nuit", "fa-circle-half-stroke", t("LAKOUR_LOUPS.Role.UneNuitSurDeux"));
+    if (s.nuit.tantQueMeuteEntiere) marque("nuit", "fa-paw", t("LAKOUR_LOUPS.Role.TantQueMeuteEntiere"));
     if (s.nuit.soiMeme) marque("nuit", "fa-user", t("LAKOUR_LOUPS.Role.SoiMeme"));
   }
   if (s.jour?.actif) marque("jour", "fa-sun", t("LAKOUR_LOUPS.Metier.PouvoirDeJour"));

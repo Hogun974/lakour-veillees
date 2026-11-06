@@ -43,6 +43,7 @@
       "proteger": "protège sa cible cette nuit",
       "voir-camp": "apprend le camp de sa cible",
       "voir-role-mort": "apprend le rôle d'un mort",
+      "voir-role": "apprend le rôle d'un joueur",
       "eclairer": "démasque le loup qui entre dans la maison",
       "silence": "réduit au silence pour le prochain débat",
       "vote-double": "le vote du jour est double",
@@ -227,6 +228,7 @@
       "SoiMeme": "Peut se désigner",
       "PremiereNuit": "Première nuit seulement",
       "UneNuitSurDeux": "Une nuit sur deux (nuits paires)",
+      "TantQueMeuteEntiere": "Chaque nuit, tant qu'aucun loup n'est mort",
       "Invite": "Question posée au joueur",
       "AideOrdre": "Petit ordre = réveil tôt. La meute se réveille d'un bloc à 40 ; un rôle de la meute réglé à 40 agit avec elle, à un autre ordre il est réveillé à part."
     },
@@ -246,7 +248,7 @@
     "Nuit": {
       "Amour": "Une flèche de brume vous lie à {nom} : si l'un meurt, l'autre le suit.",
       "ProtectionRefusee": "Vous ne pouvez pas protéger {nom} deux nuits de suite.",
-      "EspionRepere": "{nom} a été repéré en épiant la meute : il devient sa victime.",
+      "EspionRepere": "{nom} a été surprise en épiant la meute : c'est elle que la meute dévore.",
       "Epier": "Caché dans la brume, vous entendez la meute désigner sa proie : {nom}.",
       "MorsureEvitee": "La morsure sur {nom} a été repoussée.",
       "Mordu": "Une morsure dans la nuit : vous rejoignez la meute, en secret.",
@@ -268,6 +270,10 @@
       "ANarrer": "À arbitrer : {qui} ({effet}) → {cibles}.",
       "EpierRepere": "Des yeux jaunes se tournent vers vous dans la brume. Vous avez été vu.",
       "EpierRien": "La meute rôde mais ne s'accorde sur aucune proie.",
+      "EpierLoups": "Cachée dans la brume, vous voyez passer la meute : {noms}.",
+      "VoirRole": "Les cendres parlent : {nom} est « {role} », du camp « {camp} ».",
+      "FioleDeTrop": "Vous n'avez qu'une fiole de chaque sorte : rien n'est versé à {nom}.",
+      "AffameRassasie": "Un loup est mort : {nom} ne chasse plus seul.",
       "Poison": "{qui} a versé son poison à {nom}.",
       "Immunite": "La meute est repartie bredouille de chez {nom}.",
       "MemeCamp": "{a} et {b} sont du même camp.",
@@ -339,8 +345,8 @@
         "Aide": "Minuteur affiché dans le bandeau et sur la Table de jeu ; à zéro, le vote se clôt de lui-même (l'exécution reste à confirmer). 0 = sans minuteur : le MJ clôt le vote."
       },
       "ChanceEpier": {
-        "Nom": "Risque d'être repéré en épiant",
-        "Aide": "Probabilité (0 à 1) qu'un rôle qui épie la meute soit repéré et devienne sa victime."
+        "Nom": "Risque d'être surprise en épiant",
+        "Aide": "Probabilité (0 à 1) que l'Enfant de la brume, quand elle épie la meute, soit surprise et dévorée à la place de la proie (0,5 par défaut)."
       },
       "AnnoncesEnChat": {
         "Nom": "Annonces dans le chat",
@@ -513,7 +519,9 @@
         "neige": "La neige a recouvert les traces : rien à lire ce matin."
       },
       "Remouleur": "{qui} affûte la serrure et le couteau de {nom} : la nuit prochaine, la première attaque de loup contre sa maison échouera.",
-      "Ours": "{qui} couche son ours devant la porte de {nom} : la nuit prochaine, la meute n'osera pas y entrer.",
+      "Ours": "{qui} installe sa marmotte sur le seuil de {nom} : elle sifflera à la moindre ombre, et la nuit prochaine la meute n'osera pas y entrer.",
+      "ClocheVote": "{qui}, le Sonneur, tire la corde : la cloche sonne, et ce vote désignera deux condamnés.",
+      "ClocheJour": "{qui}, le Sonneur, tire la corde : la cloche sonne, et le prochain vote désignera deux condamnés.",
       "Pelerine": "{qui} prie longuement sur le seuil de {nom}.",
       "PelerinePrive": "Votre prière s'est fait entendre : {nom} est du camp « {camp} ».",
       "LavoirNeige": "Le lavoir est gelé : on n'y parle que de la neige, qui a tout recouvert."
@@ -745,6 +753,7 @@
       "EluCourt": "Bailli élu :",
       "Personne": "Personne n'est élu : la charge de Bailli reste vacante aujourd'hui.",
       "Departage": "Égalité entre {noms} : le Bailli, {nom}, tranche.",
+      "TrancheVoix": "Égalité : le Bailli, {nom}, avait voté pour {noms} ; sa voix tranche.",
       "Tranche": "Le Bailli, {nom}, tranche : {noms}.",
       "TranchePersonne": "Le Bailli, {nom}, n'a pas tranché : personne n'est condamné.",
       "Tranchera": "Égalité : le Bailli ({nom}) tranche…",
@@ -966,6 +975,10 @@
         "accuse": "Ce villageois est déjà accusé aujourd'hui.",
         "personne": "Personne à juger : aucun accusé en attente (ou une exécution a déjà eu lieu aujourd'hui)."
       }
+    },
+    "Deguise": {
+      "MasqueTombe": "{nom} a été le plus désigné d'un vote sans être exécuté : son masque tombe, les visions disent désormais la vérité sur lui.",
+      "Carnet": "Désigné par le village sans être exécuté, vous avez perdu votre masque : désormais, les visions disent la vérité sur vous."
     },
     "Deuil": {
       "Titre": "Le glas du deuil",

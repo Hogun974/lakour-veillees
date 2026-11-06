@@ -35,7 +35,7 @@ relief). Fichiers produits par `outils/fabriquer-jetons-veillees.mjs` ; les corr
 | [spinning-wheel](https://game-icons.net/1x1/caro-asercion/spinning-wheel.html) | Caro Asercion | Métier — Tisserande |
 | [nun-face](https://game-icons.net/1x1/cathelineau/nun-face.html) | Cathelineau | Figurant — Religieuse |
 | [hooded-figure](https://game-icons.net/1x1/darkzaitzev/hooded-figure.html) | DarkZaitzev | Figurant — Silhouette dans la brume |
-| [animal-hide](https://game-icons.net/1x1/delapouite/animal-hide.html) | Delapouite | Rôle — Montreur d'ours ; Métier — Tanneur |
+| [animal-hide](https://game-icons.net/1x1/delapouite/animal-hide.html) | Delapouite | Rôle — Montreur de marmotte ; Métier — Tanneur |
 | [baby-face](https://game-icons.net/1x1/delapouite/baby-face.html) | Delapouite | Figurant — Enfant |
 | [barn](https://game-icons.net/1x1/delapouite/barn.html) | Delapouite | Bâtiment — La Grange |
 | [bow-arrow](https://game-icons.net/1x1/delapouite/bow-arrow.html) | Delapouite | Métier — Chasseresse |

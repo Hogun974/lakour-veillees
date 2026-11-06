@@ -16,7 +16,8 @@
 //    rien (ni « plus de loup » ni amants ni tueur solitaire ne finissent une partie de peste) ;
 //    personne en vie : pas de vainqueur ("") ;
 // 3. les deux derniers vivants sont amoureux : ils gagnent ensemble (leur camp s'ils en partagent un, sinon l'id
-//    du premier des deux) ;
+//    du premier des deux) ; deux amants de camps différents ne gagnent que de cette façon (bilanDePartie ne les compte jamais
+//    parmi les gagnants de leur camp) ;
 // 4. « dernier-survivant » (le Pyromane) : il gagne seul s'il est le dernier vivant, ou le dernier avec un seul autre
 //    joueur qui n'est pas un loup ;
 // 5. plus de loup ni de tueur solitaire en vie : le village gagne ;
@@ -58,7 +59,9 @@ export function verifierVictoire({ villageois = [], morts = [], primes = {}, pes
     if (glas) return VAINQUEUR_PESTE;
     return vivants.length <= 1 ? VAINQUEUR_PESTE : "";
   }
-  if (!vivants.length) return "";
+  // Personne en vie : pas de vainqueur, sauf au Glas final, qui doit finir la partie : sans loup ni tueur solitaire vivant, le
+  // village (règle 7 ci-dessous). Une Braconnière qui emporte le dernier loup en mourant vide le village (petite tablée, parité stricte).
+  if (!vivants.length) return glas ? "village" : "";
 
   if (vivants.length === 2) {
     const [a, b] = vivants;
@@ -105,8 +108,10 @@ export function palmares(chroniques = []) {
 export function bilanDePartie({ villageois = [], morts = [], causes = {}, vainqueur = "", partis = [] } = {}) {
   const parId = new Map(villageois.map(v => [v.id, v]));
   const gagnants = new Set();
+  // Deux amants de camps différents (l'Entremetteuse) ne gagnent qu'en restant les deux derniers vivants : jamais avec leur camp.
+  const desAmantsMeles = v => { const lie = parId.get(v.amoureux); return Boolean(lie && lie.amoureux === v.id && lie.camp !== v.camp); };
   if (vainqueur === "village" || vainqueur === "meute") {
-    for (const v of villageois) if (v.camp === vainqueur) gagnants.add(v.id);
+    for (const v of villageois) if (v.camp === vainqueur && !desAmantsMeles(v)) gagnants.add(v.id);
   } else if (parId.has(vainqueur)) {
     const v = parId.get(vainqueur), lie = parId.get(v.amoureux);
     gagnants.add(v.id);

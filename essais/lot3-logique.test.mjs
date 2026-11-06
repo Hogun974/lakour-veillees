@@ -323,10 +323,14 @@ const VERIFICATIONS = {
     assert.ok(nuit(L, avecX, verrou, [meute("a")]).morts.includes("a"), "linceul : le verrou ne tient pas");
     assert.ok(!nuit(L, avecX, L.appliquerPouvoir({ villageois: avecX, etat: avecDeuil(L), acteurId: "x", pouvoir: "remouleur", cibles: ["a"] }).etat, [meute("a")]).morts.includes("a"));
     const louve = { cle: "louve-mere", nom: "Louve mère", camp: "meute", effet: "mordre", nuit: { actif: true, ordre: 41, cibles: 1 }, usages: { max: 0, restant: 0 } };
-    const avecLouve = [...vs, { ...v("lm", "loup"), role: louve }];
-    const mordre = [garde, { acteurId: "lm", roleCle: "louve-mere", cibles: ["a"] }, meute("a")];
-    assert.ok(!nuit(L, avecLouve, avecDeuil(L), mordre).changements.some(c => c.type === "camp"), "sans linceul : la garde repousse la morsure");
-    assert.ok(nuit(L, avecLouve, e, mordre).changements.some(c => c.type === "camp" && c.acteurId === "a"), "linceul : mordu malgré la garde");
+    // La morsure passe la garde du Garde du pont (Pacte, étape 2) ; la porte de la Gardienne des clés l'arrête, sauf sous le linceul.
+    const gardienne = { ...v("gc", "garde"), role: { ...ROLE.garde, cle: "gardienne-des-cles", nom: "Gardienne des clés" } };
+    const avecLouve = [...vs, { ...v("lm", "loup"), role: louve }, gardienne];
+    const mordre = [{ acteurId: "gc", roleCle: "gardienne-des-cles", cibles: ["a"] }, { acteurId: "lm", roleCle: "louve-mere", cibles: ["a"] }, meute("a")];
+    assert.ok(!nuit(L, avecLouve, avecDeuil(L), mordre).changements.some(c => c.type === "camp"), "sans linceul : la porte repousse la morsure");
+    assert.ok(nuit(L, avecLouve, e, mordre).changements.some(c => c.type === "camp" && c.acteurId === "a"), "linceul : mordu malgré la porte");
+    assert.ok(nuit(L, avecLouve, avecDeuil(L), [garde, { acteurId: "lm", roleCle: "louve-mere", cibles: ["a"] }, meute("a")]).changements
+      .some(c => c.type === "camp" && c.acteurId === "a"), "la garde n'arrête pas l'infection");
     assert.equal(L.linceulDeLaNuit(e, 2), true);
     assert.equal(L.linceulDeLaNuit(e, 3), false);
     assert.equal(L.effetsDeLaNuit(e, 2).linceul, true);
@@ -480,7 +484,7 @@ const MUTATIONS = [
   ["resolution.mjs", "const absent = duDeuil ? null : cibles", "const absent = cibles", "vision : la cible absente"],
   ["resolution.mjs", "if (!deLaMeute && !deLaPeste && !duDeuil && (!acteur", "if (!deLaMeute && !deLaPeste && (!acteur", "vision : le loup noté mort"],
   ["resolution.mjs", "    sortie.deuil = c;\n", "", "vision : délivrée, notée"],
-  ["resolution.mjs", "proteges.has(cible) && !sansProtection(cible) && !linceul)", "proteges.has(cible) && !sansProtection(cible))", "linceul : la morsure"],
+  ["resolution.mjs", "fermees.has(cible) && cible !== surprise && !sansProtection(cible) && !linceul)", "fermees.has(cible) && cible !== surprise && !sansProtection(cible))", "linceul : la morsure"],
   ["passage.mjs", "    etat.bailli.acteurId = \"\";\n", "", "départ : Bailli vacant"],
   ["passage.mjs", "if (estParti(etat, acteurId) || etat.morts.some(m => m.acteurId === acteurId)) return etat;", "if (false) return etat;", "départ : une fois"],
   ["passage.mjs", "  .filter(id => !estParti(etat, id) && ", "  .filter(id => ", "exil : pas les partis"],

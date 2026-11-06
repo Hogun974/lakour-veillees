@@ -1,13 +1,13 @@
 {
   "_id": "o3qDqkYhaiWnGFuF",
   "_key": "!items!o3qDqkYhaiWnGFuF",
-  "name": "Montreur d'ours",
+  "name": "Montreur de marmotte",
   "type": "role",
   "img": "modules/lakour-veillees/assets/jetons/montreur-d-ours.svg",
   "system": {
     "cle": "montreur-d-ours",
     "camp": "village",
-    "description": "<p>Ton ours danse sur la place et dort en travers des seuils.</p><p>Ton rôle est <strong>connu de tous</strong>, ton camp <strong>ne l'est pas</strong> : le narrateur te l'a dit en secret (Village ou Meute).</p><p><strong>Une fois</strong>, pendant le jour, tu couches ton ours devant la porte d'un joueur (toi compris) : <strong>la meute n'entre pas</strong> chez lui la nuit suivante.</p>",
+    "description": "<p>Ta marmotte danse sur la place au son du flageolet, et siffle dès qu'une ombre approche d'un seuil.</p><p>Ton rôle est <strong>connu de tous</strong>, ton camp <strong>ne l'est pas</strong> : le narrateur te l'a dit en secret (Village ou Meute).</p><p><strong>Une fois</strong>, pendant le jour, tu installes ta marmotte sur le seuil d'un joueur (toi compris) : <strong>la meute n'entre pas</strong> chez lui la nuit suivante.</p>",
     "victoire": "",
     "nuit": {
       "actif": false,

@@ -57,6 +57,8 @@ export const POUVOIRS_JOUR = {
   eclusiere: { source: "metier", cibles: 0, phases: JOURNEE },
   "juge-de-paix": { source: "role", cibles: 0, phases: ["vote"], revele: true },
   conteuse: { source: "role", cibles: 1, soiMeme: false, phases: MATIN },
+  // Le Sonneur sonne la cloche, une fois : le vote d'exécution ouvert (ou, pendant le débat, le prochain) désignera deux condamnés.
+  sonneur: { source: "role", cibles: 0, phases: JOURNEE, revele: true },
   // Les Gens de passage (passage.mjs) : un pouvoir fort, une fois, de jour.
   remouleur: { source: "role", cibles: 1, soiMeme: true, phases: JOURNEE },
   "montreur-d-ours": { source: "role", cibles: 1, soiMeme: true, phases: JOURNEE },
@@ -140,6 +142,11 @@ export function verifierPouvoir({ villageois = [], etat: e, acteurId = "", pouvo
       if (v.ouvert || !r || r.objet !== "execution" || r.departage?.enAttente || !r.elus?.length || r.numero !== v.numero || !r.elus.every(id => vivant(parId.get(id)))) return non("vote");
       break;
     }
+    case "sonneur":
+      // Une cloche par vote : déjà sonnée (ou un vote déjà double) ; au vote, seulement un vote d'exécution ouvert, hors Banc.
+      if (etat.voteDoubleDemain || (v.ouvert && v.double)) return non("deja");
+      if (etat.phase === "vote" && (!v.ouvert || v.objet !== "execution" || v.banc)) return non("vote");
+      break;
     case "taverne": {
       const lits = dormeursTaverne(etat, nuit);
       if (lits.includes(acteurId)) return non("deja");
@@ -208,7 +215,7 @@ export function appliquerPouvoir({ villageois = [], etat: e, acteurId = "", pouv
   const nom = id => parId.get(id)?.nom ?? id;
   const qui = nom(acteurId), c = cibles[0], n = nom(c);
   const nuit = etat.tour + 1;
-  const sortie = { ok: true, raison: "", etat, annonces: [], prives: [], changements: [], rouvrirVote: false };
+  const sortie = { ok: true, raison: "", etat, annonces: [], prives: [], changements: [], rouvrirVote: false, voteChange: false };
   const annonce = (cle, t, d = {}) => sortie.annonces.push(msg("public", cle, t, d));
   const poser = (type, cible = c ?? acteurId, origine = "") => etat.jour.effets.push({ type, acteurId, cible, nuit, ...(origine ? { origine } : {}) });
   if (def.source === "metier" || def.source === "role") sortie.changements.push({ type: "usage", acteurId, objet: def.source });
@@ -286,8 +293,21 @@ export function appliquerPouvoir({ villageois = [], etat: e, acteurId = "", pouv
       annonce("Appel", `${qui} fait l'appel : chacun parle ${PAROLE_APPEL} secondes, dans cet ordre : ${noms}.`, { qui, noms, duree: PAROLE_APPEL });
       break;
     }
+    case "sonneur":
+      // Le vote d'exécution ouvert devient double ; pendant le débat, le prochain (voteDoubleDemain, que ouvrirVote reprend).
+      if (etat.vote.ouvert && etat.vote.objet === "execution") {
+        etat.vote.double = true;
+        sortie.voteChange = true;
+        annonce("ClocheVote", `${qui}, le Sonneur, tire la corde : la cloche sonne, et ce vote désignera deux condamnés.`, { qui });
+      } else {
+        etat.voteDoubleDemain = true;
+        annonce("ClocheJour", `${qui}, le Sonneur, tire la corde : la cloche sonne, et le prochain vote désignera deux condamnés.`, { qui });
+      }
+      break;
     case "juge-de-paix": {
       const ancien = etat.vote;
+      // Le Loup déguisé le plus désigné d'un vote annulé n'est pas exécuté : son masque tombe.
+      for (const id of masquesQuiTombent({ resultat: ancien.resultat, villageois, annule: true })) sortie.changements.push({ type: "masque", acteurId: id });
       marquerAnnule(etat, ancien.numero);   // le vote annulé reste au Registre du greffier, marqué
       const x = ouvrirVote(etat, { candidats: ancien.candidats, duree: ancien.duree, double: ancien.double, majoriteAbsolue: ancien.majoriteAbsolue,
         objet: "execution", banc: ancien.banc?.accuse ?? "", maintenant });
@@ -303,9 +323,10 @@ export function appliquerPouvoir({ villageois = [], etat: e, acteurId = "", pouv
       annonce("Remouleur", `${qui} affûte la serrure et le couteau de ${n} : la nuit prochaine, la première attaque de loup contre sa maison échouera.`, { qui, nom: n });
       break;
     case "montreur-d-ours":
-      // L'ours couché devant la porte : la meute n'y entre pas la nuit prochaine (comme l'asile de la Chapelle).
+      // Le Montreur de marmotte (clé « montreur-d-ours », gardée pour les mondes sauvegardés) : sa marmotte veille sur le seuil, la
+      // meute n'y entre pas la nuit prochaine (comme l'asile de la Chapelle).
       poser("asile", c, "passage");
-      annonce("Ours", `${qui} couche son ours devant la porte de ${n} : la nuit prochaine, la meute n'osera pas y entrer.`, { qui, nom: n });
+      annonce("Ours", `${qui} installe sa marmotte sur le seuil de ${n} : elle sifflera à la moindre ombre, et la nuit prochaine la meute n'osera pas y entrer.`, { qui, nom: n });
       break;
     case "pelerine": {
       // La Pèlerine prie sur un seuil : elle apprend en secret le camp de ce joueur (tel que le voient les visions).
@@ -350,6 +371,21 @@ export function appliquerPouvoir({ villageois = [], etat: e, acteurId = "", pouv
   return sortie;
 }
 
+// ------------------------------------------------------------------ le masque du Loup déguisé
+// Un loup qui paraît villageois (apparence « village » d'un rôle de la meute : le Loup déguisé) perd son masque s'il est le plus
+// désigné d'un vote d'exécution sans être exécuté (égalité non tranchée, majorité manquée, Bailli qui passe ; annule : le vote
+// annulé par le Juge de paix, où personne n'est exécuté). Ensuite, les visions disent la vérité sur lui (apparence "").
+// resultat : celui d'un vote clos (decompte, elus) ; un départage encore en attente ne décide rien. -> [acteurId]
+export const porteUnMasque = v => v?.role?.camp === "meute" && v.role.apparence === "village";
+export function masquesQuiTombent({ resultat, villageois = [], annule = false } = {}) {
+  if (!resultat || (resultat.objet ?? "execution") !== "execution" || resultat.departage?.enAttente) return [];
+  const d = resultat.decompte ?? {};
+  const max = Math.max(0, ...Object.values(d));
+  if (!max) return [];
+  const elus = new Set(annule ? [] : resultat.elus ?? []);
+  return villageois.filter(v => vivant(v) && porteUnMasque(v) && d[v.id] === max && !elus.has(v.id)).map(v => v.id);
+}
+
 // ------------------------------------------------------------------ effets du jour sur la nuit
 export function effetsDeLaNuit(e, tour, { batiments } = {}) {
   const etat = normaliserEtat(e);
@@ -373,6 +409,9 @@ export function effetsDeLaNuit(e, tour, { batiments } = {}) {
   };
 }
 
+// Les effets qui ne visent jamais deux nuits de suite la même personne (protéger, faire taire).
+export const JAMAIS_DEUX_NUITS = ["proteger", "silence"];
+
 // Les loups qui peuvent chasser cette nuit : ni gardés à l'œil, ni hors d'atteinte (Passeur, Grange).
 export function loupsQuiChassent(villageois = [], e, tour) {
   const fx = effetsDeLaNuit(e, tour);
@@ -384,6 +423,9 @@ export function loupsQuiChassent(villageois = [], e, tour) {
 // y dort), ni l'autre rive quand le Pont est bloqué. Un joueur hors d'atteinte n'agit pas ; gardé à l'œil, il ne vise
 // que sa propre maison. Le filtre « soi-même » reste celui du rôle (demanderAction).
 // roleCle "peste" (peste noire) : les mêmes candidats que la meute (la peste frappe comme elle, rien ne doit la distinguer).
+// Jamais deux nuits de suite la même cible (Garde du pont, Gardienne des clés, Loup hurleur) : celle de la nuit d'avant est
+// RETIRÉE des candidats (l'aube la refuserait aussi : resolution.mjs). Un loup qui tue seul (le Loup affamé) choisit une AUTRE
+// victime que la proie de la meute de cette nuit.
 export function candidatsDeNuit({ villageois = [], etat: e, acteurId = "", roleCle = "", tour } = {}) {
   const etat = normaliserEtat(e);
   const n = tour ?? etat.tour;
@@ -404,6 +446,15 @@ export function candidatsDeNuit({ villageois = [], etat: e, acteurId = "", roleC
     const loupATaverne = fx.taverneEnJeu && fx.taverne.some(id => vivant(parId.get(id)) && parId.get(id).camp === "meute");
     ids = ids.filter(id => parId.get(id).camp !== "meute" && !fx.asiles.includes(id) && (!fx.taverne.includes(id) || loupATaverne)
       && !(fx.pontBloque && surLAutreRive(parId.get(id).maison)));
+    if (!groupe) {
+      const proies = new Set((etat.nuit?.actions ?? []).filter(a => a.roleCle === CLE_MEUTE).flatMap(a => a.cibles ?? []));
+      ids = ids.filter(id => !proies.has(id));
+    }
+  }
+  const role = acteur?.role;
+  if (!groupe && role?.cle === roleCle && JAMAIS_DEUX_NUITS.includes(role.effet)) {
+    const hier = (etat.nuitPrecedente?.actions ?? []).find(a => a.acteurId === acteurId && a.roleCle === roleCle)?.cibles?.[0];
+    if (hier) ids = ids.filter(id => id !== hier);
   }
   return ids;
 }

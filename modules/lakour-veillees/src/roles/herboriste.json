@@ -7,16 +7,16 @@
   "system": {
     "cle": "herboriste",
     "camp": "village",
-    "description": "<p>Tes fioles dorment dans la paille, une verte et une noire.</p><p>Chaque nuit, après la chasse, le narrateur te dit qui la meute a attaqué. Tu désignes alors un joueur :<br>- <strong>la victime de la nuit</strong> : tu lui verses ton <strong>remède</strong>, elle survit (une fois par partie) ;<br>- <strong>n'importe qui d'autre</strong> : tu verses ton <strong>poison</strong> dans son verre, il meurt à l'aube (une fois par partie).</p><p>Une seule fiole par nuit. Si la victime, c'est toi, tu peux te sauver toi-même. Passe pour garder tes fioles.</p>",
+    "description": "<p>Tes fioles dorment dans la paille, une verte et une noire.</p><p>Chaque nuit, après la chasse, le narrateur te dit qui la meute a attaqué. Tu peux alors :<br>- verser ton <strong>remède</strong> à la victime : elle survit (une fois par partie) ;<br>- verser ton <strong>poison</strong> dans le verre de n'importe qui d'autre : il meurt à l'aube (une fois par partie).</p><p>Tu peux te servir des <strong>deux fioles la même nuit</strong> : désigne la victime et celui que tu empoisonnes. Si la victime, c'est toi, tu peux te sauver toi-même. Le remède sauve de la meute, pas du feu ; et quand la Louve mère infecte sa proie au lieu de la tuer, personne ne meurt : le narrateur n'a pas de victime à te nommer. Passe pour garder tes fioles.</p>",
     "victoire": "",
     "nuit": {
       "actif": true,
       "ordre": 50,
       "premiereNuitSeulement": false,
       "uneNuitSurDeux": false,
-      "cibles": 1,
+      "cibles": 2,
       "soiMeme": true,
-      "invite": "Désigne la victime pour la sauver, quelqu'un d'autre pour l'empoisonner, ou passe."
+      "invite": "Désigne la victime pour la sauver, quelqu'un d'autre pour l'empoisonner, les deux, ou passe."
     },
     "usages": {
       "max": 2,

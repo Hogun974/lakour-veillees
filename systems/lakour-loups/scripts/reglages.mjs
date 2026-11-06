@@ -1,5 +1,5 @@
 // Réglages du système.
-import { ID, CHANCE_PESTE } from "../logique/constantes.mjs";
+import { ID, CHANCE_PESTE, RISQUE_ENFANT } from "../logique/constantes.mjs";
 import { etatInitial } from "../logique/etat.mjs";
 import { CLES_DE_FETE } from "../logique/fetes.mjs";
 import { oublierSecrets } from "./secrets.mjs";
@@ -55,7 +55,7 @@ export function enregistrerReglages(quandEtatChange) {
   });
   game.settings.register(ID, "chanceEpier", {
     name: "LAKOUR_LOUPS.Reglages.ChanceEpier.Nom", hint: "LAKOUR_LOUPS.Reglages.ChanceEpier.Aide",
-    scope: "world", config: true, type: Number, default: 0.33, range: { min: 0, max: 1, step: 0.01 }
+    scope: "world", config: true, type: Number, default: RISQUE_ENFANT, range: { min: 0, max: 1, step: 0.01 }
   });
   // Les morts parlent entre eux (et au MJ) : leurs messages deviennent des chuchotements aux seuls morts (scripts/parole.mjs).
   game.settings.register(ID, "canalDesMorts", {

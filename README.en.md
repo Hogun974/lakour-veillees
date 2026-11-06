@@ -178,9 +178,9 @@ Wolves recognise each other on the first night and hunt together; some wake a se
 | Role | Power |
 |---|---|
 | **Wolf of Brumecombe** | Each night, with the pack, picks the victim. |
-| **Starving wolf** | Every other night, kills a second victim alone. |
+| **Starving wolf** | Each night, as long as no wolf has died, kills a second victim alone. |
 | **Disguised wolf** | Looks like a villager to every vision; loses the mask if he survives a vote that singled him out. |
-| **Mother wolf** | Once per game, bites the victim instead of killing: she secretly joins the pack. |
+| **Mother wolf** | Once per game, infects the pack's prey instead of killing it: it secretly becomes a wolf. |
 | **Howling wolf** | Each night, silences a player for the next day's debate. |
 | **Sniffing wolf** | Each night, sniffs a player and learns their side. |
 | **Wolf of the reeds** | Each night, watches a house and learns whether its occupant acted. |
@@ -191,15 +191,15 @@ Wolves recognise each other on the first night and hunt together; some wake a se
 |---|---|
 | **Villager** | No power, one vote. |
 | **Lantern keeper** | Lights a house each night: a wolf who enters it is unmasked at dawn. |
-| **Ash reader** | Each night, learns a player's side. |
-| **Herbalist** | One remedy (saves the night's victim) and one poison (kills), once each. |
-| **Bridge guard** | Protects one player per night, never the same twice in a row. |
-| **Bell ringer** | Once per game, rings the bell: the day's vote condemns two players. |
+| **Ash reader** | Each night, learns a player's role. |
+| **Herbalist** | One remedy (saves the pack's victim) and one poison (kills), once each, both on the same night if she wishes. |
+| **Bridge guard** | Protects one player per night from the pack, never the same twice in a row. |
+| **Bell ringer** | Once per game, by day, rings the bell: the vote condemns two players. |
 | **Gravedigger** | Each night, learns the exact role of a dead player. |
 | **Poacher** | If she dies, she takes a player of her choice with her. |
 | **Storyteller** | Once per game, forces two minutes of debate about one player, who cannot answer. |
 | **Justice of the peace** | Once per game, cancels a vote: the village votes again. |
-| **Child of the fog** | May spy on the pack at night, but if spotted becomes the victim. |
+| **Child of the fog** | May spy on the pack at night and learn the wolves' names; if caught, she is the one the pack devours. |
 | **Hermit** | Each night, learns the name of one player who acted, without knowing what they did. |
 | **Messenger** | Each night, carries a secret message between two players. |
 | **Matchmaker** | Binds two lovers on the first night, then plays with the village. |
@@ -223,7 +223,7 @@ Wolves recognise each other on the first night and hunt together; some wake a se
 ### Passers-by (3 roles)
 
 For a player who **joins mid-game**: the role is public, the side secret (drawn by the system), the power works once, by day.
-**Knife grinder** (sharpens a house's lock), **Bear tamer** (lays his bear across a door), **Pilgrim** (prays on a doorstep and
+**Knife grinder** (sharpens a house's lock), **Marmot showman** (sets his marmot on a doorstep), **Pilgrim** (prays on a doorstep and
 learns the side). The village can exile them by vote; and any player may **leave the vigil** without dying or revealing
 anything.
 

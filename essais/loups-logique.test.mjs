@@ -7,7 +7,13 @@ import * as L from "../systems/lakour-loups/logique/index.mjs";
 // Petit catalogue de rôles d'essai (les vrais viennent du module lakour-veillees).
 const R = {
   loup: { cle: "loup-de-brumecombe", nom: "Loup de Brumecombe", camp: "meute", effet: "tuer", nuit: { actif: true, ordre: 40 } },
-  affame: { cle: "loup-affame", nom: "Loup affamé", camp: "meute", effet: "tuer", nuit: { actif: true, ordre: 45, uneNuitSurDeux: true } },
+  affame: { cle: "loup-affame", nom: "Loup affamé", camp: "meute", effet: "tuer", nuit: { actif: true, ordre: 45, tantQueMeuteEntiere: true } },
+  sourcier: { cle: "sourcier", nom: "Sourcier", camp: "village", effet: "voir-camp", nuit: { actif: true, ordre: 62, cibles: 2, uneNuitSurDeux: true } },
+  lectrice: { cle: "liseuse-de-cendres", nom: "Liseuse de cendres", camp: "village", effet: "voir-role", nuit: { actif: true, ordre: 60 } },
+  deguiseMasque: { cle: "loup-deguise", nom: "Loup déguisé", camp: "meute", effet: "", apparence: "village", nuit: { actif: true, ordre: 40 } },
+  louvetier: { cle: "louvetier", nom: "Louvetier", camp: "village", effet: "voir-camp", apparence: "meute", nuit: { actif: true, ordre: 61 } },
+  gardienne: { cle: "gardienne-des-cles", nom: "Gardienne des clés", camp: "village", effet: "proteger", nuit: { actif: true, ordre: 15 } },
+  pecheur: { cle: "pecheur-de-nuit", nom: "Pêcheur de nuit", camp: "village", effet: "tuer", nuit: { actif: true, ordre: 48 }, usages: { max: 1, restant: 1 } },
   louve: { cle: "louve-mere", nom: "Louve mère", camp: "meute", effet: "mordre", nuit: { actif: true, ordre: 41 }, usages: { max: 1, restant: 1 } },
   hurleur: { cle: "loup-hurleur", nom: "Loup hurleur", camp: "meute", effet: "silence", nuit: { actif: true, ordre: 42 } },
   deguise: { cle: "loup-deguise", nom: "Loup déguisé", camp: "meute", effet: "", nuit: { actif: true, ordre: 40 } },
@@ -123,14 +129,34 @@ test("ordre de nuit : mordus dans la meute, loups spéciaux réveillés en plus"
 });
 
 test("ordre de nuit : premiereNuitSeulement et uneNuitSurDeux (nuits paires)", () => {
-  const vs = [v("e", "entremetteuse"), v("a", "affame"), v("l", "loup")];
+  const vs = [v("e", "entremetteuse"), v("s", "sourcier"), v("l", "loup")];
   const cles = t => L.ordreDeNuit(vs, t).map(e => e.roleCle);
   assert.ok(cles(1).includes("entremetteuse"));
   assert.ok(!cles(2).includes("entremetteuse"));
-  assert.ok(!cles(1).includes("loup-affame"));
-  assert.ok(cles(2).includes("loup-affame"));
-  assert.ok(!cles(3).includes("loup-affame"));
-  assert.ok(cles(4).includes("loup-affame"));
+  assert.ok(!cles(1).includes("sourcier"));
+  assert.ok(cles(2).includes("sourcier"));
+  assert.ok(!cles(3).includes("sourcier"));
+  assert.ok(cles(4).includes("sourcier"));
+});
+
+test("Loup affamé : chaque nuit tant qu'aucun loup n'est mort (un mordu compte), puis plus jamais", () => {
+  const vs = [v("a", "affame"), v("l", "loup"), v("x", "villageois")];
+  for (const t of [1, 2, 3]) assert.ok(L.ordreDeNuit(vs, t).some(e => e.roleCle === "loup-affame"), `nuit ${t}`);
+  assert.equal(L.meuteEntiere(vs), true);
+  const loupMort = [v("a", "affame"), v("l", "loup", { vivant: false }), v("x", "villageois")];
+  assert.ok(!L.ordreDeNuit(loupMort, 2).some(e => e.roleCle === "loup-affame"), "un loup mort : plus de réveil seul");
+  const morduMort = [v("a", "affame"), v("l", "loup"), v("m", "villageois", { camp: "meute", vivant: false })];
+  assert.equal(L.meuteEntiere(morduMort), false, "un mordu mort est un loup mort");
+  const villageoisMort = [v("a", "affame"), v("l", "loup"), v("m", "villageois", { vivant: false })];
+  assert.ok(L.ordreDeNuit(villageoisMort, 2).some(e => e.roleCle === "loup-affame"), "un villageois mort ne compte pas");
+  // À l'aube : sa seconde victime, s'il chasse encore ; jamais un loup.
+  const deux = L.resoudreNuit({ villageois: vs, actions: [{ acteurId: "l", roleCle: "meute", cibles: ["x"] }, { acteurId: "a", roleCle: "loup-affame", cibles: ["l"] }] });
+  assert.deepEqual(deux.morts, ["x"], "un loup seul ne dévore pas un loup");
+  const vs2 = [...vs, v("y", "villageois")];
+  assert.deepEqual(L.resoudreNuit({ villageois: vs2, actions: [{ acteurId: "l", roleCle: "meute", cibles: ["x"] }, { acteurId: "a", roleCle: "loup-affame", cibles: ["y"] }] }).morts.sort(), ["x", "y"]);
+  const rassasie = L.resoudreNuit({ villageois: [...loupMort, v("y", "villageois")], actions: [{ acteurId: "a", roleCle: "loup-affame", cibles: ["y"] }] });
+  assert.deepEqual(rassasie.morts, [], "sa faim est passée");
+  assert.ok(rassasie.messages.some(m => m.destinataire === "mj" && m.cle.endsWith("AffameRassasie")));
 });
 
 test("ordre de nuit : usages épuisés, rôles inactifs", () => {
@@ -226,12 +252,70 @@ test("nuit : mordre au lieu de tuer -> la victime rejoint la meute", () => {
   assert.deepEqual(passe.morts, ["x"], "la Louve qui passe ne mord pas");
 });
 
-test("nuit : une morsure sur un protégé échoue", () => {
-  const vs = [...village(), v("lm", "louve")];
+test("nuit : la garde du Garde du pont n'arrête pas l'infection ; la porte de la Gardienne, si", () => {
+  const vs = [...village(), v("lm", "louve"), v("gc", "gardienne")];
   const r = L.resoudreNuit({ villageois: vs, actions: [
     { acteurId: "g", roleCle: "garde-du-pont", cibles: ["x"] },
+    { acteurId: "l1", roleCle: "meute", cibles: ["x"] },
     { acteurId: "lm", roleCle: "louve-mere", cibles: ["x"] }] });
-  assert.deepEqual(r.changements, []);
+  assert.deepEqual(r.changements, [{ type: "camp", acteurId: "x", camp: "meute" }], "infecté malgré la garde");
+  assert.deepEqual(r.morts, []);
+  const porte = L.resoudreNuit({ villageois: vs, actions: [
+    { acteurId: "gc", roleCle: "gardienne-des-cles", cibles: ["x"] },
+    { acteurId: "l1", roleCle: "meute", cibles: ["x"] },
+    { acteurId: "lm", roleCle: "louve-mere", cibles: ["x"] }] });
+  assert.deepEqual(porte.changements, [], "la porte fermée repousse la morsure");
+});
+
+test("nuit : une infection n'est pas une mort — l'Herboriste n'a rien à sauver chez le mordu", () => {
+  const vs = [...village(), v("lm", "louve")];
+  const r = L.resoudreNuit({ villageois: vs, actions: [
+    { acteurId: "l1", roleCle: "meute", cibles: ["x"] },
+    { acteurId: "lm", roleCle: "louve-mere", cibles: ["x"] },
+    { acteurId: "h", roleCle: "herboriste", cibles: ["x"] }] });
+  assert.equal(r.fioles.h?.remede, undefined, "aucun remède versé");
+  const p = L.proiesDeLaNuit({ villageois: vs, actions: [{ acteurId: "l1", roleCle: "meute", cibles: ["x"] }, { acteurId: "lm", roleCle: "louve-mere", cibles: ["x"] }] });
+  assert.deepEqual(p, { proies: ["x"], mordus: ["x"] });
+});
+
+test("nuit : l'Herboriste verse ses deux fioles la même nuit (une de chaque sorte)", () => {
+  const vs = village();
+  const r = L.resoudreNuit({ villageois: vs, actions: [{ acteurId: "l1", roleCle: "meute", cibles: ["x"] }, { acteurId: "h", roleCle: "herboriste", cibles: ["x", "y"] }] });
+  assert.deepEqual(r.morts, ["y"], "x sauvé, y empoisonné");
+  assert.deepEqual(r.fioles.h, { remede: true, poison: true });
+  assert.deepEqual(r.fiolesVides, []);
+  const deuxPoisons = L.resoudreNuit({ villageois: vs, actions: [{ acteurId: "h", roleCle: "herboriste", cibles: ["x", "y"] }] });
+  assert.deepEqual(deuxPoisons.morts, ["x"], "un seul poison");
+  assert.deepEqual(deuxPoisons.fiolesVides, ["h"], "l'usage de la fiole de trop est rendu");
+  const soi = L.resoudreNuit({ villageois: vs, actions: [{ acteurId: "l1", roleCle: "meute", cibles: ["h"] }, { acteurId: "h", roleCle: "herboriste", cibles: ["h"] }] });
+  assert.deepEqual(soi.morts, [], "elle se sauve elle-même");
+});
+
+test("nuit : la garde du Garde du pont n'arrête que la meute (ni harpon ni poison)", () => {
+  const vs = [...village(), v("pe", "pecheur"), v("gc", "gardienne")];
+  assert.deepEqual(L.resoudreNuit({ villageois: vs, actions: [{ acteurId: "g", roleCle: "garde-du-pont", cibles: ["x"] }, { acteurId: "pe", roleCle: "pecheur-de-nuit", cibles: ["x"] }] }).morts, ["x"]);
+  assert.deepEqual(L.resoudreNuit({ villageois: vs, actions: [{ acteurId: "gc", roleCle: "gardienne-des-cles", cibles: ["x"] }, { acteurId: "pe", roleCle: "pecheur-de-nuit", cibles: ["x"] }] }).morts, [],
+    "la porte de la Gardienne arrête le harpon");
+  assert.deepEqual(L.resoudreNuit({ villageois: vs, actions: [{ acteurId: "g", roleCle: "garde-du-pont", cibles: ["x"] }, { acteurId: "l1", roleCle: "meute", cibles: ["x"] }] }).morts, []);
+});
+
+test("nuit : la Liseuse lit le rôle (le déguisé paraît Villageois, le Louvetier Loup, un mordu garde sa carte)", () => {
+  const vs = [...village(), v("lc", "lectrice"), v("d", "deguiseMasque"), v("lv", "louvetier"), v("m", "garde", { camp: "meute" })];
+  const lire = (cible, extra = {}) => L.resoudreNuit({ villageois: vs, actions: [{ acteurId: "lc", roleCle: "liseuse-de-cendres", cibles: [cible] }], ...extra })
+    .messages.find(m => m.destinataire === "lc");
+  assert.deepEqual(lire("l1").donnees, { nom: "l1", role: "Loup de Brumecombe", camp: "meute" });
+  assert.match(lire("l1").texte, /meute/, "le mot « meute » reste dans le message");
+  assert.equal(lire("l1").cle, "LAKOUR_LOUPS.Nuit.VoirRole");
+  assert.deepEqual(lire("d").donnees, { nom: "d", role: "Villageois", camp: "village" });
+  assert.deepEqual(lire("lv").donnees, { nom: "lv", role: "Loup de Brumecombe", camp: "meute" });
+  assert.deepEqual(lire("m").donnees, { nom: "m", role: "Garde", camp: "village" }, "la carte, pas l'infection");
+  assert.equal(lire("d", { nomsApparents: { village: "Villager" } }).donnees.role, "Villager", "les noms du monde");
+  // Le masque tombé (apparence vidée) : la vérité.
+  const tombe = vs.map(x => (x.id === "d" ? { ...x, role: { ...x.role, apparence: "" } } : x));
+  assert.equal(L.resoudreNuit({ villageois: tombe, actions: [{ acteurId: "lc", roleCle: "liseuse-de-cendres", cibles: ["d"] }] }).messages[0].donnees.role, "Loup déguisé");
+  // Une Liseuse rêvée se trompe toujours.
+  assert.deepEqual(lire("l1", { somnambules: ["lc"] }).donnees, { nom: "l1", role: "Villageois", camp: "village" });
+  assert.deepEqual(lire("x", { somnambules: ["lc"] }).donnees, { nom: "x", role: "Loup de Brumecombe", camp: "meute" });
 });
 
 test("nuit : lien d'amour, puis chagrin en cascade", () => {
@@ -292,14 +376,26 @@ test("nuit : fossoyeur lit le rôle d'un mort, pas d'un vivant", () => {
   assert.ok(r2.messages[0].cle.endsWith("PasMort"));
 });
 
-test("nuit : épier — repéré, l'enfant devient la victime ; sinon il reconnaît un loup", () => {
+test("nuit : épier — surprise, l'enfant est dévorée à la place de la proie ; sinon elle apprend le nom des loups", () => {
   const vs = [...village(), v("en", "enfant")];
   const actions = [{ acteurId: "en", roleCle: "enfant-de-la-brume", cibles: ["en"] }, { acteurId: "l1", roleCle: "meute", cibles: ["x"] }];
   const repere = L.resoudreNuit({ villageois: vs, actions, hasard: () => 0, chanceEpier: 0.5 });
   assert.deepEqual(repere.morts, ["en"]);
+  assert.deepEqual(repere.deces, [{ acteurId: "en", cause: "epie" }], "en silence : cause secrète « epie »");
   const cache = L.resoudreNuit({ villageois: vs, actions, hasard: () => 0.9, chanceEpier: 0.5 });
   assert.deepEqual(cache.morts, ["x"]);
-  assert.equal(cache.messages.find(m => m.destinataire === "en").donnees.nom, "x", "il entend la proie, pas le nom des loups");
+  const vu = cache.messages.find(m => m.destinataire === "en");
+  assert.ok(vu.cle.endsWith("EpierLoups"));
+  assert.deepEqual(vu.donnees.noms.split(", ").sort(), ["l1", "l2"], "le nom de tous les loups sortis chasser");
+  assert.equal(L.RISQUE_ENFANT, 1 / 2);
+  // La surprise tirée quand le choix a été noté (action.surprise) l'emporte sur le hasard de l'aube.
+  assert.deepEqual(L.resoudreNuit({ villageois: vs, actions: [{ ...actions[0], surprise: false }, actions[1]], hasard: () => 0, chanceEpier: 1 }).morts, ["x"]);
+  assert.deepEqual(L.resoudreNuit({ villageois: vs, actions: [{ ...actions[0], surprise: true }, actions[1]], hasard: () => 0.99, chanceEpier: 0 }).morts, ["en"]);
+  // Prise dehors : la garde ne la sauve pas ; un remède, si.
+  const gardee = [{ acteurId: "g", roleCle: "garde-du-pont", cibles: ["en"] }, { ...actions[0], surprise: true }, actions[1]];
+  assert.deepEqual(L.resoudreNuit({ villageois: vs, actions: gardee }).morts, ["en"]);
+  assert.deepEqual(L.resoudreNuit({ villageois: vs, actions: [...gardee, { acteurId: "h", roleCle: "herboriste", cibles: ["en"] }] }).morts, []);
+  assert.deepEqual(L.proiesDeLaNuit({ villageois: vs, actions: [{ ...actions[0], surprise: true }, actions[1]] }).proies, ["en"], "l'Herboriste apprend son nom");
   const passe = L.resoudreNuit({ villageois: vs, actions: [{ ...actions[0], cibles: [] }, actions[1]], hasard: () => 0, chanceEpier: 1 });
   assert.deepEqual(passe.morts, ["x"], "l'enfant qui passe ne risque rien");
 });
@@ -482,6 +578,8 @@ test("victoire : pyromane dernier vivant, ou avec un seul non-loup ; vivant, il 
 
 test("victoire : personne en vie -> pas de vainqueur", () => {
   assert.equal(L.verifierVictoire({ villageois: [v("a", "villageois", { vivant: false })] }), "");
+  assert.equal(L.verifierVictoire({ villageois: [v("a", "villageois", { vivant: false }), v("l", "loup", { vivant: false })], glas: true }), "village",
+    "au Glas final, la partie finit quand même");
 });
 
 // ---------------------------------------------------------------- distribution
@@ -580,7 +678,7 @@ test("état : morts uniques, vainqueur -> fin, état public sans secrets", () =>
 test("constantes : toutes les clés d'effet du contrat, partagées entre automatisées et narrateur", () => {
   assert.deepEqual([...L.EFFETS].sort(), ["annuler-vote", "asperger", "echanger-role", "eclairer", "embraser", "emporter", "epier",
     "lien-amour", "messager", "mordre", "poison", "proteger", "remede", "silence", "tuer", "voir-actif", "voir-camp",
-    "voir-role-mort", "vote-double"]);
+    "voir-role", "voir-role-mort", "vote-double"]);
   assert.deepEqual([...L.EFFETS_NARRATEUR], [], "tous automatisés : le Messager à l'aube, le Juge de paix de jour");
 });
 

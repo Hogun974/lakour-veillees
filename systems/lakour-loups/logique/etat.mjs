@@ -237,11 +237,13 @@ export function passerPhase(e, phase) {
   return etat;
 }
 
-export function ajouterAction(e, { acteurId, roleCle, cibles = [], effet, texte }, quand = Date.now()) {
+// surprise : l'Enfant de la brume qui épie a-t-elle été surprise par la meute (tiré quand son choix est noté) ?
+export function ajouterAction(e, { acteurId, roleCle, cibles = [], effet, texte, surprise }, quand = Date.now()) {
   const etat = normaliserEtat(e);
   const action = { acteurId, roleCle, cibles: [...cibles], quand };
   if (effet) action.effet = effet;
   if (texte) action.texte = String(texte);
+  if (typeof surprise === "boolean") action.surprise = surprise;
   etat.nuit.actions.push(action);
   return etat;
 }
@@ -302,7 +304,8 @@ export function enregistrerVote(e, { votant, cible, votants = null, maintenant =
 // Clôture. Le ruban de la Tisserande : si le plus désigné d'un vote d'exécution porte un ruban, le dépouillement est
 // suspendu — le vote reste ouvert une minute de plus (prolongation, en ms) pour sa défense, et le ruban est dénoué.
 // Le Bailli (bailli.mjs) : sa voix compte double à un vote d'exécution (votants : les vivants ; il doit en être) ; une égalité
-// qui laisse une place vide attend son départage (resultat.departage.enAttente, puis trancherVote). Le vote clos entre au
+// qui laisse une place vide attend son départage (resultat.departage.enAttente, puis trancherVote) ; s'il a voté pour l'un des
+// ex aequo, c'est celui-là, sans rien lui demander (departage.auto ; une place restante d'un vote double attend encore son choix). Le vote clos entre au
 // Registre (un vote à départager, une fois tranché).
 // -> { etat, resultat } ou { etat, resultat: null, prolonge: acteurId }.
 // souffles : les morts qui ont encore leur Dernier souffle (souffle.mjs) ; leur voix rendue au dépouillement est consommée.
@@ -341,6 +344,16 @@ export function cloreVote(e, { votants = null, poids = {}, maintenant = Date.now
     objet: v.objet, numero: v.numero, tour: etat.tour, souffles: souffle, ...(r.banc ? { banc: r.banc } : {}), ...(deuil ? { deuil } : {}),
     poids: Object.fromEntries(Object.entries(pesees).filter(([id]) => id in r.votes)),
     departage: bailli && r.departage ? { par: bailli, candidats: r.departage.candidats, places: r.departage.places, enAttente: true, choix: [] } : null };
+  // La voix du Bailli tranche d'elle-même : il a voté pour l'un des ex aequo, c'est lui qui est désigné.
+  const sienne = resultat.departage ? r.votes[bailli] : "";
+  if (sienne && resultat.departage.candidats.includes(sienne)) {
+    const d = resultat.departage;
+    resultat.elus = [...resultat.elus, sienne];
+    resultat.elu = resultat.elus[0] ?? null;
+    resultat.departage = d.places > 1
+      ? { ...d, candidats: d.candidats.filter(id => id !== sienne), places: d.places - 1, choix: [sienne], auto: [sienne] }
+      : { ...d, enAttente: false, choix: [sienne], auto: [sienne] };
+  }
   // Petite tablée (tablee.mjs) : pas de jour sans verdict. Une égalité en tête d'un vote d'exécution que personne ne tranche
   // (pas de Bailli en charge) est tranchée par le sort, parmi les ex æquo ; resultat.sort = les désignés par le sort.
   if (etat.petiteTablee && v.objet === "execution" && !v.banc && !resultat.departage && r.departage) {
@@ -353,7 +366,7 @@ export function cloreVote(e, { votants = null, poids = {}, maintenant = Date.now
   etat.pouvoirsDeuil.cible = null;
   v.exprimes = [];
   v.resultat = resultat;
-  if (!resultat.departage) inscrire(etat, entreeDeVote(resultat), maintenant);
+  if (!resultat.departage?.enAttente) inscrire(etat, entreeDeVote(resultat), maintenant);
   return { etat, resultat };
 }
 

@@ -49,6 +49,7 @@ system: {
     ordre: Number = 50,         // ordre de réveil (petit = tôt) ; la meute agit à 40
     premiereNuitSeulement: Boolean = false,
     uneNuitSurDeux: Boolean = false,
+    tantQueMeuteEntiere: Boolean = false, // chaque nuit tant qu'aucun mort n'était de la meute (le Loup affamé, Pacte étape 2)
     cibles: Number = 1,         // nombre de joueurs à désigner (0 = action sans cible)
     soiMeme: Boolean = false,   // peut se désigner lui-même
     invite: String = ""         // question posée au joueur (« Quelle maison éclairer cette nuit ? »)
@@ -176,9 +177,17 @@ demanderAction({ acteurId, invite, candidats: [acteurId], nombre, delai })
                                             Pour la meute : demanderActionMeute({ invite, candidats, delai }) -> vote des loups vivants,
                                             résolu à la majorité (égalité : premier choisi).
                                             Seuls chassent les loups libres (ni gardés à l'œil, ni hors d'atteinte).
-candidatsDeNuit({ acteurId, roleCle })    -> [acteurId] que ce rôle (ou "meute") peut désigner cette nuit, effets du jour compris
+candidatsDeNuit({ acteurId, roleCle })    -> [acteurId] que ce rôle (ou "meute") peut désigner cette nuit, effets du jour compris ;
+                                            sans la cible de la nuit d'avant pour « proteger » et « silence » (Garde du pont,
+                                            Gardienne des clés, Loup hurleur) ; sans la proie de la meute de cette nuit pour un loup
+                                            qui tue seul (Loup affamé)
+proiesDeLaNuit()                          -> { proies, mordus, aSauver } (MJ actif, SECRET) : les proies notées jusqu'ici (la proie
+                                            de la meute, ou l'Enfant de la brume surprise à sa place ; les victimes du Loup affamé ;
+                                            la peste), les mordus de la Louve mère ; aSauver : ce que l'Herboriste apprend
 demanderTexte({ acteurId, invite, delai, max }) -> Promise<String> : une phrase écrite chez ce seul joueur ("" s'il passe)
-noterAction({ acteurId, roleCle, cibles, effet?, texte? })  -> ajoute à etat.nuit.actions (texte : le mot du Messager)
+noterAction({ acteurId, roleCle, cibles, effet?, texte? })  -> ajoute à etat.nuit.actions (texte : le mot du Messager) ; l'Enfant
+                                            de la brume qui épie : surprise tirée aussitôt (réglage chanceEpier, RISQUE_ENFANT = 1/2),
+                                            action.surprise ; l'Herboriste : un usage par cible (deux fioles la même nuit)
 resoudreNuit({ chuchoter })               -> { morts, revelations, messages: [{acteurId, texte}], narration, annonces, bilan, … } ;
                                             annonces : textes publics déjà postés au chat ; chuchoter: true -> le système remet
                                             lui-même les messages au carnet secret
@@ -262,7 +271,10 @@ ouvrirVote({ objet: "bailli" })   -> l'élection du Bailli, au débat SANS chang
                                     ni ruban) ; erreur claire si elle n'est pas due (Bailli hors jeu, Bailli vivant, succession en cours,
                                     vote ouvert, déjà une élection ce jour, vote d'exécution déjà fait, fin)
 ouvrirVote(…), changerPhase(…)    -> erreur claire (Bailli.Refus.departage) tant qu'une égalité attend le départage du Bailli
-cloreVote()                       -> + poids ({ bailli: 2 } à un vote d'exécution), departage: null | { par, candidats, places, choix } ;
+cloreVote()                       -> + poids ({ bailli: 2 } à un vote d'exécution), departage: null | { par, candidats, places, choix,
+                                    auto? } : si le Bailli a voté pour l'un des ex aequo, sa voix tranche d'office (auto, annoncé
+                                    Bailli.TrancheVoix ; une place encore libre d'un vote double attend son choix) ;
+                                    le Loup déguisé le plus désigné sans être condamné perd son masque (masquesQuiTombent) ;
                                     vote "bailli" -> + bailli: acteurId | "", sort: Boolean (égalité : le sort)
 bailli()                          -> { actif, acteurId, nom, depuis, succession: null | { de, nom, tour }, election: { ok, raison },
                                        possible: { ok, raison, raisonTexte } }   (tous, d'après l'état public)
@@ -531,7 +543,7 @@ demande » ne sont jamais des masques de la meute. Deux porteurs d'un même rôl
 **Historique** : la composition de la partie en cours reste dans les secrets du MJ (`etat.aConsigner`) et n'entre au réglage monde
 `historique` (livré à tous) qu'à la fin (victoire), ou quand la partie est abandonnée (nouvelle distribution, village remis à zéro).
 **Rosière** : exécutée par le vote -> `verifierVictoire` rend « meute » (peste noire : « peste »), après les solitaires exécutés.
-**Glas final** (public, `etat.glas`) et **Bonne étoile** (SECRET, `etat.bonneEtoile`) : `calendrier.mjs` (`glasSonne`, `etoilesDeLaNuit`).
+**Glas final** (public, `etat.glas`) et **Bonne étoile** (SECRET, `etat.bonneEtoile`) : `calendrier.mjs` (`glasSonne`, `etoilesDeLaNuit`). Au glas, un village vide (personne en vie) revient au Village : la partie finit toujours.
 
 ### Bailli, Registre, Masques (logique/bailli.mjs, logique/registre.mjs, logique/masques.mjs)
 
@@ -791,7 +803,7 @@ veillée ».
 
 `tuer`, `proteger`, `voir-camp`, `voir-role-mort`, `eclairer` (démasque un loup qui entre), `silence`, `vote-double`,
 `annuler-vote`, `remede`, `poison`, `lien-amour`, `echanger-role`, `mordre` (rejoindre la meute), `emporter` (à sa mort),
-`asperger` / `embraser`, `epier`, `messager`, `voir-actif`. `emporter` : le mourant désigne lui-même sa cible (demande posthume,
+`asperger` / `embraser`, `epier`, `messager`, `voir-actif`, `voir-role` (le rôle d'un joueur : la Liseuse de cendres). `emporter` : le mourant désigne lui-même sa cible (demande posthume,
 socle du Pacte), le MJ en repli. Toutes sont désormais appliquées par le système : à l'aube
 (`resoudreNuit()`), dont `messager` (le mot écrit par l'expéditeur, `action.texte`, remis au seul destinataire), ou de jour
 (`annuler-vote` : le Juge de paix, voir §5). Ce que le système ne connaîtrait pas reste raconté et arbitré par le MJ (`narrateur`).
@@ -799,12 +811,30 @@ socle du Pacte), le MJ en repli. Toutes sont désormais appliquées par le syst�
 Un même effet sert plusieurs rôles, réglés autrement (camp, cibles, usages, nuits, `apparence`, `victoireCle`) : un rôle nouveau
 n'a pas besoin de code tant qu'il s'en tient à ces clés. Conventions de `resoudreNuit()` qui en découlent (contenu 0.6.0) :
 - `tuer` par un rôle **hors meute** (Pêcheur de nuit, une fois par partie ; Dame du gué, une nuit sur deux) : cause `nuit` (pas de
-  crocs pour le Tanneur), arrêté par une protection, un remède ou une absence (Passeur, Grange), **pas** par le verrou, l'asile de la
-  Chapelle ni la Taverne (réservés aux attaques de loup) ; il atteint les solitaires que la meute ne peut pas tuer ;
+  crocs pour le Tanneur), arrêté par la porte de la Gardienne des clés, un remède ou une absence (Passeur, Grange), **pas** par la
+  garde du Garde du pont, le verrou, l'asile de la Chapelle ni la Taverne (réservés aux attaques de loup) ; il atteint les solitaires
+  que la meute ne peut pas tuer ;
+- `proteger` : la garde (Garde du pont) ne vaut que contre la meute (et la peste) : ni poison, ni feu, ni harpon, ni noyade, ni
+  morsure ; la Gardienne des clés ferme une porte (`gardienne-des-cles`) : elle arrête aussi le harpon, la noyade et la morsure ;
+- `tuer` par un loup seul à `nuit.tantQueMeuteEntiere` (Loup affamé, ordre 42) : chaque nuit tant qu'aucun mort n'était de la meute
+  (`meuteEntiere`, nuit.mjs : un loup, un mordu) ; une autre victime que la proie de la meute, jamais un loup ;
+- `mordre` (Louve mère) : la proie de la meute est infectée (camp « meute », rôle et pouvoir de nuit gardés) ; la garde ne l'empêche
+  pas, une porte que la meute ne passe pas (asile, Taverne, verrou, clé de la Gardienne) si ; un mordu n'est pas une victime : ni remède
+  possible, ni nom donné à l'Herboriste ;
+- `remede` (Herboriste, `nuit.cibles: 2`) : une cible victime reçoit le remède, une autre le poison ; les deux la même nuit ; une
+  fiole de chaque sorte par partie ; `fiolesVides` : une entrée par fiole restée bouchée (l'usage est rendu) ;
+- `epier` (Enfant de la brume) : elle apprend le nom des loups sortis chasser (`EpierLoups`) ; surprise (`action.surprise`, sinon
+  `chanceEpier`), c'est elle la proie de la meute (cause secrète `epie`), prise dehors : ni garde ni porte, un remède si ;
+- `voir-role` (Liseuse de cendres) : `roleApparent` — la carte du joueur et le camp de cette carte (un mordu garde sa carte du Village) ;
+  une apparence montre le rôle simple de ce camp (`nomsApparents` : « Villageois », « Loup de Brumecombe ») ; le masque du Carnaval,
+  celui du camp inverse ; une Liseuse rêvée (Somnambule) lit « Villageois » sur un loup, « Loup de Brumecombe » sur tout autre ;
+  message `VoirRole` (« Les cendres parlent : X est « rôle », du camp « camp » ») ;
 - `voir-actif` avec une cible (Loup des roseaux) : « a agi / n'a pas bougé cette nuit » ; sans cible (Ermite) : un nom tiré au hasard
   parmi ceux qui ont agi ; un loup qui vise une maison y entre (la lanterne le démasque) ;
 - `apparence` : camp montré aux visions `voir-camp` (Loup déguisé : `village` ; Louvetier : `meute`) ; le Cimetière et les salons
-  suivent le camp réel ;
+  suivent le camp réel. Le masque du Loup déguisé tombe (`masquesQuiTombent`, jour.mjs) quand il est le plus désigné d'un vote
+  d'exécution sans être condamné (égalité non tranchée, majorité manquée, vote annulé par le Juge de paix) : sa fiche perd
+  l'apparence (""), le narrateur le note (`Deguise.MasqueTombe`), le loup l'apprend (`Deguise.Carnet`) ;
 - `victoireCle: "dernier-survivant"` (Pyromane, Dame du gué) : la meute ne peut pas le tuer ; le village ne gagne pas tant qu'il vit.
 
 ## 5. Pouvoirs de jour (`logique/jour.mjs`)
@@ -830,7 +860,8 @@ est annoncé au chat avec le nom de celui qui agit.
 | `maitresse-d-ecole` | 1 (le premier) | l'appel : 30 s chacun, dans l'ordre des maisons à partir du joueur choisi |
 | `ramoneuse` | 1 vivant (soi compris) | annonce si sa maison a reçu de la visite la nuit passée (`bilan.visites` secret : proie de la meute, cibles des pouvoirs hors soi) ; ni qui, ni pourquoi |
 | `eclusiere` | — | écluse fermée (effet `ecluse`, une par nuit) : la nuit suivante, `pontBloque` comme le Pont, même sans lui ; la meute (et un loup qui tue seul) ne vise aucune maison de l'autre rive |
-| `juge-de-paix` | — | juste après le dépouillement d'un vote d'exécution, avant l'exécution : se révèle, le vote se rouvre |
+| `juge-de-paix` | — | juste après le dépouillement d'un vote d'exécution, avant l'exécution : se révèle, le vote se rouvre ; le Loup déguisé le plus désigné du vote annulé perd son masque |
+| `sonneur` | — | une fois, pendant le jour : à l'aube ou au débat (le prochain vote d'exécution), ou pendant un vote d'exécution ouvert (hors Banc) : se révèle, le vote désigne deux condamnés (`voteDoubleDemain` ou `vote.double`) |
 | `conteuse` | 1 (pas soi) | deux minutes sur ce joueur, qui ne peut pas répondre ; annoncé sans nommer la Conteuse |
 | `taverne` | soi | dort à la Taverne (3 lits) : la meute n'y tue pas, sauf si un loup y dort (alors sans protection) |
 | `forge` | soi | une lame par partie : la meute qui l'atteint y laisse du sang, un loup chasseur réduit au silence |

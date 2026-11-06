@@ -7,7 +7,7 @@
   "system": {
     "cle": "sonneur",
     "camp": "village",
-    "description": "<p>La corde de la cloche passe par ta fenêtre.</p><p><strong>Une fois par partie</strong>, au début d'un vote, tu peux annoncer que tu sonnes la cloche : <strong>ce vote désigne deux condamnés</strong> au lieu d'un (les deux villageois qui ont le plus de voix ; une égalité pour la seconde place la laisse vide). Tu te révèles en le faisant.</p>",
+    "description": "<p>La corde de la cloche passe par ta fenêtre.</p><p><strong>Une fois par partie</strong>, pendant le débat ou au début d'un vote, tu sonnes la cloche (ton pouvoir de jour, sur la Table de jeu, ou à voix haute au narrateur) : <strong>le vote d'exécution désigne deux condamnés</strong> au lieu d'un (les deux joueurs qui ont le plus de voix ; une égalité pour la seconde place la laisse vide, sauf si le Bailli la tranche). Tu te révèles en le faisant.</p>",
     "victoire": "",
     "nuit": {
       "actif": false,

@@ -23,15 +23,21 @@ export const CHANCE_PESTE = 1 / 30;
 export const EFFETS = [
   "tuer", "proteger", "voir-camp", "voir-role-mort", "eclairer", "silence", "vote-double", "annuler-vote",
   "remede", "poison", "lien-amour", "echanger-role", "mordre", "emporter", "asperger", "embraser",
-  "epier", "messager", "voir-actif"
+  "epier", "messager", "voir-actif", "voir-role"
 ];
 
 // Celles que le système applique de lui-même : à l'aube (resoudreNuit, dont le message porté par le Messager) ou de jour
 // (agirDeJour : « annuler-vote » du Juge de paix). Les autres sont rendues au narrateur.
 export const EFFETS_AUTOMATISES = [
   "tuer", "proteger", "voir-camp", "voir-role-mort", "eclairer", "silence", "vote-double", "remede", "poison",
-  "lien-amour", "echanger-role", "mordre", "emporter", "asperger", "embraser", "epier", "voir-actif", "messager", "annuler-vote"
+  "lien-amour", "echanger-role", "mordre", "emporter", "asperger", "embraser", "epier", "voir-actif", "messager", "annuler-vote",
+  "voir-role"
 ];
+
+// L'Enfant de la brume qui épie la meute (effet « epier ») : sa chance d'être surprise, et alors dévorée à la place de la proie.
+// Le livre ne chiffre pas ce risque (à la table, il dépend de l'adresse de l'enfant et de l'œil des loups) : une chance sur deux,
+// à recalibrer à l'étape 6 (simulation). Le réglage monde « chanceEpier » part de cette valeur.
+export const RISQUE_ENFANT = 1 / 2;
 export const EFFETS_NARRATEUR = EFFETS.filter(e => !EFFETS_AUTOMATISES.includes(e));
 
 // Conditions de victoire lisibles par la machine pour les solitaires (champ de rôle `victoireCle`, extension

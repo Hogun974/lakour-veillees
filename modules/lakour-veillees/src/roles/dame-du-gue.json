@@ -7,7 +7,7 @@
   "system": {
     "cle": "dame-du-gue",
     "camp": "solitaire",
-    "description": "<p>À Brumecombe, on dit qu'une femme pâle lave son linge au gué quand la brume monte, et que ceux qui s'approchent pour l'aider ne reviennent pas.</p><p><strong>Une nuit sur deux</strong> (la deuxième, la quatrième…), tu chantes au bord de l'eau et tu désignes un joueur : il suit ta voix jusqu'au gué et <strong>se noie</strong>. On le trouve mort à l'aube, sauf s'il était protégé cette nuit ou sauvé par un remède.</p><p>La meute ne peut pas te tuer : quand elle entre chez toi, elle n'y trouve que de l'eau froide. Le vote, le poison, le feu et le harpon, si.</p>",
+    "description": "<p>À Brumecombe, on dit qu'une femme pâle lave son linge au gué quand la brume monte, et que ceux qui s'approchent pour l'aider ne reviennent pas.</p><p><strong>Une nuit sur deux</strong> (la deuxième, la quatrième…), tu chantes au bord de l'eau et tu désignes un joueur : il suit ta voix jusqu'au gué et <strong>se noie</strong>. On le trouve mort à l'aube, sauf si la Gardienne des clés a fermé sa porte cette nuit ou s'il est sauvé par un remède (la garde du Garde du pont n'arrête que la meute).</p><p>La meute ne peut pas te tuer : quand elle entre chez toi, elle n'y trouve que de l'eau froide. Le vote, le poison, le feu et le harpon, si.</p>",
     "victoire": "<p>Tu gagnes <strong>seule</strong> si tu es la dernière vivante, ou la dernière avec un seul autre joueur qui n'est pas un loup.</p>",
     "nuit": {
       "actif": true,

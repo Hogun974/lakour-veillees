@@ -782,6 +782,21 @@ async function appliquerDepartage(resultat, choix) {
   return r.resultat ?? resultat;
 }
 
+// Le masque du Loup déguisé tombe (le plus désigné d'un vote sans être exécuté) : sa fiche perd l'apparence, les visions disent
+// désormais la vérité sur lui. Secret : le narrateur le sait (chronique secrète), le loup aussi (carnet) ; personne d'autre.
+async function tomberLeMasque(acteurId) {
+  const nom = game.actors.get(acteurId)?.name ?? acteurId;
+  let tombe = false;
+  await modifierEtat(e => {
+    const f = e.fiches?.[acteurId];
+    if (!f?.role?.system?.apparence) return e;
+    tombe = true;
+    majFiche(e, acteurId, x => ({ ...x, role: { ...x.role, system: { ...x.role.system, apparence: "" } } }));
+    return L.journaliserSecret(e, t("LAKOUR_LOUPS.Deguise.MasqueTombe", { nom }));
+  });
+  if (tombe) await envoyerSecret(acteurId, { texte: t("LAKOUR_LOUPS.Deguise.Carnet") });
+}
+
 // Tant que le Bailli n'a pas tranché, ni nouveau vote ni changement de phase.
 function exigerSansDepartage() {
   if (L.departageEnAttente(lireEtat())) throw new Error(t("LAKOUR_LOUPS.Bailli.Refus.departage"));
@@ -1134,6 +1149,15 @@ async function contenuDisponible() {
   // Le camp de chaque rôle : celui de l'équilibre du contenu, sinon celui du document.
   const camps = new Map([...roles.keys()].map(cle => [cle, equilibre?.roles?.[cle]?.camp || campsDesDocs.get(cle) || "village"]));
   return { roles, metiers: [...metiers.values()], batiments, noms, camps, equilibre: equilibre ?? { roles: {}, batiments: {} }, compositions: compositions ?? {} };
+}
+
+// Les noms du rôle simple de chaque camp dans ce monde (la Liseuse de cendres les lit derrière une apparence : le Loup déguisé
+// paraît « Villageois ») : ceux du contenu installé ; à défaut, ceux de la logique (NOMS_APPARENTS).
+async function nomsApparents(contenu = null) {
+  try {
+    const c = contenu ?? await contenuDisponible();
+    return Object.fromEntries([["village", c.noms.get("villageois")], ["meute", c.noms.get("loup-de-brumecombe")]].filter(([, n]) => n));
+  } catch { return {}; }
 }
 
 const lireReglage = (cle, defaut) => { try { return game.settings.get(ID, cle) ?? defaut; } catch { return defaut; } };
@@ -1642,10 +1666,10 @@ export const api = {
     const role = meute ? roles.find(r => r?.system.camp === "meute" && Number(r.system.nuit.ordre) === 40) : roles[0];
     const effet = meute ? "tuer" : role?.system.effet ?? "";
     const base = api.candidatsDeNuit({ acteurId: entree.acteurIds[0], roleCle });
-    // Les proies de la meute cette nuit (pour la Louve mère et l'Herboriste).
-    const rolesParCle = new Map(villageoisAPlat().filter(v => v.role).map(v => [v.role.cle, v.role]));
-    const proies = etat.nuit.actions.filter(a => a.roleCle === CLE_MEUTE || a.roleCle === CLE_PESTE
-      || (rolesParCle.get(a.roleCle)?.camp === "meute" && rolesParCle.get(a.roleCle)?.effet === "tuer")).flatMap(a => a.cibles);
+    // Les proies de la nuit (pour la Louve mère et l'Herboriste) : l'Enfant de la brume surprise à la place de la proie de la
+    // meute ; un mordu n'est pas une victime, l'Herboriste ne l'apprend pas (logique/resolution.mjs, proiesDeLaNuit).
+    const { proies, mordus } = L.proiesDeLaNuit({ villageois: villageoisAPlat(), actions: etat.nuit.actions });
+    const aSauver = proies.filter(id => !mordus.includes(id));
     // Les candidats d'un porteur, selon SES contraintes (gardé à l'œil, hors d'atteinte…) et l'effet du rôle.
     const candidatsPour = sa => {
       if (effet === "voir-role-mort") return sa.length ? tousLesVillageois().filter(a => !a.system.vivant).map(a => a.id) : [];
@@ -1653,7 +1677,7 @@ export const api = {
     };
     const candidats = candidatsPour(base);
     let invite = role?.system.nuit.invite || (meute ? "" : t("LAKOUR_LOUPS.Choix.InviteParDefaut"));
-    if (effet === "remede" && proies.length) invite = `${t("LAKOUR_LOUPS.Nuit.ProiesDeLaMeute", { noms: proies.map(id => game.actors.get(id)?.name ?? "").join(", ") })} ${invite}`;
+    if (effet === "remede" && aSauver.length) invite = `${t("LAKOUR_LOUPS.Nuit.ProiesDeLaMeute", { noms: aSauver.map(id => game.actors.get(id)?.name ?? "").join(", ") })} ${invite}`;
     reveilsEnCours.add(roleCle);
     Hooks.callAll("lakourLoups.reveil", { roleCle, enCours: true });
     let cibles = [], texte = "";
@@ -1728,6 +1752,15 @@ export const api = {
 
   // Qui ce rôle (ou la meute) peut désigner cette nuit, compte tenu des effets du jour (Passeur, Grange, Garde du guet,
   // Chapelle, Taverne, Pont). Le narrateur le passe à demanderAction.
+  // Les proies de la nuit en cours (MJ actif ; SECRET) : celles que la Louve mère peut mordre et que l'Herboriste apprend
+  // (logique/resolution.mjs, proiesDeLaNuit : l'Enfant de la brume surprise à la place de la proie de la meute ; un mordu n'est
+  // pas une victime). -> { proies: [acteurId], mordus: [acteurId], aSauver: [acteurId] }
+  proiesDeLaNuit() {
+    exigerMJ();
+    const x = L.proiesDeLaNuit({ villageois: villageoisAPlat(), actions: lireEtat().nuit.actions });
+    return { ...x, aSauver: x.proies.filter(id => !x.mordus.includes(id)) };
+  },
+
   candidatsDeNuit({ acteurId = "", roleCle = "" } = {}) {
     const etat = lireEtat();
     return L.candidatsDeNuit({ villageois: villageoisAPlat(), etat, acteurId, roleCle, tour: Math.max(1, etat.tour) });
@@ -1800,11 +1833,16 @@ export const api = {
     const role = roleDe(acteur);
     const cle = roleCle ?? role?.system.cle ?? "";
     // Un usage n'est consommé que si le pouvoir sert (une cible, ou un rôle sans cible) : passer ne coûte rien. L'usage vit
-    // dans la fiche secrète (le document le trahirait, en pleine nuit) ; seul son joueur l'apprend, par sa fiche.
+    // dans la fiche secrète (le document le trahirait, en pleine nuit) ; seul son joueur l'apprend, par sa fiche. L'Herboriste
+    // peut verser ses deux fioles la même nuit : un usage par cible (l'aube rend ceux d'une fiole restée bouchée).
     const utilise = cibles.length > 0 || Number(role?.system.nuit.cibles) === 0;
+    const fois = role?.system.effet === "remede" ? Math.max(1, Math.min(2, cibles.length)) : 1;
+    // L'Enfant de la brume qui épie : la meute la surprend-elle ? Tiré maintenant, pour que l'Herboriste apprenne la vraie proie.
+    const epie = role?.system.effet === "epier" && role.system.cle === cle && cibles.length > 0;
+    const surprise = epie ? Math.random() < Number(reglage("chanceEpier") ?? L.RISQUE_ENFANT) : undefined;
     const etat = await modifierEtat(e => {
-      const x = L.ajouterAction(e, { acteurId, roleCle: cle, cibles, effet, texte });
-      if (utilise && cle !== CLE_MEUTE && role && role.system.cle === cle && role.system.usages.max > 0) majFiche(x, acteurId, f => L.changerUsage(f, -1));
+      const x = L.ajouterAction(e, { acteurId, roleCle: cle, cibles, effet, texte, surprise });
+      if (utilise && cle !== CLE_MEUTE && role && role.system.cle === cle && role.system.usages.max > 0) majFiche(x, acteurId, f => L.changerUsage(f, -fois));
       return x;
     });
     return foundry.utils.deepClone(etat.nuit.actions.at(-1));
@@ -1832,12 +1870,22 @@ export const api = {
     const r = L.resoudreNuit({
       villageois: villageoisAPlat(), actions: avant.nuit.actions, tour, asperges: avant.asperges,
       precedentes: avant.nuitPrecedente.actions, primes: avant.primes, fioles: avant.fioles, chanceEpier: reglage("chanceEpier"),
-      jour: L.effetsDeLaNuit(avant, tour, { batiments: cles }), somnambules, rolesFactices
+      jour: L.effetsDeLaNuit(avant, tour, { batiments: cles }), somnambules, rolesFactices,
+      nomsApparents: avant.nuit.actions.some(a => roleDe(game.actors.get(a.acteurId))?.system.effet === "voir-role") ? await nomsApparents(contenu) : {}
     });
     // Une fiole déjà vide n'a rien versé : l'usage décompté par noterAction est rendu, AVANT les échanges de rôles de la nuit
     // (sinon il irait au rôle reçu par échange, ex. un Colporteur qui pourrait échanger une seconde fois).
+    // L'Herboriste qui verse ses deux fioles la même nuit : noterAction a pris un usage par cible ; ce qui reste, c'est le nombre
+    // de fioles encore pleines (r.fioles, avant l'échange de rôles de la nuit), pour qu'un usage pris en trop ne soit jamais rendu deux fois.
     if (r.fiolesVides.length) await modifierEtat(e => {
-      for (const id of r.fiolesVides) majFiche(e, id, f => L.changerUsage(f, +1));
+      const echanges = r.changements.filter(c => c.type === "echange");
+      const avantEchange = id => { const c = echanges.find(x => x.a === id || x.b === id); return r.fioles[c ? (c.a === id ? c.b : c.a) : id] ?? {}; };
+      for (const id of new Set(r.fiolesVides)) majFiche(e, id, f => {
+        const u = f.role?.system.usages;
+        if (!(u?.max > 0)) return f;
+        const versees = ["remede", "poison"].filter(k => avantEchange(id)[k]).length;
+        return { ...f, role: { ...f.role, system: { ...f.role.system, usages: { ...u, restant: Math.max(0, u.max - versees) } } } };
+      });
       return e;
     });
     for (const c of r.changements) {
@@ -1992,15 +2040,18 @@ export const api = {
         const annonce = x.elu ? t(x.sort ? "LAKOUR_LOUPS.Bailli.EluSort" : "LAKOUR_LOUPS.Bailli.Elu", { nom: nom(x.elu) }) : t("LAKOUR_LOUPS.Bailli.Personne");
         return { etat: L.journaliser(x.etat, annonce), resultat: { ...x.etat.vote.resultat, bailli: x.elu, sort: x.sort }, annonce };
       }
-      if (c.resultat.departage) {
-        const annonce = t("LAKOUR_LOUPS.Bailli.Departage", { nom: nom(c.resultat.departage.par), noms: c.resultat.departage.candidats.map(nom).join(", ") });
+      // La voix du Bailli a tranché d'elle-même (il avait voté pour l'un des ex aequo) : dit au village.
+      const d = c.resultat.departage;
+      const auto = d?.auto?.length ? t("LAKOUR_LOUPS.Bailli.TrancheVoix", { nom: nom(d.par), noms: d.auto.map(nom).join(", ") }) : "";
+      if (d?.enAttente) {
+        const annonce = [auto, t("LAKOUR_LOUPS.Bailli.Departage", { nom: nom(d.par), noms: d.candidats.map(nom).join(", ") })].filter(Boolean).join(" ");
         return { etat: L.journaliser(c.etat, annonce), resultat: c.resultat, annonce };
       }
       const noms = c.resultat.elus.map(nom).join(", ");
       // Le Banc : le verdict est dit (« pour » sur le total) ; la voix du deuil : « une voix sans visage » rejoint son candidat ;
       // la Petite tablée : le sort a tranché l'égalité.
       const b = c.resultat.banc;
-      const annonce = [b ? t(c.resultat.elus.length ? "LAKOUR_LOUPS.Banc.Condamne" : "LAKOUR_LOUPS.Banc.Acquitte", { nom: nom(b.accuse), pour: b.pour, total: b.total }) : "",
+      const annonce = [auto, b ? t(c.resultat.elus.length ? "LAKOUR_LOUPS.Banc.Condamne" : "LAKOUR_LOUPS.Banc.Acquitte", { nom: nom(b.accuse), pour: b.pour, total: b.total }) : "",
         c.resultat.deuil ? t("LAKOUR_LOUPS.Deuil.Voix", { nom: nom(c.resultat.deuil) }) : "",
         c.resultat.sort?.length ? t("LAKOUR_LOUPS.Tablee.Sort", { noms: c.resultat.sort.map(nom).join(", ") }) : ""].filter(Boolean).join(" ");
       let x = L.journaliser(c.etat, noms ? t("LAKOUR_LOUPS.Journal.VoteClos", { noms, n: c.resultat.elus.length }) : t("LAKOUR_LOUPS.Journal.VoteNul"));
@@ -2015,6 +2066,8 @@ export const api = {
     if (r.annonce) await annonceChat(echapper(r.annonce));
     let resultat = r.resultat;
     if (resultat.departage?.enAttente) resultat = await departageEnAttente(resultat);
+    // Le Loup déguisé le plus désigné sans être condamné perd son masque (logique/jour.mjs, masquesQuiTombent).
+    for (const id of L.masquesQuiTombent({ resultat, villageois: villageoisAPlat() })) await tomberLeMasque(id);
     if (resultat.objet === "bailli") {
       annoncer("lakourLoups.bailli", [{ acteurId: resultat.bailli, comment: resultat.bailli ? (resultat.sort ? "sort" : "election") : "vacance" }]);
     }
@@ -2193,9 +2246,12 @@ export const api = {
         if (u?.max > 0) await objet.update({ "system.usages.restant": Math.max(0, u.restant - 1) });
       } else if (c.type === "revele") await revelerPubliquement(c.acteurId);
       else if (c.type === "silence") await cible?.update({ "system.silence": Boolean(c.valeur) });
+      else if (c.type === "masque") await tomberLeMasque(c.acteurId);
     }
     for (const a of annonces) await annonceChat(echapper(a));
     for (const p of r.prives) await envoyerSecret(p.destinataire, { texte: texteMessage(p) });
+    // La cloche du Sonneur pendant le vote : le vote ouvert devient double (tous les navigateurs le voient).
+    if (r.voteChange && !r.rouvrirVote) annoncer("lakourLoups.phase", ["vote", lireEtat()], ["vote", L.etatPublic(lireEtat())]);
     if (r.rouvrirVote) {
       annoncer("lakourLoups.phase", ["vote", r.etat], ["vote", L.etatPublic(r.etat)]);
       annoncer("lakourLoups.voteOuvert", [{ objet: r.etat.vote.objet, numero: r.etat.vote.numero }]);

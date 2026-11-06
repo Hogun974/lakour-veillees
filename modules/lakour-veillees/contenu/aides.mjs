@@ -12,7 +12,7 @@ export const CAMPS = ["village", "meute", "solitaire"];
 export const EFFETS = [
   "tuer", "proteger", "voir-camp", "voir-role-mort", "eclairer", "silence", "vote-double", "annuler-vote",
   "remede", "poison", "lien-amour", "echanger-role", "mordre", "emporter", "asperger", "embraser",
-  "epier", "messager", "voir-actif"
+  "epier", "messager", "voir-actif", "voir-role"
 ];
 // Extensions du système lakour-loups (systems/lakour-loups/scripts/modeles.mjs, logique/constantes.mjs) :
 // role.apparence = camp vu par une vision « voir-camp » ("" = camp réel) ; role.victoireCle = victoire d'un solitaire ;
@@ -76,6 +76,7 @@ export function role({ cle, nom, camp, pouvoir, victoire = "", victoireCle = "",
       nuit: {
         actif: Boolean(nuit), ordre: nuit?.ordre ?? 50,
         premiereNuitSeulement: nuit?.premiereNuitSeulement ?? false, uneNuitSurDeux: nuit?.uneNuitSurDeux ?? false,
+        ...(nuit?.tantQueMeuteEntiere ? { tantQueMeuteEntiere: true } : {}),
         cibles: nuit ? (nuit.cibles ?? 1) : 0, soiMeme: nuit?.soiMeme ?? false, invite: nuit?.invite ?? ""
       },
       usages: usagesDe(usages), effet, apparence, victoireCle, ...(estPublic ? { public: true } : {})

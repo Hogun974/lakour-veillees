@@ -17,8 +17,8 @@
       "en": "Lady of the Ford"
     },
     "system.description": {
-      "fr": "<p>À Brumecombe, on dit qu'une femme pâle lave son linge au gué quand la brume monte, et que ceux qui s'approchent pour l'aider ne reviennent pas.</p><p><strong>Une nuit sur deux</strong> (la deuxième, la quatrième…), tu chantes au bord de l'eau et tu désignes un joueur : il suit ta voix jusqu'au gué et <strong>se noie</strong>. On le trouve mort à l'aube, sauf s'il était protégé cette nuit ou sauvé par un remède.</p><p>La meute ne peut pas te tuer : quand elle entre chez toi, elle n'y trouve que de l'eau froide. Le vote, le poison, le feu et le harpon, si.</p>",
-      "en": "<p>In Brumecombe, they say a pale woman washes her linen at the ford when the mist rises, and that those who come near to help her do not come back.</p><p><strong>Every other night</strong> (the second, the fourth…), you sing at the water's edge and designate a player: they follow your voice to the ford and <strong>drown</strong>. They are found dead at dawn, unless they were protected that night or saved by a remedy.</p><p>The pack cannot kill you: when it enters your house, it finds nothing but cold water. The vote, poison, fire and the harpoon, however, can.</p>"
+      "fr": "<p>À Brumecombe, on dit qu'une femme pâle lave son linge au gué quand la brume monte, et que ceux qui s'approchent pour l'aider ne reviennent pas.</p><p><strong>Une nuit sur deux</strong> (la deuxième, la quatrième…), tu chantes au bord de l'eau et tu désignes un joueur : il suit ta voix jusqu'au gué et <strong>se noie</strong>. On le trouve mort à l'aube, sauf si la Gardienne des clés a fermé sa porte cette nuit ou s'il est sauvé par un remède (la garde du Garde du pont n'arrête que la meute).</p><p>La meute ne peut pas te tuer : quand elle entre chez toi, elle n'y trouve que de l'eau froide. Le vote, le poison, le feu et le harpon, si.</p>",
+      "en": "<p>In Brumecombe, they say a pale woman washes her linen at the ford when the mist rises, and that those who come near to help her do not come back.</p><p><strong>Every other night</strong> (the second, the fourth…), you sing at the water's edge and designate a player: they follow your voice to the ford and <strong>drown</strong>. They are found dead at dawn, unless the Keeper of the Keys locked their door that night or they are saved by a remedy (the Bridge Warden's watch only stops the pack).</p><p>The pack cannot kill you: when it enters your house, it finds nothing but cold water. The vote, poison, fire and the harpoon, however, can.</p>"
     },
     "system.victoire": {
       "fr": "<p>Tu gagnes <strong>seule</strong> si tu es la dernière vivante, ou la dernière avec un seul autre joueur qui n'est pas un loup.</p>",
@@ -47,12 +47,12 @@
       "en": "Mother Wolf"
     },
     "system.description": {
-      "fr": "<p>Tu as porté la meute avant qu'elle ait des noms.</p><p>Tu chasses chaque nuit avec la meute. <strong>Une fois par partie</strong>, juste après le choix de la meute, tu peux décider de <strong>mordre</strong> la victime au lieu de la tuer : personne ne meurt cette nuit-là, et la victime rejoint la meute en secret. Elle garde son rôle et ses pouvoirs, mais joue désormais pour les loups ; le narrateur la prévient en secret et elle se réveille avec la meute dès la nuit suivante.</p><p>Une victime protégée ne peut pas être mordue.</p>",
-      "en": "<p>You carried the pack before it had names.</p><p>You hunt each night with the pack. <strong>Once per game</strong>, right after the pack's choice, you may decide to <strong>bite</strong> the victim instead of killing them: nobody dies that night, and the victim secretly joins the pack. They keep their role and powers, but now play for the wolves; the narrator warns them in secret and they wake with the pack from the next night on.</p><p>A protected victim cannot be bitten.</p>"
+      "fr": "<p>Tu as porté la meute avant qu'elle ait des noms.</p><p>Tu chasses chaque nuit avec la meute. <strong>Une fois par partie</strong>, juste après le choix de la meute, tu peux <strong>infecter</strong> sa proie au lieu qu'elle meure : la victime <strong>ne meurt pas</strong>, et devient en secret un <strong>loup de la meute</strong>. Le narrateur la prévient en secret ; dès la nuit suivante, elle se réveille avec la meute et chasse avec elle. Si elle avait un pouvoir de nuit, elle le garde : le narrateur l'appelle encore pour lui, et elle s'en sert désormais pour les loups.</p><p>La garde du Garde du pont n'arrête pas ta morsure : elle protège de la mort, pas de toi. Une porte fermée à la meute (l'asile de la Chapelle, la clé de la Gardienne, le verrou du Forgeron), si. Une infection n'est pas une mort : cette nuit-là, il n'y a personne à sauver.</p>",
+      "en": "<p>You carried the pack before it had names.</p><p>You hunt each night with the pack. <strong>Once per game</strong>, right after the pack's choice, you may <strong>infect</strong> its prey instead of letting it die: the victim <strong>does not die</strong>, and secretly becomes a <strong>wolf of the pack</strong>. The narrator warns them in secret; from the next night on, they wake with the pack and hunt with it. If they had a night power, they keep it: the narrator still calls them for it, and they now use it for the wolves.</p><p>The Bridge Warden's watch does not stop your bite: it protects from death, not from you. A door closed to the pack (the Chapel's sanctuary, the Keeper's key, the Blacksmith's lock) does. An infection is not a death: that night, there is nobody to save.</p>"
     },
     "system.nuit.invite": {
-      "fr": "La meute a choisi sa proie. Désigne-la pour la mordre au lieu de la tuer, ou passe.",
-      "en": "The pack has chosen its prey. Designate it to bite it instead of killing it, or pass."
+      "fr": "La meute a choisi sa proie. Désigne-la pour l'infecter au lieu de la tuer, ou passe.",
+      "en": "The pack has chosen its prey. Designate it to infect it instead of killing it, or pass."
     }
   },
   "roles/DFwCH3McvuG7izJy": {
@@ -73,12 +73,12 @@
       "en": "Herbalist"
     },
     "system.description": {
-      "fr": "<p>Tes fioles dorment dans la paille, une verte et une noire.</p><p>Chaque nuit, après la chasse, le narrateur te dit qui la meute a attaqué. Tu désignes alors un joueur :<br>- <strong>la victime de la nuit</strong> : tu lui verses ton <strong>remède</strong>, elle survit (une fois par partie) ;<br>- <strong>n'importe qui d'autre</strong> : tu verses ton <strong>poison</strong> dans son verre, il meurt à l'aube (une fois par partie).</p><p>Une seule fiole par nuit. Si la victime, c'est toi, tu peux te sauver toi-même. Passe pour garder tes fioles.</p>",
-      "en": "<p>Your vials sleep in the straw, one green and one black.</p><p>Each night, after the hunt, the narrator tells you whom the pack attacked. You then designate a player:<br>- <strong>the night's victim</strong>: you pour your <strong>remedy</strong> for them, they survive (once per game);<br>- <strong>anyone else</strong>: you pour your <strong>poison</strong> into their glass, they die at dawn (once per game).</p><p>One vial per night. If the victim is you, you may save yourself. Pass to keep your vials.</p>"
+      "fr": "<p>Tes fioles dorment dans la paille, une verte et une noire.</p><p>Chaque nuit, après la chasse, le narrateur te dit qui la meute a attaqué. Tu peux alors :<br>- verser ton <strong>remède</strong> à la victime : elle survit (une fois par partie) ;<br>- verser ton <strong>poison</strong> dans le verre de n'importe qui d'autre : il meurt à l'aube (une fois par partie).</p><p>Tu peux te servir des <strong>deux fioles la même nuit</strong> : désigne la victime et celui que tu empoisonnes. Si la victime, c'est toi, tu peux te sauver toi-même. Le remède sauve de la meute, pas du feu ; et quand la Louve mère infecte sa proie au lieu de la tuer, personne ne meurt : le narrateur n'a pas de victime à te nommer. Passe pour garder tes fioles.</p>",
+      "en": "<p>Your vials sleep in the straw, one green and one black.</p><p>Each night, after the hunt, the narrator tells you whom the pack attacked. You may then:<br>- pour your <strong>remedy</strong> for the victim: they survive (once per game);<br>- pour your <strong>poison</strong> into anyone else's glass: they die at dawn (once per game).</p><p>You may use <strong>both vials on the same night</strong>: designate the victim and the one you poison. If the victim is you, you may save yourself. The remedy saves from the pack, not from fire; and when the Mother Wolf infects her prey instead of killing it, nobody dies: the narrator has no victim to name for you. Pass to keep your vials.</p>"
     },
     "system.nuit.invite": {
-      "fr": "Désigne la victime pour la sauver, quelqu'un d'autre pour l'empoisonner, ou passe.",
-      "en": "Designate the victim to save them, someone else to poison them, or pass."
+      "fr": "Désigne la victime pour la sauver, quelqu'un d'autre pour l'empoisonner, les deux, ou passe.",
+      "en": "Designate the victim to save them, someone else to poison them, both, or pass."
     }
   },
   "roles/E3HcICLsexn0uSqA": {
@@ -103,8 +103,8 @@
       "en": "Ash Reader"
     },
     "system.description": {
-      "fr": "<p>Tu lis l'avenir dans la cendre froide de l'âtre.</p><p><strong>Chaque nuit</strong>, tu désignes un joueur et le narrateur te dit en secret son <strong>camp</strong> : Village, Meute ou Solitaire. Pas son rôle. À toi de choisir quand dire ce que tu sais, et à qui.</p>",
-      "en": "<p>You read the future in the cold ashes of the hearth.</p><p><strong>Each night</strong>, you designate a player and the narrator secretly tells you their <strong>side</strong>: Village, Pack or Loner. Not their role. It is up to you to choose when to say what you know, and to whom.</p>"
+      "fr": "<p>Tu lis l'avenir dans la cendre froide de l'âtre.</p><p><strong>Chaque nuit</strong>, tu désignes un joueur et le narrateur te dit en secret <strong>son rôle</strong> : la carte qu'il a reçue, et le camp de cette carte (Village, Meute ou Solitaire). À toi de choisir quand dire ce que tu sais, et à qui.</p><p>Certains trompent les cendres : le Loup déguisé t'apparaît en simple Villageois, le Louvetier en Loup de Brumecombe.</p>",
+      "en": "<p>You read the future in the cold ashes of the hearth.</p><p><strong>Each night</strong>, you designate a player and the narrator secretly tells you <strong>their role</strong>: the card they received, and that card's side (Village, Pack or Loner). It is up to you to choose when to say what you know, and to whom.</p><p>Some fool the ashes: the Wolf in Disguise looks to you like a plain Villager, the Wolfhunter like a Wolf of Brumecombe.</p>"
     },
     "system.nuit.invite": {
       "fr": "Dans quelles cendres lis-tu cette nuit ?",
@@ -170,8 +170,8 @@
       "en": "Bell Ringer"
     },
     "system.description": {
-      "fr": "<p>La corde de la cloche passe par ta fenêtre.</p><p><strong>Une fois par partie</strong>, au début d'un vote, tu peux annoncer que tu sonnes la cloche : <strong>ce vote désigne deux condamnés</strong> au lieu d'un (les deux villageois qui ont le plus de voix ; une égalité pour la seconde place la laisse vide). Tu te révèles en le faisant.</p>",
-      "en": "<p>The bell rope runs past your window.</p><p><strong>Once per game</strong>, at the start of a vote, you may announce that you ring the bell: <strong>this vote condemns two players</strong> instead of one (the two villagers with the most votes; a tie for second place leaves it empty). You reveal yourself by doing so.</p>"
+      "fr": "<p>La corde de la cloche passe par ta fenêtre.</p><p><strong>Une fois par partie</strong>, pendant le débat ou au début d'un vote, tu sonnes la cloche (ton pouvoir de jour, sur la Table de jeu, ou à voix haute au narrateur) : <strong>le vote d'exécution désigne deux condamnés</strong> au lieu d'un (les deux joueurs qui ont le plus de voix ; une égalité pour la seconde place la laisse vide, sauf si le Bailli la tranche). Tu te révèles en le faisant.</p>",
+      "en": "<p>The bell rope runs past your window.</p><p><strong>Once per game</strong>, during the debate or at the start of a vote, you ring the bell (your day power, on the Game Table, or aloud to the narrator): <strong>the execution vote condemns two players</strong> instead of one (the two players with the most votes; a tie for second place leaves it empty, unless the Bailiff breaks it). You reveal yourself by doing so.</p>"
     }
   },
   "roles/QL9bHTV6yZrgAvVR": {
@@ -181,8 +181,8 @@
       "en": "Night Fisher"
     },
     "system.description": {
-      "fr": "<p>Tu connais les eaux noires de la Brume, et ce qui y remue après minuit.</p><p><strong>Une fois par partie</strong>, la nuit, tu lances ton <strong>harpon</strong> sur la maison d'un joueur : celui qui y dort <strong>meurt à l'aube</strong>, sauf s'il est protégé cette nuit (Garde du pont, Gardienne des clés) ou sauvé par un remède. Ton harpon atteint aussi ceux que la meute ne peut pas tuer, et il ne laisse aucune trace de crocs.</p><p>Vise juste : un harpon perdu dans la poitrine d'un voisin ne revient pas. Tant que tu passes, tu le gardes.</p>",
-      "en": "<p>You know the black waters of the Brume, and what stirs in them after midnight.</p><p><strong>Once per game</strong>, at night, you cast your <strong>harpoon</strong> at a player's house: whoever sleeps there <strong>dies at dawn</strong>, unless protected that night (Bridge Warden, Keeper of the Keys) or saved by a remedy. Your harpoon also reaches those the pack cannot kill, and it leaves no fang marks.</p><p>Aim true: a harpoon lost in a neighbour's chest does not come back. As long as you pass, you keep it.</p>"
+      "fr": "<p>Tu connais les eaux noires de la Brume, et ce qui y remue après minuit.</p><p><strong>Une fois par partie</strong>, la nuit, tu lances ton <strong>harpon</strong> sur la maison d'un joueur : celui qui y dort <strong>meurt à l'aube</strong>, sauf si la Gardienne des clés a fermé sa porte cette nuit ou s'il est sauvé par un remède (la garde du Garde du pont n'arrête que la meute). Ton harpon atteint aussi ceux que la meute ne peut pas tuer, et il ne laisse aucune trace de crocs.</p><p>Vise juste : un harpon perdu dans la poitrine d'un voisin ne revient pas. Tant que tu passes, tu le gardes.</p>",
+      "en": "<p>You know the black waters of the Brume, and what stirs in them after midnight.</p><p><strong>Once per game</strong>, at night, you cast your <strong>harpoon</strong> at a player's house: whoever sleeps there <strong>dies at dawn</strong>, unless the Keeper of the Keys locked their door that night or they are saved by a remedy (the Bridge Warden's watch only stops the pack). Your harpoon also reaches those the pack cannot kill, and it leaves no fang marks.</p><p>Aim true: a harpoon lost in a neighbour's chest does not come back. As long as you pass, you keep it.</p>"
     },
     "system.nuit.invite": {
       "fr": "Sur quelle maison lances-tu ton harpon cette nuit ? Passe pour le garder.",
@@ -196,12 +196,12 @@
       "en": "Famished Wolf"
     },
     "system.description": {
-      "fr": "<p>Tu chasses avec la meute, mais ta faim ne s'apaise jamais.</p><p><strong>Une nuit sur deux</strong> (la deuxième, la quatrième…), après la chasse de la meute, tu te réveilles seul et tu choisis une <strong>seconde victime</strong>. Si tu es le dernier loup vivant, ta faim te pousse à chasser toutes les nuits.</p>",
-      "en": "<p>You hunt with the pack, but your hunger is never sated.</p><p><strong>Every other night</strong> (the second, the fourth…), after the pack's hunt, you wake alone and choose a <strong>second victim</strong>. If you are the last living wolf, your hunger drives you to hunt every night.</p>"
+      "fr": "<p>Tu chasses avec la meute, mais ta faim ne s'apaise jamais.</p><p><strong>Chaque nuit</strong>, quand la meute s'est rendormie, tu te réveilles seul et tu choisis une <strong>seconde victime</strong> : une autre que la proie de la meute, et jamais un loup.</p><p>Ta faim tient à la meute entière : <strong>dès qu'un loup est mort</strong> (un loup de toujours ou un mordu, de quelque façon qu'il soit tombé), elle s'éteint pour toujours, et tu ne chasses plus qu'avec les autres.</p>",
+      "en": "<p>You hunt with the pack, but your hunger is never sated.</p><p><strong>Each night</strong>, once the pack has gone back to sleep, you wake alone and choose a <strong>second victim</strong>: someone other than the pack's prey, and never a wolf.</p><p>Your hunger depends on the whole pack: <strong>as soon as a wolf has died</strong> (a born wolf or a bitten one, however they fell), it goes out for good, and you only hunt with the others.</p>"
     },
     "system.nuit.invite": {
-      "fr": "Ta faim te ronge : quelle maison visites-tu seul cette nuit ?",
-      "en": "Hunger gnaws at you: which house do you visit alone tonight?"
+      "fr": "Ta faim te ronge : quelle autre maison visites-tu seul cette nuit ?",
+      "en": "Hunger gnaws at you: which other house do you visit alone tonight?"
     }
   },
   "roles/W6cBRI1JdaB6I6nb": {
@@ -305,8 +305,8 @@
       "en": "Child of the Mist"
     },
     "system.description": {
-      "fr": "<p>Tu ne dors jamais quand il le faudrait.</p><p><strong>Chaque nuit</strong>, tu peux choisir d'<strong>épier</strong> la meute : le narrateur te montre ce que les loups se disent (sans leurs noms, sauf s'ils se trahissent). Mais à chaque fois, tu as <strong>une chance sur trois d'être repéré</strong> : alors la meute te prend pour victime à la place de celle qu'elle avait choisie.</p>",
-      "en": "<p>You never sleep when you should.</p><p><strong>Each night</strong>, you may choose to <strong>spy</strong> on the pack: the narrator shows you what the wolves say to each other (without their names, unless they give themselves away). But each time, you have <strong>a one-in-three chance of being spotted</strong>: the pack then takes you as its victim instead of the one it had chosen.</p>"
+      "fr": "<p>Tu ne dors jamais quand il le faudrait.</p><p><strong>Chaque nuit</strong>, pendant que la meute chasse, tu peux choisir d'<strong>épier</strong> (ou rester sagement au lit). Si tu épies, le narrateur te dit en secret <strong>le nom de tous les loups</strong> sortis chasser cette nuit. Mais tu peux être <strong>surprise</strong> (une chance sur deux) : alors c'est <strong>toi que la meute dévore</strong>, en silence, à la place de la proie qu'elle avait choisie. Prise dehors, ni la garde du Garde du pont ni une porte close ne te sauvent ; un remède, si.</p><p>Tu ne peux pas te faire passer pour un loup.</p>",
+      "en": "<p>You never sleep when you should.</p><p><strong>Each night</strong>, while the pack hunts, you may choose to <strong>spy</strong> (or stay sensibly in bed). If you spy, the narrator secretly tells you <strong>the name of every wolf</strong> who went out hunting that night. But you may be <strong>caught</strong> (one chance in two): then it is <strong>you the pack devours</strong>, silently, instead of the prey it had chosen. Caught outdoors, neither the Bridge Warden's watch nor a closed door saves you; a remedy does.</p><p>You may not pass yourself off as a wolf.</p>"
     },
     "system.nuit.invite": {
       "fr": "Désigne-toi pour te glisser hors du lit et épier la meute, ou passe.",
@@ -324,8 +324,8 @@
       "en": "<p>You have already died once. You want it made official.</p><p>You have no night power. Your only goal: to get yourself <strong>executed by the village's vote</strong>. A death at night does not count.</p>"
     },
     "system.victoire": {
-      "fr": "<p>Tu gagnes <strong>seul et aussitôt</strong> si le village t'exécute au vote. La partie continue pour les autres.</p>",
-      "en": "<p>You win <strong>alone and at once</strong> if the village executes you by vote. The game goes on for the others.</p>"
+      "fr": "<p>Tu gagnes <strong>seul et aussitôt</strong> si le village t'exécute au vote : la partie s'arrête sur ta victoire.</p>",
+      "en": "<p>You win <strong>alone and at once</strong> if the village executes you by vote: the game ends on your victory.</p>"
     }
   },
   "roles/fjHGd55SIOeEfG0j": {
@@ -410,8 +410,8 @@
       "en": "Bridge Warden"
     },
     "system.description": {
-      "fr": "<p>Tu tiens le pont depuis vingt hivers et tu sais rester éveillé.</p><p><strong>Chaque nuit</strong>, tu veilles sur un joueur (toi compris) : s'il est attaqué par la meute cette nuit, il survit. Tu ne peux pas protéger <strong>deux nuits de suite</strong> le même joueur. Ta garde n'arrête ni le poison ni le feu.</p>",
-      "en": "<p>You have held the bridge for twenty winters and you know how to stay awake.</p><p><strong>Each night</strong>, you watch over a player (yourself included): if the pack attacks them that night, they survive. You cannot protect the same player <strong>two nights in a row</strong>. Your watch stops neither poison nor fire.</p>"
+      "fr": "<p>Tu tiens le pont depuis vingt hivers et tu sais rester éveillé.</p><p><strong>Chaque nuit</strong>, avant la chasse, tu veilles sur un joueur (toi compris) : si la meute l'attaque cette nuit, il survit. Tu ne peux pas veiller <strong>deux nuits de suite</strong> sur le même joueur (le narrateur ne te le propose pas). Ta garde n'arrête que la meute : ni le poison, ni le feu, ni le harpon, ni la noyade, ni la morsure de la Louve mère qui fait d'une proie un loup.</p>",
+      "en": "<p>You have held the bridge for twenty winters and you know how to stay awake.</p><p><strong>Each night</strong>, before the hunt, you watch over a player (yourself included): if the pack attacks them that night, they survive. You cannot watch over the same player <strong>two nights in a row</strong> (the narrator does not offer them to you). Your watch only stops the pack: not poison, not fire, not the harpoon, not drowning, nor the Mother Wolf's bite that turns a prey into a wolf.</p>"
     },
     "system.nuit.invite": {
       "fr": "Devant quelle porte montes-tu la garde cette nuit ?",
@@ -425,8 +425,8 @@
       "en": "Matchmaker"
     },
     "system.description": {
-      "fr": "<p>Tu as marié la moitié du village et tu n'as pas dit ton dernier mot.</p><p><strong>La première nuit</strong>, tu désignes deux joueurs (toi comprise) : ils deviennent <strong>amants</strong>. Le narrateur les prévient en secret ; ils apprennent le nom l'un de l'autre, pas leur rôle. Si l'un meurt, l'autre meurt de chagrin aussitôt.</p><p>Les amants gagnent <strong>ensemble</strong>, quel que soit leur camp : si l'un est loup et l'autre villageois, ils ne gagnent qu'en restant les deux derniers vivants. Toi, ensuite, tu joues avec le village.</p>",
-      "en": "<p>You have married half the village and you have not said your last word.</p><p><strong>On the first night</strong>, you designate two players (yourself included): they become <strong>lovers</strong>. The narrator warns them in secret; they learn each other's name, not their role. If one dies, the other dies of grief at once.</p><p>The lovers win <strong>together</strong>, whatever their side: if one is a wolf and the other a villager, they only win by being the last two alive. You, afterwards, play with the village.</p>"
+      "fr": "<p>Tu as marié la moitié du village et tu n'as pas dit ton dernier mot.</p><p><strong>La première nuit</strong>, tu désignes deux joueurs (toi comprise) : ils deviennent <strong>amants</strong>. Le narrateur les prévient en secret ; ils apprennent le nom l'un de l'autre, pas leur rôle. Si l'un meurt, l'autre meurt de chagrin aussitôt.</p><p>Deux amants du même camp gagnent avec lui. Deux amants de <strong>camps différents</strong> (un loup et un villageois, par exemple) ne gagnent <strong>qu'ensemble, en restant les deux derniers vivants</strong> : plus avec leur camp. Toi, ensuite, tu joues avec le village.</p>",
+      "en": "<p>You have married half the village and you have not said your last word.</p><p><strong>On the first night</strong>, you designate two players (yourself included): they become <strong>lovers</strong>. The narrator warns them in secret; they learn each other's name, not their role. If one dies, the other dies of grief at once.</p><p>Two lovers of the same side win with it. Two lovers of <strong>different sides</strong> (a wolf and a villager, for instance) win <strong>only together, by being the last two alive</strong>: no longer with their sides. You, afterwards, play with the village.</p>"
     },
     "system.nuit.invite": {
       "fr": "Quels deux cœurs lies-tu cette nuit ?",
@@ -434,14 +434,14 @@
     }
   },
   "roles/o3qDqkYhaiWnGFuF": {
-    "_nom": "Montreur d'ours",
+    "_nom": "Montreur de marmotte",
     "name": {
-      "fr": "Montreur d'ours",
-      "en": "Bear Tamer"
+      "fr": "Montreur de marmotte",
+      "en": "Marmot Showman"
     },
     "system.description": {
-      "fr": "<p>Ton ours danse sur la place et dort en travers des seuils.</p><p>Ton rôle est <strong>connu de tous</strong>, ton camp <strong>ne l'est pas</strong> : le narrateur te l'a dit en secret (Village ou Meute).</p><p><strong>Une fois</strong>, pendant le jour, tu couches ton ours devant la porte d'un joueur (toi compris) : <strong>la meute n'entre pas</strong> chez lui la nuit suivante.</p>",
-      "en": "<p>Your bear dances on the square and sleeps across thresholds.</p><p>Your role is <strong>known to all</strong>, your side <strong>is not</strong>: the narrator told it to you in secret (Village or Pack).</p><p><strong>Once</strong>, during the day, you lay your bear in front of a player's door (yourself included): <strong>the pack does not enter</strong> their house the following night.</p>"
+      "fr": "<p>Ta marmotte danse sur la place au son du flageolet, et siffle dès qu'une ombre approche d'un seuil.</p><p>Ton rôle est <strong>connu de tous</strong>, ton camp <strong>ne l'est pas</strong> : le narrateur te l'a dit en secret (Village ou Meute).</p><p><strong>Une fois</strong>, pendant le jour, tu installes ta marmotte sur le seuil d'un joueur (toi compris) : <strong>la meute n'entre pas</strong> chez lui la nuit suivante.</p>",
+      "en": "<p>Your marmot dances on the square to the sound of the flageolet, and whistles as soon as a shadow nears a threshold.</p><p>Your role is <strong>known to all</strong>, your side <strong>is not</strong>: the narrator told it to you in secret (Village or Pack).</p><p><strong>Once</strong>, during the day, you set your marmot on a player's doorstep (yourself included): <strong>the pack does not enter</strong> their house the following night.</p>"
     }
   },
   "roles/oCF4vG3ph14XPoyd": {

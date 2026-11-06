@@ -65,7 +65,8 @@ export function ordreDeReveil() {
   for (const r of actifs) {
     const o = r.system.nuit.ordre;
     const nom = o === ORDRE_MEUTE && r.system.camp === "meute" ? "La meute (tous les loups vivants)" : r.name;
-    const precisions = [r.system.nuit.premiereNuitSeulement && "première nuit seulement", r.system.nuit.uneNuitSurDeux && "une nuit sur deux"].filter(Boolean);
+    const precisions = [r.system.nuit.premiereNuitSeulement && "première nuit seulement", r.system.nuit.uneNuitSurDeux && "une nuit sur deux",
+      r.system.nuit.tantQueMeuteEntiere && "tant qu'aucun loup n'est mort"].filter(Boolean);
     const texte = `${nom}${precisions.length ? ` (${precisions.join(", ")})` : ""}`;
     etapes.set(`${o}:${nom}`, { o, texte, invite: o === ORDRE_MEUTE && r.system.camp === "meute" ? "Quelle maison la meute visite-t-elle cette nuit ?" : r.system.nuit.invite });
   }
@@ -99,7 +100,7 @@ Cet automne, on a retrouvé le berger de la Combe-aux-Sorbiers dans le fossé, l
 - **Le Village** gagne quand **plus aucun loup** ne vit.
 - **La Meute** gagne quand les loups sont **aussi nombreux** que tous les autres vivants réunis.
 - **Les solitaires** ont chacun leur propre condition de victoire, écrite sur leur rôle.
-- **Les amants** (liés par l'Entremetteuse) gagnent ensemble s'ils sont les deux derniers vivants, quel que soit leur camp ; sinon chacun gagne avec son camp.
+- **Les amants** (liés par l'Entremetteuse) : du même camp, ils gagnent avec lui ; de camps différents, ils ne gagnent qu'ensemble, en restant les deux derniers vivants.
 
 Il arrive, rarement, qu'il n'y ait **aucun loup** : c'est la **peste noire** (voir la page qui lui est consacrée).`
     },
@@ -134,7 +135,7 @@ Les **pouvoirs de jour** (ton métier, quelques rôles comme le Juge de paix ou 
 Le premier jour, avant le premier vote d'exécution, le village **élit son Bailli** par un vote à part : chacun désigne son candidat (on peut voter pour soi), le plus désigné prend le **sceau du village** ; à égalité, le sort choisit entre les ex æquo. Le Bailli est **public** : son nom est sur la Table de jeu et dans le bandeau, son sceau sur son jeton.
 
 - Au vote d'exécution, **sa voix compte double**.
-- En cas d'**égalité**, c'est **lui qui tranche** : une fenêtre s'ouvre chez lui seul, avec les ex æquo ; il désigne le condamné (même lui-même), ou passe, et alors personne n'est exécuté.
+- En cas d'**égalité**, c'est **lui qui tranche** : s'il a voté pour l'un des ex æquo, c'est celui-là, sans rien lui demander ; sinon, une fenêtre s'ouvre chez lui seul, avec les ex æquo ; il désigne le condamné (même lui-même), ou passe, et alors personne n'est exécuté.
 - À **sa mort**, il **remet le sceau** à un vivant de son choix (une dernière fenêtre, depuis la tombe). S'il ne choisit personne, la charge reste vacante et le village élit un nouveau Bailli au jour suivant (le jour même, si l'on n'a pas encore voté).
 
 Un Bailli peut être un loup : le village l'a choisi, à lui de bien choisir.
@@ -151,11 +152,11 @@ Avec la variante **Banc des accusés**, on ne vote pas pour n'importe qui : pend
 
 Avec la variante **Glas du deuil**, chaque innocent exécuté par le vote fait sonner le glas sur Brumecombe (« le glas sonne pour la 2e fois »). Le village n'apprend rien de plus… mais la meute, elle, y gagne un pouvoir qui grandit à chaque glas. Méfiez-vous des votes hâtifs.
 
-**Arriver en cours de partie** : un joueur qui arrive après la distribution entre comme **gens de passage** (Rémouleur, Montreur d'ours ou Pèlerine) : son **rôle est connu de tous**, son **camp ne l'est pas** (le narrateur le lui dit en secret, et il peut être de la meute). Son pouvoir est fort mais ne sert **qu'une fois**, pendant le jour. Le village peut le chasser par un **vote d'exil** : il reprend la route sans mourir, son camp tu.
+**Arriver en cours de partie** : un joueur qui arrive après la distribution entre comme **gens de passage** (Rémouleur, Montreur de marmotte ou Pèlerine) : son **rôle est connu de tous**, son **camp ne l'est pas** (le narrateur le lui dit en secret, et il peut être de la meute). Son pouvoir est fort mais ne sert **qu'une fois**, pendant le jour. Le village peut le chasser par un **vote d'exil** : il reprend la route sans mourir, son camp tu.
 
 **Partir avant la fin** : le bouton **Quitter la veillée** (Table de jeu) te fait quitter la partie sans mourir : ni ton rôle ni ton camp ne sont révélés, ta voix en cours est retirée, et la partie continue sans toi (tu ne gagnes ni ne perds).
 
-**Égalité** : s'il y a un **Bailli**, il tranche. Sans Bailli (charge vacante, ou Bailli absent de la partie), les ex æquo ont trente secondes chacun pour se défendre, puis le village revote **entre eux seulement** ; nouvelle égalité : personne n'est exécuté ce jour-là, et la nuit tombe.
+**Égalité** : s'il y a un **Bailli**, il tranche (sa propre voix d'abord, si elle allait à l'un des ex æquo). Sans Bailli (charge vacante, ou Bailli absent de la partie), les ex æquo ont trente secondes chacun pour se défendre, puis le village revote **entre eux seulement** ; nouvelle égalité : personne n'est exécuté ce jour-là, et la nuit tombe.
 
 Puis la nuit revient, et ainsi de suite jusqu'à la victoire d'un camp.`
     },
@@ -359,7 +360,7 @@ Rarement, une partie composée d'elle-même (Table de jeu, ou MJ IA) devient une
 
 # La nuit
 
-- À la place de la meute, à l'ordre 40, l'étape **« la peste »**.
+- À la place de la meute, à l'ordre 40, l'étape **« la peste »**. Fais l'appel **comme d'habitude** : annonce le réveil de la meute et des autres rôles de la même voix, laisse passer le même temps ; rien ne doit trahir la variante.
 - **Première nuit** (tant qu'aucune victime de la peste n'est morte) : c'est **toi** qui choisis la victime (bouton « Réveiller : la peste », liste des villageois, ou **« Au hasard »**). Le MJ IA la donne à loups_nuit (peste_victime).
 - **Nuits suivantes** : **la dernière victime morte de la peste** (le porteur) désigne en secret la suivante, dans une fenêtre ou sur la carte, comme une action de nuit (un compagnon IA, par son cerveau). Sans réponse au délai, le hasard choisit. Le porteur l'apprend dans son carnet secret à sa mort.
 - La victime est attaquée **exactement comme une proie de la meute** : Garde, Gardienne des clés, remède de l'Herboriste, verrou du Forgeron, asile de la Chapelle, Taverne, Grange, Passeur, Pont et écluse la protègent ; le Pyromane et la Dame du gué n'en meurent pas.
@@ -391,13 +392,17 @@ ${ordreDeReveil().map(e => `- **${e.o}** — ${e.texte} : « ${e.invite} »`).jo
 - Note chaque action dans l'ordre (Table de jeu ou noterAction), même quand le rôle passe.
 - Les loups qui ont un pouvoir propre (Louve mère, Loup affamé, Loup hurleur, Loup flaireur, Loup des roseaux) se réveillent **avec la meute à 40**, puis **seuls à leur ordre**.
 - **La meute choisit ensemble** : un seul réveil à 40, un vote des loups vivants. Les loups à pouvoir propre se réveillent **ensuite, seuls**, chacun à son ordre.
-- **Herboriste** : dis-lui la victime de la meute avant de lui demander son choix (même si la victime est protégée : elle ne doit rien deviner). Si elle désigne **la victime**, c'est le remède ; si elle désigne **quelqu'un d'autre**, c'est le poison. Une fiole par nuit.
+- **Garde du pont** : il veille avant la meute ; le joueur qu'il a gardé la nuit d'avant ne lui est pas proposé (Table de jeu et MJ IA le retirent d'eux-mêmes). Sa garde n'arrête que la meute.
+- **Louve mère** : elle ne peut infecter que la proie de la meute (la seule qu'on lui propose). L'infecté ne meurt pas, devient loup en secret (le système le prévient) et garde son pouvoir de nuit : continue de l'appeler pour lui. La garde du Garde du pont n'empêche pas l'infection.
+- **Loup affamé** : chaque nuit, seul, après la Louve mère ; on ne lui propose ni la proie de la meute ni un loup. Dès qu'un loup est mort (un mordu compte), il ne se réveille plus seul.
+- **Herboriste** : dis-lui la victime de la meute avant de lui demander son choix (même si la victime est protégée : elle ne doit rien deviner ; une proie infectée par la Louve mère n'est pas une victime, ne la nomme pas). Si elle désigne **la victime**, c'est le remède ; si elle désigne **quelqu'un d'autre**, c'est le poison. Elle peut désigner les deux la même nuit.
 - **Pyromane** : s'il désigne une autre maison, il l'asperge ; s'il **se désigne lui-même**, il embrase toutes les maisons aspergées.
-- **Enfant de la brume** : s'il épie, montre-lui ce que la meute s'est dit, sans les noms. Tire un dé à trois faces : sur un 1, il est repéré et devient la victime de la meute à la place de la sienne.
+- **Enfant de la brume** : si elle épie, le système tire aussitôt si la meute la surprend (une chance sur deux, réglage « chanceEpier ») ; à l'aube, elle apprend en secret le nom des loups sortis chasser. Surprise, c'est elle que la meute dévore, à la place de sa proie (ni garde ni porte ne la sauvent, un remède si) ; l'Herboriste apprend alors son nom.
+- **Liseuse de cendres** : elle apprend le **rôle** d'un joueur (sa carte, et le camp de cette carte). Le Loup déguisé lui paraît « Villageois », le Louvetier « Loup de Brumecombe ».
 - **Ermite** : tire au hasard un joueur qui a agi cette nuit (la meute compte) ; s'il n'y en a aucun, dis « aucune lanterne n'a bougé ».
 - **Loup des roseaux** : il désigne une maison ; dis-lui seulement si son occupant **a agi** cette nuit (pouvoir de nuit, ou la chasse), jamais ce qu'il a fait. Il rôde au seuil : la lanterne de la Veilleuse le démasque comme un loup qui entre.
 - **Louvetier** : il apprend le camp d'un joueur, comme la Liseuse. Mais toute vision (Liseuse, Sourcier, Loup flaireur) le voit **de la meute** : réponds-leur « Meute » sans hésiter, même si tu sais qu'il n'en est pas.
-- **Pêcheur de nuit** : un seul harpon par partie. Sa cible meurt à l'aube, sauf protection (Garde du pont, Gardienne des clés), remède ou absence (Passeur, Grange) ; ni le verrou du Forgeron, ni l'asile de la Chapelle, ni la Taverne ne l'arrêtent, car ce n'est pas une attaque de loup. Il atteint aussi le Pyromane et la Dame du gué.
+- **Pêcheur de nuit** : un seul harpon par partie. Sa cible meurt à l'aube, sauf porte fermée par la Gardienne des clés, remède ou absence (Passeur, Grange) ; ni la garde du Garde du pont, ni le verrou du Forgeron, ni l'asile de la Chapelle, ni la Taverne ne l'arrêtent, car ce n'est pas une attaque de loup. Il atteint aussi le Pyromane et la Dame du gué.
 - **Dame du gué** : elle ne se réveille qu'**une nuit sur deux** (nuits paires). Sa noyade suit les mêmes règles que le harpon. La meute ne peut pas la tuer : si elle entre chez elle, elle repart bredouille, et tu n'en dis rien au matin.
 - **Fossoyeur** : il ne peut interroger qu'un mort. S'il n'y en a pas, réveille-le quand même et dis-lui « aucune tombe fraîche ».
 - **Messager** : il désigne l'expéditeur puis le destinataire. Une fenêtre s'ouvre aussitôt chez l'expéditeur, qui écrit sa phrase ; le système la remet en secret au destinataire à l'aube, avec le nom de l'expéditeur. Tu ne la lis à personne.
@@ -414,14 +419,14 @@ Garde les mêmes phrases d'une nuit à l'autre : « La nuit tombe sur Brumecombe
 Le système fait tout ceci de lui-même à l'aube (bouton « Résoudre l'aube » de la Table de jeu, ou la fin de la nuit du MJ IA) ; l'ordre sert à trancher un cas qu'il ne connaîtrait pas.
 
 1. **Cachettes et asiles** : Grange et Passeur (personne n'y entre, ni loup, ni visite, ni feu ; celui qui s'y cache n'agit pas), Chapelle (la meute n'y entre pas), Taverne (la meute n'y tue pas, sauf si un loup y dort : alors sans protection).
-2. **Protections** : Garde du pont, Gardienne des clés, verrou du Forgeron (la première attaque de loup échoue).
-3. **Morsure** : si la Louve mère a mordu, la victime change de camp, personne ne meurt de la meute.
-4. **Attaques** : victime de la meute, seconde victime du Loup affamé, harpon du Pêcheur de nuit, noyade de la Dame du gué (ces deux-là ne sont pas des attaques de loup : seuls une protection, un remède ou une absence les arrêtent).
+2. **Protections** : Garde du pont (contre la meute seulement), Gardienne des clés, verrou du Forgeron (la première attaque de loup échoue). L'Enfant de la brume surprise en épiant devient la proie de la meute, prise dehors : ni garde ni porte pour elle.
+3. **Morsure** : si la Louve mère a infecté la proie, elle devient loup en secret, personne ne meurt de la meute (la garde du Garde du pont ne l'empêche pas).
+4. **Attaques** : victime de la meute, seconde victime du Loup affamé, harpon du Pêcheur de nuit, noyade de la Dame du gué (ces deux-là ne sont pas des attaques de loup : seuls la porte de la Gardienne, un remède ou une absence les arrêtent).
 5. **Remède et poison** de l'Herboriste.
 6. **Feu** : si le Pyromane a embrasé, toutes les maisons aspergées brûlent (protégées ou non).
 7. **Lanterne** : un loup entré dans la maison éclairée est démasqué.
 8. **Cascades** : amant mort de chagrin, Braconnière qui emporte quelqu'un (elle choisit au matin).
-9. **Informations** : Liseuse, Sourcier, Louvetier, Loup flaireur, Loup des roseaux, Ermite, Fossoyeur, mot du Messager (en secret) ; lame de la Forge (« du sang de bête sur le seuil »), Moulin, Lavoir, Cimetière (annoncés au village).
+9. **Informations** : Liseuse (le rôle), Enfant de la brume (le nom des loups), Sourcier, Louvetier, Loup flaireur, Loup des roseaux, Ermite, Fossoyeur, mot du Messager (en secret) ; lame de la Forge (« du sang de bête sur le seuil »), Moulin, Lavoir, Cimetière (annoncés au village).
 10. **Victoire** : vérifie-la avant d'ouvrir le jour.
 
 # Raconter une mort
@@ -452,7 +457,7 @@ Si **personne n'est mort**, dis-le avec la même gravité : « Le jour se lève 
 
 - **Réglage « Le Bailli »** (par défaut oui), pris à la distribution. Le premier jour, **avant le premier vote d'exécution**, ouvre l'élection : bouton **« Élire le Bailli »** de la Table de jeu ou du bandeau (la ligne « Prochaine étape » te le rappelle). L'élection se tient **pendant le débat**, sans passer à la phase du vote. Tous les vivants sont candidats ; égalité : le sort ; aucune voix : charge vacante jusqu'au lendemain (une seule élection par jour, jamais après le vote d'exécution).
 - Au vote d'exécution, la voix du Bailli **compte double** : le système l'applique au dépouillement.
-- **Égalité** : le système demande au Bailli, et à lui seul, de trancher parmi les ex æquo (fenêtre ou carte ; un compagnon IA tranche par son cerveau). La clôture attend son choix (au plus le délai des choix). S'il passe, personne pour cette place. Avec le Gibet, il ne choisit que parmi ceux qui ont la majorité absolue. Tant qu'il n'a pas tranché, ni nouveau vote ni changement de phase ; s'il tarde (absent, page rechargée), tranche à sa place depuis la Table de jeu (un bouton par ex æquo, ou « Personne »).
+- **Égalité** : si le Bailli a voté pour l'un des ex æquo, sa voix tranche d'elle-même (le système l'annonce). Sinon, le système demande au Bailli, et à lui seul, de trancher parmi les ex æquo (fenêtre ou carte ; un compagnon IA tranche par son cerveau). La clôture attend son choix (au plus le délai des choix). S'il passe, personne pour cette place. Avec le Gibet, il ne choisit que parmi ceux qui ont la majorité absolue. Tant qu'il n'a pas tranché, ni nouveau vote ni changement de phase ; s'il tarde (absent, page rechargée), tranche à sa place depuis la Table de jeu (un bouton par ex æquo, ou « Personne »).
 - **À sa mort**, le système demande au défunt à qui il remet le sceau (une fenêtre posthume, après toutes les morts de la nuit). La « Prochaine étape » attend le sceau, au plus le délai des choix comptés depuis sa mort (même si ta page a été rechargée entre-temps). Sans réponse, la charge est vacante : le village élit un nouveau Bailli au jour suivant (ou le jour même, avant le vote d'exécution). Si un joueur dicte son choix à voix haute, ou si la charge reste vide, nomme le Bailli toi-même (bouton **« Nommer le Bailli »** de la Table de jeu).
 - Le Bailli est **public** : tu peux le nommer dans tes récits, rappeler sa voix double, le prendre à témoin.
 
@@ -463,25 +468,25 @@ Le système y inscrit seul chaque vote clos (voix par voix), chaque mort avec sa
 # Le vote
 
 - Ouvre le vote avec les vivants comme candidats, une minute par défaut. Les voix restent secrètes jusqu'au dépouillement.
-- Annonce le décompte, puis l'exécuté. Avec le **Sonneur**, chaque voix compte double. Avec le **Gibet**, il faut plus de la moitié des vivants.
+- Annonce le décompte, puis l'exécuté. Si le **Sonneur** a sonné la cloche (son pouvoir de jour, pendant le débat ou au début du vote), le vote désigne deux condamnés. Avec le **Gibet**, il faut plus de la moitié des vivants.
 - Le **ruban de la Tisserande** : si le plus désigné le porte, la clôture ne dépouille pas ; il a une minute de défense de plus, puis clos de nouveau.
 - Le **Juge de paix** peut annuler le vote juste après le décompte, avant l'exécution (depuis sa Table de jeu) : il se révèle, le vote se rouvre, revote immédiat, sans débat. Demande toujours « quelqu'un s'y oppose-t-il ? » avant d'exécuter, et n'exécute que le résultat du dernier vote.
 - Avec la **Chapelle**, ouvre ensuite le vote de la Chapelle (bouton de la Table de jeu) : l'élu y dort à l'abri la nuit suivante.
 
 # Les égalités
 
-- **Avec un Bailli vivant** : il tranche (le système le lui demande) ; pas de revote.
+- **Avec un Bailli vivant** : sa voix tranche si elle allait à l'un des ex æquo ; sinon il tranche (le système le lui demande) ; pas de revote.
 - Sans Bailli, première égalité : les ex æquo ont **trente secondes** chacun, puis revote **entre eux seulement**.
 - Sans Bailli, seconde égalité : **personne n'est exécuté** ; la nuit tombe.
 - Un joueur seul en tête mais sans majorité (Gibet) : personne n'est exécuté.
-- Le **Loup déguisé** en tête d'un vote sans être exécuté perd son masque : note-le.
+- Le **Loup déguisé** en tête d'un vote sans être exécuté (égalité, majorité manquée, vote annulé par le Juge de paix) perd son masque : le système le note (chronique secrète) et le lui dit ; ensuite, les visions disent la vérité sur lui.
 
 # Victoires à vérifier après chaque mort
 
 - Plus aucun loup : victoire du **Village**.
 - Loups aussi nombreux que les autres vivants : victoire de la **Meute**.
-- **Revenant** exécuté, cible du **Chasseur de primes** exécutée : victoire immédiate du solitaire (la partie continue pour les autres si tu le souhaites, ou s'arrête : annonce-le au début).
-- **Amants** derniers vivants : ils gagnent ensemble.
+- **Revenant** exécuté, cible du **Chasseur de primes** exécutée : victoire immédiate du solitaire, et la partie s'arrête.
+- **Amants** derniers vivants : ils gagnent ensemble. Deux amants de camps différents ne gagnent que de cette façon, jamais avec leur camp.
 - **Peste noire** : le cri juste fait gagner le village ; sinon la peste l'emporte quand il reste un vivant ou aucun (ni « plus aucun loup », ni amants, ni tueur solitaire ne finissent une peste).
 - **Pyromane** ou **Dame du gué** dernier vivant (ou avec un seul non-loup) : il gagne seul. Tant que l'un de ces deux tueurs vit, le village n'a pas gagné, même sans loup ; s'ils sont tous les deux en vie, aucun ne gagne avant que l'autre tombe.
 - **Rosière** exécutée par le vote : le Village perd aussitôt, **la meute l'emporte** (dans une peste noire : la peste). Le Revenant ou le Chasseur de primes exécutés gagnent d'abord. Morte la nuit, rien de particulier.
@@ -496,7 +501,7 @@ Le système y inscrit seul chaque vote clos (voix par voix), chaque mort avec sa
 
 # Gens de passage, Banc des accusés, Glas du deuil
 
-- **Gens de passage** (réglage, par défaut oui) : un joueur arrive en cours de partie ? Bouton **Accueillir un gens de passage** (Table de jeu), à l'aube ou pendant le débat, hors vote. Le système tire son rôle de passage (public, annoncé au chat) et son **camp secret**, pour ne pas déséquilibrer : la meute s'il lui manque des loups (le plus souvent), sinon le village (rarement la meute) ; jamais la meute dans une peste noire. Lui seul et la meute le savent ; ne le dis jamais. Son pouvoir ne sert qu'une fois, de jour : **Rémouleur** (la première attaque de loup contre une maison échoue la nuit suivante), **Montreur d'ours** (la meute n'entre pas dans cette maison la nuit suivante), **Pèlerine** (elle apprend en secret le camp d'un joueur).
+- **Gens de passage** (réglage, par défaut oui) : un joueur arrive en cours de partie ? Bouton **Accueillir un gens de passage** (Table de jeu), à l'aube ou pendant le débat, hors vote. Le système tire son rôle de passage (public, annoncé au chat) et son **camp secret**, pour ne pas déséquilibrer : la meute s'il lui manque des loups (le plus souvent), sinon le village (rarement la meute) ; jamais la meute dans une peste noire. Lui seul et la meute le savent ; ne le dis jamais. Son pouvoir ne sert qu'une fois, de jour : **Rémouleur** (la première attaque de loup contre une maison échoue la nuit suivante), **Montreur de marmotte** (la meute n'entre pas dans cette maison la nuit suivante), **Pèlerine** (elle apprend en secret le camp d'un joueur).
 - **Départ et exil** : un joueur qui doit partir presse **Quitter la veillée** (ou toi, la porte sur sa carte) ; un **vote d'exil** (bouton du narrateur, au débat) chasse un gens de passage. Dans les deux cas : ni mort, ni rôle, ni camp annoncés ; sa voix en cours retirée (et celles qui le désignaient), son jeton retiré du plateau, sa demande de nuit close ; s'il était Bailli, la charge devient vacante. S'il était le seul candidat du vote (l'accusé jugé, le seul gens de passage d'un exil), le vote se clôt sans élu. La victoire est vérifiée comme après une mort ; « Rejouer » ne le redistribue pas.
 - **Banc des accusés** (variante) : pas de vote libre. Les joueurs accusent pendant le débat (une fois chacun ; chacun accusé une fois par jour) ; **Ouvrir le vote** juge le prochain accusé (un seul candidat, sans cloche ni départage). Condamné à **la moitié des voix des vivants** (le Bailli compte double, au total aussi ; plus de la moitié avec le Gibet ; le Dernier souffle compte pour, pas au total). Une exécution par jour : après elle, les autres accusés sont libres. Sans accusation, la nuit peut tomber. Le Juge de paix peut annuler un jugement : l'accusé est rejugé.
 - **Glas du deuil** (variante) : chaque innocent (hors meute) exécuté par le vote fait sonner le glas — annonce vague, au chat. La meute gagne en secret : au **1er glas**, une **vision** (la nuit suivante, réveil « la meute en deuil » : elle désigne un joueur, chaque loup apprend son camp) ; au **2e**, une **voix sans visage** à chaque vote d'exécution : à l'ouverture du vote, la meute désigne en secret le candidat qu'elle rejoindra (sans réponse : un candidat au hasard) ; le dépouillement la montre, jamais d'où elle vient, et rien ne la relie aux bulletins des loups ; au **3e**, le **linceul** : la nuit suivante, aucune protection ne tient contre la meute (ni garde, ni remède, ni verrou, ni asile, ni Taverne). Au-delà, le glas sonne sans rien de plus.
@@ -574,11 +579,14 @@ Pose sur la carte quelques **figurants** pour animer le village : le garde du gu
       titre: "Cas particuliers",
       texte: `# Interactions courantes
 
-- **Louve mère et protection** : une victime protégée ne peut pas être mordue ; la morsure est perdue.
+- **Louve mère et protection** : la garde du Garde du pont n'empêche pas l'infection (elle ne protège que de la mort) ; une porte que la meute ne passe pas (Chapelle, clé de la Gardienne, verrou du Forgeron, Taverne), si, et la morsure est perdue.
+- **Louve mère et Herboriste** : une infection n'est pas une mort ; l'Herboriste n'apprend pas le nom de l'infecté, il n'y a rien à sauver chez lui.
+- **Loup affamé et mordu** : un mordu qui meurt est un loup mort ; le Loup affamé perd sa faim.
 - **Morsure d'un rôle à pouvoir** : le mordu garde son pouvoir et l'utilise pour la meute (une Liseuse mordue lit pour les loups). Il ne meurt pas s'il est la cible de la meute ensuite : il en fait partie.
 - **Amants de camps opposés** : ils gagnent ensemble s'ils sont les deux derniers vivants. Un loup amant peut voter contre la meute pour sauver son amant.
 - **Colporteur** : l'échange se fait avant les autres actions. Celui qui reçoit le Colporteur perd son pouvoir dès cette nuit. Un loup échangé quitte la meute ; le Colporteur devenu loup la rejoint.
 - **Herboriste et feu** : le remède ne sauve pas d'un incendie, seulement de la meute.
+- **Herboriste, deux fioles** : la même nuit, elle peut sauver la victime et empoisonner quelqu'un d'autre. Deux victimes désignées : une seule reçoit le remède.
 - **Braconnière tuée par le poison** : elle emporte quand même quelqu'un.
 - **Gardienne des clés sur une maison loup** : le loup chasse quand même avec la meute (la meute sort d'une autre maison), mais il ne peut pas utiliser son pouvoir propre.
 - **Garde du guet sur un loup** : la meute chasse sans lui ; son vote de meute ne compte pas.

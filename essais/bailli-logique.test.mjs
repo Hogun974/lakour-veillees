@@ -58,6 +58,20 @@ const VERIFICATIONS = {
     assert.deepEqual(L.trancherVote(etat, []).vote.resultat.elus, [], "il passe : personne");
     assert.equal(L.trancherVote(etat, ["x"]).vote.resultat.departage.enAttente, false);
   },
+  "égalité : si le Bailli a voté pour un ex aequo, sa voix tranche d'office": L => {
+    const { etat, resultat } = voter(L, jour(L), { b: "x", a: "y", c: "y" });
+    assert.equal(resultat.egalite, true);
+    assert.deepEqual(resultat.elus, ["x"]);
+    assert.deepEqual(resultat.departage, { par: "b", candidats: ["x", "y"], places: 1, enAttente: false, choix: ["x"], auto: ["x"] });
+    assert.equal(L.departageEnAttente(etat), false, "rien à lui demander");
+    assert.deepEqual(derniere(etat, "vote").departage, { par: "b", choix: ["x"] }, "au Registre aussitôt");
+    // Vote double, trois ex aequo pour deux places : sa voix en prend une, il choisit pour l'autre.
+    const d = voter(L, jour(L), { b: "x", a: "y", c: "y", d: "z", z: "z" }, { double: true });
+    assert.deepEqual(d.resultat.elus, ["x"]);
+    assert.deepEqual([d.resultat.departage.enAttente, d.resultat.departage.places, d.resultat.departage.candidats], [true, 1, ["y", "z"]]);
+    assert.deepEqual(L.trancherVote(d.etat, ["z"]).vote.resultat.elus, ["x", "z"]);
+    assert.deepEqual(L.trancherVote(d.etat, ["z"]).vote.resultat.departage.choix, ["x", "z"]);
+  },
   "le départage ne prend que les places libres (vote double)": L => {
     const { etat, resultat } = voter(L, jour(L), { a: "x", c: "x", d: "x", y: "z", z: "y" }, { double: true });
     assert.deepEqual(resultat.elus, ["x"]);
@@ -304,11 +318,14 @@ const MUTATIONS = [
   ["bailli.mjs", "  etat.bailli.succession = null;\n  inscrire(etat, { type: \"bailli\", acteurId: \"\", comment: \"vacance\", de: s.de });",
     "  inscrire(etat, { type: \"bailli\", acteurId: \"\", comment: \"vacance\", de: s.de });", "succession close à la vacance"],
   ["etat.mjs", "    ouvrirSuccession(etat, acteurId, quand);\n", "", "la mort du Bailli"],
-  ["etat.mjs", "  if (!resultat.departage) inscrire(etat, entreeDeVote(resultat), maintenant);", "  inscrire(etat, entreeDeVote(resultat), maintenant);", "Registre : attendre le départage"],
-  ["etat.mjs", "  if (!resultat.departage) inscrire(etat, entreeDeVote(resultat), maintenant);\n", "", "Registre : votes clos"],
+  ["etat.mjs", "  if (!resultat.departage?.enAttente) inscrire(etat, entreeDeVote(resultat), maintenant);", "  inscrire(etat, entreeDeVote(resultat), maintenant);", "Registre : attendre le départage"],
+  ["etat.mjs", "  if (!resultat.departage?.enAttente) inscrire(etat, entreeDeVote(resultat), maintenant);\n", "", "Registre : votes clos"],
   ["etat.mjs", "\"journalSecret\", \"masques\", \"somnambules\"", "\"journalSecret\", \"somnambules\"", "masques secrets"],
   ["etat.mjs", "for (const cle of [\"asperges\", \"journalSecret\", \"masques\"])", "for (const cle of [\"asperges\", \"journalSecret\"])", "masques rendus au MJ"],
   ["etat.mjs", "departage: bailli && r.departage ?", "departage: r.departage ?", "départage sans Bailli"],
+  ["etat.mjs", "if (sienne && resultat.departage.candidats.includes(sienne)) {", "if (false) {", "la voix du Bailli tranche d'office"],
+  ["etat.mjs", "? { ...d, candidats: d.candidats.filter(id => id !== sienne), places: d.places - 1,", "? { ...d, places: d.places,", "voix du Bailli : une place de moins"],
+  ["bailli.mjs", "choix: [...(d.auto ?? []), ...admis]", "choix: admis", "voix du Bailli : gardée au choix"],
   ["etat.mjs", "const bailli = v.objet === \"execution\" && !v.banc ? bailliEnCharge(etat, votants) : \"\";", "const bailli = !v.banc ? bailliEnCharge(etat, votants) : \"\";", "départage : l'exécution seulement"],
   ["votes.mjs", "!majoriteAbsolue || decompte[id] * 2 > totalDesVoix(admisVotants, valides, poids)", "true", "départage sous le Gibet"],
   ["votes.mjs", "const reste = places - elus.length;", "const reste = 1;", "départage : places restantes"],

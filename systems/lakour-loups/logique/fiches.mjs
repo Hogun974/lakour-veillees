@@ -16,7 +16,7 @@ import { CAMPS } from "./constantes.mjs";
 
 const copie = o => JSON.parse(JSON.stringify(o ?? null));
 
-export const NUIT_PAR_DEFAUT = { actif: false, ordre: 50, premiereNuitSeulement: false, uneNuitSurDeux: false, cibles: 1, soiMeme: false, invite: "" };
+export const NUIT_PAR_DEFAUT = { actif: false, ordre: 50, premiereNuitSeulement: false, uneNuitSurDeux: false, tantQueMeuteEntiere: false, cibles: 1, soiMeme: false, invite: "" };
 
 // Le rôle d'une fiche, complété (les essais et d'anciens objets n'ont pas tous les champs).
 export function normaliserRole(r) {

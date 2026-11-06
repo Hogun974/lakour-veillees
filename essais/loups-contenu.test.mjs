@@ -38,7 +38,8 @@ test("contenu : la meute se réveille ensemble à 40, puis chaque loup à pouvoi
   assert.deepEqual(apres.slice(0, 4), ["louve-mere", "loup-affame", "loup-hurleur", "loup-flaireur"]);
   assert.ok(!o.some(e => e.roleCle === "loup-de-brumecombe" || e.roleCle === "loup-deguise"), "pas de réveil à part à 40");
   assert.ok(o.some(e => e.roleCle === "veilleuse-de-lanterne" && e.acteurIds.includes("mordu")), "le mordu garde son pouvoir");
-  assert.ok(!L.ordreDeNuit(vs, 1).some(e => e.roleCle === "loup-affame"), "affamé : nuits paires seulement");
+  assert.ok(L.ordreDeNuit(vs, 1).some(e => e.roleCle === "loup-affame"), "affamé : chaque nuit, la première comprise");
+  assert.ok(!L.ordreDeNuit(vs.map(x => (x.id === "a0" ? { ...x, vivant: false } : x)), 3).some(e => e.roleCle === "loup-affame"), "affamé : plus seul dès qu'un loup est mort");
 });
 
 test("contenu : Herboriste, Pyromane, Ermite, Chasseur de primes tels que décrits", options, () => {
@@ -117,7 +118,7 @@ test("contenu : toutes les compositions se jouent jusqu'au bout (parties simulé
 test("contenu : Loup des roseaux, Louvetier, Pêcheur de nuit et Dame du gué tels que décrits, avec les seuls effets déjà automatisés", options, () => {
   for (const cle of ["loup-des-roseaux", "louvetier", "pecheur-de-nuit", "dame-du-gue"]) assert.ok(L.EFFETS_AUTOMATISES.includes(ROLES[cle].effet), cle);
   const vs = [v("l", "loup-de-brumecombe"), v("r", "loup-des-roseaux"), v("lv", "louvetier"), v("pe", "pecheur-de-nuit"), v("d", "dame-du-gue"),
-    v("li", "liseuse-de-cendres"), v("so", "sourcier"), v("ve", "veilleuse-de-lanterne"), v("g", "garde-du-pont"), v("x", "villageois"), v("y", "villageois")];
+    v("li", "liseuse-de-cendres"), v("so", "sourcier"), v("ve", "veilleuse-de-lanterne"), v("g", "garde-du-pont"), v("gc", "gardienne-des-cles"), v("x", "villageois"), v("y", "villageois")];
   const nuit = (actions, tour = 1, extra = {}) => L.resoudreNuit({ villageois: vs, actions, tour, hasard: () => 0, ...extra });
   const dit = (r, qui) => r.messages.filter(m => m.destinataire === qui).map(m => m.cle.split(".").pop());
 
@@ -143,9 +144,11 @@ test("contenu : Loup des roseaux, Louvetier, Pêcheur de nuit et Dame du gué te
   assert.deepEqual(dit(vision, "so"), ["MemeCamp"]);
   assert.equal(nuit([{ acteurId: "lv", roleCle: "louvetier", cibles: ["r"] }]).messages.find(m => m.destinataire === "lv").donnees.camp, "meute");
 
-  // Pêcheur de nuit : sa cible meurt (pas de crocs), sauf protection ; le verrou du Forgeron n'arrête que les loups ; il atteint la Dame du gué.
+  // Pêcheur de nuit : sa cible meurt (pas de crocs), sauf porte fermée par la Gardienne ; la garde du Garde du pont et le verrou du
+  // Forgeron n'arrêtent que les loups ; il atteint la Dame du gué.
   assert.deepEqual(nuit([{ acteurId: "pe", roleCle: "pecheur-de-nuit", cibles: ["y"] }]).deces, [{ acteurId: "y", cause: "nuit" }]);
-  assert.deepEqual(nuit([{ acteurId: "pe", roleCle: "pecheur-de-nuit", cibles: ["y"] }, { acteurId: "g", roleCle: "garde-du-pont", cibles: ["y"] }]).morts, []);
+  assert.deepEqual(nuit([{ acteurId: "pe", roleCle: "pecheur-de-nuit", cibles: ["y"] }, { acteurId: "gc", roleCle: "gardienne-des-cles", cibles: ["y"] }]).morts, []);
+  assert.deepEqual(nuit([{ acteurId: "pe", roleCle: "pecheur-de-nuit", cibles: ["y"] }, { acteurId: "g", roleCle: "garde-du-pont", cibles: ["y"] }]).morts, ["y"]);
   assert.deepEqual(nuit([{ acteurId: "pe", roleCle: "pecheur-de-nuit", cibles: ["y"] }], 1, { jour: { verrous: ["y"] } }).morts, ["y"]);
   assert.deepEqual(nuit([{ acteurId: "pe", roleCle: "pecheur-de-nuit", cibles: ["d"] }]).morts, ["d"]);
 

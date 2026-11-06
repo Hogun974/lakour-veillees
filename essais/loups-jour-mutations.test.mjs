@@ -19,6 +19,8 @@ const ROLE = {
   pyromane: { cle: "pyromane", camp: "solitaire", effet: "asperger", nuit: { actif: true, ordre: 55, cibles: 1, soiMeme: true }, usages: { max: 0, restant: 0 } },
   messager: { cle: "messager", camp: "village", effet: "messager", nuit: { actif: true, ordre: 10, cibles: 2, soiMeme: true }, usages: { max: 0, restant: 0 } },
   juge: { cle: "juge-de-paix", camp: "village", effet: "annuler-vote", nuit: { actif: false, cibles: 0 }, usages: { max: 1, restant: 1 } },
+  sonneur: { cle: "sonneur", camp: "village", effet: "vote-double", nuit: { actif: false, cibles: 0 }, usages: { max: 1, restant: 1 } },
+  deguise: { cle: "loup-deguise", camp: "meute", effet: "tuer", apparence: "village", nuit: { actif: true, ordre: 40, cibles: 1 }, usages: { max: 0, restant: 0 } },
   villageois: { cle: "villageois", camp: "village", effet: "", nuit: { actif: false, cibles: 0 }, usages: { max: 0, restant: 0 } }
 };
 const v = (id, role, n, metier = "", extra = {}) => ({ id, nom: `Nom-${id}`, vivant: true, revele: false, camp: ROLE[role].camp, maison: `Maison ${n}`, silence: false,
@@ -186,7 +188,57 @@ const VERIFICATIONS = {
     assert.equal(e.vote.double, false);
     assert.equal(e.voteDoubleDemain, true);
   },
-  "un tiers des maisons sur l'autre rive": L => assert.equal(L.maisonsDuVillage(9).filter(L.surLAutreRive).length, 3)
+  "un tiers des maisons sur l'autre rive": L => assert.equal(L.maisonsDuVillage(9).filter(L.surLAutreRive).length, 3),
+  "Garde du pont : la cible d'hier n'est pas proposée": L => {
+    const e = L.cloreNuit(L.ajouterAction({ ...jour(L), phase: "nuit" }, { acteurId: "g", roleCle: "garde-du-pont", cibles: ["x"] }));
+    const c = L.candidatsDeNuit({ villageois: base(), etat: e, acteurId: "g", roleCle: "garde-du-pont", tour: 2 });
+    assert.ok(!c.includes("x") && c.includes("y") && c.includes("g"));
+  },
+  "Loup hurleur : la gorge d'hier n'est pas proposée": L => {
+    const e = L.cloreNuit(L.ajouterAction({ ...jour(L), phase: "nuit" }, { acteurId: "hu", roleCle: "loup-hurleur", cibles: ["x"] }));
+    assert.ok(!L.candidatsDeNuit({ villageois: base(), etat: e, acteurId: "hu", roleCle: "loup-hurleur", tour: 2 }).includes("x"));
+  },
+  "Loup affamé : une autre victime que la proie de la meute, jamais un loup": L => {
+    const e = L.ajouterAction({ ...jour(L), phase: "nuit", tour: 2 }, { acteurId: "l1", roleCle: "meute", cibles: ["x"] });
+    const c = L.candidatsDeNuit({ villageois: base(), etat: e, acteurId: "af", roleCle: "loup-affame", tour: 2 });
+    assert.ok(!c.includes("x") && !c.includes("l1") && c.includes("y"));
+    assert.ok(L.candidatsDeNuit({ villageois: base(), etat: e, roleCle: "meute", tour: 2 }).includes("x"), "la meute, elle, garde tous ses candidats");
+  },
+  "Sonneur : au débat, le prochain vote d'exécution sera double": L => {
+    const vs = [...base(), v("so", "sonneur", 15)];
+    const r = agir(L, vs, jour(L), "so", "sonneur");
+    assert.ok(r.ok);
+    assert.equal(r.etat.voteDoubleDemain, true);
+    assert.deepEqual(r.changements.map(c => c.type).sort(), ["revele", "usage"]);
+    assert.equal(L.ouvrirVote(r.etat, { candidats: ["x"] }).vote.double, true);
+    assert.equal(raison(L, vs, r.etat, "so", "sonneur"), "deja");
+  },
+  "Sonneur : pendant le vote, le vote ouvert devient double": L => {
+    const vs = [...base(), v("so", "sonneur", 15)];
+    const e = L.ouvrirVote(jour(L), { candidats: ["x", "y"] });
+    const r = agir(L, vs, e, "so", "sonneur");
+    assert.equal(r.etat.vote.double, true);
+    assert.equal(r.voteChange, true);
+    assert.equal(raison(L, vs, L.ouvrirVote(jour(L), { candidats: [], objet: "chapelle" }), "so", "sonneur"), "vote", "pas le vote de la Chapelle");
+    assert.equal(raison(L, vs, jour(L, { phase: "nuit" }), "so", "sonneur"), "phase");
+  },
+  "Loup déguisé : le plus désigné sans être exécuté perd son masque": L => {
+    const vs = [...base(), v("d", "deguise", 15)];
+    const egalite = { objet: "execution", decompte: { d: 2, x: 2 }, elus: [] };
+    assert.deepEqual(L.masquesQuiTombent({ resultat: egalite, villageois: vs }), ["d"]);
+    assert.deepEqual(L.masquesQuiTombent({ resultat: { ...egalite, decompte: { d: 2, x: 3 }, elus: ["x"] }, villageois: vs }), [], "pas le plus désigné");
+    assert.deepEqual(L.masquesQuiTombent({ resultat: { objet: "execution", decompte: { d: 3 }, elus: ["d"] }, villageois: vs }), [], "exécuté");
+    assert.deepEqual(L.masquesQuiTombent({ resultat: { objet: "execution", decompte: { d: 3 }, elus: ["d"] }, villageois: vs, annule: true }), ["d"], "vote annulé");
+    assert.deepEqual(L.masquesQuiTombent({ resultat: { ...egalite, departage: { enAttente: true } }, villageois: vs }), [], "le Bailli n'a pas tranché");
+  },
+  "Juge de paix : le déguisé du vote annulé perd son masque": L => {
+    const vs = [...base(), v("d", "deguise", 15)];
+    let e = L.enregistrerVote(L.ouvrirVote(jour(L), { candidats: ["d", "x"] }), { votant: "x", cible: "d" }).etat;
+    e = L.cloreVote(e).etat;
+    e.phase = "vote";
+    const r = agir(L, vs, e, "j", "juge-de-paix");
+    assert.ok(r.changements.some(c => c.type === "masque" && c.acteurId === "d"));
+  }
 };
 
 const MUTATIONS = [
@@ -216,7 +268,17 @@ const MUTATIONS = [
   ["resolution.mjs", "if (verrous.has(cible) && !verrousServis.has(cible) && !sansProtection(cible)) {", "if (verrous.has(cible) && !sansProtection(cible)) {", "verrou : la première attaque"],
   ["resolution.mjs", "    if (asiles.has(cible)) return \"asile\";", "", "asile de la Chapelle"],
   ["resolution.mjs", "const loupATaverne = Boolean(jour.taverneEnJeu) && [...taverne].some(", "const loupATaverne = false && [...taverne].some(", "loup à la Taverne"],
-  ["resolution.mjs", "if (proteges.has(x.cible) && !x.traverse && !(x.meute && sansProtection(x.cible))) {", "if (proteges.has(x.cible) && !x.traverse) {", "Taverne sans protection"],
+  ["resolution.mjs", "&& !x.surprise && !(x.meute && sansProtection(x.cible))) {", "&& !x.surprise) {", "Taverne sans protection"],
+  ["jour.mjs", "if (hier) ids = ids.filter(id => id !== hier);", "", "jamais deux nuits de suite : candidats"],
+  ["jour.mjs", "ids = ids.filter(id => !proies.has(id));", "", "Loup affamé : une autre victime"],
+  ["jour.mjs", "if (etat.voteDoubleDemain || (v.ouvert && v.double)) return non(\"deja\");", "", "Sonneur : une cloche"],
+  ["jour.mjs", "        etat.voteDoubleDemain = true;", "", "Sonneur : au débat"],
+  ["jour.mjs", "        etat.vote.double = true;", "", "Sonneur : pendant le vote"],
+  ["jour.mjs", "if (etat.phase === \"vote\" && (!v.ouvert || v.objet !== \"execution\" || v.banc)) return non(\"vote\");", "", "Sonneur : un vote d'exécution"],
+  ["jour.mjs", "const elus = new Set(annule ? [] : resultat.elus ?? []);", "const elus = new Set(resultat.elus ?? []);", "masque : vote annulé"],
+  ["jour.mjs", "d[v.id] === max && !elus.has(v.id)", "d[v.id] > 0 && !elus.has(v.id)", "masque : le plus désigné seulement"],
+  ["jour.mjs", "|| resultat.departage?.enAttente) return [];", ") return [];", "masque : départage en attente"],
+  ["jour.mjs", "for (const id of masquesQuiTombent({ resultat: ancien.resultat, villageois, annule: true }))", "for (const id of [])", "masque : Juge de paix"],
   ["resolution.mjs", "if (taverne.has(cible) && !loupATaverne) return \"taverne\";", "", "Taverne sans loup"],
   ["resolution.mjs", "} else if (hors.has(a.acteurId)) {", "} else if (false) {", "hors d'atteinte n'agit pas"],
   ["resolution.mjs", "const absent = duDeuil ? null : cibles.find(c => hors.has(c) && c !== a.acteurId && vivant(c));", "const absent = null;", "hors d'atteinte : visites"],

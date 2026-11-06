@@ -499,7 +499,7 @@ export function simulerJoueurs({ graine = "joueurs", canal = "system.lakour-loup
     const loup = a => estLoupPour(d.destinataire, a);
     if (loup(moi)) return tirer(autres.filter(id => !loup(game.actors.get(id))), 1);   // un loup vise un non-loup
     switch (effet) {
-      case "voir-camp": case "proteger": case "eclairer": case "voir-role-mort": return tirer(ids, d.nombre);
+      case "voir-camp": case "voir-role": case "proteger": case "eclairer": case "voir-role-mort": return tirer(ids, d.nombre);
       case "lien-amour": case "messager": return tirer(ids, d.nombre);
       case "asperger": return ids.includes(moi.id) && h() < 0.25 ? [moi.id] : tirer(autres, 1);
       case "epier": return ids.includes(moi.id) && h() < 0.5 ? [moi.id] : [];
@@ -532,7 +532,8 @@ export function simulerJoueurs({ graine = "joueurs", canal = "system.lakour-loup
     const connus = new Set(v.candidats.filter(id => campPublic(game.actors.get(id)) === "meute"));
     for (const s of journal.secrets) {
       const lecteur = acteurDe(s.userId);
-      const lu = /Les cendres parlent : (.+?) est du camp « Meute »/.exec(s.texte ?? "");
+      // Le camp (Loup flaireur, Louvetier, ancienne Liseuse) ou le rôle (la Liseuse : « X est « Loup de Brumecombe », du camp « Meute » »).
+      const lu = /Les cendres parlent : (.+?) est (?:« .+? », )?du camp « Meute »/.exec(s.texte ?? "");
       if (!lu || !lecteur?.system.vivant || estLoupPour(s.userId, lecteur)) continue;
       const suspect = game.actors.find(a => a.type === "villageois" && a.name === lu[1]);
       if (suspect && v.candidats.includes(suspect.id)) connus.add(suspect.id);

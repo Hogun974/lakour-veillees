@@ -11,7 +11,10 @@ const SOURCE = fileURLToPath(new URL("../systems/lakour-loups/logique/", import.
 
 const R = {
   loup: { cle: "loup-de-brumecombe", nom: "Loup", camp: "meute", effet: "tuer", nuit: { actif: true, ordre: 40 } },
-  affame: { cle: "loup-affame", nom: "Affamé", camp: "meute", effet: "tuer", nuit: { actif: true, ordre: 45, uneNuitSurDeux: true } },
+  affame: { cle: "loup-affame", nom: "Affamé", camp: "meute", effet: "tuer", nuit: { actif: true, ordre: 45, tantQueMeuteEntiere: true } },
+  sourcier: { cle: "sourcier", nom: "Sourcier", camp: "village", effet: "voir-camp", nuit: { actif: true, ordre: 62, cibles: 2, uneNuitSurDeux: true } },
+  lectrice: { cle: "liseuse-de-cendres", nom: "Liseuse", camp: "village", effet: "voir-role", nuit: { actif: true, ordre: 60 } },
+  pecheur: { cle: "pecheur-de-nuit", nom: "Pêcheur", camp: "village", effet: "tuer", nuit: { actif: true, ordre: 48 } },
   louve: { cle: "louve-mere", nom: "Louve", camp: "meute", effet: "mordre", nuit: { actif: true, ordre: 41 } },
   deguise: { cle: "loup-deguise", nom: "Déguisé", camp: "meute", effet: "", nuit: { actif: true, ordre: 40 } },
   villageois: { cle: "villageois", nom: "Villageois", camp: "village", effet: "", nuit: { actif: false } },
@@ -52,9 +55,40 @@ const VERIFICATIONS = {
     assert.ok(L.ordreDeNuit([v("e", "entremetteuse")], 2).length === 0);
   },
   "une nuit sur deux": L => {
-    const cles = t => L.ordreDeNuit([v("a", "affame")], t).map(e => e.roleCle);
-    assert.ok(!cles(1).includes("loup-affame"));
-    assert.ok(cles(2).includes("loup-affame"));
+    const cles = t => L.ordreDeNuit([v("a", "sourcier")], t).map(e => e.roleCle);
+    assert.ok(!cles(1).includes("sourcier"));
+    assert.ok(cles(2).includes("sourcier"));
+  },
+  "affamé : chaque nuit tant que la meute est entière": L => {
+    const cles = (vs, t) => L.ordreDeNuit(vs, t).map(e => e.roleCle);
+    assert.ok(cles([v("a", "affame"), v("l", "loup")], 1).includes("loup-affame"));
+    assert.ok(!cles([v("a", "affame"), v("l", "loup", { vivant: false })], 2).includes("loup-affame"));
+    assert.ok(!cles([v("a", "affame"), v("m", "villageois", { camp: "meute", vivant: false })], 2).includes("loup-affame"), "un mordu mort compte");
+  },
+  "affamé rassasié : son action ne tue plus": L => assert.deepEqual(L.resoudreNuit({ villageois: [...base(), v("a", "affame"), v("lm", "loup", { vivant: false })],
+    actions: [{ acteurId: "a", roleCle: "loup-affame", cibles: ["y"] }] }).morts, []),
+  "un loup seul ne tue pas un loup": L => assert.deepEqual(L.resoudreNuit({ villageois: [...base(), v("a", "affame")],
+    actions: [{ acteurId: "a", roleCle: "loup-affame", cibles: ["l1"] }] }).morts, []),
+  "la garde n'arrête que la meute": L => assert.deepEqual(L.resoudreNuit({ villageois: [...base(), v("pe", "pecheur")],
+    actions: [{ acteurId: "g", roleCle: "garde-du-pont", cibles: ["x"] }, { acteurId: "pe", roleCle: "pecheur-de-nuit", cibles: ["x"] }] }).morts, ["x"]),
+  "l'infection passe la garde": L => assert.deepEqual(L.resoudreNuit({ villageois: [...base(), v("lm", "louve")],
+    actions: [{ acteurId: "g", roleCle: "garde-du-pont", cibles: ["x"] }, meute("x"), { acteurId: "lm", roleCle: "louve-mere", cibles: ["x"] }] }).changements,
+    [{ type: "camp", acteurId: "x", camp: "meute" }]),
+  "un mordu n'est pas une victime": L => assert.equal(L.resoudreNuit({ villageois: [...base(), v("lm", "louve")],
+    actions: [meute("x"), { acteurId: "lm", roleCle: "louve-mere", cibles: ["x"] }, { acteurId: "h", roleCle: "herboriste", cibles: ["x"] }] }).fioles.h?.remede, undefined),
+  "deux fioles la même nuit": L => assert.deepEqual(L.resoudreNuit({ villageois: base(), actions: [meute("x"), { acteurId: "h", roleCle: "herboriste", cibles: ["x", "y"] }] }).morts, ["y"]),
+  "l'enfant apprend le nom des loups": L => assert.equal(L.resoudreNuit({ villageois: [...base(), v("en", "enfant")], hasard: () => 0.9, chanceEpier: 0.5,
+    actions: [{ acteurId: "en", roleCle: "enfant-de-la-brume", cibles: ["en"] }, meute("x")] }).messages.find(m => m.destinataire === "en")?.donnees.noms, "l1, l2"),
+  "l'enfant surprise : ni garde": L => assert.deepEqual(L.resoudreNuit({ villageois: [...base(), v("en", "enfant")],
+    actions: [{ acteurId: "g", roleCle: "garde-du-pont", cibles: ["en"] }, { acteurId: "en", roleCle: "enfant-de-la-brume", cibles: ["en"], surprise: true }, meute("x")] }).morts, ["en"]),
+  "la surprise tirée à l'avance": L => assert.deepEqual(L.resoudreNuit({ villageois: [...base(), v("en", "enfant")], hasard: () => 0, chanceEpier: 1,
+    actions: [{ acteurId: "en", roleCle: "enfant-de-la-brume", cibles: ["en"], surprise: false }, meute("x")] }).morts, ["x"]),
+  "la Liseuse lit le rôle, le déguisé en Villageois": L => {
+    const lire = c => L.resoudreNuit({ villageois: [...base(), v("lc", "lectrice"), v("d", "deguise", { role: { ...structuredClone(R.deguise), apparence: "village" } })],
+      actions: [{ acteurId: "lc", roleCle: "liseuse-de-cendres", cibles: [c] }] }).messages[0].donnees;
+    assert.deepEqual(lire("x"), { nom: "x", role: "Villageois", camp: "village" });
+    assert.deepEqual(lire("l1"), { nom: "l1", role: "Loup", camp: "meute" });
+    assert.deepEqual(lire("d"), { nom: "d", role: "Villageois", camp: "village" });
   },
   "usages épuisés": L => assert.equal(L.ordreDeNuit([v("s", "sonneur")], 1).length, 0),
   "les morts ne sont pas réveillés": L => assert.deepEqual(L.ordreDeNuit([v("g", "garde", { vivant: false }), v("l", "loup", { vivant: false })], 1), []),
@@ -67,8 +101,10 @@ const VERIFICATIONS = {
     assert.deepEqual(L.resoudreNuit({ villageois: vs, actions: [meute("x")] }).morts, []);
   },
   "le remède sauve": L => assert.deepEqual(L.resoudreNuit({ villageois: base(), actions: [meute("x"), { acteurId: "h", roleCle: "herboriste", cibles: ["x"] }] }).morts, []),
-  "le poison passe la protection": L => assert.deepEqual(L.resoudreNuit({ villageois: base(), actions: [
-    { acteurId: "g", roleCle: "garde-du-pont", cibles: ["y"] }, { acteurId: "h", roleCle: "herboriste", cibles: ["y"], effet: "poison" }] }).morts, ["y"]),
+  "le poison passe la protection": L => {
+    const vs = base(); vs[7].protections = 1;
+    assert.deepEqual(L.resoudreNuit({ villageois: vs, actions: [{ acteurId: "h", roleCle: "herboriste", cibles: ["y"], effet: "poison" }] }).morts, ["y"]);
+  },
   "la lanterne démasque": L => assert.deepEqual(L.resoudreNuit({ villageois: base(), actions: [{ acteurId: "vl", roleCle: "veilleuse-de-lanterne", cibles: ["x"] }, meute("x")] })
     .revelations.map(r => r.acteurId), ["l2"]),
   "la lanterne ne ment pas": L => assert.deepEqual(L.resoudreNuit({ villageois: base(), actions: [{ acteurId: "vl", roleCle: "veilleuse-de-lanterne", cibles: ["y"] }, meute("x")] }).revelations, []),
@@ -104,8 +140,10 @@ const VERIFICATIONS = {
   "herboriste : poison sur un autre": L => assert.deepEqual(L.resoudreNuit({ villageois: base(), actions: [meute("x"), { acteurId: "h", roleCle: "herboriste", cibles: ["y"] }] }).morts, ["x", "y"]),
   "pyromane : se désigner embrase": L => assert.deepEqual(L.resoudreNuit({ villageois: [...base(), v("p", "pyromane")], asperges: ["x"],
     actions: [{ acteurId: "p", roleCle: "pyromane", cibles: ["p"] }] }).morts, ["x"]),
-  "le feu passe les protections": L => assert.deepEqual(L.resoudreNuit({ villageois: [...base(), v("p", "pyromane")], asperges: ["x"],
-    actions: [{ acteurId: "g", roleCle: "garde-du-pont", cibles: ["x"] }, { acteurId: "p", roleCle: "pyromane", cibles: [], effet: "embraser" }] }).morts, ["x"]),
+  "le feu passe les protections": L => {
+    const vs = [...base(), v("p", "pyromane")]; vs[6].protections = 1;
+    assert.deepEqual(L.resoudreNuit({ villageois: vs, asperges: ["x"], actions: [{ acteurId: "p", roleCle: "pyromane", cibles: [], effet: "embraser" }] }).morts, ["x"]);
+  },
   "la meute ne tue pas le pyromane": L => assert.deepEqual(L.resoudreNuit({ villageois: [...base(), v("p", "pyromane")], actions: [meute("p")] }).morts, []),
   "un rôle sans cible agit d'office": L => assert.ok(L.resoudreNuit({ villageois: [...base(), v("e", "ermite")], tour: 1, actions: [] }).messages.some(m => m.destinataire === "e")),
   "le chasseur apprend sa cible": L => {
@@ -125,6 +163,13 @@ const VERIFICATIONS = {
     morts: [{ acteurId: "r", cause: "vote" }] }), "r"),
   "revenant tué la nuit ne gagne pas": L => assert.equal(L.verifierVictoire({ villageois: [v("r", "revenant", { vivant: false }), v("l", "loup"), v("a", "villageois"), v("b", "villageois")],
     morts: [{ acteurId: "r", cause: "meute" }] }), ""),
+  "amants de camps différents : jamais gagnants avec leur camp": L => {
+    const vs = [v("l", "loup", { amoureux: "a" }), v("a", "villageois", { amoureux: "l", vivant: false }), v("l2", "loup"), v("b", "villageois", { vivant: false })];
+    const gagnants = L.bilanDePartie({ villageois: vs, vainqueur: "meute" }).filter(x => x.gagnant).map(x => x.id);
+    assert.deepEqual(gagnants, ["l2"]);
+    const memes = [v("l", "loup", { amoureux: "l2" }), v("l2", "loup", { amoureux: "l" }), v("a", "villageois", { vivant: false })];
+    assert.deepEqual(L.bilanDePartie({ villageois: memes, vainqueur: "meute" }).filter(x => x.gagnant).map(x => x.id).sort(), ["l", "l2"]);
+  },
   "amoureux derniers vivants": L => assert.equal(L.verifierVictoire({ villageois: [v("l", "loup", { amoureux: "a" }), v("a", "villageois", { amoureux: "l" })] }), "l"),
   "chasseur de primes": L => assert.equal(L.verifierVictoire({ villageois: [v("c", "chasseur"), v("l", "loup"), v("a", "villageois", { vivant: false }), v("b", "villageois"), v("d", "villageois")],
     morts: [{ acteurId: "a", cause: "vote" }], primes: { c: "a" } }), "c"),
@@ -169,21 +214,34 @@ const MUTATIONS = [
   ["nuit.mjs", "a.ordre - b.ordre", "b.ordre - a.ordre", "ordre croissant"],
   ["nuit.mjs", "const vivants = villageois.filter(v => v.vivant !== false);", "const vivants = villageois;", "morts non réveillés"],
   ["resolution.mjs", "if (precedente(a.acteurId, \"proteger\")?.cibles?.[0] === cible) {", "if (false) {", "pas deux protections de suite"],
-  ["resolution.mjs", "    proteges.add(cible);", "", "protection"],
+  ["resolution.mjs", "} else gardes.add(cible);", "}", "protection"],
+  ["resolution.mjs", "(x.meute && gardes.has(x.cible))", "gardes.has(x.cible)", "la garde n'arrête que la meute"],
+  ["nuit.mjs", "if (n.tantQueMeuteEntiere && !entiere) return false;", "", "affamé : meute entière"],
+  ["nuit.mjs", "!villageois.some(v => v.vivant === false && v.camp === \"meute\")", "!villageois.some(v => v.vivant === false && v.role?.camp === \"meute\")", "affamé : un mordu mort compte"],
+  ["resolution.mjs", "a.roleCle === acteur.role.cle && !entiere) {", "a.roleCle === acteur.role.cle && false) {", "affamé rassasié à l'aube"],
+  ["resolution.mjs", "if (solo && cibles.some(", "if (false && cibles.some(", "un loup seul ne tue pas un loup"],
+  ["resolution.mjs", "else if (fermees.has(cible) &&", "else if ((fermees.has(cible) || gardes.has(cible)) &&", "l'infection passe la garde"],
+  ["resolution.mjs", "const victimes = new Set(attaques.map(x => x.cible));", "const victimes = new Set([...attaques.map(x => x.cible), ...parEffet(\"mordre\").map(a => a.cibles[0])]);", "un mordu n'est pas une victime"],
+  ["resolution.mjs", "for (const c of a.cibles.slice(0, 2)) {", "for (const c of a.cibles.slice(0, 1)) {", "deux fioles la même nuit"],
+  ["resolution.mjs", "const loups = peutChasser.map(nom).join(\", \");", "const loups = \"\";", "l'enfant apprend le nom des loups"],
+  ["resolution.mjs", "&& !x.traverse && !x.surprise && ", "&& !x.traverse && ", "l'enfant surprise : ni garde"],
+  ["resolution.mjs", "typeof a.surprise === \"boolean\" ? a.surprise : ", "", "la surprise tirée à l'avance"],
+  ["resolution.mjs", "if (app && app !== campDuRole) return", "if (false) return", "la Liseuse : apparence"],
+  ["resolution.mjs", "return { nom: v.role.nom ?? v.role.cle ?? \"?\", camp: campDuRole };", "return { nom: \"Villageois\", camp: \"village\" };", "la Liseuse lit le rôle"],
   ["resolution.mjs", "const proteges = new Set(villageois.filter(v => Number(v.protections) > 0).map(v => v.id));", "const proteges = new Set();", "protections de l'API"],
   ["resolution.mjs", "if (remedies.has(x.cible)) {", "if (false) {", "remède"],
-  ["resolution.mjs", "if (proteges.has(x.cible) && !x.traverse && ", "if (proteges.has(x.cible) && ", "poison"],
+  ["resolution.mjs", "if ((proteges.has(x.cible) || (x.meute && gardes.has(x.cible))) && !x.traverse && ", "if ((proteges.has(x.cible) || (x.meute && gardes.has(x.cible))) && ", "poison"],
   ["resolution.mjs", "for (const loup of vus) sortie.revelations.push", "for (const loup of []) sortie.revelations.push", "lanterne"],
   ["resolution.mjs", ".filter(e => e.loup !== a.acteurId && memeMaison(e.cible, eclairee))", ".filter(e => e.loup !== a.acteurId)", "lanterne exacte"],
   ["resolution.mjs", "for (let i = attaques.length - 1; i >= 0; i--) if (attaques[i].meute && attaques[i].cible === cible) attaques.splice(i, 1);", "", "mordre au lieu de tuer"],
   ["resolution.mjs", "if (lie) meurt(lie, CAUSES.chagrin);", "", "chagrin"],
   ["resolution.mjs", "for (const id of aspergees) attaques.push({ cible: id, cause: CAUSES.feu, traverse: true });", "", "embraser"],
   ["resolution.mjs", "cause: CAUSES.feu, traverse: true", "cause: CAUSES.feu", "le feu passe les protections"],
-  ["resolution.mjs", "if (victimeMeute && loupMeute) entrees.push({ loup: loupMeute, cible: victimeMeute });",
+  ["resolution.mjs", "if (victimeMeute && loupMeute && !surprise) entrees.push({ loup: loupMeute, cible: victimeMeute });",
     "for (const a of actionsMeute) entrees.push({ loup: a.acteurId, cible: a.cibles[0] });", "un seul loup entre"],
   ["resolution.mjs", "if (victimeMeute) attaques.push(", "for (const a of actionsMeute) attaques.push({ cible: a.cibles[0], cause: CAUSES.meute, meute: true }); if (false) attaques.push(", "une seule victime"],
   ["resolution.mjs", "if (passe) continue;", "", "passer"],
-  ["resolution.mjs", "else if (c !== a.acteurId) {", "else if (false) {", "herboriste : poison"],
+  ["resolution.mjs", "c !== a.acteurId ? \"poison\" : \"\";", "\"\";", "herboriste : poison"],
   ["resolution.mjs", "...parEffet(\"asperger\").filter(a => a.cibles.includes(a.acteurId))", "", "pyromane : se désigner"],
   ["resolution.mjs", "if (x.meute && victoireCleDe(parId.get(x.cible)?.role) === \"dernier-survivant\") {", "if (false) {", "pyromane immunisé"],
   ["resolution.mjs", "if (!toutes.some(a => a.acteurId === v.id && a.roleCle === v.role.cle)) toutes.push(", "if (false) toutes.push(", "rôles sans cible"],
@@ -194,13 +252,14 @@ const MUTATIONS = [
   ["resolution.mjs", "let aspergees = new Set(asperges.filter(id => vivant(id)));", "let aspergees = new Set();", "asperger"],
   ["resolution.mjs", "sortie.enAttente.push(", "void (", "emporter"],
   ["resolution.mjs", "if (!deLaMeute && !deLaPeste && !duDeuil && (!acteur || acteur.vivant === false)) continue;", "if (!deLaMeute && !deLaPeste && !duDeuil && !acteur) continue;", "les morts n'agissent plus"],
-  ["resolution.mjs", "if (v.camp === \"meute\" && /deguis/.test(v.role?.cle ?? \"\")) return \"village\";", "", "loup déguisé"],
+  ["resolution.mjs", "if (v.role && v.role.apparence === undefined && v.camp === \"meute\" && /deguis/.test(v.role.cle ?? \"\")) return \"village\";", "", "loup déguisé"],
   ["resolution.mjs", "for (const v of nouveaux) v.protections = 0;", "", "protections remises à 0"],
   ["victoire.mjs", "if (meute === 0 && tueurs.length === 0) return \"village\";", "if (meute === 0) return \"village\";", "pyromane"],
   ["victoire.mjs", "meute >= vivants.length - meute", "meute > vivants.length - meute", "meute à égalité"],
   ["victoire.mjs", "if (cle === \"execute\" && executes.has(v.id)) return v.id;", "", "revenant"],
   ["victoire.mjs", "morts.filter(m => m.cause === \"vote\")", "morts", "exécuté par le vote seulement"],
   ["victoire.mjs", "if (a.amoureux === b.id && b.amoureux === a.id) {", "if (false) {", "amoureux"],
+  ["victoire.mjs", "if (v.camp === vainqueur && !desAmantsMeles(v)) gagnants.add(v.id);", "if (v.camp === vainqueur) gagnants.add(v.id);", "amants mêlés"],
   ["victoire.mjs", "if (cle === \"cible-executee\" && primes[v.id] && executes.has(primes[v.id])) return v.id;", "", "chasseur de primes"],
   ["distribution.mjs", "const r = melanger(roles, h);", "const r = [...roles];", "rôles mélangés"],
   ["hasard.mjs", "if (graine === undefined || graine === null || graine === \"\") return Math.random;", "return Math.random;", "graine"],

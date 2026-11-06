@@ -7,7 +7,7 @@
   "system": {
     "cle": "louve-mere",
     "camp": "meute",
-    "description": "<p>Tu as porté la meute avant qu'elle ait des noms.</p><p>Tu chasses chaque nuit avec la meute. <strong>Une fois par partie</strong>, juste après le choix de la meute, tu peux décider de <strong>mordre</strong> la victime au lieu de la tuer : personne ne meurt cette nuit-là, et la victime rejoint la meute en secret. Elle garde son rôle et ses pouvoirs, mais joue désormais pour les loups ; le narrateur la prévient en secret et elle se réveille avec la meute dès la nuit suivante.</p><p>Une victime protégée ne peut pas être mordue.</p>",
+    "description": "<p>Tu as porté la meute avant qu'elle ait des noms.</p><p>Tu chasses chaque nuit avec la meute. <strong>Une fois par partie</strong>, juste après le choix de la meute, tu peux <strong>infecter</strong> sa proie au lieu qu'elle meure : la victime <strong>ne meurt pas</strong>, et devient en secret un <strong>loup de la meute</strong>. Le narrateur la prévient en secret ; dès la nuit suivante, elle se réveille avec la meute et chasse avec elle. Si elle avait un pouvoir de nuit, elle le garde : le narrateur l'appelle encore pour lui, et elle s'en sert désormais pour les loups.</p><p>La garde du Garde du pont n'arrête pas ta morsure : elle protège de la mort, pas de toi. Une porte fermée à la meute (l'asile de la Chapelle, la clé de la Gardienne, le verrou du Forgeron), si. Une infection n'est pas une mort : cette nuit-là, il n'y a personne à sauver.</p>",
     "victoire": "",
     "nuit": {
       "actif": true,
@@ -16,7 +16,7 @@
       "uneNuitSurDeux": false,
       "cibles": 1,
       "soiMeme": false,
-      "invite": "La meute a choisi sa proie. Désigne-la pour la mordre au lieu de la tuer, ou passe."
+      "invite": "La meute a choisi sa proie. Désigne-la pour l'infecter au lieu de la tuer, ou passe."
     },
     "usages": {
       "max": 1,

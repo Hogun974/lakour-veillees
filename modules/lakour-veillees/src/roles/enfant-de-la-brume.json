@@ -7,7 +7,7 @@
   "system": {
     "cle": "enfant-de-la-brume",
     "camp": "village",
-    "description": "<p>Tu ne dors jamais quand il le faudrait.</p><p><strong>Chaque nuit</strong>, tu peux choisir d'<strong>épier</strong> la meute : le narrateur te montre ce que les loups se disent (sans leurs noms, sauf s'ils se trahissent). Mais à chaque fois, tu as <strong>une chance sur trois d'être repéré</strong> : alors la meute te prend pour victime à la place de celle qu'elle avait choisie.</p>",
+    "description": "<p>Tu ne dors jamais quand il le faudrait.</p><p><strong>Chaque nuit</strong>, pendant que la meute chasse, tu peux choisir d'<strong>épier</strong> (ou rester sagement au lit). Si tu épies, le narrateur te dit en secret <strong>le nom de tous les loups</strong> sortis chasser cette nuit. Mais tu peux être <strong>surprise</strong> (une chance sur deux) : alors c'est <strong>toi que la meute dévore</strong>, en silence, à la place de la proie qu'elle avait choisie. Prise dehors, ni la garde du Garde du pont ni une porte close ne te sauvent ; un remède, si.</p><p>Tu ne peux pas te faire passer pour un loup.</p>",
     "victoire": "",
     "nuit": {
       "actif": true,

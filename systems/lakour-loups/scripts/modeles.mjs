@@ -45,6 +45,8 @@ export class ModeleRole extends foundry.abstract.TypeDataModel {
         ordre: entier(50),
         premiereNuitSeulement: bool(false),
         uneNuitSurDeux: bool(false),
+        // Le Loup affamé : chaque nuit, tant qu'aucun membre de la meute n'est mort (logique/nuit.mjs, meuteEntiere).
+        tantQueMeuteEntiere: bool(false),
         cibles: entier(1),
         soiMeme: bool(false),
         invite: texte()

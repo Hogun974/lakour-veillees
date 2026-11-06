@@ -7,7 +7,7 @@
   "system": {
     "cle": "garde-du-pont",
     "camp": "village",
-    "description": "<p>Tu tiens le pont depuis vingt hivers et tu sais rester éveillé.</p><p><strong>Chaque nuit</strong>, tu veilles sur un joueur (toi compris) : s'il est attaqué par la meute cette nuit, il survit. Tu ne peux pas protéger <strong>deux nuits de suite</strong> le même joueur. Ta garde n'arrête ni le poison ni le feu.</p>",
+    "description": "<p>Tu tiens le pont depuis vingt hivers et tu sais rester éveillé.</p><p><strong>Chaque nuit</strong>, avant la chasse, tu veilles sur un joueur (toi compris) : si la meute l'attaque cette nuit, il survit. Tu ne peux pas veiller <strong>deux nuits de suite</strong> sur le même joueur (le narrateur ne te le propose pas). Ta garde n'arrête que la meute : ni le poison, ni le feu, ni le harpon, ni la noyade, ni la morsure de la Louve mère qui fait d'une proie un loup.</p>",
     "victoire": "",
     "nuit": {
       "actif": true,

@@ -10,7 +10,8 @@
 // - LA VOIX DOUBLE : aux votes d'exécution, la voix du Bailli vivant pèse POIDS_DU_BAILLI au dépouillement (et compte double
 //   dans le total du Gibet).
 // - LE DÉPARTAGE : une égalité qui laisse une place vide (en tête, ou pour la seconde place d'un vote double) est tranchée par
-//   lui : il choisit parmi les ex aequo (une demande secrète, comme un choix de nuit ; un compagnon IA par son résolveur). Il peut
+//   lui. S'il a voté pour l'un des ex aequo, c'est celui-là, d'office (etat.mjs, cloreVote : departage.auto) ; sinon il choisit
+//   parmi les ex aequo (une demande secrète, comme un choix de nuit ; un compagnon IA par son résolveur). Il peut
 //   se désigner lui-même. S'il passe, personne pour cette place. Avec le Gibet, seulement parmi ceux qui ont la majorité.
 // - LA SUCCESSION : à sa mort (quelle qu'en soit la cause), il remet le sceau à un vivant de son choix (demande posthume). Sans
 //   réponse au délai, la charge reste vacante : le village élira un nouveau Bailli au prochain jour (le jour même, si le vote
@@ -186,7 +187,8 @@ export function trancherVote(e, choix = [], { vivants = null, hasard = Math.rand
     ? sortTranche({ candidats: d.candidats.filter(id => permis(id) && !admis.includes(id)), places: d.places - admis.length, hasard }) : [];
   r.elus = [...r.elus, ...admis, ...sort];
   r.elu = r.elus[0] ?? null;
-  r.departage = { ...d, enAttente: false, choix: admis, ...(sort.length ? { sort } : {}) };
+  // Une place déjà prise par la voix du Bailli (departage.auto, vote double) reste prise.
+  r.departage = { ...d, enAttente: false, choix: [...(d.auto ?? []), ...admis], ...(sort.length ? { sort } : {}) };
   inscrire(etat, entreeDeVote(r));
   return etat;
 }

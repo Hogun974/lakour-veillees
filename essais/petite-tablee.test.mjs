@@ -153,7 +153,8 @@ test("cloreVote : en petite tablée, une égalité en tête sans Bailli est tran
   assert.deepEqual(L.cloreVote(ch, { votants: ["a", "b"] }).resultat.elus, []);
   // Avec un Bailli en charge (a) : le départage lui revient ; s'il passe, le sort tranche parmi les ex æquo.
   let b = L.ouvrirVote({ ...L.etatInitial(), partie: "p", phase: "jour", tour: 1, petiteTablee: true, bailli: { ...L.bailliInitial(true), acteurId: "a", depuis: 1 } }, { candidats: ["a", "b", "c", "d"] });
-  for (const [votant, cible] of [["a", "c"], ["b", "c"], ["c", "d"], ["d", "d"], ["e", "d"]]) ({ etat: b } = L.enregistrerVote(b, { votant, cible }));
+  // Le Bailli s'abstient : sa voix ne tranche pas d'elle-même (bailli-logique : la voix qui tranche).
+  for (const [votant, cible] of [["b", "c"], ["c", "c"], ["d", "d"], ["e", "d"]]) ({ etat: b } = L.enregistrerVote(b, { votant, cible }));
   const r = L.cloreVote(b, { votants: ["a", "b", "c", "d", "e"] });
   assert.ok(r.resultat.departage?.enAttente, "le Bailli tranche");
   assert.equal(r.resultat.sort, undefined);
@@ -454,7 +455,7 @@ async function batterie() {
     for (const [votant, cible] of [["a", "b"], ["b", "a"], ["c", "d"], ["d", "c"]]) ({ etat: e } = L.enregistrerVote(e, { votant, cible }));
     assert.equal(L.cloreVote(e, { votants: ["a", "b", "c", "d"] }).resultat.elus.length, 1);
     let b = L.ouvrirVote({ ...L.etatInitial(), partie: "p", phase: "jour", tour: 1, petiteTablee: true, bailli: { ...L.bailliInitial(true), acteurId: "a", depuis: 1 } }, { candidats: ["a", "b", "c", "d"] });
-    for (const [votant, cible] of [["a", "c"], ["b", "c"], ["c", "d"], ["d", "d"], ["e", "d"]]) ({ etat: b } = L.enregistrerVote(b, { votant, cible }));
+    for (const [votant, cible] of [["b", "c"], ["c", "c"], ["d", "d"], ["e", "d"]]) ({ etat: b } = L.enregistrerVote(b, { votant, cible }));
     const r = L.cloreVote(b, { votants: ["a", "b", "c", "d", "e"] });
     assert.equal(L.trancherVote(r.etat, [], { vivants: ["a", "b", "c", "d", "e"] }).vote.resultat.elus.length, 1);
   });

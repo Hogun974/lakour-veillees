@@ -7,7 +7,7 @@
   "system": {
     "cle": "entremetteuse",
     "camp": "village",
-    "description": "<p>Tu as marié la moitié du village et tu n'as pas dit ton dernier mot.</p><p><strong>La première nuit</strong>, tu désignes deux joueurs (toi comprise) : ils deviennent <strong>amants</strong>. Le narrateur les prévient en secret ; ils apprennent le nom l'un de l'autre, pas leur rôle. Si l'un meurt, l'autre meurt de chagrin aussitôt.</p><p>Les amants gagnent <strong>ensemble</strong>, quel que soit leur camp : si l'un est loup et l'autre villageois, ils ne gagnent qu'en restant les deux derniers vivants. Toi, ensuite, tu joues avec le village.</p>",
+    "description": "<p>Tu as marié la moitié du village et tu n'as pas dit ton dernier mot.</p><p><strong>La première nuit</strong>, tu désignes deux joueurs (toi comprise) : ils deviennent <strong>amants</strong>. Le narrateur les prévient en secret ; ils apprennent le nom l'un de l'autre, pas leur rôle. Si l'un meurt, l'autre meurt de chagrin aussitôt.</p><p>Deux amants du même camp gagnent avec lui. Deux amants de <strong>camps différents</strong> (un loup et un villageois, par exemple) ne gagnent <strong>qu'ensemble, en restant les deux derniers vivants</strong> : plus avec leur camp. Toi, ensuite, tu joues avec le village.</p>",
     "victoire": "",
     "nuit": {
       "actif": true,

@@ -447,7 +447,9 @@ async function partie(graine) {
 
 test("parties complètes simulées : la ligne de chaque joueur, à chaque étape, suit le tableau ; le secret tient", async () => {
   const bilan = [];
-  for (const graine of ["brume", "lanterne", "cendres", "moulin"]) bilan.push(await partie(graine));
+  // Huit graines : le mordu doit être un joueur humain encore en vie la nuit suivante, ce qui reste rare (une partie sur huit
+  // environ depuis que la Louve mère infecte malgré la garde et que la meute l'emporte plus vite).
+  for (const graine of ["brume", "lanterne", "cendres", "moulin", "pont", "lavoir", "gibet", "puits"]) bilan.push(await partie(graine));
   assert.ok(bilan.every(b => b.vainqueur));
   for (const p of ["preparation", "nuit", "aube", "jour", "vote", "fin"]) assert.ok(bilan.some(b => b.phases.has(p)), `phase jamais vue : ${p}`);
   assert.ok(bilan.some(b => b.mordu), "au moins un villageois mordu a rejoint la tanière");

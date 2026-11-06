@@ -2,6 +2,7 @@
 import { ID, CHANCE_PESTE, RISQUE_ENFANT } from "../logique/constantes.mjs";
 import { etatInitial } from "../logique/etat.mjs";
 import { CLES_DE_FETE } from "../logique/fetes.mjs";
+import { CHANCE_FOURNIERE } from "../logique/personnalites.mjs";
 import { oublierSecrets } from "./secrets.mjs";
 import { oublierPrive } from "./prive.mjs";
 import { oublierSalons, quandReglageSalons } from "./salons.mjs";
@@ -146,6 +147,16 @@ export function enregistrerReglages(quandEtatChange) {
   // déjà gracié meurt avec lui. Non par défaut. Lu à la distribution (etat.pacte.innocentSuit).
   game.settings.register(ID, "innocentSuitAieul", {
     name: "LAKOUR_LOUPS.Reglages.InnocentSuitAieul.Nom", hint: "LAKOUR_LOUPS.Reglages.InnocentSuitAieul.Aide",
+    scope: "world", config: true, type: Boolean, default: false
+  });
+  // Le Village (Pacte, étape 4, logique/personnalites.mjs) : la variante du jeu de soirée où des personnalités tiennent des bâtiments.
+  // Non par défaut. Lue à la distribution (etat.village.actif) ; nouvellePartie y retient le dernier choix explicite du MJ (la case
+  // « Le Village » de la Table de jeu). Publique : une règle de la veillée.
+  // La chance qu'a la Fournière d'entrevoir un loup chaque nuit (adaptation en ligne ; réglage caché, comme « chancePeste » : à
+  // recalibrer à l'étape 6, les essais le règlent).
+  game.settings.register(ID, "chanceFourniere", { scope: "world", config: false, type: Number, default: CHANCE_FOURNIERE });
+  game.settings.register(ID, "leVillage", {
+    name: "LAKOUR_LOUPS.Reglages.LeVillage.Nom", hint: "LAKOUR_LOUPS.Reglages.LeVillage.Aide",
     scope: "world", config: true, type: Boolean, default: false
   });
   game.settings.register(ID, "annoncesEnChat", {

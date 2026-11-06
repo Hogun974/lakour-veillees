@@ -18,6 +18,10 @@
 //   d'exécution n'a pas encore eu lieu). La succession ne dure jamais plus que le délai des choix, compté depuis sa mort
 //   (succession.quand), même si la page du MJ est rechargée entre-temps (api.reprendre). Choix retenu plutôt que le hasard : un sceau tiré au sort donnerait la voix double à un
 //   loup sans que personne ne l'ait voulu.
+// - LE VILLAGE (Le Pacte, étape 4, personnalites.mjs) : dans cette variante, l'élection par tout le village est remplacée par celle
+//   des Métayers : à partir du deuxième jour, les Métayers vivants votent entre eux (objet "bailli", candidats et votants : les
+//   Métayers vivants) ; le Bailli défunt remet le sceau à un Métayer vivant ; le dernier Métayer mort, la charge est abolie
+//   (api.mjs). Le Bailli désigné garde sa charge s'il perd sa métairie (l'Incendiaire).
 //
 // etat.bailli : { actif, acteurId ("" : charge vacante), depuis (tour), succession: null | { de, tour }, election (tour de la
 //   dernière élection, -1 : jamais) } — public, comme tout ce qu'il contient.
@@ -26,6 +30,7 @@ import { normaliserEtat } from "./etat.mjs";
 import { inscrire } from "./registre.mjs";
 import { presageDuJour } from "./almanach.mjs";
 import { sortTranche } from "./tablee.mjs";
+import { villageActif, metayersDe, JOUR_DES_METAYERS } from "./personnalites.mjs";
 
 export const POIDS_DU_BAILLI = 2;
 // Les phases où l'élection est proposée (le débat, ou le vote quand celui d'exécution n'a pas encore eu lieu).
@@ -70,7 +75,10 @@ export const voteExecutionDuJour = etat => Boolean(etat?.vote?.resultat && !etat
 export const departageEnAttente = etat => Boolean(!etat?.vote?.ouvert && etat?.vote?.resultat?.departage?.enAttente);
 
 // Peut-on ouvrir l'élection maintenant ? (permission : la Table et l'API refusent sinon, avec la raison)
-// -> { ok, raison: "" | "inactif" | "fin" | "phase" | "vote" (un vote ouvert) | "bailli" (un Bailli vivant) | "succession" }
+// -> { ok, raison: "" | "inactif" | "fin" | "phase" | "vote" (un vote ouvert) | "bailli" (un Bailli vivant) | "succession"
+//      | "jourDeux" | "metayers" }
+// La variante « Le Village » (personnalites.mjs) : ce sont les Métayers vivants qui désignent le Bailli, parmi eux, et seulement à
+// partir du deuxième jour (« jourDeux ») ; sans Métayer vivant, pas d'élection (« metayers »).
 export function electionPossible({ etat: e, villageois = [] } = {}) {
   const etat = normaliserEtat(e);
   const non = raison => ({ ok: false, raison });
@@ -80,8 +88,12 @@ export function electionPossible({ etat: e, villageois = [] } = {}) {
   if (etat.vote.ouvert) return non("vote");
   if (etat.bailli.succession) return non("succession");
   if (bailliEnCharge(etat, idsVivants(villageois))) return non("bailli");
+  if (villageActif(etat) && etat.tour < JOUR_DES_METAYERS) return non("jourDeux");
+  if (villageActif(etat) && !metayersDe(etat, villageois).length) return non("metayers");
   return { ok: true, raison: "" };
 }
+// Les candidats de l'élection : les vivants ; dans la variante « Le Village », les Métayers vivants. -> [acteurId]
+export const candidatsElection = (etat, villageois = []) => (villageActif(etat) ? metayersDe(etat, villageois) : idsVivants(villageois));
 
 // L'élection est-elle due (étape proposée au MJ humain) ? Permise, au débat ou au vote, pas encore faite ce jour, et avant le
 // vote d'exécution du jour. -> { ok, raison } (raisons en plus : "deja", "execution")
@@ -146,8 +158,8 @@ export function resteDeSuccession(etat, delai, maintenant = Date.now()) {
   return Math.max(0, delai - Math.max(0, maintenant - (Number(s.quand) || 0)));
 }
 
-// Ceux à qui le Bailli défunt peut remettre le sceau : les vivants.
-export const candidatsSuccession = (etat, villageois = []) => idsVivants(villageois).filter(id => id !== etat?.bailli?.succession?.de);
+// Ceux à qui le Bailli défunt peut remettre le sceau : les vivants ; dans la variante « Le Village », les seuls Métayers vivants.
+export const candidatsSuccession = (etat, villageois = []) => candidatsElection(etat, villageois).filter(id => id !== etat?.bailli?.succession?.de);
 
 // Le défunt a choisi (successeur : acteurId, "" s'il a passé ou n'a pas répondu). -> { etat, acteurId, comment }
 export function nommerSuccesseur(e, { successeur = "", villageois = [] } = {}) {

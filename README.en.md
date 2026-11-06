@@ -186,7 +186,7 @@ Wolves recognise each other on the first night and hunt together; some wake a se
 | **Wolf of the reeds** | Each night, watches a house and learns whether its occupant acted. |
 | **Pale wolf** | Hunts with the pack, but every other night devours one of its own alone; wins only if left the last one alive. |
 
-### The Village (36 roles)
+### The Village (37 roles)
 
 | Role | Power |
 |---|---|
@@ -226,6 +226,7 @@ Wolves recognise each other on the first night and hunt together; some wake a se
 | **Woods child** | On the first night, chooses a model: as long as it lives, is on the Village side; if it dies, joins the pack. |
 | **Mastiff** | On the first night, chooses for good to be a wolf (hunting with the pack) or a plain villager. |
 | **Chambermaid** | When the vote eliminates a player, may reveal herself before their card is turned over and secretly take their role. |
+| **Firebrand** | With The Village variant: once per game, sets fire to a building; if it is the house of the wolves' prey, the wolf to its right dies there. |
 
 ### The loners (8 roles)
 
@@ -304,6 +305,7 @@ All are chosen at set-up, in the Game Table or the world settings; the Variants 
 | **Mourning knell** | Each innocent executed rings the knell, and the pack gains a growing power. |
 | **Saint Martin's night** | The short format: three more roles than players under the altar, one night, one vote, the end. |
 | **Festive vigils** | A seasonal, illustrated variant at the narrator's choice: **Night of souls** (the dead whisper), **Winter vigil** (a gift that parries the first blow, snow that erases tracks), **Carnival of masks** (one vision deceived, a parade that shows an absent role), **Feast of the betrothed** (two sure allies, whom the pack has seen). |
+| **The Village** | Public personalities (Tenant Farmers, Prior, Bonesetter, Schoolmaster, Oven-Keeper, Wigmaker, Alehouse Keeper, Provost, Squire) hold the village buildings: a power on top of their secret role; the others are Drifters. The Tenant Farmers choose the Bailiff. |
 | **Small table** | 1 to 4 humans and 2 to 8 AI players: short pack, first night without a kill from two wolves up, humans never all wolves nor all on the same side, ties broken by lot, final knell set automatically. |
 | **Sleepwalker, Rose queen** | On-request roles, added by hand by the narrator. |
 | Settings | Reveal on death, the dead see everything, debate and vote length, night choice delay, chance of being spotted while spying, dead channel, voice rooms, chat announcements, "your turn" signal, reset on world launch. |

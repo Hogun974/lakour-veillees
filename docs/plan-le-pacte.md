@@ -52,7 +52,7 @@ Colonne « livre » : la fonction du personnage, pour s'y retrouver ; jamais aff
 | juge bègue | Greffier bègue | Stammering Clerk | `greffier-begue` | fait (étape 3a : pouvoir de jour secret ; second vote ouvert dès que les condamnés sont tombés) |
 | chevalier à l'épée rouillée | Vieux Sergent | Old Sergeant | `vieux-sergent` | fait (étape 3a : premier loup vivant à gauche, mort la nuit suivante, cause publique « contamine ») |
 | corbeau | Pie | Magpie | `pie` | fait (étape 3a : ordre 46, annonce anonyme au matin, deux voix au premier vote d'exécution du jour ; filtre `EXCLUS_DE_LA_PLUME` prêt pour le Chemineau) |
-| pyromane (incendie un bâtiment) | Incendiaire | Firebrand | `incendiaire` | nouveau |
+| pyromane (incendie un bâtiment) | Incendiaire | Firebrand | `incendiaire` | fait (étape 4 : ordre 19, une fois ; un bâtiment désigné par son occupant, détruit au matin ; la maison de la proie : pas de victime, premier loup vivant à droite carbonisé, cause publique `incendie` ; seulement avec « Le Village », `equilibre.village`) |
 
 ### Ambigus
 | Livre | Chez nous | English | Clé | État |
@@ -73,23 +73,23 @@ Colonne « livre » : la fonction du personnage, pour s'y retrouver ; jamais aff
 ### Charges et médium
 | Livre | Chez nous | English | État |
 |---|---|---|---|
-| capitaine | Bailli (charge élue) | Bailiff | aligné (étape 2 : sa voix tranche l'égalité d'office) ; reste : parmi les métayers avec les bâtiments (étape 4) |
-| garde champêtre | Crieur public | Town Crier | nouveau |
-| gitane (sans philtre) | Liseuse d'étoiles | Stargazer | nouveau (cartes Spiritisme : photos) |
+| capitaine | Bailli (charge élue) | Bailiff | aligné (étape 2 : sa voix tranche l'égalité d'office) ; étape 4 : dans « Le Village », désigné par les Métayers parmi eux à partir du deuxième jour, succession parmi eux, aboli avec le dernier |
+| garde champêtre | Crieur public | Town Crier | nouveau (passe à l'étape 9, avec les cartes) |
+| gitane (sans philtre) | Liseuse d'étoiles | Stargazer | nouveau (cartes Spiritisme : passe à l'étape 9, avec les cartes) |
 
 ### Personnalités du village (bâtiments tenus par un joueur)
 | Livre | Personnage / bâtiment | English | État |
 |---|---|---|---|
-| fermiers (6 fermes) | Métayers / les métairies | Tenant Farmers / farmsteads | nouveau |
-| confesseur / église | Prieur / le prieuré | Prior / priory | nouveau |
-| rebouteux / masure | Remégeux / la masure | Bonesetter / hovel | nouveau |
-| institutrice / école | Régent / l'école | Schoolmaster / school | nouveau |
-| boulanger / boulangerie | Fournière / le fournil | Oven-Keeper / bakehouse | nouveau |
-| barbier / échoppe | Perruquier / l'échoppe | Wigmaker / shop | nouveau |
-| tavernier / taverne | Cabaretier / le cabaret | Alehouse Keeper / alehouse | nouveau |
-| bailli / sa maison | Prévôt / la prévôté | Provost / provostry | nouveau |
-| châtelain / manoir | Hobereau / le manoir | Squire / manor | nouveau |
-| vagabonds | Chemineaux | Drifters | nouveau |
+| fermiers (6 fermes) | Métayers / les métairies | Tenant Farmers / farmsteads | fait (étape 4 : `metairie-1` à `metairie-6` ; le Bailli désigné par eux, parmi eux, dès le 2e jour ; ils gardent ce droit sans sagesse) |
+| confesseur / église | Prieur / le prieuré | Prior / priory | fait (étape 4 : `prieure`, pouvoir de jour unique ; la carte au carnet du Prieur) |
+| rebouteux / masure | Remégeux / la masure | Bonesetter / hovel | fait (étape 4 : `masure`, unique ; rend un pouvoir unique servi) |
+| institutrice / école | Régent / l'école | Schoolmaster / school | fait (étape 4 : `ecole`, au débat, un ou deux privés de vote ce jour ; ne vote jamais) |
+| boulanger / boulangerie | Fournière / le fournil | Oven-Keeper / bakehouse | fait (étape 4 : `fournil` ; adaptation : une chance sur trois d'entrevoir un loup, `CHANCE_FOURNIERE`, réglage caché `chanceFourniere`, à recalibrer à l'étape 6) |
+| barbier / échoppe | Perruquier / l'échoppe | Wigmaker / shop | fait (étape 4 : `echoppe`, unique ; cause publique `rasoir`, une mort du village pour l'Aïeul) |
+| tavernier / taverne | Cabaretier / le cabaret | Alehouse Keeper / alehouse | fait (étape 4 : `cabaret` ; ni proie ni candidat ; vote public ; immunité perdue s'il vote contre un condamné) |
+| bailli / sa maison | Prévôt / la prévôté | Provost / provostry | fait (étape 4 : `prevote` ; demandes « prevot » puis « logement », le pouvoir rétabli) |
+| châtelain / manoir | Hobereau / le manoir | Squire / manor | fait (étape 4 : `manoir`, unique ; demandes « supplique » puis « grace » après le vote, carte cachée) |
+| vagabonds | Chemineaux | Drifters | fait (étape 4 : sans bâtiment ; hors de portée du Régent, du Perruquier, de la Pie et de l'Incendiaire) |
 
 ### Variantes du livre
 | Livre | Chez nous | English | État |
@@ -136,12 +136,12 @@ Socle à créer d'abord (servira à plusieurs rôles) :
 | 1 | Socle (cercle, choix posthumes, rôle public, tenures, charges, événements) | fait (sauf les charges : Crieur public avec l'étape 4) ; reste au moteur MJ IA (étape 8) : ne plus dire au narrateur de « demander » à la Braconnière qui emporter (`loups_eliminer`, `loups_nuit`) et une consigne de compagnon pour l'objet `emporter` |
 | 2 | Aligner les rôles existants (Loup affamé, Louve mère, Liseuse, Herboriste, Braconnière, Enfant de la brume, Garde du pont, Entremetteuse, Bailli, Peste noire) | fait, avec nos créations corrigées (Sonneur : pouvoir de jour ; Loup déguisé : le masque tombe ; Revenant : la partie s'arrête ; garde du Garde du pont contre la meute seulement, d'où le harpon et la noyade arrêtés par la seule Gardienne) ; reste au moteur MJ IA (étape 8) : Herboriste et proies de la nuit (`api.proiesDeLaNuit`), nom du Montreur de marmotte, consigne du Sonneur |
 | 3 | Nouveaux rôles : villageois, puis ambigus, puis solitaires, puis Loup pâle | fait : 3a (les onze rôles du Village, `logique/pacte.mjs`) et 3b (les cinq ambigus, les trois solitaires du livre et le Loup pâle, `logique/ambigus.mjs`) ; poids provisoires (Mâtin -1, Enfant des bois 0, Feu follet 0 pour garder le générateur à ±2), hors compositions prêtes et petite tablée ; reste au moteur MJ IA (étape 8) : voir plus bas |
-| 4 | Personnalités du village, Chemineaux, Incendiaire ; Crieur public, Liseuse d'étoiles (la Pie est faite à l'étape 3a ; son filtre exclura le Chemineau) | à faire |
+| 4 | Personnalités du village, Chemineaux, Incendiaire (la variante « Le Village ») | fait : `logique/personnalites.mjs` (état public `etat.village`, tenures du socle), réglage « leVillage » et case de la Table de jeu, encart « Le Village » (le narrateur change la proposition avant la première nuit), personnalités sur les cartes de la Table et les fiches ; Incendiaire (poids provisoire +2, `equilibre.village`), hors petite tablée et compositions prêtes ; guides fr et en (page « Le Village » des variantes et du guide du narrateur). Le Crieur public et la Liseuse d'étoiles passent à l'étape 9, avec les cartes ; reste au moteur MJ IA (étape 8) : voir plus bas |
 | 5 | Variantes du livre ; mode « Le Pacte » (composition fidèle au livre) ; ordre d'appel du livre | à faire |
 | 6 | Simulateur (`essais/outils/simuler-veillees.mjs`), politiques par effet pour les joueurs simulés et les compagnons, calibration des poids par régression, cibles par taille ; compositions prêtes passées au générateur | à faire |
 | 7 | Anglais (dictionnaires, guides retraduits), jetons, carte (repères des bâtiments), guides du joueur et du narrateur | à faire |
 | 8 | Publication (système, module, moteur si les compagnons changent), déploiement LaKour, essai en vrai | à faire |
-| 9 | Cartes Événement et Spiritisme : mécaniques consignées dans `gazette-de-la-lune.md` (photos reçues le 6 nov.) ; traits visibles des personnages | à faire après l'étape 4 |
+| 9 | Cartes Événement et Spiritisme : mécaniques consignées dans `gazette-de-la-lune.md` (photos reçues le 6 nov.) ; traits visibles des personnages ; le Crieur public (charge nommée par le Bailli, socle « charges ») et la Liseuse d'étoiles (Spiritisme), venus de l'étape 4 | à faire après l'étape 4 |
 | 10 | Webcam (après les rôles) : réglage MJ « caméras permises » dans le moteur commun (tous les modules) ; aux Veillées, image de remplacement quand il le faut (nuit, morts, comme la coupure du micro de `salons.mjs` / `activite.mjs`) : logo de loup-garou fait sur ComfyStudio | à faire |
 | 11 | Musiques ComfyStudio pour les modules et mondes (version interne) | après le reste |
 
@@ -202,3 +202,29 @@ Relevé à l'étape 3b (les ambigus, les solitaires du livre, le Loup pâle ; li
   général (un candidat au hasard).
 - Contexte du narrateur et des compagnons : l'état public `api.ambigus()`, les secrets `api.ambigusSecrets()` (MJ), le hook
   `lakourLoups.pacte` (`quoi: "devouement"`) ; les compagnons charmés lisent leurs charmés dans leur carnet (`Ambigus.Charmes`).
+
+Relevé à l'étape 4 (la variante « Le Village » ; lignes de `scripts/outils.js` et `scripts/compagnons-jeu.js` au 6 novembre) — rien ne casse
+sans ces changements (la variante se règle par le monde : réglage « leVillage » ; les demandes ont un délai), mais le MJ IA la mène mal :
+- `loups_composer` (outils.js l. 1306-1340) : passer `village` (le réglage « leVillage », ou un paramètre) à `api.logique.composer` ; sinon
+  le générateur du MJ IA ne tire jamais l'Incendiaire. `loups_distribuer` / `loups_rejouer` (l. 1341-1490) : un paramètre `village` pour
+  `distribuer` / `nouvellePartie`, et, après la distribution, rendre au narrateur `api.village()` (qui tient quel bâtiment, les Chemineaux :
+  public, à présenter) ; il peut changer la proposition par `api.installer(cle, acteurId)` avant la première nuit.
+- `loups_jour` (l. 1979-2030) : la description cite les pouvoirs des personnalités (Prieur, Remégeux, Régent, Perruquier ; source
+  `tenure`, publics) ; `decrire` dit « désigne 2 » pour le Régent, qui en désigne un ou deux (`ciblesMin`) ; après le Perruquier, le
+  système a déjà éliminé (cause `rasoir`) et vérifié la victoire : le dire au narrateur ; la carte vue par le Prieur n'est qu'au carnet
+  du Prieur, ne jamais la raconter.
+- `loups_vote` (l. 1620-1734) : la description de l'objet « bailli » (« tous les vivants candidats ») — dans « Le Village », les Métayers
+  vivants seuls, à partir du deuxième jour (les refus `jourDeux` et `metayers` viennent de `api.bailli().election`) ; le Cabaretier n'est
+  jamais candidat, son vote est annoncé au chat ; à la clôture, l'immunité perdue est annoncée, et l'exécution attend la supplique au
+  Hobereau (deux fenêtres courtes) : le dire au narrateur.
+- `loups_eliminer` (l. 1896-1926) : `eliminer` d'un condamné gracié par le Hobereau rend `[]` (vivant, carte cachée, `api.village().graces`) :
+  ne pas écrire « meurt » ni « Rôle de X » ; raconter la grâce.
+- `loups_nuit` (l. 1494-1582) : rien d'obligatoire (l'Incendiaire désigne un occupant parmi `candidatsDeNuit`) ; au matin, le bâtiment brûlé
+  et le loup carbonisé sont dans `annonces` ; ce qu'entrevoit la Fournière est dans `messages` (à remettre comme les autres).
+- `compagnons-jeu.js` (`sujetDemandeLoups`, l. 364) : quatre objets de demande nouveaux — `supplique` (le condamné supplie le Hobereau : le
+  désigner, ou passer), `grace` (le Hobereau gracie le condamné, ou lui-même), `prevot` (le Prévôt loge un Chemineau), `logement` (le
+  Chemineau accepte en se désignant) ; aujourd'hui ils tombent dans le cas général (un candidat au hasard : un compagnon supplie et accepte
+  toujours). Les compagnons devraient connaître leur personnalité (`api.personnalite(acteurId)`), et le Cabaretier compagnon que son vote est
+  public.
+- Contexte du narrateur et des compagnons : l'état public `api.village()` (personnalités, Chemineaux, bâtiments brûlés, privés de vote du
+  Régent, graciés du Hobereau) et le hook public `lakourLoups.village` (`{ quoi, acteurId?, ids?, cle? }`).

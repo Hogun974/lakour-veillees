@@ -37,7 +37,9 @@
       "peste": "taken by the black plague",
       "panique": "hanged for spreading panic",
       "contamine": "felled by the old sword's wound",
-      "sagesse": "gone with the Greybeard's wisdom"
+      "sagesse": "gone with the Greybeard's wisdom",
+      "rasoir": "victim of the Wigmaker's razor",
+      "incendie": "victim of the fire"
     },
     "Effets": {
       "aucun": "none (ruled by the narrator)",
@@ -76,7 +78,8 @@
       "modele": "chooses a model: if it dies, joins the pack",
       "devouement": "may take a condemned player's card before it is turned over",
       "charmer": "charms two players each night",
-      "trahir": "every other night, may devour a wolf"
+      "trahir": "every other night, may devour a wolf",
+      "incendier": "once per game, sets fire to a village building (The Village)"
     },
     "Victoires": {
       "aucune": "none (see text)",
@@ -229,7 +232,8 @@
       "LireTexte": "Read the text",
       "NuitOrdre": "Night · order {ordre}",
       "Cibles": "Targets: {n}",
-      "Protege": "Protected ×{n}"
+      "Protege": "Protected ×{n}",
+      "Personnalite": "Personality"
     },
     "Role": {
       "Pouvoir": "Power",
@@ -337,7 +341,11 @@
       "FuretOui": "Your snout twitches: there is at least one wolf among {noms}.",
       "FuretNon": "No wolf among {noms}: they are innocent. But your nose has left you, for good.",
       "FuretPerdu": "{nom}, the Ferret, sniffed out no wolf: he loses his nose.",
-      "Plume": "A black feather will settle on {nom}: two more votes against them at today's vote."
+      "Plume": "A black feather will settle on {nom}: two more votes against them at today's vote.",
+      "Incendie": "{nom}'s building burns tonight.",
+      "IncendieProie": "{nom} was the night's prey: the pack has no victim.",
+      "Cabaret": "{nom}, the Alehouse Keeper, cannot be devoured: the pack leaves empty-handed.",
+      "Carbonise": "{nom}, the first wolf to the right of {proie}, is caught in the flames."
     },
     "Messages": {
       "Mort": "{nom} is dead: {cause}.",
@@ -448,6 +456,10 @@
       "InnocentSuitAieul": {
         "Nom": "The Innocent follows the Greybeard",
         "Aide": "If the Greybeard falls at the village's hand (vote, poison, Poacher), a Village Innocent already pardoned dies with him: the village loses its wisdom. Taken at the deal."
+      },
+      "LeVillage": {
+        "Nom": "The Village (variant)",
+        "Aide": "Personalities (Prior, Alehouse Keeper, Tenant Farmers…) hold the village buildings: a public power on top of their secret role; the other players are Drifters. Kept from one game to the next (the “The Village” box of the Game Table changes it)."
       }
     },
     "Erreurs": {
@@ -477,7 +489,21 @@
       "forge": "The Forge",
       "grange": "The Barn",
       "puits": "The Well",
-      "chapelle": "The Chapel"
+      "chapelle": "The Chapel",
+      "metairie-1": "Willow Farmstead",
+      "metairie-2": "Ford Farmstead",
+      "metairie-3": "Heath Farmstead",
+      "metairie-4": "Combe Farmstead",
+      "metairie-5": "Alder Farmstead",
+      "metairie-6": "High Meadow Farmstead",
+      "prieure": "The Priory",
+      "masure": "The Hovel",
+      "ecole": "The School",
+      "fournil": "The Bakehouse",
+      "echoppe": "The Shop",
+      "cabaret": "The Alehouse",
+      "prevote": "The Provostry",
+      "manoir": "The Manor"
     },
     "Carnet": {
       "Titre": "Secret notebook",
@@ -562,7 +588,14 @@
       "Pelerine": "{qui} prays long on {nom}'s doorstep.",
       "PelerinePrive": "Your prayer was heard: {nom} belongs to the « {camp} » side.",
       "LavoirNeige": "The wash-house is frozen: people only talk about the snow, which covered everything.",
-      "GreffierSigne": "Your sign was seen: a second vote will follow, without debate, as soon as the condemned has fallen."
+      "GreffierSigne": "Your sign was seen: a second vote will follow, without debate, as soon as the condemned has fallen.",
+      "Confession": "{qui}, the Prior, calls {nom} to the priory: {nom} shows him their card, in secret.",
+      "ConfessionPrive": "{nom} showed you their card: {role}.",
+      "Remise": "{qui}, the Bonesetter, sets {nom} right: the power of their building is theirs once more.",
+      "Regent": "{qui}, the Schoolmaster, sends {noms} to the corner: they will not vote today.",
+      "Rasoir": "{qui}, the Wigmaker, opens his razor on {nom}.",
+      "RasoirLoup": "{nom} was a wolf: the village congratulates {qui}.",
+      "RasoirInnocent": "{nom} was not a wolf: {qui} pays for his mistake with his life."
     },
     "Plateau": {
       "ChoisisSurLaCarte": "Your turn: choose on the map (click a glowing token), then \"Confirm\" in the banner."
@@ -810,7 +843,9 @@
         "execution": "Today's execution vote has already taken place.",
         "nomme": "{nom} cannot become Bailiff (the Bailiff must be in play and the villager alive).",
         "departage": "The Bailiff must first break the tie (the narrator can decide in their place, from the Game Table).",
-        "pasDeDepartage": "No tie is waiting for the Bailiff."
+        "pasDeDepartage": "No tie is waiting for the Bailiff.",
+        "jourDeux": "The Tenant Farmers only choose the Bailiff from the second day on.",
+        "metayers": "No living Tenant Farmer can choose the Bailiff."
       },
       "SceauAttend": "The seal waits: {nom}, the late Bailiff, names a successor; the count follows.",
       "ParLeSort": "named by fate",
@@ -847,7 +882,8 @@
         "succession": "Round {tour} — {de}, the late Bailiff, hands the seal to {nom}.",
         "nomme": "Round {tour} — the narrator names {nom} Bailiff.",
         "vacance": "Round {tour} — the office of Bailiff is vacant.",
-        "abolie": "Round {tour} — {de}, pardoned, loses the office of Bailiff: Brumecombe will have no Bailiff any more."
+        "abolie": "Round {tour} — {de}, pardoned, loses the office of Bailiff: Brumecombe will have no Bailiff any more.",
+        "metayers": "Round {tour} — {de}, the last Tenant Farmer, is dead: Brumecombe will have no Bailiff anymore."
       },
       "Declaration": "Round {tour} — {nom} declares: “{texte}”",
       "Refus": {
@@ -886,6 +922,19 @@
         "oies": "Round {tour} — {nom}'s geese are honking.",
         "second-vote": "Round {tour} — a second execution vote, without debate.",
         "devouement": "Round {tour} — {nom} steps forward: the Chambermaid takes {noms}'s card without showing it."
+      },
+      "Village": {
+        "distribution": "Round {tour} — the village buildings go to {noms}; the others are Drifters.",
+        "changement": "Round {tour} — change in the village: {batiment} ({nom}).",
+        "installation": "Round {tour} — {noms}, the Provost, lodges {nom} at {batiment}.",
+        "refus": "Round {tour} — {nom} turns down {batiment}.",
+        "incendie": "Round {tour} — {batiment} burned down; {nom} becomes a Drifter.",
+        "prieur": "Round {tour} — {nom}, the Prior, sees {noms}'s card in secret.",
+        "remegeux": "Round {tour} — {nom}, the Bonesetter, gives {noms} their power back.",
+        "regent": "Round {tour} — {nom}, the Schoolmaster, bars {noms} from voting.",
+        "perruquier": "Round {tour} — {nom}, the Wigmaker, strikes {noms}.",
+        "grace": "Round {tour} — {nom}, the Squire, pardons {noms}.",
+        "cabaret": "Round {tour} — {nom}, the Alehouse Keeper, loses his immunity."
       }
     },
     "Masques": {
@@ -1148,7 +1197,9 @@
     "Tenures": {
       "Refus": {
         "cle": "Which building? (missing key)",
-        "mort": "{nom} is dead and can no longer hold a building."
+        "mort": "{nom} is dead and can no longer hold a building.",
+        "village": "This building is not part of the current “The Village” variant.",
+        "detruit": "This building burned down: it no longer exists."
       }
     },
     "Pacte": {
@@ -1207,6 +1258,87 @@
         "tard": "The Mountebank's cards are chosen before the first night.",
         "cartes": "Choose one to {n} cards of roles with a night power (neither wolf nor loner) that are not in the deck."
       }
+    },
+    "Village": {
+      "Nom": "The Village",
+      "Personnalites": {
+        "metayer": {
+          "Nom": "Tenant Farmer",
+          "Aide": "Tenant Farmer: from the second day on, the living Tenant Farmers choose the Bailiff among themselves; a dead Bailiff picks his successor among them. When the last Tenant Farmer dies, Brumecombe has no Bailiff anymore."
+        },
+        "prieur": {
+          "Nom": "Prior",
+          "Aide": "Prior: once, during the day (even after the condemned has been named), he calls a player to the priory, who shows him their card in secret."
+        },
+        "remegeux": {
+          "Nom": "Bonesetter",
+          "Aide": "Bonesetter: once, during the day, he gives a player back the one-time power of their building, already spent."
+        },
+        "regent": {
+          "Nom": "Schoolmaster",
+          "Aide": "Schoolmaster: each day, just before the vote, he bars up to two players from voting (never a Drifter). He himself never votes."
+        },
+        "fourniere": {
+          "Nom": "Oven-Keeper",
+          "Aide": "Oven-Keeper: each night, as the pack goes back to bed, she has a chance to glimpse one of the wolves."
+        },
+        "perruquier": {
+          "Nom": "Wigmaker",
+          "Aide": "Wigmaker: once, during the day, he opens his razor on a player (never a Drifter). A wolf: the village congratulates him; otherwise he pays for his mistake with his life."
+        },
+        "cabaretier": {
+          "Nom": "Alehouse Keeper",
+          "Aide": "Alehouse Keeper: the pack cannot devour him, the village cannot vote against him; he votes in the open. If he votes against a player the vote names, he loses this immunity."
+        },
+        "prevot": {
+          "Nom": "Provost",
+          "Aide": "Provost: when a building is freed, he may lodge the Drifter of his choice there, who gains its power."
+        },
+        "hobereau": {
+          "Nom": "Squire",
+          "Aide": "Squire: once, someone condemned by the vote may beg him for mercy; he pardons them (himself too): no execution, and the card stays hidden."
+        },
+        "chemineau": {
+          "Nom": "Drifter",
+          "Aide": "Drifter: no roof and no building power. The Schoolmaster, the Wigmaker, the Magpie and the Firebrand have no hold on him; the Provost may lodge him."
+        }
+      },
+      "Pouvoirs": {
+        "prieure": "The Priory: confession",
+        "masure": "The Hovel: set right",
+        "ecole": "The School: to the corner",
+        "echoppe": "The Shop: the razor"
+      },
+      "Annonce": "The Village: {lignes}.",
+      "Ligne": "{nom} holds {batiment} ({personnalite})",
+      "Chemineaux": "Drifters: {noms}.",
+      "Change": "Change in the village: {nom} now holds {batiment} ({personnalite}).",
+      "Libere": "{batiment} stands empty: {nom} no longer lives there.",
+      "Incendie": "Tonight, {batiment} burned down: {nom} has no roof anymore and becomes a Drifter.",
+      "IncendieProie": "The flames caught the pack at {nom}'s, who escapes unharmed: {loup} perished there.",
+      "Fourniere": "At first light, opening the bakehouse, you glimpse {nom} slipping home along the walls: a wolf.",
+      "InvitePrevot": "{batiment} is free: which Drifter do you lodge there (they will become {personnalite})? Pass to leave it empty.",
+      "InviteLogement": "{nom}, the Provost, offers you {batiment}: choose yourself to accept (you become {personnalite}), or pass to refuse.",
+      "Installation": "{prevot}, the Provost, lodges {nom} at {batiment}: {nom} hands back their bundle and becomes {personnalite}.",
+      "Refus": "{nom} turns down {batiment}: the lodging stays empty.",
+      "Vide": "{prevot}, the Provost, leaves {batiment} empty.",
+      "InviteSupplique": "The village has condemned you. Do you beg {nom}, the Squire, for mercy? Choose him to plead, or pass.",
+      "Supplique": "{nom} begs {hobereau}, the Squire, for mercy.",
+      "InviteGrace": "{nom} begs you for mercy: choose them to pardon them (once per game), or pass.",
+      "InviteGraceSoi": "The village has condemned you: choose yourself to pardon yourself (once per game), or pass.",
+      "Grace": "{hobereau}, the Squire, pardons {nom}: no execution, and their card stays hidden.",
+      "GraceRefusee": "{hobereau}, the Squire, refuses {nom} his mercy.",
+      "VoteCabaret": "{nom}, the Alehouse Keeper, votes in the open against {cible}.",
+      "ImmunitePerdue": "{nom}, the Alehouse Keeper, voted against {cible}, whom the vote named: he loses his immunity.",
+      "BailliAboli": "{nom} was the last Tenant Farmer: Brumecombe will have no Bailiff anymore.",
+      "Preparation": "The Village",
+      "PreparationAide": "Personalities hold the village buildings (a public power on top of their secret role); the other players are Drifters. Proposed at the deal, can be changed before the first night.",
+      "Titre": "The Village",
+      "Aide": "Who holds which building: public, like the “visible role” token placed in front of each player. Before the first night, the narrator can change the proposal.",
+      "Vacant": "— empty —",
+      "Detruits": "Burned down: {noms}",
+      "Epuise": "power spent",
+      "Prives": "Barred from voting today: {noms}"
     }
   }
 }

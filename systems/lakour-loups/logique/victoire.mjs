@@ -40,7 +40,8 @@ export function victoireCleDe(role) {
   if (role.victoireCle) return role.victoireCle;
   const cle = role.cle ?? "";
   if (/revenant/.test(cle)) return "execute";
-  if (/pyromane|incendiaire/.test(cle)) return "dernier-survivant";
+  // (L'Incendiaire du Pacte, étape 4, est un rôle du Village qui ne gagne pas seul : sa clé n'entre plus ici.)
+  if (/pyromane/.test(cle)) return "dernier-survivant";
   if (/chasseu.*prime/.test(cle)) return "cible-executee";
   return "";
 }

@@ -83,6 +83,7 @@ relief). Fichiers produits par `outils/fabriquer-jetons-veillees.mjs` ; les corr
 | [domino-mask](https://game-icons.net/1x1/lorc/domino-mask.html) | Lorc | Rôle — Loup déguisé |
 | [droplets](https://game-icons.net/1x1/lorc/droplets.html) | Lorc | Rôle — Sourcier |
 | [envelope](https://game-icons.net/1x1/lorc/envelope.html) | Lorc | Rôle — Messager |
+| [fire-silhouette](https://game-icons.net/1x1/lorc/fire-silhouette.html) | Lorc | Rôle — Incendiaire |
 | [gavel](https://game-icons.net/1x1/lorc/gavel.html) | Lorc | Rôle — Juge de paix |
 | [ghost](https://game-icons.net/1x1/lorc/ghost.html) | Lorc | Rôle — Revenant |
 | [gibbet](https://game-icons.net/1x1/lorc/gibbet.html) | Lorc | Bâtiment — Le Gibet |

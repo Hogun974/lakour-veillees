@@ -17,8 +17,8 @@
       "en": "Magpie"
     },
     "system.description": {
-      "fr": "<p>Tu ramasses tout ce qui brille, et tu sais sous quel toit chacun cache ses secrets.</p><p><strong>Chaque nuit</strong>, après la chasse, tu peux désigner un joueur (pas toi). Au matin, le narrateur annonce à tous : « <strong>une plume noire désigne</strong> <em>(son nom)</em> ». Au <strong>vote d'exécution</strong> de ce jour, il compte <strong>deux voix de plus</strong> contre lui. Personne ne sait d'où vient la plume.</p><p>Passe si tu ne veux désigner personne.</p>",
-      "en": "<p>You pick up everything that glitters, and you know under which roof everyone hides their secrets.</p><p><strong>Each night</strong>, after the hunt, you may choose a player (not yourself). In the morning, the narrator announces to all: “<strong>a black feather points at</strong> <em>(their name)</em>”. At that day's <strong>execution vote</strong>, they count <strong>two more votes</strong> against them. No one knows where the feather came from.</p><p>Pass if you do not wish to choose anyone.</p>"
+      "fr": "<p>Tu ramasses tout ce qui brille, et tu sais sous quel toit chacun cache ses secrets.</p><p><strong>Chaque nuit</strong>, après la chasse, tu peux désigner un joueur (pas toi ; avec la variante Le Village, jamais un Chemineau). Au matin, le narrateur annonce à tous : « <strong>une plume noire désigne</strong> <em>(son nom)</em> ». Au <strong>vote d'exécution</strong> de ce jour, il compte <strong>deux voix de plus</strong> contre lui. Personne ne sait d'où vient la plume.</p><p>Passe si tu ne veux désigner personne.</p>",
+      "en": "<p>You pick up everything that glitters, and you know under which roof everyone hides their secrets.</p><p><strong>Each night</strong>, after the hunt, you may choose a player (not yourself; with The Village variant, never a Drifter). In the morning, the narrator announces to all: “<strong>a black feather points at</strong> <em>(their name)</em>”. At that day's <strong>execution vote</strong>, they count <strong>two more votes</strong> against them. No one knows where the feather came from.</p><p>Pass if you do not wish to choose anyone.</p>"
     },
     "system.nuit.invite": {
       "fr": "Sur quel seuil poses-tu ta plume noire cette nuit ? Passe pour n'en poser aucune.",
@@ -217,6 +217,21 @@
     "system.description": {
       "fr": "<p>Tu portes un visage d'emprunt cousu de patience.</p><p>Tu chasses chaque nuit avec la meute. <strong>Toute vision te voit comme un villageois du camp du Village</strong> (Liseuse de cendres, Sourcier, Loup flaireur…). La Veilleuse de lanterne te démasque comme les autres si tu entres dans la maison qu'elle éclaire.</p><p>Si tu es <strong>le plus désigné d'un vote sans être exécuté</strong> (égalité, vote annulé, majorité manquée), le masque tombe : à partir de là, les visions disent la vérité sur toi.</p>",
       "en": "<p>You wear a borrowed face, stitched with patience.</p><p>You hunt each night with the pack. <strong>Every vision sees you as a villager of the Village side</strong> (Ash Reader, Dowser, Scenting Wolf…). The Lantern Keeper unmasks you like any other wolf if you enter the house she lights.</p><p>If you are <strong>the most designated in a vote without being executed</strong> (a tie, a cancelled vote, a missed majority), the mask falls: from then on, visions tell the truth about you.</p>"
+    }
+  },
+  "roles/NKm6lJHfzWujugDr": {
+    "_nom": "Incendiaire",
+    "name": {
+      "fr": "Incendiaire",
+      "en": "Firebrand"
+    },
+    "system.description": {
+      "fr": "<p>Tu as toujours aimé regarder danser les flammes, et tu sais quel chaume brûle le mieux.</p><p>Tu n'es en jeu qu'avec la variante <strong>Le Village</strong>, où des personnalités tiennent les bâtiments de Brumecombe.</p><p><strong>Une fois par partie</strong>, à ton réveil, tu peux désigner un <strong>bâtiment</strong>, en désignant celui qui l'occupe (un Chemineau n'a pas de toit à brûler). Au matin, le bâtiment est <strong>réduit en cendres</strong> pour toujours : son occupant n'est pas tué, mais il perd son toit et le pouvoir qui allait avec, et devient <strong>Chemineau</strong>.</p><p>Si c'est dans cette maison que la meute venait chercher sa proie cette nuit-là, la proie en réchappe, la meute n'a pas de victime, et <strong>le premier loup vivant assis à la droite de la proie</strong> périt dans les flammes.</p><p>Tu peux passer, et garder ta torche pour une autre nuit.</p>",
+      "en": "<p>You have always loved to watch flames dance, and you know which thatch burns best.</p><p>You are only in play with <strong>The Village</strong> variant, where personalities hold the buildings of Brumecombe.</p><p><strong>Once per game</strong>, when you wake, you may choose a <strong>building</strong>, by choosing the one who lives in it (a Drifter has no roof to burn). In the morning, the building has been <strong>reduced to ashes</strong> for good: its occupant is not killed, but loses their roof and the power that came with it, and becomes a <strong>Drifter</strong>.</p><p>If that is the very house where the pack came for its prey that night, the prey escapes, the pack has no victim, and <strong>the first living wolf seated to the prey's right</strong> perishes in the flames.</p><p>You may pass, and keep your torch for another night.</p>"
+    },
+    "system.nuit.invite": {
+      "fr": "Quel bâtiment livres-tu aux flammes cette nuit ? Désigne celui qui l'occupe, ou passe pour garder ta torche.",
+      "en": "Which building do you give to the flames tonight? Choose the one who lives in it, or pass to keep your torch."
     }
   },
   "roles/OSDyxJ8GuNPMyYZR": {

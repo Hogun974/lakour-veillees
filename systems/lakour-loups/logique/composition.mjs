@@ -47,10 +47,13 @@ export const PACTE_HORS_TABLEE = ["franc-villageois", "aieul", "souffre-douleur"
   "chapardeur", "bateleur", "matin", "enfant-des-bois", "chambriere", "feu-follet", "joueur-de-vielle", "illumine", "loup-pale"];
 export const SOLITAIRES_TABLEE = ["colporteur"];
 export const HORS_TABLEE_BATIMENTS = ["gibet", "pont"];
-function catalogue(equilibre, n, niveau, exclure, peste = false) {
+// Le Pacte, étape 4 : un rôle marqué village (equilibre.roles[cle].village, l'Incendiaire) ne sort que dans la variante « Le Village »
+// (option village du générateur) : sans bâtiments tenus, il n'aurait rien à faire. Jamais à la petite tablée (composer n'y passe pas
+// l'option), que la variante n'a pas.
+function catalogue(equilibre, n, niveau, exclure, peste = false, village = false) {
   const tablee = niveau === NIVEAU_PETITE_TABLEE;
   const permis = Object.entries(equilibre.roles ?? {}).filter(([cle, r]) =>
-    !exclure.has(cle) && !(peste && r.camp === "meute")
+    !exclure.has(cle) && !(peste && r.camp === "meute") && !(r.village && !village)
     && (tablee ? (rangNiveau(r.niveau) <= rangNiveau(niveau) || SOLITAIRES_TABLEE.includes(cle)) && !HORS_TABLEE.includes(cle) && !PACTE_HORS_TABLEE.includes(cle)
       : rangNiveau(r.niveau) <= rangNiveau(niveau) && n >= (r.joueursMin ?? 0)));
   const famille = f => permis.filter(f).map(([cle]) => cle);
@@ -160,16 +163,18 @@ export const cibleTablee = n => (n <= 5 ? 6 : n === 6 ? 3 : n <= 8 ? 5 : n <= 10
 export const sansMeute = (roles, equilibre) => roles.map(cle => (equilibre.roles?.[cle]?.camp === "meute" ? BASE_VILLAGE : cle));
 
 // Point d'entrée. options : { niveau, inclure: [cle], exclure: [cle], historique: [{ roles, batiments }], cible = 0, graine, essais = 400,
-// peste (true : composition de peste noire, sans meute ; l'équilibre ne compte plus, seule la variété) }
+// peste (true : composition de peste noire, sans meute ; l'équilibre ne compte plus, seule la variété), village (la variante « Le
+// Village » : ses rôles, l'Incendiaire, peuvent sortir ; jamais à la petite tablée) }
 // Petite tablée (niveau NIVEAU_PETITE_TABLEE, tablee.mjs) : tirerTablee, cible cibleTablee(n) sauf cible donnée, 4 à 12 places.
-export function composer(n, equilibre, { niveau = "classique", inclure = [], exclure = [], historique = [], cible = 0, graine, essais = 1200, peste = false } = {}) {
+export function composer(n, equilibre, { niveau = "classique", village = false, inclure = [], exclure = [], historique = [], cible = 0, graine,
+  essais = 1200, peste = false } = {}) {
   if (!Number.isInteger(n) || n < 4) throw new Error(`Il faut au moins 4 joueurs (${n}).`);
   if (!NIVEAUX.includes(niveau)) throw new Error(`Niveau inconnu : ${niveau}.`);
   const tablee = niveau === NIVEAU_PETITE_TABLEE;
   if (tablee && n > 12) throw new Error(`Une petite tablée compte 12 places au plus (${n}).`);
   if (tablee && cible === 0) cible = cibleTablee(n);
   const hasard = creerHasard(graine);
-  const cat = catalogue(equilibre, n, niveau, new Set(exclure), peste);
+  const cat = catalogue(equilibre, n, niveau, new Set(exclure), peste, village && !tablee);
   const inconnus = inclure.filter(c => !equilibre.roles?.[c]);
   if (inconnus.length) throw new Error(`Rôles inconnus : ${inconnus.join(", ")}.`);
   const candidats = [];

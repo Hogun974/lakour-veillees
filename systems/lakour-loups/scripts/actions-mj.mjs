@@ -10,10 +10,14 @@ const api = () => game.lakourLoups;
 // { coches: [userId] | null (null : tous les joueurs connectés), mode: "auto" | "manuel", niveau, roles: { cle: n },
 //   peste: partie de peste noire choisie par le MJ (sinon, une partie générée le devient rarement d'elle-même),
 //   format: "" ou "saint-martin" (la Nuit de la Saint-Martin : sa propre composition, ni peste ni rôles choisis),
-//   fete: null (pas encore choisie : la Table pré-sélectionne la veillée proposée, veilleeProposee) | "" (aucune) | clé de veillée }
+//   fete: null (pas encore choisie : la Table pré-sélectionne la veillée proposée, veilleeProposee) | "" (aucune) | clé de veillée,
+//   village: la variante « Le Village » (Pacte, étape 4 ; pré-cochée si le réglage « leVillage » s'en souvient) }
 // Le niveau pré-sélectionné : la Petite tablée si le réglage monde s'en souvient (0.11.0), sinon classique.
 const niveauParDefaut = () => { try { return game.settings.get("lakour-loups", "petiteTablee") ? "petite-tablee" : "classique"; } catch { return "classique"; } };
+const villageParDefaut = () => { try { return Boolean(game.settings.get("lakour-loups", "leVillage")); } catch { return false; } };
 export const nouvellePreparation = () => ({ coches: null, mode: "auto", niveau: niveauParDefaut(), roles: {}, peste: false, format: "", fete: null });
+// La case « Le Village » : celle que le MJ a cochée, sinon le réglage (village absent de la préparation neuve : il suit le réglage).
+export const villagePrepare = prep => (typeof prep.village === "boolean" ? prep.village : villageParDefaut());
 
 // La veillée de fête que la Table propose au MJ (pré-sélectionnée, jamais imposée) : celle du réglage s'il en nomme une, sinon
 // celle de la fête du calendrier du moteur ce jour-là ("" : aucune).
@@ -80,6 +84,7 @@ export async function distribuer(prep) {
   if (prep.format === "saint-martin") return api().nouvellePartie({ memesJoueurs: false, joueurs, compagnons, niveau: prep.niveau, format: "saint-martin" });
   return api().nouvellePartie({ memesJoueurs: false, joueurs, compagnons, niveau: prep.niveau, format: "",
     roles: prep.mode === "manuel" ? rolesManuels(prep, total) : [], ...(prep.peste ? { peste: true } : {}),
+    ...(prep.niveau === "petite-tablee" ? {} : { village: villagePrepare(prep) }),
     fete: prep.fete ?? veilleeProposee() });
 }
 

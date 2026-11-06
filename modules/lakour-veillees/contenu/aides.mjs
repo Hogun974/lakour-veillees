@@ -16,7 +16,9 @@ export const EFFETS = [
   // Les rôles du Village du Pacte (système : logique/pacte.mjs).
   "resister", "egalite", "grace", "fratrie", "flairer", "cacarder", "second-vote", "contaminer", "plume",
   // Les ambigus, les solitaires du livre et le Loup pâle (système : logique/ambigus.mjs).
-  "chaparder", "emprunter", "choisir-camp", "modele", "devouement", "charmer", "trahir"
+  "chaparder", "emprunter", "choisir-camp", "modele", "devouement", "charmer", "trahir",
+  // La variante « Le Village » (système : logique/personnalites.mjs) : l'Incendiaire.
+  "incendier"
 ];
 // Extensions du système lakour-loups (systems/lakour-loups/scripts/modeles.mjs, logique/constantes.mjs) :
 // role.apparence = camp vu par une vision « voir-camp » ("" = camp réel) ; role.victoireCle = victoire d'un solitaire ;

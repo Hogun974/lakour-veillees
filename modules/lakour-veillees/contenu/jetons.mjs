@@ -58,6 +58,8 @@ export const JETONS_ROLES = {
   "greffier-begue": "lorc/quill-ink",                  // la plume du greffier
   "vieux-sergent": "lorc/visored-helm",                // le vieux casque
   "pie": "lorc/raven",                                 // l'oiseau noir et blanc
+  // --- La variante « Le Village » (Le Pacte, étape 4)
+  "incendiaire": "lorc/fire-silhouette",               // la silhouette dans les flammes
   // --- Les ambigus du jeu de soirée (Le Pacte, étape 3b)
   "chapardeur": "delapouite/bandit",                   // le voleur masqué
   "bateleur": "delapouite/carnival-mask",              // le masque des tréteaux

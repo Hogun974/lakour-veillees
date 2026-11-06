@@ -253,7 +253,7 @@ const VERIFICATIONS = {
     assert.deepEqual(publicBrut().tenures, { prieure: null, fournil: b.id });
     const x = M.api.registre().find(y => y.type === "vacance");
     assert.deepEqual([x.acteurId, x.batiments], [a.id, ["prieure"]]);
-    assert.ok(M.api.registreTexte().some(l => l === remplir(FR.LAKOUR_LOUPS.Registre.Vacance, { tour: 0, nom: a.name, batiments: "prieure" })));
+    assert.ok(M.api.registreTexte().some(l => l === remplir(FR.LAKOUR_LOUPS.Registre.Vacance, { tour: 0, nom: a.name, batiments: FR.LAKOUR_LOUPS.Batiments.prieure })));
     await assert.rejects(() => M.api.tenir("prieure", a.id), /mort/);
     await assert.rejects(() => M.api.tenir("", b.id));
     await M.api.tenir("fournil", "");

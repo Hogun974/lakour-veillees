@@ -11,6 +11,9 @@
 // Les Gens de passage : leur rôle public sur leur carte (jamais leur camp) ; « Quitter la veillée » pour soi ; le MJ accueille un
 // arrivant, ouvre un vote d'exil, fait partir un joueur. Le Banc des accusés : les accusations du jour, et la mienne. Le Glas du
 // deuil : son compte (public). La Nuit de la Saint-Martin : sa marque, et sa case à la préparation.
+// Le Village (Pacte, étape 4, logique/personnalites.mjs) : sa case à la préparation ; la personnalité de chaque vivant sur sa carte
+// (publique, comme le métier) ; l'encart « Le Village » (qui tient quoi, les bâtiments brûlés, les privés de vote du Régent), où le
+// MJ change la proposition avant la première nuit (api.installer).
 import { ID, PHASES } from "../../logique/constantes.mjs";
 import * as L from "../../logique/index.mjs";
 import { LONGUEUR_DECLARATION as LONGUEUR } from "../../logique/registre.mjs";
@@ -34,10 +37,26 @@ const api = () => game.lakourLoups;
 const nomDe = id => game.actors.get(id)?.name ?? id;
 const TYPES_EFFETS = ["verrou", "surveille", "gite", "traversee", "taverne", "lame", "cachette", "asile", "ecluse"];
 const ICONES_REGISTRE = { vote: "fa-scale-balanced", mort: "fa-cross", bailli: "fa-stamp", declaration: "fa-feather-pointed",
-  passage: "fa-person-walking-luggage", accusation: "fa-hand-point-right", deuil: "fa-bell", fete: "fa-star" };
+  passage: "fa-person-walking-luggage", accusation: "fa-hand-point-right", deuil: "fa-bell", fete: "fa-star", village: "fa-house-chimney-window" };
 
 async function tenter(fn) {
   try { return await fn(); } catch (e) { ui.notifications.error(e.message); console.error(e); }
+}
+
+// L'encart « Le Village » (public) : chaque bâtiment debout, son occupant et sa personnalité (pouvoir servi ou non) ; pendant la
+// préparation, le MJ y choisit l'occupant (« — vide — » : personne).
+function villageDeLaTable(etat, { gm = false, preparation = false } = {}) {
+  const v = tenterSync(() => api().village(), null);
+  if (!v?.actif) return null;
+  const vivants = tousLesVillageois().filter(a => a.system.vivant).map(a => ({ id: a.id, nom: a.name }));
+  return {
+    preparation, gm,
+    batiments: v.batiments.map(b => ({ ...b, epuise: Boolean(b.acteurId) && !b.disponible,
+      options: preparation ? [{ id: "", nom: t("LAKOUR_LOUPS.Village.Vacant"), choisi: !b.acteurId }, ...vivants.map(x => ({ ...x, choisi: x.id === b.acteurId }))] : [] })),
+    chemineaux: v.chemineaux.map(c => c.nom).join(", "),
+    detruits: v.detruits.length ? t("LAKOUR_LOUPS.Village.Detruits", { noms: v.detruits.map(d => d.nom).join(", ") }) : "",
+    prives: v.regent && v.regent.tour === etat.tour ? t("LAKOUR_LOUPS.Village.Prives", { noms: v.regent.noms }) : ""
+  };
 }
 
 export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
@@ -61,7 +80,8 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
       crier: (event, cible) => crierALaPeste(cible.dataset.id),
       accuser: TableDeJeu.#accuser, quitter: TableDeJeu.#quitter, faireQuitter: TableDeJeu.#faireQuitter,
       accueillir: TableDeJeu.#accueillir, voteExil: TableDeJeu.#voteExil, prepSaintMartin: TableDeJeu.#prepSaintMartin,
-      voixActiver: TableDeJeu.#voixActiver, voixMicro: TableDeJeu.#voixMicro
+      voixActiver: TableDeJeu.#voixActiver, voixMicro: TableDeJeu.#voixMicro,
+      prepVillage: TableDeJeu.#prepVillage
     }
   };
 
@@ -90,6 +110,13 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
     // Les gens de passage (rôle public, jamais le camp) et les partis (départ, exil : ni morts ni révélés).
     const gens = tenterSync(() => api().gensDePassage(), []);
     const partis = etat.partis ?? [];
+    // Le Village (Pacte, étape 4) : la personnalité de chacun, publique (comme le métier).
+    const villageActif = L.villageActif(etat);
+    const personnaliteDe = a => {
+      if (!villageActif) return "";
+      const p = L.personnaliteDe(etat, a.id);
+      return p ? t(`LAKOUR_LOUPS.Village.Personnalites.${p}.Nom`) : "";
+    };
     const fiche = a => {
       const role = roleDe(a), metier = metierDe(a);
       const voitRole = fin || roleVisible(a);
@@ -101,6 +128,8 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
         faireQuitter: gm && a.system.vivant && Boolean(etat.partie) && !fin,
         id: a.id, nom: a.name, img: a.img, vivant: a.system.vivant, maison: libelleRepere(a.system.maison),
         metier: metier?.name ?? "", metierImg: metier?.img ?? "",
+        personnalite: a.system.vivant ? personnaliteDe(a) : "",
+        personnaliteAide: a.system.vivant && villageActif ? t(`LAKOUR_LOUPS.Village.Personnalites.${L.personnaliteDe(etat, a.id)}.Aide`) : "",
         voitRole, roleNom: voitRole ? role?.name ?? "" : "", roleImg: voitRole ? role?.img ?? "" : "",
         camp: voitRole ? libelleCamp(campDe(a)) : "", campCle: voitRole ? campDe(a) : "",
         revele: a.system.revele, silence: a.system.silence, moi: a.id === moi?.id,
@@ -210,6 +239,8 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
         peutDistribuer: total >= 1,
         peste: Boolean(p.peste),
         saintMartin: p.format === L.FORMAT_SAINT_MARTIN,
+        // Le Village (Pacte, étape 4) : jamais à la petite tablée ni dans une Nuit de la Saint-Martin.
+        village: MJ.villagePrepare(p), villagePossible: p.format !== L.FORMAT_SAINT_MARTIN && p.niveau !== L.NIVEAU_PETITE_TABLEE,
         fetes: veilleesAPreparer(p),
         // La Petite tablée (0.11.0) : un rappel de ses règles, et un avis si la table sort de ses clous (1 à 4 humains, 2 à 8 IA).
         tablee: p.niveau === L.NIVEAU_PETITE_TABLEE ? (() => {
@@ -288,6 +319,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
             ? (resultat.elus ?? []).filter(id => game.actors.get(id)?.system.vivant).map(id => ({ id, nom: nomDe(id) })) : [] } : null
       },
       historique: chronique,
+      village: villageActif && etat.partie ? villageDeLaTable(etat, { gm, preparation: gm && etat.phase === "preparation" && etat.tour === 0 }) : null,
       etape, preparation, nuit,
       emporteur: etape?.cle === "emporter" ? { id: etape.donnees.id, nom: etape.donnees.nom } : null,
       reveils: gm ? api().reveilsEnCours?.() ?? [] : []
@@ -311,6 +343,10 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
       this.preparation.fete = L.cleDeFete(ev.currentTarget.value);
       this.render();
     });
+    // Le Village : le MJ change l'occupant d'un bâtiment avant la première nuit.
+    for (const choix of this.element.querySelectorAll("select[name=villageOccupant]")) {
+      choix.addEventListener("change", ev => tenter(() => api().installer(ev.currentTarget.dataset.cle, ev.currentTarget.value)));
+    }
     clearInterval(this._minuterie);
     const zone = this.element.querySelector(".loups-minuteur");
     if (!zone) return;
@@ -478,6 +514,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
   static #prepMode(event, cible) { this.preparation.mode = cible.dataset.mode === "manuel" ? "manuel" : "auto"; this.render(); }
   static #prepRole(event, cible) { MJ.changerRole(this.preparation, cible.dataset.cle, Number(cible.dataset.delta)); this.render(); }
   static #prepPeste() { this.preparation.peste = !this.preparation.peste; this.render(); }
+  static #prepVillage() { this.preparation.village = !MJ.villagePrepare(this.preparation); this.render(); }
   static async #distribuer() {
     const enCours = !["preparation", "fin"].includes(lireEtat().phase) && lireEtat().partie;
     if (enCours) {

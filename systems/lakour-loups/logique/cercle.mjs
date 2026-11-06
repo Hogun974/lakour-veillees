@@ -93,3 +93,9 @@ export function trioAutour(etat, villageois = [], centreId) {
 export function premierAGauche(etat, villageois = [], acteurId, filtre = () => true) {
   return premierDansLeSens(etat, villageois, acteurId, -1, v => estVivant(v) && Boolean(filtre(v)));
 }
+
+// Le premier vivant à droite (la place suivante), de même. (L'Incendiaire de la variante « Le Village » : le premier loup à la
+// droite de la proie dont la maison brûle est carbonisé.)
+export function premierADroite(etat, villageois = [], acteurId, filtre = () => true) {
+  return premierDansLeSens(etat, villageois, acteurId, +1, v => estVivant(v) && Boolean(filtre(v)));
+}

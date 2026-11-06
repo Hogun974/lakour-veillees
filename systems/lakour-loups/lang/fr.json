@@ -37,7 +37,9 @@
       "peste": "victime de la peste noire",
       "panique": "pendaison pour avoir semé la panique",
       "contamine": "victime de la vieille épée",
-      "sagesse": "emporté avec la sagesse de l'Aïeul"
+      "sagesse": "emporté avec la sagesse de l'Aïeul",
+      "rasoir": "victime du rasoir du Perruquier",
+      "incendie": "victime de l'incendie"
     },
     "Effets": {
       "aucun": "aucun (arbitré par le narrateur)",
@@ -76,7 +78,8 @@
       "modele": "choisit un modèle : s'il meurt, rejoint la meute",
       "devouement": "peut prendre la carte d'un condamné avant qu'elle soit retournée",
       "charmer": "charme deux joueurs par nuit",
-      "trahir": "une nuit sur deux, peut dévorer un loup"
+      "trahir": "une nuit sur deux, peut dévorer un loup",
+      "incendier": "une fois par partie, met le feu à un bâtiment du village (Le Village)"
     },
     "Victoires": {
       "aucune": "aucune (selon le texte)",
@@ -229,7 +232,8 @@
       "LireTexte": "Lire le texte",
       "NuitOrdre": "Nuit · ordre {ordre}",
       "Cibles": "Cibles : {n}",
-      "Protege": "Protégé ×{n}"
+      "Protege": "Protégé ×{n}",
+      "Personnalite": "Personnalité"
     },
     "Role": {
       "Pouvoir": "Pouvoir",
@@ -337,7 +341,11 @@
       "FuretOui": "Votre museau frémit : il y a au moins un loup parmi {noms}.",
       "FuretNon": "Aucun loup parmi {noms} : ils sont innocents. Mais votre flair vous a quitté, pour toujours.",
       "FuretPerdu": "{nom}, le Furet, n'a flairé aucun loup : il perd son flair.",
-      "Plume": "Une plume noire se posera sur {nom} : deux voix de plus contre lui au vote du jour."
+      "Plume": "Une plume noire se posera sur {nom} : deux voix de plus contre lui au vote du jour.",
+      "Incendie": "Le bâtiment de {nom} brûle cette nuit.",
+      "IncendieProie": "{nom} était la proie de la nuit : la meute n'a pas de victime.",
+      "Cabaret": "{nom}, le Cabaretier, ne peut pas être dévoré : la meute repart bredouille.",
+      "Carbonise": "{nom}, le premier loup à la droite de {proie}, est pris dans les flammes."
     },
     "Messages": {
       "Mort": "{nom} n’est plus : {cause}.",
@@ -448,6 +456,10 @@
       "InnocentSuitAieul": {
         "Nom": "L'Innocent suit l'Aïeul",
         "Aide": "Si l'Aïeul tombe de la main du village (vote, poison, Braconnière), un Innocent déjà gracié meurt avec lui : le village perd sa sagesse. Pris à la distribution."
+      },
+      "LeVillage": {
+        "Nom": "Le Village (variante)",
+        "Aide": "Des personnalités (Prieur, Cabaretier, Métayers…) tiennent les bâtiments du village : un pouvoir public en plus de leur rôle secret ; les autres joueurs sont des Chemineaux. Retenu d'une partie à l'autre (la case « Le Village » de la Table de jeu le change)."
       }
     },
     "Erreurs": {
@@ -477,7 +489,21 @@
       "forge": "La Forge",
       "grange": "La Grange",
       "puits": "Le Puits",
-      "chapelle": "La Chapelle"
+      "chapelle": "La Chapelle",
+      "metairie-1": "La Métairie des Saules",
+      "metairie-2": "La Métairie du Gué",
+      "metairie-3": "La Métairie des Brandes",
+      "metairie-4": "La Métairie de la Combe",
+      "metairie-5": "La Métairie des Aulnes",
+      "metairie-6": "La Métairie du Haut-Pré",
+      "prieure": "Le Prieuré",
+      "masure": "La Masure",
+      "ecole": "L'École",
+      "fournil": "Le Fournil",
+      "echoppe": "L'Échoppe",
+      "cabaret": "Le Cabaret",
+      "prevote": "La Prévôté",
+      "manoir": "Le Manoir"
     },
     "Carnet": {
       "Titre": "Carnet secret",
@@ -562,7 +588,14 @@
       "Pelerine": "{qui} prie longuement sur le seuil de {nom}.",
       "PelerinePrive": "Votre prière s'est fait entendre : {nom} est du camp « {camp} ».",
       "LavoirNeige": "Le lavoir est gelé : on n'y parle que de la neige, qui a tout recouvert.",
-      "GreffierSigne": "Votre signe est passé : un second vote suivra, sans débat, dès que le condamné sera tombé."
+      "GreffierSigne": "Votre signe est passé : un second vote suivra, sans débat, dès que le condamné sera tombé.",
+      "Confession": "{qui}, le Prieur, fait venir {nom} au prieuré : {nom} lui montre sa carte, en secret.",
+      "ConfessionPrive": "{nom} vous a montré sa carte : {role}.",
+      "Remise": "{qui}, le Remégeux, remet {nom} d'aplomb : le pouvoir de son bâtiment lui est rendu, une fois encore.",
+      "Regent": "{qui}, le Régent, met au coin {noms} : ils ne voteront pas aujourd'hui.",
+      "Rasoir": "{qui}, le Perruquier, ouvre son rasoir sur {nom}.",
+      "RasoirLoup": "{nom} était un loup : le village félicite {qui}.",
+      "RasoirInnocent": "{nom} n'était pas un loup : {qui} paie sa méprise de sa vie."
     },
     "Plateau": {
       "ChoisisSurLaCarte": "À toi : choisis sur la carte (clique sur un jeton allumé), puis « Valider » dans le bandeau."
@@ -810,7 +843,9 @@
         "execution": "Le vote d'exécution du jour a déjà eu lieu.",
         "nomme": "{nom} ne peut pas devenir Bailli (le Bailli doit être en jeu et le villageois vivant).",
         "departage": "Le Bailli doit d'abord trancher l'égalité (le narrateur peut trancher à sa place, depuis la Table de jeu).",
-        "pasDeDepartage": "Aucune égalité n'attend le Bailli."
+        "pasDeDepartage": "Aucune égalité n'attend le Bailli.",
+        "jourDeux": "Les Métayers ne désignent le Bailli qu'à partir du deuxième jour.",
+        "metayers": "Aucun Métayer vivant ne peut désigner le Bailli."
       },
       "SceauAttend": "Le sceau attend : {nom}, Bailli défunt, désigne son successeur ; le dépouillement suit.",
       "ParLeSort": "désigné par le sort",
@@ -847,7 +882,8 @@
         "succession": "Tour {tour} — {de}, Bailli défunt, remet le sceau à {nom}.",
         "nomme": "Tour {tour} — le narrateur nomme {nom} Bailli.",
         "vacance": "Tour {tour} — la charge de Bailli est vacante.",
-        "abolie": "Tour {tour} — {de}, gracié, perd la charge de Bailli : Brumecombe n'aura plus de Bailli."
+        "abolie": "Tour {tour} — {de}, gracié, perd la charge de Bailli : Brumecombe n'aura plus de Bailli.",
+        "metayers": "Tour {tour} — {de}, le dernier Métayer, est mort : Brumecombe n'aura plus de Bailli."
       },
       "Declaration": "Tour {tour} — {nom} déclare : « {texte} »",
       "Refus": {
@@ -886,6 +922,19 @@
         "oies": "Tour {tour} — les oies de {nom} cacardent.",
         "second-vote": "Tour {tour} — un second vote d'exécution, sans débat.",
         "devouement": "Tour {tour} — {nom} se dévoue : la Chambrière prend la carte de {noms}, sans la montrer."
+      },
+      "Village": {
+        "distribution": "Tour {tour} — les bâtiments du village sont confiés à {noms} ; les autres sont des Chemineaux.",
+        "changement": "Tour {tour} — changement au village : {batiment} ({nom}).",
+        "installation": "Tour {tour} — {noms}, le Prévôt, loge {nom} à {batiment}.",
+        "refus": "Tour {tour} — {nom} refuse {batiment}.",
+        "incendie": "Tour {tour} — {batiment} a brûlé ; {nom} devient Chemineau.",
+        "prieur": "Tour {tour} — {nom}, le Prieur, voit en secret la carte de {noms}.",
+        "remegeux": "Tour {tour} — {nom}, le Remégeux, rend son pouvoir à {noms}.",
+        "regent": "Tour {tour} — {nom}, le Régent, prive de vote {noms}.",
+        "perruquier": "Tour {tour} — {nom}, le Perruquier, frappe {noms}.",
+        "grace": "Tour {tour} — {nom}, le Hobereau, gracie {noms}.",
+        "cabaret": "Tour {tour} — {nom}, le Cabaretier, perd son immunité."
       }
     },
     "Masques": {
@@ -1148,7 +1197,9 @@
     "Tenures": {
       "Refus": {
         "cle": "Quel bâtiment ? (clé manquante)",
-        "mort": "{nom} est mort : il ne peut plus tenir de bâtiment."
+        "mort": "{nom} est mort : il ne peut plus tenir de bâtiment.",
+        "village": "Ce bâtiment n'appartient pas à la variante « Le Village » en cours.",
+        "detruit": "Ce bâtiment a brûlé : il n'existe plus."
       }
     },
     "Pacte": {
@@ -1207,6 +1258,87 @@
         "tard": "Les cartes du Bateleur se choisissent avant la première nuit.",
         "cartes": "Choisis une à {n} cartes de rôles à pouvoir de nuit (ni loup, ni solitaire), qui ne sont pas au paquet."
       }
+    },
+    "Village": {
+      "Nom": "Le Village",
+      "Personnalites": {
+        "metayer": {
+          "Nom": "Métayer",
+          "Aide": "Métayer : à partir du deuxième jour, les Métayers vivants désignent entre eux le Bailli, parmi eux ; le Bailli défunt choisit son successeur parmi eux. Le dernier Métayer mort, Brumecombe n'a plus de Bailli."
+        },
+        "prieur": {
+          "Nom": "Prieur",
+          "Aide": "Prieur : une fois, pendant le jour (même après la désignation du condamné), il fait venir un joueur au prieuré, qui lui montre sa carte en secret."
+        },
+        "remegeux": {
+          "Nom": "Remégeux",
+          "Aide": "Remégeux : une fois, pendant le jour, il rend à un joueur le pouvoir unique de son bâtiment, déjà servi."
+        },
+        "regent": {
+          "Nom": "Régent",
+          "Aide": "Régent : chaque jour, juste avant le vote, il prive de vote jusqu'à deux joueurs (jamais un Chemineau). Lui-même ne vote jamais."
+        },
+        "fourniere": {
+          "Nom": "Fournière",
+          "Aide": "Fournière : chaque nuit, quand la meute rentre se coucher, elle a une chance d'entrevoir l'un des loups."
+        },
+        "perruquier": {
+          "Nom": "Perruquier",
+          "Aide": "Perruquier : une fois, pendant le jour, il ouvre son rasoir sur un joueur (jamais un Chemineau). Un loup : le village le félicite ; sinon, il paie sa méprise de sa vie."
+        },
+        "cabaretier": {
+          "Nom": "Cabaretier",
+          "Aide": "Cabaretier : la meute ne peut pas le dévorer, le village ne peut pas voter contre lui ; il vote à découvert. S'il vote contre un joueur que le vote désigne, il perd cette immunité."
+        },
+        "prevot": {
+          "Nom": "Prévôt",
+          "Aide": "Prévôt : quand un bâtiment se libère, il peut y loger le Chemineau de son choix, qui en reçoit le pouvoir."
+        },
+        "hobereau": {
+          "Nom": "Hobereau",
+          "Aide": "Hobereau : une fois, un condamné du vote peut le supplier ; il le gracie (lui-même aussi) : pas d'exécution, et sa carte reste cachée."
+        },
+        "chemineau": {
+          "Nom": "Chemineau",
+          "Aide": "Chemineau : sans toit ni pouvoir de bâtiment. Le Régent, le Perruquier, la Pie et l'Incendiaire n'ont pas prise sur lui ; le Prévôt peut le loger."
+        }
+      },
+      "Pouvoirs": {
+        "prieure": "Le Prieuré : confesser",
+        "masure": "La Masure : remettre d'aplomb",
+        "ecole": "L'École : mettre au coin",
+        "echoppe": "L'Échoppe : le rasoir"
+      },
+      "Annonce": "Le Village : {lignes}.",
+      "Ligne": "{nom} tient {batiment} ({personnalite})",
+      "Chemineaux": "Chemineaux : {noms}.",
+      "Change": "Changement au village : {nom} tient désormais {batiment} ({personnalite}).",
+      "Libere": "{batiment} est vide : {nom} n'y loge plus.",
+      "Incendie": "Cette nuit, {batiment} a brûlé : {nom} n'a plus de toit et devient Chemineau.",
+      "IncendieProie": "Les flammes ont surpris la meute chez {nom}, qui en réchappe : {loup} y a péri.",
+      "Fourniere": "Au petit jour, en ouvrant le fournil, vous apercevez {nom} qui rentre chez lui en rasant les murs : c'est un loup.",
+      "InvitePrevot": "{batiment} est libre : quel Chemineau y loges-tu (il deviendra {personnalite}) ? Passe pour le laisser vide.",
+      "InviteLogement": "{nom}, le Prévôt, t'offre {batiment} : désigne-toi pour l'accepter (tu deviens {personnalite}), ou passe pour refuser.",
+      "Installation": "{prevot}, le Prévôt, loge {nom} à {batiment} : {nom} rend son baluchon et devient {personnalite}.",
+      "Refus": "{nom} refuse {batiment} : le logement reste vide.",
+      "Vide": "{prevot}, le Prévôt, laisse {batiment} vide.",
+      "InviteSupplique": "Le village t'a condamné. Supplies-tu {nom}, le Hobereau, de te faire grâce ? Désigne-le pour le supplier, ou passe.",
+      "Supplique": "{nom} supplie {hobereau}, le Hobereau, de lui faire grâce.",
+      "InviteGrace": "{nom} te supplie de lui faire grâce : désigne-le pour le gracier (une fois par partie), ou passe.",
+      "InviteGraceSoi": "Le village t'a condamné : désigne-toi pour te gracier toi-même (une fois par partie), ou passe.",
+      "Grace": "{hobereau}, le Hobereau, gracie {nom} : il n'est pas exécuté, et sa carte reste cachée.",
+      "GraceRefusee": "{hobereau}, le Hobereau, refuse sa grâce à {nom}.",
+      "VoteCabaret": "{nom}, le Cabaretier, vote à découvert contre {cible}.",
+      "ImmunitePerdue": "{nom}, le Cabaretier, a voté contre {cible}, que le vote a désigné : il perd son immunité.",
+      "BailliAboli": "{nom} était le dernier Métayer : Brumecombe n'aura plus de Bailli.",
+      "Preparation": "Le Village",
+      "PreparationAide": "Des personnalités tiennent les bâtiments du village (un pouvoir public en plus de leur rôle secret) ; les autres joueurs sont des Chemineaux. Proposé à la distribution, modifiable avant la première nuit.",
+      "Titre": "Le Village",
+      "Aide": "Qui tient quel bâtiment : public, comme le jeton « rôle visible » posé devant chacun. Avant la première nuit, le narrateur peut changer la proposition.",
+      "Vacant": "— vide —",
+      "Detruits": "Brûlés : {noms}",
+      "Epuise": "pouvoir servi",
+      "Prives": "Privés de vote aujourd'hui : {noms}"
     }
   }
 }

@@ -348,6 +348,14 @@
       "joueursMin": 8,
       "unique": true
     },
+    "incendiaire": {
+      "camp": "village",
+      "poids": 2,
+      "niveau": "classique",
+      "joueursMin": 8,
+      "unique": true,
+      "village": true
+    },
     "revenant": {
       "camp": "solitaire",
       "poids": -2,

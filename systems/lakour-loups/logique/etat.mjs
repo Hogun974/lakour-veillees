@@ -48,6 +48,9 @@
 // Le Pacte, étape 3b (ambigus.mjs) : +ambigus (public : les cartes du Bateleur face visible, le Feu follet qui fait commencer par un
 // jour, le partage du village pour l'Illuminé, les dévouements de la Chambrière) et +ambigusSecret [S] (les cartes du centre du
 // Chapardeur, les cartes jouées par le Bateleur, les modèles des Enfants des bois, le choix des Mâtins, les charmés).
+// Le Pacte, étape 4 (personnalites.mjs) : +village (public : la variante « Le Village », ses bâtiments brûlés, les pouvoirs servis,
+// les bâtiments qui attendent le Prévôt, les privés de vote du Régent, les graciés du Hobereau, le vote public du Cabaretier ; qui
+// tient quel bâtiment vit dans etat.tenures).
 
 import { PHASES, causePublique } from "./constantes.mjs";
 import { decompterVotes } from "./votes.mjs";
@@ -62,7 +65,8 @@ import { deuilInitial, pouvoirsDeuilInitiaux, normaliserDeuil, normaliserPouvoir
 import { feteInitiale, normaliserFete, secretsDeFeteInitiaux, normaliserSecretsDeFete } from "./fetes.mjs";
 import { sortTranche } from "./tablee.mjs";
 import { cercleInitial, normaliserCercle } from "./cercle.mjs";
-import { tenuresInitiales, normaliserTenures, libererALaMort } from "./tenures.mjs";
+import { tenuresInitiales, normaliserTenures, libererALaMort, batimentsDe } from "./tenures.mjs";
+import { villageInitial, normaliserVillage, attendreLePrevot } from "./personnalites.mjs";
 import { evenementsInitiaux, normaliserEvenements } from "./evenements.mjs";
 import { ambigusInitial, ambigusSecretInitial, normaliserAmbigus, normaliserAmbigusSecret } from "./ambigus.mjs";
 import { pacteInitial, pacteSecretInitial, normaliserPacte, normaliserPacteSecret, plumeDuVote, VOIX_DE_LA_PLUME, POIDS_DE_LA_PLUME } from "./pacte.mjs";
@@ -102,7 +106,9 @@ export function etatInitial() {
     // Le Pacte, étape 3a (pacte.mjs) : les rôles du Village du jeu de soirée — le public, et les secrets du MJ.
     pacte: pacteInitial(), pacteSecret: pacteSecretInitial(),
     // Le Pacte, étape 3b (ambigus.mjs) : les ambigus, les solitaires du livre et le Loup pâle — le public, et les secrets du MJ.
-    ambigus: ambigusInitial(), ambigusSecret: ambigusSecretInitial()
+    ambigus: ambigusInitial(), ambigusSecret: ambigusSecretInitial(),
+    // Le Pacte, étape 4 (personnalites.mjs) : la variante « Le Village », publique.
+    village: villageInitial()
   };
 }
 
@@ -146,6 +152,7 @@ export function normaliserEtat(e) {
   etat.pacteSecret = normaliserPacteSecret(etat.pacteSecret);
   etat.ambigus = normaliserAmbigus(etat.ambigus);
   etat.ambigusSecret = normaliserAmbigusSecret(etat.ambigusSecret);
+  etat.village = normaliserVillage(etat.village);
   etat.tour = Number(etat.tour) || 0;
   return etat;
 }
@@ -415,14 +422,17 @@ export function cloreVote(e, { votants = null, poids = {}, maintenant = Date.now
 }
 
 // Une mort : au Registre avec sa cause PUBLIQUE ; le Bailli qui meurt laisse la charge à son successeur (bailli.mjs) ; les
-// bâtiments qu'il tenait deviennent vacants (tenures.mjs).
+// bâtiments qu'il tenait deviennent vacants (tenures.mjs) et, dans la variante « Le Village », attendent le Prévôt
+// (personnalites.mjs).
 export function ajouterMort(e, { acteurId, cause = "", quand = Date.now() }) {
   const etat = normaliserEtat(e);
   if (!etat.morts.some(m => m.acteurId === acteurId)) {
     etat.morts.push({ acteurId, tour: etat.tour, phase: etat.phase, cause });
     inscrire(etat, { type: "mort", acteurId, cause }, quand);   // le Registre n'en garde que la cause publique (registre.mjs)
     ouvrirSuccession(etat, acteurId, quand);
+    const tenus = batimentsDe(etat, acteurId);
     libererALaMort(etat, acteurId, quand);
+    attendreLePrevot(etat, tenus);
   }
   return etat;
 }

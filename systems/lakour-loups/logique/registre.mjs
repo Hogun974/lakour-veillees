@@ -20,6 +20,10 @@
 //   pacte : { quoi: "grace" | "sagesse" | "votants" | "plume" | "oies" | "second-vote", acteurId?, ids? } — ce que les rôles du Village du
 //          Pacte annoncent à tous (pacte.mjs) ; jamais qui tient un rôle resté secret (ni la Pie, ni le Greffier)
 //   vote : + plume (la cible de la plume noire), souffreDouleur (il a payé l'égalité)
+//   village : { quoi, acteurId?, cle?, ids? } — la variante « Le Village » (personnalites.mjs, Pacte étape 4) : la distribution des
+//          bâtiments, un logement donné par le Prévôt (ou refusé), un bâtiment brûlé, les pouvoirs publics des personnalités
+//          (Prieur, Remégeux, Régent, Perruquier, Hobereau), l'immunité perdue du Cabaretier, la charge de Bailli abolie avec le
+//          dernier Métayer ; jamais qui est l'Incendiaire
 import { causePublique } from "./constantes.mjs";
 import { PHASES_DU_SILENCE } from "./parole.mjs";
 import { presageDuJour } from "./almanach.mjs";
@@ -28,7 +32,7 @@ export const LONGUEUR_DECLARATION = 160;
 export const DECLARATIONS_PAR_JOUR = 3;
 export const TAILLE_DU_REGISTRE = 300;
 export const PHASES_DECLARATION = ["aube", "jour", "vote"];
-export const TYPES_DU_REGISTRE = ["vote", "mort", "bailli", "declaration", "passage", "accusation", "deuil", "fete", "vacance", "pacte"];
+export const TYPES_DU_REGISTRE = ["vote", "mort", "bailli", "declaration", "passage", "accusation", "deuil", "fete", "vacance", "pacte", "village"];
 
 // Inscrit une entrée (etat déjà normalisé, modifié sur place). Une mort n'y entre qu'avec sa cause publique.
 export function inscrire(etat, entree, quand = Date.now()) {

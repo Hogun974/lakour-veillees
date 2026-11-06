@@ -35,6 +35,10 @@
 // public, chat, Registre, hook lakourLoups.pacte) ; les cartes du centre du Chapardeur, la carte que joue le Bateleur cette nuit,
 // le camp choisi par le Mâtin, le modèle de l'Enfant des bois et les charmés du Joueur de vielle restent des secrets du MJ
 // (etat.ambigusSecret, carnets des seuls concernés). Leurs choix s'appliquent dès qu'ils sont notés (noterAction) : la nuit suit.
+// La variante « Le Village » (logique/personnalites.mjs, étape 4) : tout y est PUBLIC — qui tient quel bâtiment (etat.tenures,
+// annoncé à la distribution), les Chemineaux, les pouvoirs des personnalités (chat, Registre « village », hook lakourLoups.village :
+// { quoi, acteurId?, ids?, cle? }), le vote du Cabaretier, la grâce du Hobereau, les logements du Prévôt, les bâtiments brûlés ;
+// seuls restent secrets ce que le Prieur lit sur une carte et ce qu'entrevoit la Fournière (leur carnet), et qui est l'Incendiaire.
 //
 // Les FICHES (0.9.0, logique/fiches.mjs) : le rôle, le camp, l'amoureux et les protections de chaque villageois vivent dans les
 // secrets du MJ actif (etat.fiches), jamais dans les documents que Foundry livre à tous. Chaque joueur reçoit SA fiche par le
@@ -458,6 +462,8 @@ export async function recevoirVote({ votant, cible, userId }) {
     // Chez les autres : seulement QUI a voté, jamais pour qui (le décompte est publié à la clôture).
     annoncer("lakourLoups.vote", [{ votant, cible: cible || "" }], [{ votant }]);
     if (user.id !== game.user.id) emettre({ type: "monVote", partie: r.etat.partie, numero: r.etat.vote.numero, cible: cible || "" }, [user.id]);
+    // Le Village : le Cabaretier immunisé vote à découvert (sur table : seul, avant les autres).
+    await publierLeVoteDuCabaretier(votant, cible || "", r.etat.vote.numero);
   } else if (r.raison === "temps") avis(userId, t("LAKOUR_LOUPS.Vote.TempsEcoule"));
   return r.ok;
 }
@@ -617,6 +623,10 @@ export function ligneDuRegistre(x) {
     // Le Pacte (logique/pacte.mjs) : grâce, sagesse perdue, votants du Souffre-douleur, plume, oies, second vote.
     case "pacte": return game.i18n.has(`LAKOUR_LOUPS.Registre.Pacte.${x.quoi}`)
       ? t(`LAKOUR_LOUPS.Registre.Pacte.${x.quoi}`, { tour, nom: x.acteurId ? nom(x.acteurId) : "", noms: (x.ids ?? []).map(nom).join(", ") }) : "";
+    // Le Village (logique/personnalites.mjs) : distribution, logements, incendies, pouvoirs des personnalités.
+    case "village": return game.i18n.has(`LAKOUR_LOUPS.Registre.Village.${x.quoi}`)
+      ? t(`LAKOUR_LOUPS.Registre.Village.${x.quoi}`, { tour, nom: x.acteurId ? nom(x.acteurId) : "", noms: (x.ids ?? []).map(nom).join(", "),
+        batiment: x.cle && game.i18n.has(`LAKOUR_LOUPS.Batiments.${x.cle}`) ? t(`LAKOUR_LOUPS.Batiments.${x.cle}`) : x.cle ?? "" }) : "";
     case "vacance": return t("LAKOUR_LOUPS.Registre.Vacance", { tour, nom: nom(x.acteurId),
       batiments: (x.batiments ?? []).map(c => (game.i18n.has(`LAKOUR_LOUPS.Batiments.${c}`) ? t(`LAKOUR_LOUPS.Batiments.${c}`) : c)).join(", ") });
     default: return "";
@@ -662,6 +672,8 @@ function nomDuPouvoir(pouvoir, acteur) {
   const def = L.POUVOIRS_JOUR[pouvoir];
   if (def?.source === "metier") return metierDe(acteur)?.name ?? pouvoir;
   if (def?.source === "role") return roleDe(acteur)?.name ?? pouvoir;
+  // Le Village : le pouvoir d'une personnalité (« Le prieuré : confesser »).
+  if (def?.source === "tenure") return t(`LAKOUR_LOUPS.Village.Pouvoirs.${pouvoir}`);
   const cle = `LAKOUR_LOUPS.Batiments.${pouvoir}`;
   return game.i18n.has(cle) ? t(cle) : pouvoir;
 }
@@ -1251,6 +1263,175 @@ function annoncesDesAmbigus(etat) {
   return textes;
 }
 
+// ------------------------------------------------------------------ la variante « Le Village » (logique/personnalites.mjs)
+// Tout y est public : chat, Registre (type « village »), hook lakourLoups.village ({ quoi, acteurId?, ids?, cle? }).
+const nomDuBatiment = cle => (game.i18n.has(`LAKOUR_LOUPS.Batiments.${cle}`) ? t(`LAKOUR_LOUPS.Batiments.${cle}`) : cle);
+const nomDePersonnalite = p => (p ? t(`LAKOUR_LOUPS.Village.Personnalites.${p}.Nom`) : "");
+// Un fait public de la variante : journal, Registre, chat, hook. entree : { quoi, acteurId?, ids?, cle? }.
+async function annoncerAuVillage(texte, entree = null) {
+  await modifierEtat(e => {
+    if (entree) L.inscrire(e, { type: "village", ...entree });
+    return L.journaliser(e, texte);
+  });
+  await annonceChat(echapper(texte));
+  if (entree) annoncer("lakourLoups.village", [{ ...entree }]);
+}
+
+// La distribution des bâtiments, annoncée à tous : qui tient quoi (sa personnalité), et les Chemineaux.
+function texteDuVillage(etat) {
+  const lignes = Object.entries(etat.tenures).filter(([cle, id]) => id && L.estDuVillage(cle))
+    .map(([cle, id]) => t("LAKOUR_LOUPS.Village.Ligne", { nom: nomDe(id), batiment: nomDuBatiment(cle), personnalite: nomDePersonnalite(L.personnaliteDuBatiment(cle)) }));
+  const sans = L.chemineaux(etat, villageoisAPlat()).map(nomDe);
+  return [t("LAKOUR_LOUPS.Village.Annonce", { lignes: lignes.join(" ; ") || "—" }),
+    sans.length ? t("LAKOUR_LOUPS.Village.Chemineaux", { noms: sans.join(", ") }) : ""].filter(Boolean).join(" ");
+}
+
+// Le Hobereau : après un vote d'exécution, chaque condamné (l'un après l'autre) peut le supplier ; il gracie, ou non. Deux demandes
+// courtes (DELAI_GRACE) ; l'exécution (eliminer) attend la réponse. Le Hobereau condamné se gracie lui-même s'il le veut.
+const gracesEnCours = new Map();   // condamné -> Promise<Boolean> (gracié ?)
+const delaiDeGrace = () => Math.min(reglage("delaiChoix") * 1000, L.DELAI_GRACE);
+function proposerLaGrace(resultat) {
+  gracesEnCours.clear();
+  const etat = lireEtat();
+  if (!L.villageActif(etat) || !resultat || resultat.objet !== "execution" || resultat.departage?.enAttente || !(resultat.elus ?? []).length) return;
+  if (!L.porteur(etat, "manoir", villageoisAPlat())) return;
+  let chaine = Promise.resolve();
+  for (const condamne of resultat.elus) {
+    const p = chaine.then(() => demanderLaGrace({ partie: etat.partie, numero: resultat.numero, condamne })).catch(err => {
+      console.warn(`${ID} | grâce du Hobereau`, err);
+      return false;
+    });
+    gracesEnCours.set(condamne, p);
+    chaine = p;
+  }
+}
+async function demanderLaGrace({ partie, numero, condamne }) {
+  const h = L.porteur(lireEtat(), "manoir", villageoisAPlat());
+  if (lireEtat().partie !== partie || !h || !game.actors.get(condamne)?.system.vivant) return false;
+  const nomH = nomDe(h), nomC = nomDe(condamne);
+  if (h !== condamne) {
+    const [supplique] = await demandeLibre({ acteurId: condamne, invite: t("LAKOUR_LOUPS.Village.InviteSupplique", { nom: nomH }), candidats: [h], nombre: 1,
+      delai: delaiDeGrace(), objet: "supplique" });
+    if (supplique !== h) return false;
+    await annoncerAuVillage(t("LAKOUR_LOUPS.Village.Supplique", { nom: nomC, hobereau: nomH }));
+  }
+  const [choix] = await demandeLibre({ acteurId: h, invite: t(h === condamne ? "LAKOUR_LOUPS.Village.InviteGraceSoi" : "LAKOUR_LOUPS.Village.InviteGrace", { nom: nomC }),
+    candidats: [condamne], nombre: 1, delai: delaiDeGrace(), objet: "grace" });
+  const avant = lireEtat();
+  if (avant.partie !== partie || L.porteur(avant, "manoir", villageoisAPlat()) !== h) return false;
+  if (choix !== condamne) {
+    if (h !== condamne) await annoncerAuVillage(t("LAKOUR_LOUPS.Village.GraceRefusee", { nom: nomC, hobereau: nomH }));
+    return false;
+  }
+  await modifierEtat(e => L.gracierParLeHobereau(e, { acteurId: condamne, par: h, numero }));
+  await annoncerAuVillage(t("LAKOUR_LOUPS.Village.Grace", { nom: nomC, hobereau: nomH }), { quoi: "grace", acteurId: h, ids: [condamne] });
+  return true;
+}
+// Le condamné a-t-il été gracié par le Hobereau ? (eliminer, cause « vote » : attend la réponse, au plus deux fenêtres)
+async function graceDuHobereau(acteurId) {
+  const p = gracesEnCours.get(acteurId);
+  if (!p) return false;
+  gracesEnCours.delete(acteurId);
+  return Boolean(await p);
+}
+
+// Le Cabaretier : son vote, rendu public dès qu'il le pose (sur table, il vote seul, avant les autres) ; puis, s'il a voté contre un
+// joueur que le vote désigne, son immunité perdue.
+async function publierLeVoteDuCabaretier(votant, cible, numero) {
+  if (!cible || L.cabaretierImmunise(lireEtat(), villageoisAPlat()) !== votant || lireEtat().vote.objet !== "execution") return;
+  await modifierEtat(e => { e.village = { ...e.village, cabaret: { numero, cible } }; return e; });
+  await annoncerAuVillage(t("LAKOUR_LOUPS.Village.VoteCabaret", { nom: nomDe(votant), cible: nomDe(cible) }));
+}
+async function perdreLImmunite(resultat) {
+  const c = L.cabaretierQuiPerd(lireEtat(), resultat);
+  if (!c) return;
+  await modifierEtat(e => L.marquerEpuise(e, "cabaret", c));
+  await annoncerAuVillage(t("LAKOUR_LOUPS.Village.ImmunitePerdue", { nom: nomDe(c), cible: nomDe(resultat.votes[c]) }), { quoi: "cabaret", acteurId: c, ids: [resultat.votes[c]] });
+}
+
+// Le dernier Métayer mort : plus de Bailli (la charge est abolie, une succession ouverte se ferme).
+async function abolirSansMetayer(mortId, etaitMetayer) {
+  const e = lireEtat();
+  if (!etaitMetayer || !L.villageActif(e) || !e.bailli.actif || L.metayersDe(e, villageoisAPlat()).length) return;
+  const texte = t("LAKOUR_LOUPS.Village.BailliAboli", { nom: nomDe(mortId) });
+  await modifierEtat(x => {
+    x.bailli = { ...x.bailli, actif: false, acteurId: "", succession: null };
+    L.inscrire(x, { type: "bailli", acteurId: "", comment: "metayers", de: mortId });
+    return L.journaliser(x, texte);
+  });
+  const posthume = demandeOuverte("succession");
+  if (posthume) terminer(posthume, [], true);
+  await annonceChat(echapper(texte));
+  annoncer("lakourLoups.bailli", [{ acteurId: "", comment: "abolie", de: mortId }]);
+}
+
+// Les bâtiments brûlés par l'Incendiaire, au matin : détruits pour toujours, leur occupant devient Chemineau. -> [texte] (annonces)
+async function brulerLesBatiments(incendies = []) {
+  const textes = [];
+  for (const x of incendies) {
+    const texte = t("LAKOUR_LOUPS.Village.Incendie", { batiment: nomDuBatiment(x.batiment), nom: nomDe(x.occupant) });
+    await modifierEtat(e => {
+      L.detruire(e, [x.batiment]);
+      L.inscrire(e, { type: "village", quoi: "incendie", acteurId: x.occupant, cle: x.batiment });
+      return e;
+    });
+    annoncer("lakourLoups.village", [{ quoi: "incendie", acteurId: x.occupant, cle: x.batiment }]);
+    textes.push(texte);
+    if (x.loup) textes.push(t("LAKOUR_LOUPS.Village.IncendieProie", { nom: nomDe(x.occupant), loup: nomDe(x.loup) }));
+  }
+  return textes;
+}
+
+// Le Prévôt : chaque bâtiment libéré (etat.village.attente), l'un après l'autre, quand toutes les morts de la nuit sont tombées. Il
+// choisit un Chemineau vivant (ou passe) ; le Chemineau accepte (ou refuse). Sans Prévôt vivant (ou sans sagesse), sans Chemineau,
+// le bâtiment reste vide. Une à la fois, sans bloquer qui l'appelle (comme la succession du Bailli).
+let vacances = Promise.resolve();
+function suivreVacances() {
+  if (mortsDeLaNuit || !L.normaliserVillage(lireEtat().village).attente.length) return vacances;
+  vacances = vacances.then(menerVacances).catch(e => console.warn(`${ID} | logements du Prévôt`, e));
+  return vacances;
+}
+// Pour les essais et les outils qui doivent attendre les logements en cours.
+export const attendreVacances = () => vacances;
+async function menerVacances() {
+  for (let i = 0; i < 20; i++) {
+    const avant = lireEtat();
+    const cle = L.normaliserVillage(avant.village).attente[0];
+    if (!cle || !avant.partie || avant.vainqueur || avant.phase === "fin") return;
+    const prevot = L.porteur(avant, "prevote", villageoisAPlat());
+    const sans = L.chemineaux(avant, villageoisAPlat());
+    const batiment = nomDuBatiment(cle), personnalite = nomDePersonnalite(L.personnaliteDuBatiment(cle));
+    let choisi = "", accepte = false;
+    if (prevot && sans.length && !L.occupant(avant, cle)) {
+      [choisi = ""] = await demandeLibre({ acteurId: prevot, invite: t("LAKOUR_LOUPS.Village.InvitePrevot", { batiment, personnalite }), candidats: sans, nombre: 1, objet: "prevot" });
+      if (choisi) {
+        const [oui] = await demandeLibre({ acteurId: choisi, invite: t("LAKOUR_LOUPS.Village.InviteLogement", { batiment, personnalite, nom: nomDe(prevot) }),
+          candidats: [choisi], nombre: 1, objet: "logement" });
+        accepte = oui === choisi;
+      }
+    }
+    let fait = false;
+    await modifierEtat(e => {
+      if (e.partie !== avant.partie) return e;
+      const vivants = villageoisAPlat();
+      fait = accepte && L.porteur(e, "prevote", vivants) === prevot && L.chemineaux(e, vivants).includes(choisi) && !L.occupant(e, cle)
+        && !L.normaliserVillage(e.village).detruits.includes(cle);
+      if (fait) L.installer(e, cle, choisi);
+      else L.sortirDeLAttente(e, cle);
+      return e;
+    });
+    if (fait) {
+      await annoncerAuVillage(t("LAKOUR_LOUPS.Village.Installation", { prevot: nomDe(prevot), nom: nomDe(choisi), batiment, personnalite }),
+        { quoi: "installation", acteurId: choisi, cle, ids: [prevot] });
+    } else if (choisi) {
+      await annoncerAuVillage(t("LAKOUR_LOUPS.Village.Refus", { nom: nomDe(choisi), batiment }), { quoi: "refus", acteurId: choisi, cle });
+    } else if (prevot && sans.length) {
+      await annoncerAuVillage(t("LAKOUR_LOUPS.Village.Vide", { batiment, prevot: nomDe(prevot) }));
+    }
+    await sceller();
+  }
+}
+
 // ------------------------------------------------------------------ le Glas du deuil (logique/deuil.mjs)
 // Un exécuté par le vote : innocent (hors meute), le glas sonne — public et vague (chat, Registre, hook lakourLoups.deuil :
 // { compte } seulement) ; chaque loup vivant apprend en secret, dans son carnet, le pouvoir que la meute vient de gagner.
@@ -1465,6 +1646,7 @@ function recitDeLaFete(etat) {
 // Ce que fait un pouvoir de jour : la description de l'objet rôle, métier ou bâtiment, en texte brut (infobulles).
 function descriptionDuPouvoir(pouvoir, acteur) {
   const source = L.POUVOIRS_JOUR[pouvoir]?.source;
+  if (source === "tenure") return t(`LAKOUR_LOUPS.Village.Personnalites.${L.personnaliteDuBatiment(pouvoir)}.Aide`);
   const objet = source === "metier" ? metierDe(acteur) : source === "role" ? roleDe(acteur)
     : (lirePublic().batiments ?? []).map(u => { try { return fromUuidSync(u); } catch { return null; } }).find(d => d?.system?.cle === pouvoir);
   return texteBrut(objet?.system?.description);
@@ -1661,8 +1843,12 @@ export const api = {
   // tirage des rôles est alors contraint (distribuerTablee : l'ombre des deux côtés de la table, une lanterne chez un humain…),
   // le Glas final posé d'office (glasTablee) s'il n'est pas donné, et etat.petiteTablee (public) l'annonce. Jamais dans une
   // Nuit de la Saint-Martin.
+  // village (Le Pacte, étape 4, logique/personnalites.mjs) : la variante « Le Village » — true, false, ou non précisée : le réglage
+  // monde « leVillage » (nouvellePartie y retient le dernier choix explicite du MJ). Des bâtiments confiés publiquement à des joueurs
+  // (proposerLeVillage, au hasard de la graine ; le narrateur les change avant la première nuit : api.installer), annoncés ; les
+  // autres sont des Chemineaux. Jamais dans une Nuit de la Saint-Martin ni à la petite tablée.
   async distribuer({ roles = [], metiers = [], joueurs = [], compagnons = [], maisons = [], graine, composition = "", batiments = [], peste = false, glas = 0,
-    format = "", autel = [], fete, tablee } = {}) {
+    format = "", autel = [], fete, tablee, village } = {}) {
     exigerMJ();
     const cleFete = format === L.FORMAT_SAINT_MARTIN ? "" : feteVoulue(fete, lireEtat().fete?.cle);
     // Une Nuit de la Saint-Martin n'est jamais une petite tablée, et ne touche pas au réglage (il se souvient du dernier choix ordinaire).
@@ -1670,6 +1856,7 @@ export const api = {
     const tableeVoulue = court ? undefined : tablee ?? (await compositionDeTablee(composition) ? true : undefined);
     const enTablee = !court && (tableeVoulue ?? Boolean(lireReglage("petiteTablee", false)));
     if (tableeVoulue !== undefined && tableeVoulue !== Boolean(lireReglage("petiteTablee", false))) await game.settings.set(ID, "petiteTablee", tableeVoulue);
+    const enVillage = !court && !enTablee && (typeof village === "boolean" ? village : Boolean(lireReglage("leVillage", false)));
     // Les secrets de la partie se scellent avec le coffre du MJ IA : sans lui, ils ne survivraient pas à ce navigateur.
     if (!coffreDisponible()) throw new Error(t("LAKOUR_LOUPS.Erreurs.SansCoffre"));
     const estPlaceCompagnon = id => { const a = game.actors.get(id); return a?.type === "villageois" && estCompagnon(a); };
@@ -1795,6 +1982,8 @@ export const api = {
     }
     // Les villageois en jeu vus avec leurs fiches NEUVES (les secrets du MJ ne les ont pas encore).
     const enJeu = tousLesVillageois().filter(a => sortie.some(s => s.acteurId === a.id)).map(a => aPlat(a, fiches));
+    // Le Village : les bâtiments proposés pour cette table, confiés au hasard (public).
+    const tenuresDuVillage = enVillage ? L.distribuerLeVillage(L.ordreDesPlaces(enJeu), { graine }) : {};
     const etat = await modifierEtat(() => {
       const e = L.etatInitial();
       e.partie = foundry.utils.randomID();
@@ -1809,6 +1998,8 @@ export const api = {
       e.format = court ? L.FORMAT_SAINT_MARTIN : "";
       e.autel = court ? [...autel] : [];
       e.bailli = L.bailliInitial(!court && lireReglage("bailli", true));
+      // Le Village : sans métairie distribuée, pas de Métayer pour désigner le Bailli, donc pas de Bailli.
+      if (enVillage && !Object.keys(tenuresDuVillage).some(L.estMetairie)) e.bailli = L.bailliInitial(false);
       e.souffle = L.souffleInitial(lireReglage("dernierSouffle", true));
       e.presage = L.presageInitial(!court && lireReglage("almanach", false));
       e.passage = L.passageInitial(lireReglage("gensDePassage", true));
@@ -1828,11 +2019,16 @@ export const api = {
       e.ambigus = { ...L.ambigusInitial(), bateleur, commenceParLeJour: L.commenceParLeJour(paquet),
         groupes: paquet.includes(L.CLE_ILLUMINE) ? L.partagerLeVillage(enJeu) : null };
       e.ambigusSecret = { ...L.ambigusSecretInitial(), centre };
+      // Le Pacte, étape 4 (logique/personnalites.mjs) : la variante « Le Village », ses bâtiments tenus (publics).
+      e.village = L.villageInitial(enVillage);
+      e.tenures = { ...tenuresDuVillage };
       return L.journaliser(e, t("LAKOUR_LOUPS.Journal.Distribution", { n: sortie.length }));
     }, { sansSecrets: true });   // une partie neuve : elle ne doit rien aux secrets d'avant
     for (const s of sortie) await envoyerRole(game.actors.get(s.acteurId));
     // Les rôles PUBLICS dès la distribution (role.public) : retournés face visible, devant tous.
     await revelerLesRolesPublics(sortie.map(s => s.acteurId));
+    // Le Village : les bâtiments confiés, devant tous (jetons « rôle visible »), et les Chemineaux.
+    if (enVillage) await annoncerAuVillage(texteDuVillage(lireEtat()), { quoi: "distribution", ids: Object.values(lireEtat().tenures).filter(Boolean) });
     // Le Pacte, étape 3b : ce que la table voit de la mise en place (cartes du Bateleur, jour du Feu follet, bords de l'Illuminé).
     for (const texte of annoncesDesAmbigus(etat)) {
       await modifierEtat(e => L.journaliser(e, texte));
@@ -1917,8 +2113,11 @@ export const api = {
   // Les partis de la partie précédente (départ, exil : etat.partis) ne sont pas repris : leurs villageois quittent le village.
   // fete : la veillée de fête (logique/fetes.mjs ; "" : aucune) ; non précisée : le réglage « veilleeDeFete », sinon celle de la
   // partie précédente (distribuer). Le résumé la porte (publique, comme son annonce).
+  // village (Le Pacte, étape 4) : la variante « Le Village » (true, false ; non précisée : le réglage « leVillage ») ; le générateur peut
+  // alors tirer ses rôles (l'Incendiaire). Une composition choisie qui contient l'Incendiaire la demande d'office (sans elle, il
+  // n'aurait rien à brûler). Le résumé la porte (publique, comme son annonce).
   async nouvellePartie({ memesJoueurs = true, joueurs = null, compagnons: ia = null, composition = "", roles = [], niveau = "", graine, peste, glas = 0,
-    format, fete } = {}) {
+    format, fete, village } = {}) {
     exigerMJ();
     await consignerComposition();
     const avant = lireEtat();
@@ -1952,9 +2151,13 @@ export const api = {
       niv = "classique";
     }
     const equilibreOk = Object.keys(contenu.equilibre.roles ?? {}).length > 0 && total >= 4;
-    const genere = inclure => L.composer(total, contenu.equilibre, { niveau: niv, inclure, historique, graine });
-    let compo;
     const court = format === L.FORMAT_SAINT_MARTIN;
+    // Le Village : jamais dans une Nuit de la Saint-Martin ni à la petite tablée. Le choix explicite du MJ est retenu par le réglage
+    // (comme la Petite tablée) : « Rejouer » le reprend.
+    if (typeof village === "boolean" && village !== Boolean(lireReglage("leVillage", false))) await game.settings.set(ID, "leVillage", village);
+    let enVillage = !court && niv !== L.NIVEAU_PETITE_TABLEE && (typeof village === "boolean" ? village : Boolean(lireReglage("leVillage", false)));
+    const genere = inclure => L.composer(total, contenu.equilibre, { niveau: niv, inclure, historique, graine, village: enVillage });
+    let compo;
     // La peste noire : choisie (true), refusée (false), ou tirée au sort quand la composition se génère d'elle-même.
     const genereeSeule = !court && !roles.length && !(composition && contenu.compositions[composition]) && equilibreOk;
     const enPeste = !court && (peste === true || (peste === undefined && genereeSeule && L.tirerPeste({ graine, chance: api.chancePeste() })));
@@ -1970,7 +2173,7 @@ export const api = {
       const c = contenu.compositions[composition];
       compo = { cle: composition, libelle: c.libelle ?? composition, niveau: c.niveau ?? niv, roles: enPeste ? L.sansMeute(c.roles, contenu.equilibre) : [...c.roles], batiments: [...(c.batiments ?? [])] };
     } else if (equilibreOk) {
-      const g = L.composer(total, contenu.equilibre, { niveau: niv, historique, graine, peste: enPeste });
+      const g = L.composer(total, contenu.equilibre, { niveau: niv, historique, graine, peste: enPeste, village: enVillage });
       compo = { cle: "generee", libelle: t("LAKOUR_LOUPS.NouvellePartie.Generee", { verdict: g.verdict }), niveau: niv, roles: g.roles, batiments: g.batiments, somme: g.somme, verdict: g.verdict };
     } else {
       compo = { cle: avant.composition || "reprise", libelle: t("LAKOUR_LOUPS.NouvellePartie.Reprise"), niveau: niv, roles: precedents, batiments: avant.batimentsCles ?? [] };
@@ -1986,6 +2189,9 @@ export const api = {
     // La Petite tablée : le niveau choisi, ou une composition prête de ce niveau (jamais une Nuit de la Saint-Martin).
     const tablee = !court && (niv === L.NIVEAU_PETITE_TABLEE || compo.niveau === L.NIVEAU_PETITE_TABLEE);
     if (tablee && !compo.libelle.includes(t("LAKOUR_LOUPS.Tablee.Nom"))) compo.libelle = `${t("LAKOUR_LOUPS.Tablee.Nom")} — ${compo.libelle}`;
+    // L'Incendiaire au paquet demande Le Village (hors petite tablée et Saint-Martin, où il ne peut pas venir).
+    if (!court && !tablee && cles.includes(L.CLE_INCENDIAIRE)) enVillage = true;
+    if (tablee) enVillage = false;
     const uuidsRoles = cles.map(c => contenu.roles.get(c));
     if (uuidsRoles.some(u => !u)) throw new Error(t("LAKOUR_LOUPS.Erreurs.RolesInconnus", { roles: cles.filter((_, i) => !uuidsRoles[i]).join(", ") }));
     const metiers = contenu.metiers.length ? Array.from({ length: total }, (_, i) => contenu.metiers[i % contenu.metiers.length]) : [];
@@ -1995,13 +2201,13 @@ export const api = {
     annulerDemandes();
     if (!memesJoueurs) for (const a of anciens.filter(x => x.system.joueur && !humains.includes(x.system.joueur))) await a.delete();
     const sortie = await api.distribuer({ roles: uuidsRoles, metiers, joueurs: humains, compagnons, maisons: L.maisonsDuVillage(total),
-      graine, composition: compo.cle, batiments, peste: enPeste, glas, ...(court ? { format: L.FORMAT_SAINT_MARTIN, autel: compo.autel } : { tablee }),
+      graine, composition: compo.cle, batiments, peste: enPeste, glas, ...(court ? { format: L.FORMAT_SAINT_MARTIN, autel: compo.autel } : { tablee, village: enVillage }),
       ...(typeof fete === "string" ? { fete } : {}) });
     // La composition n'entre au réglage monde « historique » (livré à tous) qu'à la fin de la partie : en attendant, le MJ la garde.
     await modifierEtat(e => { e.aConsigner = { roles: [...cles], batiments: [...compo.batiments], niveau: compo.niveau, composition: compo.cle, quand: Date.now() }; return e; });
     const partie = lireEtat().partie;
     const resume = {
-      partie, fete: lireEtat().fete.cle, tablee: lireEtat().petiteTablee, glas: lireEtat().glas,
+      partie, fete: lireEtat().fete.cle, tablee: lireEtat().petiteTablee, glas: lireEtat().glas, village: lireEtat().village.actif,
       joueurs: sortie.filter(x => !x.compagnon).map(x => ({ userId: x.userId, nom: game.users.get(x.userId)?.name ?? "", acteurId: x.acteurId })),
       compagnons: sortie.filter(x => x.compagnon).map(x => ({ nom: game.actors.get(x.acteurId)?.name ?? "", acteurId: x.acteurId })),
       composition: { cle: compo.cle, libelle: compo.libelle, niveau: compo.niveau, roles: [...cles], batiments: [...compo.batiments],
@@ -2306,6 +2512,9 @@ export const api = {
       sagessePerdue: L.sagesseEstPerdue(avant),
       // Le Pacte, étape 3b : la carte jouée cette nuit par un Bateleur se résout avec son rôle.
       emprunts: L.empruntsDeLaNuit(avant, tour),
+      // Le Village (logique/personnalites.mjs) : le Cabaretier immunisé, les Chemineaux, le bâtiment de chacun (l'Incendiaire).
+      immunises: L.immunisesDeLaNuit(avant, villageoisAPlat()), chemineaux: L.chemineaux(avant, villageoisAPlat()),
+      batimentsTenus: Object.fromEntries(villageoisAPlat().map(v => [v.id, L.batimentDe(avant, v.id)]).filter(([, cle]) => cle)),
       nomsApparents: avant.nuit.actions.some(a => roleDe(game.actors.get(a.acteurId))?.system.effet === "voir-role") ? await nomsApparents(contenu) : {}
     });
     // Une fiole déjà vide n'a rien versé : l'usage décompté par noterAction est rendu, AVANT les échanges de rôles de la nuit
@@ -2330,6 +2539,9 @@ export const api = {
       } else if (c.type === "silence") await api.reduireAuSilence(c.acteurId);
       else if (c.type === "echange") await api.echangerRoles(c.a, c.b);
     }
+    // La Fournière (Le Village) entrouvre les yeux quand la meute se rendort : ce qu'elle entrevoit (les loups du début de la nuit)
+    // lui est écrit au carnet, si elle voit le matin.
+    const apercus = L.apercusDeLaFourniere({ etat: avant, villageois: villageoisAPlat(), chance: Number(lireReglage("chanceFourniere", L.CHANCE_FOURNIERE)) });
     // Le Bailli tombé cette nuit ne remet le sceau qu'une fois toutes les morts de la nuit tombées (fin de resoudreNuit).
     mortsDeLaNuit = true;
     try { for (const d of r.deces) await api.eliminer(d.acteurId, { cause: d.cause }); } finally { mortsDeLaNuit = false; }
@@ -2356,9 +2568,11 @@ export const api = {
     // devient simple villageois.
     const cartesRetirees = await retirerLesCartesJouees(tour);
     if (tour === 1) await eteindreLesFeuxFollets();
+    // Le Village : les bâtiments brûlés par l'Incendiaire tombent en cendres (leur occupant devient Chemineau).
+    const incendies = await brulerLesBatiments(r.incendies ?? []);
     const oies = L.oiesQuiCacardent(lireEtat(), villageoisAPlat());
     if (oies.length) await modifierEtat(e => { for (const id of oies) L.inscrire(e, { type: "pacte", quoi: "oies", acteurId: id }); return e; });
-    const annoncesDuPacte = [...oies.map(id => t("LAKOUR_LOUPS.Pacte.Oies", { nom: nomDe(id) })), ...(plume ? [t("LAKOUR_LOUPS.Pacte.PlumeMatin", { nom: nomDe(plume) })] : []),
+    const annoncesDuPacte = [...incendies, ...oies.map(id => t("LAKOUR_LOUPS.Pacte.Oies", { nom: nomDe(id) })), ...(plume ? [t("LAKOUR_LOUPS.Pacte.PlumeMatin", { nom: nomDe(plume) })] : []),
       ...cartesRetirees];
     const neige = await faireNeiger();
     const nomActeur = id => game.actors.get(id)?.name ?? id;
@@ -2369,6 +2583,9 @@ export const api = {
       revelerALaMort: reglage("revelerALaMort") });
     const messages = [...r.messages.filter(m => m.destinataire !== "mj"), ...aube.prives, ...murmure.filter(m => m.destinataire !== "mj")]
       .map(m => ({ acteurId: m.destinataire, texte: texteMessage(m) }));
+    for (const x of apercus) {
+      if (game.actors.get(x.acteurId)?.system.vivant) messages.push({ acteurId: x.acteurId, texte: t("LAKOUR_LOUPS.Village.Fourniere", { nom: nomDe(x.loup) }) });
+    }
     const annonces = [...(neige ? [neige] : []), ...[...r.annonces, ...aube.annonces].map(texteMessage)];
     annonces.unshift(...annoncesDuPacte);   // les oies et la plume, juste après les morts
     const narration = [
@@ -2410,6 +2627,7 @@ export const api = {
     annoncer("lakourLoups.aube", [{ tour, morts: r.morts, annonces }]);
     suivreGestes();
     suivreSuccession();
+    suivreVacances();
     const presage = await tirerLePresage(r.bilan);
     await sceller();   // la nuit est finie : ses choix entrent au coffre
     return {
@@ -2433,6 +2651,10 @@ export const api = {
       if (!p.ok) throw new Error(t(`LAKOUR_LOUPS.Bailli.Refus.${p.raison}`));
     }
     let ids = candidats ?? tousLesVillageois().filter(a => a.system.vivant).map(a => a.id);
+    // Le Village (logique/personnalites.mjs) : le Cabaretier immunisé n'est jamais candidat d'un vote d'exécution ; le Bailli se
+    // désigne parmi les Métayers vivants.
+    ids = L.candidatsDuVillage(lireEtat(), ids, objet);
+    if (objet === "bailli" && L.villageActif(lireEtat())) ids = ids.filter(id => L.candidatsElection(lireEtat(), villageoisAPlat()).includes(id));
     // Le Banc des accusés (variante) : un vote d'exécution juge le prochain accusé, et lui seul ; sans accusé, pas de vote.
     let banc = "";
     if (objet === "execution" && lireEtat().banc.actif) {
@@ -2455,6 +2677,7 @@ export const api = {
     const etat = await modifierEtat(e => {
       const x = L.ouvrirVote(e, { candidats: ids, duree: ms, double, majoriteAbsolue: gibet, objet, banc });
       if (banc) L.noterJugement(x, banc);
+      if (x.village.cabaret) x.village = { ...x.village, cabaret: null };   // le vote public du Cabaretier : celui du vote ouvert
       return L.journaliser(x, banc ? t("LAKOUR_LOUPS.Banc.Jugement", { nom: game.actors.get(banc)?.name ?? "" })
         : t({ chapelle: "LAKOUR_LOUPS.Journal.VoteChapelle", bailli: "LAKOUR_LOUPS.Journal.VoteBailli", exil: "LAKOUR_LOUPS.Passage.VoteExil" }[objet] ?? "LAKOUR_LOUPS.Journal.VoteOuvert"));
     });
@@ -2530,6 +2753,10 @@ export const api = {
     if (resultat.departage?.enAttente) resultat = await departageEnAttente(resultat);
     // Le Loup déguisé le plus désigné sans être condamné perd son masque (logique/jour.mjs, masquesQuiTombent).
     for (const id of L.masquesQuiTombent({ resultat, villageois: villageoisAPlat() })) await tomberLeMasque(id);
+    // Le Village : le Cabaretier qui a voté contre un condamné perd son immunité ; le Hobereau peut gracier (les condamnés le
+    // supplient, l'exécution attend sa réponse).
+    await perdreLImmunite(resultat);
+    proposerLaGrace(resultat);
     // La Chambrière : la demande part aussitôt (une fenêtre courte) ; l'exécution (eliminer) attend sa réponse.
     proposerLeDevouement(resultat);
     if (resultat.objet === "bailli") {
@@ -2553,6 +2780,12 @@ export const api = {
     exigerMJ();
     const acteur = acteurOuErreur(acteurId);
     if (!acteur.system.vivant) return [];
+    // Le Village : le Hobereau a gracié ce condamné (à sa demande) — il n'est pas éliminé, sa carte reste cachée.
+    if (cause === "vote" && await graceDuHobereau(acteurId)) {
+      await suivreSecondVote();
+      await sceller();
+      return [];
+    }
     // L'Innocent condamné par le vote n'en meurt pas : il est gracié (logique/pacte.mjs).
     if (L.graceDue(lireEtat(), { acteurId, role: roleDe(acteur)?.system, cause })) return gracierLInnocent(acteur);
     // La Chambrière (logique/ambigus.mjs) : condamné par le vote, avant que sa carte soit retournée, elle peut la prendre ; la
@@ -2565,8 +2798,11 @@ export const api = {
     const visible = causePublique(cause);
     // Le rôle ne rejoint le document qu'au moment où il devient public (mort révélée).
     if (montrer) await revelerPubliquement(acteurId, { marquer: false, mort: true });
+    // Le Village : un Métayer qui meurt (le dernier ? la charge de Bailli tombe avec lui).
+    const etaitMetayer = L.estMetairie(L.batimentDe(lireEtat(), acteurId));
     await acteur.update({ "system.vivant": false, ...(montrer ? { "system.revele": true } : {}) });
     await modifierEtat(e => L.journaliser(L.ajouterMort(e, { acteurId, cause }), t("LAKOUR_LOUPS.Journal.Mort", { nom: acteur.name, cause: libelleCause(visible) })));
+    await abolirSansMetayer(acteurId, etaitMetayer);
     // Un geste fait par le MJ (Braconnière : il emporte à sa place) : la demande au mourant se ferme (logique/derniers-gestes.mjs).
     fermerGestes(cause);
     // La Chambrière se dévoile et prend sa carte : rien de ce que sa mort aurait déclenché par sa carte ne joue (geste, sagesse).
@@ -2597,6 +2833,7 @@ export const api = {
     if (cause === "vote") await suivreSecondVote();
     // Le Bailli mort remet le sceau, le mourant qui porte un geste le fait (sans attendre ici : les demandes courent pendant que
     // la partie continue).
+    suivreVacances();   // Le Village : ses bâtiments libérés attendent le Prévôt
     suivreGestes();
     suivreSuccession();
     diffuserVus();   // ce mort voit peut-être tout, désormais
@@ -2712,6 +2949,8 @@ export const api = {
       if (!x.ok) throw new Error(libelleRefus(x.raison, L.POUVOIRS_JOUR[pouvoir]));
       annonces = x.annonces.map(texteMessage);
       let etat = x.etat;
+      // Le Village : le pouvoir public d'une personnalité entre au Registre.
+      if (x.village) L.inscrire(etat, { type: "village", ...x.village });
       for (const a of annonces) etat = L.journaliser(etat, a);
       return { ...x, etat };
     });
@@ -2750,6 +2989,12 @@ export const api = {
       return { pouvoir, annonces };
     }
     annoncer("lakourLoups.jour", [{ acteurId, pouvoir, cibles, annonces }], [publicInfos]);
+    if (r.village) annoncer("lakourLoups.village", [{ ...r.village }]);
+    // Le rasoir du Perruquier : sa victime tombe (cause « rasoir »), puis lui-même s'il s'est trompé ; la victoire est vérifiée.
+    if (r.morts?.length) {
+      for (const m of r.morts) await api.eliminer(m.acteurId, { cause: m.cause });
+      await api.verifierVictoire();
+    }
     await sceller();
     return { pouvoir, annonces };
   },
@@ -3112,6 +3357,66 @@ export const api = {
     await modifierEtat(e => (acteurId ? L.tenir(e, cle, acteurId) : L.liberer(e, cle)));
     await sceller();
     return api.tenures();
+  },
+
+  // ---------------------------------------------------------------- le Pacte, étape 4 : la variante « Le Village » (public)
+  // -> { actif, batiments: [{ cle, nom, personnalite, titre, aide, pouvoir: "permanent" | "unique", acteurId, occupant, disponible }],
+  //      detruits: [{ cle, nom }], chemineaux: [{ acteurId, nom }], regent: null | { tour, ids, noms, par }, graces, cabaret }
+  // disponible : le pouvoir est entre les mains de son occupant (ni servi, ni perdu, ni éteint avec la sagesse).
+  village() {
+    const e = lirePublic();
+    const v = L.normaliserVillage(e.village);
+    const villageois = villageoisAPlat();
+    const cles = Object.keys(L.BATIMENTS_DU_VILLAGE).filter(cle => cle in e.tenures);
+    return foundry.utils.deepClone({
+      actif: v.actif,
+      batiments: cles.map(cle => {
+        const id = L.occupant(e, cle);
+        const p = L.personnaliteDuBatiment(cle);
+        return { cle, nom: nomDuBatiment(cle), personnalite: p, titre: nomDePersonnalite(p), aide: t(`LAKOUR_LOUPS.Village.Personnalites.${p}.Aide`),
+          pouvoir: L.BATIMENTS_DU_VILLAGE[cle].pouvoir, acteurId: id, occupant: id ? nomDe(id) : "", disponible: Boolean(id) && L.pouvoirIntact(e, cle, id) };
+      }),
+      detruits: v.detruits.map(cle => ({ cle, nom: nomDuBatiment(cle) })),
+      chemineaux: L.chemineaux(e, villageois).map(id => ({ acteurId: id, nom: nomDe(id) })),
+      regent: v.regent ? { ...v.regent, noms: nomsDe(v.regent.ids) } : null, graces: v.graces, cabaret: v.cabaret
+    });
+  },
+  // La personnalité d'un villageois (public) : { cle (bâtiment, "" pour un Chemineau), personnalite, titre, aide } ; null hors de la variante.
+  personnalite(acteurId) {
+    const e = lirePublic();
+    const p = L.personnaliteDe(e, acteurId);
+    if (!p) return null;
+    return { cle: L.batimentDe(e, acteurId), personnalite: p, titre: nomDePersonnalite(p), aide: t(`LAKOUR_LOUPS.Village.Personnalites.${p}.Aide`),
+      batiment: L.batimentDe(e, acteurId) ? nomDuBatiment(L.batimentDe(e, acteurId)) : "" };
+  },
+  // Le narrateur confie un bâtiment du village à un vivant (avant la première nuit : changer la proposition ; ensuite : une correction).
+  // Celui qui le reçoit rend le sien (s'il en tenait un) à l'ancien occupant : un échange ; acteurId "" : le bâtiment devient vacant
+  // (et son occupant, Chemineau). Le pouvoir est rétabli pour le nouvel occupant. Annoncé à tous. -> api.village()
+  async installer(cle, acteurId = "") {
+    exigerMJ();
+    const avant = lireEtat();
+    if (!L.villageActif(avant) || !L.estDuVillage(cle)) throw new Error(t("LAKOUR_LOUPS.Tenures.Refus.village"));
+    if (L.normaliserVillage(avant.village).detruits.includes(cle)) throw new Error(t("LAKOUR_LOUPS.Tenures.Refus.detruit"));
+    if (acteurId) {
+      const a = acteurOuErreur(acteurId);
+      if (!a.system.vivant) throw new Error(t("LAKOUR_LOUPS.Tenures.Refus.mort", { nom: a.name }));
+    }
+    const ancien = L.occupant(avant, cle);
+    const sien = acteurId ? L.batimentDe(avant, acteurId) : "";
+    if (ancien === (acteurId || "")) return api.village();
+    await modifierEtat(e => {
+      L.installer(e, cle, acteurId || null);
+      if (sien && sien !== cle) L.installer(e, sien, ancien || null);
+      L.inscrire(e, { type: "village", quoi: "changement", acteurId: acteurId || ancien, cle });
+      return e;
+    });
+    const texte = acteurId
+      ? t("LAKOUR_LOUPS.Village.Change", { nom: nomDe(acteurId), batiment: nomDuBatiment(cle), personnalite: nomDePersonnalite(L.personnaliteDuBatiment(cle)) })
+      : t("LAKOUR_LOUPS.Village.Libere", { nom: nomDe(ancien), batiment: nomDuBatiment(cle) });
+    await annoncerAuVillage(texte);
+    annoncer("lakourLoups.village", [{ quoi: "changement", acteurId: acteurId || ancien, cle }]);
+    await sceller();
+    return api.village();
   },
   // Les événements en cours ou à venir (logique/evenements.mjs ; public), le présage de l'Almanach compris :
   // [{ cle, type, quand, tire, debut, fin, source?, actif }] (actif : il vaut à ce tour, à cette phase).

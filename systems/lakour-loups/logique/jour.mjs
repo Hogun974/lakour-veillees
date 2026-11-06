@@ -8,6 +8,8 @@
 //   annonces : [msg] publiques (tout le village) ; prives : [msg] pour un joueur ; msg = { destinataire, cle, texte, donnees }
 //   changements : [{ type: "usage", acteurId, objet: "metier" | "role" } | { type: "revele", acteurId }
 //                  | { type: "silence", acteurId, valeur }] que Foundry applique aux documents.
+//   Le Village (personnalites.mjs) : + morts ([{ acteurId, cause }] : le rasoir du Perruquier, que Foundry applique), village
+//   ({ quoi, acteurId, ids } : l'entrée du Registre).
 //   villageois « à plat » : { id, nom, vivant, revele, camp, maison, silence, role: { cle, usages }, metier: { cle, usages } }
 //   batiments : clés des bâtiments en jeu (etat.batimentsCles).
 //
@@ -30,6 +32,8 @@ import { roleEmprunte, normaliserAmbigusSecret, candidatsDuCharme, CLE_CHARMES, 
   EFFET_LOUP_PALE } from "./ambigus.mjs";
 import { rendreLaPlume, sagesseEstPerdue, pouvoirPerdu, furetAveugle, candidatsDeLaPlume, normaliserPacte, normaliserPacteSecret,
   EFFET_FURET, EFFET_PIE, CLE_GREFFIER } from "./pacte.mjs";
+import { occupant, raisonDuPouvoir, marquerEpuise, retablir, batimentDe, estChemineau, cabaretierImmunise, candidatsDuVillageois,
+  candidatsDuRemegeux, candidatsDeLIncendiaire, normaliserVillage, EFFET_INCENDIAIRE, CIBLES_DU_REGENT } from "./personnalites.mjs";
 
 export const MATIN = ["aube", "jour"];             // « au matin », « au début d'un débat »
 export const JOURNEE = ["aube", "jour", "vote"];   // « pendant le jour »
@@ -45,6 +49,9 @@ export const LONGUEUR_MESSAGE = 200;    // caractères d'un mot porté par le Me
 // apresNuit : seulement le jour qui suit une nuit résolue ; narrateur : décidé par le village, appliqué par le MJ ;
 // texte : demande un texte ; mort : réservé aux morts ; revele : le rôle est révélé en l'utilisant ; usageDiffere : l'usage n'est
 // pas pris quand le pouvoir est annoncé, mais quand il sert (le Greffier bègue : à l'ouverture du second vote).
+// source « tenure » (Le Pacte, étape 4, personnalites.mjs) : le pouvoir d'un bâtiment de la variante « Le Village », qui appartient à
+// son occupant ACTUEL (occupant, tenures du socle) ; unique : une fois (l'usage rangé dans etat.village.epuises, avec l'occupant qui
+// l'a pris) ; ciblesMin : il peut en désigner moins que cibles (le Régent : un ou deux).
 export const POUVOIRS_JOUR = {
   forgeron: { source: "metier", cibles: 1, soiMeme: true, phases: JOURNEE },
   meuniere: { source: "metier", cibles: 0, phases: MATIN },
@@ -71,6 +78,13 @@ export const POUVOIRS_JOUR = {
   // Le Greffier bègue (Pacte, étape 3a) : une fois par partie, pendant un vote d'exécution ou juste après qu'il a désigné un condamné,
   // un signe secret au narrateur : un second vote d'exécution, sans débat, dès que les condamnés sont tombés. Il ne se révèle pas.
   [CLE_GREFFIER]: { source: "role", cibles: 0, phases: ["vote"], usageDiffere: true },
+  // Le Village (personnalites.mjs) : le Prieur (une carte montrée en secret), le Remégeux (un pouvoir unique rendu), le Régent
+  // (jusqu'à deux privés de vote, chaque jour, avant le vote), le Perruquier (son rasoir). Le Hobereau, le Prévôt et les Métayers
+  // agissent par des demandes (api.mjs), le Cabaretier et la Fournière d'eux-mêmes.
+  prieure: { source: "tenure", cibles: 1, soiMeme: false, phases: JOURNEE, unique: true },
+  masure: { source: "tenure", cibles: 1, soiMeme: false, phases: JOURNEE, unique: true },
+  ecole: { source: "tenure", cibles: CIBLES_DU_REGENT, ciblesMin: 1, soiMeme: false, phases: ["jour"] },
+  echoppe: { source: "tenure", cibles: 1, soiMeme: false, phases: JOURNEE, unique: true },
   taverne: { source: "batiment", cibles: 0, phases: JOURNEE },
   forge: { source: "batiment", cibles: 0, phases: JOURNEE },
   grange: { source: "batiment", cibles: 0, phases: JOURNEE },
@@ -84,7 +98,8 @@ const msg = (destinataire, cle, texte, donnees = {}) => ({ destinataire, cle: `L
 const vivant = v => Boolean(v) && v.vivant !== false;
 
 // ------------------------------------------------------------------ ce que possède un villageois
-export function pouvoirsPossedes(acteur, batiments = []) {
+// etat : pour les bâtiments tenus de la variante « Le Village » (l'occupant actuel en a le pouvoir).
+export function pouvoirsPossedes(acteur, batiments = [], etat = null) {
   const liste = [];
   if (!acteur) return liste;
   const m = acteur.metier?.cle;
@@ -92,8 +107,10 @@ export function pouvoirsPossedes(acteur, batiments = []) {
   const r = acteur.role?.cle;
   if (POUVOIRS_JOUR[r]?.source === "role") liste.push(r);
   for (const b of BATIMENTS_DES_JOUEURS) if (batiments.includes(b)) liste.push(b);
+  if (etat) for (const [cle, def] of Object.entries(POUVOIRS_JOUR)) if (def.source === "tenure" && occupant(etat, cle) === acteur.id) liste.push(cle);
   return liste;
 }
+const ciblesMin = def => def.ciblesMin ?? def.cibles;
 
 const effetsPour = (etat, type, nuit) => etat.jour.effets.filter(x => x.type === type && x.nuit === nuit);
 const dormeursTaverne = (etat, nuit) => [...new Set([...effetsPour(etat, "taverne", nuit), ...effetsPour(etat, "gite", nuit)].map(x => x.cible))];
@@ -113,6 +130,10 @@ export function candidatsDuPouvoir({ villageois = [], etat: e, acteurId = "", po
       const hier = effetsPour(etat, "asile", etat.tour).filter(x => !x.origine).map(x => x.cible);
       return vivants.filter(v => !hier.includes(v.id)).map(v => v.id);
     }
+    // Le Village : ni le Régent ni le Perruquier n'ont prise sur un Chemineau ; le Remégeux, sur ceux dont le pouvoir unique a servi.
+    case "ecole":
+    case "echoppe": return candidatsDuVillageois(etat, villageois, acteurId, { sansChemineaux: true });
+    case "masure": return candidatsDuRemegeux(etat, villageois, acteurId);
     default: return vivants.filter(v => def.soiMeme || v.id !== acteurId).map(v => v.id);
   }
 }
@@ -129,7 +150,7 @@ export function verifierPouvoir({ villageois = [], etat: e, acteurId = "", pouvo
   const acteur = villageois.find(v => v.id === acteurId) ?? null;
   if (def.source === "batiment" && !enJeu.includes(pouvoir)) return non("batiment");
   if (!def.narrateur) {
-    if (!acteur || !pouvoirsPossedes(acteur, enJeu).includes(pouvoir)) return non("absent");
+    if (!acteur || !pouvoirsPossedes(acteur, enJeu, etat).includes(pouvoir)) return non("absent");
   }
   if (!def.phases.includes(etat.phase)) return non("phase");
   if (!def.narrateur) {
@@ -138,6 +159,11 @@ export function verifierPouvoir({ villageois = [], etat: e, acteurId = "", pouvo
     if (objet && Number(objet.usages?.max) > 0 && Number(objet.usages?.restant) <= 0) return non("usage");
     // Le village a perdu sa sagesse (l'Aïeul, pacte.mjs) : plus aucun métier, plus aucun pouvoir de rôle du Village.
     if (sagesseEstPerdue(etat) && (def.source === "metier" || (def.source === "role" && pouvoirPerdu(true, acteur.role)))) return non("sagesse");
+    // Le Village (personnalites.mjs) : le bâtiment entre ses mains, la sagesse du village, le pouvoir unique pas encore servi par lui.
+    if (def.source === "tenure") {
+      const raison = raisonDuPouvoir(etat, pouvoir, acteurId);
+      if (raison) return non(raison);
+    }
   }
   if (def.apresNuit && !(etat.tour >= 1 && etat.nuitResolue === etat.tour)) return non("nuit");
   // La neige de la Veillée d'hiver a recouvert les traces : ces pouvoirs du matin attendent un autre jour (l'usage n'est pas pris).
@@ -197,11 +223,15 @@ export function verifierPouvoir({ villageois = [], etat: e, acteurId = "", pouvo
     case "eclusiere":
       if (effetsPour(etat, "ecluse", nuit).length) return non("deja");
       break;
+    case "ecole":
+      // Le Régent : une fois par jour, avant le vote (au débat).
+      if (normaliserVillage(etat.village).regent?.tour === etat.tour) return non("deja");
+      break;
   }
 
   const candidats = candidatsDuPouvoir({ villageois, etat, acteurId, pouvoir });
   const choisis = [...new Set(cibles.filter(Boolean))];
-  if (choisis.length !== def.cibles || choisis.some(c => !candidats.includes(c))) return { ...non("cibles"), candidats };
+  if (choisis.length > def.cibles || choisis.length < ciblesMin(def) || choisis.some(c => !candidats.includes(c))) return { ...non("cibles"), candidats };
   if (def.texte) {
     const n = compterMots(texte);
     if (!n || n > MOTS_DU_PUITS) return { ...non("texte"), candidats };
@@ -215,12 +245,12 @@ export function pouvoirsDe({ villageois = [], etat, acteurId, batiments } = {}) 
   const e = normaliserEtat(etat);
   const enJeu = batiments ?? e.batimentsCles;
   const acteur = villageois.find(v => v.id === acteurId);
-  return pouvoirsPossedes(acteur, enJeu).map(pouvoir => {
+  return pouvoirsPossedes(acteur, enJeu, e).map(pouvoir => {
     const def = POUVOIRS_JOUR[pouvoir];
     const candidats = candidatsDuPouvoir({ villageois, etat: e, acteurId, pouvoir });
     const essai = verifierPouvoir({ villageois, etat: e, acteurId, pouvoir, cibles: [], texte: def.texte ? "mot" : "", batiments: enJeu });
     let raison = essai.ok ? "" : essai.raison;
-    if (raison === "cibles") raison = candidats.length < def.cibles ? "personne" : "";
+    if (raison === "cibles") raison = candidats.length < ciblesMin(def) ? "personne" : "";
     return { pouvoir, source: def.source, cibles: def.cibles, soiMeme: Boolean(def.soiMeme), texte: Boolean(def.texte), candidats, possible: !raison, raison };
   });
 }
@@ -240,6 +270,8 @@ export function appliquerPouvoir({ villageois = [], etat: e, acteurId = "", pouv
   const poser = (type, cible = c ?? acteurId, origine = "") => etat.jour.effets.push({ type, acteurId, cible, nuit, ...(origine ? { origine } : {}) });
   if ((def.source === "metier" || def.source === "role") && !def.usageDiffere) sortie.changements.push({ type: "usage", acteurId, objet: def.source });
   if (def.revele) sortie.changements.push({ type: "revele", acteurId });
+  // Le Village : un pouvoir unique de bâtiment est servi, par cet occupant (rangé dans l'état public, pas dans un objet).
+  if (def.source === "tenure" && def.unique) marquerEpuise(etat, pouvoir, acteurId);
 
   switch (pouvoir) {
     case "forgeron":
@@ -370,6 +402,42 @@ export function appliquerPouvoir({ villageois = [], etat: e, acteurId = "", pouv
       sortie.prives.push(msg(acteurId, "GreffierSigne", "Votre signe est passé : un second vote suivra, sans débat, dès que le condamné sera tombé."));
       sortie.secondVote = true;
       break;
+    // ---------------- Le Village (personnalites.mjs) : des pouvoirs PUBLICS, comme leurs bâtiments.
+    case "prieure": {
+      // Le Prieur : le joueur désigné lui montre sa carte, en secret (la carte qu'il tient : celle que voit la table).
+      const role = parId.get(c)?.role?.nom || "?";
+      annonce("Confession", `${qui}, le Prieur, fait venir ${n} au prieuré : ${n} lui montre sa carte, en secret.`, { qui, nom: n });
+      sortie.prives.push(msg(acteurId, "ConfessionPrive", `${n} vous a montré sa carte : ${role}.`, { nom: n, role }));
+      sortie.village = { quoi: "prieur", acteurId, ids: [c] };
+      break;
+    }
+    case "masure": {
+      // Le Remégeux rend à ce joueur le pouvoir unique de son bâtiment, déjà servi.
+      const cle = batimentDe(etat, c);
+      retablir(etat, cle);
+      annonce("Remise", `${qui}, le Remégeux, remet d'aplomb ${n} : le pouvoir de son bâtiment lui est rendu, une fois de plus.`, { qui, nom: n });
+      sortie.village = { quoi: "remegeux", acteurId, ids: [c] };
+      break;
+    }
+    case "ecole": {
+      // Le Régent prive de vote, à ce tour, ceux qu'il a désignés (ils débattent encore).
+      const ids = [...new Set(cibles.filter(Boolean))];
+      etat.village = { ...normaliserVillage(etat.village), regent: { tour: etat.tour, ids, par: acteurId } };
+      const noms = ids.map(nom).join(", ");
+      annonce("Regent", `${qui}, le Régent, met au coin ${noms} : ils ne voteront pas aujourd'hui.`, { qui, noms });
+      sortie.village = { quoi: "regent", acteurId, ids };
+      break;
+    }
+    case "echoppe": {
+      // Le Perruquier tranche une gorge : un loup (camp actuel : un mordu en est un), il est félicité ; sinon, il paie de sa vie.
+      const loup = parId.get(c)?.camp === "meute";
+      annonce("Rasoir", `${qui}, le Perruquier, ouvre son rasoir sur ${n}.`, { qui, nom: n });
+      annonce(loup ? "RasoirLoup" : "RasoirInnocent", loup ? `${n} était un loup : le village félicite ${qui}.`
+        : `${n} n'était pas un loup : ${qui} paie sa méprise de sa vie.`, { qui, nom: n });
+      sortie.morts = [{ acteurId: c, cause: "rasoir" }, ...(loup ? [] : [{ acteurId, cause: "rasoir" }])];
+      sortie.village = { quoi: "perruquier", acteurId, ids: [c], loup };
+      break;
+    }
     case "conteuse":
       // La Conteuse n'est pas nommée : le pouvoir s'annonce sans dire qui le tient.
       etat.jour.conteuse = { tour: etat.tour, cible: c, jusqua: maintenant + DUREE_CONTEUSE };
@@ -460,6 +528,9 @@ export function loupsQuiChassent(villageois = [], e, tour) {
 // propose) : [] ici ; le Mâtin se désigne lui-même pour rejoindre la meute ; le Joueur de vielle, deux vivants pas encore charmés
 // (jamais lui) ; le Loup pâle, un loup vivant (jamais lui) ; les charmés n'ont rien à désigner ; le Bateleur qui joue une carte
 // cette nuit choisit selon le rôle de cette carte.
+// Le Pacte, étape 4 (personnalites.mjs) : la meute (et tout loup qui chasse, le Loup pâle compris) ne peut pas dévorer le
+// Cabaretier immunisé ; l'Incendiaire désigne un bâtiment par son occupant (un Chemineau n'en a pas) ; la plume de la Pie ne se
+// pose pas sur un Chemineau.
 export function candidatsDeNuit({ villageois = [], etat: e, acteurId = "", roleCle = "", tour } = {}) {
   const etat = normaliserEtat(e);
   const n = tour ?? etat.tour;
@@ -485,6 +556,8 @@ export function candidatsDeNuit({ villageois = [], etat: e, acteurId = "", roleC
       ids = ids.filter(id => !proies.has(id));
     }
   }
+  const cabaretier = cabaretierImmunise(etat);
+  if (cabaretier && (chasse || roleCle === CLE_PESTE)) ids = ids.filter(id => id !== cabaretier);
   if (roleCle === CLE_CHARMES) return [];
   const role = roleEmprunte(etat, acteurId, roleCle, n) ?? acteur?.role;
   if (!groupe && role?.cle === roleCle) {
@@ -492,6 +565,8 @@ export function candidatsDeNuit({ villageois = [], etat: e, acteurId = "", roleC
     if (role.effet === EFFET_MATIN) return ids.includes(acteurId) ? [acteurId] : [];
     if (role.effet === EFFET_VIELLE) ids = candidatsDuCharme(ids, acteurId, normaliserAmbigusSecret(etat.ambigusSecret).charmes);
     if (role.effet === EFFET_LOUP_PALE) ids = ids.filter(id => id !== acteurId && parId.get(id)?.camp === "meute");
+    if (role.effet === EFFET_LOUP_PALE && cabaretier) ids = ids.filter(id => id !== cabaretier);   // Le Village : le Cabaretier
+    if (role.effet === EFFET_INCENDIAIRE) ids = candidatsDeLIncendiaire(etat, ids);
   }
   if (!groupe && role?.cle === roleCle && JAMAIS_DEUX_NUITS.includes(role.effet)) {
     const hier = (etat.nuitPrecedente?.actions ?? []).find(a => a.acteurId === acteurId && a.roleCle === roleCle)?.cibles?.[0];
@@ -500,7 +575,7 @@ export function candidatsDeNuit({ villageois = [], etat: e, acteurId = "", roleC
   // Le Pacte (pacte.mjs) : le Furet qui a perdu son flair est réveillé comme avant (pour ne pas se trahir), mais il n'a plus rien
   // à désigner ; la plume noire de la Pie ne se pose ni sur elle-même ni sur un rôle exclu (EXCLUS_DE_LA_PLUME).
   if (!groupe && role?.cle === roleCle && role.effet === EFFET_FURET && furetAveugle(etat, acteurId)) return [];
-  if (!groupe && role?.cle === roleCle && role.effet === EFFET_PIE) ids = candidatsDeLaPlume(villageois, acteurId, ids);
+  if (!groupe && role?.cle === roleCle && role.effet === EFFET_PIE) ids = candidatsDeLaPlume(villageois, acteurId, ids).filter(id => !estChemineau(etat, id));
   return ids;
 }
 

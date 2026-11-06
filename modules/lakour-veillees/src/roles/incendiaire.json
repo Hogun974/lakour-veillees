@@ -1,0 +1,45 @@
+{
+  "_id": "NKm6lJHfzWujugDr",
+  "_key": "!items!NKm6lJHfzWujugDr",
+  "name": "Incendiaire",
+  "type": "role",
+  "img": "modules/lakour-veillees/assets/jetons/incendiaire.svg",
+  "system": {
+    "cle": "incendiaire",
+    "camp": "village",
+    "description": "<p>Tu as toujours aimé regarder danser les flammes, et tu sais quel chaume brûle le mieux.</p><p>Tu n'es en jeu qu'avec la variante <strong>Le Village</strong>, où des personnalités tiennent les bâtiments de Brumecombe.</p><p><strong>Une fois par partie</strong>, à ton réveil, tu peux désigner un <strong>bâtiment</strong>, en désignant celui qui l'occupe (un Chemineau n'a pas de toit à brûler). Au matin, le bâtiment est <strong>réduit en cendres</strong> pour toujours : son occupant n'est pas tué, mais il perd son toit et le pouvoir qui allait avec, et devient <strong>Chemineau</strong>.</p><p>Si c'est dans cette maison que la meute venait chercher sa proie cette nuit-là, la proie en réchappe, la meute n'a pas de victime, et <strong>le premier loup vivant assis à la droite de la proie</strong> périt dans les flammes.</p><p>Tu peux passer, et garder ta torche pour une autre nuit.</p>",
+    "victoire": "",
+    "nuit": {
+      "actif": true,
+      "ordre": 19,
+      "premiereNuitSeulement": false,
+      "uneNuitSurDeux": false,
+      "cibles": 1,
+      "soiMeme": true,
+      "invite": "Quel bâtiment livres-tu aux flammes cette nuit ? Désigne celui qui l'occupe, ou passe pour garder ta torche."
+    },
+    "usages": {
+      "max": 1,
+      "restant": 1
+    },
+    "effet": "incendier",
+    "apparence": "",
+    "victoireCle": ""
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "lakour-veillees": {
+      "cle": "incendiaire"
+    }
+  },
+  "_stats": {
+    "coreVersion": "14.369",
+    "systemId": "lakour-loups",
+    "systemVersion": "0.1.0"
+  }
+}

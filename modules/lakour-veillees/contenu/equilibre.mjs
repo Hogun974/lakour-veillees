@@ -3,7 +3,8 @@
 // poids : ce que le rôle apporte à son camp, du point de vue du village (positif = aide le village, négatif = l'affaiblit).
 //         Une partie équilibrée a une somme proche de 0 : chaque loup « coûte » autour de -6, chaque villageois rapporte +1.
 // niveau : niveau minimal où le rôle peut sortir (debutants < classique < chaos) ; joueursMin : nombre minimal de joueurs ;
-// unique : au plus un exemplaire (tous sauf le loup de base et le villageois) ; surDemande : jamais tiré par le générateur.
+// unique : au plus un exemplaire (tous sauf le loup de base et le villageois) ; surDemande : jamais tiré par le générateur ;
+// village : seulement avec la variante « Le Village » (Le Pacte, étape 4 : l'Incendiaire).
 // groupe : n — des cartes qui vont toujours ensemble (les Lavandières par deux, les Bûcherons par trois) : le générateur les tire
 //          toutes ou aucune ; le poids est celui d'UNE carte.
 // Le Pacte, étape 3a : les poids des rôles du Village du jeu de soirée sont PROVISOIRES (posés à la main) ; l'étape 6 les calibrera
@@ -71,6 +72,9 @@ export const EQUILIBRE = {
   "matin": { camp: "village", poids: -1, niveau: "chaos", joueursMin: 9, unique: true },
   "enfant-des-bois": { camp: "village", poids: 0, niveau: "classique", joueursMin: 8, unique: true },
   "chambriere": { camp: "village", poids: 2, niveau: "classique", joueursMin: 8, unique: true },
+  // --- La variante « Le Village » (Le Pacte, étape 4 ; poids provisoire). village : le générateur ne tire l'Incendiaire que si la
+  // variante est choisie (il n'aurait rien à brûler sans elle) ; jamais à la petite tablée.
+  "incendiaire": { camp: "village", poids: 2, niveau: "classique", joueursMin: 8, unique: true, village: true },
   // --- Solitaires
   "revenant": { camp: "solitaire", poids: -2, niveau: "classique", joueursMin: 9, unique: true },
   "chasseur-de-primes": { camp: "solitaire", poids: -2, niveau: "classique", joueursMin: 9, unique: true },

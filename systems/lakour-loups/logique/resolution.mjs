@@ -31,6 +31,11 @@
 //                sagesse (les rôles du Village n'agissent plus).
 //   Le Pacte, étape 3b (ambigus.mjs) : emprunts : { acteurId: rôle à plat } — la carte jouée cette nuit par un Bateleur : une
 //                action de ce rôle (roleCle de la carte) notée par lui se résout avec ce rôle-là (son effet, ses règles).
+//   Le Pacte, étape 4 (personnalites.mjs, variante « Le Village ») : immunises : [acteurId] le Cabaretier immunisé (la meute, la
+//                peste et tout loup qui chasse repartent bredouilles de chez lui) ; chemineaux : [acteurId] (la plume de la Pie ne se
+//                pose pas sur eux) ; batimentsTenus : { acteurId: cle } le bâtiment que tient chacun (l'Incendiaire désigne son
+//                occupant) ; + sortie.incendies : [{ par, occupant, batiment, loup, proie }] — le bâtiment brûlé (l'API le détruit au
+//                matin), et, si c'était la maison de la proie de la meute (proie), le loup carbonisé (mort, cause « incendie »).
 // -> { morts, deces, sauves, revelations, messages, changements, asperges, fioles, fiolesVides, voteDouble, enAttente, narrateur,
 //      annonces, bilan, pontFranchi }
 //    annonces : [msg] publiques (la lame de la Forge) ; bilan : { visites, sorties, victime, loup, sauves, attaques } pour les
@@ -61,6 +66,10 @@
 // - Furet (effet "flairer") : le joueur désigné et ses deux voisins vivants (cercle.mjs, trioAutour) ; au moins un loup parmi eux
 //   (tel que le voient les visions) : « oui », il garde son flair ; sinon « non », et il le perd pour toujours (furets) ;
 // - Pie (effet "plume") : sa cible (ni elle-même) portera deux voix de plus au vote d'exécution du jour ; annoncée au matin ;
+// - Incendiaire (effet "incendier", Le Village) : le bâtiment de l'occupant désigné brûle ; si c'est la maison de la proie de la meute
+//   (la peste aussi : rien ne doit la distinguer), la proie n'est pas attaquée (ni mordue) et le premier loup vivant à sa DROITE
+//   (cercle.mjs) est carbonisé ; rien ne l'en protège ;
+// - Cabaretier (Le Village) : la meute ne peut pas le dévorer (immunises) ;
 // - Vieux Sergent (effet "contaminer") : dévoré par la meute (cause « meute »), il contamine le premier loup vivant à sa gauche
 //   (contaminations) ; ce loup meurt la nuit suivante (contamines, cause publique « contamine »), rien ne l'en protège ;
 // - Lavandières, Bûcherons (effet "fratrie") : rien à résoudre (ils se reconnaissent au réveil : api.noterAction) ;
@@ -92,9 +101,10 @@ import { victoireCleDe } from "./victoire.mjs";
 import { majoriteMeute } from "./votes.mjs";
 import { surLAutreRive } from "./distribution.mjs";
 import { CLE_DEUIL } from "./deuil.mjs";
-import { trioAutour, premierAGauche } from "./cercle.mjs";
+import { trioAutour, premierAGauche, premierADroite } from "./cercle.mjs";
 import { EFFET_AIEUL, EFFET_FURET, EFFET_PIE, EFFET_SERGENT, pouvoirPerdu, candidatsDeLaPlume } from "./pacte.mjs";
 import { EFFET_LOUP_PALE, CLE_CHARMES } from "./ambigus.mjs";
+import { EFFET_INCENDIAIRE } from "./personnalites.mjs";
 
 // Un mot porté par le Messager : une ligne, sans balises, 200 caractères au plus.
 export function nettoyerMot(texte, longueur = 200) {
@@ -141,7 +151,8 @@ const msg = (destinataire, cle, texte, donnees = {}) => ({ destinataire, cle: `L
 const sansCible = role => Number(role?.nuit?.cibles ?? 1) === 0;
 
 export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges = [], precedentes = [], primes = {}, fioles = {}, hasard = Math.random, chanceEpier = RISQUE_ENFANT, jour = {},
-  somnambules = [], rolesFactices = [], nomsApparents = {}, cercle = [], aieux = [], furets = [], contamines = [], sagessePerdue = false, emprunts = {} } = {}) {
+  somnambules = [], rolesFactices = [], nomsApparents = {}, cercle = [], aieux = [], furets = [], contamines = [], sagessePerdue = false, emprunts = {},
+  immunises = [], chemineaux = [], batimentsTenus = {} } = {}) {
   const noms = { ...NOMS_APPARENTS, ...nomsApparents };
   const reve = new Set(somnambules);
   const parId = new Map(villageois.map(v => [v.id, v]));
@@ -174,7 +185,10 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
   const sortie = { morts: [], deces: [], sauves: [], revelations: [], messages: [], changements: [], asperges: [],
     fioles: JSON.parse(JSON.stringify(fioles ?? {})), fiolesVides: [], voteDouble: false, enAttente: [], narrateur: [],
     annonces: [], bilan: null, pontFranchi: false, deuil: "", presentOuvert: false, masqueTombe: false,
-    aieux: [...new Set(aieux)], furets: [...new Set(furets)], plume: "", contaminations: [] };
+    aieux: [...new Set(aieux)], furets: [...new Set(furets)], plume: "", contaminations: [], incendies: [] };
+  // Le Village : le Cabaretier immunisé, les Chemineaux.
+  const immunes = new Set(immunises);
+  const sansToit = new Set(chemineaux);
   // Le Pacte : la place de chacun autour de la table (le Furet, le Vieux Sergent) ; les rôles du Village sans pouvoir.
   const placesDuCercle = { cercle };
   const sansPouvoir = role => pouvoirPerdu(sagessePerdue, role);
@@ -313,7 +327,30 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
   }
 
   // La victime de la peste noire : la dernière notée (une par nuit).
-  const victimePeste = retenues.filter(a => a.roleCle === CLE_PESTE && a.cibles[0]).at(-1)?.cibles[0] ?? null;
+  let victimePeste = retenues.filter(a => a.roleCle === CLE_PESTE && a.cibles[0]).at(-1)?.cibles[0] ?? null;
+
+  // L'Incendiaire (Le Village) : le bâtiment de l'occupant désigné brûle (un Chemineau n'en a pas : rien ne brûle). La maison de la
+  // proie de la meute : la meute n'a pas de victime cette nuit, et le premier loup vivant à DROITE de la proie est carbonisé (après
+  // les attaques : rien ne l'en protège). L'Enfant surprise est prise dehors : sa maison n'y est pour rien.
+  let proieBrulee = "";
+  for (const a of parEffet(EFFET_INCENDIAIRE)) {
+    const c = a.cibles[0];
+    const batiment = c ? batimentsTenus[c] ?? "" : "";
+    if (!batiment || sortie.incendies.some(x => x.batiment === batiment)) continue;
+    let loup = "", proie = false;
+    if (c === victimeMeute && !surprise) {
+      loup = premierADroite(placesDuCercle, villageois, c, v => v.camp === "meute");
+      proie = true;
+      victimeMeute = null;
+    } else if (c === victimePeste) {
+      proie = true;
+      victimePeste = null;
+    }
+    if (proie) proieBrulee = c;
+    sortie.incendies.push({ par: a.acteurId, occupant: c, batiment, loup, proie });
+    sortie.messages.push(msg("mj", "Incendie", `Le bâtiment de ${nom(c)} brûle cette nuit.`, { nom: nom(c) }));
+    if (proie) sortie.messages.push(msg("mj", "IncendieProie", `${nom(c)} était la proie de la nuit : la meute n'a pas de victime.`, { nom: nom(c) }));
+  }
 
   // 4. Attaques.
   const attaques = [];
@@ -364,6 +401,8 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
   for (const a of parEffet("mordre")) {
     const cible = a.cibles[0];
     if (!cible || !vivant(cible)) continue;
+    // Le Village : la maison de la proie a brûlé (la meute n'a pas de victime), ou la proie est le Cabaretier immunisé.
+    if (cible === proieBrulee || immunes.has(cible)) continue;
     for (let i = attaques.length - 1; i >= 0; i--) if (attaques[i].meute && attaques[i].cible === cible) attaques.splice(i, 1);
     const porte = cible === surprise ? "" : bloqueeALaPorte(cible);
     if (porte) noterBlocage(cible, porte);
@@ -444,6 +483,12 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
   };
   for (const x of attaques) {
     if (!vivant(x.cible) || sortie.morts.includes(x.cible)) continue;
+    // Le Cabaretier immunisé (Le Village) : la meute (la peste, un loup qui chasse) ne peut pas le dévorer.
+    if (x.meute && immunes.has(x.cible)) {
+      sortie.sauves.push({ acteurId: x.cible, par: "cabaret" });
+      sortie.messages.push(msg("mj", "Cabaret", `${nom(x.cible)}, le Cabaretier, ne peut pas être dévoré : la meute repart bredouille.`, { nom: nom(x.cible) }));
+      continue;
+    }
     if (x.meute && victoireCleDe(parId.get(x.cible)?.role) === "dernier-survivant") {
       sortie.sauves.push({ acteurId: x.cible, par: "immunite" });
       sortie.messages.push(x.peste ? msg("mj", "PesteArretee", `La peste n'a pas pu atteindre ${nom(x.cible)} (immunite).`, { nom: nom(x.cible), par: "immunite" })
@@ -488,6 +533,13 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
       continue;
     }
     meurt(x.cible, x.cause);
+  }
+
+  // Le loup carbonisé dans la maison que l'Incendiaire a brûlée (Le Village) : rien ne l'en protège.
+  for (const x of sortie.incendies) {
+    if (!x.loup || !vivant(x.loup) || sortie.morts.includes(x.loup)) continue;
+    meurt(x.loup, CAUSES.incendie);
+    sortie.messages.push(msg("mj", "Carbonise", `${nom(x.loup)}, le premier loup à la droite de ${nom(x.occupant)}, est pris dans les flammes.`, { nom: nom(x.loup), proie: nom(x.occupant) }));
   }
 
   // La contamination du Vieux Sergent : le loup contaminé la nuit d'avant meurt cette nuit ; rien ne l'en protège.
@@ -611,7 +663,7 @@ export function resoudreNuit({ villageois = [], actions = [], tour = 1, asperges
   // La Pie : sa plume noire (la dernière posée), jamais sur elle-même ni sur un rôle exclu ; annoncée au matin si sa cible vit.
   for (const a of parEffet(EFFET_PIE)) {
     const c = a.cibles[0];
-    if (c && vivant(c) && candidatsDeLaPlume(villageois, a.acteurId, [c]).length) sortie.plume = c;
+    if (c && vivant(c) && candidatsDeLaPlume(villageois, a.acteurId, [c]).length && !sansToit.has(c)) sortie.plume = c;
   }
   if (sortie.plume) sortie.messages.push(msg("mj", "Plume", `Une plume noire se posera sur ${nom(sortie.plume)} : deux voix de plus contre lui au vote du jour.`, { nom: nom(sortie.plume) }));
 

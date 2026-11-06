@@ -697,6 +697,34 @@ ${FETES_VEILLEES.map(f => `- **${f.nom}** — ${RESUMES_DE_FETE[f.id]}`).join("\
 # Pour un MJ IA
 
 Ton état du jeu porte une ligne de fête. Quand une veillée est en jeu dans la partie (le Registre porte « la veillée de fête commence »), cette ligne vient d'elle, même hors saison : son nom, ses règles, ce qu'elle a annoncé à tous (neige, défilé) et la consigne de garder ses secrets. Sans veillée en jeu, la fête du calendrier n'est qu'une ambiance, sans règle de plus.`
+    },
+    {
+      titre: "Le Village",
+      texte: `# Des personnalités, en plus des rôles
+
+La variante **Le Village** (case « Le Village » à la préparation, réglage du monde du même nom) confie des bâtiments à des joueurs. Chaque personnalité est **publique**, comme un jeton posé face visible devant elle ; sa carte de rôle reste secrète. Les joueurs sans bâtiment sont des **Chemineaux**. Les règles complètes sont dans le journal des variantes (page « Le Village ») ; voici comment la mener.
+
+# Préparer
+
+- À la distribution, le système propose qui tient quoi selon le nombre de joueurs, l'annonce au chat et l'inscrit au Registre. Tant que la première nuit n'est pas tombée, tu peux changer l'occupant de chaque bâtiment dans l'encart « Le Village » de ta Table de jeu (un échange si le joueur tenait déjà un bâtiment) : chaque changement est annoncé.
+- Ni à la petite tablée, ni dans une Nuit de la Saint-Martin. L'**Incendiaire** ne sort que dans cette variante.
+- Sans métairie distribuée, pas de Bailli dans la partie.
+
+# Ce que le système fait seul
+
+- **Le Prieur, le Remégeux, le Régent, le Perruquier** : leur joueur s'en sert de sa Table (pouvoirs de jour). Les annonces partent d'elles-mêmes ; seule la carte que le Prieur voit reste secrète (son carnet). Le rasoir du Perruquier tue, puis tue le Perruquier s'il s'est trompé de cible.
+- **Le Cabaretier** : il n'est jamais candidat d'un vote d'exécution, la meute ne peut pas le dévorer, et son vote est annoncé dès qu'il le pose. S'il vote contre un joueur que le vote désigne, il perd son immunité (annoncé).
+- **Le Hobereau** : juste après un vote d'exécution, chaque condamné reçoit une courte question (supplier le Hobereau ?), puis le Hobereau la sienne (gracier ?). L'exécution attend leurs réponses, une demi-minute chacune au plus. Gracié, le condamné reste en vie, sa carte cachée.
+- **Le Prévôt** : quand un bâtiment se libère, il choisit un Chemineau, qui accepte ou refuse ; un bâtiment après l'autre.
+- **La Fournière** : certaines nuits, au matin, un nom de loup lui est écrit au carnet. Tu n'as rien à faire.
+- **Les Métayers** : à partir du deuxième jour, le bouton « Élire le Bailli » ouvre leur vote à eux seuls, parmi eux. Le dernier Métayer mort, la charge de Bailli disparaît.
+- **L'Incendiaire** se réveille juste avant le Garde du pont. Il désigne un occupant : au matin, le bâtiment brûle, et son occupant devient Chemineau. Si c'était la maison de la proie de la meute, la proie en réchappe et le premier loup à sa droite périt (une mort annoncée, cause « victime de l'incendie »).
+
+# Raconter
+
+- Les personnalités sont des visages du village : présente-les à la distribution (« la Fournière ouvre son four avant l'aube »), rappelle-les au débat.
+- Une maison qui brûle se raconte au matin, avant les autres nouvelles : fumée, cendres, l'occupant qui sort sur le chemin avec son baluchon. Ne dis jamais qui a mis le feu.
+- Si le village a perdu sa sagesse (l'Aïeul), les personnalités perdent leur pouvoir comme les métiers ; seuls les Métayers gardent la désignation du Bailli, qui est une charge.`
     }
   ]
 });
@@ -728,6 +756,7 @@ const variantes = journal({
 - **Glas final** et **Bonne étoile** : réglages du narrateur, à la Table de jeu (le jour où la partie s'arrête ; un débutant protégé en secret la première nuit).
 - **Somnambule** et **Rosière** : rôles « sur demande », jamais tirés d'office ; le narrateur les ajoute à la main.
 - **L'Innocent suit l'Aïeul** (par défaut : non) : si l'Aïeul tombe de la main du village, un Innocent déjà gracié meurt avec lui.
+- **Le Village** (par défaut : non ; case de la préparation) : des personnalités tiennent les bâtiments du village, un pouvoir public en plus de leur rôle (page « Le Village »).
 - **Ambiance** : gothique sérieux (par défaut) ou comique.`
     },
     {
@@ -774,6 +803,38 @@ Une partie d'une dizaine de minutes : trois rôles de plus que de joueurs, cach�
 - **Un solitaire** à partir de dix joueurs ; deux à partir de quinze. Le Pyromane et la Dame du gué sont les plus difficiles à arrêter : ne les ajoutez qu'avec une Liseuse ou un Sourcier, et pensez au Pêcheur de nuit, dont le harpon les atteint.
 - Gardez **au moins un quart de villageois sans pouvoir** : ce sont eux qui font les votes honnêtes.
 - **4 bâtiments** pour une partie simple, **6** pour une partie riche ; évitez le Gibet à moins de huit joueurs, il bloque trop de votes.`
+    },
+    {
+      titre: "Le Village",
+      texte: `# Des gens qui comptent
+
+Dans la variante **Le Village**, certains joueurs tiennent un bâtiment de Brumecombe et deviennent l'une de ses **personnalités**. Leur personnalité est **connue de tous**, comme un jeton posé face visible devant eux ; leur carte de rôle, elle, reste **secrète** : le Prieur peut être un loup. Le pouvoir du bâtiment s'ajoute à celui du rôle.
+
+À la distribution, le narrateur annonce qui tient quel bâtiment (il peut changer la proposition avant la première nuit). Ceux qui n'ont rien sont des **Chemineaux** : sans toit ni pouvoir de bâtiment, mais le Régent, le Perruquier, la Pie et l'Incendiaire n'ont pas prise sur eux.
+
+Un pouvoir **permanent** vaut toute la partie ; un pouvoir **unique** sert une fois. Un bâtiment qui brûle prive son occupant de son pouvoir. Un occupant qui meurt libère son bâtiment.
+
+# Les personnalités
+
+- **Métayers** (les six métairies) — à partir du deuxième jour, les Métayers vivants débattent et votent entre eux pour désigner le **Bailli**, l'un d'eux : dans cette variante, le village ne l'élit pas. Le Bailli qui meurt choisit son successeur parmi les Métayers vivants. Le dernier Métayer mort, Brumecombe n'a plus de Bailli. *Permanent.*
+- **Prieur** (le prieuré) — à tout moment du jour, même après qu'un condamné a été désigné, il fait venir un joueur, qui lui montre sa carte en secret. *Unique.*
+- **Remégeux** (la masure) — à tout moment du jour, il rend à un joueur le pouvoir unique de son bâtiment, déjà servi : ce pouvoir sert une fois de plus. *Unique.*
+- **Régent** (l'école) — chaque jour, juste avant le vote, il met au coin un ou deux joueurs : ils débattent, mais ne votent pas ce jour-là. Lui ne vote jamais. Il peut mettre au coin le Cabaretier, jamais un Chemineau. *Permanent.*
+- **Fournière** (le fournil) — chaque nuit, quand la meute rentre se coucher, elle entrouvre les yeux. Sur table, elle voit qui passe ; en ligne, elle a une chance sur trois d'entrevoir un loup, dont le nom lui est soufflé au matin. *Permanent.*
+- **Perruquier** (l'échoppe) — à tout moment du jour, il élimine un joueur de son choix (jamais un Chemineau). Si c'était un loup, le village le félicite ; sinon, il paie sa méprise de sa vie, aussitôt. *Unique.*
+- **Cabaretier** (le cabaret) — la meute ne peut pas le dévorer, et le village ne peut pas voter contre lui. Il vote à découvert, avant tout le monde (en ligne : son vote est annoncé dès qu'il le pose). S'il vote contre un joueur que le vote désigne (même gracié ensuite), il perd cette protection. Les autres pouvoirs le touchent comme tout le monde. *Permanent.*
+- **Prévôt** (la prévôté) — quand un bâtiment se libère, il peut y loger le Chemineau de son choix, qui peut refuser. Le Chemineau prend le bâtiment et son pouvoir entier (un pouvoir unique déjà servi redevient disponible). Le Prévôt mort, plus personne n'est logé. *Permanent.*
+- **Hobereau** (le manoir) — après un vote, celui que le village vient de condamner peut le supplier : s'il le gracie, le condamné n'est pas exécuté et sa carte reste cachée. Il peut se gracier lui-même. *Unique.*
+
+# L'Incendiaire
+
+Un rôle du Village qui n'existe que dans cette variante.
+
+${ficheDuRole(ROLES.find(r => r.system.cle === "incendiaire"))}
+
+# Quand le village perd la tête
+
+Si l'Aïeul tombe de la main du village, les personnalités perdent leur pouvoir comme les métiers ; les Métayers gardent la désignation du Bailli, qui est une charge.`
     }
   ]
 });

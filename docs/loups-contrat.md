@@ -125,8 +125,10 @@ n'existe que chez le MJ actif ; il se range en deux morceaux (`logique/etat.mjs`
   pacte: { innocentSuit, sagessePerdue, gracies, egalite, votants, plume, secondVote },   // public (Pacte, étape 3a ; logique/pacte.mjs)
   pacteSecret: { aieux, furets, contamines, signal },      // SECRET (Pacte, étape 3a) : vies perdues, flair perdu, loups contaminés, signe du Greffier
   ambigus: { bateleur, retirees, commenceParLeJour, groupes, devouements },   // public (Pacte, étape 3b ; logique/ambigus.mjs)
-  ambigusSecret: { centre, chapardes, emprunts, modeles, matins, charmes }    // SECRET (Pacte, étape 3b) : centre du Chapardeur, carte jouée
+  ambigusSecret: { centre, chapardes, emprunts, modeles, matins, charmes },   // SECRET (Pacte, étape 3b) : centre du Chapardeur, carte jouée
                                                                               //   par le Bateleur, modèles, choix des Mâtins, charmés
+  village: { actif, detruits, epuises, attente, regent, graces, cabaret }      // public (Pacte, étape 4 ; logique/personnalites.mjs) : la variante
+                                                                              //   « Le Village » (qui tient quoi : tenures)
 }
 ```
 `etat()` rend l'état complet chez le MJ actif, l'état public partout ailleurs.
@@ -529,6 +531,44 @@ verifierVictoire()                -> + Feu follet (premier tour), Joueur de viel
 - Registre : entrée `{ type: "pacte", quoi: "devouement", acteurId, ids: [condamné] }` ; hook PUBLIC `lakourLoups.pacte`
   (`{ quoi: "devouement", acteurId, ids }`). Réglages : aucun (la fenêtre de la Chambrière suit `delaiChoix`, au plus 30 s).
 
+Le Pacte, étape 4 — la variante « Le Village » : personnalités, Chemineaux, Incendiaire (`logique/personnalites.mjs`, `docs/plan-le-pacte.md`) :
+```
+village()                         -> { actif, batiments: [{ cle, nom, personnalite, titre, aide, pouvoir: "permanent" | "unique", acteurId, occupant,
+                                       disponible }], detruits: [{ cle, nom }], chemineaux: [{ acteurId, nom }], regent, graces, cabaret } (tous ; public)
+personnalite(acteurId)            -> { cle (bâtiment ; "" : Chemineau), personnalite, titre, aide, batiment } ; null hors de la variante (tous)
+installer(cle, acteurId)          -> le narrateur confie un bâtiment du village à un vivant ("" : vide) ; échange si le joueur en tenait un ; le
+                                       pouvoir est rétabli ; annoncé (MJ actif). La Table de jeu s'en sert avant la première nuit.
+distribuer({ village })           -> true : les bâtiments proposés (proposerLeVillage(n)) confiés au hasard de la graine (distribuerLeVillage),
+                                       annoncés avec les Chemineaux ; sans métairie, pas de Bailli. Ni Saint-Martin, ni petite tablée.
+nouvellePartie({ village })       -> le réglage monde « leVillage » retient le choix explicite ; le générateur tire alors les rôles marqués
+                                       `village` (l'Incendiaire) ; une composition qui contient l'Incendiaire demande la variante ; résumé.village
+agirDeJour({ pouvoir: "prieure" | "masure" | "ecole" | "echoppe" }) -> les pouvoirs de jour des personnalités (§5) ; le rasoir élimine
+ouvrirVote({ objet })             -> exécution : jamais le Cabaretier immunisé ; "bailli" : les Métayers vivants, candidats et seuls votants
+cloreVote()                       -> le Cabaretier qui a voté contre un condamné perd son immunité (annoncé) ; chaque condamné peut supplier le
+                                       Hobereau (demande objet "supplique", candidats [Hobereau]), qui gracie ou non (objet "grace") ; deux
+                                       fenêtres de min(délai des choix, DELAI_GRACE) ; eliminer(id, { cause: "vote" }) attend sa réponse
+eliminer(id)                      -> gracié par le Hobereau : [] (vivant, carte cachée) ; ses bâtiments libérés attendent le Prévôt (demande
+                                       objet "prevot" : un Chemineau vivant ; puis objet "logement" au Chemineau, [lui-même] pour accepter) ; le
+                                       dernier Métayer mort, la charge de Bailli est abolie (Registre bailli / metayers)
+resoudreNuit()                    -> l'Incendiaire : le bâtiment de l'occupant désigné brûle au matin (détruit, l'occupant Chemineau) ; la
+                                       maison de la proie de la meute : pas de victime, le premier loup vivant à DROITE carbonisé (cause
+                                       publique `incendie`) ; le Cabaretier immunisé n'est pas dévoré ; la Fournière (chance : réglage caché
+                                       `chanceFourniere`, CHANCE_FOURNIERE = 1/3) entrevoit un loup vivant (messages : son carnet)
+```
+- **Bâtiments et personnalités** : `metairie-1` à `metairie-6` (Métayers), `prieure` (Prieur), `masure` (Remégeux), `ecole` (Régent), `fournil`
+  (Fournière), `echoppe` (Perruquier), `cabaret` (Cabaretier), `prevote` (Prévôt), `manoir` (Hobereau) ; sans bâtiment : Chemineau. Qui
+  tient quoi : `etat.tenures` (socle). Pouvoir permanent ou unique (`BATIMENTS_DU_VILLAGE`) ; un pouvoir unique servi ou l'immunité perdue
+  du Cabaretier est rangé avec l'occupant (`village.epuises[cle] = acteurId`) : un nouvel occupant le reçoit entier.
+- **Chemineaux** : ni le Régent, ni le Perruquier, ni la Pie, ni l'Incendiaire n'ont prise sur eux (candidats filtrés).
+- **Métayers** : à partir du deuxième jour (`JOUR_DES_METAYERS`), `electionPossible` refuse sinon (`jourDeux`, `metayers`) ; succession
+  parmi les Métayers vivants (`candidatsSuccession`).
+- **Sagesse perdue** (l'Aïeul) : les pouvoirs des personnalités s'éteignent (refus `sagesse`, plus d'immunité, la Fournière ne voit rien, le
+  Régent vote, le Prévôt ne loge plus personne) ; les Métayers gardent la désignation du Bailli (une charge). Le rasoir est une mort du
+  village (`CAUSES_SANS_SAGESSE`).
+- Registre : entrée `{ type: "village", quoi: "distribution" | "changement" | "installation" | "refus" | "incendie" | "prieur" | "remegeux" |
+  "regent" | "perruquier" | "grace" | "cabaret", acteurId?, ids?, cle? }` ; hook PUBLIC `lakourLoups.village` (mêmes champs). Réglages :
+  `leVillage` (monde, non par défaut), `chanceFourniere` (caché).
+
 ### Petite tablée (logique/tablee.mjs, 0.11.0)
 
 Le mode pour peu d'humains (1 à 4) complétés par des compagnons IA (2 à 8), de 4 à 12 places. Ses règles sont PUBLIQUES (guide du
@@ -908,7 +948,8 @@ veillée ».
 (`logique/pacte.mjs`, §1 « Socle du Pacte ») : `resister` (Aïeul), `egalite` (Souffre-douleur), `grace` (Innocent), `fratrie` (Lavandières,
 Bûcherons), `flairer` (Furet), `cacarder` (Gardeuse d'oies), `second-vote` (Greffier bègue), `contaminer` (Vieux Sergent), `plume`
 (Pie) ; Pacte, étape 3b (`logique/ambigus.mjs`) : `chaparder` (Chapardeur), `emprunter` (Bateleur), `choisir-camp` (Mâtin), `modele` (Enfant
-des bois), `devouement` (Chambrière), `charmer` (Joueur de vielle), `trahir` (Loup pâle). `emporter` : le mourant désigne lui-même sa cible (demande posthume,
+des bois), `devouement` (Chambrière), `charmer` (Joueur de vielle), `trahir` (Loup pâle) ; Pacte, étape 4 (`logique/personnalites.mjs`) :
+`incendier` (Incendiaire, variante « Le Village »). `emporter` : le mourant désigne lui-même sa cible (demande posthume,
 socle du Pacte), le MJ en repli. Toutes sont désormais appliquées par le système : à l'aube
 (`resoudreNuit()`), dont `messager` (le mot écrit par l'expéditeur, `action.texte`, remis au seul destinataire), ou de jour
 (`annuler-vote` : le Juge de paix, voir §5). Ce que le système ne connaîtrait pas reste raconté et arbitré par le MJ (`narrateur`).
@@ -976,6 +1017,10 @@ est annoncé au chat avec le nom de celui qui agit.
 | `grange` | soi | une fois par joueur, deux par nuit : hors d'atteinte |
 | `puits` | soi, mort de ce tour | un dernier mot de dix mots au plus, une fois par partie |
 | `chapelle` | 1 (le village) | asile (une fois par jour, jamais deux nuits de suite) : la meute n'y entre pas ; vote `objet: "chapelle"` |
+| `prieure` | 1 (pas soi) | **Le Village**, source `tenure` (l'occupant du prieuré), une fois : le Prieur voit en secret la carte du joueur (son carnet) ; annoncé sans la carte ; pendant le jour, même après la condamnation |
+| `masure` | 1 dont le pouvoir unique de bâtiment a servi | **Le Village** (Remégeux), une fois : ce pouvoir lui est rendu |
+| `ecole` | 1 ou 2 (`ciblesMin: 1` ; ni soi, ni un Chemineau) | **Le Village** (Régent), au débat, une fois par jour : ils ne votent pas aux votes d'exécution de ce tour ; le Régent ne vote jamais |
+| `echoppe` | 1 (ni soi, ni un Chemineau) | **Le Village** (Perruquier), une fois : la cible meurt (cause publique `rasoir`) ; si elle n'était pas loup (camp actuel), le Perruquier aussi |
 
 À l'aube, sans action : **Moulin** (la Meunière vivante apprend en secret le nombre de loups ; sans elle, annonce publique les
 matins pairs), **Lavoir** (indice flou public), **Cimetière** (sans révélation à la mort : camp des morts pas encore annoncés),

@@ -85,6 +85,9 @@ function crible(etat) {
   // les charmés ne sortent jamais dans l'état public.
   if (p.ambigusSecret && JSON.stringify(L.normaliserAmbigusSecret(p.ambigusSecret)) !== JSON.stringify(L.ambigusSecretInitial())) fuite("*", "secrets des ambigus publics");
   const charmes = api.etat().ambigusSecret?.charmes ?? [];
+  // Le Pacte, étape 4 : la carte que le Prieur a vue, ce qu'a entrevu la Fournière, jamais au chat ; le hook public du village ne
+  // porte que ce que la table voit.
+  for (const m of nouveauxMessages) if (/vous a montré sa carte|qui rentre chez lui en rasant les murs/.test(decoder(m.content))) fuite("*", "un secret du Prieur ou de la Fournière au chat");
   // La Petite tablée : son annonce (chat) ne porte que des nombres, jamais un nom de villageois.
   for (const m of nouveauxMessages) {
     const t = decoder(m.content);
@@ -103,6 +106,9 @@ function crible(etat) {
   }
   // Le signe du Greffier bègue est secret : jamais de hook public qui le porte.
   for (const e of diffuses.filter(e => e.type === "hook" && e.nom === "lakourLoups.jour" && JSON.stringify(e.args).includes("greffier-begue"))) fuite("*", "le signe du Greffier dans un hook public");
+  for (const e of diffuses.filter(e => e.type === "hook" && e.nom === "lakourLoups.village")) {
+    if (Object.keys(e.args?.[0] ?? {}).some(k => !["quoi", "acteurId", "ids", "cle", "loup"].includes(k))) fuite("*", `hook public du village trop bavard : ${JSON.stringify(e.args)}`);
+  }
   for (const e of diffuses.filter(e => e.type === "hook" && e.nom === "lakourLoups.fete")) {
     if (JSON.stringify(Object.keys(e.args?.[0] ?? {}).sort()) !== JSON.stringify(["cle", "quoi", "tour"])) fuite("*", `hook public de la veillée trop bavard : ${JSON.stringify(e.args)}`);
   }
@@ -178,7 +184,8 @@ function espionnerEcritures(etat) {
 
 // ------------------------------------------------------------------ une partie complète
 // publics : les clés de rôle du contenu rendues publiques pour cette partie (role.public, le Franc-Villageois du livre).
-async function partie({ graine, peste = false, gens = false, compagnons = 0, revelerALaMort = true, joueurs = 7, roles = [], fete = "", niveau = "chaos", publics = [] } = {}) {
+async function partie({ graine, peste = false, gens = false, compagnons = 0, revelerALaMort = true, joueurs = 7, roles = [], fete = "", niveau = "chaos", publics = [],
+  village = false } = {}) {
   installerFoundry({ joueurs: 8, contenu: true });
   for (const pack of game.packs.contents ?? [...game.packs.values()]) {
     for (const d of pack.documents?.contents ?? []) if (d.type === "role" && publics.includes(d.system?.cle)) d.system = { ...d.system, public: true };
@@ -188,6 +195,8 @@ async function partie({ graine, peste = false, gens = false, compagnons = 0, rev
   game.lakourLoups = api;
   await game.settings.set("lakour-loups", "revelerALaMort", revelerALaMort);
   await game.settings.set("lakour-loups", "gensDePassage", gens);
+  // Le Village : la Fournière entrevoit un loup chaque nuit (sa chance est un réglage caché), pour que l'essai la voie à l'œuvre.
+  if (village) await game.settings.set("lakour-loups", "chanceFourniere", 1);
   // Les compagnons IA : un cerveau simple (le premier candidat ; un mot quelconque).
   api.resolveurs.compagnon = d => (d.mode === "texte" ? "Rien vu." : [d.candidats.find(c => c.id !== d.acteurId)?.id].filter(Boolean));
   const etat = { etape: "début", vusMessages: 0, vusSockets: {}, connues: {}, enNuit: false, ecrituresNocturnes: [], murmures: [] };
@@ -198,7 +207,7 @@ async function partie({ graine, peste = false, gens = false, compagnons = 0, rev
   // Les compagnons d'abord créés (comme par le MJ IA), puis la partie.
   const ids = [];
   for (const nom of ia) ids.push((await Actor.implementation.create({ name: nom, type: "villageois", system: { joueur: "", compagnon: true } })).id);
-  await api.nouvellePartie({ memesJoueurs: false, joueurs: humains, compagnons: ids, graine, peste, niveau, roles, fete });
+  await api.nouvellePartie({ memesJoueurs: false, joueurs: humains, compagnons: ids, graine, peste, niveau, roles, fete, village });
   await calme();
   await rangement();
   const fuites = [];
@@ -249,7 +258,7 @@ async function partie({ graine, peste = false, gens = false, compagnons = 0, rev
   return { fuites, nocturnes: etat.ecrituresNocturnes, vainqueur: api.etat().vainqueur, morts: api.etat().morts.length, fete: api.etat().fete.cle, tablee: api.etat().petiteTablee,
     secretsDeFete: api.etat().secretsDeFete, murmures: etat.murmures, publicsReveles, autresReveles,
     cles: villageois().map(a => secretDuMJ.role(a)?.system.cle), centre: api.etat().ambigusSecret.centre.map(r => r.system?.cle),
-    devouements: api.ambigus().devouements.length };
+    devouements: api.ambigus().devouements.length, village: api.village().actif };
 }
 
 // Des compositions variées : rôles d'information, de lien, d'échange, solitaires, loups spéciaux, Somnambule.
@@ -269,6 +278,9 @@ const PARTIES = [
   // camp du Mâtin, le modèle de l'Enfant des bois, les charmés, la Chambrière), avec des compagnons IA.
   { graine: "pacte-ambigus", joueurs: 8, compagnons: 6, roles: ["loup-de-brumecombe", "loup-de-brumecombe", "loup-de-brumecombe", "loup-pale", "chapardeur", "bateleur",
     "matin", "enfant-des-bois", "chambriere", "joueur-de-vielle", "illumine", "feu-follet", "liseuse-de-cendres", "herboriste"] },
+  // Le Pacte, étape 4 : la variante « Le Village » (personnalités publiques, Chemineaux, l'Incendiaire, la Pie), avec des compagnons IA.
+  { graine: "le-village", joueurs: 8, compagnons: 4, village: true, roles: ["loup-de-brumecombe", "loup-de-brumecombe", "loup-de-brumecombe", "incendiaire", "pie",
+    "aieul", "liseuse-de-cendres", "herboriste", "garde-du-pont", "villageois", "villageois", "villageois"] },
   // Les veillées de fête (0.10.0), dont une avec des compagnons IA et une en peste noire.
   { graine: "ames", joueurs: 7, fete: "nuit-des-ames" },
   { graine: "hiver", joueurs: 6, compagnons: 2, fete: "veillee-d-hiver" },
@@ -287,6 +299,7 @@ for (const p of PARTIES) {
     assert.ok(r.morts > 0, "la partie a eu lieu");
     assert.ok(r.vainqueur, "jusqu'à la victoire");
     assert.equal(r.tablee, p.niveau === "petite-tablee", "le mode public de la petite tablée");
+    assert.equal(r.village, Boolean(p.village), "la variante « Le Village »");
     // (Avec le Chapardeur, deux cartes du paquet restent au centre ; une Chambrière dévouée tient désormais un autre rôle.)
     for (const cle of p.roles ?? []) if (!p.peste) assert.ok(r.cles.includes(cle) || r.centre.includes(cle) || cle === "somnambule" || (cle === "chambriere" && r.devouements), `${cle} distribué`);
     if (p.publics?.length) {
@@ -409,7 +422,10 @@ const MUTATIONS = [
     "  ligne.freres = ids(liste.filter(p => p.fratrie).map(p => p.acteurId));", "fratries : les siens à eux seuls", PARTIES.findIndex(p => p.graine === "pacte-village")],
   // Le Pacte, étape 3b : les secrets des ambigus hors de l'état public ; le réveil des charmés, à eux seuls.
   ["logique/etat.mjs", "  pub.ambigusSecret = ambigusSecretInitial();", "", "ambigus : leurs secrets hors de l'état public", PARTIES.findIndex(p => p.graine === "pacte-ambigus")],
-  ["scripts/api.mjs", "  const ids = L.charmesVivants(villageoisAPlat(), etat.ambigusSecret.charmes);", "  const ids = villageoisAPlat().filter(v => v.vivant).map(v => v.id);", "charmés : à eux seuls", PARTIES.findIndex(p => p.graine === "pacte-ambigus")]
+  ["scripts/api.mjs", "  const ids = L.charmesVivants(villageoisAPlat(), etat.ambigusSecret.charmes);", "  const ids = villageoisAPlat().filter(v => v.vivant).map(v => v.id);", "charmés : à eux seuls", PARTIES.findIndex(p => p.graine === "pacte-ambigus")],
+  // Le Pacte, étape 4 : la Fournière entrevoit un loup en secret (son carnet), jamais au chat.
+  ["scripts/api.mjs", "      if (game.actors.get(x.acteurId)?.system.vivant) messages.push({ acteurId: x.acteurId, texte: t(\"LAKOUR_LOUPS.Village.Fourniere\", { nom: nomDe(x.loup) }) });",
+    "      await annonceChat(echapper(t(\"LAKOUR_LOUPS.Village.Fourniere\", { nom: nomDe(x.loup) })));", "Fournière : son carnet, pas le chat", PARTIES.findIndex(p => p.graine === "le-village")]
 ];
 
 async function chargerMutant(fichier, avant, apres) {

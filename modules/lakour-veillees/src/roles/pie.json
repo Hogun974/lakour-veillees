@@ -7,7 +7,7 @@
   "system": {
     "cle": "pie",
     "camp": "village",
-    "description": "<p>Tu ramasses tout ce qui brille, et tu sais sous quel toit chacun cache ses secrets.</p><p><strong>Chaque nuit</strong>, après la chasse, tu peux désigner un joueur (pas toi). Au matin, le narrateur annonce à tous : « <strong>une plume noire désigne</strong> <em>(son nom)</em> ». Au <strong>vote d'exécution</strong> de ce jour, il compte <strong>deux voix de plus</strong> contre lui. Personne ne sait d'où vient la plume.</p><p>Passe si tu ne veux désigner personne.</p>",
+    "description": "<p>Tu ramasses tout ce qui brille, et tu sais sous quel toit chacun cache ses secrets.</p><p><strong>Chaque nuit</strong>, après la chasse, tu peux désigner un joueur (pas toi ; avec la variante Le Village, jamais un Chemineau). Au matin, le narrateur annonce à tous : « <strong>une plume noire désigne</strong> <em>(son nom)</em> ». Au <strong>vote d'exécution</strong> de ce jour, il compte <strong>deux voix de plus</strong> contre lui. Personne ne sait d'où vient la plume.</p><p>Passe si tu ne veux désigner personne.</p>",
     "victoire": "",
     "nuit": {
       "actif": true,

@@ -5,6 +5,7 @@ import { ID, CAMPS, EFFETS, VICTOIRES } from "../../logique/constantes.mjs";
 import { t, roleDe, campDe, amoureuxDe, protectionsDe, metierDe, libelleCamp, libelleRepere, maisonNumerotee, lireEtat, roleVisible } from "../donnees.mjs";
 import { mesSecrets } from "../prive.mjs";
 import { estMJActif } from "../canal.mjs";
+import { personnaliteDe, batimentDe } from "../../logique/personnalites.mjs";
 
 // Les champs SECRETS de la fiche (0.9.0) : ils ne vivent pas dans le document, mais dans les secrets du MJ actif. Le formulaire
 // du MJ les nomme « secret.* » ; à l'envoi, ils partent à game.lakourLoups.reglerFiche (jamais au document).
@@ -86,7 +87,12 @@ export class FicheVillageois extends HandlebarsApplicationMixin(ActorSheetV2) {
     // Un joueur ne reçoit jamais le document entier : seulement les champs publics.
     const { document: _document, model: _modele, source: _source, ...publics } = contexte;
     const insigne = (classe, icone, texte, bulle = "") => ({ classe, icone, texte, bulle });
+    // Le Village (Pacte, étape 4) : sa personnalité, publique (le jeton « rôle visible » posé devant lui), avec son bâtiment.
+    const perso = s.vivant ? personnaliteDe(etat, a.id) : "";
+    const batiment = perso ? batimentDe(etat, a.id) : "";
     const etats = [
+      perso && insigne("personnalite", "fa-house-chimney-window", batiment ? `${t(`LAKOUR_LOUPS.Village.Personnalites.${perso}.Nom`)} — ${t(`LAKOUR_LOUPS.Batiments.${batiment}`)}`
+        : t(`LAKOUR_LOUPS.Village.Personnalites.${perso}.Nom`), t(`LAKOUR_LOUPS.Village.Personnalites.${perso}.Aide`)),
       s.vivant ? insigne("vivant", "fa-heart-pulse", t("LAKOUR_LOUPS.Fiche.Vivant")) : insigne("mort", "fa-cross", t("LAKOUR_LOUPS.Table.Mort")),
       s.revele && insigne("revele", "fa-eye", t("LAKOUR_LOUPS.Fiche.Revele")),
       s.silence && insigne("silence", "fa-comment-slash", t("LAKOUR_LOUPS.Table.Silence")),

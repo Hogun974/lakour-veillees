@@ -179,7 +179,7 @@ Les loups se reconnaissent dès la première nuit et chassent ensemble ; certain
 | **Loup des roseaux** | Chaque nuit, guette une maison et apprend si son occupant a agi. |
 | **Loup pâle** | Chasse avec la meute, mais une nuit sur deux dévore seul l'un des siens ; ne gagne que s'il reste le dernier vivant. |
 
-### Le Village (36 rôles)
+### Le Village (37 rôles)
 
 | Rôle | Pouvoir |
 |---|---|
@@ -219,6 +219,7 @@ Les loups se reconnaissent dès la première nuit et chassent ensemble ; certain
 | **Enfant des bois** | La première nuit, choisit un modèle : tant qu'il vit, il est du Village ; s'il meurt, il rejoint la meute. |
 | **Mâtin** | La première nuit, choisit pour toujours d'être loup (il chasse avec la meute) ou simple villageois. |
 | **Chambrière** | Quand le vote élimine un joueur, peut se dévoiler avant qu'on retourne sa carte et prendre son rôle en secret. |
+| **Incendiaire** | Avec la variante Le Village : une fois par partie, met le feu à un bâtiment ; si c'est la maison de la proie des loups, le loup à sa droite y périt. |
 
 ### Les solitaires (8 rôles)
 
@@ -317,6 +318,7 @@ Toutes se choisissent à la préparation, dans la Table de jeu ou les réglages 
 | **Glas du deuil** | Chaque innocent exécuté fait sonner le glas, et la meute y gagne un pouvoir qui grandit. |
 | **Nuit de la Saint-Martin** | Le format court : trois rôles de plus que de joueurs sous l'autel, une nuit, un vote, et la fin. |
 | **Veillées de fête** | Une variante de saison, illustrée, au choix du narrateur : **Nuit des âmes** (les morts murmurent), **Veillée d'hiver** (un présent qui pare le premier coup, la neige qui efface les traces), **Carnaval des masques** (une vision trompée, un défilé qui montre un rôle absent), **Fête des promis** (deux alliés sûrs, que la meute a vus). |
+| **Le Village** | Des personnalités publiques (Métayers, Prieur, Remégeux, Régent, Fournière, Perruquier, Cabaretier, Prévôt, Hobereau) tiennent les bâtiments du village : un pouvoir en plus de leur rôle secret ; les autres sont des Chemineaux. Les Métayers désignent le Bailli. |
 | **Petite tablée** | 1 à 4 humains et 2 à 8 joueurs IA : meute courte, première nuit blanche dès deux loups, humains jamais tous loups ni tous du même camp, le sort tranche les égalités, glas final d'office. |
 | **Somnambule, Rosière** | Rôles sur demande, ajoutés à la main par le narrateur. |
 | Réglages | Révélation à la mort, morts qui voient tout, durée du débat et du vote, délai des choix de nuit, chance d'être repéré en épiant la meute, canal des morts, salons vocaux, annonces au chat, signal « à toi », remise à zéro au lancement du monde. |

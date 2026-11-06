@@ -10,6 +10,8 @@
 // et le Bateleur en tout début de nuit (1, 2), l'Enfant des bois après les Bûcherons (13), le Mâtin juste avant la meute (38), le Loup
 // pâle juste après elle (41, avant la Louve mère, même ordre), le Joueur de vielle à la fin (80, puis ses charmés à 81, avant le
 // Fossoyeur). Leurs règles vivent dans le système (logique/ambigus.mjs).
+// Le Pacte, étape 4 : l'Incendiaire de la variante « Le Village », juste avant le Garde du pont (19) ; ses règles vivent dans le
+// système (logique/personnalites.mjs).
 import { ORDRE_MEUTE, role } from "./aides.mjs";
 
 // ======================================================================= La Meute
@@ -365,10 +367,29 @@ Mort d'une autre façon (le vote, le poison, les flammes…), ton épée ne sert
     resume: "chaque nuit, pose une plume noire sur un joueur : il aura deux voix de plus contre lui au vote du jour.",
     pouvoir: `Tu ramasses tout ce qui brille, et tu sais sous quel toit chacun cache ses secrets.
 
-**Chaque nuit**, après la chasse, tu peux désigner un joueur (pas toi). Au matin, le narrateur annonce à tous : « **une plume noire désigne** *(son nom)* ». Au **vote d'exécution** de ce jour, il compte **deux voix de plus** contre lui. Personne ne sait d'où vient la plume.
+**Chaque nuit**, après la chasse, tu peux désigner un joueur (pas toi ; avec la variante Le Village, jamais un Chemineau). Au matin, le narrateur annonce à tous : « **une plume noire désigne** *(son nom)* ». Au **vote d'exécution** de ce jour, il compte **deux voix de plus** contre lui. Personne ne sait d'où vient la plume.
 
 Passe si tu ne veux désigner personne.`,
     nuit: { ordre: 46, cibles: 1, invite: "Sur quel seuil poses-tu ta plume noire cette nuit ? Passe pour n'en poser aucune." }
+  }),
+
+  // --------------------------------------------------------------- la variante « Le Village » (Le Pacte, étape 4)
+  // L'Incendiaire n'entre en jeu qu'avec la variante (le générateur ne le tire que si elle est choisie : equilibre.village). Il est
+  // appelé dans l'ordre du livre juste avant le Garde du pont (19), donc avant la meute ; son feu prend au matin. Ses règles vivent
+  // dans le système (logique/personnalites.mjs, logique/resolution.mjs).
+  role({
+    cle: "incendiaire", nom: "Incendiaire", camp: "village", effet: "incendier", usages: 1,
+    resume: "une fois par partie, la nuit, met le feu à un bâtiment du village ; si c'est la maison de la proie des loups, le loup assis à sa droite y périt.",
+    pouvoir: `Tu as toujours aimé regarder danser les flammes, et tu sais quel chaume brûle le mieux.
+
+Tu n'es en jeu qu'avec la variante **Le Village**, où des personnalités tiennent les bâtiments de Brumecombe.
+
+**Une fois par partie**, à ton réveil, tu peux désigner un **bâtiment**, en désignant celui qui l'occupe (un Chemineau n'a pas de toit à brûler). Au matin, le bâtiment est **réduit en cendres** pour toujours : son occupant n'est pas tué, mais il perd son toit et le pouvoir qui allait avec, et devient **Chemineau**.
+
+Si c'est dans cette maison que la meute venait chercher sa proie cette nuit-là, la proie en réchappe, la meute n'a pas de victime, et **le premier loup vivant assis à la droite de la proie** périt dans les flammes.
+
+Tu peux passer, et garder ta torche pour une autre nuit.`,
+    nuit: { ordre: 19, cibles: 1, soiMeme: true, invite: "Quel bâtiment livres-tu aux flammes cette nuit ? Désigne celui qui l'occupe, ou passe pour garder ta torche." }
   }),
 
   // --------------------------------------------------------------- les ambigus du jeu de soirée (Le Pacte, étape 3b)

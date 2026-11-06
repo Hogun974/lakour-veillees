@@ -28,6 +28,7 @@
 //   { aieux: [acteurId] (première vie perdue), furets: [acteurId] (flair perdu), contamines: [{ acteurId, nuit }],
 //     signal: null | { tour, numero, par } (le signe du Greffier, avant que le second vote ne s'ouvre) }
 import { trioAutour, voisins, premierAGauche } from "./cercle.mjs";
+import { filtrerVotantsDuVillage, gracieParLeHobereau } from "./personnalites.mjs";
 
 export const EFFET_AIEUL = "resister";
 export const EFFET_SOUFFRE_DOULEUR = "egalite";
@@ -85,8 +86,9 @@ export const sagesseEstPerdue = etat => Number(etat?.pacte?.sagessePerdue) > 0;
 export const pouvoirPerdu = (perdue, role) => Boolean(perdue) && Boolean(role) && (role.camp ?? "village") === "village";
 
 // Les causes qui brisent la sagesse : l'Aïeul tombé de la main du village — le vote, le poison de l'Herboriste, la Braconnière
-// (plus tard : le Perruquier). Ni la meute, ni le chagrin, ni le harpon ou la noyade (cause « nuit », qui ne les distingue pas).
-export const CAUSES_SANS_SAGESSE = ["vote", "poison", "emporte"];
+// et le rasoir du Perruquier (Le Village, personnalites.mjs). Ni la meute, ni le chagrin, ni le harpon ou la noyade (cause « nuit »,
+// qui ne les distingue pas), ni l'incendie.
+export const CAUSES_SANS_SAGESSE = ["vote", "poison", "emporte", "rasoir"];
 
 // L'Aïeul meurt : le village perd-il sa sagesse ? -> { perdue: Boolean, innocents: [acteurId à emporter avec lui] }
 // innocents : les Innocents déjà graciés, encore vivants, si le réglage le veut (innocentSuit).
@@ -105,8 +107,10 @@ export function perdreLaSagesse(etat) {
 
 // ------------------------------------------------------------------ l'Innocent
 export const estGracie = (etat, acteurId) => normaliserPacte(etat?.pacte).gracies.some(g => g.acteurId === acteurId);
-// Gracié par CE vote (n°) : l'étape « exécuter » de la Table ne le propose plus.
-export const gracieAuVote = (etat, acteurId, numero) => normaliserPacte(etat?.pacte).gracies.some(g => g.acteurId === acteurId && g.numero === numero);
+// Gracié par CE vote (n°) : l'étape « exécuter » de la Table ne le propose plus. Le Village (personnalites.mjs) : la grâce du
+// Hobereau aussi.
+export const gracieAuVote = (etat, acteurId, numero) => normaliserPacte(etat?.pacte).gracies.some(g => g.acteurId === acteurId && g.numero === numero)
+  || gracieParLeHobereau(etat, acteurId, numero);
 
 // L'Innocent condamné par le vote est-il gracié ? Il faut son rôle, la grâce pas encore servie, et la sagesse du village.
 export const graceDue = (etat, { acteurId, role, cause }) => cause === "vote" && role?.effet === EFFET_INNOCENT && !estGracie(etat, acteurId)
@@ -125,7 +129,8 @@ export function gracier(etat, acteurId, { numero = Number(etat?.vote?.numero) ||
 
 // ------------------------------------------------------------------ qui vote
 // Les votants permis parmi ids, pour le vote ouvert (ou objet donné) : jamais un Innocent gracié ; aux votes d'exécution du tour
-// désigné par le Souffre-douleur, seulement ceux de sa liste.
+// désigné par le Souffre-douleur, seulement ceux de sa liste. Le Village (personnalites.mjs) : jamais le Régent ; aux votes
+// d'exécution du jour, ni ceux qu'il a privés de vote ; au vote du Bailli, les seuls Métayers.
 export function filtrerVotants(etat, ids = [], objet = etat?.vote?.objet ?? "execution") {
   const p = normaliserPacte(etat?.pacte);
   const gracies = new Set(p.gracies.map(g => g.acteurId));
@@ -134,7 +139,7 @@ export function filtrerVotants(etat, ids = [], objet = etat?.vote?.objet ?? "exe
     const permis = new Set(p.votants.ids);
     admis = admis.filter(id => permis.has(id));
   }
-  return admis;
+  return filtrerVotantsDuVillage(etat, admis, objet);
 }
 
 // Ce villageois est-il privé de ce vote (gracié, ou hors de la liste du Souffre-douleur) ? (bandeau, fenêtre de vote, Table)
@@ -154,7 +159,8 @@ export function souffreDouleur(etat, villageois = []) {
 }
 
 // ------------------------------------------------------------------ la Pie
-// Les rôles qu'une plume noire ne peut pas désigner (plus tard : un Chemineau). Elle-même non plus.
+// Les rôles qu'une plume noire ne peut pas désigner. Elle-même non plus. Un Chemineau (la variante « Le Village », qui n'est pas un
+// rôle mais l'absence de bâtiment) est écarté à part : jour.mjs (candidatsDeNuit) et resolution.mjs (chemineaux).
 export const EXCLUS_DE_LA_PLUME = [];
 export const candidatsDeLaPlume = (villageois = [], pieId = "", ids = villageois.filter(vivant).map(v => v.id)) => {
   const parId = new Map(villageois.map(v => [v.id, v]));

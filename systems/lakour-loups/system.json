@@ -2,7 +2,7 @@
   "id": "lakour-loups",
   "title": "Les Veillées de Brumecombe",
   "description": "Jeu original de déduction sociale de la famille du loup-garou, pour 6 à 18 joueurs (ou 4 à 12 places avec des joueurs IA) : un village de vallée pris dans la brume d'automne, des loups cachés, des nuits secrètes et des votes au grand jour. Le système fait tout le travail du meneur : composition équilibrée, distribution secrète des rôles, ordre de nuit, résolution de l'aube, débat minuté, vote au clic sur la carte, Bailli, Registre du greffier, variantes et veillées de fête. Les secrets (rôles, camps, choix de nuit) ne quittent jamais le navigateur du meneur : ils voyagent chiffrés dans un coffre, et un joueur ne reçoit que ce qui le concerne. Se joue avec un narrateur humain ou avec le MJ IA et ses compagnons (module lakour-mj-ia, requis pour le coffre). Contenu (rôles, métiers, bâtiments, carte du village, guides) : module lakour-veillees. — An original social-deduction game of the werewolf family for 6 to 18 players: hidden wolves, secret nights, public votes, a village map, a game table, a vault that keeps every secret out of the players' browsers. Playable with a human narrator or with the AI game master. Interface in French and English; content in French.",
-  "version": "0.11.2",
+  "version": "0.11.3",
   "compatibility": {
     "minimum": "14",
     "verified": "14.370"

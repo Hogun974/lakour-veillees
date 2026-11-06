@@ -9,7 +9,8 @@
 // - une page du module qui n'est plus au compendium est retirée si personne ne l'a retouchée ;
 // - une page ajoutée par le MJ (sans marque du module) n'est pas regardée.
 // « Retouchée » : son texte ne correspond plus à l'empreinte posée à l'import (flags.<ID>.empreinte) ; pour une page importée
-// avant les empreintes, sa date de modification diffère de sa date de création.
+// avant les empreintes, sa date de modification suit de plus de MARGE_CREATION_MS sa date de création (à la création, le serveur
+// Foundry pose la date de modification quelques millisecondes après celle de création : 1 à 59 ms relevés sur LaKour).
 
 // Empreinte courte d'un texte (FNV-1a 32 bits) : de quoi reconnaître un texte inchangé, rien de plus.
 export function empreinte(texte = "") {
@@ -22,12 +23,13 @@ export function empreinte(texte = "") {
 }
 
 const texteDe = page => page.text?.content ?? "";
+export const MARGE_CREATION_MS = 5000;
 
 export function pageIntacte(id, page) {
   const e = page.flags?.[id]?.empreinte;
   if (e) return e === empreinte(texteDe(page));
   const s = page._stats ?? {};
-  return s.createdTime != null && s.createdTime === s.modifiedTime;
+  return s.createdTime != null && s.modifiedTime != null && s.modifiedTime - s.createdTime <= MARGE_CREATION_MS;
 }
 
 export function pageDuMjIa(page) {

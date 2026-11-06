@@ -7,12 +7,12 @@ import { readFileSync } from "node:fs";
 
 const MODULE = "lakour-veillees";
 const RACINE = new URL(`../modules/${MODULE}/`, import.meta.url);
-const { empreinte, pageIntacte, pageDuMjIa, planMiseAJour, avecEmpreintes } = await import(new URL("scripts/mise-a-jour.js", RACINE));
+const { empreinte, pageIntacte, pageDuMjIa, planMiseAJour, avecEmpreintes, MARGE_CREATION_MS } = await import(new URL("scripts/mise-a-jour.js", RACINE));
 
 const ID = MODULE;
 const page = (id, cle, contenu, sort, extra = {}) => ({ _id: id, name: `Page ${cle ?? id}`, type: "text", sort, text: { content: contenu, format: 1 }, flags: cle ? { [ID]: { cle } } : {}, ...extra });
 const neuve = { createdTime: 1000, modifiedTime: 1000 };
-const retouchee = { createdTime: 1000, modifiedTime: 2000 };
+const retouchee = { createdTime: 1000, modifiedTime: 1000 + 3_600_000 };
 const vide = { creer: [], maj: [], supprimer: [], gardees: [] };
 
 test("empreinte : stable, sensible au texte", () => {
@@ -26,6 +26,8 @@ test("page intacte : par l'empreinte, sinon par les dates", () => {
   assert.equal(pageIntacte(ID, { ...p, _stats: neuve }), true);
   assert.equal(pageIntacte(ID, { ...p, _stats: retouchee }), false);
   assert.equal(pageIntacte(ID, p), false, "sans dates ni empreinte : on ne touche pas");
+  assert.equal(pageIntacte(ID, { ...p, _stats: { createdTime: 1000, modifiedTime: 1059 } }), true, "date de modification posée par le serveur juste après la création");
+  assert.equal(pageIntacte(ID, { ...p, _stats: { createdTime: 1000, modifiedTime: 1000 + MARGE_CREATION_MS + 1 } }), false);
   const marquee = avecEmpreintes(ID, [p])[0];
   assert.equal(pageIntacte(ID, { ...marquee, _stats: retouchee }), true, "l'empreinte prime sur les dates");
   assert.equal(pageIntacte(ID, { ...marquee, text: { content: "<p>A modifié</p>" } }), false);

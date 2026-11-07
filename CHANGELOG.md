@@ -4,6 +4,64 @@ Deux numéros de version avancent ensemble : celui du **système** `lakour-loups
 `lakour-veillees`. Chaque publication GitHub (étiquette `v<version du système>`) emporte les deux, plus le monde vierge.
 Le moteur commun `lakour-mj-ia` a son propre journal dans [son dépôt](https://github.com/Hogun974/lakour-mj-ia).
 
+## Système 0.13.1 · Contenu 0.16.0 — 7 novembre 2026
+
+Le chantier **« Le Pacte »** (6 et 7 novembre). Cette section regroupe aussi les numéros intermédiaires système 0.12.0, 0.12.1
+et 0.13.0, contenu 0.15.0 et 0.15.1. Moteur MJ IA 0.43.0 à 0.44.1.
+
+- **Le Pacte** : un niveau qui rejoue, règle pour règle, le jeu de loups-garous de soirée avec ses extensions, sous nos noms et
+  avec nos textes (aucun texte ni nom d'un jeu édité). Ses seuls personnages, sans bâtiments communaux ni métiers, de 6 à 18
+  joueurs ; proposé d'abord à la préparation ; treize compositions prêtes (`le-pacte-06` à `-18`) ; la **Liseuse de cendres**
+  dans toute composition du niveau ; ordre d'appel du jeu de soirée (première nuit, chaque nuit, chaque jour). Nos créations
+  restent disponibles en option (rôles choisis à la main, bâtiments choisis).
+- **Socle** : le cercle des places (voisins de gauche et de droite), les derniers gestes choisis par le mourant (la Braconnière
+  désigne elle-même), les rôles publics dès la distribution, les bâtiments tenus, les charges, les événements.
+- **Rôles alignés** sur le jeu de soirée : Loup affamé, Louve mère, Liseuse de cendres, Herboriste (deux fioles la même nuit),
+  Braconnière, Enfant de la brume, Garde du pont (contre la meute seulement), Entremetteuse, Bailli (sa voix tranche l'égalité),
+  Peste noire ; le montreur des gens de passage devient le **Montreur de marmotte**.
+- **Rôles nouveaux** : au Village, Franc-Villageois, Aïeul, Souffre-douleur, Innocent, Lavandières, Bûcherons, Furet, Gardeuse
+  d'oies, Greffier bègue, Vieux Sergent, Pie, Incendiaire, Liseuse d'étoiles ; les visages changeants Chapardeur, Bateleur,
+  Mâtin, Enfant des bois, Chambrière ; les solitaires Feu follet, Joueur de vielle, Illuminé ; le Loup pâle. Réglage
+  « L'Innocent suit l'Aïeul ».
+- **Le Village** (variante) : neuf personnalités publiques qui tiennent les bâtiments (Métayers, Prieur, Remégeux, Régent,
+  Fournière, Perruquier, Cabaretier, Prévôt, Hobereau), les Chemineaux, l'Incendiaire ; les Métayers désignent le Bailli dès le
+  deuxième jour ; encart « Le Village » de la Table pour changer les occupants avant la première nuit.
+- **Variantes du jeu de soirée** : Veillée aux chandelles (et angoissante), Chaîne des innocents, Mur des murmures, Double visage
+  (petite et grande complication, case « une allégeance loup de plus »), Vendanges, Envoûtement ; peste noire jouable au niveau
+  Le Pacte. Exclusions : aucune variante dans une Nuit de la Saint-Martin ; ni Double visage, ni Vendanges, ni Envoûtement à la
+  petite tablée ou dans une peste.
+- **La Gazette de la lune** : 31 cartes Événement (immédiates, différées, permanentes ; chaque matin, un sur deux ou un sur
+  trois ; au choix du narrateur ; permanentes dès le début), le **Crieur public** (charge nommée par le Bailli, 3 cartes en main
+  par défaut), l'**Exécuteur**, la **Liseuse d'étoiles** et ses cinq séances de Spiritisme (réponse vraie calculée) ; les
+  **traits visibles** des personnages (genre d'après le prénom, âge, lunettes, bijou, coiffe, sabots, pipe, bourg ou écart),
+  que les cartes lisent ; l'Illuminé peut partager le village selon un trait. Sans Almanach des brumes.
+- **Partie simple** : réglages « Bâtiments du village » (aucun, tirés au hasard, choisis) et « Métiers », pour tous les niveaux.
+- **Explication à la distribution** : chaque joueur humain reçoit dans son carnet secret « Comment jouer : son rôle » (ce qu'il
+  fait, quand il est appelé, ce qu'on lui demandera, ses usages, comment il gagne, sa seconde carte, son métier, sa
+  personnalité).
+- **Table de jeu** : préparation en onglets (Joueurs, Composition, Village, Variantes, Gazette et fête), résumé des choix actifs
+  et bouton Distribuer toujours visibles ; en-tête qui dit la composition en clair.
+- **Équilibre mesuré** : un simulateur de parties complètes (`essais/outils/simuler-veillees.mjs`), des politiques par rôle
+  pour les joueurs simulés et les compagnons (`logique/politiques.mjs`), une calibration des poids par régression ; une adresse
+  de référence par niveau (débutants 0,5 ; classique et Le Pacte 0,75 ; chaos 1). Débutants : un loup de moins. Revenant :
+  gagne exécuté à partir du troisième jour ; Chasseur de primes : sa cible doit tomber au plus tard le deuxième jour. Mesuré, la
+  meute gagne 51 % au niveau Le Pacte, 54 % au classique, 51 % au chaos, 52 % aux débutants. Avertissements chiffrés et conseils
+  de dosage dans les guides (Chaîne des innocents, Double visage). Détail : `docs/equilibre-veillees.md`.
+- **Caméras** : la caméra d'un joueur est remplacée par un loup-garou la nuit (tous les vivants), pour les morts, les partis, les
+  spectateurs, les absents du jour de la Gazette et les réduits au silence ; sa piste vidéo est éteinte à la source, d'après
+  l'état public seul. Réglages « Caméras remplacées par le loup-garou » et « Image à la place d'une caméra » ; le logo
+  (`assets/camera/loup-garou.webp`, FLUX.2 klein 9B dans ComfyStudio) et son repli SVG. Le réglage « Caméras des joueurs
+  permises » et le bloc de la console sont au moteur MJ IA (0.44.0).
+- **Après les parties en vrai du 7 novembre** : messages accordés au féminin (Métayère, Prieure, Crieuse publique…), le Hobereau
+  qui se gracie lui-même ; après la victoire, plus aucune fenêtre ni demande, chaque tâche de fond s'arrête ; le villageois d'un
+  joueur humain laissé hors de la distribution quitte le village.
+- **MJ IA** (moteur 0.43.0 à 0.44.1) : le narrateur et les compagnons mènent tous les rôles, variantes, cartes et demandes du
+  Pacte (outils `loups_gazette` et `loups_pacte`) ; les compagnons sans modèle jouent d'après les politiques du système ; le
+  pilote ne compte que les humains connectés de la partie en cours ; le coût de la séance s'affiche en direct et reste compté
+  après un rechargement ; le modèle des compagnons se choisit dans une liste ; les joueurs hors ligne sont laissés de côté à la
+  composition.
+- Guides du joueur, du narrateur et des variantes, aides et interface en français et en anglais ; README et tutoriels mis à jour.
+
 ## Système 0.11.3 · Contenu 0.14.2 — 6 novembre 2026
 
 - **Mise à jour des journaux : pages intactes mieux reconnues** (`scripts/mise-a-jour.js`, commun aux quatre modules LaKour) :

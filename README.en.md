@@ -23,7 +23,8 @@ some of you are wolves: by day they talk, vote and mourn with everyone else; by 
 one weapon: words, and the vote.
 
 > **Language note.** The interface of the system and of the content module is available in **French and English**. The
-> game content itself (roles, trades, buildings, guides, variants, tables, holiday journals) exists in both languages:
+> game content itself (roles, trades, buildings, guides, variants, tables, holiday journals, and the whole of The Pact: its
+> characters, The Village, the Gazette and séance cards) exists in both languages:
 > `lakour-veillees` is the French module; **`lakour-veillees-en`** is the English edition, generated from the same sources
 > and the translation dictionaries in `modules/lakour-veillees/contenu/en/` (`npm run fabriquer-veillees-en`). Same
 > documents, same identifiers: enable only one of the two. Manifest: `releases/latest/download/lakour-veillees-en.json`.
@@ -38,6 +39,11 @@ own. It uses the free mechanisms of the genre (a village, hidden wolves, secret 
 else: *nothing is taken from Les Loups-garous de Thiercelieux (a trademark of its publishers) nor from any other commercial
 game*.
 
+It can be played in two ways, at the narrator's choice: **the Vigils** proper (our roles, our trades, our buildings, our
+variants), or **[The Pact](#the-pact-the-party-game-under-our-own-names)**, the werewolf game friends bring out at the end of
+an evening, with its characters, its village personalities, its event cards and its variants: the same rules, rewritten, under
+our own names and with our own texts. The two mix: our own creations remain available as options in The Pact.
+
 It is played **in Foundry VTT**, online, with **6 to 18 players**, in an evening (a game lasts from twenty minutes to an hour
 and a half depending on the size of the table). It can be run two ways:
 
@@ -51,7 +57,7 @@ Either way, **no player has to give up their seat** to be the narrator, and **no
 browser**: what they must not know is never sent to them.
 
 **Transparency.** The code and the texts in this repository were written with the help of an AI (Claude, by
-Anthropic) and reviewed by the author. The illustrations (world welcome screen, festive vigils, the picture that replaces a cut camera) are AI-generated, locally
+Anthropic) and reviewed by the author. The illustrations (world welcome screen, festive vigils, the werewolf logo that replaces a camera) are AI-generated, locally
 (FLUX.2 klein 9B in ComfyStudio); the village map and the tokens are not (see [Credits](#credits)).
 
 This repository holds three pieces:
@@ -64,13 +70,15 @@ This repository holds three pieces:
 
 ## Who it is for, what you need
 
-- **6 to 18 players** (ready-made set-ups for every size, in three levels), or **4 to 12 seats** in Small table mode with AI
-  players. A group of friends online, one evening, a microphone each.
+- **6 to 18 players** (ready-made set-ups for every size, in four levels: The Pact, Beginners, Classic, Chaos), or **4 to 12
+  seats** in Small table mode with AI players. A group of friends online, one evening, a microphone each; a camera if you want
+  to see each other.
 - **Foundry VTT v14** (verified with 14.369). No game system to buy: the system is provided here.
 - The **AI GM module** (`lakour-mj-ia`) is **required even without AI**: it keeps the encrypted vault of the game's secrets.
   Without an AI key it costs nothing and contacts nobody; voice and companions then run in "simple" mode (no AI) or stay off.
 - Optional: Foundry's built-in A/V for automatic **voice rooms** (at night the wolves hear each other; the dead talk to the
-  dead); a Claude or OpenAI key for the AI GM and the companions.
+  dead) and, if you wish, the players' **cameras** (see [Voice and cameras](#voice-and-cameras)); a Claude or OpenAI key for
+  the AI GM and the companions.
 
 ## Installation
 
@@ -132,11 +140,17 @@ release, in `dist/`.
 
 A vigil runs in **rounds**: a night, a dawn, a day, a vote, and night falls again, until one side wins.
 
-**Set-up.** The narrator opens the **Game Table** (button in the left bar, token layer), picks the number of players and the
-level (Beginners, Classic, Chaos, or Small table), lets the system compose a balanced game or takes a ready-made set-up, then
-**deals**. Everyone receives a **role card** in secret and a **trade** in public; everyone has a **house** on the map
-("House 1" to "House 18", six of them across the river). **The set-up stays secret**: neither the roles in play nor the
-number of wolves are announced; only the **4 to 6 buildings** in play are, and each one changes a rule.
+**Set-up.** The narrator opens the **Game Table** (button in the left bar, token layer). Its preparation is laid out in
+**tabs**: *Players* (who plays, the AI players), *Composition* (the level: **The Pact**, offered first, Beginners, Classic,
+Chaos or Small table; a set-up balanced by the system, a ready-made set-up, or roles picked by hand), *Village* (black
+plague, Saint Martin's night, The Village; buildings: none, drawn at random or chosen; trades), *Variants* (the party game's),
+and *Gazette and feast*. The summary of the active choices
+and the **Deal** button stay visible below the tabs. Everyone receives a **role card** in secret and, if trades are in play, a
+public **trade**; everyone has a **house** on the map ("House 1" to "House 18", six of them across the river). Every human
+player also finds in their **secret notebook**, which opens by itself, an **explanation of their role**: what it does, when the
+narrator calls them and what they will be asked, how many times it can be used, how they win, then their trade and their
+personality if they have one. **The set-up stays secret**: neither the roles in play nor the number of wolves are announced;
+only the buildings in play (4 to 6 when drawn at random) and the variants are, and each one changes a rule.
 
 **Night.** Fog falls on the map, tokens go home, microphones go quiet (voice rooms: wolves hear each other, the dead hear each
 other). The narrator wakes the roles **one by one, in order**: a **choice window** opens for the one player concerned ("Which
@@ -149,14 +163,15 @@ narrator tells what the village finds in the morning: who died, and sometimes ho
 their **secret notebook**. Depending on the setting, the roles of the dead are revealed or not; a dead player no longer talks
 to the living, but may keep a **Last breath** (one vote, once).
 
-**Day.** The village **debates**, on a timer (five minutes by default). **Day powers** (trades, Justice of the peace,
+**Day.** The village **debates**, on a timer (five minutes by default). **Day powers** (trades, Justice of the Peace,
 Storyteller, buildings) are played with one click on the Game Table: the system checks the timing, applies the effect and
-announces it. On the first day the village **elects its Bailiff** (double vote, breaks ties). Anyone can have a **statement**
+announces it. On the first day the village **elects its Bailiff** (double vote, breaks ties; with The Village, the Tenant
+Farmers choose one of their own instead, from the second day on). Anyone can have a **statement**
 written into the **Clerk's register**, the public memory of the vigil.
 
 **Vote.** The narrator opens the vote; everyone **clicks a token** (or a name in the vote window), may change their mind until
 closing; you see who has voted, never for whom. The vote closes by itself when the timer ends. The most accused is executed,
-unless the Justice of the peace cancels or the Weaver's ribbon grants a last minute of defence; tally bubbles appear on the
+unless the Justice of the Peace cancels or the Weaver's ribbon grants a last minute of defence; tally bubbles appear on the
 map, the register records every vote. Then night falls again.
 
 **The end.** The Village wins when no wolf is left alive; the Pack, when it equals everyone else; loners and lovers have their
@@ -167,9 +182,152 @@ the village starts over.
 The **player guide** (a world journal, readable by all) and the **narrator guide** (hidden from players) cover all of this,
 and every building on the map is **pinned** to its rules page.
 
+## The Pact: the party game, under our own names
+
+**The Pact** level replays, rule for rule, the werewolf game that friends bring out at the end of an evening, with its
+expansions: its characters, the village personalities, the event cards and the variants. The mechanics are the same;
+the names, texts and images are those of Brumecombe, and no rules text or name from a published game is taken. Where the
+physical table has no online equivalent, the guides say how it was adapted (for instance, each player's candle sits on their
+card of the Game Table, or the characters' visible traits, below). Everything exists in French and in English.
+
+- **Only the party game's characters**, from 6 to 18 players (one ready-made set-up per size, or the generator), **without our
+  common buildings or our trades**: the vigil plays as it would around a real table. The other levels keep every role of the
+  Vigils.
+- **The Ash Reader is always there**, as in the party game, where the one who sees roles is never missing: the generator puts
+  her in every set-up of the level. She is left out only if the narrator excludes her, if the roles are picked by hand, with
+  Two Faces (which has its own deck), or when the Pilferer leaves her in the middle.
+- **Our own creations, as options**: pick the roles by hand (*Composition* tab, "Pick the roles") to add a Vigils role to a
+  vigil of The Pact, or tick some buildings (*Village* tab, "Chosen"). Trades, however, are never dealt at The Pact level.
+
+### Roles by side
+
+| Side | The party game's characters (our names) | Our own creations, as options |
+|---|---|---|
+| **The Pack** | Wolf of Brumecombe, Famished Wolf, Mother Wolf, Pale Wolf | Wolf in Disguise, Howling Wolf, Scenting Wolf, Wolf of the Reeds |
+| **The Village** | Villager, Plain Villager, **Ash Reader** (always there), Matchmaker, Herbalist, Poacher, Child of the Mist, Bridge Warden, Greybeard, Whipping Boy, Village Innocent, Washerwomen (in pairs), Woodcutters (in threes), Ferret, Goose Girl, Stammering Clerk, Old Sergeant, Magpie, Stargazer; the Firebrand with The Village | Lantern Keeper, Bell Ringer, Gravedigger, Storyteller, Justice of the Peace, Hermit, Messenger, Keeper of the Keys, Dowser, Wolfhunter, Night Fisher; Sleepwalker and Rose Maiden on request |
+| **The changing faces** (Village at the start, their side may change) | Pilferer, Mountebank, Mastiff, Woods Child, Chambermaid | — |
+| **The loners** | Will-o'-the-Wisp, Hurdy-Gurdy Player, Zealot | Revenant, Peddler, Bounty Hunter, Arsonist, Lady of the Ford |
+| **Offices and personalities** | the Bailiff; the Town Crier and the Executioner (Moon Gazette); the personalities and the Drifters (The Village) | the Passers-by (Knife Grinder, Marmot Showman, Pilgrim) |
+
+Each power is in the [content](#the-content) tables below, and in the player's guide.
+
+### The calling order
+
+The system wakes the roles in the party game's order; the Game Table's **Night order** follows it, and so does the AI GM.
+
+- **The first night**: Pilferer, Mountebank, Matchmaker, Ash Reader, Ferret, Washerwomen, Woodcutters, Woods Child, Magpie,
+  Firebrand, Bridge Warden, the pack (with the Mastiff if it joined), Child of the Mist, Mother Wolf, Famished Wolf, Herbalist,
+  Stargazer, Hurdy-Gurdy Player, then the charmed.
+- **The following nights**: Mountebank, Ash Reader, Ferret, Magpie, Firebrand, Bridge Warden, the pack, Child of the Mist,
+  Pale Wolf (every other night), Mother Wolf, Famished Wolf (as long as no wolf has died), Herbalist, Stargazer, Hurdy-Gurdy
+  Player, the charmed; the Washerwomen and the Woodcutters every other night.
+- **Every morning, every day**: the night's victims, the Goose Girl's geese, the Gazette card, the séance, the Town Crier's
+  announcement, the debate, the vote (and the Chambermaid, who may step in), the Will-o'-the-Wisp if it falls in the first
+  round, the Stammering Clerk's second vote.
+
+What has no wake-up of its own happens by itself: the lovers learn of their bond in their notebook, the Oven-Keeper receives in
+the morning what she glimpsed, the Stammering Clerk's signal is a secret day power. Our own creations, when in play, wake next
+to the role they resemble.
+
+### A simple game: no buildings, no trades
+
+Two preparation choices (*Village* tab, and world settings) apply to every level: **Village buildings** (*none*: a simple game
+with the characters only, where the map landmarks are mere scenery; *drawn at random*, as before; *chosen*: tick the ones of
+the vigil) and **Trades** (yes or no). The Table keeps the last choice. The Pact draws no building and never deals a trade:
+without The Village, it is therefore played with no building at all.
+
+### The Village: personalities, Drifters, Firebrand
+
+With **The Village** variant (box of the *Village* tab), some players hold one of Brumecombe's buildings and become a
+**personality**, known to all; their role card stays secret (the Prior may be a wolf), and the building's power comes on top of
+the role's. At the deal, the system proposes who holds what, announces it and writes it into the register; the narrator can
+change each holder in "The Village" panel of the Table until the first night.
+
+| Personality (building) | Power |
+|---|---|
+| **Tenant Farmers** (six farmsteads) | From the second day, they choose the Bailiff among themselves; when the last one dies, there is no Bailiff any more. |
+| **Prior** (the priory) | Once, by day: a player shows him their card in secret. |
+| **Bonesetter** (the hovel) | Once, by day: gives a player back the single-use power of their building, already spent. |
+| **Schoolmaster** (the school) | Every day, before the vote, puts one or two players in the corner: they do not vote that day; he never votes. |
+| **Oven-Keeper** (the bakehouse) | Every night, half-opens her eyes when the pack goes home: online, a one-in-three chance of glimpsing a wolf. |
+| **Wigmaker** (the shop) | Once, by day: eliminates a player; if he was wrong (not a wolf), he pays with his life. |
+| **Alehouse Keeper** (the alehouse) | Neither prey for the pack nor a candidate in the vote; votes openly, and loses that protection by voting against a condemned player. |
+| **Provost** (the provostry) | When a building becomes free, lodges a Drifter there, who may refuse. |
+| **Squire** (the manor) | Once, after a vote: pardons the condemned player who begs him (or himself); the pardoned player's card stays hidden. |
+
+Players without a building are **Drifters**: no roof and no building power, but the Schoolmaster, the Wigmaker, the Magpie and
+the Firebrand have no hold on them. The **Firebrand**, a Village role that exists only with this variant, sets fire to a
+building once: its holder becomes a Drifter; if it was the house of the pack's prey, the prey escapes and the first wolf to its
+right dies. If the Greybeard falls at the village's hand, the personalities lose their power like the trades (the Tenant Farmers
+keep choosing the Bailiff). Neither at the small table nor on a Saint Martin's night.
+
+### The Moon Gazette
+
+**31 Event cards**, one read out every morning but the first by the last player eliminated (if nobody has died yet: by the
+narrator). Each one acts **at once** (that day), **later** (the coming night or vote) or **for the whole game**: The Flood (no
+vote, two shelters, maybe two victims), Heads or Tails (the condemned player pardoned or not), The Great Distrust (two votes per
+player, for their friends: whoever gets none falls), The Executioner (an elected office, the only one to know the role of the
+condemned), The Deadly Touch, The Nightmare, The Wraith… Settings: a card every morning, every other morning or one morning in
+three; the narrator may pick the cards; permanent cards may be laid down from the start (boxes of the *Gazette and feast* tab).
+The deck stays the narrator's secret. Three cards (Sunny Sunday, End of the Harvest, Grey Monday) let the narrator apply The
+Thrall, Grape Harvest or the Chain of Innocents for that round only. With the Gazette, no Almanac of mists.
+
+- **The characters' visible traits.** Many cards speak of the bodies of the players around the table (the women, the youngest,
+  whoever wears glasses…). Online, they read the **traits of each player's character**, drawn at the deal and seen by all
+  (sheet, Table card, chat): gender (from the first name), age, spectacles, visible jewel, dark headdress, clogs, pipe, house in
+  the village or on an outlying farm. A GM can set an actor's traits by hand (flag `flags["lakour-loups"].traits`). The Zealot
+  can also split the village by a trait (setting "The Zealot: how the village is split").
+- **The Town Crier.** An office named by the Bailiff (never himself), to whom the narrator hands a few Gazette cards before the
+  game (3 by default, 5 at most), taken out of the deck. Every morning from the day after being named, the Crier may read one,
+  which applies. The Bailiff may dismiss the Crier after the announcement, before the vote; a Crier who dies is replaced.
+- **The Stargazer and the séances.** The narrator keeps five séance cards of four questions each. Every night, the Stargazer
+  may ask for a séance: in the morning she picks a question and names the **Medium**, who puts it to the spirit of the game's
+  **first dead player**. The spirit answers yes or no and never lies: the system works out the answer from the game and the
+  traits ("Does one of the wolves wear spectacles?"). Five séances at most.
+
+The narrator keeps control of what an online game cannot judge alone: taking away the vote of whoever breaks a conduct card
+(Black Moon, Good Manners, Neither Wolf nor Me; in the chat, the system itself spots "wolf" and "me"), reading a card, applying
+a one-day variant, naming the Crier in place of an absent Bailiff. Guide pages: "The Moon Gazette" (Variants journal, readable by
+all) and "Running the Moon Gazette" (narrator's guide).
+
+### The party game's variants
+
+Each one is a box of the *Variants* tab (and a world setting), announced at the deal. The figures come from the simulator
+([`docs/equilibre-veillees.md`](docs/equilibre-veillees.md), in French): the pack's share of the games won by the pack or the
+village, compared with the ordinary vigil (about one in two), with players who make fairly good use of what they know; within
+± 8 points, a variant is within the margin.
+
+| Variant | What it changes | Measured balance |
+|---|---|---|
+| **Candlelight vigil** | A candle per player, on their card of the Game Table, blown out at their death. **Dreadful**: each wolf blows out a candle himself at night; if they do not all blow out the same one, the pack has no victim, and the village sees the dark candles in the morning. | Within the margin (-1 point; dreadful, -9: slightly for the village). |
+| **Chain of Innocents** | No vote: starting from the left neighbour of the last player eliminated, each one names a standing player whose innocence they vouch for, who sits down and names the next; the last one standing is condemned. | **It strongly favours the pack**: eight games in ten (+31 points), more than nine in ten at 16 players. Advice: from 9 to 12 players, **one wolf fewer**; from 13, **two fewer**; at 8 and below, keep two wolves. The generator keeps its wolf count: compose the vigil by hand. |
+| **Whispering Wall** | Every night, every living player may write a short anonymous sentence; in the morning the wall is read out. Nobody, not even the narrator, knows who wrote what. | Within the margin (-4 points). |
+| **Two Faces** | **Small twist**: a visible role, turned face up for all, and a secret allegiance that sets the side. **Big twist**: two secret cards per player. From 7 to 18 players (a second deck from 10). | **It favours the village**: the pack wins a little under four games in ten (-14 points with the small twist, -17 with the big one). Advice, the **"one more wolf allegiance"** box: from 16 players with the small twist (and at 13), from 12 with the big one; the pack comes back to four to six in ten. Below that, keep the basic deck (with the extra card, seven to nine in ten for the pack). |
+| **Grape Harvest** | One more wolf, and every power tipsy: the pack only devours a neighbour of a wolf, the Ash Reader reads three mixed-up roles, the Bailiff votes alone and first, the Herbalist has a single phial with an uncertain outcome… | **It favours the pack**: seven games in ten (+19 points), even though the generator arms the village more (at medium and large tables it is already at its ceiling). |
+| **The Thrall** | The pack's prey do not die: they lose their powers, secretly enthralled; an enthralled player condemned by the village drags down those enthralled before them; the pack wins once it has enthralled the second-to-last villager. | Uncorrected, it made the village win almost every time (-30 points); the generator compensates (a set-up less armed for the village): -7 points remain, within the margin. |
+| **Black plague** | The variant with no wolves (see [Variants](#variants)); it can also be played at The Pact level. | Not measured by the simulator. |
+
+No variant on a Saint Martin's night; neither Two Faces, nor Grape Harvest, nor The Thrall at the small table or in a black
+plague (a chosen plague rules them out). **The Hamlets** (several villages playing at once, players moving from one to another)
+are not there yet: a Foundry world runs only one vigil at a time.
+
+### Balance, measured
+
+Role weights and the generator's target are no longer set by hand: they are **measured**. A simulator plays thousands of
+complete games with the real system and the real content; simulated players follow a policy per role (what a player would do
+from what they know), with the skill of a real table: one piece of information in two for beginners, three in four for Classic
+and The Pact, all of it for Chaos. Measured at those skill levels, the pack wins about **one game in two** among those won by
+the pack or the village: **51% at The Pact level** (43 to 54% depending on size, except 63% at six players, where the generator
+is at its ceiling), 54% at Classic, 51% at Chaos, 52% for Beginners (who have **one wolf fewer** than the usual count for that).
+Three loners were adjusted: the **Revenant** only wins if executed from the third day on, the **Bounty Hunter**'s target must
+fall by the second day at the latest, and the simulated players keep an eye on the **Hurdy-Gurdy Player** (his rule is
+unchanged; he wins 15% of the games he is in, against 33% before). The Village (+6 points) and the Gazette (+7) stay within the
+margin. Method, seeds, tables and how to measure again: [`docs/equilibre-veillees.md`](docs/equilibre-veillees.md) (in French).
+
 ## The content
 
-Roles are public: the player guide describes them all, as the genre requires. What is secret is who holds what.
+Roles are public: the player guide describes them all, as the genre requires. What is secret is who holds what. Those of the
+party game (The Pact level) are sorted in [the table by side](#roles-by-side) above.
 
 ### The Pack (8 roles)
 
@@ -178,38 +336,38 @@ Wolves recognise each other on the first night and hunt together; some wake a se
 | Role | Power |
 |---|---|
 | **Wolf of Brumecombe** | Each night, with the pack, picks the victim. |
-| **Starving wolf** | Each night, as long as no wolf has died, kills a second victim alone. |
-| **Disguised wolf** | Looks like a villager to every vision; loses the mask if he survives a vote that singled him out. |
-| **Mother wolf** | Once per game, infects the pack's prey instead of killing it: it secretly becomes a wolf. |
-| **Howling wolf** | Each night, silences a player for the next day's debate. |
-| **Sniffing wolf** | Each night, sniffs a player and learns their side. |
-| **Wolf of the reeds** | Each night, watches a house and learns whether its occupant acted. |
-| **Pale wolf** | Hunts with the pack, but every other night devours one of its own alone; wins only if left the last one alive. |
+| **Famished Wolf** | Each night, as long as no wolf has died, kills a second victim alone. |
+| **Wolf in Disguise** | Looks like a villager to every vision; loses the mask if he survives a vote that singled him out. |
+| **Mother Wolf** | Once per game, infects the pack's prey instead of killing it: it secretly becomes a wolf. |
+| **Howling Wolf** | Each night, silences a player for the next day's debate. |
+| **Scenting Wolf** | Each night, sniffs a player and learns their side. |
+| **Wolf of the Reeds** | Each night, watches a house and learns whether its occupant acted. |
+| **Pale Wolf** | Hunts with the pack, but every other night devours one of its own alone; wins only if left the last one alive. |
 
-### The Village (37 roles)
+### The Village (38 roles)
 
 | Role | Power |
 |---|---|
 | **Villager** | No power, one vote. |
-| **Lantern keeper** | Lights a house each night: a wolf who enters it is unmasked at dawn. |
-| **Ash reader** | Each night, learns a player's role. |
+| **Lantern Keeper** | Lights a house each night: a wolf who enters it is unmasked at dawn. |
+| **Ash Reader** | Each night, learns a player's role. |
 | **Herbalist** | One remedy (saves the pack's victim) and one poison (kills), once each, both on the same night if she wishes. |
-| **Bridge guard** | Protects one player per night from the pack, never the same twice in a row. |
-| **Bell ringer** | Once per game, by day, rings the bell: the vote condemns two players. |
+| **Bridge Warden** | Protects one player per night from the pack, never the same twice in a row. |
+| **Bell Ringer** | Once per game, by day, rings the bell: the vote condemns two players. |
 | **Gravedigger** | Each night, learns the exact role of a dead player. |
 | **Poacher** | If she dies, she takes a player of her choice with her. |
 | **Storyteller** | Once per game, forces two minutes of debate about one player, who cannot answer. |
-| **Justice of the peace** | Once per game, cancels a vote: the village votes again. |
-| **Child of the fog** | May spy on the pack at night and learn the wolves' names; if caught, she is the one the pack devours. |
+| **Justice of the Peace** | Once per game, cancels a vote: the village votes again. |
+| **Child of the Mist** | May spy on the pack at night and learn the wolves' names; if caught, she is the one the pack devours. |
 | **Hermit** | Each night, learns the name of one player who acted, without knowing what they did. |
 | **Messenger** | Each night, carries a secret message between two players. |
 | **Matchmaker** | Binds two lovers on the first night, then plays with the village. |
-| **Keeper of the keys** | Each night, locks a house: nobody gets in, nobody gets out. |
+| **Keeper of the Keys** | Each night, locks a house: nobody gets in, nobody gets out. |
 | **Dowser** | Every other night, learns whether two players are on the same side. |
-| **Wolf-hunter** | Each night, learns a player's side; but he smells of wolf: every vision sees him as the pack's. |
+| **Wolfhunter** | Each night, learns a player's side; but he smells of wolf: every vision sees him as the pack's. |
 | **Sleepwalker** *(on request)* | Believes he holds a vision role, but he dreams: his visions are false. |
-| **Rose queen** *(on request)* | The village's pride: if the village executes her by vote, the Village loses at once. |
-| **Night fisherman** | Once per game, throws his harpoon: the target dies at dawn unless protected. |
+| **Rose Maiden** *(on request)* | The village's pride: if the village executes her by vote, the Village loses at once. |
+| **Night Fisher** | Once per game, throws his harpoon: the target dies at dawn unless protected. |
 | **Plain Villager** | No power, but their card is turned face up from the deal: the whole village knows they are innocent. |
 | **Greybeard** | The pack must attack him twice to kill him; if he falls at the village's hand, the villagers lose their powers. |
 | **Whipping Boy** | If the vote ends in a tie, he is the one executed; he then chooses who will vote the next day. |
@@ -223,10 +381,11 @@ Wolves recognise each other on the first night and hunt together; some wake a se
 | **Magpie** | Each night, lays a black feather on a player: two more votes against them at the day's vote. |
 | **Pilferer** | On the first night, may steal one of the two cards left in the middle and become that role; must do so if both are wolves. |
 | **Mountebank** | Three roles are laid face up: each night, may play the power of one of them, each one only once. |
-| **Woods child** | On the first night, chooses a model: as long as it lives, is on the Village side; if it dies, joins the pack. |
+| **Woods Child** | On the first night, chooses a model: as long as it lives, is on the Village side; if it dies, joins the pack. |
 | **Mastiff** | On the first night, chooses for good to be a wolf (hunting with the pack) or a plain villager. |
 | **Chambermaid** | When the vote eliminates a player, may reveal herself before their card is turned over and secretly take their role. |
 | **Firebrand** | With The Village variant: once per game, sets fire to a building; if it is the house of the wolves' prey, the wolf to its right dies there. |
+| **Stargazer** | Each night, may ask for a séance: in the morning, a Medium puts a question to the first dead player, who answers yes or no without lying. |
 
 ### The loners (8 roles)
 
@@ -234,17 +393,17 @@ Wolves recognise each other on the first night and hunt together; some wake a se
 |---|---|
 | **Revenant** | Wins if executed by the village. |
 | **Peddler** | Secretly swaps roles with another player, once; wins with the new side. |
-| **Bounty hunter** | Gets a target at the start: wins if the target is executed by day. |
+| **Bounty Hunter** | Gets a target at the start: wins if the target is executed by day. |
 | **Arsonist** | Douses one house per night; one night, sets fire to every doused house; wins alone. |
-| **Lady of the ford** | Every other night, lures a player to the ford where they drown; the pack cannot kill her; wins alone. |
-| **Will-o'-the-wisp** | The game begins with a day; if eliminated in the first round, wins alone; otherwise, becomes a plain villager. |
-| **Hurdy-gurdy player** | Each night, charms two players; wins alone when every other living player is charmed. |
+| **Lady of the Ford** | Every other night, lures a player to the ford where they drown; the pack cannot kill her; wins alone. |
+| **Will-o'-the-Wisp** | The game begins with a day; if eliminated in the first round, wins alone; otherwise, becomes a plain villager. |
+| **Hurdy-Gurdy Player** | Each night, charms two players; wins alone when every other living player is charmed. |
 | **Zealot** | The village is split into two groups announced to all; wins alone if the whole other group is eliminated. |
 
 ### Passers-by (3 roles)
 
 For a player who **joins mid-game**: the role is public, the side secret (drawn by the system), the power works once, by day.
-**Knife grinder** (sharpens a house's lock), **Marmot showman** (sets his marmot on a doorstep), **Pilgrim** (prays on a doorstep and
+**Knife Grinder** (sharpens a house's lock), **Marmot Showman** (sets his marmot on a doorstep), **Pilgrim** (prays on a doorstep and
 learns the side). The village can exile them by vote; and any player may **leave the vigil** without dying or revealing
 anything.
 
@@ -267,13 +426,16 @@ wounds and silences a wolf), the **Graveyard** (the side of the dead eventually 
 across the river; the pack never crosses two nights in a row), the **Washhouse** (a true but vague clue every morning), the
 **Barn** (a hiding place where you can neither be found nor act).
 
-### Ready-made set-ups (48)
+### Ready-made set-ups (61)
 
 - **Beginners, Classic, Chaos**: one set-up per size from 6 to 18 players (2 wolves up to 8 players, 3 up to 12, 4 up to 15,
   5 beyond; one fewer at the Beginners level; loners and special wolves by level), with its buildings.
+- **The Pact**: one set-up per size from 6 to 18 players, with the party game's characters only, no buildings and no trades,
+  the Ash Reader in each one.
 - **Small table**: 4 to 12 seats, drawn by the system's generator with a fixed seed.
-- The Game Table can also **compose** a balanced game for any number, or take a hand-written list of roles. Balance weights
-  live in `modules/lakour-veillees/contenu/equilibre.mjs`.
+- The Game Table can also **compose** a balanced game for any number, or take a hand-written list of roles. Every ready-made
+  set-up is drawn by that same generator. Balance weights, measured by the simulator, live in
+  `modules/lakour-veillees/contenu/equilibre.mjs`.
 
 ### The map and the board
 
@@ -305,13 +467,35 @@ All are chosen at set-up, in the Game Table or the world settings; the Variants 
 | **Mourning knell** | Each innocent executed rings the knell, and the pack gains a growing power. |
 | **Saint Martin's night** | The short format: three more roles than players under the altar, one night, one vote, the end. |
 | **Festive vigils** | A seasonal, illustrated variant at the narrator's choice: **Night of souls** (the dead whisper), **Winter vigil** (a gift that parries the first blow, snow that erases tracks), **Carnival of masks** (one vision deceived, a parade that shows an absent role), **Feast of the betrothed** (two sure allies, whom the pack has seen). |
-| **The Village** | Public personalities (Tenant Farmers, Prior, Bonesetter, Schoolmaster, Oven-Keeper, Wigmaker, Alehouse Keeper, Provost, Squire) hold the village buildings: a power on top of their secret role; the others are Drifters. The Tenant Farmers choose the Bailiff. |
-| **The Pact** (level) | The party game's setup: only its characters, without our buildings or trades; the level offered first. |
-| **Party game variants** | **Candlelight vigil** (and its dreadful version), **Chain of Innocents** (the last one standing is condemned), **Whispering Wall** (anonymous sentences each night), **Two Faces** (a visible role and a secret allegiance, or two cards), **Grape Harvest** (one more wolf, tipsy powers), **The Thrall** (the pack's prey enthralled instead of dying). |
-| **The Moon Gazette** | 31 Event cards, one read out every morning but the first by the last player eliminated (or every other morning, one in three; or at the narrator's choice): absences, flood, deadly touch, distrust, nightmare, executioner… With it, every character has **visible traits** (gender, age, spectacles, jewel, clogs, headdress, pipe, village or outlying farm), which the cards read. The **Town Crier**, named by the Bailiff, holds a few cards in hand; the **Stargazer** has the first dead questioned (séances). |
+| **The Pact** (level) | The party game's setup: only its characters, the Ash Reader always there, without our buildings or trades; the level offered first. See [The Pact](#the-pact-the-party-game-under-our-own-names). |
+| **Buildings and trades** | Village buildings: none (a simple game), drawn at random or chosen; trades or not. Valid at every level. |
+| **The Village** | Public personalities (Tenant Farmers, Prior, Bonesetter, Schoolmaster, Oven-Keeper, Wigmaker, Alehouse Keeper, Provost, Squire) hold the village buildings: a power on top of their secret role; the others are Drifters; the Firebrand comes into play. The Tenant Farmers choose the Bailiff. See [The Village](#the-village-personalities-drifters-firebrand). |
+| **Party game variants** | **Candlelight vigil** (and its dreadful version), **Chain of Innocents** (the last one standing is condemned), **Whispering Wall** (anonymous sentences each night), **Two Faces** (a visible role and a secret allegiance, or two cards; one more wolf allegiance as an option), **Grape Harvest** (one more wolf, tipsy powers), **The Thrall** (the pack's prey enthralled instead of dying). Three of them tip the balance: see [the figures and the advice](#the-party-games-variants). |
+| **The Moon Gazette** | 31 Event cards, one read out every morning but the first by the last player eliminated (or every other morning, one in three; or at the narrator's choice): absences, flood, deadly touch, distrust, nightmare, executioner… With it, every character has **visible traits** (gender, age, spectacles, jewel, clogs, headdress, pipe, village or outlying farm), which the cards read. The **Town Crier**, named by the Bailiff, holds a few cards in hand; the **Stargazer** has the first dead questioned (séances). See [The Moon Gazette](#the-moon-gazette). |
 | **Small table** | 1 to 4 humans and 2 to 8 AI players: short pack, first night without a kill from two wolves up, humans never all wolves nor all on the same side, ties broken by lot, final knell set automatically. |
-| **Sleepwalker, Rose queen** | On-request roles, added by hand by the narrator. |
-| Settings | Reveal on death, the dead see everything, debate and vote length, night choice delay, chance of being spotted while spying, dead channel, voice rooms, chat announcements, "your turn" signal, reset on world launch. |
+| **Sleepwalker, Rose Maiden** | On-request roles, added by hand by the narrator. |
+| Settings | Reveal on death, the dead see everything, debate and vote length, night choice delay, chance of being spotted while spying, dead channel, voice rooms, cameras replaced by the werewolf and replacement picture, chat announcements, "your turn" signal, reset on world launch. |
+
+## Voice and cameras
+
+The Vigils are played **by voice** first: the Game Table (*Voice* section) switches the world to "Audio only" and gives the
+players the microphone; the **voice rooms** then follow the game (at night only the wolves hear each other; the dead talk to
+the dead; a silenced player stays quiet).
+
+You can also **see each other**. The setting comes from the AI GM, for every LaKour world: in its console, the **Players'
+cameras** block offers *Add video* (the world switches to "Audio & Video"; everyone reloads the page), *Give players the
+camera* (the "Broadcast Video" permission) and *Cut* or *Allow the cameras* (world setting "Players' cameras allowed", on by
+default). When cut, each player's camera closes in their own browser and no other browser shows it, even if switched back on
+from the console; the GM keeps theirs, and microphones are never touched.
+
+In the Vigils, a player's camera is **replaced by a werewolf** (a wolf howling before the moon, in a wrought-iron medallion)
+whenever they must not be seen: **at night** for every living player (eyes closed), when they are **dead**, gone or a
+**spectator**, **away for the day** because of a Gazette card (the dance, the foraging, the hunt…) and **silenced** during the
+debate and the vote. Their video track is switched off at the source: their browser stops sending any picture. Every browser
+works out the same thing from the public state alone, without receiving anything secret; the camera comes back by itself
+afterwards, if the GM allows cameras. The GM is never replaced. Two world settings: **Cameras replaced by the werewolf** (on)
+and **Picture in place of a camera** (empty: the module's werewolf; otherwise, a picture of your choice). The automated tests
+cover these rules; a real game with cameras is still to be played to check the camera light and pop-out windows.
 
 ## How secrets are kept, in plain words
 
@@ -337,6 +521,9 @@ In an online werewolf game the temptation to open the browser console is strong.
   indicator. At night, and while a player makes a secret choice, none of this leaves their browser; at nightfall cursors
   vanish and speaking lights go out for everyone at the same moment. The GM stays visible: they should avoid pointing at a
   token during the night.
+- **Cameras do not betray the night**: when the rule replaces a camera with the werewolf, the video track is switched off in
+  the player's browser, not merely hidden for the others; and the rule reads only the public state, which every browser
+  already knows.
 - **AI companions** do not cheat: each has its own context, restricted to what a player in its seat would know.
 - An automated test (`essais/non-fuite.test.mjs`) sifts **everything each player receives** during complete games and checks
   that no role, side, choice or secret of another player appears before its public reveal.
@@ -352,28 +539,40 @@ log in as GM. Details and limits are in `docs/loups-contrat.md` (§ 6, in French
 The `lakour-mj-ia` module brings an **AI narrator** (Claude or ChatGPT, with your own key, stored in your browser only) and
 everything around it:
 
-- it composes a balanced game, deals in secret, **runs the nights**, tells the dawn, drives the debate, opens and tallies the
-  votes, reads the end-of-game tale; the recommended personality is *La Voix de la brume*;
+- it **prepares and runs a whole game by itself**: in a session, ask it for "a game of The Pact with The Village, the Gazette
+  and 11 companions"; it composes (every level, The Village, the Gazette and the Crier, the party game's variants), deals in
+  secret, **runs the nights** in the calling order, tells the dawn, reads the morning card, drives the debate, opens and
+  tallies the votes, reads the end-of-game tale; the recommended personality is *La Voix de la brume*; an offline player is left
+  out of the deal (unless you name them), and nothing more is played after victory;
 - the narrator's **voice** (browser, free; or OpenAI, live) and **listening** to the players;
 - **AI companions**: villagers played by the AI like players, each with its own mind and personality, who choose at night,
-  coordinate as a pack, accuse, defend and vote; they also work without an AI GM session, with a human narrator ("+ AI
+  coordinate as a pack, accuse, defend and vote; they know the roles and requests of The Pact, the Gazette and The Village; a
+  companion called on by the narrator answers first; their model is picked from a list (by default, a cheap model of the
+  provider); without a model or once the budget is reached, they play in simple mode, following the system's per-role
+  policies, never repeating the same line twice; they also work without an AI GM session, with a human narrator ("+ AI
   player" button of the Table);
-- the **autopilot**: when only AIs are left, the game goes on by itself, step by step, in front of the spectators, with its
-  safeguards;
-- a **budget per session** and a "validation" mode where every sensitive action waits for the human GM's approval; a
-  **dummy** provider to try everything with no key and no cost.
+- the **autopilot**: when no living player of the game is held by a connected human any more, the game goes on by itself, step
+  by step, in front of the spectators, with its safeguards;
+- a **visible cost** and a **budget per session**: the console shows the session's estimated cost live (during a game it is
+  kept in the GM's browser, never in the world, and survives a page reload), and the AI GM stops when it reaches the budget; a
+  "validation" mode where every sensitive action waits for the human GM's approval; a **dummy** provider to try everything
+  with no key and no cost;
+- the **players' cameras** setting (see [Voice and cameras](#voice-and-cameras)).
 
 The full guide is installed in the world by the module (journals "MJ IA — Guide du MJ" and "Guide des joueurs") and can be
 read in [its repository](https://github.com/Hogun974/lakour-mj-ia).
 
 ## Tests
 
-**505 Node tests** (`node --test`), no network, no cost, six to seven minutes: the system's pure logic (set-up, dealing,
-night, dawn, votes, victory, every variant), its API, mutations (every broken rule must be caught), secret non-leakage, the
-content contract, set-ups, map, tokens, companions, and complete simulated games to victory for every level and table size.
+**673 Node tests** (`node --test`), no network, no cost: the system's pure logic (set-up, dealing, night, dawn, votes,
+victory, every variant, every role and card of The Pact), its API, mutations (every broken rule must be caught), secret
+non-leakage, the content contract, set-ups, map, tokens, cameras, companions, balance (a quick run of the simulator), and
+complete simulated games to victory for every level and table size. The balance simulator (`essais/outils/simuler-veillees.mjs`)
+and the weight calibration (`essais/outils/calibrer-poids.mjs`) are run separately: see
+[`docs/equilibre-veillees.md`](docs/equilibre-veillees.md).
 
 ```bash
-npm run essais               # every test of the repository
+npm run essais               # every test of the repository (several minutes)
 npm run contrat              # the shared contract of content modules (extras, token index, plans)
 npm run valider -- <folder of a Foundry v14 installation>   # Foundry schemas, 0 errors expected
 ```
@@ -389,8 +588,9 @@ monde/                        the empty world published with each release (world
 outils/                       fabriquer-veillees.mjs (content, compendiums), fabriquer-jetons-veillees.mjs (SVG tokens),
                               empaqueter-paquets.mjs (release archives)
 essais/                       the Node tests of this repository, with their Foundry doubles
-docs/                         loups-contrat.md (the contract between system, content and AI GM), plan-loup-garou.md,
-                              publication.md, captures/
+docs/                         loups-contrat.md (the contract between system, content and AI GM), plan-le-pacte.md (The
+                              Pact's roadmap), gazette-de-la-lune.md (the cards, one by one), equilibre-veillees.md (the
+                              measurements), plan-loup-garou.md, publication.md, captures/ (all in French)
 .github/workflows/            release.yml: release on v* tags
 ```
 
@@ -418,8 +618,9 @@ change:
 - Token silhouettes: icons from **[game-icons.net](https://game-icons.net)** (Caro Asercion, Cathelineau, DarkZaitzev,
   Delapouite, Lorc, Skoll), **CC BY 3.0** licence, recoloured and set in a medallion; the icon-by-icon list is in
   [`modules/lakour-veillees/CREDITS.md`](modules/lakour-veillees/CREDITS.md).
-- Illustrations (world welcome screen, festive vigils, the cut-camera picture): **AI-generated**, locally by the author (FLUX.2 klein 9B in
-  ComfyStudio), without any remote service.
+- Illustrations (world welcome screen, festive vigils, and the werewolf logo that replaces a camera,
+  `assets/camera/loup-garou.webp`): **AI-generated**, locally by the author (FLUX.2 klein 9B in ComfyStudio), without any
+  remote service. The logo's fallback (`loup-garou.svg`) is drawn by hand.
 - Village map: drawn by code, no external image. Ambient sounds: synthesised loops from the shared engine.
 - **An original game of the werewolf family** (social-deduction games born from the traditional game *Mafia*): nothing is
   taken from *Les Loups-garous de Thiercelieux* (a trademark of its publishers) nor from any other commercial game.

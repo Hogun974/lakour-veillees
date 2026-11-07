@@ -29,6 +29,11 @@ ses images sont à lui. Il reprend les mécanismes libres du genre (un village, 
 au grand jour) et rien d'autre : *aucune reprise des Loups-garous de Thiercelieux (marque de ses éditeurs) ni d'un autre jeu
 commercial*.
 
+Il se joue de deux manières, au choix du narrateur : **les Veillées** proprement dites (nos rôles, nos métiers, nos bâtiments,
+nos variantes), ou **[Le Pacte](#le-pacte--le-jeu-de-soirée-sous-nos-noms)**, le jeu de loups-garous qu'on sort entre amis en
+fin de soirée, avec ses personnages, ses personnalités du village, ses cartes d'événement et ses variantes : les mêmes règles,
+réécrites, sous nos noms et avec nos textes. Les deux se mêlent : nos créations restent disponibles en option dans Le Pacte.
+
 Il se joue **dans Foundry VTT**, à distance, de **6 à 18 joueurs**, en une soirée (une partie dure de vingt minutes à une
 heure et demie selon la taille de la table). Il se mène de deux façons :
 
@@ -42,7 +47,7 @@ Dans les deux cas, **aucun joueur n'a à sacrifier sa place** pour être meneur,
 d'un joueur** : ce qu'il ne doit pas savoir ne lui est jamais envoyé.
 
 **Transparence.** Le code et les textes de ce dépôt ont été écrits avec l'aide d'une IA (Claude, d'Anthropic) et relus par
-l'auteur. Les illustrations (écran d'accueil du monde, veillées de fête, image qui remplace une caméra coupée) sont
+l'auteur. Les illustrations (écran d'accueil du monde, veillées de fête, logo de loup-garou qui remplace une caméra) sont
 générées par IA, localement (FLUX.2 klein 9B dans ComfyStudio) ; la carte du village et les jetons ne le sont pas (voir [Crédits](#crédits)).
 
 Ce dépôt contient trois pièces :
@@ -55,14 +60,16 @@ Ce dépôt contient trois pièces :
 
 ## Pour qui, avec quoi
 
-- **De 6 à 18 joueurs** (compositions prêtes pour chaque taille, en trois niveaux), ou **4 à 12 places** en Petite tablée avec
-  des joueurs IA. Un groupe d'amis à distance, une soirée, un micro chacun.
+- **De 6 à 18 joueurs** (compositions prêtes pour chaque taille, en quatre niveaux : Le Pacte, Débutants, Classique, Chaos), ou
+  **4 à 12 places** en Petite tablée avec des joueurs IA. Un groupe d'amis à distance, une soirée, un micro chacun ; une caméra
+  si l'on veut se voir.
 - **Foundry VTT v14** (vérifié avec la 14.369). Aucun système de jeu à acheter : le système est fourni ici.
 - Le module **MJ IA** (`lakour-mj-ia`) est **requis même sans IA** : c'est lui qui tient le coffre chiffré des secrets de la
   partie. Sans clé d'IA, il ne coûte rien et ne contacte personne ; la voix et les compagnons restent alors « simples »
   (sans IA) ou désactivés.
 - Facultatif : la voix intégrée de Foundry (A/V) pour les **salons vocaux** automatiques (la nuit, les loups s'entendent entre
-  eux ; les morts parlent aux morts) ; une clé Claude ou OpenAI pour le MJ IA et les compagnons.
+  eux ; les morts parlent aux morts) et, si vous le voulez, les **caméras** des joueurs (voir [La voix et les
+  caméras](#la-voix-et-les-caméras)) ; une clé Claude ou OpenAI pour le MJ IA et les compagnons.
 
 ## Installation
 
@@ -124,11 +131,17 @@ publication, dans `dist/`.
 
 Une veillée se joue en **tours** : une nuit, une aube, un jour, un vote, et la nuit revient, jusqu'à la victoire d'un camp.
 
-**La préparation.** Le narrateur ouvre la **Table de jeu** (bouton dans la barre de gauche, calque des jetons), choisit le
-nombre de joueurs et le niveau (Débutants, Classique, Chaos, ou Petite tablée), laisse le système composer la partie ou prend
-une composition prête, puis **distribue**. Chacun reçoit en secret une **carte de rôle** et, publiquement, un **métier** ; chacun
-a sa **maison** sur la carte (« Maison 1 » à « Maison 18 », dont six sur l'autre rive). **La composition reste secrète** : ni les
-rôles en jeu, ni le nombre de loups ne sont annoncés ; seuls les **4 à 6 bâtiments** en jeu le sont, et chacun change une règle.
+**La préparation.** Le narrateur ouvre la **Table de jeu** (bouton dans la barre de gauche, calque des jetons). La préparation y
+est rangée en **onglets** : *Joueurs* (qui joue, les joueurs IA), *Composition* (le niveau : **Le Pacte**, proposé d'abord,
+Débutants, Classique, Chaos ou Petite tablée ; une composition équilibrée par le système, une composition prête, ou les rôles
+choisis à la main), *Village* (peste noire, Nuit de la Saint-Martin, Le Village ; les bâtiments : aucun, tirés au hasard ou
+choisis ; les métiers), *Variantes* (celles du jeu de soirée), et *Gazette et fête*. Le résumé des choix actifs et le bouton **Distribuer** restent visibles sous les onglets. Chacun reçoit en
+secret une **carte de rôle** et, si les métiers sont en jeu, un **métier** public ; chacun a sa **maison** sur la carte
+(« Maison 1 » à « Maison 18 », dont six sur l'autre rive). Chaque joueur humain trouve aussi dans son **carnet secret**, qui
+s'ouvre de lui-même, une **explication de son rôle** : ce qu'il fait, quand le narrateur l'appelle et ce qu'il lui demandera,
+combien de fois il sert, comment il gagne, puis son métier et sa personnalité s'il en a. **La composition reste secrète** : ni
+les rôles en jeu, ni le nombre de loups ne sont annoncés ; seuls les bâtiments en jeu (4 à 6 quand ils sont tirés au hasard) et
+les variantes le sont, et chacun change une règle.
 
 **La nuit.** La brume tombe sur la carte, les jetons rentrent devant leur maison, les micros se taisent (salons vocaux : les
 loups s'entendent entre eux, les morts entre eux). Le narrateur réveille les rôles **un par un, dans l'ordre** : une **fenêtre de
@@ -143,7 +156,8 @@ vivants, mais peut garder un **Dernier souffle** (une voix, une seule fois) pour
 
 **Le jour.** Le village **débat**, minuté (cinq minutes par défaut). Les **pouvoirs de jour** (métiers, Juge de paix, Conteuse,
 bâtiments) se jouent d'un clic sur la Table de jeu : le système vérifie que c'est le bon moment, applique l'effet et
-l'annonce. Le premier jour, le village **élit son Bailli** (voix double, il tranche les égalités). Chacun peut faire inscrire
+l'annonce. Le premier jour, le village **élit son Bailli** (voix double, il tranche les égalités ; avec Le Village, ce sont les
+Métayers qui le désignent parmi eux, à partir du deuxième jour). Chacun peut faire inscrire
 une **déclaration** au **Registre du greffier**, la mémoire publique de la veillée.
 
 **Le vote.** Le narrateur ouvre le vote ; chacun **clique sur un jeton** (ou un nom dans la fenêtre de vote), peut changer d'avis
@@ -160,9 +174,157 @@ Le **guide du joueur** (journal du monde, lisible de tous) et le **guide du narr
 cela, et chaque bâtiment de la carte est **épinglé** sur sa page de règles. Le **livre de Brumecombe** (lisible de tous)
 raconte l'univers : la vallée, l'histoire du village, ses maisons, sa foi, ce qu'on dit des loups, la Veillée comme coutume.
 
+## Le Pacte : le jeu de soirée, sous nos noms
+
+Le niveau **Le Pacte** rejoue, règle pour règle, le jeu de loups-garous qu'on sort entre amis en fin de soirée, avec ses
+extensions : ses personnages, les personnalités du village, les cartes d'événement et les variantes. Les
+mécaniques sont les mêmes ; les noms, les textes et les images sont ceux de Brumecombe, et aucun texte de règle ni aucun nom
+d'un jeu édité n'est repris. Là où la table physique n'a pas d'équivalent en ligne, l'adaptation est dite dans les guides
+(par exemple, la chandelle de chacun posée sur sa carte de la Table de jeu, ou les traits visibles des personnages, plus bas).
+Tout existe en français et en anglais.
+
+- **Les seuls personnages du jeu de soirée**, de 6 à 18 joueurs (une composition prête par taille, ou le générateur), **sans
+  nos bâtiments communaux ni nos métiers** : la veillée se joue comme autour d'une vraie table. Les autres niveaux gardent tous
+  les rôles des Veillées.
+- **La Liseuse de cendres est toujours là**, comme au jeu de soirée, où celle qui voit les rôles ne manque jamais : le
+  générateur la met dans toute composition du niveau. Elle n'en sort que si le narrateur l'exclut, si les rôles sont choisis
+  à la main, avec Double visage (qui a son propre paquet), ou quand le Chapardeur la laisse au centre.
+- **Nos créations, en option** : choisissez les rôles à la main (onglet *Composition*, « Choix des rôles ») pour ajouter un
+  rôle des Veillées à une veillée du Pacte, ou cochez des bâtiments (onglet *Village*, « Choisis »). Les métiers, eux, ne se
+  distribuent jamais au niveau Le Pacte.
+
+### Les rôles par camp
+
+| Camp | Personnages du jeu de soirée (nos noms) | Nos créations, en option |
+|---|---|---|
+| **La Meute** | Loup de Brumecombe, Loup affamé, Louve mère, Loup pâle | Loup déguisé, Loup hurleur, Loup flaireur, Loup des roseaux |
+| **Le Village** | Villageois, Franc-Villageois, **Liseuse de cendres** (toujours là), Entremetteuse, Herboriste, Braconnière, Enfant de la brume, Garde du pont, Aïeul, Souffre-douleur, Innocent, Lavandières (par deux), Bûcherons (par trois), Furet, Gardeuse d'oies, Greffier bègue, Vieux Sergent, Pie, Liseuse d'étoiles ; l'Incendiaire avec Le Village | Veilleuse de lanterne, Sonneur, Fossoyeur, Conteuse, Juge de paix, Ermite, Messager, Gardienne des clés, Sourcier, Louvetier, Pêcheur de nuit ; Somnambule et Rosière sur demande |
+| **Les visages changeants** (au départ du Village, leur camp peut changer) | Chapardeur, Bateleur, Mâtin, Enfant des bois, Chambrière | — |
+| **Les solitaires** | Feu follet, Joueur de vielle, Illuminé | Revenant, Colporteur, Chasseur de primes, Pyromane, Dame du gué |
+| **Les charges et les personnalités** | le Bailli ; le Crieur public et l'Exécuteur (Gazette de la lune) ; les personnalités et les Chemineaux (Le Village) | les Gens de passage (Rémouleur, Montreur de marmotte, Pèlerine) |
+
+Le pouvoir de chacun est dans les tables du [contenu](#le-contenu), plus bas, et dans le guide du joueur.
+
+### L'ordre d'appel
+
+Le système réveille les rôles dans l'ordre du jeu de soirée ; l'**Ordre de nuit** de la Table de jeu le suit, le MJ IA aussi.
+
+- **La première nuit** : Chapardeur, Bateleur, Entremetteuse, Liseuse de cendres, Furet, Lavandières, Bûcherons, Enfant des
+  bois, Pie, Incendiaire, Garde du pont, la meute (avec le Mâtin s'il l'a rejointe), Enfant de la brume, Louve mère, Loup affamé,
+  Herboriste, Liseuse d'étoiles, Joueur de vielle, puis les charmés.
+- **Les nuits suivantes** : Bateleur, Liseuse de cendres, Furet, Pie, Incendiaire, Garde du pont, la meute, Enfant de la brume,
+  Loup pâle (une nuit sur deux), Louve mère, Loup affamé (tant qu'aucun loup n'est mort), Herboriste, Liseuse d'étoiles, Joueur
+  de vielle, les charmés ; les Lavandières et les Bûcherons une nuit sur deux.
+- **Chaque matin, chaque jour** : les victimes de la nuit, les oies de la Gardeuse, la carte de la Gazette, la séance de
+  Spiritisme, l'annonce du Crieur public, le débat, le vote (et la Chambrière, qui peut se dévouer), le Feu follet s'il tombe au
+  premier tour, le second vote du Greffier bègue.
+
+Ce qui n'a pas de réveil propre se fait seul : les amoureux apprennent leur lien dans leur carnet, la Fournière reçoit au matin
+ce qu'elle a entrevu, le signe du Greffier bègue est un pouvoir de jour secret. Nos créations, quand elles sont en jeu, se
+réveillent à côté du rôle qui leur ressemble.
+
+### Une partie simple : sans bâtiments ni métiers
+
+Deux choix de la préparation (onglet *Village*, et réglages du monde) valent pour tous les niveaux : **Bâtiments du village**
+(*aucun* : une partie simple, avec les seuls personnages, où les repères de la carte restent des décors ; *tirés au hasard*,
+comme avant ; *choisis* : cochez ceux de la veillée) et **Métiers** (oui ou non). La Table retient le dernier choix. Le Pacte
+ne tire aucun bâtiment et ne distribue jamais de métier : sans Le Village, il se joue donc sans aucun bâtiment.
+
+### Le Village : personnalités, Chemineaux, Incendiaire
+
+Avec la variante **Le Village** (case de l'onglet *Village*), des joueurs tiennent un bâtiment de Brumecombe et deviennent une
+**personnalité**, connue de tous ; leur carte de rôle reste secrète (le Prieur peut être un loup), et le pouvoir du bâtiment
+s'ajoute à celui du rôle. À la distribution, le système propose qui tient quoi, l'annonce et l'inscrit au Registre ; le
+narrateur peut changer chaque occupant dans l'encart « Le Village » de la Table jusqu'à la première nuit.
+
+| Personnalité (bâtiment) | Pouvoir |
+|---|---|
+| **Métayers** (six métairies) | À partir du deuxième jour, ils désignent le Bailli parmi eux ; le dernier Métayer mort, il n'y a plus de Bailli. |
+| **Prieur** (le prieuré) | Une fois, de jour : un joueur lui montre sa carte en secret. |
+| **Remégeux** (la masure) | Une fois, de jour : rend à un joueur le pouvoir unique de son bâtiment, déjà servi. |
+| **Régent** (l'école) | Chaque jour, avant le vote, met au coin un ou deux joueurs, qui ne votent pas ce jour-là ; lui ne vote jamais. |
+| **Fournière** (le fournil) | Chaque nuit, entrouvre les yeux quand la meute rentre : en ligne, une chance sur trois d'entrevoir un loup. |
+| **Perruquier** (l'échoppe) | Une fois, de jour : élimine un joueur ; s'il s'est trompé (pas un loup), il le paie de sa vie. |
+| **Cabaretier** (le cabaret) | Ni proie de la meute, ni candidat au vote ; il vote à découvert, et perd sa protection s'il vote contre un condamné. |
+| **Prévôt** (la prévôté) | Quand un bâtiment se libère, il y loge un Chemineau, qui peut refuser. |
+| **Hobereau** (le manoir) | Une fois, après un vote : gracie le condamné qui le supplie (ou lui-même) ; la carte du gracié reste cachée. |
+
+Les joueurs sans bâtiment sont des **Chemineaux** : ni toit ni pouvoir de bâtiment, mais le Régent, le Perruquier, la Pie et
+l'Incendiaire n'ont pas prise sur eux. L'**Incendiaire**, un rôle du Village qui n'existe qu'avec cette variante, met le feu une
+fois à un bâtiment : son occupant devient Chemineau ; si c'était la maison de la proie de la meute, la proie en réchappe et le
+premier loup à sa droite périt. Si l'Aïeul tombe de la main du village, les personnalités perdent leur pouvoir comme les
+métiers (les Métayers gardent la désignation du Bailli). Ni à la petite tablée, ni dans une Nuit de la Saint-Martin.
+
+### La Gazette de la lune
+
+**31 cartes Événement**, une lue chaque matin sauf le premier par le dernier joueur éliminé (sans mort encore : par le
+narrateur). Chacune agit **aussitôt** (ce jour), **plus tard** (la nuit ou le vote à venir) ou **pour toute la partie** :
+La Crue (pas de vote, deux refuges, peut-être deux victimes), Pile ou face (le condamné gracié ou non), La Grande Défiance (deux
+voix par joueur, pour ses amis : qui n'en reçoit aucune tombe), L'Exécuteur (une charge élue, seul à connaître le rôle des
+condamnés), Le Toucher mortel, Le Cauchemar, Le Spectre… Les réglages : une carte chaque matin, un matin sur deux ou sur trois ;
+le narrateur peut choisir ses cartes ; des cartes permanentes peuvent être posées dès le début (cases de l'onglet *Gazette et
+fête*). Le paquet reste un secret du narrateur. Trois cartes (Dimanche de soleil, Fin des vendanges, Lundi gris) permettent au
+narrateur d'appliquer, pour ce seul tour, l'Envoûtement, les Vendanges ou la Chaîne des innocents. Avec la Gazette, pas
+d'Almanach des brumes.
+
+- **Les traits visibles des personnages.** Beaucoup de cartes parlent du corps des joueurs autour de la table (les femmes, les
+  plus jeunes, qui porte des lunettes…). En ligne, elles lisent les **traits du personnage** de chacun, tirés à la distribution
+  et vus de tous (fiche, carte de la Table, chat) : genre (d'après le prénom), âge, lunettes, bijou visible, coiffe sombre,
+  sabots, pipe, maison au bourg ou dans un écart. Un MJ peut fixer les traits d'un acteur à la main (drapeau
+  `flags["lakour-loups"].traits`). L'Illuminé peut aussi partager le village selon un trait (réglage « L'Illuminé : le partage du
+  village »).
+- **Le Crieur public.** Une charge nommée par le Bailli (jamais lui-même), à qui le narrateur confie avant la partie quelques
+  cartes de la Gazette (3 par défaut, 5 au plus), retirées du paquet. Chaque matin dès le lendemain de sa nomination, il peut en
+  lire une, qui s'applique. Le Bailli peut le révoquer après son annonce, avant le vote ; un Crieur mort est remplacé.
+- **La Liseuse d'étoiles et le Spiritisme.** Le narrateur garde cinq cartes Spiritisme de quatre questions chacune. Chaque nuit,
+  la Liseuse d'étoiles peut demander une séance : au matin, elle choisit une question et désigne le **Spirite**, qui la pose à
+  l'esprit du **premier mort** de la partie. L'esprit répond oui ou non, sans jamais mentir : le système calcule la réponse
+  d'après la partie et les traits (« Un des loups porte-t-il des lunettes ? »). Cinq séances au plus.
+
+Le narrateur garde la main sur ce que le jeu en ligne ne peut pas juger seul : retirer son vote à qui enfreint une carte de
+conduite (Lune noire, Les Bonnes manières, Ni loup ni moi ; au chat, le système relève lui-même « loup » et « moi »), lire une
+carte, appliquer la variante d'un jour, nommer le Crieur à la place d'un Bailli absent. Pages des guides : « La Gazette de la
+lune » (journal des Variantes, lisible de tous) et « Mener la Gazette de la lune » (guide du narrateur).
+
+### Les variantes du jeu de soirée
+
+Chacune est une case de l'onglet *Variantes* (et un réglage du monde), annoncée à la distribution. Les chiffres viennent du
+simulateur ([`docs/equilibre-veillees.md`](docs/equilibre-veillees.md)) : la part de la meute parmi les parties gagnées par la
+meute ou le village, comparée à la veillée ordinaire (environ une sur deux), avec des joueurs qui se servent assez bien de ce
+qu'ils savent ; à ± 8 points près, une variante est dans la marge.
+
+| Variante | Ce qu'elle change | Équilibre mesuré |
+|---|---|---|
+| **Veillée aux chandelles** | Une chandelle par joueur, sur sa carte de la Table de jeu, soufflée à sa mort. **Angoissante** : chaque loup souffle lui-même une chandelle la nuit ; s'ils ne soufflent pas tous la même, la meute n'a pas de victime, et le village voit au matin les chandelles éteintes. | Dans la marge (-1 point ; angoissante, -9 : un peu pour le village). |
+| **La Chaîne des innocents** | Pas de vote : du voisin de gauche du dernier éliminé, chacun désigne un debout dont il garantit l'innocence, qui s'assied et désigne à son tour ; le dernier debout est condamné. | **Elle avantage beaucoup la meute** : huit parties sur dix (+31 points), plus de neuf sur dix à 16 joueurs. Conseil : de 9 à 12 joueurs, **un loup de moins** ; dès 13, **deux de moins** ; à 8 et moins, gardez deux loups. Le générateur garde le barème : composez alors la veillée à la main. |
+| **Le Mur des murmures** | Chaque nuit, chaque vivant peut écrire une courte phrase anonyme ; au matin, le mur est lu. Personne, pas même le narrateur, ne sait qui a écrit quoi. | Dans la marge (-4 points). |
+| **Double visage** | **Petite complication** : un rôle visible, retourné devant tous, et une allégeance secrète qui fait le camp. **Grande** : deux cartes secrètes par joueur. De 7 à 18 joueurs (un second paquet dès 10). | **Elle avantage le village** : la meute gagne un peu moins de quatre parties sur dix (-14 points en petite, -17 en grande). Conseil, la case **« une allégeance loup de plus »** : dès 16 joueurs en petite complication (et à 13), dès 12 en grande ; la meute revient à quatre à six sur dix. En dessous, gardez le paquet de base (avec la carte de plus, sept à neuf sur dix pour la meute). |
+| **Les Vendanges** | Un loup de plus, et tous les pouvoirs éméchés : la meute ne dévore qu'un voisin d'un loup, la Liseuse lit trois rôles mêlés, le Bailli vote seul et le premier, l'Herboriste n'a qu'une fiole au sort incertain… | **Elle avantage la meute** : sept parties sur dix (+19 points), même si le générateur arme davantage le village (aux tables moyennes et grandes, il est déjà à son plafond). |
+| **L'Envoûtement** | Les proies de la meute ne meurent pas : elles perdent leurs pouvoirs, envoûtées en secret ; un envoûté condamné entraîne les envoûtés d'avant lui ; la meute gagne quand elle a envoûté l'avant-dernier villageois. | Sans correction, elle donnait le village gagnant à coup presque sûr (-30 points) ; le générateur compense (une composition moins armée pour le village) : il reste -7 points, dans la marge. |
+| **Peste noire** | La variante sans loups (voir [Les variantes](#les-variantes)) ; elle se joue aussi au niveau Le Pacte. | Non mesurée au simulateur. |
+
+Aucune variante dans une Nuit de la Saint-Martin ; ni Double visage, ni Vendanges, ni Envoûtement à la petite tablée ou dans une
+peste noire (une peste choisie les écarte). **Les Hameaux** (plusieurs villages qui jouent ensemble, des joueurs qui passent de
+l'un à l'autre) ne sont pas encore là : un monde de Foundry ne mène qu'une veillée à la fois.
+
+### L'équilibre, mesuré
+
+Les poids des rôles et la cible du générateur ne sont plus posés à la main : ils sont **mesurés**. Un simulateur joue des
+milliers de parties complètes avec le vrai système et le vrai contenu ; les joueurs simulés suivent une politique par rôle (ce
+que ferait un joueur d'après ce qu'il sait), avec l'adresse d'une vraie table : une information sur deux aux débutants, trois
+sur quatre au classique et au Pacte, toutes au chaos. Mesuré à ces adresses, la meute gagne environ **une partie sur deux**
+parmi celles que gagnent la meute ou le village : **51 % au niveau Le Pacte** (de 43 à 54 % selon la taille, sauf 63 % à six
+joueurs, où le générateur est à son plafond), 54 % au classique, 51 % au chaos, 52 % aux débutants (qui ont pour cela **un loup
+de moins** que le barème). Trois solitaires ont été retouchés : le **Revenant** ne gagne qu'exécuté à partir du troisième jour,
+la cible du **Chasseur de primes** doit tomber au plus tard le deuxième jour, et les joueurs simulés surveillent le **Joueur de
+vielle** (sa règle ne change pas ; il gagne 15 % des parties où il est, contre 33 % avant). Le Village (+6 points) et la Gazette
+(+7) restent dans la marge. Méthode, graines, tableaux et façon de remesurer :
+[`docs/equilibre-veillees.md`](docs/equilibre-veillees.md).
+
 ## Le contenu
 
 Les rôles sont publics : le guide du joueur les décrit tous, c'est le propre du genre. Ce qui est secret, c'est qui tient quoi.
+Ceux du jeu de soirée (niveau Le Pacte) sont rangés dans [la table par camp](#les-rôles-par-camp) plus haut.
 
 ### La Meute (8 rôles)
 
@@ -179,7 +341,7 @@ Les loups se reconnaissent dès la première nuit et chassent ensemble ; certain
 | **Loup des roseaux** | Chaque nuit, guette une maison et apprend si son occupant a agi. |
 | **Loup pâle** | Chasse avec la meute, mais une nuit sur deux dévore seul l'un des siens ; ne gagne que s'il reste le dernier vivant. |
 
-### Le Village (37 rôles)
+### Le Village (38 rôles)
 
 | Rôle | Pouvoir |
 |---|---|
@@ -220,6 +382,7 @@ Les loups se reconnaissent dès la première nuit et chassent ensemble ; certain
 | **Mâtin** | La première nuit, choisit pour toujours d'être loup (il chasse avec la meute) ou simple villageois. |
 | **Chambrière** | Quand le vote élimine un joueur, peut se dévoiler avant qu'on retourne sa carte et prendre son rôle en secret. |
 | **Incendiaire** | Avec la variante Le Village : une fois par partie, met le feu à un bâtiment ; si c'est la maison de la proie des loups, le loup à sa droite y périt. |
+| **Liseuse d'étoiles** | Chaque nuit, peut demander une séance de Spiritisme : au matin, un Spirite pose une question au premier mort, qui répond oui ou non sans mentir. |
 
 ### Les solitaires (8 rôles)
 
@@ -279,13 +442,16 @@ Chacun est un lieu de la carte et change une règle.
 | **Le Lavoir** | Chaque matin, un indice vrai mais flou. |
 | **La Grange** | Une cachette où l'on ne peut ni être trouvé ni agir. |
 
-### Les compositions prêtes (48)
+### Les compositions prêtes (61)
 
 - **Débutants, Classique, Chaos** : une composition par taille de 6 à 18 joueurs (2 loups jusqu'à 8 joueurs, 3 jusqu'à 12, 4
   jusqu'à 15, 5 au-delà ; un de moins au niveau Débutants ; solitaires et loups spéciaux selon le niveau), avec ses bâtiments.
+- **Le Pacte** : une composition par taille de 6 à 18 joueurs, avec les seuls personnages du jeu de soirée, sans bâtiments ni
+  métiers, la Liseuse de cendres dans chacune.
 - **Petite tablée** : de 4 à 12 places, tirées par le générateur du système à graine fixe.
 - La Table de jeu peut aussi **composer** une partie équilibrée pour n'importe quel nombre, ou prendre une liste de rôles
-  écrite à la main. Les poids d'équilibre sont dans `modules/lakour-veillees/contenu/equilibre.mjs`.
+  écrite à la main. Toutes les compositions prêtes sont tirées par ce même générateur. Les poids d'équilibre, mesurés au
+  simulateur, sont dans `modules/lakour-veillees/contenu/equilibre.mjs`.
 
 ### La carte et le plateau
 
@@ -318,13 +484,36 @@ Toutes se choisissent à la préparation, dans la Table de jeu ou les réglages 
 | **Glas du deuil** | Chaque innocent exécuté fait sonner le glas, et la meute y gagne un pouvoir qui grandit. |
 | **Nuit de la Saint-Martin** | Le format court : trois rôles de plus que de joueurs sous l'autel, une nuit, un vote, et la fin. |
 | **Veillées de fête** | Une variante de saison, illustrée, au choix du narrateur : **Nuit des âmes** (les morts murmurent), **Veillée d'hiver** (un présent qui pare le premier coup, la neige qui efface les traces), **Carnaval des masques** (une vision trompée, un défilé qui montre un rôle absent), **Fête des promis** (deux alliés sûrs, que la meute a vus). |
-| **Le Village** | Des personnalités publiques (Métayers, Prieur, Remégeux, Régent, Fournière, Perruquier, Cabaretier, Prévôt, Hobereau) tiennent les bâtiments du village : un pouvoir en plus de leur rôle secret ; les autres sont des Chemineaux. Les Métayers désignent le Bailli. |
-| **Le Pacte** (niveau) | La composition du jeu de soirée : seulement ses personnages, sans nos bâtiments ni nos métiers ; le niveau proposé d'abord. |
-| **Variantes du jeu de soirée** | **Veillée aux chandelles** (et sa version angoissante), **Chaîne des innocents** (le dernier debout est condamné), **Mur des murmures** (des phrases anonymes chaque nuit), **Double visage** (un rôle visible et une allégeance secrète, ou deux cartes), **Vendanges** (un loup de plus, des pouvoirs éméchés), **Envoûtement** (les proies de la meute envoûtées au lieu de mourir). |
-| **La Gazette de la lune** | 31 cartes Événement, une lue chaque matin sauf le premier par le dernier éliminé (ou un matin sur deux, sur trois ; ou au choix du narrateur) : absences, crue, toucher mortel, défiance, cauchemar, exécuteur… Avec elle, chaque personnage a des **traits visibles** (genre, âge, lunettes, bijou, sabots, coiffe, pipe, bourg ou écart), que les cartes lisent. Le **Crieur public**, nommé par le Bailli, garde quelques cartes en main ; la **Liseuse d'étoiles** fait interroger le premier mort (Spiritisme). |
+| **Le Pacte** (niveau) | La composition du jeu de soirée : seulement ses personnages, la Liseuse de cendres toujours là, sans nos bâtiments ni nos métiers ; le niveau proposé d'abord. Voir [Le Pacte](#le-pacte--le-jeu-de-soirée-sous-nos-noms). |
+| **Bâtiments et métiers** | Bâtiments du village : aucun (une partie simple), tirés au hasard ou choisis ; métiers ou non. Valables à tous les niveaux. |
+| **Le Village** | Des personnalités publiques (Métayers, Prieur, Remégeux, Régent, Fournière, Perruquier, Cabaretier, Prévôt, Hobereau) tiennent les bâtiments du village : un pouvoir en plus de leur rôle secret ; les autres sont des Chemineaux ; l'Incendiaire entre en jeu. Les Métayers désignent le Bailli. Voir [Le Village](#le-village--personnalités-chemineaux-incendiaire). |
+| **Variantes du jeu de soirée** | **Veillée aux chandelles** (et sa version angoissante), **Chaîne des innocents** (le dernier debout est condamné), **Mur des murmures** (des phrases anonymes chaque nuit), **Double visage** (un rôle visible et une allégeance secrète, ou deux cartes ; une allégeance loup de plus en option), **Vendanges** (un loup de plus, des pouvoirs éméchés), **Envoûtement** (les proies de la meute envoûtées au lieu de mourir). Trois d'entre elles déséquilibrent la partie : voir [les chiffres et les conseils](#les-variantes-du-jeu-de-soirée). |
+| **La Gazette de la lune** | 31 cartes Événement, une lue chaque matin sauf le premier par le dernier éliminé (ou un matin sur deux, sur trois ; ou au choix du narrateur) : absences, crue, toucher mortel, défiance, cauchemar, exécuteur… Avec elle, chaque personnage a des **traits visibles** (genre, âge, lunettes, bijou, sabots, coiffe, pipe, bourg ou écart), que les cartes lisent. Le **Crieur public**, nommé par le Bailli, garde quelques cartes en main ; la **Liseuse d'étoiles** fait interroger le premier mort (Spiritisme). Voir [La Gazette](#la-gazette-de-la-lune). |
 | **Petite tablée** | 1 à 4 humains et 2 à 8 joueurs IA : meute courte, première nuit blanche dès deux loups, humains jamais tous loups ni tous du même camp, le sort tranche les égalités, glas final d'office. |
 | **Somnambule, Rosière** | Rôles sur demande, ajoutés à la main par le narrateur. |
-| Réglages | Révélation à la mort, morts qui voient tout, durée du débat et du vote, délai des choix de nuit, chance d'être repéré en épiant la meute, canal des morts, salons vocaux, annonces au chat, signal « à toi », remise à zéro au lancement du monde. |
+| Réglages | Révélation à la mort, morts qui voient tout, durée du débat et du vote, délai des choix de nuit, chance d'être repéré en épiant la meute, canal des morts, salons vocaux, caméras remplacées par le loup-garou et image de remplacement, annonces au chat, signal « à toi », remise à zéro au lancement du monde. |
+
+## La voix et les caméras
+
+Les Veillées se jouent d'abord **à la voix** : la Table de jeu (section *Voix*) passe le monde en « Audio seulement » et donne
+le micro aux joueurs ; les **salons vocaux** suivent ensuite la partie (la nuit, seuls les loups s'entendent ; les morts parlent
+aux morts ; un joueur réduit au silence se tait).
+
+On peut aussi **se voir**. Le réglage vient du MJ IA, pour tous les mondes LaKour : dans sa console, le bloc **Caméras des
+joueurs** propose *Ajouter la vidéo* (le monde passe en « Audio et vidéo » ; chacun recharge la page), *Donner la caméra aux
+joueurs* (le droit « Diffuser la vidéo ») et *Couper* ou *Permettre les caméras* (réglage du monde « Caméras des joueurs
+permises », coché par défaut). Coupées, la caméra de chaque joueur se ferme dans son navigateur et aucun autre ne l'affiche,
+même rallumée depuis la console ; le MJ garde la sienne, et le micro n'est jamais touché.
+
+Aux Veillées, la caméra d'un joueur est **remplacée par un loup-garou** (un loup qui hurle devant la lune, dans un médaillon de
+fer forgé) chaque fois qu'il ne doit pas être vu : **la nuit** pour tous les vivants (les yeux fermés), quand il est **mort**,
+parti ou **spectateur**, **absent du jour** par une carte de la Gazette (le bal, la cueillette, la battue…) et **réduit au
+silence** pendant le débat et le vote. Sa piste vidéo est éteinte à la source : son navigateur n'envoie plus d'image. Chaque
+navigateur calcule la même chose à partir de l'état public seul, sans rien recevoir de secret ; la caméra revient d'elle-même
+ensuite, si le MJ permet les caméras. Le MJ n'est jamais remplacé. Deux réglages du monde : **Caméras remplacées par le
+loup-garou** (coché) et **Image à la place d'une caméra** (vide : le loup-garou du module ; sinon, l'image de votre choix). Les
+essais automatiques couvrent ces règles ; une partie réelle avec des caméras reste à faire pour le voyant de la caméra et les
+fenêtres détachées.
 
 ## La sécurité des secrets, en termes simples
 
@@ -352,6 +541,9 @@ trouve :
   tant qu'un joueur fait un choix secret, rien de tout cela ne part de son navigateur ; à la tombée de la nuit, les curseurs
   disparaissent et les voyants s'éteignent chez tous en même temps. Le MJ, lui, reste visible : qu'il évite de pointer un
   jeton pendant la nuit.
+- **Les caméras ne trahissent pas la nuit** : quand la règle remplace une caméra par le loup-garou, la piste vidéo est éteinte
+  dans le navigateur du joueur, pas seulement cachée chez les autres ; et la règle ne lit que l'état public, que tous les
+  navigateurs connaissent déjà.
 - Les **compagnons IA** ne trichent pas : chacun a son propre contexte, restreint à ce que saurait un joueur à sa place.
 - Un essai automatique (`essais/non-fuite.test.mjs`) passe au crible **tout ce que chaque joueur reçoit** pendant des parties
   complètes et vérifie qu'aucun rôle, camp, choix ni secret d'autrui n'y figure avant sa révélation publique.
@@ -367,16 +559,25 @@ soit**, sinon n'importe quel invité peut entrer en MJ. Le détail, avec ses lim
 Le module `lakour-mj-ia` apporte un **narrateur IA** (Claude ou ChatGPT, avec votre propre clé, rangée dans votre navigateur
 seulement) et tout ce qui va avec :
 
-- il compose une partie équilibrée, distribue en secret, **mène les nuits**, raconte l'aube, anime le débat, ouvre et dépouille
-  les votes, lit le récit de fin ; la personnalité conseillée est *La Voix de la brume* ;
+- il **prépare et mène seul une partie** : demandez-lui, en séance, « une partie Le Pacte avec Le Village, la Gazette et
+  11 compagnons » ; il compose (tous les niveaux, Le Village, la Gazette et le Crieur, les variantes du jeu de soirée),
+  distribue en secret, **mène les nuits** dans l'ordre d'appel, raconte l'aube, lit la carte du matin, anime le débat, ouvre et
+  dépouille les votes, lit le récit de fin ; la personnalité conseillée est *La Voix de la brume* ; un joueur hors ligne est
+  laissé de côté à la distribution (sauf si on le nomme), et plus rien ne se joue après la victoire ;
 - la **voix** du narrateur (navigateur, gratuite ; ou OpenAI, en direct) et l'**écoute** des joueurs ;
 - des **compagnons IA** : des villageois joués par l'IA comme des joueurs, chacun avec son cerveau et sa personnalité, qui
-  choisissent la nuit, se coordonnent en meute, accusent, se défendent et votent ; ils servent aussi sans séance du MJ IA,
-  avec un narrateur humain (bouton « + Joueur IA » de la Table) ;
-- le **pilote automatique** : quand il ne reste que des IA, la partie continue seule, étape par étape, sous les yeux des
-  spectateurs, avec ses garde-fous ;
-- un **budget par séance** et un mode « validation » où chaque action sensible attend l'accord du meneur humain ; un
-  fournisseur **factice** pour tout essayer sans clé ni coût.
+  choisissent la nuit, se coordonnent en meute, accusent, se défendent et votent ; ils connaissent les rôles et les demandes du
+  Pacte, de la Gazette et du Village ; un compagnon interpellé par le narrateur répond d'abord ; leur modèle se choisit dans une
+  liste (par défaut, un modèle bon marché du fournisseur) ; sans modèle ou budget atteint, ils jouent en mode simple, d'après les
+  politiques par rôle du système, sans jamais redire deux fois la même réplique ; ils servent aussi sans séance du MJ IA, avec
+  un narrateur humain (bouton « + Joueur IA » de la Table) ;
+- le **pilote automatique** : quand plus aucun vivant de la partie n'est tenu par un humain connecté, la partie continue seule,
+  étape par étape, sous les yeux des spectateurs, avec ses garde-fous ;
+- un **coût visible** et un **budget par séance** : la console affiche en direct le coût estimé de la séance (pendant une
+  partie, il est gardé dans le navigateur du MJ, jamais dans le monde, et survit à un rechargement de la page), et le MJ IA
+  s'arrête quand il atteint le budget ; un mode « validation » où chaque action sensible attend l'accord du meneur humain ; un
+  fournisseur **factice** pour tout essayer sans clé ni coût ;
+- le réglage des **caméras des joueurs** (voir [La voix et les caméras](#la-voix-et-les-caméras)).
 
 Le guide complet est installé dans le monde par le module (journaux « MJ IA — Guide du MJ » et « Guide des joueurs ») et se
 lit dans [son dépôt](https://github.com/Hogun974/lakour-mj-ia).
@@ -384,8 +585,8 @@ lit dans [son dépôt](https://github.com/Hogun974/lakour-mj-ia).
 ## Langues
 
 L'**interface** du système et du module est en **français et en anglais** (fichiers `lang/fr.json` et `lang/en.json`, tout
-libellé traduit). Les **textes du contenu** (rôles, métiers, bâtiments, guides, variantes, tables, journaux de fête) existent
-dans les deux langues : le module `lakour-veillees` est le français ; `npm run fabriquer-veillees-en` engendre, des mêmes
+libellé traduit). Les **textes du contenu** (rôles, métiers, bâtiments, guides, variantes, tables, journaux de fête, et tout
+le Pacte : ses personnages, Le Village, les cartes de la Gazette et du Spiritisme) existent dans les deux langues : le module `lakour-veillees` est le français ; `npm run fabriquer-veillees-en` engendre, des mêmes
 sources et des dictionnaires `modules/lakour-veillees/contenu/en/<pack>.json`, le module anglais **`lakour-veillees-en`**
 (mêmes documents, mêmes identifiants ; un seul des deux actif à la fois ; manifeste publié
 `releases/latest/download/lakour-veillees-en.json`). Les noms de rôles anglais sont des créations originales (Ash Reader,
@@ -395,13 +596,15 @@ Lantern Keeper, Lady of the Ford…) ; les clés que le système lit (`system.cl
 
 ## Essais
 
-**505 essais** Node (`node --test`), sans réseau ni coût, en six à sept minutes, couvrent la logique pure du système (composition, distribution, nuit, aube,
-votes, victoire, chaque variante), son API, les mutations (chaque règle cassée doit être détectée), la non-fuite des secrets,
-le contrat du contenu, les compositions, la carte, les jetons, les compagnons et les parties complètes simulées jusqu'à la
-victoire pour chaque niveau et chaque taille de table.
+**673 essais** Node (`node --test`), sans réseau ni coût, couvrent la logique pure du système (composition, distribution, nuit,
+aube, votes, victoire, chaque variante, chaque rôle et chaque carte du Pacte), son API, les mutations (chaque règle cassée doit
+être détectée), la non-fuite des secrets, le contrat du contenu, les compositions, la carte, les jetons, les caméras, les
+compagnons, l'équilibre (un essai rapide au simulateur) et les parties complètes simulées jusqu'à la victoire pour chaque niveau
+et chaque taille de table. Le simulateur d'équilibre (`essais/outils/simuler-veillees.mjs`) et la calibration des poids
+(`essais/outils/calibrer-poids.mjs`) se lancent à part : voir [`docs/equilibre-veillees.md`](docs/equilibre-veillees.md).
 
 ```bash
-npm run essais               # tous les essais du dépôt (six à sept minutes)
+npm run essais               # tous les essais du dépôt (plusieurs minutes)
 npm run contrat              # le contrat commun des modules de contenu (figurants, index des jetons, plans)
 npm run valider -- <dossier d'une installation de Foundry v14>   # schémas Foundry, 0 erreur attendue
 ```
@@ -417,8 +620,9 @@ monde/                        le monde vierge publié avec chaque version (world
 outils/                       fabriquer-veillees.mjs (contenu, compendiums), fabriquer-jetons-veillees.mjs (jetons SVG),
                               empaqueter-paquets.mjs (archives de publication)
 essais/                       les essais Node de ce dépôt, avec leurs doublures de Foundry
-docs/                         loups-contrat.md (le contrat entre système, contenu et MJ IA), plan-loup-garou.md,
-                              publication.md, captures/
+docs/                         loups-contrat.md (le contrat entre système, contenu et MJ IA), plan-le-pacte.md (le chantier
+                              du Pacte), gazette-de-la-lune.md (les cartes, carte par carte), equilibre-veillees.md (les
+                              mesures), plan-loup-garou.md, publication.md, captures/
 .github/workflows/            release.yml : publication sur étiquette v*
 ```
 
@@ -449,8 +653,9 @@ Pour proposer un changement :
 - Silhouettes des jetons : icônes de **[game-icons.net](https://game-icons.net)** (Caro Asercion, Cathelineau, DarkZaitzev,
   Delapouite, Lorc, Skoll), licence **CC BY 3.0**, recolorées et composées dans un médaillon ; la liste icône par icône est
   dans [`modules/lakour-veillees/CREDITS.md`](modules/lakour-veillees/CREDITS.md).
-- Illustrations (écran d'accueil du monde, veillées de fête, image de la caméra coupée) : **générées par IA**, localement par l'auteur (FLUX.2 klein 9B
-  dans ComfyStudio), sans service distant.
+- Illustrations (écran d'accueil du monde, veillées de fête, et le logo de loup-garou qui remplace une caméra,
+  `assets/camera/loup-garou.webp`) : **générées par IA**, localement par l'auteur (FLUX.2 klein 9B dans ComfyStudio), sans
+  service distant. Le repli de ce logo (`loup-garou.svg`) est dessiné à la main.
 - Carte du village : dessinée par programme, aucune image extérieure. Sons d'ambiance : boucles synthétisées du moteur commun.
 - **Jeu original de la famille du loup-garou** (jeux de déduction sociale nés du jeu traditionnel *Mafia*) : aucune reprise
   des *Loups-garous de Thiercelieux* (marque de ses éditeurs) ni d'un autre jeu commercial.

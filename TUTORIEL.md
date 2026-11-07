@@ -29,7 +29,7 @@ Veillées.
 - **Foundry VTT v14** (testé avec la 14.370), avec sa licence, installé chez vous ou chez un hébergeur, et joignable par vos
   joueurs depuis Internet (redirection de port, ou hébergeur). Aucun système de jeu à acheter : le système est fourni.
 - **6 à 18 joueurs** (ou 1 à 4 humains complétés par des joueurs IA, en **Petite tablée**), chacun avec un navigateur récent
-  et, de préférence, un micro.
+  et, de préférence, un micro ; une caméra si l'on veut se voir (§ 6).
 - Trois paquets gratuits : le **système** `lakour-loups`, le **module de contenu** `lakour-veillees` (ou sa version anglaise
   `lakour-veillees-en`) et le **moteur** `lakour-mj-ia`. Le moteur est **requis même sans IA** : il tient le coffre chiffré
   des secrets de la partie. Sans clé d'IA, il ne coûte rien et ne contacte personne.
@@ -168,7 +168,7 @@ Sans elle, les secrets de la partie en cours et les fils de l'IA deviennent illi
 
 ## 6. La voix : salons vocaux et nuit
 
-Les Veillées se jouent à la voix, en **audio seulement** (pas de vidéo).
+Les Veillées se jouent à la voix ; les caméras sont facultatives (« Les caméras », plus bas).
 
 1. Ouvrez la **Table de jeu** (bouton dans la barre de gauche, calque des jetons). Section **Voix** : **Activer l'audio** passe
    le monde en « Audio seulement ».
@@ -200,6 +200,27 @@ tous les navigateurs) ; un mort écrit aux morts par le **canal des morts**, rel
 
 ![La section Voix de la Table de jeu](docs/captures/tuto-voix.png)
 
+### Les caméras (facultatif)
+
+Le bouton **Activer l'audio** de la Table met le monde en « Audio seulement » : personne ne voit personne. Pour se voir, passez
+par la console du MJ IA (bouton **chapeau de magicien**), bloc **Caméras des joueurs** :
+
+1. **Ajouter la vidéo** : le monde passe en « Audio et vidéo » ; chacun recharge la page (Foundry le propose), puis choisit sa
+   caméra dans **Configurer l'audio et la vidéo › Client**.
+2. **Donner la caméra aux joueurs** : accorde « Diffuser la vidéo » au rôle Joueur (par défaut, Foundry ne le donne qu'aux
+   joueurs de confiance).
+3. **Couper les caméras** / **Permettre les caméras**, d'un clic, à tout moment (c'est le réglage du MJ IA **Caméras des
+   joueurs permises**, coché par défaut). Coupées : la caméra de chaque joueur se ferme dans son navigateur et aucun autre ne
+   l'affiche, même s'il la rallume depuis sa console ; votre caméra et les micros ne bougent pas.
+
+Pendant la veillée, le jeu **remplace la caméra d'un joueur par un loup-garou** chaque fois qu'il ne doit pas être vu : **la
+nuit** pour tous les vivants, quand il est **mort**, parti ou spectateur, **absent du jour** par une carte de la Gazette (le
+bal, la cueillette, la battue…), **réduit au silence** pendant le débat et le vote. Son navigateur cesse alors d'envoyer
+l'image (ce n'est pas un simple voile) ; elle revient d'elle-même ensuite. Le MJ n'est jamais remplacé. Deux réglages du monde
+(§ 9) : **Caméras remplacées par le loup-garou** et **Image à la place d'une caméra** (vide : le loup-garou du module). Ces
+règles sont éprouvées par les essais automatiques, pas encore lors d'une vraie partie en vidéo : signalez ce qui vous
+surprend (voyant de la caméra, fenêtres détachées).
+
 ## 7. Le MJ IA, les compagnons et le pilote automatique
 
 Tout cela est facultatif : sans clé, vous menez la partie vous-même (§ 8) et les joueurs IA jouent en mode simple, sans IA.
@@ -218,8 +239,15 @@ Tout cela est facultatif : sans clé, vous menez la partie vous-même (§ 8) et 
 ### Mener une séance
 
 Ouvrez la console du MJ IA (bouton **chapeau de magicien**, barre de gauche), choisissez la personnalité, **Démarrer la
-séance**, puis demandez-lui une partie, par exemple « une partie avec 3 compagnons ». Il compose, distribue en secret, mène les
-nuits, raconte l'aube, anime le débat, ouvre et dépouille les votes, lit le récit de fin. **Terminer la séance** à la fin.
+séance**, puis demandez-lui une partie, par exemple « une partie avec 3 compagnons », ou « une partie Le Pacte avec Le Village,
+la Gazette, le Crieur public et 11 compagnons ». Il **prépare et mène seul** toute la veillée : il compose (niveau, Le Village,
+Gazette et Crieur, variantes du jeu de soirée), distribue en secret, mène les nuits dans l'ordre d'appel, raconte l'aube, lit
+la carte du matin, anime le débat, ouvre et dépouille les votes, lit le récit de fin. Un joueur **hors ligne** est laissé de
+côté à la distribution, sauf si vous le nommez ; après la victoire, plus rien ne se joue. **Terminer la séance** à la fin.
+
+**Le coût se voit** : la console affiche en direct le **coût estimé** de la séance. Pendant une partie, ce coût est gardé dans
+votre navigateur (jamais dans le monde, que tous les navigateurs reçoivent) et survit à un rechargement de la page ; le budget
+le compte toujours et arrête le MJ IA quand il est atteint.
 
 ### Les compagnons IA
 
@@ -230,12 +258,17 @@ et votent. Deux façons d'en avoir :
 - avec le MJ IA en séance : demandez-les-lui (« une partie avec 3 compagnons ») ;
 - avec un narrateur humain : bouton **+ Joueur IA** de la Table de jeu, avant la distribution.
 
-Leur coût (un appel court par réplique ou décision, à un modèle bon marché) compte dans le budget de la séance. Sans clé ou
-budget atteint, ils jouent en mode simple et la partie n'attend jamais.
+Leur coût (un appel court par réplique ou décision, à un modèle bon marché) compte dans le budget de la séance. Leur modèle se
+choisit dans une liste (réglage **Modèle des compagnons IA** ; par défaut, un modèle bon marché du fournisseur actif). Sans clé
+ou budget atteint, ils jouent en mode simple : ils décident d'après les politiques par rôle du système (ce que ferait un joueur
+d'après ce qu'il sait), parlent sans redire deux fois la même réplique, et la partie n'attend jamais. Un compagnon que le
+narrateur interpelle répond en premier. Ils connaissent tous les rôles et toutes les demandes du Pacte, du Village et de la
+Gazette.
 
 ### Le pilote automatique
 
-Quand **plus aucun vivant n'est tenu par un humain** (les morts regardent), la partie **continue seule** : nuit, aube, un court
+Quand **plus aucun vivant de la partie n'est tenu par un humain connecté** (les morts regardent ; un humain hors ligne ne
+retient pas le pilote), la partie **continue seule** : nuit, aube, un court
 débat entre compagnons, vote, exécution, jusqu'à la victoire. Il faut :
 
 - l'autonomie en **Autonome** ;
@@ -253,10 +286,23 @@ le bouton **Arrêter le pilote** de la console. Il ne relance jamais une autre p
 
 1. Les joueurs se connectent, chacun avec son compte. **Seuls les joueurs connectés** sont comptés à la distribution (cochez
    ou décochez-les dans la Table de jeu).
-2. Le narrateur ouvre la **Table de jeu** : nombre de joueurs, niveau (**Débutants**, **Classique**, **Chaos**, ou **Petite
-   tablée**), variantes, joueurs IA éventuels. Laissez le système composer, ou prenez une des 48 compositions prêtes.
-3. **Distribuer**. Chacun reçoit en secret sa **carte de rôle**, publiquement un **métier**, et sa **maison** sur la carte. La
-   composition reste secrète : seuls les 4 à 6 **bâtiments** en jeu sont annoncés, chacun change une règle.
+2. Le narrateur ouvre la **Table de jeu**. La préparation est rangée en **onglets** ; le résumé des choix actifs et le bouton
+   **Distribuer** restent visibles sous eux :
+   - **Joueurs** : qui joue (cochez ou décochez), les joueurs IA éventuels (**+ Joueur IA**) ;
+   - **Composition** : le niveau (**Le Pacte**, proposé d'abord, **Débutants**, **Classique**, **Chaos**, ou **Petite tablée**),
+     puis une composition équilibrée par le système, une des 61 compositions prêtes, ou les rôles choisis à la main ;
+   - **Village** : la forme de la veillée (partie **peste noire**, **Nuit de la Saint-Martin**, variante **Le Village**), les
+     **bâtiments** (*aucun* pour une partie simple, *tirés au hasard*, ou *choisis*) et les **métiers** (oui ou non ; jamais au
+     niveau Le Pacte) ;
+   - **Variantes** : celles du jeu de soirée (chandelles, Chaîne des innocents, Mur des murmures, Double visage et son
+     allégeance loup de plus, Vendanges, Envoûtement) ;
+   - **Gazette et fête** : la Gazette de la lune, le Crieur public, les cartes permanentes posées dès le début, la veillée de
+     fête.
+3. **Distribuer**. Chacun reçoit en secret sa **carte de rôle**, publiquement un **métier** si les métiers sont en jeu, et sa
+   **maison** sur la carte. Chaque joueur humain trouve en plus, dans son **carnet secret** qui s'ouvre de lui-même, une
+   **explication de son rôle** : ce qu'il fait, quand le narrateur l'appelle et ce qu'il lui demandera, comment il gagne, son
+   métier et sa personnalité s'il en a ; il la relit quand il veut (bouton **Carnet secret** de la Table). La composition reste
+   secrète : seuls les **bâtiments** en jeu (4 à 6 quand ils sont tirés au hasard) et les variantes sont annoncés.
 
 ![La Table de jeu en préparation](docs/captures/preparatifs.png)
 
@@ -294,6 +340,40 @@ leurs propres conditions. Le récit de fin dévoile tous les rôles, et la veill
 lisible de tous, avec le palmarès). **Rejouer** relance une partie avec les mêmes joueurs. Au prochain lancement du monde, le
 village repart de zéro.
 
+### Une veillée « Le Pacte », pas à pas
+
+**Le Pacte** est le jeu de loups-garous de soirée, à l'identique, sous nos noms (README, « Le Pacte »). Pour une première
+soirée de ce genre :
+
+1. **Composition** : niveau **Le Pacte** (proposé d'abord), composition équilibrée ou prête. La **Liseuse de cendres** y est
+   toujours ; il n'y a ni bâtiment communal ni métier. Pour y glisser un rôle des Veillées, choisissez les rôles à la main.
+2. **Village** (facultatif) : cochez **Le Village** pour les personnalités (Métayers, Prieur, Remégeux, Régent, Fournière,
+   Perruquier, Cabaretier, Prévôt, Hobereau), les Chemineaux et l'Incendiaire. Après la distribution, l'encart « Le Village »
+   de la Table vous laisse changer qui tient quel bâtiment jusqu'à la première nuit.
+3. **Gazette et fête** (facultatif) : cochez **La Gazette de la lune** (une carte Événement chaque matin sauf le premier),
+   éventuellement le **Crieur public** (le Bailli le nomme ; il garde 3 cartes en main par défaut) et des cartes permanentes
+   dès le début. Le rythme (chaque matin, un sur deux, un sur trois) et « le narrateur choisit ses cartes » sont des réglages
+   du monde (§ 9). Avec la Gazette, chaque personnage a des **traits visibles** (genre, âge, lunettes, bijou, coiffe, sabots,
+   pipe, bourg ou écart), que les cartes et le Spiritisme de la **Liseuse d'étoiles** lisent.
+4. **Variantes** (facultatif) : lisez d'abord l'avertissement de chacune (l'infobulle de sa case, et le guide des Variantes).
+   **La Chaîne des innocents** donne huit parties sur dix à la meute : de 9 à 12 joueurs, composez la veillée à la main avec un
+   loup de moins, dès 13 avec deux de moins. **Double visage** avantage le village : cochez « une allégeance loup de plus »
+   dès 16 joueurs en petite complication (et à 13), dès 12 en grande. **Les Vendanges** donnent sept parties sur dix à la meute.
+   Les chandelles, le Mur des murmures et l'Envoûtement restent à peu près équilibrés.
+5. **Distribuer**, puis suivez l'**Ordre de nuit** : il réveille les rôles dans l'ordre du jeu de soirée.
+6. **Le matin**, la Table attend d'elle-même les réponses du matin (« la Gazette du matin ») avant le débat : les victimes, les
+   oies de la Gardeuse, la carte de la Gazette, la séance de Spiritisme, l'annonce du Crieur. Laissez-la finir avant d'ouvrir
+   le débat.
+7. **Ce que vous faites vous-même**, dans l'encart de la Gazette : retirer son vote à qui enfreint une carte de conduite à voix
+   haute (Lune noire, Les Bonnes manières, Ni loup ni moi ; au chat, le système relève seul « loup » et « moi ») ; lire une
+   carte si vous les choisissez ; appliquer la variante d'un jour (Dimanche de soleil, Fin des vendanges, Lundi gris) ; nommer
+   le Crieur à la place d'un Bailli absent. Le reste (votes particuliers, Exécuteur, Châtiment, séances, grâces) se déroule seul.
+
+Les règles sont dans le journal **Variantes** (lisible de tous : pages « Le Village », « Le Pacte », « Les variantes du jeu de
+soirée », « La Gazette de la lune ») ; la façon de les mener, dans le **guide du narrateur** (pages « Le Village », « Les
+variantes du jeu de soirée », « Mener la Gazette de la lune »). Les mesures d'équilibre complètes sont dans
+`docs/equilibre-veillees.md`.
+
 Pour le détail de chaque rôle, métier, bâtiment et variante : le **guide du joueur** et, pour le narrateur, le **guide du
 narrateur** (journaux du monde).
 
@@ -311,10 +391,21 @@ narrateur** (journaux du monde).
 | Annonces dans le chat | oui | morts et victoire annoncées aussi au chat |
 | Canal des morts | oui | les morts s'écrivent entre eux, par le relais du MJ |
 | Salons vocaux automatiques | oui | voir § 6 ; décoché, tout le monde s'entend |
+| Caméras remplacées par le loup-garou | oui | la nuit, à la mort, pour un absent du jour ou un réduit au silence, la caméra montre le loup-garou et ne part plus (§ 6) |
+| Image à la place d'une caméra | vide | vide : le loup-garou du module ; sinon, l'image de votre choix |
 | Repartir de zéro à chaque lancement du monde | oui | une partie ne se reprend pas ; F5 ne remet rien à zéro |
 | Le Bailli, Masques de veillée, Le Dernier souffle, Gens de passage | oui | variantes douces, détaillées dans le guide |
 | Almanach des brumes, Banc des accusés, Glas du deuil, Veillée de fête | non | variantes au choix, prises en compte à la distribution suivante |
 | Petite tablée par défaut | non | 1 à 4 humains et 2 à 8 joueurs IA |
+| Bâtiments du village | tirés au hasard | *aucun* (partie simple), *tirés au hasard* ou *choisis* (à la Table) ; Le Pacte n'en tire aucun |
+| Métiers | oui | décoché : une partie sans métiers ; jamais au niveau Le Pacte |
+| Le Village (variante) | non | personnalités, Chemineaux, Incendiaire |
+| Veillée aux chandelles, version angoissante, Chaîne des innocents, Mur des murmures, Vendanges, Envoûtement | non | variantes du jeu de soirée ; la Table de jeu les coche aussi |
+| Double visage | non | petite ou grande complication ; avec elle, « une allégeance loup de plus » (non) |
+| La Gazette de la lune | non | avec « quel matin ? » (chaque matin, un sur deux, un sur trois) et « le narrateur choisit ses cartes » (non) |
+| Le Crieur public (charge) | non | avec le nombre de cartes confiées (3 ; 5 au plus) |
+| L'Innocent suit l'Aïeul | non | si l'Aïeul tombe de la main du village, un Innocent déjà gracié meurt avec lui |
+| L'Illuminé : le partage du village | la rive | ou un trait visible (genre, âge, lunettes) |
 | Agir sur la carte, Signal quand c'est à moi, Effets visuels | oui | réglages **de chaque joueur**, chez lui |
 
 ## 10. Dépannage
@@ -335,6 +426,11 @@ narrateur** (journaux du monde).
 | Textes du contenu dans la mauvaise langue | Un seul module de contenu actif : `lakour-veillees` (français) **ou** `lakour-veillees-en` (anglais). |
 | Mise à jour d'un module sans effet | **F5** pour les scripts ; un **redémarrage du serveur** Foundry pour les compendiums. |
 | Un joueur arrive en pleine partie | Avec la variante **Gens de passage** (par défaut), il entre avec un rôle public et un camp secret ; sinon, il regarde. |
+| Un joueur hors ligne n'a pas reçu de carte | C'est voulu : seuls les joueurs connectés et cochés sont distribués ; le villageois d'un humain laissé de côté quitte le village. |
+| Personne ne voit les caméras | Le monde est en « Audio seulement » (le bouton **Activer l'audio** de la Table l'y met) : console du MJ IA › Caméras des joueurs › **Ajouter la vidéo**, puis **Donner la caméra aux joueurs** ; vérifiez que les caméras sont **permises**. |
+| Une caméra montre un loup-garou | C'est la règle : la nuit, les morts, les spectateurs, les absents du jour (Gazette) et les réduits au silence. Elle revient d'elle-même. Réglage « Caméras remplacées par le loup-garou » pour l'empêcher. |
+| La Table ne passe pas au débat le matin | Avec la Gazette, elle attend les réponses du matin (séance de Spiritisme, annonce du Crieur) : laissez passer, chaque demande a un délai. |
+| « Ouvrir le vote » est refusé | La carte du jour l'interdit peut-être (La Crue : pas de vote ce jour-là) : passez à la nuit. |
 
 Un bogue, une question : les [issues du dépôt](https://github.com/Hogun974/lakour-veillees/issues). Pour le moteur (MJ IA,
 compagnons, coffre) : son [tutoriel](https://github.com/Hogun974/lakour-mj-ia/blob/principale/TUTORIEL.md) et son dépôt.

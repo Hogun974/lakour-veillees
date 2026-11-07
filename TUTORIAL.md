@@ -32,7 +32,7 @@ The screenshots below show the French interface; every label quoted here is the 
 - **Foundry VTT v14** (tested with 14.370), with its licence, installed on your machine or at a host, and reachable by your
   players over the Internet (port forwarding, or a hosting service). No game system to buy: the system is provided.
 - **6 to 18 players** (or 1 to 4 humans plus AI players, in **Small table** mode), each with a recent browser and, ideally,
-  a microphone.
+  a microphone; a camera if you want to see each other (§ 6).
 - Three free packages: the **system** `lakour-loups`, a **content module** (`lakour-veillees-en` in English, or
   `lakour-veillees` in French) and the **engine** `lakour-mj-ia`. The engine is **required even without AI**: it holds the
   encrypted vault of the game's secrets. Without an AI key it costs nothing and contacts no one.
@@ -170,7 +170,7 @@ secrets of the game in progress and the AI threads become unreadable for good.
 
 ## 6. Voice: voice rooms and the night
 
-The Vigils are played by voice, **audio only** (no video).
+The Vigils are played by voice; cameras are optional ("Cameras", below).
 
 1. Open the **Game Table** (button in the left toolbar, token layer). In its **Voice** section, **Enable audio** switches the
    world to "Audio only".
@@ -202,6 +202,26 @@ every browser); a dead player writes to the dead through the **channel of the de
 
 ![The Voice section of the Game Table](docs/captures/tuto-voix.png)
 
+### Cameras (optional)
+
+The Table's **Enable audio** button switches the world to "Audio only": nobody sees anybody. To see each other, use the AI GM
+console (the **wizard hat** button), **Players' cameras** block:
+
+1. **Add video**: the world switches to "Audio & Video"; everyone reloads the page (Foundry offers it), then picks a camera in
+   **Configure Audio/Video › Client**.
+2. **Give players the camera**: grants "Broadcast Video" to the Player role (by default Foundry gives it to trusted players
+   only).
+3. **Cut the cameras** / **Allow the cameras**, with one click, at any time (this is the AI GM setting **Players' cameras
+   allowed**, on by default). When cut, each player's camera closes in their own browser and no other browser shows it, even
+   if they switch it back on from their console; your camera and the microphones are left alone.
+
+During the vigil, the game **replaces a player's camera with a werewolf** whenever they must not be seen: **at night** for
+every living player, when they are **dead**, gone or a spectator, **away for the day** because of a Gazette card (the dance,
+the foraging, the hunt…), **silenced** during the debate and the vote. Their browser then stops sending the picture (it is not
+a mere veil); it comes back by itself afterwards. The GM is never replaced. Two world settings (§ 9): **Cameras replaced by
+the werewolf** and **Picture in place of a camera** (empty: the module's werewolf). These rules are proven by the automated
+tests, not yet in a real game on video: report anything that surprises you (camera light, pop-out windows).
+
 ## 7. The AI GM, companions and the autopilot
 
 All of this is optional: without a key, you run the game yourself (§ 8) and AI players play in simple mode, without AI.
@@ -219,8 +239,15 @@ All of this is optional: without a key, you run the game yourself (§ 8) and AI 
 ### Running a session
 
 Open the AI GM console (the **wizard hat** button in the left toolbar), pick the personality, **Start session**, then ask it
-for a game, for instance "a game with 3 companions". It composes the game, deals in secret, runs the nights, narrates the
-dawn, leads the debate, opens and counts the votes, and reads the ending. **End session** when you are done.
+for a game, for instance "a game with 3 companions", or "a game of The Pact with The Village, the Gazette, the Town Crier and
+11 companions". It **prepares and runs** the whole vigil **by itself**: it composes the game (level, The Village, Gazette and
+Crier, the party game's variants), deals in secret, runs the nights in the calling order, narrates the dawn, reads the morning
+card, leads the debate, opens and counts the votes, and reads the ending. An **offline** player is left out of the deal, unless
+you name them; after victory, nothing more is played. **End session** when you are done.
+
+**The cost is visible**: the console shows the session's **estimated cost** live. During a game this cost is kept in your
+browser (never in the world, which every browser receives) and survives a page reload; the budget always counts it and stops
+the AI GM when it is reached.
 
 ### AI companions
 
@@ -231,12 +258,16 @@ vote. Two ways to get them:
 - with the AI GM in session: ask for them ("a game with 3 companions");
 - with a human narrator: the **+ AI player** button of the Game Table, before the deal.
 
-Their cost (one short call per line or decision, to a cheap model) counts towards the session budget. Without a key, or once
-the budget is reached, they play in simple mode and the game never waits.
+Their cost (one short call per line or decision, to a cheap model) counts towards the session budget. Their model is picked
+from a list (setting **AI companions model**; by default, a cheap model of the active provider). Without a key, or once the
+budget is reached, they play in simple mode: they decide from the system's per-role policies (what a player would do from what
+they know), speak without ever repeating the same line twice, and the game never waits. A companion the narrator calls on
+answers first. They know every role and every request of The Pact, The Village and the Gazette.
 
 ### The autopilot
 
-When **no living villager is held by a human any more** (the dead watch), the game **carries on by itself**: night, dawn, a
+When **no living villager of the game is held by a connected human any more** (the dead watch; an offline human does not
+hold the autopilot back), the game **carries on by itself**: night, dawn, a
 short debate between companions, vote, execution, until victory. It needs:
 
 - autonomy set to **Autonomous**;
@@ -254,10 +285,22 @@ or with the **Stop the autopilot** button of the console. It never starts anothe
 
 1. The players log in, each with their own account. **Only connected players** are counted at the deal (tick or untick them
    in the Game Table).
-2. The narrator opens the **Game Table**: number of players, level (**Beginners**, **Classic**, **Chaos**, or **Small
-   table**), variants, any AI players. Let the system compose the game, or take one of the 48 ready-made set-ups.
-3. **Deal**. Each player receives a secret **role card**, a public **trade**, and a **house** on the map. The set-up stays
-   secret: only the 4 to 6 **buildings** in play are announced, and each one changes a rule.
+2. The narrator opens the **Game Table**. The preparation is laid out in **tabs**; the summary of the active choices and the
+   **Deal** button stay visible below them:
+   - **Players**: who plays (tick or untick them), any AI players (**+ AI player**);
+   - **Composition**: the level (**The Pact**, offered first, **Beginners**, **Classic**, **Chaos**, or **Small table**), then a
+     set-up balanced by the system, one of the 61 ready-made set-ups, or roles picked by hand;
+   - **Village**: the shape of the vigil (**black plague** game, **Saint Martin's night**, **The Village** variant), the
+     **buildings** (*none* for a simple game, *drawn at random*, or *chosen*) and the **trades** (yes or no; never at The Pact
+     level);
+   - **Variants**: the party game's (candlelight, Chain of Innocents, Whispering Wall, Two Faces and its extra wolf allegiance,
+     Grape Harvest, The Thrall);
+   - **Gazette and feast**: the Moon Gazette, the Town Crier, permanent cards laid down from the start, the holiday vigil.
+3. **Deal**. Each player receives a secret **role card**, a public **trade** if trades are in play, and a **house** on the map.
+   Every human player also finds, in their **secret notebook**, which opens by itself, an **explanation of their role**: what
+   it does, when the narrator calls them and what they will be asked, how they win, their trade and their personality if they
+   have one; they can read it again at any time (**Secret notebook** button of the Table). The set-up stays secret: only the
+   **buildings** in play (4 to 6 when drawn at random) and the variants are announced.
 
 ![The Game Table during setup](docs/captures/preparatifs.png)
 
@@ -295,6 +338,39 @@ conditions. The ending reveals every role, and the vigil enters the **Chronicles
 with the hall of fame). **Play again** starts a new game with the same players. The next time the world is launched, the
 village starts afresh.
 
+### A vigil of "The Pact", step by step
+
+**The Pact** is the werewolf party game, played as is, under our own names (README, "The Pact"). For a first evening of this
+kind:
+
+1. **Composition**: level **The Pact** (offered first), a balanced or ready-made set-up. The **Ash Reader** is always in it;
+   there is no common building and no trade. To slip in a role of the Vigils, pick the roles by hand.
+2. **Village** (optional): tick **The Village** for the personalities (Tenant Farmers, Prior, Bonesetter, Schoolmaster,
+   Oven-Keeper, Wigmaker, Alehouse Keeper, Provost, Squire), the Drifters and the Firebrand. After the deal, "The Village"
+   panel of the Table lets you change who holds which building until the first night.
+3. **Gazette and feast** (optional): tick **The Moon Gazette** (an Event card every morning but the first), maybe the **Town
+   Crier** (named by the Bailiff; holds 3 cards by default) and permanent cards from the start. The pace (every morning, every
+   other, one in three) and "the narrator picks the cards" are world settings (§ 9). With the Gazette, every character has
+   **visible traits** (gender, age, spectacles, jewel, headdress, clogs, pipe, village or outlying farm), which the cards and
+   the **Stargazer**'s séances read.
+4. **Variants** (optional): read each one's warning first (its box's tooltip, and the Variants guide). The **Chain of
+   Innocents** gives the pack eight games in ten: from 9 to 12 players, compose the vigil by hand with one wolf fewer, from 13
+   with two fewer. **Two Faces** favours the village: tick "one more wolf allegiance" from 16 players with the small twist (and
+   at 13), from 12 with the big one. **Grape Harvest** gives the pack seven games in ten. Candlelight, the Whispering Wall and
+   The Thrall stay roughly balanced.
+5. **Deal**, then follow the **night order**: it wakes the roles in the party game's order.
+6. **In the morning**, the Table waits by itself for the morning answers ("the morning Gazette") before the debate: the
+   victims, the Goose Girl's geese, the Gazette card, the séance, the Crier's announcement. Let it finish before opening the
+   debate.
+7. **What you do yourself**, in the Gazette panel: take away the vote of whoever breaks a conduct card out loud (Black Moon,
+   Good Manners, Neither Wolf nor Me; in the chat, the system spots "wolf" and "me" by itself); read a card if you pick them;
+   apply a one-day variant (Sunny Sunday, End of the Harvest, Grey Monday); name the Crier in place of an absent Bailiff. The
+   rest (special votes, Executioner, Retribution, séances, pardons) runs by itself.
+
+The rules are in the **Variants** journal (readable by all: pages "The Village", "The Pact", "The party game's variants", "The
+Moon Gazette"); how to run them, in the **Narrator's Guide** (pages "The Village", "The party game's variants", "Running the
+Moon Gazette"). The full balance measurements are in `docs/equilibre-veillees.md` (in French).
+
 For the details of every role, trade, building and variant: the **Player's Guide** and, for the narrator, the **Narrator's
 Guide** (journals in the world).
 
@@ -312,10 +388,21 @@ Guide** (journals in the world).
 | Chat announcements | on | deaths and victory also announced in the chat |
 | Channel of the dead | on | the dead write to each other, relayed by the GM |
 | Automatic voice rooms | on | see § 6; off, everyone hears everyone |
+| Cameras replaced by the werewolf | on | at night, at death, for someone away for the day or silenced, the camera shows the werewolf and is no longer sent (§ 6) |
+| Picture in place of a camera | empty | empty: the module's werewolf; otherwise a picture of your choice |
 | Start fresh every time the world is launched | on | a game is never resumed; F5 resets nothing |
 | The Bailiff, Vigil masks, The Last breath, Travellers | on | gentle variants, described in the guide |
 | Almanac of mists, The Dock, The Mourning Bell, Holiday vigil | off | optional variants, applied at the next deal |
 | Small table by default | off | 1 to 4 humans and 2 to 8 AI players |
+| Village buildings | drawn at random | *none* (simple game), *drawn at random* or *chosen* (at the Table); The Pact draws none |
+| Trades | on | off: a game without trades; never at The Pact level |
+| The Village (variant) | off | personalities, Drifters, Firebrand |
+| Candlelight vigil, dreadful version, Chain of Innocents, Whispering Wall, Grape Harvest, The Thrall | off | the party game's variants; the Game Table ticks them too |
+| Two Faces | off | small or big twist; with it, "one more wolf allegiance" (off) |
+| The Moon Gazette | off | with "which mornings?" (every morning, every other, one in three) and "the narrator picks the cards" (off) |
+| The Town Crier (office) | off | with the number of cards handed over (3; 5 at most) |
+| The Innocent follows the Greybeard | off | if the Greybeard falls at the village's hand, an already pardoned Innocent dies with him |
+| The Zealot: how the village is split | by the bank | or a visible trait (gender, age, spectacles) |
 | Act on the map, Signal when it is my turn, Visual effects | on | **per-player** settings, on each player's side |
 
 ## 10. Troubleshooting
@@ -336,6 +423,11 @@ Guide** (journals in the world).
 | Content texts in the wrong language | Only one content module enabled: `lakour-veillees-en` (English) **or** `lakour-veillees` (French). |
 | A module update has no effect | **F5** for scripts; a Foundry **server restart** for compendiums. |
 | A player arrives mid-game | With the **Travellers** variant (on by default), they join with a public role and a secret camp; otherwise they watch. |
+| An offline player got no card | That is intended: only connected, ticked players are dealt in; the villager of a human left out leaves the village. |
+| Nobody sees the cameras | The world is "Audio only" (the Table's **Enable audio** button puts it there): AI GM console › Players' cameras › **Add video**, then **Give players the camera**; check that cameras are **allowed**. |
+| A camera shows a werewolf | That is the rule: at night, the dead, spectators, those away for the day (Gazette) and the silenced. It comes back by itself. The "Cameras replaced by the werewolf" setting turns it off. |
+| The Table does not move on to the debate in the morning | With the Gazette, it waits for the morning answers (séance, Crier's announcement): let them pass, every request has a delay. |
+| "Open the vote" is refused | The day's card may forbid it (The Flood: no vote that day): go to the night. |
 
 Bugs and questions: the repository's [issues](https://github.com/Hogun974/lakour-veillees/issues). For the engine (AI GM,
 companions, vault): its [tutorial](https://github.com/Hogun974/lakour-mj-ia/blob/principale/TUTORIAL.md) and its repository.

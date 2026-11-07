@@ -174,7 +174,10 @@ export function verifierTexte(texte, ou) {
 let controle = 0;
 export function verifierSecrets(ou) {
   const pub = reglages.get("lakour-loups.partie").valeur;
-  assert.deepEqual([pub.nuit.actions, pub.nuitPrecedente.actions, pub.nuitPrecedente.bilan, pub.primes, pub.fioles, pub.asperges, pub.vote.votes,
+  // Un vote à main levée (la foire de l'Almanach ; le vote à tour de rôle de la Gazette : le Cauchemar, les Influences) : ses voix sont
+  // publiques pendant le vote (logique/etat.mjs, etatPublic ; même règle que essais/non-fuite.test.mjs) : on ne les y cherche pas.
+  const votesSecrets = v => (v?.ouvert && v.mainLevee ? {} : v?.votes);
+  assert.deepEqual([pub.nuit.actions, pub.nuitPrecedente.actions, pub.nuitPrecedente.bilan, pub.primes, pub.fioles, pub.asperges, votesSecrets(pub.vote),
     pub.carnets, pub.journalSecret, pub.causes], [[], [], null, {}, {}, [], {}, {}, [], {}], `${ou} : secret dans l'état public`);
   for (const m of pub.morts) assert.ok(!CAUSES_SECRETES.includes(m.cause), `${ou} : vraie cause « ${m.cause} » dans l'état public`);
   // La composition n'est jamais annoncée : ni sa clé dans l'état public ; la peste noire n'y existe pas avant la fin (pas même la clé).
@@ -187,7 +190,7 @@ export function verifierSecrets(ou) {
       assert.equal(e.recipients, null, e.nom);
       const etat = e.args?.[1];
       if (etat?.nuit) {
-        assert.deepEqual([etat.nuit.actions, etat.nuitPrecedente.actions, etat.primes, etat.fioles, etat.asperges, etat.vote.votes, etat.carnets],
+        assert.deepEqual([etat.nuit.actions, etat.nuitPrecedente.actions, etat.primes, etat.fioles, etat.asperges, votesSecrets(etat.vote), etat.carnets],
           [[], [], {}, {}, [], {}, {}], `${ou} : ${e.nom} diffuse un secret`);
         assert.equal(etat.composition, "", `${ou} : ${e.nom} diffuse la composition`);
         assert.ok(!("peste" in etat) || etat.phase === "fin", `${ou} : ${e.nom} diffuse la peste noire avant la fin`);
@@ -411,19 +414,23 @@ export async function jouerPartie({ n, niveau, graine, nbCompagnons = 0, fete = 
     const t = await appeler("loups_eliminer", { villageois: nom, cause, reveler: true });
     await calme();   // un mort peut confier un dernier mot au Puits
     if (/VICTOIRE/.test(t)) return t;
-    const emporte = /(.+?) peut emporter quelqu'un/.exec(t);
-    if (emporte) return emporter([emporte[1].split(" et ").at(-1)]);
+    // Le moteur 27e7559 (Le Pacte) : « X choisit lui-même qui il emporte » (une demande lui est faite) ou « X n'a pas désigné qui il
+    // emporte » ; un moteur plus ancien : « X peut emporter quelqu'un ».
+    if (/peut emporter quelqu'un|qui il emporte dans la tombe|n'a pas désigné qui il emporte/.test(t)) return emporter();
     return "";
   };
-  // La Braconnière désigne elle-même sa cible (demande posthume du système, déjà faite : appeler l'attend) ; le narrateur n'emporte
-  // à sa place que si elle n'a désigné personne. Une victoire tombée de son geste se lit dans l'état.
-  const emporter = async noms => {
+  // La Braconnière désigne elle-même sa cible (demande posthume du système, déjà faite : appeler l'attend). Le narrateur n'emporte
+  // personne à sa place (le moteur le lui interdit) : seulement, si elle n'a rien désigné (geste encore en attente), la simulation
+  // fait comme si elle le disait tout haut, et le narrateur l'applique (loups_eliminer, cause « emporte »). Une victoire tombée de son
+  // geste se lit dans l'état.
+  const emporter = async () => {
     await gestesFaits();
     if (api.etat().vainqueur) return victoireDuGeste();
-    for (const nom of noms) {
-      const mourant = villageois().find(a => a.name === nom);
-      if (!api.derniersGestes().some(g => g.acteurId === mourant?.id)) { couvert("Braconnière : elle choisit elle-même"); continue; }
-      couvert("Braconnière : le narrateur choisit à sa place");
+    const enAttente = api.derniersGestes().filter(g => g.geste === "emporter");
+    if (!enAttente.length) couvert("Braconnière : elle choisit elle-même");
+    for (const g of enAttente) {
+      if (!game.actors.get(g.acteurId)) continue;
+      couvert("Braconnière : dit tout haut, le narrateur l'applique");
       const cible = choisir(villageois().filter(a => a.system.vivant).map(a => a.name), h);
       if (!cible) return "";
       const t = await eliminer(cible, "emporte");
@@ -458,9 +465,13 @@ ${r.contenu}`);
   };
   // Le vote d'exécution : ruban de la Tisserande (prolongation) et Juge de paix (revote) compris.
   const voterLeJour = async () => {
+    // Un vote déjà ouvert de lui-même (au matin : le Cauchemar, le Châtiment, l'élection de l'Exécuteur ; après une exécution : le
+    // second vote du Greffier bègue, le Dépit, l'Enthousiasme) : loups_vote ne rouvre jamais un vote ouvert (moteur 27e7559) ; on le
+    // laisse aller à son terme, puis on le clôt.
+    if (api.etat().vote.ouvert) couvert("vote ouvert de lui-même");
     // (Sans vérification : un jour sans vote — la Crue de la Gazette — se passe de vote.)
-    if (!verifier) {
-      // (loups_vote lève alors l'erreur du système au lieu de la rendre : noté pour le moteur, docs/equilibre-veillees.md.)
+    else if (!verifier) {
+      // (Un moteur d'avant 27e7559 levait l'erreur du système au lieu de la rendre : rattrapée, au cas où.)
       let r;
       try { r = await outil("loups_vote").executer({ action: "ouvrir", candidats: [], duree_secondes: 0, double: false, objet: "execution" }); }
       catch (e) { r = { erreur: true, contenu: e.message }; }
@@ -568,6 +579,7 @@ ${r.contenu}`);
       // --- nuit
       const avantNuit = vivantsIds();
       const avant = new Map(villageois().map(a => [a.id, { cle: roleDe(a).system.cle, camp: secretDuMJ.camp(a) }]));
+      const centreAvant = verifier ? (api.etat().ambigusSecret?.centre ?? []).map(r => r.system?.cle) : [];
       const fx = verifier ? effetsDeLaNuit(api.etat(), api.etat().tour + 1) : null;
       const nbDemandes = emissions.length;
       const carnetsAvant = new Map(villageois().filter(a => a.system.compagnon).map(a => [a.id, api.carnet(a.id).length]));
@@ -582,7 +594,16 @@ ${r.contenu}`);
       }
       const actions = etatNuit.nuitPrecedente.actions;
       if (verifier) {
-        const proies = actions.filter(x => x.roleCle === "meute" || ROLES[x.roleCle]?.system.camp === "meute" && ROLES[x.roleCle].system.effet === "tuer").flatMap(x => x.cibles);
+        // Les proies de la nuit (logique/resolution.mjs, proiesDeLaNuit ; le MJ IA les lit au système depuis le moteur 27e7559) : celle de
+        // la meute — ou, si l'Enfant de la brume a été surprise en épiant (action « surprise », tirée quand elle est notée), l'Enfant à sa
+        // place : c'est elle que la meute dévore —, et les victimes des loups qui tuent seuls. La Louve mère ne mord qu'une proie ; un
+        // mordu n'est pas une victime (rien à sauver) : l'Herboriste n'apprend que les autres.
+        const propre = x => avant.get(x.acteurId)?.cle === x.roleCle;
+        const surprise = actions.find(x => x.surprise === true && ROLES[x.roleCle]?.system.effet === "epier" && propre(x));
+        const proies = [...(surprise ? [surprise.acteurId] : actions.filter(x => x.roleCle === "meute").flatMap(x => x.cibles)),
+          ...actions.filter(x => ROLES[x.roleCle]?.system.camp === "meute" && ROLES[x.roleCle].system.effet === "tuer").flatMap(x => x.cibles)];
+        const mordus = actions.filter(x => ROLES[x.roleCle]?.system.effet === "mordre" && propre(x)).map(x => x.cibles?.[0]).filter(Boolean);
+        const aSauver = proies.filter(id => !mordus.includes(id));
         // La séance de Spiritisme (Gazette, Le Pacte, étape 9 ; api.mjs, seanceDeSpiritisme) se tient au MATIN, après les morts de la
         // nuit : ses demandes (objet « seance-… ») ne sont pas des réveils de nuit. Les effets du jour sur la nuit (hors d'atteinte :
         // cachette, traversée ; gardé à l'œil) ne valent que pour la nuit : au matin, comme sur table, la Liseuse d'étoiles choisit son
@@ -601,8 +622,25 @@ ${r.contenu}`);
             assert.deepEqual(new Set(d.candidats.map(c => c.id)), new Set([...vivantsAuMatin].filter(id => !absents.has(id))), "séance : le Spirite se choisit parmi les vivants présents");
           }
         }
+        // Le Chapardeur et le Bateleur choisissent une CARTE (options : « centre-<i> », ou la clé d'une carte face visible), pas un
+        // joueur : la carte n'est pas une cible (l'action est notée sans cible) ; le Chapardeur prend ce rôle, le Bateleur joue ce rôle
+        // cette nuit, à son ordre, avec son invite (le MJ IA les réveille par api.reveiller depuis le moteur 27e7559). -> acteurId : clé
+        const parCarte = d => ["chapardeur", "bateleur"].includes(d.objet) && d.candidats.every(c => !game.actors.get(c.id));
+        const cartes = new Map();
+        for (const d of emissions.slice(nbDemandes).filter(e => e.type === "demande" && parCarte(e))) {
+          const choix = joueurs.journal.reponses.find(r => r.id === d.id)?.cibles?.[0];
+          const noted = actions.find(x => x.acteurId === d.acteurId && x.roleCle === d.objet);
+          assert.ok(noted && !noted.cibles.length, `${d.acteurNom} (${d.objet}) : le choix d'une carte noté sans cible`);
+          if (!choix) continue;
+          assert.ok(d.candidats.some(c => c.id === choix), `${d.acteurNom} (${d.objet}) : une carte qui ne lui était pas offerte`);
+          const cle = d.objet === "chapardeur" ? centreAvant[Number(String(choix).slice("centre-".length))] : choix;
+          cartes.set(d.acteurId, cle);
+          couvert(`${d.objet} : une carte choisie`);
+          if (d.objet === "bateleur") assert.ok(api.ambigus().retirees.includes(cle), `la carte jouée par le Bateleur (${cle}) n'est pas retirée au matin`);
+          else if (game.actors.get(d.acteurId)?.system.vivant) couvert("chapardeur : il tient la carte prise", roleDe(game.actors.get(d.acteurId))?.system.cle === cle ? 1 : 0);
+        }
         // (Hors la demande posthume d'une Braconnière tombée cette nuit : elle choisit parmi tous les vivants.)
-        for (const d of emissions.slice(nbDemandes).filter(e => e.type === "demande" && !(e.posthume && e.objet === "emporter") && !deSeance(e))) {
+        for (const d of emissions.slice(nbDemandes).filter(e => e.type === "demande" && !(e.posthume && e.objet === "emporter") && !deSeance(e) && !parCarte(e))) {
           assert.ok(avantNuit.has(d.acteurId), `un mort (${d.acteurNom}) est réveillé la nuit`);
           assert.ok(!fx.horsDAtteinte.includes(d.acteurId) || d.mode === "texte", `${d.acteurNom}, hors d'atteinte, est réveillé`);
           for (const c of d.candidats.filter(c => avantNuit.has(c.id))) assert.ok(!fx.horsDAtteinte.includes(c.id), `${d.acteurNom} peut viser ${c.nom}, hors d'atteinte`);
@@ -614,7 +652,12 @@ ${r.contenu}`);
             assert.equal(porte.texte ?? "", ecrit.texte, "le mot porté est celui écrit");
             continue;
           }
-          const { cle, camp } = avant.get(d.acteurId);
+          // Son réveil : celui de son rôle, ou celui de la carte qu'il a prise (Chapardeur) ou qu'il joue cette nuit (Bateleur).
+          const carte = cartes.get(d.acteurId);
+          const parSaCarte = Boolean(carte && ROLES[carte]?.system.nuit.invite && d.invite.endsWith(ROLES[carte].system.nuit.invite));
+          const { camp } = avant.get(d.acteurId);
+          const cle = parSaCarte ? carte : avant.get(d.acteurId).cle;
+          if (parSaCarte) couvert("carte jouée ou prise : son réveil");
           // L'invite propre à un rôle ne va qu'à ce rôle (ou, pour l'invite de chasse de la meute, à un loup — le Mâtin qui choisit la
           // meute en début de nuit chasse avec elle dès cette nuit : son camp d'après la nuit).
           const loupCetteNuit = camp === "meute" || secretDuMJ.camp(game.actors.get(d.acteurId)) === "meute";
@@ -629,7 +672,7 @@ ${r.contenu}`);
             assert.ok(d.candidats.every(c => !avantNuit.has(c.id)), "le Fossoyeur n'interroge que des tombes");
           }
           if (effet === "mordre" && d.invite === ROLES[cle].system.nuit.invite) assert.ok(d.candidats.every(c => proies.includes(c.id)), "la Louve mère ne mord que la proie");
-          if (effet === "remede" && proies.length && d.invite.endsWith(ROLES[cle].system.nuit.invite)) assert.match(d.invite, /la meute a attaqué/, "l'Herboriste apprend qui a été attaqué");
+          if (effet === "remede" && aSauver.length && d.invite.endsWith(ROLES[cle].system.nuit.invite)) assert.match(d.invite, /la meute a attaqué/, "l'Herboriste apprend qui a été attaqué");
           // Gardé à l'œil : il ne vise que sa maison (une tombe n'est pas une maison : le Fossoyeur interroge les morts).
           if (fx.surveilles.includes(d.acteurId) && camp !== "meute") assert.ok(d.candidats.every(c => c.id === d.acteurId || !avantNuit.has(c.id)), `${d.acteurNom}, gardé à l'œil, vise une autre maison`);
           // Le choix noté est celui du joueur : la réponse forgée par un autre (un mort) a été ignorée.
@@ -678,9 +721,8 @@ ${r.contenu}`);
         verifierVillageois(usages);
       }
       if (/VICTOIRE/.test(nuit)) { fin = nuit; break; }
-      const attente = /^En attente : (.+)\.$/m.exec(nuit);
-      if (attente) {
-        fin = await emporter(attente[1].split(" ; ").map(x => x.split(" doit désigner")[0]));
+      if (/^En attente : /m.test(nuit)) {
+        fin = await emporter();
         if (fin) break;
       }
       // --- jour : les joueurs usent de leurs pouvoirs (Table de jeu -> socket, à l'aube), puis le narrateur (loups_jour)
@@ -737,6 +779,17 @@ ${r.contenu}`);
       for (const nom of designes) {
         fin = await eliminer(nom, "vote");
         if (fin) break;
+      }
+      // Un second vote ouvert de lui-même après l'exécution (le signe du Greffier bègue, le Dépit, l'Enthousiasme de la Gazette) :
+      // loups_nuit refuse tant qu'il est ouvert (moteur 27e7559). On le clôt et on exécute avant la nuit.
+      for (let second = 0; !fin && api.etat().vote.ouvert && !api.etat().vainqueur; second++) {
+        assert.ok(second < 4, "les seconds votes ne finissent pas");
+        couvert("second vote (ouvert de lui-même)");
+        const clos2 = await voterLeJour();
+        for (const nom of /Désignés? : (.+) \(loups_eliminer pour chacun\)/.exec(clos2)?.[1].split(" et ") ?? []) {
+          fin = await eliminer(nom, "vote");
+          if (fin) break;
+        }
       }
       // Une victoire tombée d'un dernier geste ou d'une grâce sans texte (le système l'a déclarée).
       if (!fin && !verifier && api.etat().vainqueur) fin = victoireDuGeste();

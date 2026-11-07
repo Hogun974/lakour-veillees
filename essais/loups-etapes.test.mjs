@@ -253,8 +253,15 @@ const ETAPES_DE_PHASE = {
 };
 const ACTIONS_DE_LA_TABLE = ["distribuer", "phase", "reveiller", "aube", "voteBailli", "ouvrirVote", "cloreVote", "executer", "emporter", "victoire", "voteChapelle", "rejouer"];
 
-// Une partie menée par la Table, de la préparation à la victoire.
+// Une partie menée par la Table, de la préparation à la victoire. Reproductible : le hasard du monde (distribution, nuit, épier…)
+// est tiré de la graine, comme dans les parties simulées (essais/outils/partie-loups.mjs) ; sans cela, une distribution au hasard
+// finissait parfois la partie à sa première aube (tous les loups tombés la première nuit), sans débat, et l'essai échouait au hasard.
 async function partieHumaine(graine) {
+  const hasardOrigine = Math.random;
+  Math.random = creerHasard(`${graine}-monde`);
+  try { return await partieHumaineTiree(graine); } finally { Math.random = hasardOrigine; }
+}
+async function partieHumaineTiree(graine) {
   const { scene } = monde({ graine });
   const h = creerHasard(`${graine}-mj`);
   const prep = MJ.nouvellePreparation();

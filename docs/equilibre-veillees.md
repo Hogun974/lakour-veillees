@@ -563,6 +563,29 @@ prêtes sont contrôlées par `essais/veillees-compositions.test.mjs` (chacune e
 - **Une graine, une partie** : les mesures se rejouent à l'identique (mêmes graines, même code). Une règle, une politique ou un poids
   qui change déplace tout : remesurer avant de conclure (commandes plus bas).
 
+## La petite tablée, compagnons branchés sur les politiques (moteur `27e7559`)
+
+Depuis le moteur `27e7559`, les compagnons sans modèle décident par les politiques du système (source « politique », l'adresse de leur
+tempérament), disent au débat ce qu'ils savent et usent de leurs pouvoirs de jour (points 1 et 2 ci-dessous : faits). Mesuré au
+simulateur (`--tablee` : les sept configurations de l'essai d'intégration, 100 parties chacune, graine « politiques ») ; la fourchette
+de l'essai, 30 à 72 % pour la meute, tient partout :
+
+| Configuration | Humains au hasard | Humains d'adresse 0,75 |
+|---|---|---|
+| 2 humains + 2 IA | 52 % | 61 % |
+| 2 humains + 4 IA | 54 % | 59 % |
+| 2 humains + 4 IA (petite-tablee-06) | 45 % | 53 % |
+| 3 humains + 5 IA | 62 % | 46 % |
+| 3 humains + 5 IA (petite-tablee-08) | 66 % | 63 % |
+| 3 humains + 7 IA | 39 % | 47 % |
+| 4 humains + 8 IA | 64 % | 64 % |
+
+(Marge à 95 % : ±9 à ±10 points ; 55 % pour la meute en tout, humains au hasard ; aucune partie en erreur.) Les cibles de la petite
+tablée n'ont pas été recalibrées : à faire si une configuration sort de la fourchette.
+
+    node essais/outils/simuler-veillees.mjs --tablee --parties 100 --graine politiques                 (~80 s, 16 fils)
+    node essais/outils/simuler-veillees.mjs --tablee --parties 100 --graine politiques --adresse 0.75
+
 ## À brancher dans le moteur (`lakour-mj-ia`, étape 8)
 
 Les politiques sont dans le système (`api.logique` : `savoirDuJoueur`, `politiqueDeNuit`, `politiqueDeVote`, `politiqueDuJour`,

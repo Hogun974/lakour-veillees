@@ -1357,7 +1357,7 @@
       "ChapardeurNote": "{nom}, the Pilferer, took the card “{role}” from the middle.",
       "BateleurJoue": "Tonight you play the card “{role}”: the narrator will call you in its turn. In the morning, it will be removed.",
       "BateleurNote": "{nom}, the Mountebank, plays the card “{role}” tonight.",
-      "CarteRetiree": "The Mountebank's card “{role}” was used tonight: it is removed from the table.",
+      "CarteRetiree": "The card “{role}” was used tonight: it is removed from the middle of the table.",
       "CartesDuBateleur": "Three cards are laid face up in the middle of the table: {roles}. Some night, someone may play one of them.",
       "MatinMeute": "You chose the pack: you hunt with it from tonight. The wolves: {noms}.",
       "MatinVillage": "You chose the village: you will remain a plain villager until the end.",

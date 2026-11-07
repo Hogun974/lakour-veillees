@@ -156,7 +156,16 @@ test("un villageois compagnon ne voit pas l'état secret de la nuit : ni qui la 
 
 test("la vue suit l'état PUBLIC : un mort ou un muet ne parle pas, la nuit personne ne parle ; le prompt ne contient que la vue", async () => {
   const v = compagnons.vue(B);
-  assert.deepEqual(Object.keys(v).sort(), ["allies", "autres", "fiche", "id", "jeu", "monde", "nom", "peutParler", "personnalite", "prive", "public", "scene", "suspects", "tour", "vivant", "humains", "petiteTablee", "langue"].sort());
+  assert.deepEqual(Object.keys(v).sort(), ["allies", "autres", "fiche", "id", "jeu", "monde", "nom", "peutParler", "personnalite", "prive", "public", "scene", "suspects", "tour", "vivant", "humains", "petiteTablee", "langue",
+    "roleCle", "effet", "camp"].sort());
+  // Le moteur 27e7559 (Le Pacte) : la clé, l'effet et le camp de SA propre carte, pour les politiques de jeu du système quand il décide
+  // sans modèle — jamais ceux d'un autre, et rien de cela n'entre dans ce qu'on envoie au modèle (aucune clé brute).
+  for (const a of [A, B]) {
+    const w = compagnons.vue(a);
+    assert.deepEqual([w.roleCle, w.effet, w.camp], [roleDe(a).system.cle, roleDe(a).system.effet ?? "", secretDuMJ.camp(a)], `${a.name} : sa propre carte`);
+    const { systeme, texte } = contexteCompagnon(w);
+    if (w.roleCle.includes("-")) assert.ok(!`${systeme}\n${texte}`.includes(w.roleCle), `${a.name} : clé brute de son rôle dans le prompt`);
+  }
   // La Petite tablée (0.11.0) : les humains (public : system.joueur) et le mode (public : etat.petiteTablee), pour la parole seulement.
   assert.deepEqual([...v.humains].sort(), villageois().filter(a => a.system.joueur && a.id !== B.id).map(a => a.id).sort());
   assert.equal(v.petiteTablee, false);
@@ -189,7 +198,9 @@ test("loups_distribuer : noms tirés de la table des noms du village, jamais un 
 
 // ------------------------------------------------------------------ mutations de la vue (compagnons-jeu.js)
 const SCRIPTS = fileURLToPath(new URL("../modules/lakour-mj-ia/scripts/", import.meta.url));
-const COPIES = ["compagnons-jeu.js", "compagnons.js", "constantes.js", "adaptateurs.js", "utilitaires.js", "tour-logique.js", "histoire-logique.js", "survie-logique.js", "contenus.js"];
+// (veillees-pacte.js : importé par compagnons-jeu.js depuis le moteur 27e7559, Le Pacte.)
+const COPIES = ["compagnons-jeu.js", "compagnons.js", "constantes.js", "adaptateurs.js", "utilitaires.js", "tour-logique.js", "histoire-logique.js", "survie-logique.js", "contenus.js",
+  "veillees-pacte.js"];
 const MUTATIONS = {
   "état complet au lieu de l'état public (chronique secrète comprise)": [
     "const pub = api.logique.etatPublic(api.etat());", "const pub = api.etat();",

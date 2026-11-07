@@ -19,9 +19,10 @@ import { readFileSync } from "node:fs";
 import { calme, erreurs, envoyerAuMJ, emissions, messages, reglages, FR } from "./doublures/foundry-loups.mjs";
 import {
   api, outil, monde, jouerPartie, villageois, roleDe, metierDe, secretsEmis, sansHTML, verifierTexte, verifierSecrets, verifierPlateau,
-  verifierSavoirDesCompagnons, couverture, couvert, gestesFaits, victoireDuGeste, EQUILIBRE, ROLES, joueursSimules
+  verifierSavoirDesCompagnons, couverture, couvert, gestesFaits, victoireDuGeste, EQUILIBRE, ROLES, joueursSimules, compagnons
 } from "./outils/partie-loups.mjs";
 const { creerHasard, choisir, POUVOIRS_JOUR, ROLES_DE_PASSAGE, CLES_DE_FETE } = await import("../systems/lakour-loups/logique/index.mjs");
+const { contexteCompagnon } = await import("../modules/lakour-mj-ia/scripts/compagnons.js");
 
 // ------------------------------------------------------------------ les parties
 const TAILLES = [6, 8, 10, 13, 15, 18];
@@ -273,17 +274,170 @@ test("loups_vote sous le Gibet : sans majorité absolue, le texte le dit (ni « 
   assert.equal(reglages.get("lakour-loups.partie").valeur.vote.exprimes.length, 6, "on sait seulement qui a voté");
   const clos = await outil("loups_vote").executer({ action: "clore", candidats: [], duree_secondes: 0, double: false });
   assert.match(clos.contenu, new RegExp(`${a.name} : 4, ${b.name} : 2\\. Pas de majorité absolue \\(le Gibet l'exige\\) : personne n'est désigné\\.`));
+  // Le moteur 27e7559 : clore un vote déjà clos (son minuteur, un vote à tour de rôle fini) rend son résultat, sans erreur ni recompte.
+  const numero = api.etat().vote.numero;
+  const encore = await outil("loups_vote").executer({ action: "clore", candidats: [], duree_secondes: 0, double: false });
+  assert.ok(!encore.erreur, encore.contenu);
+  assert.equal(encore.contenu, clos.contenu, "le même résultat");
+  assert.equal(api.etat().vote.numero, numero, "aucun vote de plus");
 });
 
-test("loups_eliminer : la Braconnière condamnée par le vote — le narrateur est prévenu qu'elle peut emporter quelqu'un", async () => {
+// Le moteur 27e7559 (Le Pacte) : la Braconnière choisit ELLE-MÊME qui elle emporte (le système lui fait une demande posthume, les
+// derniers gestes) ; le narrateur ne le lui demande plus et n'emporte personne à sa place. Avant, il était prié de « demander qui ».
+test("loups_eliminer : la Braconnière condamnée par le vote choisit elle-même qui elle emporte ; le narrateur ne tue pas un mort", async () => {
   await preparer(...preteAvec("braconniere"));
   const braconniere = acteurDuRole("braconniere");
+  const vivantsAvant = new Set(villageois().filter(a => a.system.vivant && a.id !== braconniere.id).map(a => a.id));
   const r = await outil("loups_eliminer").executer({ villageois: braconniere.name, cause: "vote", reveler: true });
-  assert.match(r.contenu, new RegExp(`${braconniere.name} peut emporter quelqu'un dans la tombe : demande-lui qui, puis loups_eliminer \\(cause emporte\\)\\.`));
-  const emporte = villageois().find(a => a.system.vivant);
-  const r2 = await outil("loups_eliminer").executer({ villageois: emporte.name, cause: "emporte", reveler: true });
-  assert.doesNotMatch(r2.contenu, /peut emporter/);
+  verifierTexte(r.contenu, "loups_eliminer");
+  assert.match(r.contenu, new RegExp(`${braconniere.name} choisit lui-même qui il emporte dans la tombe \\(une demande lui est faite\\) : ne le lui demande pas et n'emporte personne à sa place\\.`));
+  assert.doesNotMatch(r.contenu, /demande-lui qui/);
+  assert.ok(api.derniersGestes().some(g => g.acteurId === braconniere.id && g.geste === "emporter" && g.demande), "la demande posthume est faite");
+  // Son joueur (simulé) répond : sa cible tombe, cause « emporte », sans outil du narrateur ; s'il passe, le geste reste au MJ (sans
+  // demande en cours : le narrateur ne l'applique que si le joueur le dit tout haut).
+  await gestesFaits();
+  const emportes = villageois().filter(a => vivantsAvant.has(a.id) && !a.system.vivant);
+  assert.ok(emportes.length <= 1, "une seule personne emportée");
+  if (emportes.length) assert.deepEqual(api.derniersGestes(), [], "son geste est fait");
+  else assert.deepEqual(api.derniersGestes().map(g => [g.acteurId, g.geste, g.demande]), [[braconniere.id, "emporter", false]], "il a passé : au MJ");
+  // Un narrateur qui l'emporterait quand même (ou qui élimine un mort) : le système l'a déjà fait tomber, personne d'autre ne meurt.
+  const vivants = villageois().filter(a => a.system.vivant).length;
+  for (const mort of [braconniere, ...emportes]) {
+    const r2 = await outil("loups_eliminer").executer({ villageois: mort.name, cause: "emporte", reveler: true });
+    assert.ok(!r2.erreur, r2.contenu);
+    assert.match(r2.contenu, new RegExp(`^${mort.name} est déjà mort \\(le système l'a fait tomber\\) : n'élimine personne d'autre`));
+    assert.equal(villageois().filter(a => a.system.vivant).length, vivants, "personne d'autre ne meurt");
+  }
 });
+
+// Le moteur 27e7559 (Le Pacte) : les compagnons sans modèle décident par les politiques du système et leur vue contient le jeu de
+// soirée (le Village, les traits, les cartes du Bateleur, les deux groupes de l'Illuminé, la Gazette, le Crieur). Sur les VRAIES
+// données (vrai système, vrai contenu, vrai moteur) : ce qu'on enverrait à leur modèle ne contient aucune clé brute ni aucun
+// identifiant (verifierTexte), aucun secret qu'ils ignorent (verifierSavoirDesCompagnons), à chaque pas d'un jour et d'une nuit. Et la
+// distribution du jeu de soirée : avec le Chapardeur, le système reçoit n + 2 cartes (deux au centre) ; « le-pacte » n'a aucun métier.
+const ROLES_DU_PACTE_AVEC_COMPAGNONS = ["loup-de-brumecombe", "loup-de-brumecombe", "loup-de-brumecombe", "bateleur", "illumine", "chapardeur",
+  "liseuse-de-cendres", "herboriste", "pie", "aieul"];
+const gazettesVues = [];
+for (const graine of ["pacte-compagnons-1", "pacte-compagnons-2", "pacte-compagnons-3"]) {
+  test(`le Pacte avec des compagnons IA (${graine}) : Village, traits, Bateleur, Illuminé, Gazette dans leur vue, sans clé brute ni secret ; n + 2 cartes, aucun métier`, async () => {
+    // Reproductible : le hasard du monde (distribution, nuit, Gazette…) tiré de la graine, comme dans jouerPartie.
+    const hasardOrigine = Math.random;
+    Math.random = creerHasard(`${graine}-monde`);
+    try { await partieDuPacte(graine); } finally { Math.random = hasardOrigine; }
+  });
+}
+// Les compositions prêtes du jeu de soirée qui ont le Chapardeur (n cartes au contenu) : le paquet a n + 2 cartes, deux au centre.
+test("loups_distribuer, compositions prêtes du Pacte avec le Chapardeur : n + 2 cartes (deux au centre), aucun métier, rien de brut", async () => {
+  for (const [cle, c] of Object.entries(COMPOSITIONS).filter(([, c]) => c.niveau === "le-pacte" && c.roles.includes("chapardeur"))) {
+    const n = c.joueurs[0];
+    const texte = await preparer(n, cle);
+    verifierTexte(texte, `loups_distribuer ${cle}`);
+    verifierSecrets(`loups_distribuer ${cle}`);
+    assert.equal(villageois().length, n);
+    const centre = api.etat().ambigusSecret.centre.map(x => x.system.cle);
+    assert.equal(centre.length, 2, `${cle} : le centre du Chapardeur`);
+    assert.deepEqual([...villageois().map(a => roleDe(a).system.cle), ...centre].filter(x => x !== "villageois").sort(), c.roles.filter(x => x !== "villageois").sort(), `${cle} : la composition entière`);
+    for (const a of villageois()) assert.equal(a.items.filter(i => i.type === "metier").length, 0, `${cle} : ${a.name} a un métier au jeu de soirée`);
+  }
+});
+test("le Pacte avec des compagnons IA : une carte de la Gazette en cours est passée dans leur vue", () => {
+  assert.ok(gazettesVues.some(Boolean), `jamais : ${JSON.stringify(gazettesVues)}`);
+});
+async function partieDuPacte(graine) {
+  {
+    monde(4, graine);
+    const nbCompagnons = 6, total = 10;
+    const r = await outil("loups_distribuer").executer({ joueurs: [], mode: "roles", niveau: "le-pacte", composition: "", batiments: [], inclure: [], exclure: [],
+      roles: ROLES_DU_PACTE_AVEC_COMPAGNONS, compagnons: nbCompagnons, village: "oui", gazette: "oui-crieur", variantes: ["mur"] });
+    assert.ok(!r.erreur, r.contenu);
+    verifierTexte(r.contenu, "loups_distribuer");
+    verifierSecrets("loups_distribuer");
+    assert.match(r.contenu, /\(10 joueurs, dont 6 compagnons IA\)/);
+    // n + 2 cartes : dix places, deux cartes au centre (des Villageois ajoutés si la liste n'en a pas assez), toutes de la composition.
+    assert.equal(villageois().length, total);
+    const centre = api.etat().ambigusSecret.centre.map(x => x.system.cle);
+    assert.equal(centre.length, 2, "le centre du Chapardeur");
+    const distribues = [...villageois().map(a => roleDe(a).system.cle), ...centre];
+    for (const cle of ROLES_DU_PACTE_AVEC_COMPAGNONS) assert.ok(distribues.includes(cle), `${cle} au paquet`);
+    assert.equal(distribues.length, total + 2);
+    // Le jeu de soirée : ni métier, ni bâtiment communal.
+    for (const a of villageois()) assert.equal(a.items.filter(i => i.type === "metier").length, 0, `${a.name} a un métier au jeu de soirée`);
+    assert.match(r.contenu, /Bâtiments en jeu : aucun\./);
+    assert.ok(api.village().actif, "la variante « Le Village »");
+    assert.ok(api.gazette().actif && api.gazette().crieur.actif, "la Gazette et son Crieur");
+    const lesCompagnons = villageois().filter(a => a.system.compagnon);
+    assert.equal(lesCompagnons.length, nbCompagnons);
+    // Ce qu'on enverrait au modèle de chacun : la vue du jeu de soirée, et rien de brut.
+    const verifierLesVues = ou => {
+      verifierSavoirDesCompagnons(ou);
+      for (const a of lesCompagnons) {
+        const { systeme, texte } = contexteCompagnon(compagnons.vue(a));
+        verifierTexte(`${systeme}\n${texte}`, `${ou}, vue de ${a.name}`);
+      }
+    };
+    const scene = contexteCompagnon(compagnons.vue(lesCompagnons[0])).texte;
+    assert.match(scene, /Le Village \(public\) : /);
+    assert.match(scene, /Traits visibles \(publics\) : /);
+    // (Les cartes du Bateleur et les deux bords de l'Illuminé dits comme le chat les annonce, sans nommer ces rôles : la composition
+    // ne s'annonce pas — le moteur nommait les deux rôles, verifierSavoirDesCompagnons l'a vu ; corrigé dans le moteur.)
+    assert.match(scene, /Le village est partagé en deux bords \(annoncé\) : .+ \| .+\./);
+    if (api.ambigus().bateleur.length) assert.match(scene, /Cartes posées face visible au milieu de la table \(une nuit, quelqu'un pourra jouer l'une d'elles\) : /);
+    assert.match(scene, /Variantes de la veillée \(publiques\) : le Mur des murmures/);
+    verifierLesVues("distribution");
+    // Jusqu'à quatre jours : la nuit, l'aube (la Gazette du matin, le Crieur), le débat (annonces et pouvoirs de jour des compagnons),
+    // le vote (un second vote ouvert de lui-même compris), les exécutions ; la vue repassée au crible à chaque pas.
+    let gazetteVue = false;
+    const fini = () => Boolean(api.etat().vainqueur);
+    for (let jour = 1; jour <= 4 && !fini(); jour++) {
+      const nuit = await outil("loups_nuit").executer({ delai_secondes: 20, peste_victime: "" });
+      assert.ok(!nuit.erreur, nuit.contenu);
+      await gestesFaits();
+      verifierTexte(nuit.contenu, "loups_nuit");
+      verifierSecrets("loups_nuit");
+      verifierLesVues(`nuit ${jour}`);
+      if (fini()) break;
+      if (api.gazette().enCours?.length) {
+        assert.match(contexteCompagnon(compagnons.vue(lesCompagnons[0])).texte, /Gazette de la lune, cartes en cours : /);
+        gazetteVue = true;
+      }
+      await calme();
+      const dits = await compagnons.debattre({ max: 4 });
+      for (const d of dits) verifierTexte(d.texte, `réplique de ${d.nom}`);
+      await gestesFaits();
+      verifierSecrets("débat");
+      verifierLesVues(`débat ${jour}`);
+      if (fini()) break;
+      if (!api.etat().vote.ouvert) {
+        const ouvert = await outil("loups_vote").executer({ action: "ouvrir", candidats: [], duree_secondes: 0, double: false, objet: "execution" });
+        if (ouvert.erreur) { assert.match(ouvert.contenu, /pas de vote/i, ouvert.contenu); continue; }   // la Crue de la Gazette
+        verifierTexte(ouvert.contenu, "loups_vote");
+      }
+      // Le vote, puis un second vote ouvert de lui-même (le Greffier, le Dépit, l'Enthousiasme) : clos et exécuté avant la nuit.
+      for (let n = 0; n < 4 && api.etat().vote.ouvert && !fini(); n++) {
+        await calme();
+        const clos = await outil("loups_vote").executer({ action: "clore", candidats: [], duree_secondes: 0, double: false, objet: "execution" });
+        assert.ok(!clos.erreur, clos.contenu);
+        verifierTexte(clos.contenu, "loups_vote");
+        await gestesFaits();
+        if (api.etat().vote.ouvert) continue;   // le ruban de la Tisserande, le Juge de paix
+        const designes = /Désignés? : (.+) \(loups_eliminer pour chacun\)/.exec(clos.contenu)?.[1].split(" et ") ?? [];
+        for (const nom of designes) {
+          const r2 = await outil("loups_eliminer").executer({ villageois: nom, cause: "vote", reveler: true });
+          assert.ok(!r2.erreur, r2.contenu);
+          verifierTexte(r2.contenu, "loups_eliminer");
+          await gestesFaits();
+          if (fini()) break;
+        }
+        verifierSecrets("vote");
+        verifierLesVues(`vote ${jour}`);
+      }
+    }
+    gazettesVues.push(gazetteVue);
+    if (process.env.TRACE_LOUPS) console.log(`${graine} : ${api.etat().tour} tours, vainqueur ${api.etat().vainqueur || "aucun"}, Gazette en cours vue : ${gazetteVue}`);
+    // Sans modèle, les compagnons ont décidé par les politiques du système (source « politique »), pas par le repli d'avant seulement.
+    assert.ok(compagnons.cerveaux.journal.some(x => x.operation === "decider" && x.source === "politique"), "aucune décision par les politiques");
+  }
+}
 
 test("loups_effet : protéger, faire taire, changer de camp, échanger les rôles (cartes remises aux deux seuls joueurs)", async () => {
   await preparer(8, "classique-08");

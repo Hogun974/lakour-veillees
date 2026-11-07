@@ -143,7 +143,10 @@ const VERIFICATIONS = {
     const r = await M.api.resoudreNuit({ chuchoter: true });
     assert.deepEqual(r.morts, [], "la clé empruntée a tenu");
     assert.equal(campDe(x), "village", "ni mort ni mordu");
-    assert.match(chat(m), /La carte « Gardienne des clés » du Bateleur a servi/);
+    assert.match(chat(m), /La carte « Gardienne des clés » a servi cette nuit/);
+    // Comme l'annonce des trois cartes (« quelqu'un pourra jouer l'une d'elles »), le retrait ne dit pas qu'un Bateleur est en jeu : la
+    // composition ne s'annonce pas (trouvé par les parties avec compagnons quand le MJ IA s'est mis à réveiller le Bateleur).
+    assert.doesNotMatch(chat(m), /Bateleur/);
     assert.deepEqual([M.api.ambigus().bateleur.map(c => c.cle), M.api.ambigus().retirees], [["garde-du-pont"], ["gardienne-des-cles"]]);
   },
 

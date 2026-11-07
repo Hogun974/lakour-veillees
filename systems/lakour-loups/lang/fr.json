@@ -1357,7 +1357,7 @@
       "ChapardeurNote": "{nom}, le Chapardeur, a pris au centre la carte « {role} ».",
       "BateleurJoue": "Cette nuit, tu joues la carte « {role} » : le narrateur t'appellera à son tour. Au matin, elle sera retirée.",
       "BateleurNote": "{nom}, le Bateleur, joue cette nuit la carte « {role} ».",
-      "CarteRetiree": "La carte « {role} » du Bateleur a servi cette nuit : elle est retirée de la table.",
+      "CarteRetiree": "La carte « {role} » a servi cette nuit : elle est retirée du milieu de la table.",
       "CartesDuBateleur": "Trois cartes sont posées face visible au milieu de la table : {roles}. Une nuit, quelqu'un pourra jouer l'une d'elles.",
       "MatinMeute": "Tu as choisi la meute : tu chasses avec elle dès cette nuit. Les loups : {noms}.",
       "MatinVillage": "Tu as choisi le village : tu resteras simple villageois jusqu'à la fin.",

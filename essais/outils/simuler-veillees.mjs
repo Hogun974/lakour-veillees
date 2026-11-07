@@ -11,6 +11,9 @@
 //             la variante s'affiche « chaine-1loup »…)
 //   options : --tailles 6,8,10  --niveaux debutants,classique,chaos,le-pacte  --adresse 0.4,1 (ou niveau : ADRESSE_DU_NIVEAU)  --variantes ordinaire,vendanges,…
 //             --village (la variante « Le Village »)  --pretes (les compositions prêtes au lieu des générées)
+//             --tablee (la Petite tablée : des humains simulés et des compagnons IA sans modèle, qui décident par les politiques du
+//             système ; les configurations de l'essai d'intégration, ou « 2+2,3+5,2+4:petite-tablee-06 » : humains+compagnons[:composition
+//             prête]) ; l'adresse des humains simulés y est « hasard » par défaut (ils votent au hasard, comme dans l'essai d'intégration)
 //             --fils 8 (fils d'exécution : une doublure par fil ; défaut : 16 au plus, au-delà les fils se gênent)  --json <fichier>
 //
 // Une case = un niveau × une taille × une adresse × une variante ; chaque partie a sa graine (graine|niveau|taille|adresse|variante|i) :
@@ -37,6 +40,20 @@ export const ADRESSES = [0.4, 1];
 // --adresse niveau (ou adresses: ["niveau"]) : chaque niveau à la sienne.
 export const ADRESSE_DU_NIVEAU = { debutants: 0.5, classique: 0.75, chaos: 1, "le-pacte": 0.75 };
 export const adresseDe = (adresse, niveau) => (adresse === "niveau" ? ADRESSE_DU_NIVEAU[niveau] ?? 1 : adresse);
+// La Petite tablée (--tablee) : les configurations de essais/integration-loups.test.mjs (humains + compagnons IA ; les deux dernières, les
+// compositions prêtes du contenu), et la fourchette de la meute que l'essai exige par configuration.
+export const TABLEES_SIMULEES = [{ h: 2, ia: 2 }, { h: 2, ia: 4 }, { h: 3, ia: 5 }, { h: 3, ia: 7 }, { h: 4, ia: 8 },
+  { h: 2, ia: 4, compo: "petite-tablee-06" }, { h: 3, ia: 5, compo: "petite-tablee-08" }];
+export const FOURCHETTE_TABLEE = [0.3, 0.72];
+// « 2+2,2+4:petite-tablee-06 » -> [{ h, ia, compo? }] ; vide ou « integration » : TABLEES_SIMULEES.
+export function tableesDe(texte) {
+  if (!texte || texte === true || texte === "integration") return TABLEES_SIMULEES;
+  return String(texte).split(",").map(x => x.trim()).filter(Boolean).map(x => {
+    const [hia, compo] = x.split(":");
+    const [h, ia] = hia.split("+").map(Number);
+    return { h, ia, ...(compo ? { compo } : {}) };
+  });
+}
 export const VARIANTES_SIMULEES = ["ordinaire", "chandelles", "angoissante", "chaine", "mur", "petite", "grande", "vendanges", "envoutement", "gazette", "village"];
 const EQUILIBRE = JSON.parse(readFileSync(new URL("../../modules/lakour-veillees/assets/equilibre.json", import.meta.url), "utf8"));
 const COMPOSITIONS = JSON.parse(readFileSync(new URL("../../modules/lakour-veillees/assets/compositions.json", import.meta.url), "utf8"));
@@ -58,8 +75,15 @@ export function optionsDeVariante(v) {
 }
 
 // Les cas : [{ niveau, n, adresse, variante, pretes }].
-export function casDe({ tailles = TAILLES_SIMULEES, niveaux = NIVEAUX_SIMULES, adresses = ADRESSES, variantes = ["ordinaire"], pretes = false, village = false } = {}) {
+export function casDe({ tailles = TAILLES_SIMULEES, niveaux = NIVEAUX_SIMULES, adresses = ADRESSES, variantes = ["ordinaire"], pretes = false, village = false, tablee = null } = {}) {
   const cas = [];
+  // La Petite tablée : une case par configuration (n : les places, humains et compagnons) et par adresse des humains simulés.
+  if (tablee) {
+    for (const t of tableesDe(tablee)) for (const a of adresses) {
+      cas.push({ niveau: "petite-tablee", n: t.h + t.ia, h: t.h, ia: t.ia, compo: t.compo ?? "", adresse: a, variante: `${t.h}h+${t.ia}ia${t.compo ? `:${t.compo}` : ""}`, pretes: Boolean(t.compo) });
+    }
+    return cas;
+  }
   for (const niveau of niveaux) for (const n of tailles) for (const a of adresses) for (const variante of variantes) {
     if (pretes && !COMPOSITIONS[`${niveau}-${String(n).padStart(2, "0")}`]) continue;
     const adresse = adresseDe(a, niveau);
@@ -71,8 +95,10 @@ export function casDe({ tailles = TAILLES_SIMULEES, niveaux = NIVEAUX_SIMULES, a
 // Une partie d'un cas (dans un fil qui a chargé la doublure).
 async function jouerUne(jouerPartie, c, i, graine) {
   const g = `s${graine}|${c.niveau}|${c.n}|${c.adresse}|${c.variante}|${c.pretes ? "p" : "g"}|${i}`;
-  const base = { n: c.n, niveau: c.niveau, graine: g, verifier: false, adresse: c.adresse, ...optionsDeVariante(c.variante) };
-  if (c.pretes) base.composition = `${c.niveau}-${String(c.n).padStart(2, "0")}`;
+  const base = c.ia !== undefined
+    ? { n: c.h, nbCompagnons: c.ia, tablee: true, composition: c.compo, niveau: c.niveau, graine: g, verifier: false, adresse: c.adresse === "hasard" ? null : c.adresse }
+    : { n: c.n, niveau: c.niveau, graine: g, verifier: false, adresse: c.adresse, ...optionsDeVariante(c.variante) };
+  if (c.pretes && c.ia === undefined) base.composition = `${c.niveau}-${String(c.n).padStart(2, "0")}`;
   if (c.reglages) base.reglages = c.reglages;
   if (c.roles) Object.assign(base, { roles: c.roles, batiments: c.batiments?.length ? c.batiments : "aucun", metiers: c.niveau !== "le-pacte" });
   const t0 = performance.now();
@@ -245,10 +271,11 @@ function lireOptions(argv) {
     else if (a === "--graine") o.graine = String(argv[++i]);
     else if (a === "--tailles") o.tailles = liste(argv[++i]).map(Number);
     else if (a === "--niveaux") o.niveaux = liste(argv[++i]);
-    else if (a === "--adresse") o.adresses = liste(argv[++i]).map(x => (x === "niveau" ? x : Number(x)));
+    else if (a === "--adresse") o.adresses = liste(argv[++i]).map(x => (x === "niveau" || x === "hasard" ? x : Number(x)));
     else if (a === "--variantes") o.variantes = liste(argv[++i]);
     else if (a === "--village") o.village = true;
     else if (a === "--pretes") o.pretes = true;
+    else if (a === "--tablee") o.tablee = argv[i + 1] && !argv[i + 1].startsWith("--") ? argv[++i] : "integration";
     else if (a === "--fils") o.fils = Number(argv[++i]);
     else if (a === "--json") o.json = argv[++i];
     else if (a === "--rapide") o.parties = PARTIES_RAPIDE;
@@ -259,12 +286,22 @@ function lireOptions(argv) {
 
 if (isMainThread && process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const o = lireOptions(process.argv.slice(2));
+  if (o.tablee && !process.argv.includes("--adresse")) o.adresses = ["hasard"];
   const debut = performance.now();
   let dernier = 0;
   const resultats = await simuler({ ...o, progres: (f, t) => { if (performance.now() - dernier > 15000) { dernier = performance.now(); process.stderr.write(`  ${f}/${t} parties (${Math.round((performance.now() - debut) / 1000)} s)\n`); } } });
   const m = mesurer(resultats);
   console.log(tableaux(m, { titre: `${o.pretes ? "Compositions prêtes" : "Compositions générées"} — ${o.parties} parties par case, graine ${o.graine}` }));
   const erreurs = resultats.filter(r => r.erreur);
+  if (o.tablee) {
+    // La fourchette de l'essai d'intégration, configuration par configuration.
+    const [bas, haut] = FOURCHETTE_TABLEE;
+    console.log(`\n### Petite tablée : la fourchette de la meute (${Math.round(bas * 100)} à ${Math.round(haut * 100)} %)\n`);
+    for (const [k, v] of [...m.parCas.entries()].sort()) {
+      const b = bilanDe(v);
+      console.log(`- ${k.split("|")[1]}, adresse ${k.split("|")[2]} : meute ${Math.round(100 * b.partMeute)} % ±${marge(b.partMeute, b.parties)} sur ${b.parties} parties, ${b.tours} tours — ${b.partMeute >= bas && b.partMeute <= haut ? "dans la fourchette" : "HORS de la fourchette"}`);
+    }
+  }
   if (erreurs.length) console.log(`\n${erreurs.length} parties en erreur, par exemple : ${erreurs.slice(0, 3).map(r => `${r.cas} #${r.i} : ${r.erreur}`).join(" ; ")}`);
   console.log(`\n(${resultats.length} parties, graine ${o.graine}, ${Math.round((performance.now() - debut) / 1000)} s, ${o.fils} fils)`);
   if (o.json) writeFileSync(o.json, JSON.stringify({ options: o, resultats }, null, 1));

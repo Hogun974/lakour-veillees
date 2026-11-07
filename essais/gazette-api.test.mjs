@@ -622,7 +622,7 @@ const MUTATIONS = [
   ["scripts/api.mjs", "  if (enCours.vote.mode === \"suite\" && (enCours.vote.ordre ?? [])[enCours.vote.rang ?? 0] !== votant) {", "  if (false) {", "à tour de rôle : chacun son tour"],
   ["logique/gazette.mjs", "    const id = cercle[(((i - k) % cercle.length) + cercle.length) % cercle.length];", "    const id = cercle[(i + k) % cercle.length];", "à tour de rôle : vers la gauche"],
   ["scripts/api.mjs", "    if (pile) return true;", "", "Pile ou face"],
-  ["scripts/api.mjs", "    if (oui === acteurId && game.actors.get(acteurId)?.system.vivant) {", "    if (false) {", "Marché avec le Malin"],
+  ["scripts/api.mjs", "    if (oui === acteurId && game.actors.get(acteurId)?.system.vivant && !L.partieFinie(lireEtat())) {", "    if (false) {", "Marché avec le Malin"],
   ["scripts/api.mjs", "    if (cacheParLaGazette) reveler = false;", "", "Exécuteur, Enfouissement : pas révélé"],
   ["scripts/api.mjs", "  await game.settings.set(ID, \"exclusDuMalin\", exclus);", "", "Marché perdu : exclu"],
   ["scripts/api.mjs", "  await api.donnerRole(acteurId, villageois ?? roleParDefaut());   // la fiche prend le camp du rôle : le Village", "", "Revenue : simple Villageois"],

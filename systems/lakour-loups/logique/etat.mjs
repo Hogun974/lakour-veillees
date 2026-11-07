@@ -530,6 +530,10 @@ export function ajouterMort(e, { acteurId, cause = "", quand = Date.now() }) {
   return etat;
 }
 
+// La partie est-elle finie (un vainqueur déclaré, ou la phase « fin ») ? Plus rien ne s'y demande ni ne s'y fait : ni Crieur, ni
+// succession, ni carte de la Gazette.
+export const partieFinie = e => Boolean(e?.vainqueur) || e?.phase === "fin";
+
 export function declarerVainqueur(e, vainqueur) {
   const etat = normaliserEtat(e);
   etat.vainqueur = vainqueur;

@@ -365,13 +365,19 @@ export const estCompagnon = a => Boolean(a?.system?.compagnon) && !a.system.joue
 const PLACE_COMPAGNON = "compagnon:";
 
 // Une demande pour un compagnon : le résolveur du MJ IA répond (au plus tard au délai), le système filtre la réponse comme
-// celle d'un joueur (candidats admis, nombre de cibles, longueur du mot).
+// celle d'un joueur (candidats admis, nombre de cibles, longueur du mot). La partie finie, rien ne se demande plus ; une demande
+// encore en réflexion à la victoire cesse d'attendre (couperLesDemandes) et sa réponse tardive est ignorée.
+const compagnonsEnAttente = new Set();   // pour chaque demande en réflexion : de quoi cesser de l'attendre
 async function demanderAuCompagnon(demande) {
   const fn = api.resolveurs?.compagnon;
   const vide = demande.mode === "texte" ? "" : [];
-  if (typeof fn !== "function") return vide;
-  let minuterie;
-  const delai = new Promise(r => { minuterie = setTimeout(() => r(null), Math.max(1000, Number(demande.delai) || 0)); });
+  if (typeof fn !== "function" || L.partieFinie(lireEtat())) return vide;
+  let minuterie, arreter;
+  const delai = new Promise(r => {
+    arreter = () => r(null);
+    minuterie = setTimeout(arreter, Math.max(1000, Number(demande.delai) || 0));
+  });
+  compagnonsEnAttente.add(arreter);
   let reponse = null;
   try {
     reponse = await Promise.race([Promise.resolve().then(() => fn(foundry.utils.deepClone(demande))), delai]);
@@ -379,7 +385,9 @@ async function demanderAuCompagnon(demande) {
     console.warn(`${ID} | compagnon ${demande.acteurNom} : il passe`, e);
   } finally {
     clearTimeout(minuterie);
+    compagnonsEnAttente.delete(arreter);
   }
+  if (L.partieFinie(lireEtat())) return vide;
   if (demande.mode === "texte") return L.nettoyerMot(typeof reponse === "string" ? reponse : "", demande.max);
   const admis = new Set(demande.candidats.map(c => c.id));
   const choix = [...new Set(Array.isArray(reponse) ? reponse : [])].filter(c => admis.has(c)).slice(0, demande.nombre);
@@ -446,7 +454,7 @@ function demanderVoixDuDeuil(etat) {
   const tache = demanderALaMeute({ invite: t("LAKOUR_LOUPS.Deuil.InviteVoix"), candidats: [...v.candidats], delai, objet: "deuil-voix" })
     .then(async ([cible = ""]) => {
       const maintenant = lireEtat().vote;
-      if (cible && maintenant.ouvert && maintenant.numero === v.numero) {
+      if (cible && maintenant.ouvert && maintenant.numero === v.numero && !L.partieFinie(lireEtat())) {
         await modifierEtat(e => L.journaliserSecret(L.choisirVoixDuDeuil(e, { numero: v.numero, cible }),
           t("LAKOUR_LOUPS.Deuil.VoixChoisie", { nom: game.actors.get(cible)?.name ?? cible })));
       }
@@ -477,6 +485,13 @@ function terminer(id, cibles, expire, texte = "") {
   return true;
 }
 
+// La partie finie (victoire.verifier) : chaque demande encore ouverte se ferme chez son joueur, et celles des compagnons IA cessent
+// d'être attendues ; les tâches qui les attendaient (Crieur, successions, Gazette…) voient la fin et s'arrêtent sans rien faire.
+function couperLesDemandes() {
+  for (const id of [...enAttente.keys()]) terminer(id, [], true);
+  for (const arreter of [...compagnonsEnAttente]) arreter();
+}
+
 // Réponse d'un joueur (reçue par socket, ou directement si le MJ répond à sa propre demande).
 export function recevoirReponse({ id, cibles, texte, userId }) {
   const p = enAttente.get(id);
@@ -504,7 +519,8 @@ function ouvrirDemande(demande, user) {
 
 // ------------------------------------------------------------------ votes reçus
 export async function recevoirVote({ votant, cible, userId }) {
-  if (!estMJActif()) return false;
+  // La partie finie, un vote encore ouvert ne compte plus personne (un compagnon IA en retard, un joueur qui clique encore).
+  if (!estMJActif() || L.partieFinie(lireEtat())) return false;
   // Sans les secrets à jour, rien ne s'enregistre (le joueur est prévenu ; le coffre est cherché).
   if (ecritureBloquee()) {
     try { exigerSecretsAJour(t("LAKOUR_LOUPS.Erreurs.SecretsAbsents")); } catch (e) { avis(userId, e.message); }
@@ -797,6 +813,7 @@ function recitDeFin(etat, lignes, chroniques = null) {
 // compagnon) ; absent pour le porteur de la peste.
 function demandeLibre({ acteurId, invite, candidats, nombre = 1, delai, posthume = false, objet = "" }) {
   const acteur = acteurOuErreur(acteurId);
+  if (L.partieFinie(lireEtat())) return Promise.resolve([]);   // la partie finie, plus rien ne se demande
   const compagnon = estCompagnon(acteur);
   const user = compagnon ? null : game.users.get(acteur.system.joueur);
   if (!compagnon && !user?.active) return Promise.resolve([]);
@@ -831,6 +848,17 @@ let departageEnCours = null; // le départage demandé au Bailli (une seule fois
 // La demande encore ouverte chez un joueur pour cet objet ("departage", "succession") : son id, ou "".
 const demandeOuverte = objet => [...enAttente.entries()].find(([, p]) => p.demande.objet === objet)?.[0] ?? "";
 const vivantsIds = () => tousLesVillageois().filter(a => a.system.vivant).map(a => a.id);
+// La partie finie, ou déjà gagnée sans être encore déclarée (la mort qui vient de tomber la termine : victoire.verifier suit) :
+// une charge à pourvoir (Crieur, Exécuteur) ne se demande plus. Sans les secrets à jour, aucun rôle n'est connu : jamais « gagnée »
+// sur du vide.
+function partieGagnee(e = lireEtat()) {
+  if (L.partieFinie(e)) return true;
+  if (ecritureBloquee()) return false;
+  const saintMartin = L.estSaintMartin(e) ? L.saintMartinFinie(e, villageoisAPlat()) : null;
+  const contexte = { ...L.contexteDesAmbigus(e), ...L.contexteDesVariantes(e) };
+  return Boolean(L.verifierVictoire({ ...contexte, villageois: villageoisAPlat(), glas: L.glasSonne(e), morts: e.morts, primes: e.primes, peste: e.peste,
+    saintMartin, strict: pariteStricte(e) }));
+}
 
 // Le Bailli défunt remet le sceau (une succession ouverte par sa mort, ajouterMort) : une demande posthume à son joueur (ou à
 // son compagnon IA), puis l'annonce. Une à la fois, sans bloquer qui l'appelle (cloreVote l'attend) ; rien si la partie a changé
@@ -840,6 +868,8 @@ function suivreSuccession() {
   succession = succession.then(menerSuccession).catch(e => console.warn(`${ID} | succession du Bailli`, e));
   return succession;
 }
+// Pour les essais : la succession du Bailli en cours, jusqu'à son annonce (ou jusqu'à ce qu'elle renonce).
+export const attendreSuccession = () => succession;
 
 // Le défunt n'a que le reste du délai des choix, compté depuis sa mort : une succession plus vieille (page du MJ rechargée
 // longtemps après) devient vacante sans rien demander.
@@ -856,7 +886,7 @@ async function menerSuccession() {
     : [];
   let annonce = "";
   const r = await modifierEtat(e => {
-    if (e.partie !== avant.partie || e.bailli.succession?.de !== s.de) return { etat: e, comment: "" };
+    if (e.partie !== avant.partie || L.partieFinie(e) || e.bailli.succession?.de !== s.de) return { etat: e, comment: "" };
     const x = L.nommerSuccesseur(e, { successeur: choix[0] ?? "", villageois: villageoisAPlat() });
     annonce = x.comment === "succession" ? t("LAKOUR_LOUPS.Bailli.Succession", { de, nom: game.actors.get(x.acteurId)?.name ?? "" })
       : t("LAKOUR_LOUPS.Bailli.Vacance", { de });
@@ -1302,7 +1332,7 @@ async function chambrierePour(acteurId) {
   const etat = lireEtat();
   if (!d || d.partie !== etat.partie || d.numero !== etat.vote.resultat?.numero) return "";
   const choix = await d.promesse;
-  if (choix !== acteurId || devouement !== d || !game.actors.get(d.chambriere)?.system.vivant) return "";
+  if (choix !== acteurId || devouement !== d || L.partieFinie(lireEtat()) || !game.actors.get(d.chambriere)?.system.vivant) return "";
   devouement = null;
   return d.chambriere;
 }
@@ -1417,18 +1447,18 @@ function proposerLaGrace(resultat) {
 }
 async function demanderLaGrace({ partie, numero, condamne }) {
   const h = L.porteur(lireEtat(), "manoir", villageoisAPlat());
-  if (lireEtat().partie !== partie || !h || !game.actors.get(condamne)?.system.vivant) return false;
+  if (lireEtat().partie !== partie || L.partieFinie(lireEtat()) || !h || !game.actors.get(condamne)?.system.vivant) return false;
   const nomH = nomDe(h), nomC = nomDe(condamne);
   if (h !== condamne) {
     const [supplique] = await demandeLibre({ acteurId: condamne, invite: t("LAKOUR_LOUPS.Village.InviteSupplique", { nom: nomH }), candidats: [h], nombre: 1,
       delai: delaiDeGrace(), objet: "supplique" });
-    if (supplique !== h) return false;
+    if (supplique !== h || L.partieFinie(lireEtat())) return false;
     await annoncerAuVillage(t("LAKOUR_LOUPS.Village.Supplique", { nom: nomC, hobereau: nomH }));
   }
   const [choix] = await demandeLibre({ acteurId: h, invite: t(h === condamne ? "LAKOUR_LOUPS.Village.InviteGraceSoi" : "LAKOUR_LOUPS.Village.InviteGrace", { nom: nomC }),
     candidats: [condamne], nombre: 1, delai: delaiDeGrace(), objet: "grace" });
   const avant = lireEtat();
-  if (avant.partie !== partie || L.porteur(avant, "manoir", villageoisAPlat()) !== h) return false;
+  if (avant.partie !== partie || L.partieFinie(avant) || L.porteur(avant, "manoir", villageoisAPlat()) !== h) return false;
   if (choix !== condamne) {
     if (h !== condamne) await annoncerAuVillage(t("LAKOUR_LOUPS.Village.GraceRefusee", { nom: nomC, hobereau: nomH }));
     return false;
@@ -1522,6 +1552,7 @@ async function menerVacances() {
       }
     }
     let fait = false;
+    if (L.partieFinie(lireEtat())) return;
     await modifierEtat(e => {
       if (e.partie !== avant.partie) return e;
       const vivants = villageoisAPlat();
@@ -1614,12 +1645,13 @@ function lancerLaChaine(numero) {
     for (let i = 0; i < 200; i++) {
       const etat = lireEtat();
       const c = L.chaineEnCours(etat);
-      if (!c || c.numero !== numero || c.condamne || !etat.vote.ouvert || etat.vote.numero !== numero) break;
+      if (!c || c.numero !== numero || c.condamne || !etat.vote.ouvert || etat.vote.numero !== numero || L.partieFinie(etat)) break;
       const candidats = L.candidatsDeLaChaine(c);
       if (!candidats.length) break;
       const par = c.designateur;
       const [choix = ""] = game.actors.get(par)?.system.vivant
         ? await demandeLibre({ acteurId: par, invite: t("LAKOUR_LOUPS.Variantes.Chaine.Invite"), candidats, nombre: 1, objet: "chaine" }) : [];
+      if (L.partieFinie(lireEtat())) break;
       const hasard = !candidats.includes(choix);
       const cible = hasard ? candidats[Math.floor(Math.random() * candidats.length)] : choix;
       let r = null;
@@ -2079,6 +2111,8 @@ const victoire = {
       await consignerComposition();
       const libelle = libelleVainqueur(g, e);
       const etat = await modifierEtat(x => L.journaliser(L.declarerVainqueur(x, g), libelle));
+      // Plus rien ne se demande : les fenêtres encore ouvertes se ferment, les compagnons ne sont plus attendus.
+      couperLesDemandes();
       // Les cartes se retournent pour de bon : chaque rôle, camp et lien d'amour entre aux documents (public, enfin).
       for (const id of Object.keys(etat.fiches ?? {})) if (game.actors.get(id)) await revelerPubliquement(id, { marquer: false, fin: true });
       // La partie est finie : l'état public dévoile maintenant la peste noire, s'il y en avait une.
@@ -2152,6 +2186,8 @@ const traitsImposes = acteur => {
 
 // Une carte posée (lue au matin par le dernier éliminé, par le Crieur, par le narrateur) : ses événements, son annonce, ses gestes.
 async function poserUneCarte(cle, { lecteur = "", source = "gazette" } = {}) {
+  // La partie finie (le matin qui suit une victoire, un Crieur en retard) : plus de carte.
+  if (L.partieFinie(lireEtat())) return "";
   let r = { annonces: [], prives: [], gestes: [] };
   await modifierEtat(e => { r = L.poserLaCarte(e, cle, { villageois: villageoisAPlat(), lecteur, source }); return e; });
   const qui = lecteur ? nomDe(lecteur) : t("LAKOUR_LOUPS.Narrateur");
@@ -2163,6 +2199,7 @@ async function poserUneCarte(cle, { lecteur = "", source = "gazette" } = {}) {
   return cle;
 }
 async function suivreLeGeste(g) {
+  if (L.partieFinie(lireEtat())) return;
   if (g.type === "silence") { for (const id of g.ids) await game.actors.get(id)?.update({ "system.silence": true }); return; }
   if (g.type === "bailli") { annoncer("lakourLoups.bailli", [{ acteurId: "", comment: "destitue" }]); return; }
   if (g.type === "revenir") { await revenirParmiLesVivants(g.acteurId); return; }
@@ -2201,17 +2238,17 @@ async function revenirParmiLesVivants(acteurId) {
 // tarde, l'accusé lance un appel.
 async function menerLeChatiment(par) {
   const vivants = vivantsIds();
-  if (!vivants.length) return;
+  if (!vivants.length || L.partieFinie(lireEtat())) return;
   const [choix = ""] = await demandeLibre({ acteurId: par, invite: t("LAKOUR_LOUPS.Gazette.Chatiment.Invite"), candidats: vivants, posthume: true, objet: "chatiment" });
   const accuse = vivants.includes(choix) ? choix : L.choisir(vivants) ?? "";
-  if (!accuse || lireEtat().vainqueur) return;
+  if (!accuse || L.partieFinie(lireEtat())) return;
   await annoncerGazette(t(choix ? "LAKOUR_LOUPS.Gazette.Chatiment.Designe" : "LAKOUR_LOUPS.Gazette.Chatiment.Sort", { qui: nomDe(par), nom: nomDe(accuse) }),
     { quoi: "chatiment", acteurId: accuse });
   try { await api.ouvrirVote({ objet: "chatiment", candidats: [accuse] }); } catch (e) { await noterPourMJ(e.message, { notifier: true }); return; }
   const numero = lireEtat().vote.numero;
   const [appel] = await demandeLibre({ acteurId: accuse, invite: t("LAKOUR_LOUPS.Gazette.Chatiment.InviteAppel"), candidats: [accuse],
     delai: Math.min(delaiDesChoix(), 30000), objet: "appel" });
-  if (appel === accuse && lireEtat().vote.ouvert && lireEtat().vote.numero === numero) await annoncerGazette(t("LAKOUR_LOUPS.Gazette.Chatiment.Appel", { nom: nomDe(accuse) }));
+  if (appel === accuse && !L.partieFinie(lireEtat()) && lireEtat().vote.ouvert && lireEtat().vote.numero === numero) await annoncerGazette(t("LAKOUR_LOUPS.Gazette.Chatiment.Appel", { nom: nomDe(accuse) }));
 }
 
 // Le vote à tour de rôle (les Influences, le Cauchemar) : à chacun son tour, dans l'ordre du cercle vers la gauche ; un compagnon vote
@@ -2220,7 +2257,7 @@ let suiteDuVote = null;
 function avancerLaSuite() {
   clearTimeout(suiteDuVote?.minuterie);
   const v = lireEtat().vote;
-  if (!v.ouvert || v.mode !== "suite") return;
+  if (!v.ouvert || v.mode !== "suite" || L.partieFinie(lireEtat())) return;
   const id = (v.ordre ?? [])[v.rang ?? 0];
   if (!id) {
     if (v.ordre?.length) api.cloreVote().catch(e => noterPourMJ(e.message, { notifier: true }));
@@ -2238,7 +2275,7 @@ function avancerLaSuite() {
   }
   suiteDuVote = { numero, minuterie: setTimeout(async () => {
     const w = lireEtat().vote;
-    if (!w.ouvert || w.numero !== numero || w.rang !== rang) return;
+    if (!w.ouvert || w.numero !== numero || w.rang !== rang || L.partieFinie(lireEtat())) return;
     await modifierEtat(e => { e.vote.votes[id] = ""; e.vote.rang = rang + 1; e.vote.exprimes = Object.keys(e.vote.votes); return e; });
     await annonceChat(echapper(t("LAKOUR_LOUPS.Gazette.Suite.Passe", { qui: nomDe(id) })));
     avancerLaSuite();
@@ -2253,7 +2290,7 @@ function lancerLesInfluences(numero) {
     const par = L.dernierElimine(e);
     const [choix = ""] = par ? await demandeLibre({ acteurId: par, invite: t("LAKOUR_LOUPS.Gazette.Influences.Invite"), candidats: admis, posthume: true, objet: "influences" }) : [];
     const premier = admis.includes(choix) ? choix : L.choisir(admis) ?? "";
-    if (!lireEtat().vote.ouvert || lireEtat().vote.numero !== numero) return;
+    if (!lireEtat().vote.ouvert || lireEtat().vote.numero !== numero || L.partieFinie(lireEtat())) return;
     await modifierEtat(x => { x.vote.ordre = L.ordreAGauche(x, villageoisAPlat(), premier, admis); x.vote.rang = 0; return x; });
     await annoncerGazette(t("LAKOUR_LOUPS.Gazette.Influences.Premier", { qui: par ? nomDe(par) : t("LAKOUR_LOUPS.Narrateur"), nom: nomDe(premier) }));
     avancerLaSuite();
@@ -2272,11 +2309,13 @@ async function menerLeCrieur() {
   for (let i = 0; i < 3; i++) {
     const avant = lireEtat();
     const a = L.attenteDuCrieur(avant, villageoisAPlat());
-    if (!a) return;
+    // La mort qui appelle un Crieur (le Bailli, le Crieur) a pu finir la partie : plus personne à nommer.
+    if (!a || partieGagnee(avant)) return;
     const [choix = ""] = await demandeLibre({ acteurId: a.par, invite: t(`LAKOUR_LOUPS.Gazette.Crieur.Invite.${a.quoi}`, { nom: nomDe(a.actuel) }),
       candidats: a.candidats, objet: `crieur-${a.quoi}` });
     const maintenant = lireEtat();
-    if (maintenant.partie !== avant.partie || maintenant.bailli.acteurId !== a.bailli || !maintenant.gazette.crieur.actif) return;
+    // La partie finie pendant que le Bailli réfléchissait : ni nomination, ni sort (rien après le récit de fin).
+    if (maintenant.partie !== avant.partie || L.partieFinie(maintenant) || maintenant.bailli.acteurId !== a.bailli || !maintenant.gazette.crieur.actif) return;
     const elu = a.candidats.includes(choix) ? choix : a.quoi === "garder" ? a.actuel : L.choisir(a.candidats) ?? "";
     if (!elu) return;
     await modifierEtat(e => { L.nommerLeCrieur(e, { acteurId: elu, par: a.par }); return e; });
@@ -2288,20 +2327,22 @@ async function menerLeCrieur() {
 // Les cartes de la charge, au carnet du (nouveau) Crieur : secrètes.
 async function envoyerLaMainDuCrieur(acteurId) {
   const main = L.normaliserGazetteSecret(lireEtat().gazetteSecret).main;
-  if (!acteurId || !game.actors.get(acteurId)) return;
+  if (!acteurId || !game.actors.get(acteurId) || L.partieFinie(lireEtat())) return;
   await envoyerSecret(acteurId, { titre: t("LAKOUR_LOUPS.Gazette.Crieur.Titre"),
     texte: main.length ? t("LAKOUR_LOUPS.Gazette.Crieur.Main", { cartes: main.map(c => `${nomDeCarte(c)} (${effetDeCarte(c)})`).join(" ; ") }) : t("LAKOUR_LOUPS.Gazette.Crieur.MainVide") });
 }
 // Le matin : le Crieur a-t-il une annonce ? Une carte lue s'applique aussitôt ; ne rien choisir, c'est se taire.
 async function annonceDuCrieur() {
   const avant = lireEtat();
-  if (!L.annonceDuCrieurDue(avant, villageoisAPlat())) return;
+  if (L.partieFinie(avant) || !L.annonceDuCrieurDue(avant, villageoisAPlat())) return;
   const crieur = avant.gazette.crieur.acteurId;
   await modifierEtat(e => { const g = L.normaliserGazette(e.gazette); g.crieur.annonce = e.tour; e.gazette = g; return e; });
   const main = L.normaliserGazetteSecret(lireEtat().gazetteSecret).main;
   const [carte = ""] = await demandeLibre({ acteurId: crieur, invite: t("LAKOUR_LOUPS.Gazette.Crieur.InviteAnnonce"),
     candidats: main.map(c => ({ id: c, nom: `${nomDeCarte(c)} — ${effetDeCarte(c)}`, img: "" })), objet: "crieur-annonce" });
-  if (!main.includes(carte) || lireEtat().vainqueur) { await annoncerGazette(t("LAKOUR_LOUPS.Gazette.Crieur.Rien", { nom: nomDe(crieur) })); return; }
+  // La partie finie pendant qu'il réfléchissait : rien, pas même « il se tait ».
+  if (L.partieFinie(lireEtat())) return;
+  if (!main.includes(carte)) { await annoncerGazette(t("LAKOUR_LOUPS.Gazette.Crieur.Rien", { nom: nomDe(crieur) })); return; }
   await modifierEtat(e => {
     const s = L.normaliserGazetteSecret(e.gazetteSecret);
     s.main = s.main.filter(c => c !== carte);
@@ -2333,6 +2374,7 @@ async function seanceDeSpiritisme() {
     questions: questions.map((q, i) => `${i + 1}. « ${texteDeQuestion(q)} »`).join(" ") }), { quoi: "seance", cle: carte });
   const [q = ""] = await demandeLibre({ acteurId: s.par, invite: t("LAKOUR_LOUPS.Gazette.Spiritisme.InviteQuestion"),
     candidats: questions.map((x, i) => ({ id: x, nom: `${i + 1}. ${texteDeQuestion(x)}`, img: "" })), objet: "seance-question" });
+  if (L.partieFinie(lireEtat())) return;
   const question = questions.includes(q) ? q : L.choisir(questions);
   const vivants = vivantsIds();
   // Le Spirite pose la question à voix haute : un absent du jour (Petit Commis parti, danseurs, chasseurs, cueilleuses) ne
@@ -2340,6 +2382,7 @@ async function seanceDeSpiritisme() {
   const absents = new Set(L.absentsDuJour(lireEtat()));
   const presents = vivants.filter(id => !absents.has(id));
   const [sp = ""] = await demandeLibre({ acteurId: s.par, invite: t("LAKOUR_LOUPS.Gazette.Spiritisme.InviteSpirite"), candidats: presents, objet: "seance-spirite" });
+  if (L.partieFinie(lireEtat())) return;
   const spirite = presents.includes(sp) ? sp : presents.includes(s.par) ? s.par : (presents[0] ?? s.par);
   const n = L.DESIGNATIONS_DES_QUESTIONS[question] ?? 0;
   let designes = [];
@@ -2349,6 +2392,7 @@ async function seanceDeSpiritisme() {
     designes = [...new Set(choix.filter(id => vivants.includes(id)))].slice(0, n);
     for (const id of L.melanger(vivants.filter(id => !designes.includes(id)))) if (designes.length < n) designes.push(id);
   }
+  if (L.partieFinie(lireEtat())) return;
   const reponse = L.reponseDeLEsprit({ question, etat: lireEtat(), villageois: villageoisAPlat(), spirite, designes });
   const humain = Boolean(game.actors.get(mort)?.system.joueur);
   await modifierEtat(x => {
@@ -2402,7 +2446,7 @@ async function verdictDeLaGazette(acteurId) {
   }
   if (L.carteDuJour(e, "marche-du-malin")) {
     const [oui] = await demandeLibre({ acteurId, invite: t("LAKOUR_LOUPS.Gazette.Marche.Invite"), candidats: [acteurId], delai: Math.min(delaiDesChoix(), 30000), objet: "marche" });
-    if (oui === acteurId && game.actors.get(acteurId)?.system.vivant) {
+    if (oui === acteurId && game.actors.get(acteurId)?.system.vivant && !L.partieFinie(lireEtat())) {
       await modifierEtat(x => { const g = L.normaliserGazette(x.gazette); g.marches.push({ acteurId, tour: x.tour }); x.gazette = g; L.inscrire(x, { type: "gazette", quoi: "marche", acteurId }); return x; });
       await annoncerGazette(t("LAKOUR_LOUPS.Gazette.Marche.Accepte", { nom: nomDe(acteurId) }), { quoi: "marche", acteurId });
       return true;
@@ -2435,8 +2479,11 @@ async function apresUneMortDeLaGazette(acteurId, cause, { executeur = "", cache 
 }
 async function successionDeLExecuteur(de, roleCache = "") {
   const vivants = vivantsIds();
+  // Sa mort finit la partie : personne à désigner (la charge se ferme avec la partie).
+  if (partieGagnee()) return;
   await modifierEtat(x => { const g = L.normaliserGazette(x.gazette); g.executeur = { ...g.executeur, acteurId: "", succession: { de, tour: x.tour } }; x.gazette = g; return x; });
   const [choix = ""] = vivants.length ? await demandeLibre({ acteurId: de, invite: t("LAKOUR_LOUPS.Gazette.Executeur.InviteSuccession"), candidats: vivants, posthume: true, objet: "executeur" }) : [];
+  if (L.partieFinie(lireEtat())) return;
   const elu = vivants.includes(choix) ? choix : L.choisir(vivants) ?? "";
   await modifierEtat(x => {
     const g = L.normaliserGazette(x.gazette);
@@ -2578,6 +2625,8 @@ export const api = {
     return tousLesVillageois();
   },
 
+  // joueurs : les ids des joueurs humains de la partie ; le villageois d'un joueur humain qui n'en est pas (absent, laissé de côté)
+  // quitte le village.
   // compagnons : les villageois tenus par des compagnons IA (sans joueur), en plus des joueurs : un nom (un compagnon d'une
   // partie précédente est repris et renommé, sinon un villageois est créé), ou l'id d'un villageois compagnon déjà là
   // (créé par le MJ IA, api.compagnons.creer : il garde son nom), ou { acteurId } / { nom }.
@@ -2783,6 +2832,10 @@ export const api = {
       if (typeof api.compagnons?.retirer === "function") { try { await api.compagnons.retirer(a.id); } catch { /* repli */ } }
       if (game.actors.get(a.id)) await a.delete();
     }
+    // Les villageois des joueurs humains qui ne sont pas de cette partie (un absent laissé de côté, un exclu du Marché avec le Malin)
+    // quittent le village, comme ceux qui ne rejouent pas (nouvellePartie) : sans carte, ils y resteraient des vivants (candidats,
+    // proies, comptés à la victoire, envoyés au village voisin par la Gazette).
+    for (const a of tousLesVillageois().filter(x => x.system.joueur && !x.system.compagnon && !joueurs.includes(x.system.joueur))) await a.delete();
     // Les villageois en jeu vus avec leurs fiches NEUVES (les secrets du MJ ne les ont pas encore).
     const enJeu = tousLesVillageois().filter(a => sortie.some(s => s.acteurId === a.id)).map(a => aPlat(a, fiches));
     // Les traits visibles des personnages (publics), tirés à la distribution ; un trait posé sur l'acteur (drapeau « traits ») est respecté.
@@ -3304,8 +3357,8 @@ export const api = {
     const acteur = acteurOuErreur(acteurId);
     // Un rôle sans cible (nuit.cibles = 0 : Ermite, Chasseur de primes) n'a rien à choisir : pas de fenêtre.
     if (Number(nombre) === 0) return Promise.resolve([]);
-    // Un mort n'agit plus (joueur ou compagnon IA) : il n'est pas réveillé.
-    if (!acteur.system.vivant) return Promise.resolve([]);
+    // Un mort n'agit plus (joueur ou compagnon IA) : il n'est pas réveillé ; la partie finie, personne.
+    if (!acteur.system.vivant || L.partieFinie(lireEtat())) return Promise.resolve([]);
     const compagnon = estCompagnon(acteur);
     const user = compagnon ? null : game.users.get(acteur.system.joueur);
     if (!compagnon && !user?.active) return Promise.resolve([]);
@@ -3329,7 +3382,7 @@ export const api = {
   demanderTexte({ acteurId, invite = "", delai, max = L.LONGUEUR_MESSAGE } = {}) {
     exigerMJ();
     const acteur = acteurOuErreur(acteurId);
-    if (!acteur.system.vivant) return Promise.resolve("");
+    if (!acteur.system.vivant || L.partieFinie(lireEtat())) return Promise.resolve("");
     const compagnon = estCompagnon(acteur);
     const user = compagnon ? null : game.users.get(acteur.system.joueur);
     if (!compagnon && !user?.active) return Promise.resolve("");
@@ -4635,7 +4688,7 @@ export const api = {
     exigerMJ();
     const a = acteurOuErreur(acteurId);
     const e = lireEtat();
-    if (!e.gazette.crieur.actif || !a.system.vivant || e.bailli.acteurId === acteurId) throw new Error(t("LAKOUR_LOUPS.Gazette.Refus.nommer", { nom: a.name }));
+    if (!e.gazette.crieur.actif || L.partieFinie(e) || !a.system.vivant || e.bailli.acteurId === acteurId) throw new Error(t("LAKOUR_LOUPS.Gazette.Refus.nommer", { nom: a.name }));
     const ancien = e.gazette.crieur.acteurId;
     await modifierEtat(x => { L.nommerLeCrieur(x, { acteurId, par: x.bailli.acteurId }); return x; });
     await annoncerGazette(t("LAKOUR_LOUPS.Gazette.Crieur.NommeParLeNarrateur", { nom: a.name }), { quoi: "crieur", acteurId });

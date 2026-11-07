@@ -780,7 +780,7 @@ const MUTATIONS = [
   ["scripts/plateau-local.mjs", "local.selection = L.basculer(local.selection, acteurId);", "envoyerReponse(local.demande.id, [acteurId]);", "sélection locale"],
   ["scripts/plateau-local.mjs", "  if (demande.mode === \"texte\" || !plateauInteractif(demande.candidats.map(c => c.id))) {", "  if (true) {", "choix sur la carte"],
   ["scripts/plateau-local.mjs", "    case \"vote\": return lireEtat().vote.candidats.includes(acteurId);", "    case \"vote\": return true;", "candidats du vote"],
-  ["scripts/api.mjs", "    if (!acteur.system.vivant) return Promise.resolve([]);", "", "un mort n'est pas réveillé"],
+  ["scripts/api.mjs", "    if (!acteur.system.vivant || L.partieFinie(lireEtat())) return Promise.resolve([]);", "    if (L.partieFinie(lireEtat())) return Promise.resolve([]);", "un mort n'est pas réveillé"],
   ["scripts/api.mjs", ": anciens.filter(estCompagnon).map(a => a.id);", ": [];", "rejouer avec les compagnons"],
   ["scripts/api.mjs", "    annulerDemandes();\n", "", "rejouer : demandes closes"],
   ["scripts/api.mjs", "const historique = [...historiqueDesParties(), ...(precedents.length ? [{ roles: precedents, batiments: avant.batimentsCles ?? [], quand: Date.now() }] : [])];", "const historique = [];", "rejouer : autre composition"],

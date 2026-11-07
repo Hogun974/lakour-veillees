@@ -184,7 +184,8 @@ const VERIFICATIONS = {
     await M.api.eliminer(braco.id, { cause: "vote" });
     await attendre(() => demandeDe(braco, n), "la demande posthume");
     const d = demandeDe(braco, n);
-    const [x, y] = d.candidats.map(c => game.actors.get(c.id));
+    // Ni l'un ni l'autre n'est le loup : la partie continue (une victoire fermerait aussi la fenêtre, couperLesDemandes).
+    const [x, y] = d.candidats.map(c => game.actors.get(c.id)).filter(a => cle(a) !== "loup-de-brumecombe");
     await M.MJ.emporter(x.id);
     assert.ok(emissions.slice(n).some(e => e.type === "annuler" && e.id === d.id && e.recipients?.[0] === braco.system.joueur), "sa fenêtre se ferme");
     repondre(d, [y]);

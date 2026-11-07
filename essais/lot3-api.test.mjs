@@ -432,7 +432,8 @@ const MUTATIONS = [
   ["scripts/api.mjs", "    if (clos) {\n", "    if (false) {\n", "départ : le vote clos annoncé"],
   ["scripts/api.mjs", "format = format === undefined ? (L.estSaintMartin(avant) ? L.FORMAT_SAINT_MARTIN : \"\") : format;", "format = format ?? \"\";", "rejouer : le format"],
   ["scripts/api.mjs", "const anciens = tousLesVillageois().filter(a => !partis.has(a.id));", "const anciens = tousLesVillageois();", "rejouer : sans les partis"],
-  ["scripts/api.mjs", "    for (const a of tousLesVillageois().filter(x => partis.has(x.id))) {", "    for (const a of []) {", "rejouer : les villageois des partis"],
+  // « rejouer : les villageois des partis » (nouvellePartie qui ne les retire plus) n'est plus une mutation seule : distribuer fait aussi quitter
+  // le village au villageois d'un joueur humain qui n'est pas de la partie, et au compagnon qui n'est pas repris (la garde est double).
   ["scripts/actions-mj.mjs", "niveau: prep.niveau, format: \"\",", "niveau: prep.niveau,", "préparation : une partie ordinaire"],
   ["scripts/api.mjs", "    if (roleCle === L.CLE_DEUIL) return reveillerLeDeuil(entree, { delai: ms });\n", "", "deuil : le réveil de la meute"],
   ["scripts/api.mjs", "await api.noterAction({ acteurId: entree.acteurIds[0], roleCle: L.CLE_DEUIL, cibles, effet: \"deuil\" });", "await api.noterAction({ acteurId: entree.acteurIds[0], roleCle: L.CLE_DEUIL, cibles });", "deuil : la vision notée"],

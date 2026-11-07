@@ -6,13 +6,23 @@
 // hasard (le comportement des joueurs simulés d'avant l'étape 6). 0 : toujours au hasard ; 1 : toujours ce qu'il sait.
 //
 // 1. Le savoir d'un joueur : savoirDuJoueur({ moi, camp, allies, textes, publics, villageois, gabarits, nomsDesRoles, nomsDesCamps,
-//    annonces, roles, voisins, registre, role, groupes }) — son carnet (textes : visions de la Liseuse et des autres, lanterne, flair
+//    annonces, roles, voisins, registre, role, groupes, charmesAppeles }) — son carnet (textes : visions de la Liseuse et des autres, lanterne, flair
 //    du Furet, Enfant de la brume, Fournière, Prieur, Pèlerine, prime du Chasseur, charmes ; le Spiritisme ne dit que oui ou non : non
 //    lu), le chat public (publics : tombes, rasoir, oies), les rôles révélés (villageois), le Registre (qui a voté contre un loup
 //    démasqué) et les annonces du débat (annonces : « X est un loup », dit par Y ; démenties, elles trahissent leur auteur ; vérifiées,
 //    elles le rendent fiable). Les textes sont lus d'après les gabarits du dictionnaire du système (LAKOUR_LOUPS, français ou anglais).
 //    -> { moi, camp, allies: [id], loups: [id], innocents: [id], roles: { id: cle }, soupcons: { id: n }, utiles: [id], amoureux: [id],
-//         menteurs: [id], objectifs: [id] (un solitaire : sa prime, l'autre groupe de l'Illuminé — role, groupes) }
+//         menteurs: [id], objectifs: [id] (un solitaire : sa prime, l'autre groupe de l'Illuminé — role, groupes),
+//         charmes: [id], vielle: [id], vielleConnue: [id], vielleEnJeu, menaceDeLaVielle (le Joueur de vielle, étape 6c : ci-dessous) }
+//    Le Joueur de vielle (Le Pacte, étape 6c ; sa règle ne change pas) : un charmé SAIT qu'il l'est et connaît les autres charmés
+//    (son carnet) ; le Joueur de vielle, qui ne se charme jamais, est donc parmi les vivants non charmés (vielle : ses suspects, les
+//    plus sûrs d'abord — révélé, accusé au débat, puis les non-charmés qu'on ne sait pas d'un autre rôle ; vielleConnue : ceux que
+//    tous savent, révélé ou accusé). Le village le sait aussi autrement : dès que le narrateur appelle les charmés (charmesAppeles :
+//    le nombre de nuits où il les a appelés, public, comme à la table), un Joueur de vielle joue (vielleEnJeu), et chaque nuit il en
+//    charme deux (menaceDeLaVielle : il peut gagner à la prochaine nuit — un charmé le sait au compte près, les autres l'estiment
+//    d'après les nuits d'appel). Les charmés du Village le cherchent ensemble (au vote, un même suspect ; au débat, ils l'accusent :
+//    une annonce « solitaire »), le village vote contre un suspect accusé quand la menace est là, et la meute le vise aussi (la nuit et
+//    au vote, sous la menace).
 // 2. La nuit : politiqueDeNuit({ effet, objet, candidats, nombre, invite, savoir, adresse, hasard, roles, deja }) -> [id]
 //    (POLITIQUES[effet] ou POLITIQUES_DES_GESTES[objet] ; roles : { cle: { camp, information, protection } }, l'équilibre du contenu ;
 //    deja : ses choix passés pour ce réveil).
@@ -70,7 +80,7 @@ const listeDeNoms = s => String(s ?? "").split(/, | et | and /).map(x => x.trim(
 // nomsDesRoles : { nom affiché: cle } ; nomsDesCamps : { libellé: camp } ; roles : { cle: { camp, information, protection } } ;
 // voisins(id) -> [id] (le cercle, pour les oies) ; annonces : [{ par, cible, camp }].
 export function savoirDuJoueur({ moi = "", camp = "village", allies = [], textes = [], publics = [], villageois = [], gabarits = null,
-  nomsDesRoles = {}, nomsDesCamps = {}, annonces = [], roles = {}, voisins = null, registre = [], role = "", groupes = null } = {}) {
+  nomsDesRoles = {}, nomsDesCamps = {}, annonces = [], roles = {}, voisins = null, registre = [], role = "", groupes = null, charmesAppeles = 0 } = {}) {
   const parNom = new Map(villageois.map(v => [v.nom, v.id]));
   const idDe = nom => parNom.get(String(nom ?? "").trim()) ?? "";
   const campDe = libelle => nomsDesCamps[String(libelle ?? "").trim()] ?? ({ meute: "meute", village: "village", solitaire: "solitaire" })[String(libelle ?? "").trim().toLowerCase()] ?? "";
@@ -130,15 +140,20 @@ export function savoirDuJoueur({ moi = "", camp = "village", allies = [], textes
   // Les annonces du débat : une annonce démentie (le désigné révélé d'un autre camp) trahit son auteur ; les autres valent un fort
   // soupçon (le loup) ou une présomption d'innocence.
   const revele = new Map(villageois.filter(v => v.revele && v.camp).map(v => [v.id, v.camp]));
+  // (Une accusation de jouer de la vielle, « solitaire », n'est jamais démentie : un charmé se trompe de bonne foi.)
   for (const a of annonces) {
+    if (a.camp === "solitaire") continue;
     const vrai = revele.get(a.cible);
     if (vrai && (vrai === "meute") !== (a.camp === "meute")) { menteurs.add(a.par); continue; }
   }
   for (const id of menteurs) if (id !== moi) loups.add(id);
   // Une annonce confirmée (le loup désigné, révélé loup) rend son auteur fiable : ses autres annonces valent une vision.
   const fiables = new Set(fiablesDesAnnonces(annonces, revele).filter(id => !menteurs.has(id)));
+  // Les accusés de jouer de la vielle (annonces « solitaire » des charmés) : combien de fois.
+  const accusesDeVielle = new Map();
   for (const a of annonces) {
     if (menteurs.has(a.par) || a.par === moi || loups.has(a.par)) continue;
+    if (a.camp === "solitaire") { if (a.cible !== moi) { accusesDeVielle.set(a.cible, (accusesDeVielle.get(a.cible) ?? 0) + 1); soupconner(a.cible, 1); } continue; }
     if (a.camp === "meute" && fiables.has(a.par) && !revele.has(a.cible)) loups.add(a.cible);
     else if (a.camp === "meute") soupconner(a.cible, 3); else soupconner(a.cible, -2);
   }
@@ -154,14 +169,24 @@ export function savoirDuJoueur({ moi = "", camp = "village", allies = [], textes
     }
   }
   for (const [id, cle] of solitaires) if (id !== moi && !loups.has(id)) soupconner(id, cle === "revenant" ? -10 : cle ? 3 : 0.5);
-  // Charmé, il sait que le Joueur de vielle est parmi ceux qui ne le sont pas : quand la moitié des vivants l'est, il le cherche.
-  if (charmes && camp !== "solitaire") {
-    const vivants = villageois.filter(v => v.vivant !== false);
-    const libres = vivants.filter(v => !charmes.has(v.id) && v.id !== moi);
-    if (charmes.size * 2 >= vivants.length) for (const v of libres) if (!innocents.has(v.id)) soupconner(v.id, 1.5 / Math.max(1, libres.length / 3));
-  }
   for (const id of [...loups]) if (innocents.has(id)) innocents.delete(id);
   const alliesSet = new Set(allies.filter(id => id && id !== moi));
+  // Le Joueur de vielle (étape 6c, voir l'en-tête) : ses suspects, la menace.
+  const vivantsIds = villageois.filter(v => v.vivant !== false).map(v => v.id);
+  const vielleEnJeu = role !== "joueur-de-vielle" && (Boolean(charmes) || Number(charmesAppeles) > 0);
+  const vielle = [];
+  let menaceDeLaVielle = false;
+  if (vielleEnJeu) {
+    const possible = id => id !== moi && vivantsIds.includes(id) && !alliesSet.has(id) && !loups.has(id) && !innocents.has(id)
+      && (!connus.get(id) || connus.get(id) === "joueur-de-vielle") && (!charmes || !charmes.has(id));
+    const revelee = vivantsIds.filter(id => id !== moi && connus.get(id) === "joueur-de-vielle");
+    const accuses = [...accusesDeVielle].filter(([id]) => possible(id)).sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1)).map(([id]) => id);
+    const libres = charmes ? vivantsIds.filter(id => !charmes.has(id) && id !== moi) : [];
+    for (const id of [...revelee, ...accuses, ...libres.filter(possible).sort()]) if (!vielle.includes(id)) vielle.push(id);
+    // Charmé : il peut gagner cette nuit si, lui excepté, il ne reste que deux non-charmés ; sinon : deux charmés par nuit d'appel.
+    menaceDeLaVielle = charmes ? libres.length <= 3 : vivantsIds.length - 2 * Number(charmesAppeles) <= 3;
+  }
+  const vielleConnue = vielle.filter(id => connus.get(id) === "joueur-de-vielle" || accusesDeVielle.has(id));
   // Les rôles utiles (information, protection) connus ou révélés, et ceux qui ont parlé au débat (ils savent quelque chose) : les
   // cibles de la meute, les protégés du Garde.
   const utiles = new Set([...connus].filter(([id, cle]) => roles[cle]?.camp === "village" && (roles[cle]?.information || roles[cle]?.protection)).map(([id]) => id));
@@ -169,7 +194,8 @@ export function savoirDuJoueur({ moi = "", camp = "village", allies = [], textes
   loups.delete(moi); innocents.delete(moi); utiles.delete(moi);
   return {
     moi, camp, allies: [...alliesSet], loups: [...loups], innocents: [...innocents], roles: Object.fromEntries(connus), soupcons: Object.fromEntries(soupcons),
-    utiles: [...utiles], amoureux: [...amoureux].filter(Boolean), menteurs: [...menteurs], objectifs: [...objectifs].filter(id => id !== moi)
+    utiles: [...utiles], amoureux: [...amoureux].filter(Boolean), menteurs: [...menteurs], objectifs: [...objectifs].filter(id => id !== moi),
+    charmes: charmes ? [...charmes] : [], vielle, vielleConnue, vielleEnJeu, menaceDeLaVielle
   };
 }
 
@@ -192,7 +218,18 @@ function outils({ candidats = [], savoir = {}, adresse = 0, hasard = Math.random
   const ennemis = l => (loup ? l.filter(id => !amis.has(id) && id !== moi) : l.filter(id => id !== moi && !amis.has(id) && !innocents.has(id)));
   const inconnus = l => l.filter(id => id !== moi && !amis.has(id) && !loups.has(id) && !innocents.has(id) && !(savoir.roles ?? {})[id]);
   const surs = l => l.filter(id => id === moi ? false : loup ? amis.has(id) : (innocents.has(id) || utiles.has(id) || amis.has(id)) && !loups.has(id));
-  return { ids, moi, loup, amis, loups, innocents, utiles, soupcon, autres, adroit, un, tirer, parSoupcon, ennemis, inconnus, surs, hasard, adresse };
+  // Le Joueur de vielle (étape 6c) : ses suspects parmi l (dans l'ordre du savoir : les plus sûrs d'abord), et celui sur lequel
+  // s'accordent ceux qui savent la même chose (les charmés entre eux, la meute) : un tirage commun, comme la proie de la meute, parmi
+  // ceux que tous savent (révélé, accusé) s'il y en a, sinon parmi les autres.
+  const vielle = l => (savoir.vielle ?? []).filter(id => l.includes(id) && id !== moi && !amis.has(id));
+  const vielleCommune = l => {
+    const v = vielle(l);
+    if (!v.length) return "";
+    const connus = v.filter(id => (savoir.vielleConnue ?? []).includes(id));
+    return commun(connus.length ? connus : v, `vielle|${[...v].sort().join(",")}`);
+  };
+  return { ids, moi, loup, amis, loups, innocents, utiles, soupcon, autres, adroit, un, tirer, parSoupcon, ennemis, inconnus, surs, hasard, adresse,
+    vielle, vielleCommune, charme: (savoir.charmes ?? []).length > 0, menace: Boolean(savoir.menaceDeLaVielle) };
 }
 // Le choix au hasard d'avant l'étape 6 (essais/doublures/foundry-loups.mjs, choixDeNuit : « default ») : souvent, n'importe qui.
 const auHasard = (o, n) => (o.hasard() < 0.8 ? o.tirer(o.ids, n) : []);
@@ -208,6 +245,9 @@ function viserPourTuer(o, n = 1) {
     const utiles = proies.filter(id => o.utiles.has(id));
     const cle = [...o.ids].sort().join(",");
     const adroite = hacher(`adresse|${cle}`) / 4294967296 < o.adresse;
+    // Étape 6c : sous la menace du Joueur de vielle (il peut gagner cette nuit), la meute le vise d'abord.
+    const vielle = o.menace ? o.vielleCommune(proies) : "";
+    if (adroite && vielle) return [vielle];
     if (adroite && utiles.length) return [commun(utiles, cle)];
     const l = proies.length ? proies : o.autres;
     return l.length ? [commun(l, cle)] : [];
@@ -391,7 +431,10 @@ export function politiqueDeVote({ objet = "execution", candidats = [], savoir = 
     return place.rumeur && place.rumeur !== o.moi ? place.rumeur : o.un(pasMoi)[0] ?? "";
   }
   if (o.loup) {
-    // La meute vote d'un bloc sa proie concertée ; adroite, elle suit la rumeur du village quand elle tombe sur un innocent.
+    // La meute vote d'un bloc sa proie concertée ; adroite, elle suit la rumeur du village quand elle tombe sur un innocent. Sous la
+    // menace du Joueur de vielle (étape 6c), elle vote contre lui (la rumeur, si elle le désigne).
+    const vielle = o.menace ? o.vielleCommune(o.ennemis(pasMoi)) : "";
+    if (vielle && o.adroit()) return o.vielle(pasMoi).includes(place.rumeur) ? place.rumeur : vielle;
     if (o.adroit() && place.rumeur && !o.amis.has(place.rumeur) && place.rumeur !== o.moi) return place.rumeur;
     if (place.proie && place.proie !== o.moi && !o.amis.has(place.proie)) return place.proie;
     return o.un(o.ennemis(pasMoi))[0] ?? "";
@@ -401,10 +444,20 @@ export function politiqueDeVote({ objet = "execution", candidats = [], savoir = 
   // en pend un, plutôt que de partager ses voix entre les trois).
   const connus = pasMoi.filter(id => o.loups.has(id) && !o.amis.has(id));
   const x = hasard();
+  // Le Joueur de vielle (étape 6c) : un charmé, adroit, vote avec les autres charmés contre le suspect commun quand la vielle peut
+  // gagner cette nuit (avant même un loup connu : la meute ne gagne pas en une nuit) ; un villageois qui ne l'est pas, contre un
+  // accusé de jouer de la vielle sous la même menace (après un loup connu : il ne sait la menace qu'à peu près).
+  const vielle = o.vielleCommune(pasMoi);
+  const adroitVielle = vielle && o.menace && o.adroit();
+  if (adroitVielle && o.charme) return vielle;
   if (connus.length && o.adroit()) return connus.includes(place.rumeur) ? place.rumeur : choisir(connus, hasard);
   if (connus.length && hasard() < 0.85) return choisir(connus, hasard);
+  if (adroitVielle && (savoir.vielleConnue ?? []).includes(vielle)) return o.vielle(pasMoi).includes(place.rumeur) ? place.rumeur : vielle;
   if (o.adroit()) {
     const suspects = o.parSoupcon(o.ennemis(pasMoi)).filter(id => o.soupcon(id) >= 1);
+    // Charmé, sans menace encore : avec les autres charmés, contre le suspect commun, quand il en reste peu (trois au plus) ou qu'il
+    // ne soupçonne personne d'autre fortement (un loup annoncé, ou mieux).
+    if (o.charme && vielle && (o.vielle(pasMoi).length <= 3 || !suspects.some(id => o.soupcon(id) >= 3))) return vielle;
     if (suspects.length) return suspects.includes(place.rumeur) && o.soupcon(place.rumeur) >= o.soupcon(suspects[0]) - 1 ? place.rumeur : suspects[0];
     if (place.rumeur && place.rumeur !== o.moi && !o.innocents.has(place.rumeur) && !o.amis.has(place.rumeur)) return place.rumeur;
     return o.un(o.ennemis(pasMoi))[0] ?? "";
@@ -422,7 +475,8 @@ export function rumeurDuJour({ candidats = [], annonces = [], menteurs = [], has
   if (hasard() < adresse) {
     const score = new Map();
     for (const id of connus) if (ids.includes(id)) score.set(id, (score.get(id) ?? 0) + 5);
-    for (const a of annonces) if (!menteurs.includes(a.par) && ids.includes(a.cible) && a.camp === "meute") score.set(a.cible, (score.get(a.cible) ?? 0) + (fiables.includes(a.par) ? 3 : 1));
+    // (Étape 6c : une accusation de jouer de la vielle, « solitaire », compte comme une annonce de loup.)
+    for (const a of annonces) if (!menteurs.includes(a.par) && ids.includes(a.cible) && (a.camp === "meute" || a.camp === "solitaire")) score.set(a.cible, (score.get(a.cible) ?? 0) + (fiables.includes(a.par) ? 3 : 1));
     for (const id of menteurs) if (ids.includes(id)) score.set(id, (score.get(id) ?? 0) + 5);
     const max = Math.max(0, ...score.values());
     if (max > 0) return choisir([...score].filter(([, s]) => s === max).map(([id]) => id), hasard);
@@ -439,7 +493,9 @@ export function proieDuVoteDeLaMeute({ candidats = [], savoir = {}, adresse = AD
 
 // ------------------------------------------------------------------ le débat
 // Ce qu'un joueur dit tout haut : un villageois adroit, les loups qu'il a découverts (une fois chacun) ; un loup adroit, parfois, un
-// innocent qu'il accuse (MENSONGE_DE_LA_MEUTE). -> [{ cible, camp: "meute" }]
+// innocent qu'il accuse (MENSONGE_DE_LA_MEUTE) ; un charmé du Village adroit (étape 6c), le suspect commun des charmés quand il en
+// reste peu (trois au plus) ou que la vielle menace : « il joue de la vielle » (camp « solitaire », une fois chacun).
+// -> [{ cible, camp: "meute" | "solitaire" }]
 export function annoncesDuJoueur({ savoir = {}, adresse = ADRESSE_PAR_DEFAUT, hasard = Math.random, dejaDites = [], vivants = [] } = {}) {
   const dites = new Set(dejaDites);
   const vivant = id => !vivants.length || vivants.includes(id);
@@ -451,7 +507,14 @@ export function annoncesDuJoueur({ savoir = {}, adresse = ADRESSE_PAR_DEFAUT, ha
     return c ? [{ cible: c, camp: "meute" }] : [];
   }
   if (savoir.camp !== "village") return [];
-  return (savoir.loups ?? []).filter(id => vivant(id) && !dites.has(id) && hasard() < adresse).map(cible => ({ cible, camp: "meute" }));
+  const loups = (savoir.loups ?? []).filter(id => vivant(id) && !dites.has(id) && hasard() < adresse).map(cible => ({ cible, camp: "meute" }));
+  if ((savoir.charmes ?? []).length && (savoir.vielle ?? []).length) {
+    const o = outils({ candidats: vivants.length ? vivants : savoir.vielle, savoir, adresse, hasard });
+    const suspects = o.vielle(o.ids);
+    const cible = suspects.length <= 3 || o.menace ? o.vielleCommune(o.ids) : "";
+    if (cible && vivant(cible) && !dites.has(cible) && !loups.some(x => x.cible === cible) && hasard() < adresse) loups.push({ cible, camp: "solitaire" });
+  }
+  return loups;
 }
 
 // ------------------------------------------------------------------ le jour

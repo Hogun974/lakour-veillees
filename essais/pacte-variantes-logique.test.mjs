@@ -90,7 +90,7 @@ const VERIFICATIONS = {
 
   // ------------------------------------------------------------ les exclusions
   "variantes permises : ni à la Saint-Martin ; à la petite tablée ou en peste, ni Double visage, ni Vendanges, ni Envoûtement": L => {
-    const toutes = { chandelles: true, angoissante: true, chaine: true, mur: true, doubleVisage: "grande", vendanges: true, envoutement: true };
+    const toutes = { chandelles: true, angoissante: true, chaine: true, mur: true, doubleVisage: "grande", allegeanceLoup: true, vendanges: true, envoutement: true };
     assert.deepEqual(L.variantesPermises(toutes, { places: 9 }), toutes);
     assert.deepEqual(L.variantesPermises(toutes, { saintMartin: true }), L.choixDesVariantes());
     const tablee = L.variantesPermises(toutes, { tablee: true, places: 8 });
@@ -186,6 +186,20 @@ const VERIFICATIONS = {
     assert.deepEqual(L.lireDeuxCartes(["loup-de-brumecombe", "villageois"]), { principale: "loup-de-brumecombe", seconde: "", camp: "meute" });
     assert.deepEqual(L.lireDeuxCartes(["villageois", "villageois"]), { principale: "villageois", seconde: "", camp: "village" });
     assert.deepEqual(L.lireDeuxCartes(["herboriste", "herboriste"]).seconde, "", "deux fois le même pouvoir : un seul");
+  },
+  // Le Pacte, étape 6c : le réglage « une allégeance loup de plus » (seulement avec Double visage).
+  "Double visage : une allégeance loup de plus, en petite et en grande complication, seulement avec la variante": L => {
+    assert.deepEqual([7, 9, 10, 13, 14, 18].map(n => L.loupsDoubleVisage(n, true)), [3, 3, 4, 4, 5, 5]);
+    const a = L.allegeances(12, () => 0.3, true);
+    assert.deepEqual([a.length, a.filter(x => x === "meute").length], [12, 4]);
+    const g = L.cartesDeLaGrande(L.paquetDoubleVisage(16), () => 0.42, true);
+    assert.equal(g.flat().filter(c => c === L.CARTE_LOUP).length, 5, "cinq cartes de loup à 16 joueurs");
+    assert.equal(g.flat().length, 32, "deux cartes par joueur, toujours");
+    assert.equal(L.choixDesVariantes({ doubleVisage: "grande", allegeanceLoup: true }).allegeanceLoup, true);
+    assert.equal(L.choixDesVariantes({ allegeanceLoup: true }).allegeanceLoup, false, "sans Double visage, rien");
+    assert.equal(L.variantesPermises({ doubleVisage: "petite", allegeanceLoup: true }, { places: 6 }).allegeanceLoup, false, "Double visage écarté, le réglage aussi");
+    assert.equal(L.allegeanceLoupEnPlus(L.normaliserEtat({ ...L.etatInitial(), variantes: { doubleVisage: "petite", allegeanceLoup: true } })), true);
+    assert.ok(L.CLES_DES_VARIANTES.includes("allegeanceLoup") && L.REGLAGES_DES_VARIANTES.allegeanceLoup === "allegeanceLoupEnPlus");
   },
   "Double visage : la Liseuse lit les cartes secrètes ; la seconde carte se réveille, agit et résiste": L => {
     const fiches = { a: { camp: "meute" }, b: { camp: "village" } };
@@ -314,7 +328,7 @@ const VERIFICATIONS = {
 const MUTATIONS = [
   ["composition.mjs", " && (!livre || estDuLivre(cle))", "", "Le Pacte : seulement le livre"],
   ["composition.mjs", "  const batimentsPermis = niveau === NIVEAU_LE_PACTE ? []\n    :", "  const batimentsPermis =", "Le Pacte : sans bâtiment"],
-  ["composition.mjs", "nombreDeLoups(n) + loupsEnPlus", "nombreDeLoups(n)", "Vendanges : un loup de plus"],
+  ["composition.mjs", "nombreDeLoups(n, niveau) + loupsEnPlus", "nombreDeLoups(n, niveau)", "Vendanges : un loup de plus"],
   ["variantes.mjs", "  if (tablee || peste) Object.assign", "  if (false) Object.assign", "exclusions : petite tablée et peste"],
   ["variantes.mjs", "cible: ids.length === 1 ? ids[0] : \"\"", "cible: ids[0] ?? \"\"", "chandelles : plus d'une, pas de victime"],
   ["variantes.mjs", "s.ids.length > 1 ? s.ids : []", "s.ids", "chandelles : au matin, seulement un désaccord"],
@@ -325,6 +339,8 @@ const MUTATIONS = [
   ["nuit.mjs", "  if (mur && vivants.length)", "  if (false)", "mur : le réveil"],
   ["variantes.mjs", "  if (pouvoirs.length === 2 && PASSIFS_DU_VISAGE.includes(pouvoirs[1])", "  if (false && PASSIFS_DU_VISAGE.includes(pouvoirs[1])", "Double visage : le passif d'abord"],
   ["variantes.mjs", "camp: loup ? \"meute\" : \"village\" };", "camp: \"village\" };", "Double visage : une carte de loup fait un loup"],
+  ["variantes.mjs", "+ (enPlus === true ? ALLEGEANCES_LOUP_EN_PLUS : 0)", "", "Double visage : une allégeance loup de plus"],
+  ["variantes.mjs", "  allegeanceLoup: Boolean(MODES_DOUBLE_VISAGE.includes(x?.doubleVisage) && x?.allegeanceLoup),", "  allegeanceLoup: Boolean(x?.allegeanceLoup),", "Double visage : le réglage seulement avec la variante"],
   ["resolution.mjs", "  const lire = id => visages[id] ?? roleApparent(parId.get(id), noms);", "  const lire = id => roleApparent(parId.get(id), noms);", "Double visage : la Liseuse lit les cartes secrètes"],
   ["nuit.mjs", "    ajouter(etapes, seconde, v.id, { emprunt: true, seconde: true });", "", "Double visage : la seconde carte se réveille"],
   ["resolution.mjs", "      ?? (porteur && !deLaMeute && porteur.seconde?.cle === a.roleCle", "      ?? (false && porteur.seconde?.cle === a.roleCle", "Double visage : la seconde carte agit"],

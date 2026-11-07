@@ -270,7 +270,7 @@ across the river; the pack never crosses two nights in a row), the **Washhouse**
 ### Ready-made set-ups (48)
 
 - **Beginners, Classic, Chaos**: one set-up per size from 6 to 18 players (2 wolves up to 8 players, 3 up to 12, 4 up to 15,
-  5 beyond; loners and special wolves by level), with its buildings.
+  5 beyond; one fewer at the Beginners level; loners and special wolves by level), with its buildings.
 - **Small table**: 4 to 12 seats, drawn by the system's generator with a fixed seed.
 - The Game Table can also **compose** a balanced game for any number, or take a hand-written list of roles. Balance weights
   live in `modules/lakour-veillees/contenu/equilibre.mjs`.

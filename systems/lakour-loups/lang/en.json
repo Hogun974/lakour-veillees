@@ -504,6 +504,10 @@
         "Nom": "Two Faces (variant)",
         "Aide": "Small twist: a visible role for each, and a secret allegiance card that sets their side. Big twist: two secret cards per player. 7 to 18 players; neither at the small table nor with the black plague."
       },
+      "AllegeanceLoupEnPlus": {
+        "Nom": "Two Faces: one more wolf allegiance",
+        "Aide": "With Two Faces only: one more wolf allegiance card in the deck, in place of a villager allegiance (small and big twist). The book's deck favours the village at large tables: advised from 16 players with the small twist (and at 13), from 12 with the big one; below that, the book's deck."
+      },
       "Vendanges": {
         "Nom": "Grape Harvest (variant)",
         "Aide": "One more wolf, and every power tipsy until the end of the vigil (see the variant rules). Neither at the small table nor with the black plague."
@@ -1518,7 +1522,9 @@
         "Visible": "Two Faces: {nom} shows their visible role, {role}.",
         "CarnetPetite": "Two Faces: your allegiance card is “{allegeance}”; you are of the side {camp}. Your visible role keeps its power.",
         "CarnetGrande": "Two Faces: your two secret cards are {cartes}; you are of the side {camp}.",
-        "Seconde": "{nom} also held the card {role}."
+        "Seconde": "{nom} also held the card {role}.",
+        "AllegeanceLoup": "one more wolf allegiance",
+        "AllegeanceLoupAide": "One more wolf allegiance card in the deck (in place of a villager one). The book's deck favours the village at large tables: advised from 16 players with the small twist (and at 13), from 12 with the big one; below that, the book's deck (the pack would win seven to nine games in ten)."
       },
       "Vendanges": {
         "Nom": "Grape Harvest",

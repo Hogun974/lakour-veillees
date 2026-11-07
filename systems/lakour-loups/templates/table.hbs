@@ -84,6 +84,7 @@
       {{#each preparation.variantes.cases}}<label class="loups-prep-joueur" data-tooltip="{{aide}}"><input type="checkbox" data-action="prepVariante" data-cle="{{cle}}" {{#if coche}}checked{{/if}}> <i class="fa-solid {{icone}}"></i> {{nom}}</label>{{/each}}
       {{#if preparation.variantes.doubleVisage}}<label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.Variantes.DoubleVisage.Aide'}}"><i class="fa-solid fa-masks-theater"></i> {{localize "LAKOUR_LOUPS.Variantes.DoubleVisage.Nom"}}
         <select name="prepDoubleVisage">{{#each preparation.variantes.doubleVisage}}<option value="{{cle}}" {{#if choisi}}selected{{/if}}>{{nom}}</option>{{/each}}</select></label>{{/if}}
+      {{#if preparation.variantes.allegeance}}<label class="loups-prep-joueur" data-tooltip="{{preparation.variantes.allegeance.aide}}"><input type="checkbox" data-action="prepVariante" data-cle="{{preparation.variantes.allegeance.cle}}" {{#if preparation.variantes.allegeance.coche}}checked{{/if}}> <i class="fa-solid fa-paw"></i> {{preparation.variantes.allegeance.nom}}</label>{{/if}}
     </div>
     {{/if}}
     {{#if preparation.gazette}}

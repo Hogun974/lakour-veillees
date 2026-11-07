@@ -504,6 +504,10 @@
         "Nom": "Double visage (variante)",
         "Aide": "Petite complication : un rôle visible pour chacun, et une carte d'allégeance secrète qui fait son camp. Grande complication : deux cartes secrètes par joueur. De 7 à 18 joueurs ; ni à la petite tablée, ni avec la peste noire."
       },
+      "AllegeanceLoupEnPlus": {
+        "Nom": "Double visage : une allégeance loup de plus",
+        "Aide": "Avec Double visage seulement : une carte d'allégeance loup de plus au paquet, à la place d'une allégeance villageoise (petite et grande complication). Le paquet du livre favorise le village aux grandes tables : conseillé dès 16 joueurs en petite complication (et à 13), dès 12 en grande ; en dessous, le paquet du livre."
+      },
       "Vendanges": {
         "Nom": "Les Vendanges (variante)",
         "Aide": "Un loup de plus, et tous les pouvoirs éméchés jusqu'à la fin de la veillée (voir les règles des variantes). Ni à la petite tablée, ni avec la peste noire."
@@ -1518,7 +1522,9 @@
         "Visible": "Double visage : {nom} montre son rôle visible, {role}.",
         "CarnetPetite": "Double visage : votre carte d'allégeance est « {allegeance} » ; vous êtes du camp {camp}. Votre rôle visible garde son pouvoir.",
         "CarnetGrande": "Double visage : vos deux cartes secrètes sont {cartes} ; vous êtes du camp {camp}.",
-        "Seconde": "{nom} avait aussi la carte {role}."
+        "Seconde": "{nom} avait aussi la carte {role}.",
+        "AllegeanceLoup": "une allégeance loup de plus",
+        "AllegeanceLoupAide": "Une carte d'allégeance loup de plus au paquet (à la place d'une villageoise). Le paquet du livre favorise le village aux grandes tables : conseillé dès 16 joueurs en petite complication (et à 13), dès 12 en grande ; en dessous, le paquet du livre (la meute y gagnerait sept à neuf parties sur dix)."
       },
       "Vendanges": {
         "Nom": "Les Vendanges",

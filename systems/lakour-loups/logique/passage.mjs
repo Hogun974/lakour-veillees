@@ -46,12 +46,12 @@ export function verifierArrivee(e) {
 
 // Le camp secret d'un gens de passage : la meute si elle est en dessous de son compte pour le village qui s'agrandit (avec une
 // part de hasard, pour que rien ne soit sûr), sinon le village (et parfois la meute). Jamais la meute dans une peste noire.
-// villageois : les présents (vivants) AVANT son arrivée.
-export function campDePassage({ villageois = [], peste = false, hasard = Math.random } = {}) {
+// villageois : les présents (vivants) AVANT son arrivée ; niveau : celui de la veillée (les débutants ont un loup de moins, nombreDeLoups).
+export function campDePassage({ villageois = [], peste = false, hasard = Math.random, niveau = "" } = {}) {
   if (peste) return "village";
   const vivants = villageois.filter(v => v.vivant !== false);
   const loups = vivants.filter(v => v.camp === "meute").length;
-  const manque = loups < nombreDeLoups(vivants.length + 1);
+  const manque = loups < nombreDeLoups(vivants.length + 1, niveau);
   return hasard() < (manque ? 0.7 : 0.15) ? "meute" : "village";
 }
 

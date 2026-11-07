@@ -56,7 +56,7 @@ test("dosage : les loups selon le nombre de joueurs, jamais la moitié ; débuta
   for (const c of Object.values(surDisque)) {
     const n = c.joueurs[0];
     const meute = c.roles.filter(r => camp[r] === "meute");
-    assert.equal(meute.length, c.niveau === NIVEAU_PETITE_TABLEE ? nombreDeLoupsTablee(n) : nombreDeLoups(n), c.libelle);
+    assert.equal(meute.length, c.niveau === NIVEAU_PETITE_TABLEE ? nombreDeLoupsTablee(n) : nombreDeLoups(n, c.niveau), c.libelle);
     assert.ok(meute.includes("loup-de-brumecombe"), `${c.libelle} : au moins un loup simple`);
     assert.ok(meute.length * 2 < n);
     if (c.niveau === "debutants") {

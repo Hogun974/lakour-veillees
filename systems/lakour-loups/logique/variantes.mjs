@@ -23,6 +23,10 @@
 //   fait le camp ; grande complication — les mêmes cartes, deux par joueur, face cachée : une carte de loup fait un loup, une carte à
 //   pouvoir donne son pouvoir (deux cartes à pouvoir : les deux ; la seconde vit dans la fiche, fiche.seconde). 7 à 18 joueurs : au-delà
 //   de 9, un second paquet (deux fois les mêmes cartes ; 3 loups jusqu'à 13, 4 au-delà). La Liseuse de cendres lit les cartes secrètes.
+//   Réglage « une allégeance loup de plus » (« allegeanceLoup », Le Pacte, étape 6c, décidé avec Jordan ; seulement avec Double visage) :
+//   une carte d'allégeance loup de plus au paquet (petite et grande complication), à la place d'une allégeance villageoise. Le paquet du
+//   livre favorise le village d'autant plus que la table est grande (docs/equilibre-veillees.md) : mesuré, conseillé dès 16 joueurs en
+//   petite complication (et à 13), dès 12 en grande ; en dessous, la carte de plus donne la partie à la meute.
 // - Les Vendanges (« vendanges ») : un loup de plus que le barème, et chaque pouvoir est « éméché » (voir plus bas, et resolution.mjs).
 // - L'Envoûtement (« envoutement ») : la victime de la meute n'est pas éliminée, elle perd ses pouvoirs et reste envoûtée, en secret
 //   (elle seule le sait) ; condamnée par le village, elle entraîne dans la mort toutes les envoûtées d'avant elle ; la meute gagne
@@ -39,7 +43,7 @@ import { melanger, choisir } from "./hasard.mjs";
 export const MODES_DOUBLE_VISAGE = ["petite", "grande"];
 // Les réglages monde de chaque variante (scripts/reglages.mjs).
 export const REGLAGES_DES_VARIANTES = { chandelles: "chandelles", angoissante: "chandellesAngoissantes", chaine: "chaineDesInnocents",
-  mur: "murDesMurmures", doubleVisage: "doubleVisage", vendanges: "vendanges", envoutement: "envoutement" };
+  mur: "murDesMurmures", doubleVisage: "doubleVisage", allegeanceLoup: "allegeanceLoupEnPlus", vendanges: "vendanges", envoutement: "envoutement" };
 export const CLES_DES_VARIANTES = Object.keys(REGLAGES_DES_VARIANTES);
 
 const vivant = v => Boolean(v) && v.vivant !== false;
@@ -48,7 +52,10 @@ const liste = x => (Array.isArray(x) ? [...new Set(x.map(y => String(y ?? "")).f
 // ------------------------------------------------------------------ le choix des variantes, et l'état
 export const choixDesVariantes = (x = {}) => ({
   chandelles: Boolean(x?.chandelles), angoissante: Boolean(x?.chandelles && x?.angoissante), chaine: Boolean(x?.chaine), mur: Boolean(x?.mur),
-  doubleVisage: MODES_DOUBLE_VISAGE.includes(x?.doubleVisage) ? x.doubleVisage : "", vendanges: Boolean(x?.vendanges), envoutement: Boolean(x?.envoutement)
+  doubleVisage: MODES_DOUBLE_VISAGE.includes(x?.doubleVisage) ? x.doubleVisage : "",
+  // Une allégeance loup de plus : seulement avec Double visage (comme la version angoissante avec les chandelles).
+  allegeanceLoup: Boolean(MODES_DOUBLE_VISAGE.includes(x?.doubleVisage) && x?.allegeanceLoup),
+  vendanges: Boolean(x?.vendanges), envoutement: Boolean(x?.envoutement)
 });
 
 // Le public : les règles de la veillée ; ratees : les chandelles soufflées par une meute en désaccord (angoissante) ; chaineEnCours :
@@ -97,6 +104,7 @@ export function variantesPermises(voulues = {}, { saintMartin = false, tablee = 
   const c = choixDesVariantes(voulues);
   if (tablee || peste) Object.assign(c, { doubleVisage: "", vendanges: false, envoutement: false });
   if (c.doubleVisage && places && (places < DOUBLE_VISAGE.min || places > DOUBLE_VISAGE.max)) c.doubleVisage = "";
+  if (!c.doubleVisage) c.allegeanceLoup = false;
   return c;
 }
 // Ces variantes empêchent le tirage d'une peste noire (elles ont besoin de la meute).
@@ -217,23 +225,29 @@ export const PASSIFS_DU_VISAGE = ["aieul", "souffre-douleur", "braconniere"];
 export const CARTE_LOUP = "loup-de-brumecombe";
 export const CARTE_VILLAGEOIS = "villageois";
 export const doubleVisage = etat => variantesDe(etat).doubleVisage;
-// Les loups d'allégeance : deux pour un paquet (7 à 9 joueurs), puis trois jusqu'à 13, quatre au-delà (deux paquets).
-export const loupsDoubleVisage = n => (n <= 9 ? 2 : n <= 13 ? 3 : 4);
+// Les loups d'allégeance : deux pour un paquet (7 à 9 joueurs), puis trois jusqu'à 13, quatre au-delà (deux paquets) ; enPlus (le
+// réglage « une allégeance loup de plus », allegeanceLoup) : une de plus (ALLEGEANCES_LOUP_EN_PLUS).
+export const ALLEGEANCES_LOUP_EN_PLUS = 1;
+// (enPlus === true : un index de .map n'en fait pas une.)
+export const loupsDoubleVisage = (n, enPlus = false) => (n <= 9 ? 2 : n <= 13 ? 3 : 4) + (enPlus === true ? ALLEGEANCES_LOUP_EN_PLUS : 0);
+// Le réglage est-il en jeu dans cette veillée ?
+export const allegeanceLoupEnPlus = etat => Boolean(variantesDe(etat).allegeanceLoup);
 // Les cartes VISIBLES pour n joueurs : les sept pouvoirs, puis deux Villageois ; au-delà de 9, un second paquet dans le même ordre.
 export function paquetDoubleVisage(n) {
   if (!Number.isInteger(n) || n < DOUBLE_VISAGE.min || n > DOUBLE_VISAGE.max) throw new Error(`Double visage : ${DOUBLE_VISAGE.min} à ${DOUBLE_VISAGE.max} joueurs (${n}).`);
   const un = [...VISAGES, CARTE_VILLAGEOIS, CARTE_VILLAGEOIS];
   return [...un, ...un].slice(0, n);
 }
-// Les allégeances de n places, mêlées : "meute" ou "village".
-export function allegeances(n, hasard = Math.random) {
-  const k = loupsDoubleVisage(n);
+// Les allégeances de n places, mêlées : "meute" ou "village" (enPlus : une allégeance loup de plus).
+export function allegeances(n, hasard = Math.random, enPlus = false) {
+  const k = loupsDoubleVisage(n, enPlus);
   return melanger([...Array(k).fill("meute"), ...Array(Math.max(0, n - k)).fill("village")], hasard);
 }
-// La grande complication : les cartes visibles et les cartes d'allégeance, mêlées, deux par joueur. -> [[cle, cle]] (n paires)
-export function cartesDeLaGrande(paquet = [], hasard = Math.random) {
+// La grande complication : les cartes visibles et les cartes d'allégeance, mêlées, deux par joueur (enPlus : une allégeance loup de
+// plus). -> [[cle, cle]] (n paires)
+export function cartesDeLaGrande(paquet = [], hasard = Math.random, enPlus = false) {
   const n = paquet.length;
-  const k = loupsDoubleVisage(n);
+  const k = loupsDoubleVisage(n, enPlus);
   const tas = melanger([...paquet, ...Array(k).fill(CARTE_LOUP), ...Array(Math.max(0, n - k)).fill(CARTE_VILLAGEOIS)], hasard);
   return Array.from({ length: n }, (_, i) => [tas[2 * i], tas[2 * i + 1]]);
 }

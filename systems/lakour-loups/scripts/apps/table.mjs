@@ -57,7 +57,7 @@ function variantesDeLaTable(etat) {
   const enJeu = L.variantesEnJeu(etat);
   if (!enJeu.length) return null;
   const v = L.normaliserVariantes(etat.variantes);
-  const noms = enJeu.map(c => (c === "doubleVisage" ? `${t("LAKOUR_LOUPS.Variantes.DoubleVisage.Nom")} (${t(`LAKOUR_LOUPS.Variantes.DoubleVisage.${v.doubleVisage}`)})`
+  const noms = enJeu.map(c => (c === "doubleVisage" ? `${t("LAKOUR_LOUPS.Variantes.DoubleVisage.Nom")} (${t(`LAKOUR_LOUPS.Variantes.DoubleVisage.${v.doubleVisage}`)}${v.allegeanceLoup ? `, ${t("LAKOUR_LOUPS.Variantes.DoubleVisage.AllegeanceLoup")}` : ""})`
     : c === "chandelles" && v.angoissante ? `${nomDeVariante(c)} (${nomDeVariante("angoissante")})` : nomDeVariante(c)));
   const c = v.chaineEnCours;
   return {
@@ -302,7 +302,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
       const total = coches.size + ia.length;
       const contenu = this.#contenu;
       const roles = MJ.rolesManuels(p, total);
-      const eq = contenu ? MJ.equilibreDesRoles(roles, contenu.equilibre) : null;
+      const eq = contenu ? MJ.equilibreDesRoles(roles, contenu.equilibre, p.niveau) : null;
       preparation = {
         joueurs: MJ.joueursConnectes().map(u => ({ id: u.id, nom: u.name, coche: coches.has(u.id) })),
         ia: { disponible: MJ.iaDisponible(), n: ia.length, noms: ia.map(a => a.name).join(", ") },
@@ -330,7 +330,10 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
             cases: CASES_DES_VARIANTES.filter(([c]) => !(sansMeute && ["vendanges", "envoutement"].includes(c)) && (c !== "angoissante" || v.chandelles))
               .map(([cle, icone]) => ({ cle, icone, nom: nomDeVariante(cle), coche: Boolean(v[cle]),
                 aide: t(`LAKOUR_LOUPS.Variantes.${cle === "angoissante" ? "Chandelles.AngoissanteAide" : `${cle.charAt(0).toUpperCase()}${cle.slice(1)}.Aide`}`) })),
-            doubleVisage: sansMeute ? null : ["", ...L.MODES_DOUBLE_VISAGE].map(m => ({ cle: m, nom: t(`LAKOUR_LOUPS.Variantes.DoubleVisage.${m || "Aucune"}`), choisi: v.doubleVisage === m }))
+            doubleVisage: sansMeute ? null : ["", ...L.MODES_DOUBLE_VISAGE].map(m => ({ cle: m, nom: t(`LAKOUR_LOUPS.Variantes.DoubleVisage.${m || "Aucune"}`), choisi: v.doubleVisage === m })),
+            // Le Pacte, étape 6c : « une allégeance loup de plus », seulement avec Double visage (l'aide dit dès quelle taille la mettre).
+            allegeance: sansMeute || !v.doubleVisage ? null : { cle: "allegeanceLoup", coche: Boolean(v.allegeanceLoup),
+              nom: t("LAKOUR_LOUPS.Variantes.DoubleVisage.AllegeanceLoup"), aide: t("LAKOUR_LOUPS.Variantes.DoubleVisage.AllegeanceLoupAide") }
           };
         })(),
         // La Gazette de la lune et le Crieur public (étape 9) : jamais dans une Saint-Martin ni à la petite tablée.

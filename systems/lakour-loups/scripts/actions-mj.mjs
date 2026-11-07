@@ -91,11 +91,12 @@ export function changerRole(prep, cle, delta) {
 }
 
 // L'équilibre d'une liste de rôles (poids du contenu) : { somme, verdict: "equilibree" | "village" | "meute", loups, loupsConseilles }.
-export function equilibreDesRoles(roles, equilibre) {
+// niveau : celui de la préparation (les débutants ont un loup de moins : nombreDeLoups, Le Pacte, étape 6c).
+export function equilibreDesRoles(roles, equilibre, niveau = "") {
   const L = api().logique;
   const somme = L.equilibreDe(roles, equilibre);
   const loups = roles.filter(c => equilibre.roles?.[c]?.camp === "meute").length;
-  return { somme, verdict: Math.abs(somme) <= 2 ? "equilibree" : somme > 0 ? "village" : "meute", loups, loupsConseilles: roles.length >= 4 ? L.nombreDeLoups(roles.length) : 0 };
+  return { somme, verdict: Math.abs(somme) <= 2 ? "equilibree" : somme > 0 ? "village" : "meute", loups, loupsConseilles: roles.length >= 4 ? L.nombreDeLoups(roles.length, niveau) : 0 };
 }
 
 // Ajouter ou retirer un joueur IA (par le point d'enregistrement du MJ IA).

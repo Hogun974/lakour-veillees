@@ -96,17 +96,18 @@ export const EQUILIBRE = {
   "illumine": { camp: "solitaire", poids: -2, niveau: "chaos", joueursMin: 10, unique: true }
 };
 
-// Les CIBLES d'équilibre (Le Pacte, étapes 6 et 6b) : pour chaque niveau et chaque taille, la somme des poids qui donne au village une
+// Les CIBLES d'équilibre (Le Pacte, étapes 6, 6b et 6c) : pour chaque niveau et chaque taille, la somme des poids qui donne au village une
 // chance sur deux contre la meute, à l'adresse de référence du niveau, mesurée par simulation (essais/outils/calibrer-poids.mjs,
-// docs/equilibre-veillees.md) ; bornée à ce que le générateur atteint (les débutants presque partout, le classique et Le Pacte à six
-// joueurs : le village le plus armé que le générateur sache faire n'y suffit pas à 50 %) ; le générateur
+// docs/equilibre-veillees.md) ; bornée à ce que le générateur atteint (le classique et Le Pacte à six joueurs, les débutants de 13 à 18
+// joueurs : le village le plus armé que le générateur sache faire n'y suffit pas à 50 %). Étape 6c : les débutants ont un loup de
+// moins (composition.mjs, nombreDeLoups) ; leurs cibles viennent de deux seconds passages (graines « 6c-val1 », « 6c-val2 ») ; le générateur
 // (logique/composition.mjs, cibleDe) vise cette somme au lieu de 0. Écrites dans assets/equilibre.json (champ « cibles »). Sans
 // cible pour un niveau, le générateur vise 0 (la petite tablée : cibleTablee).
-// <cibles> (écrit par essais/outils/calibrer-poids.mjs : la régression, puis deux validations, --corriger ; étape 6b)
+// <cibles> (écrit par essais/outils/calibrer-poids.mjs : la régression, puis des validations, --corriger ; débutants : étape 6c)
 export const CIBLES = {
   "chaos": { 6: 1, 7: 1, 8: -5, 9: -3, 10: -8, 11: -10, 12: -14, 13: -14, 14: -16, 15: -18, 16: -20, 17: -21, 18: -23 },
   "classique": { 6: 1, 7: 3, 8: -2, 9: 1, 10: 0, 11: -2, 12: -6, 13: -6, 14: -8, 15: -9, 16: -12, 17: -14, 18: -15 },
-  "debutants": { 6: 1, 7: 3, 8: 4, 9: -2, 10: -1, 11: 0, 12: 1, 13: -5, 14: -4, 15: -3, 16: -9, 17: -8, 18: -7 },
+  "debutants": { 6: 4, 7: 3, 8: 3, 9: 5, 10: 5, 11: 5, 12: 7, 13: 2, 14: 3, 15: 4, 16: -2, 17: -1, 18: 0 },
   "le-pacte": { 6: 1, 7: 3, 8: 1, 9: 2, 10: 0, 11: -3, 12: -5, 13: -8, 14: -8, 15: -10, 16: -13, 17: -15, 18: -15 },
   "petite-tablee": { 4: 5, 5: 5, 6: 2, 7: 4, 8: 4, 9: 1, 10: 0, 11: 2, 12: 4 }
 };

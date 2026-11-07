@@ -479,13 +479,17 @@ const NOMS_DES_CAMPS = Object.fromEntries(Object.entries(FR.LAKOUR_LOUPS.Camps ?
 // adresse (Le Pacte, étape 6 ; absente : les joueurs au hasard de toujours, mêmes tirages) : de 0 à 1, chaque joueur suit les
 // politiques par rôle du système (logique/politiques.mjs) d'après ce qu'il sait — son carnet, le chat public, les rôles révélés et
 // ce qui s'est dit au débat (journal.annonces : un villageois adroit dit les loups qu'il a découverts, un loup ment parfois) —, et
-// use de son information avec cette probabilité. Ni fraude ni morts qui votent dans ce mode (rien ne s'y vérifie).
+// use de son information avec cette probabilité. Ni fraude ni morts qui votent dans ce mode (rien ne s'y vérifie). Le Pacte, étape 6c :
+// chacun entend aussi, comme à la table, le narrateur appeler les charmés la nuit (« les charmés, ouvrez les yeux ») : dès lors, tous
+// savent qu'un Joueur de vielle joue (charmesAppeles, les nuits d'appel ; la doublure l'entend au hook lakourLoups.reveil du MJ).
 export function simulerJoueurs({ graine = "joueurs", canal = "system.lakour-loups", mortsVotent = true, fraude = true, pouvoirs = 0.5, adresse = null } = {}) {
   const h = creerHasard(graine);
   const journal = { reponses: [], bulletins: [], refusAttendus: [], demandes: [], textes: [], secrets: [], jour: [], fuites: [], annonces: [] };
   let dernierVote = "";
   const adroits = adresse !== null && adresse !== undefined;
   if (adroits) { mortsVotent = false; fraude = false; }
+  const nuitsDeCharme = new Set();
+  if (adroits) globalThis.Hooks.on("lakourLoups.reveil", x => { if (x?.roleCle === "charmes" && x.enCours) nuitsDeCharme.add(etatPublic()?.tour ?? 0); });
   // Ce que chaque joueur sait (0.9.0) : SA fiche (rôle, usages, camp), reçue du MJ par le socket ; sa meute s'il est loup (sa
   // carte de rôle, les nouvelles du carnet) ; les rôles et camps révélés à tous (documents). Jamais le rôle d'un autre.
   const fiches = new Map();   // acteurId -> fiche reçue par son joueur
@@ -539,7 +543,8 @@ export function simulerJoueurs({ graine = "joueurs", canal = "system.lakour-loup
     return L.savoirDuJoueur({ moi: moi?.id ?? "", camp, allies: [...allies, ...(amour ? [amour] : [])],
       textes: journal.secrets.filter(s => s.userId === userId).map(s => s.texte), publics: messagesPublics(),
       villageois: vus, gabarits: FR.LAKOUR_LOUPS, nomsDesRoles: nomsDesRoles(), nomsDesCamps: NOMS_DES_CAMPS, annonces: journal.annonces,
-      roles: equilibreDesRoles(), registre: etat?.registre ?? [], role: roleDe(moi)?.system.cle ?? "", groupes: etat?.ambigus?.groupes ?? null, voisins: id => { try { const v = L.voisins(etat, aPlat, id); return [v?.gauche, v?.droite].filter(Boolean); } catch { return []; } } });
+      roles: equilibreDesRoles(), registre: etat?.registre ?? [], role: roleDe(moi)?.system.cle ?? "", groupes: etat?.ambigus?.groupes ?? null,
+      charmesAppeles: nuitsDeCharme.size, voisins: id => { try { const v = L.voisins(etat, aPlat, id); return [v?.gauche, v?.droite].filter(Boolean); } catch { return []; } } });
   }
   // Le chat public, une fois pour toutes les lectures d'un même instant (seuls les messages qui portent un savoir public).
   let publicsLus = { n: -1, textes: [] };

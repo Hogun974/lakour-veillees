@@ -9,6 +9,9 @@
 //             (le dosage d'une variante, Le Pacte, étape 6b : des parties APPARIÉES, la même composition du générateur — graine
 //             « dosage|<niveau>|<n>|<i> » — jouée telle quelle, puis avec 1, 2… Loups de Brumecombe remplacés par des Villageois ;
 //             la variante s'affiche « chaine-1loup »…)
+//   node essais/outils/simuler-veillees.mjs --inclure joueur-de-vielle --niveaux chaos,le-pacte --tailles 10,11,12,13,14,15,16,17,18
+//             (un rôle à la loupe, Le Pacte, étape 6c : des compositions du générateur qui l'INCLUENT — graine
+//             « inclure|<rôles>|<niveau>|<n>|<i> » —, la part des parties qu'il gagne au tableau des solitaires)
 //   options : --tailles 6,8,10  --niveaux debutants,classique,chaos,le-pacte  --adresse 0.4,1 (ou niveau : ADRESSE_DU_NIVEAU)  --variantes ordinaire,vendanges,…
 //             --village (la variante « Le Village »)  --pretes (les compositions prêtes au lieu des générées)
 //             --tablee (la Petite tablée : des humains simulés et des compagnons IA sans modèle, qui décident par les politiques du
@@ -20,7 +23,8 @@
 // même graine, mêmes parties. La composition est celle que tire le générateur du système pour la Table de jeu (api.nouvellePartie,
 // niveau et taille donnés), ou la composition prête du contenu (--pretes : « <niveau>-<nn> »).
 // Variantes (--variantes) : ordinaire, chandelles, angoissante, chaine, mur, petite (Double visage, petite complication), grande,
-// vendanges, envoutement, gazette, village.
+// petite-loup et grande-loup (Double visage avec « une allégeance loup de plus », Le Pacte, étape 6c), vendanges, envoutement,
+// gazette, village.
 // Tableaux markdown : victoires par camp (meute, village, chaque solitaire, amoureux) et durée, par case, par taille et par niveau ;
 // les solitaires (la part des parties qu'ils gagnent quand ils sont là) ; l'attribution par rôle (la part des victoires du village
 // quand le rôle est là, et quand il n'y est pas, au même niveau).
@@ -54,7 +58,7 @@ export function tableesDe(texte) {
     return { h, ia, ...(compo ? { compo } : {}) };
   });
 }
-export const VARIANTES_SIMULEES = ["ordinaire", "chandelles", "angoissante", "chaine", "mur", "petite", "grande", "vendanges", "envoutement", "gazette", "village"];
+export const VARIANTES_SIMULEES = ["ordinaire", "chandelles", "angoissante", "chaine", "mur", "petite", "grande", "petite-loup", "grande-loup", "vendanges", "envoutement", "gazette", "village"];
 const EQUILIBRE = JSON.parse(readFileSync(new URL("../../modules/lakour-veillees/assets/equilibre.json", import.meta.url), "utf8"));
 const COMPOSITIONS = JSON.parse(readFileSync(new URL("../../modules/lakour-veillees/assets/compositions.json", import.meta.url), "utf8"));
 
@@ -69,6 +73,7 @@ export function optionsDeVariante(v) {
   if (v === "village") o.village = true;
   else if (v === "gazette") o.gazette = true;
   else if (v === "petite" || v === "grande") o.variantes.doubleVisage = v;
+  else if (v === "petite-loup" || v === "grande-loup") Object.assign(o.variantes, { doubleVisage: v.split("-")[0], allegeanceLoup: true });
   else if (v === "angoissante") Object.assign(o.variantes, { chandelles: true, angoissante: true });
   else if (v && v !== "ordinaire") o.variantes[v] = true;
   return o;
@@ -138,10 +143,23 @@ export async function jouerTaches(taches, { graine = "1", fils = Math.max(1, Mat
 }
 
 // Simule les cas, `parties` parties chacun. -> Promise<[résultat]>
-export async function simuler({ parties = 100, graine = "1", fils, progres, loupsDeMoins = null, ...options } = {}) {
+export async function simuler({ parties = 100, graine = "1", fils, progres, loupsDeMoins = null, inclure = null, ...options } = {}) {
   const taches = loupsDeMoins ? tachesDeDosage(casDe(options), parties, loupsDeMoins)
+    : inclure?.length ? tachesAvecRoles(casDe(options), parties, inclure)
     : casDe(options).flatMap(c => Array.from({ length: parties }, (_, i) => ({ c, i })));
   return jouerTaches(taches, { graine, fils, progres });
+}
+
+// Un rôle à la loupe (Le Pacte, étape 6c) : pour chaque cas et chaque partie, la composition du générateur qui inclut ces rôles
+// (graine « inclure|<rôles>|<niveau>|<n>|<i> », la cible du niveau et de la taille).
+export function tachesAvecRoles(cas, parties, inclure = []) {
+  const eq = { roles: EQUILIBRE.roles, batiments: EQUILIBRE.batiments, cibles: EQUILIBRE.cibles };
+  const taches = [];
+  for (const c of cas) for (let i = 0; i < parties; i++) {
+    const compo = composer(c.n, eq, { niveau: c.niveau, inclure, graine: `inclure|${inclure.join("+")}|${c.niveau}|${c.n}|${i}`, essais: 600 });
+    taches.push({ c: { ...c, roles: compo.roles, batiments: compo.batiments }, i });
+  }
+  return taches;
 }
 
 // Le dosage (Le Pacte, étape 6b) : pour chaque cas et chaque partie, la composition du générateur (la même pour toutes les variantes
@@ -280,6 +298,7 @@ function lireOptions(argv) {
     else if (a === "--json") o.json = argv[++i];
     else if (a === "--rapide") o.parties = PARTIES_RAPIDE;
     else if (a === "--loups-de-moins") o.loupsDeMoins = liste(argv[++i]).map(Number);
+    else if (a === "--inclure") o.inclure = liste(argv[++i]);
   }
   return o;
 }

@@ -383,7 +383,7 @@ const VERIFICATIONS = {
 const MUTATIONS = [
   // les Gens de passage
   ["scripts/api.mjs", "    if (!v.ok) throw new Error(t(`LAKOUR_LOUPS.Passage.Refus.${v.raison}`));\n    const user = userId", "    const user = userId", "arrivée : vérifiée"],
-  ["scripts/api.mjs", "const camp = L.campDePassage({ villageois: villageoisAPlat().filter(x => x.vivant !== false), peste: L.estPeste(avant) });", "const camp = \"village\";", "arrivée : le camp tiré"],
+  ["scripts/api.mjs", "const camp = L.campDePassage({ villageois: villageoisAPlat().filter(x => x.vivant !== false), peste: L.estPeste(avant), niveau: avant.aConsigner?.niveau ?? \"\" });", "const camp = \"village\";", "arrivée : le camp tiré"],
   ["scripts/api.mjs", "    if (camp === \"meute\") {\n      await envoyerMasques(", "    if (false) {\n      await envoyerMasques(", "arrivée : la meute prévenue"],
   ["scripts/api.mjs", "return L.journaliserSecret(L.journaliser(x, t(\"LAKOUR_LOUPS.Passage.Annonce\"", "return L.journaliser(L.journaliser(x, t(\"LAKOUR_LOUPS.Passage.Annonce\"", "arrivée : le camp au MJ seul"],
   ["scripts/api.mjs", "annoncer(\"lakourLoups.passage\", [{ acteurId: acteur.id, cle: choisie, comment: \"arrivee\" }]);", "annoncer(\"lakourLoups.passage\", [{ acteurId: acteur.id, cle: choisie, comment: \"arrivee\", camp }]);", "arrivée : hook sans camp"],

@@ -227,7 +227,9 @@ test("bilan : coût d'un jour de pilote (appels au narrateur et aux compagnons)"
 });
 
 test("un humain vit encore : pas de pilote ; en mode Validation, pas de pilote non plus, un avis au MJ (une seule fois)", async () => {
-  const { moteur, restaurer } = await monde("moulin");
+  // (Neuf places : deux loups aux débutants, comme avant l'étape 6c du Pacte — à huit, le seul loup y mangeait le second humain la
+  // première nuit, et plus aucun humain ne vivait pour l'essai.)
+  const { moteur, restaurer } = await monde("moulin", { compagnons: 7 });
   try {
     const nuit = await outil("loups_nuit").executer({ delai_secondes: 20 });
     assert.ok(!nuit.erreur);

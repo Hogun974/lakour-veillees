@@ -20,7 +20,8 @@
 // - reglages : { cle: valeur } — des réglages du système posés avant la distribution (chanceEpier, chanceFourniere…) ;
 // - par la voie de api.nouvellePartie (au lieu de loups_distribuer), dès qu'une de ces options est donnée : roles (la composition
 //   exacte, complétée de villageois), batiments ("aucun", "hasard" ou [cle]), metiers (booléen), village (la variante « Le Village »),
-//   variantes ({ chandelles, angoissante, chaine, mur, doubleVisage, vendanges, envoutement }), gazette (booléen : la Gazette de la lune).
+//   variantes ({ chandelles, angoissante, chaine, mur, doubleVisage, allegeanceLoup, vendanges, envoutement }), gazette (booléen : la
+//   Gazette de la lune).
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
@@ -510,7 +511,7 @@ ${r.contenu}`);
       await api.nouvellePartie({ memesJoueurs: false, joueurs: game.users.filter(u => !u.isGM).map(u => u.id), niveau, graine: `${graine}-distribution`,
         ...(roles ? { roles: [...roles, ...Array(Math.max(0, total - roles.length)).fill("villageois")] } : {}),
         ...(batiments !== undefined ? { batiments } : {}), ...(metiers !== undefined ? { metiers } : {}), village: avecVillage,
-        variantes: { chandelles: false, angoissante: false, chaine: false, mur: false, doubleVisage: "", vendanges: false, envoutement: false, ...(variantes ?? {}) },
+        variantes: { chandelles: false, angoissante: false, chaine: false, mur: false, doubleVisage: "", allegeanceLoup: false, vendanges: false, envoutement: false, ...(variantes ?? {}) },
         gazette: { actif: Boolean(gazette), crieur: false }, peste: false });
       await gestesFaits();
     } else {
@@ -545,7 +546,7 @@ ${r.contenu}`);
       const centre = api.etat().ambigusSecret.centre.map(r => r.system.cle);
       const distribues = [...villageois().map(a => roleDe(a).system.cle), ...centre];
       if (centre.length) for (let i = 0; i < 2; i++) distribues.splice(distribues.lastIndexOf("villageois"), 1);
-      assert.equal(distribues.filter(c => equilibre.roles[c].camp === "meute").length, tablee ? api.logique.nombreDeLoupsTablee(total) : api.logique.nombreDeLoups(total));
+      assert.equal(distribues.filter(c => equilibre.roles[c].camp === "meute").length, tablee ? api.logique.nombreDeLoupsTablee(total) : api.logique.nombreDeLoups(total, niveau));
       assert.ok(Math.abs(distribues.reduce((s, c) => s + equilibre.roles[c].poids, 0) - api.logique.cibleDe(total, tablee ? "petite-tablee" : niveau, equilibre)) <= 3, `déséquilibrée : ${distribues.join(", ")}`);
       // La Petite tablée : publique, glas d'office, tirage contraint (le partage des camps), annonce sans nom.
       assert.equal(api.etat().petiteTablee, tablee);

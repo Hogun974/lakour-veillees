@@ -282,7 +282,7 @@ Chacun est un lieu de la carte et change une règle.
 ### Les compositions prêtes (48)
 
 - **Débutants, Classique, Chaos** : une composition par taille de 6 à 18 joueurs (2 loups jusqu'à 8 joueurs, 3 jusqu'à 12, 4
-  jusqu'à 15, 5 au-delà ; solitaires et loups spéciaux selon le niveau), avec ses bâtiments.
+  jusqu'à 15, 5 au-delà ; un de moins au niveau Débutants ; solitaires et loups spéciaux selon le niveau), avec ses bâtiments.
 - **Petite tablée** : de 4 à 12 places, tirées par le générateur du système à graine fixe.
 - La Table de jeu peut aussi **composer** une partie équilibrée pour n'importe quel nombre, ou prendre une liste de rôles
   écrite à la main. Les poids d'équilibre sont dans `modules/lakour-veillees/contenu/equilibre.mjs`.

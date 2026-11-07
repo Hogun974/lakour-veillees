@@ -1563,7 +1563,7 @@ const nomDeVariante = c => t(`LAKOUR_LOUPS.Variantes.${c === "doubleVisage" ? "D
 // Les variantes de la veillée, annoncées à tous (une règle de la veillée, jamais un secret).
 function texteDesVariantes(etat) {
   const v = etat.variantes;
-  const noms = L.variantesEnJeu(etat).map(c => (c === "doubleVisage" ? `${nomDeVariante(c)} (${t(`LAKOUR_LOUPS.Variantes.DoubleVisage.${v.doubleVisage}`)})`
+  const noms = L.variantesEnJeu(etat).map(c => (c === "doubleVisage" ? `${nomDeVariante(c)} (${t(`LAKOUR_LOUPS.Variantes.DoubleVisage.${v.doubleVisage}`)}${v.allegeanceLoup ? `, ${t("LAKOUR_LOUPS.Variantes.DoubleVisage.AllegeanceLoup")}` : ""})`
     : c === "chandelles" && v.angoissante ? `${nomDeVariante(c)} (${t("LAKOUR_LOUPS.Variantes.Chandelles.Angoissante")})` : nomDeVariante(c)));
   return noms.length ? t("LAKOUR_LOUPS.Variantes.Annonce", { noms: noms.join(", ") }) : "";
 }
@@ -2674,10 +2674,10 @@ export const api = {
         return cache.has(u) ? u : "";
       };
       if (choixVariantes.doubleVisage === "petite") {
-        const camps = L.allegeances(tirage.length, hasardDesVisages);
+        const camps = L.allegeances(tirage.length, hasardDesVisages, choixVariantes.allegeanceLoup);
         tirage.forEach((att, i) => visages.push({ camp: camps[i], cartes: [camps[i] === "meute" ? L.CARTE_LOUP : L.CARTE_VILLAGEOIS], seconde: "" }));
       } else {
-        const paires = L.cartesDeLaGrande(tirage.map(att => cache.get(att.role)?.system?.cle ?? L.CARTE_VILLAGEOIS), hasardDesVisages);
+        const paires = L.cartesDeLaGrande(tirage.map(att => cache.get(att.role)?.system?.cle ?? L.CARTE_VILLAGEOIS), hasardDesVisages, choixVariantes.allegeanceLoup);
         for (const [i, att] of tirage.entries()) {
           const x = L.lireDeuxCartes(paires[i]);
           const principale = await uuidDe(x.principale);
@@ -4229,7 +4229,7 @@ export const api = {
     if (!choisie) throw new Error(t("LAKOUR_LOUPS.Passage.Refus.contenu"));
     const doc = await fromUuid(contenu.roles.get(choisie));
     if (!doc) throw new Error(t("LAKOUR_LOUPS.Erreurs.Introuvable", { uuid: contenu.roles.get(choisie) }));
-    const camp = L.campDePassage({ villageois: villageoisAPlat().filter(x => x.vivant !== false), peste: L.estPeste(avant) });
+    const camp = L.campDePassage({ villageois: villageoisAPlat().filter(x => x.vivant !== false), peste: L.estPeste(avant), niveau: avant.aConsigner?.niveau ?? "" });
     // Une maison libre du village agrandi.
     const prises = new Set(tousLesVillageois().map(a => a.system.maison).filter(Boolean));
     const maison = L.maisonsDuVillage(prises.size + 1).find(m => !prises.has(m)) ?? `Maison ${prises.size + 1}`;

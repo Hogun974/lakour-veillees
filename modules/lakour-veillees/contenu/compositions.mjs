@@ -6,12 +6,12 @@
 // Le Pacte, étape 6 : TOUTES sont tirées par le générateur du système (logique/composition.mjs, composer), à graine fixe
 // (« <niveau>-<n> »), sur l'équilibre calibré par simulation (equilibre.mjs : poids et cibles, docs/equilibre-veillees.md) : une
 // composition prête vaut une composition générée. Les règles de dosage sont celles du générateur (loups : 2 jusqu'à 8 joueurs, 3
-// jusqu'à 12, 4 jusqu'à 15, 5 au-delà ; débutants : loups simples, aucun solitaire ; classique : un loup à pouvoir et un solitaire au
-// plus ; chaos : un ou deux de chaque ; Le Pacte : les rôles du jeu de soirée, au dosage classique). Les choix de chaque niveau sont
+// jusqu'à 12, 4 jusqu'à 15, 5 au-delà ; débutants : un loup de moins — étape 6c —, loups simples, aucun solitaire ; classique : un loup
+// à pouvoir et un solitaire au plus ; chaos : un ou deux de chaque ; Le Pacte : les rôles du jeu de soirée, au dosage classique). Les choix de chaque niveau sont
 // gardés : ses bâtiments (NIVEAUX[niveau].batiments, ci-dessous ; Le Pacte et la petite tablée : ceux du générateur, aucun pour Le Pacte),
 // et les métiers (distribués à tous par la Table de jeu, sauf au Pacte).
 
-import { composer as composerSysteme } from "../../../systems/lakour-loups/logique/composition.mjs";
+import { composer as composerSysteme, nombreDeLoups as nombreDeLoupsSysteme } from "../../../systems/lakour-loups/logique/composition.mjs";
 import { EQUILIBRE, EQUILIBRE_BATIMENTS, CIBLES, AJUSTEMENTS } from "./equilibre.mjs";
 
 // L'équilibre complet du contenu (celui d'assets/equilibre.json) : poids, bâtiments, cibles.
@@ -33,7 +33,8 @@ export const NIVEAUX = {
 
 export const MIN_JOUEURS = 6;
 export const MAX_JOUEURS = 18;
-export const nombreDeLoups = n => (n <= 8 ? 2 : n <= 12 ? 3 : n <= 15 ? 4 : 5);
+// Le barème du générateur (niveau « debutants » : un loup de moins, jamais moins d'un ; Le Pacte, étape 6c).
+export const nombreDeLoups = (n, niveau = "") => nombreDeLoupsSysteme(n, niveau);
 
 // La Petite tablée (niveau « petite-tablee », systems/lakour-loups/logique/tablee.mjs) : 4 à 12 places, meute courte (1 loup
 // jusqu'à 7 places, 2 jusqu'à 10, 3 au-delà), au moins deux rôles de l'ombre dès 6 places (le Colporteur ; quatre à 11 et 12),

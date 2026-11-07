@@ -260,6 +260,21 @@ const VERIFICATIONS = {
     assert.deepEqual(M.api.ordreDeNuit().find(e => e.roleCle === "meute").acteurIds.sort(), loups.map(a => a.id).sort());
   },
 
+  async "Double visage, une allégeance loup de plus (Le Pacte, étape 6c) : petite et grande complication, annoncée à tous"(M) {
+    await monde(M);
+    const m = messages.length;
+    await M.api.nouvellePartie({ memesJoueurs: false, joueurs: JOUEURS, graine: "visages", variantes: { doubleVisage: "petite", allegeanceLoup: true } });
+    assert.equal(villageois().filter(a => secretDuMJ.camp(a) === "meute").length, 3, "trois allégeances de loup au lieu de deux");
+    assert.equal(M.api.etat().variantes.allegeanceLoup, true, "une règle publique de la veillée");
+    assert.match(chat(m), /une allégeance loup de plus/);
+    assert.equal(game.settings.get("lakour-loups", "allegeanceLoupEnPlus"), true, "le choix retenu par le réglage");
+    await M.api.nouvellePartie({ memesJoueurs: false, joueurs: JOUEURS, graine: "visages-g", variantes: { doubleVisage: "grande" } });
+    const cartes = M.api.etat().variantesSecret.cartes;
+    assert.equal(Object.values(cartes).flat().filter(c => c === M.L.CARTE_LOUP).length, 3, "grande : trois cartes de loup (le réglage retenu)");
+    await M.api.nouvellePartie({ memesJoueurs: false, joueurs: JOUEURS, graine: "visages", variantes: { doubleVisage: "petite", allegeanceLoup: false } });
+    assert.equal(villageois().filter(a => secretDuMJ.camp(a) === "meute").length, 2, "décoché : le paquet du livre");
+  },
+
   async "Double visage, grande : deux cartes par joueur, la principale au rôle, la seconde à la fiche, le camp du loup"(M) {
     await monde(M);
     let seconde = false;
@@ -387,6 +402,7 @@ const MUTATIONS = [
   ["scripts/api.mjs", "      if (texte) await modifierEtat(e => L.graverUnMurmure(e, texte));", "      if (texte) await modifierEtat(e => L.graverUnMurmure(e, `${nomDe(id)} : ${texte}`));", "mur : sans auteur"],
   ["scripts/api.mjs", "      if (L.murActif(e)) mur = L.lireLeMur(e, tour);", "", "mur : lu au matin"],
   ["scripts/api.mjs", "        fiches[acteur.id] = { ...fiches[acteur.id], camp: visage.camp };", "", "Double visage : l'allégeance"],
+  ["scripts/api.mjs", "L.allegeances(tirage.length, hasardDesVisages, choixVariantes.allegeanceLoup)", "L.allegeances(tirage.length, hasardDesVisages)", "Double visage : une allégeance loup de plus"],
   ["scripts/api.mjs", "    await revelerPubliquement(id, { sansCamp: true });", "    await revelerPubliquement(id);", "Double visage : le rôle visible sans camp"],
   ["scripts/api.mjs", "          fiches[acteur.id] = L.normaliserFiche({ ...fiches[acteur.id], seconde:", "          if (false) fiches[acteur.id] = L.normaliserFiche({ ...fiches[acteur.id], seconde:", "Double visage : la seconde carte"],
   ["scripts/api.mjs", "      if (choixVariantes.vendanges) roleData = L.roleDesVendanges(roleData);", "", "Vendanges : la fiole unique"],

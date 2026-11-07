@@ -30,8 +30,11 @@ export const NIVEAUX = ["debutants", "classique", "chaos", NIVEAU_LE_PACTE, NIVE
 const RANGS = { debutants: 0, classique: 1, chaos: 2, [NIVEAU_LE_PACTE]: 2, [NIVEAU_PETITE_TABLEE]: 1 };
 const rangNiveau = n => RANGS[n] ?? 0;
 
-// Loups selon le nombre de joueurs (même barème que les compositions prêtes du contenu).
-export const nombreDeLoups = n => (n <= 8 ? 2 : n <= 12 ? 3 : n <= 15 ? 4 : 5);
+// Loups selon le nombre de joueurs (même barème que les compositions prêtes du contenu) et le niveau : Le Pacte, étape 6c (décidé avec
+// Jordan), les DÉBUTANTS ont un loup de moins que le barème, jamais moins d'un (LOUPS_DE_MOINS) — à l'adresse d'une table de débutants
+// (0,5), même le village le plus armé du niveau laissait la meute à 70 % (docs/equilibre-veillees.md). Sans niveau : le barème.
+export const LOUPS_DE_MOINS = Object.freeze({ debutants: 1 });
+export const nombreDeLoups = (n, niveau = "") => Math.max(1, (n <= 8 ? 2 : n <= 12 ? 3 : n <= 15 ? 4 : 5) - (LOUPS_DE_MOINS[niveau] ?? 0));
 // Loups à pouvoir propre et solitaires permis selon le niveau.
 const LOUPS_SPECIAUX = { debutants: [0, 0], classique: [0, 1], chaos: [1, 2], [NIVEAU_LE_PACTE]: [0, 1] };
 const SOLITAIRES = { debutants: [0, 0], classique: [0, 1], chaos: [1, 2], [NIVEAU_LE_PACTE]: [0, 1] };
@@ -132,7 +135,7 @@ function tirer(n, niveau, cat, inclure, hasard, peste = false, loupsEnPlus = 0) 
   const entre = ([min, max]) => min + Math.floor(hasard() * (max - min + 1));
   // Souhaits d'abord (rôles imposés), dans la limite du nombre de joueurs.
   inclureDans(roles, cat, inclure);
-  const loups = peste ? 0 : nombreDeLoups(n) + loupsEnPlus;
+  const loups = peste ? 0 : nombreDeLoups(n, niveau) + loupsEnPlus;
   const loupsDeja = roles.filter(c => cat.permis.get(c)?.camp === "meute").length;
   prendre(cat.loupsSpeciaux, Math.max(0, Math.min(entre(LOUPS_SPECIAUX[niveau]), loups - 1) - roles.filter(c => cat.loupsSpeciaux.includes(c)).length));
   // (Le loup de base exclu, ou une peste noire sans meute : pas de loup ajouté, plutôt qu'une boucle sans fin.)

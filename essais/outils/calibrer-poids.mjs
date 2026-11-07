@@ -12,7 +12,8 @@
 // L'échelle : un rôle du Village (ou solitaire) vaut 1 + β_r·u, un loup à pouvoir -6 + β_r·u (le Villageois +1 et le Loup de Brumecombe
 // -6 gardent leur poids, comme avant) ; u (des poids par unité de logit) est celui qui garde les nouveaux poids au plus près des
 // anciens. La CIBLE d'une taille et d'un niveau est la somme des poids qui donne une chance sur deux au village :
-//     cible(niveau, n) = (n - m) - 6·m - b(niveau, n)·u        (m : les loups de la taille, nombreDeLoups)
+//     cible(niveau, n) = (n - m) - 6·m - b(niveau, n)·u        (m : les loups de la taille et du niveau, nombreDeLoups ; étape 6c :
+//                                                               les débutants en ont un de moins)
 // La petite tablée (ses compagnons IA jouent sans les politiques) garde ses compositions : sa cible devient la somme moyenne, aux
 // nouveaux poids, des compositions que tiraient les anciens.
 //
@@ -186,13 +187,13 @@ export function calibrer(resultats, { lambda = 2, anciens = EQUILIBRE } = {}) {
   const cibles = {};
   for (const [cle, o] of Object.entries(ordonnees)) {
     const [niveau, n] = [cle.split("|")[0], Number(cle.split("|")[1])];
-    const m = nombreDeLoups(n);
+    const m = nombreDeLoups(n, niveau);
     (cibles[niveau] ??= {})[n] = { brute: (n - m) - 6 * m - o.b * u, erreur: o.erreur * u, parties: b.lignes.filter(l => l.r.niveau === niveau && l.r.n === n).length };
   }
   // Lissage : une taille et ses deux voisines (même nombre de loups), pesées 1-2-1.
   for (const niveau of Object.keys(cibles)) for (const n of Object.keys(cibles[niveau]).map(Number)) {
     const t = cibles[niveau];
-    const voisines = [n - 1, n + 1].filter(k => t[k] && nombreDeLoups(k) === nombreDeLoups(n));
+    const voisines = [n - 1, n + 1].filter(k => t[k] && nombreDeLoups(k, niveau) === nombreDeLoups(n, niveau));
     t[n].lissee = (2 * t[n].brute + voisines.reduce((s, k) => s + t[k].brute, 0)) / (2 + voisines.length);
     t[n].cible = Math.round(t[n].lissee);
   }
@@ -264,7 +265,7 @@ export function corrigerCibles(resultats, { u, cibles, adresse = 1, equilibre = 
       let d = corr[n];
       if (d === undefined && !interpoler) d = 0;
       if (d === undefined) {
-        const memes = [n - 1, n + 1].filter(k => corr[k] !== undefined && nombreDeLoups(k) === nombreDeLoups(n));
+        const memes = [n - 1, n + 1].filter(k => corr[k] !== undefined && nombreDeLoups(k, niveau) === nombreDeLoups(n, niveau));
         const l = memes.length ? memes : [n - 1, n + 1].filter(k => corr[k] !== undefined);
         d = l.length ? l.reduce((s, k) => s + corr[k], 0) / l.length : 0;
       }

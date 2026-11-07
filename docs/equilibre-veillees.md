@@ -1,10 +1,12 @@
 # Équilibre des Veillées de Brumecombe
 
-*Le Pacte, étapes 6 et 6b (novembre 2026). Les poids des rôles et la cible du générateur ne sont plus posés à la main : ils sont
+*Le Pacte, étapes 6, 6b et 6c (novembre 2026). Les poids des rôles et la cible du générateur ne sont plus posés à la main : ils sont
 mesurés par simulation. L'étape 6 les a calibrés avec des joueurs simulés parfaits (adresse 1) ; l'étape 6b les recalibre avec une
 **adresse par niveau**, celle d'une vraie soirée (débutants 0,5 ; classique et Le Pacte 0,75 ; chaos 1), retouche deux solitaires
-(Revenant, Chasseur de primes) et chiffre les variantes du livre que leur règle déséquilibre. Ce document dit comment, avec quelles
-graines, ce qui a été mesuré avant et après, et comment remesurer.*
+(Revenant, Chasseur de primes) et chiffre les variantes du livre que leur règle déséquilibre. L'étape 6c tranche ce que la 6b laissait
+« à décider » : un loup de moins aux débutants, un réglage « une allégeance loup de plus » pour Double visage, des joueurs simulés
+qui se méfient du Joueur de vielle. Ce document dit comment, avec quelles graines, ce qui a été mesuré avant et après, et comment
+remesurer.*
 
 ## La méthode
 
@@ -39,7 +41,8 @@ hasard d'avant l'étape 6 (qui restent ceux de l'essai d'intégration). Quelques
   village quand elle tombe sur un innocent, sinon sa proie concertée ;
 - le village vote contre un loup connu, sinon contre le plus soupçonné, jamais contre un innocent connu ; il s'accorde sur la rumeur du
   jour (le plus accusé au débat, les annonces d'un joueur dont une accusation s'est vérifiée comptant triple) quand elle vaut ses
-  soupçons ; un charmé cherche le Joueur de vielle parmi les non-charmés ; un solitaire découvert est visé (jamais le Revenant) ;
+  soupçons ; les charmés cherchent ensemble le Joueur de vielle parmi les non-charmés, l'accusent au débat, et le village comme la
+  meute le visent quand il menace de gagner (étape 6c, plus bas) ; un solitaire découvert est visé (jamais le Revenant) ;
 - le Pêcheur de nuit, la Pie, la Braconnière, le Perruquier (rasoir) visent un loup connu (le harpon et le rasoir attendent sinon) ;
 - les solitaires votent contre ceux qu'ils veulent voir tomber (la cible du Chasseur de primes, l'autre groupe de l'Illuminé) ;
 - le Mâtin rejoint la meute deux fois sur cinq (un goût, pas une adresse) ; le Juge de paix annule si un condamné est un innocent sûr.
@@ -113,10 +116,136 @@ sache faire aux débutants (cible +60 : toutes les places possibles en rôles du
 aucune cible ne ramène la meute à 50 %. Calibrer les débutants à 0,75 tiendrait la promesse du tableau, mais pour une table qui
 n'existe pas : une vraie table de débutants trouverait la meute à 75-85 %. L'adresse 0,5 est **gardée** : les cibles des débutants
 sont bornées au plafond du générateur (le village le plus armé possible), ce qui rapproche le plus une vraie table de débutants
-de l'équilibre (la meute à 70 % au lieu de 86 %). Le levier qui resterait est le barème des loups (`nombreDeLoups`), **à
-décider** : avec **un loup de moins** et le village le plus armé, la meute de débutants à 0,5 retombe à 33 % (8 joueurs), 38 % (10),
-51 % (12), 63 % (14), 68 % (16), 56 % (18) (80 parties par case). De même, à **six joueurs** (deux loups), le classique et Le Pacte
-à 0,75 restent au plafond du générateur (la meute vers 60-65 %).
+de l'équilibre (la meute à 70 % au lieu de 86 %). Le levier qui resterait est le barème des loups (`nombreDeLoups`) : avec **un loup
+de moins** et le village le plus armé, la meute de débutants à 0,5 retombe à 33 % (8 joueurs), 38 % (10), 51 % (12), 63 % (14), 68 %
+(16), 56 % (18) (80 parties par case). **Décidé à l'étape 6c** : les débutants ont un loup de moins (la meute à 52 %, plus bas). À
+**six joueurs** (deux loups), le classique et Le Pacte à 0,75 restent au plafond du générateur (la meute vers 60-65 %).
+
+## L'étape 6c (trois décisions prises avec Jordan)
+
+### 1. Débutants : un loup de moins
+
+`nombreDeLoups(n, niveau)` (`logique/composition.mjs`) : le barème (2 loups jusqu'à 8 joueurs, 3 jusqu'à 12, 4 jusqu'à 15, 5 au-delà)
+moins `LOUPS_DE_MOINS[niveau]` — **un** aux débutants —, jamais moins d'un loup : 1 loup jusqu'à 8 joueurs, 2 jusqu'à 12, 3 jusqu'à 15,
+4 au-delà. Le générateur (`tirer`), donc les compositions prêtes des débutants (tirées par lui à graine fixe), le conseil de la Table de
+jeu quand on compose à la main (`equilibreDesRoles(roles, equilibre, niveau)`), le camp des gens de passage (`campDePassage({ niveau })`,
+le niveau de la partie en cours), la calibration (`calibrer-poids.mjs` : la cible et le lissage comptent les loups du niveau) et la
+vérification de l'essai d'intégration s'en servent. Les autres niveaux, la petite tablée (son propre barème) et les Vendanges (un loup de
+plus que le barème du niveau) ne changent pas.
+
+**Les cibles des débutants** : départ des cibles de l'étape 6b plus 7 (un Loup de Brumecombe, -6, devenu Villageois, +1) retouché
+d'après le dosage mesuré à l'étape 6b, puis deux seconds passages (`--corriger`, échelle 6,73) d'après deux validations des treize
+tailles (graines « 6c-val1 », 150 parties par case, puis « 6c-val2 », 200 parties), bornées à ce que le générateur atteint :
+
+| Débutants | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Cible 6b (barème) | +1 | +3 | +4 | -2 | -1 | +0 | +1 | -5 | -4 | -3 | -9 | -8 | -7 |
+| Cible 6c (un loup de moins) | **+4** | **+3** | **+3** | **+5** | **+5** | **+5** | **+7** | **+2** | **+3** | **+4** | **-2** | **-1** | **+0** |
+| Ce que le générateur atteint | 2 à 8 | 0 à 10 | 1 à 11 | -5 à 5 | -4 à 6 | -3 à 7 | -2 à 8 | -8 à 2 | -7 à 3 | -6 à 4 | -12 à -2 | -11 à -1 | -10 à 0 |
+| Meute, « 6c-val1 » | 46 % | 42 % | 39 % | 70 % | 54 % | 55 % | 45 % | 63 % | 55 % | 52 % | 57 % | 57 % | 57 % |
+| Meute, « 6c-val2 » | 49 % | 42 % | 39 % | 58 % | 55 % | 44 % | 49 % | 68 % | 60 % | 61 % | 68 % | 53 % | 59 % |
+
+(9 et 13 à 18 joueurs : au plafond, le village le plus armé que le générateur sache faire.)
+
+**Mesure** (adresse 0,5 ; la part de la meute parmi les parties gagnées par la meute ou le village) — avant : l'étape 6b (barème,
+graine « 6b-apres ») ; après : graine « 6c-apres », 400 parties par taille paire (±5 points), 150 par taille impaire (±8) :
+
+| Débutants (adresse 0,5) | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | Toutes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Avant (6b) | 75 % | 70 % | 57 % | 77 % | 76 % | 69 % | 64 % | 77 % | 69 % | 75 % | 80 % | 70 % | 70 % | 70 % |
+| **Après (6c)** | **48 %** | 45 % | **43 %** | 59 % | **54 %** | 53 % | **45 %** | 63 % | **56 %** | 60 % | **63 %** | 59 % | **53 %** | **52 %** ±2 |
+
+Compositions prêtes des débutants (30 parties chacune, graine « 6c-apres ») : **57 %** (67 % à l'étape 6b ; 390 parties, ±5). Aucune
+partie en erreur.
+
+**Dans la fourchette** (50 ± 10) : toutes les tailles sauf **16 joueurs (63 % ±5)** et **13 joueurs (63 % ±8)** ; 15 joueurs (60 %)
+y est de justesse. Ces trois tailles sont au plafond du générateur (quatre loups contre douze joueurs du village, dont les cinq rôles à pouvoir
+du niveau à 16 ; trois loups et dix places à 13) : un second loup de moins, ou un rôle de plus au niveau débutants, serait le seul levier
+restant. Le guide du narrateur le dit (« Préparer la partie », « Réglages de la partie ») : au niveau Débutants, un loup de moins, et ne
+pas en retirer un autre soi-même.
+
+### 2. Double visage : une allégeance loup de plus
+
+Un réglage monde **« Double visage : une allégeance loup de plus »** (`allegeanceLoupEnPlus` ; clé de variante `allegeanceLoup`,
+`logique/variantes.mjs`) et sa case à la préparation de la Table de jeu, visible seulement avec Double visage (aide : quand la cocher).
+Il n'a de sens qu'avec la variante (`choixDesVariantes`, `variantesPermises` : sans Double visage, il tombe), entre dans l'état public
+avec les autres règles de la veillée (`etat.variantes.allegeanceLoup`) et s'annonce avec elle (« Double visage (petite complication,
+une allégeance loup de plus) »). À la distribution, `allegeances(n, hasard, true)` (petite complication) et `cartesDeLaGrande(paquet,
+hasard, true)` (grande) mettent une carte d'allégeance loup de plus (`ALLEGEANCES_LOUP_EN_PLUS`, à la place d'une villageoise ;
+`loupsDoubleVisage(n, true)`). Essais : `pacte-variantes-logique` (le compte, la grande complication, le réglage seulement avec la
+variante, deux mutations) et `pacte-variantes-api` (trois allégeances de loup à 8 joueurs au lieu de deux, l'annonce, le réglage
+retenu, la grande complication, décoché : le paquet du livre ; une mutation).
+
+**Mesure** (classique et Le Pacte, adresse 0,75 ; 100 parties par niveau et par taille, 200 par taille, ±7 points ; graine
+« variantes » ; le simulateur : `--variantes petite-loup,grande-loup`) — la part de la meute :
+
+| Joueurs | Ordinaire | Petite complication | Petite, une allégeance loup de plus | Grande complication | Grande, une allégeance loup de plus |
+|---|---|---|---|---|---|
+| 8 | 58 % | **48 %** | 89 % | **51 %** | 70 % |
+| 10 | 44 % | **58 %** | 87 % | **46 %** | 79 % |
+| 11 | 44 % | **53 %** | 78 % | **44 %** | 67 % |
+| 12 | 51 % | **38 %** | 65 % | 37 % | **52 %** |
+| 13 | 56 % | 32 % | **52 %** | 28 % | **45 %** |
+| 14 | 52 % | **44 %** | 70 % | 40 % | **55 %** |
+| 15 | 49 % | 33 % | **65 %** | 41 % | **61 %** |
+| 16 | 51 % | 31 % | **50 %** | 28 % | **47 %** |
+| 17 | 59 % | 22 % | **49 %** | 22 % | **41 %** |
+| 18 | 44 % | 22 % | **36 %** | 20 % | **29 %** |
+| 8, 12 et 16 | 53 % | 39 % | 68 % | 39 % | 56 % |
+| De 8 à 18 | 51 % | 38 % | 64 % | 36 % | 55 % |
+
+(En gras, le meilleur des deux paquets à chaque taille ; à 15 joueurs, les deux se valent à peu près. 4 parties sur 10 000 sans
+vainqueur en 30 tours.) **Le conseil de l'étape 6b ne tient pas** : il avait été tiré de trois tailles (8, 12 et 16). À 10 joueurs, la
+carte de plus donne 79 % à la meute en grande complication ; à 14, 70 % en petite (les paquets sautent : 3 allégeances loup jusqu'à 13
+joueurs, 4 au-delà, et 13 joueurs n'ont que 3 loups pour 13). **Conseil retenu** (aide de la case, guides du joueur et du narrateur,
+fr et en) : **dès 16 joueurs en petite complication, et à 13 ; dès 12 en grande** ; en dessous, le paquet du livre (la carte de plus y
+donne sept à neuf parties sur dix à la meute). À 18 joueurs, même avec elle, le village garde l'avantage (36 et 29 %).
+
+### 3. Le Joueur de vielle : des joueurs simulés plus méfiants (sa règle ne change pas)
+
+Il gagnait un tiers des parties où il est (32 %, étape 6b) parce que les joueurs simulés ne s'en méfiaient pas : un charmé ne le
+cherchait qu'une fois la moitié du village charmée, chacun de son côté, et ni le village ni la meute ne le visaient. Or un charmé
+**sait** qu'il l'est et connaît les autres charmés (son carnet), et tout le village sait qu'un Joueur de vielle joue dès que le
+narrateur appelle les charmés, la première nuit (comme à la table : le narrateur appelle chaque rôle de la même voix ; la doublure
+l'entend au hook `lakourLoups.reveil` du MJ, `charmesAppeles`). Les politiques (`logique/politiques.mjs`), à adresse > 0 :
+
+- **le savoir** (`savoirDuJoueur`) : `charmes` (les charmés que l'on connaît), `vielle` (les suspects du Joueur de vielle, les plus
+  sûrs d'abord : révélé, accusé au débat, puis — pour un charmé — les vivants non charmés qu'on ne sait ni d'un autre rôle ni
+  innocents), `vielleConnue` (révélé ou accusé : ce que tous savent), `vielleEnJeu`, `menaceDeLaVielle` (il peut gagner la nuit
+  suivante : un charmé le sait au compte près, au plus trois non-charmés en le comptant ; les autres l'estiment à deux charmés par nuit
+  d'appel) ;
+- **les charmés du Village** votent ensemble (un même suspect, tiré en commun comme la proie de la meute) : sous la menace, avant même
+  un loup connu (la meute ne gagne pas en une nuit) ; sans menace, quand il reste trois suspects au plus ou qu'ils ne soupçonnent
+  personne d'autre fortement ; au débat, ils l'accusent (une annonce « solitaire », jamais tenue pour un mensonge : on se trompe de
+  bonne foi), ce qui fait la rumeur du jour ;
+- **le village** qui n'est pas charmé vote contre un accusé de jouer de la vielle sous la menace (après un loup connu) ; sinon
+  l'accusation est un soupçon comme un autre ;
+- **la meute** le vise sous la même menace, la nuit (avant les rôles utiles) et au vote (la rumeur, si elle le désigne).
+
+Essais (`essais/politiques-veillees.test.mjs`, deux de plus ; le contrat reste vert) : le savoir des charmés en français et en anglais,
+l'innocent connu écarté, les charmés qui s'accordent (avant un loup connu sous la menace), l'accusation au débat, le hasard à
+l'adresse 0 ; le village qui vote l'accusé sous la menace et le loup annoncé sans elle, le loup connu d'abord, la rumeur qui compte
+l'accusation, la meute qui vise l'accusé sous la menace et un utile sans elle, une accusation qui ne fait pas un menteur.
+
+**Mesure** : des compositions du générateur qui l'**incluent** (`--inclure joueur-de-vielle`, chaos et Le Pacte, 10 à 18 joueurs, 60
+par niveau et par taille : 1 080 parties, chacune à l'adresse de son niveau ; graine « vielle6c », les mêmes compositions et les mêmes
+graines avant et après ; l'« avant » : `politiques.mjs` et la doublure de l'étape 6b) — la part des parties qu'il gagne (±7 points
+par taille) :
+
+| Joueurs | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | Chaos | Le Pacte | **Toutes** |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Avant (étape 6b) | 26 % | 26 % | 37 % | 28 % | 37 % | 30 % | 32 % | 34 % | 47 % | 31 % | 34 % | **33 %** ±3 |
+| Après | 19 % | 24 % | 14 % | 18 % | 22 % | 11 % | 9 % | 9 % | 10 % | 11 % | 19 % | **15 %** ±2 |
+
+Aucune partie en erreur. Dans ces parties, la meute passe de 35 à 43 %, le village de 30 à 39 % : il rend ses victoires aux deux camps.
+Un second échantillon (d'autres compositions, mêmes tailles) donne 33 % → 13 % ; aux compositions générées ordinaires (chaos et Le
+Pacte, graine « 6c-apres », 200 parties par case), il gagne **15 %** des 325 parties où il est (32 % à l'étape 6b). Il est sous les
+20 % : **ni son poids (0) ni son minimum de joueurs (10) ne changent**. (À 11 et 14 joueurs, 24 et 22 % : dans la marge de ±7 d'une
+case de 120 parties ; 13 et 15 % dans le second échantillon.)
+
+Le reste ne bouge pas : chaos **51 %**, Le Pacte **48 %** (graine « 6c-apres », 200 parties par case, ±3 ; 51 et 49 % à l'étape 6b) ;
+de 42 à 56 % par case. Solitaires dans ces parties : Feu follet 10 %, Joueur de vielle 15 %, Illuminé 7 %, Chasseur de primes 16 %,
+Revenant 12 %.
 
 ## La calibration de l'étape 6b (graine « cal6b », 12 000 parties, adresse du niveau)
 
@@ -245,8 +374,9 @@ l'emportent avant ; marges : ±4 points sur 400 parties, ±3 sur 700).
   niveau chaos) ; son poids passe de -2 à 0 (mesuré : -0,5 ± 1,2). Il reste au-dessus de 20 % (32 %), **à toutes les tailles** (de
   10 à 18 joueurs : un tiers des parties, sans seuil où il retomberait) : ni le minimum de joueurs ni le poids n'y peuvent rien. Ce
   qui le rend fort est la règle (deux charmes par nuit) ou le jeu des charmés simulés (ils le cherchent parmi les non-charmés dès que
-  la moitié du village l'est, sans s'accorder sur qui) : **à décider** — un charme par nuit (comme aux Vendanges), ou des charmés qui
-  s'accordent au vote (une politique).
+  la moitié du village l'est, sans s'accorder sur qui). **Étape 6c** (décidé avec Jordan) : sa règle reste celle du livre, les joueurs
+  simulés se méfient de lui (les charmés s'accordent, le village et la meute le visent sous la menace) — il retombe à **15 %**
+  (« L'étape 6c », plus bas).
 
 ## Les constantes recalibrées (étape 6, adresse 1)
 
@@ -400,7 +530,9 @@ les guides du joueur et du narrateur, fr et en) :
   allégeances). **Conseil des guides** : dès 14 joueurs, une carte d'allégeance loup de plus ; à 10-13 joueurs, en grande complication
   seulement ; jusqu'à 9 joueurs, le paquet du livre (un loup de plus y donne huit parties sur dix à la meute). **En ligne**, le système
   distribue le paquet du livre et ne sait pas ajouter cette carte : le conseil vaut autour d'une table, et pour le narrateur en ligne,
-  l'avertissement seul (prévenir la meute qu'elle part de loin). Un réglage « allégeance loup de plus » serait à décider.
+  l'avertissement seul (prévenir la meute qu'elle part de loin). **Étape 6c** : le réglage « une allégeance loup de plus » existe
+  (la case de la préparation) ; remesuré de 8 à 18 joueurs, le conseil devient : dès 16 joueurs en petite complication (et à 13), dès
+  12 en grande (« L'étape 6c », plus haut).
 
 ## Les mesures de l'étape 6 (adresse 1, pour mémoire)
 
@@ -537,11 +669,12 @@ Non corrigé, et pourquoi :
 
 `essais/veillees-equilibre.test.mjs` (dans `npm run essais`, une à deux minutes sur 8 fils) : 16 parties par case, graine « rapide »,
 chaque niveau à son adresse (étape 6b), quatre niveaux × 6, 10, 14 et 18 joueurs, compositions générées. Il échoue si la meute
-s'écarte de plus de **20 points** de la mesure longue à un niveau (référence : débutants 70 %, les trois autres 50 %), sort de
+s'écarte de plus de **20 points** de la mesure longue à un niveau (référence : 50 % aux quatre niveaux depuis l'étape 6c ; débutants
+70 % avant), sort de
 **30-80 %** à une taille, si une partie finit en erreur, si les solitaires gagnent plus d'une partie sur trois de celles où ils sont
-(ou l'un d'eux plus d'une sur deux, sur 20 parties au moins), et vérifie que le simulateur est déterministe. Mesuré à l'écriture :
-débutants 72 %, classique 47 %, chaos 41 %, Le Pacte 39 % ; 6 joueurs 58 %, 10 : 44 %, 14 : 47 %, 18 : 50 % ; solitaires 12
-victoires sur 87 parties. Deux autres essais : `essais/politiques-veillees.test.mjs` (le contrat : chaque effet de rôle,
+(ou l'un d'eux plus d'une sur deux, sur 20 parties au moins), et vérifie que le simulateur est déterministe. Mesuré à l'écriture
+(étape 6c) : débutants 53 %, classique 47 %, chaos 47 %, Le Pacte 44 % ; 6 joueurs 53 %, 10 : 44 %, 14 : 47 %, 18 : 47 % ; solitaires
+8 victoires sur 87 parties (étape 6b : débutants 72 %, chaos 41 %, Le Pacte 39 %, 6 joueurs 58 % ; 12 victoires). Deux autres essais : `essais/politiques-veillees.test.mjs` (le contrat : chaque effet de rôle,
 pouvoir de jour et geste a sa politique ; le savoir lu en français et en anglais ; les choix de l'adresse 1 et de l'adresse 0) et
 `essais/calibration-veillees.test.mjs` (la régression retrouve des effets connus ; l'échelle, la cible, l'échantillon). Les compositions
 prêtes sont contrôlées par `essais/veillees-compositions.test.mjs` (chacune est celle du générateur, à ±2 de sa cible).
@@ -556,10 +689,12 @@ prêtes sont contrôlées par `essais/veillees-compositions.test.mjs` (chacune e
   cible, une table plus adroite le village (tableau « Aux autres adresses »). L'adresse de chaque niveau (étape 6b) est une
   supposition sur de vraies soirées, pas une mesure : quand on aura des parties en vrai (la Chronique), les comparer aux tableaux et
   ajuster `ADRESSE_DU_NIVEAU` (l'outil recalibre à n'importe quelle adresse : `--adresse niveau` ou un nombre, deux heures de calcul).
-- **Les débutants restent au-dessus de 60 %** à leur adresse (0,5) : le générateur n'a pas de quoi armer davantage leur village. Le
-  levier restant est le barème des loups (un loup de moins aux débutants : mesuré plus haut), **à décider** ; de même pour les tables
-  de six joueurs du classique et de Le Pacte.
-- **Le Joueur de vielle** gagne toujours un tiers des parties où il est (règle du livre inchangée) : **à décider** (voir « Solitaires »).
+- **Les débutants** (étape 6c : un loup de moins) : la meute à 52 % à leur adresse (0,5), mais encore à 63 % à 13 et 16 joueurs, au
+  plafond du générateur (ses cinq rôles à pouvoir). Les tables de six joueurs du classique et de Le Pacte restent elles aussi au
+  plafond (60-65 %).
+- **Le Joueur de vielle** : la règle du livre est gardée ; ce sont les joueurs simulés qui se méfient de lui (étape 6c : 33 % → 15 %).
+  La méfiance suppose qu'on entende le narrateur appeler les charmés la nuit (comme à la table) : un narrateur, ou un MJ IA, qui
+  tairait cette étape laisserait le Joueur de vielle plus fort que mesuré.
 - **Une graine, une partie** : les mesures se rejouent à l'identique (mêmes graines, même code). Une règle, une politique ou un poids
   qui change déplace tout : remesurer avant de conclure (commandes plus bas).
 
@@ -609,6 +744,10 @@ sans modèle (repli) jouent comme les joueurs simulés :
 5. Étape 6b : l'adresse d'un compagnon peut suivre le niveau de la veillée (`ADRESSE_DU_NIVEAU`) plutôt que son seul tempérament ;
    et ce que le moteur dit au narrateur et aux compagnons du Revenant (il ne gagne qu'exécuté à partir du troisième jour) et du
    Chasseur de primes (sa prime échoue après le deuxième jour : il devient villageois, au matin) est à revoir avec ces règles.
+6. Étape 6c : le choix des variantes du moteur (`variantesDemandees`, `scripts/outils.js`) ne connaît pas encore `allegeanceLoup`
+   (la case « une allégeance loup de plus », et son conseil de taille) ; le narrateur IA doit appeler les charmés à voix haute, la
+   nuit, comme les autres rôles (la méfiance mesurée envers le Joueur de vielle le suppose) ; un compagnon branché sur les politiques
+   passe `charmesAppeles` (les nuits où les charmés ont été appelés) à `savoirDuJoueur`.
 
 ## Remesurer
 
@@ -637,6 +776,27 @@ niveau à son adresse (`--adresse niveau`) :
     node essais/outils/simuler-veillees.mjs --variantes ordinaire,chaine --loups-de-moins 0,1,2 --niveaux classique,le-pacte       --tailles 8,10,12,14,16 --parties 100 --adresse niveau --graine dosage
     # le maximum du générateur aux débutants (cible +60), à plusieurs adresses : composer(n, …, { cible: 60 }) puis jouerTaches
     # (tableau de « L'adresse de référence par niveau »)
+
+Étape 6c (débutants : un loup de moins ; Double visage : une allégeance loup de plus ; Joueur de vielle : des joueurs méfiants) :
+
+    # les cibles des débutants : deux seconds passages
+    node essais/outils/simuler-veillees.mjs --parties 150 --niveaux debutants --tailles 6,7,8,9,10,11,12,13,14,15,16,17,18 --adresse niveau --graine 6c-val1 --json deb-val1.json
+    node essais/outils/calibrer-poids.mjs --corriger deb-val1.json --echelle 6.73 --adresse niveau --ecrire
+    npm run fabriquer-veillees
+    node essais/outils/simuler-veillees.mjs --parties 200 --niveaux debutants --tailles 6,7,8,9,10,11,12,13,14,15,16,17,18 --adresse niveau --graine 6c-val2 --json deb-val2.json
+    node essais/outils/calibrer-poids.mjs --corriger deb-val2.json --echelle 6.73 --adresse niveau --ecrire
+    npm run fabriquer-veillees && npm run fabriquer-veillees-en
+    # après : débutants (en deux courses : une course d'un seul tenant a planté, « segmentation fault »), tailles impaires, prêtes
+    node essais/outils/simuler-veillees.mjs --parties 400 --niveaux debutants --tailles 6,8,10,12 --adresse niveau --graine 6c-apres   (~3,5 min)
+    node essais/outils/simuler-veillees.mjs --parties 400 --niveaux debutants --tailles 14,16,18 --adresse niveau --graine 6c-apres
+    node essais/outils/simuler-veillees.mjs --parties 150 --niveaux debutants --tailles 7,9,11,13,15,17 --adresse niveau --graine 6c-apres
+    node essais/outils/simuler-veillees.mjs --pretes --parties 30 --niveaux debutants --tailles 6,7,8,9,10,11,12,13,14,15,16,17,18 --adresse niveau --graine 6c-apres
+    # Double visage, avec et sans l'allégeance loup de plus (~7 min chacune)
+    node essais/outils/simuler-veillees.mjs --variantes ordinaire,petite,grande,petite-loup,grande-loup --niveaux classique,le-pacte --tailles 8,10,12,14,16 --parties 100 --adresse niveau --graine variantes
+    node essais/outils/simuler-veillees.mjs --variantes ordinaire,petite,grande,petite-loup,grande-loup --niveaux classique,le-pacte --tailles 11,13,15,17,18 --parties 100 --adresse niveau --graine variantes
+    # le Joueur de vielle (l'« avant » : politiques.mjs et essais/doublures/foundry-loups.mjs de l'étape 6b, commit 0b4f7c9) ; chaos et Le Pacte
+    node essais/outils/simuler-veillees.mjs --inclure joueur-de-vielle --niveaux chaos,le-pacte --tailles 10,11,12,13,14,15,16,17,18 --parties 60 --adresse niveau --graine vielle6c   (~2,5 min)
+    node essais/outils/simuler-veillees.mjs --parties 200 --niveaux chaos,le-pacte --adresse niveau --graine 6c-apres                 (~8 min)
 
 Étape 6 (adresse 1) : les mêmes commandes avec `--adresse 1` (ou `0.5`) et les graines « cal », « avant », « apres », « variantes »,
 au commit `452fb50` ; `--corriger … --echelle 5.68`.

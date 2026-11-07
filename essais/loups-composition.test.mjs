@@ -17,7 +17,7 @@ test("toute taille de 6 à 18, tout niveau classique : bon nombre de rôles et d
     const c = composer(n, EQ, { niveau, graine: `${niveau}/${n}/${g}` });
     const ou = `${niveau}, ${n} joueurs, graine ${g}`;
     assert.equal(c.roles.length, n, ou);
-    assert.equal(c.roles.filter(r => camp(r) === "meute").length, nombreDeLoups(n), `${ou} : loups`);
+    assert.equal(c.roles.filter(r => camp(r) === "meute").length, nombreDeLoups(n, niveau), `${ou} : loups`);
     assert.ok(Math.abs(c.somme - cibleDe(n, niveau, EQ)) <= 2, `${ou} : équilibre ${c.somme} (cible ${cibleDe(n, niveau, EQ)})`);
     assert.equal(c.somme, equilibreDe(c.roles, EQ));
     for (const r of c.roles) {

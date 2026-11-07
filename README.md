@@ -42,8 +42,8 @@ Dans les deux cas, **aucun joueur n'a à sacrifier sa place** pour être meneur,
 d'un joueur** : ce qu'il ne doit pas savoir ne lui est jamais envoyé.
 
 **Transparence.** Le code et les textes de ce dépôt ont été écrits avec l'aide d'une IA (Claude, d'Anthropic) et relus par
-l'auteur. Les illustrations (écran d'accueil du monde, veillées de fête) sont générées par IA, localement (FLUX.2 klein
-9B dans ComfyStudio) ; la carte du village et les jetons ne le sont pas (voir [Crédits](#crédits)).
+l'auteur. Les illustrations (écran d'accueil du monde, veillées de fête, image qui remplace une caméra coupée) sont
+générées par IA, localement (FLUX.2 klein 9B dans ComfyStudio) ; la carte du village et les jetons ne le sont pas (voir [Crédits](#crédits)).
 
 Ce dépôt contient trois pièces :
 
@@ -449,7 +449,7 @@ Pour proposer un changement :
 - Silhouettes des jetons : icônes de **[game-icons.net](https://game-icons.net)** (Caro Asercion, Cathelineau, DarkZaitzev,
   Delapouite, Lorc, Skoll), licence **CC BY 3.0**, recolorées et composées dans un médaillon ; la liste icône par icône est
   dans [`modules/lakour-veillees/CREDITS.md`](modules/lakour-veillees/CREDITS.md).
-- Illustrations (écran d'accueil du monde, veillées de fête) : **générées par IA**, localement par l'auteur (FLUX.2 klein 9B
+- Illustrations (écran d'accueil du monde, veillées de fête, image de la caméra coupée) : **générées par IA**, localement par l'auteur (FLUX.2 klein 9B
   dans ComfyStudio), sans service distant.
 - Carte du village : dessinée par programme, aucune image extérieure. Sons d'ambiance : boucles synthétisées du moteur commun.
 - **Jeu original de la famille du loup-garou** (jeux de déduction sociale nés du jeu traditionnel *Mafia*) : aucune reprise

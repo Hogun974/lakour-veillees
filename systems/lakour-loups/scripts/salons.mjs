@@ -28,6 +28,7 @@ import * as L from "../logique/index.mjs";
 import { estMJActif, emettre, annoncer } from "./canal.mjs";
 import { t, lirePublic, lireEtat, villageoisAPlat } from "./donnees.mjs";
 import { secretsMJ } from "./secrets.mjs";
+import { actualiserCameras } from "./cameras.mjs";
 
 const lire = (cle, defaut) => { try { return game.settings.get(ID, cle) ?? defaut; } catch { return defaut; } };
 export const salonsAutomatiques = () => lire("salonsAutomatiques", true) !== false;
@@ -493,6 +494,8 @@ function rendreSource() {
   rendreSourceFn();
   rendreSourceFn = null;
   averti = false;
+  // Les caméras rallumées par ce repli : celle qu'une règle des caméras remplace est éteinte de nouveau (scripts/cameras.mjs).
+  actualiserCameras();
 }
 
 export const voixRepliee = () => Boolean(rendreSourceFn);

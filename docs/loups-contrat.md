@@ -888,6 +888,42 @@ mais plus entendre les autres (leur flux ne lui arrive pas). Reste observable : 
 est connecté à tous, ICE/DTLS/RTCP continuent), et la nuit l'absence de paquets venant de chacun (la même pour tous). Le système gère seul
 les salons, sans le MJ IA ; le MJ IA consulte `audibilite` pour la voix des IA et la transcription.
 
+### Caméras (logique/cameras.mjs, scripts/cameras.mjs ; Le Pacte, étape 10)
+
+Avec la vidéo intégrée de Foundry, la caméra d'un joueur est **remplacée par une image** (un loup-garou) quand il le faut, réglage
+monde **`cameraRemplacee`** (« Caméras remplacées par le loup-garou », vrai par défaut) :
+
+| Qui                             | `preparation`, `fin` | `nuit`    | `aube`                       | `jour`, `vote`                         |
+|---------------------------------|----------------------|-----------|------------------------------|----------------------------------------|
+| un vivant                       | sa caméra            | remplacée | sa caméra ; remplacée s'il est absent du jour (Gazette) | sa caméra ; remplacée s'il est absent du jour ou réduit au silence |
+| un mort (ou parti)              | sa caméra            | remplacée | remplacée                    | remplacée                              |
+| un spectateur (sans villageois) | sa caméra            | remplacée | remplacée                    | remplacée                              |
+| un MJ                           | jamais remplacée     |           |                              |                                        |
+
+Raisons (`RAISONS_DE_CAMERA`) : `nuit`, `mort`, `spectateur`, `absent`, `silence`. Les absents du jour sont ceux que marque la Gazette
+de la lune (`absentsDuJour` : le Petit Commis, les danseurs du Bal, les cueilleuses, les chasseurs de la Battue, les vétérans du
+Banquet). Chaque fois que le jeu coupe ou restreint le micro (salons vocaux : nuit, tanière, fratrie, morts, silence), la caméra est
+remplacée (essai sur toute la matrice des salons) ; un loup qui parle à la tanière est remplacé comme celui qui dort.
+Fonction pure : `cameraDe(etatPublic, { userId, mj, villageois: [{ id, joueur, vivant, silence }], actif })` -> `{ remplacee, raison }` ;
+`imagesDeCamera(reglage, moduleDeContenu)` -> `{ image, repli }`. Réglage monde **`imageCamera`** (sélecteur d'image) : vide, l'image
+du module de contenu actif (`modules/lakour-veillees/assets/camera/loup-garou.webp`, ou `lakour-veillees-en`) ; repli
+`assets/camera/loup-garou.svg` (dessiné à la main), puis l'avatar du joueur si les deux manquent.
+
+Le travail est fait par le moteur commun (`lakour-mj-ia`, `api.cameras`, `lakour-mj-ia/docs/voix-et-ecoute.md` §4), où le système
+pose sa règle au crochet `setup` (avant la connexion A/V ; sinon au crochet `lakour-mj-ia.pret`) et la fait recalculer à chaque
+changement de l'état public (`quandEtatChange`), d'un villageois, d'un réglage, et quand le repli des salons rallume une caméra :
+- dans le navigateur du joueur remplacé : sa piste vidéo **éteinte à la source** (`canUserShareVideo` faux, `toggleVideo(false)`,
+  piste `enabled = false` : plus une image de sa caméra ne part ; la caméra reste ouverte, sans renégociation à chaque phase) ;
+- dans TOUS les navigateurs, le sien compris : l'image sur l'avatar de sa vignette, son `<video>` caché (le son y passe toujours :
+  le micro suit les salons vocaux, pas les caméras) ; un joueur qui rallumerait sa caméra dans sa console n'est affiché nulle part ;
+- quand la règle ne vaut plus : sa piste rendue à son propre choix (caméra montrée ou cachée), si le MJ permet les caméras (réglage
+  du MJ IA « Caméras des joueurs permises » : décoché, aucune caméra de joueur, Veillées ou non).
+Le secret : la règle ne lit que l'état public (phase, tour, `gazette`) et quatre champs des documents des villageois (`id`,
+`joueur`, `vivant`, `silence`), jamais un camp, un rôle, une fratrie ni une ligne des salons, même chez le MJ actif : tous les
+navigateurs calculent la même vignette pour chacun, et la nuit TOUS les vivants ont la même (`nuit`). Rien ne transite : ni socket,
+ni réglage, ni document écrit. Sans moteur à caméras (avant 0.44), sans A/V, ou en audio seul, rien ne change. Essais :
+`essais/cameras-veillees.test.mjs` (règle, matrice des salons, non-fuite, image, mutations, deux parties simulées avec le moteur).
+
 ### Plateau (scripts/plateau.mjs, logique/plateau.mjs)
 
 La scène du village est celle dont le drapeau `plan` (d'un module de contenu) a des éléments « Maison N » ; `plan.plateau`
@@ -1220,6 +1256,11 @@ le MJ IA, par `api.ecritureBloquee()`, se met en pause).
   (`essais/activite-nuit.test.mjs`). Restent visibles : la scène affichée, et l'activité d'un MJ (qu'il évite de pointer un jeton
   la nuit). Ce n'est qu'une enveloppe dans le navigateur du joueur : qui la retire ne trahit que lui-même. Pour plus de sûreté, le MJ
   peut aussi réserver ces trois droits aux MJ (Configuration › Droits des utilisateurs) le temps d'une partie.
+- **Les caméras** (§1 « Caméras ») : une caméra remplacée par le loup-garou ne dit rien de plus que l'état public (la nuit, TOUS
+  les vivants le sont, avec la même raison ; le jour, seulement les morts, les spectateurs, les absents de la Gazette et les réduits
+  au silence) ; chaque navigateur le calcule chez lui, rien ne passe par le socket ni par un réglage. La caméra d'un joueur remplacé
+  n'envoie plus d'image (piste éteinte), mais sa connexion reste ouverte comme celle de tous (le même trafic pour chacun, comme pour
+  la voix la nuit). Un joueur qui rallume sa piste dans sa console n'est montré par aucun autre navigateur.
 - **Le socket** : un message sans émetteur donné par le serveur (v14 le donne toujours) est refusé ; l'auteur déclaré
   (`userId`) ne compte jamais seul. Le HTML d'une entrée du carnet (d'un MJ, quel qu'il soit) est nettoyé par
   `foundry.utils.cleanHTML` avant d'être affiché.

@@ -21,7 +21,9 @@
 // - par la voie de api.nouvellePartie (au lieu de loups_distribuer), dès qu'une de ces options est donnée : roles (la composition
 //   exacte, complétée de villageois), batiments ("aucun", "hasard" ou [cle]), metiers (booléen), village (la variante « Le Village »),
 //   variantes ({ chandelles, angoissante, chaine, mur, doubleVisage, allegeanceLoup, vendanges, envoutement }), gazette (booléen : la
-//   Gazette de la lune).
+//   Gazette de la lune) ;
+// - apresMonde : une fonction appelée une fois le monde neuf posé (doublure, réglages, crochets), avant la distribution : un essai y
+//   branche ce qu'il observe (essais/cameras-veillees.test.mjs : les caméras du moteur).
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
@@ -377,8 +379,9 @@ function gagnantsDeLaPartie(depart) {
 // distribue au niveau « petite-tablee » ; le tirage contraint, le glas d'office et le sort qui tranche sont vérifiés en chemin.
 // composition : une composition prête du contenu (clé), au lieu de la composition générée.
 export async function jouerPartie({ n, niveau, graine, nbCompagnons = 0, fete = "", tablee = false, composition = "", verifier = true, adresse = null,
-  roles, batiments, metiers, village, variantes, gazette, reglages: reglagesVoulus = {} } = {}) {
+  roles, batiments, metiers, village, variantes, gazette, reglages: reglagesVoulus = {}, apresMonde = null } = {}) {
   const joueurs = monde(n, graine, { verifier, adresse });
+  await apresMonde?.();
   // Des réglages du système pour cette partie (le simulateur : chanceEpier, chanceFourniere…).
   for (const [cle, valeur] of Object.entries(reglagesVoulus ?? {})) await game.settings.set("lakour-loups", cle, valeur);
   const parNouvellePartie = [roles, batiments, metiers, village, variantes, gazette].some(x => x !== undefined);

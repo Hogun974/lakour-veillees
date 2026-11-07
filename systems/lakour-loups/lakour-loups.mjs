@@ -31,6 +31,7 @@ import { brancherInfobulle } from "./scripts/infobulle.mjs";
 import { brancherSalons, rafraichirSalons } from "./scripts/salons.mjs";
 import { brancherImmersion } from "./scripts/immersion.mjs";
 import { brancherActivite, brancherCrochetsActivite, verifierActivite } from "./scripts/activite.mjs";
+import { brancherCameras, actualiserCameras } from "./scripts/cameras.mjs";
 
 // ------------------------------------------------------------------ rafraîchissement des fenêtres
 // Une fiche où l'on écrit (notes ouvertes dans l'éditeur, champ actif) n'est pas redessinée : le texte en cours serait perdu.
@@ -38,6 +39,8 @@ const enSaisie = appli => Boolean(appli.element?.querySelector?.("prose-mirror[o
 let voteEtaitOuvert = false;
 function quandEtatChange() {
   if (!game.ready) return;
+  // La caméra de chacun (la nuit, les morts, les absents… : scripts/cameras.mjs), d'après l'état public, dans ce navigateur.
+  actualiserCameras();
   const etat = lireEtat();
   // Une nouvelle partie : le carnet secret de ce navigateur repart de zéro.
   if (!game.user.isGM && etat.partie !== mesSecrets().partie) chargerPrive(etat.partie);
@@ -120,6 +123,8 @@ Hooks.once("init", () => {
 // ------------------------------------------------------------------ prêt : API, socket
 Hooks.once("setup", () => {
   game.lakourLoups = api;
+  // La règle des caméras, posée dans le moteur avant que Foundry ne connecte l'A/V (scripts/cameras.mjs).
+  brancherCameras();
 });
 
 Hooks.once("ready", () => {

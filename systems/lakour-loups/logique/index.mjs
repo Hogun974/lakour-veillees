@@ -44,3 +44,4 @@ export * from "./gazette.mjs";
 export * from "./politiques.mjs";
 export * from "./prenoms.mjs";
 export * from "./preparation.mjs";
+export * from "./cameras.mjs";

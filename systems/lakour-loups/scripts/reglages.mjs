@@ -10,6 +10,7 @@ import { oublierSecrets } from "./secrets.mjs";
 import { oublierPrive } from "./prive.mjs";
 import { oublierSalons, quandReglageSalons } from "./salons.mjs";
 import { oublierCoffre, surCoffreChange } from "./coffre.mjs";
+import { actualiserCameras } from "./cameras.mjs";
 
 export function enregistrerReglages(quandEtatChange) {
   oublierSecrets();
@@ -71,6 +72,17 @@ export function enregistrerReglages(quandEtatChange) {
   game.settings.register(ID, "salonsAutomatiques", {
     name: "LAKOUR_LOUPS.Reglages.SalonsAutomatiques.Nom", hint: "LAKOUR_LOUPS.Reglages.SalonsAutomatiques.Aide",
     scope: "world", config: true, type: Boolean, default: true, onChange: () => quandReglageSalons()
+  });
+  // Les caméras (scripts/cameras.mjs, avec le moteur MJ IA) : la caméra d'un joueur remplacée par une image la nuit (tous les
+  // vivants), pour les morts, les spectateurs, les absents du jour de la Gazette et les réduits au silence (jour, vote) ; sa piste
+  // vidéo ne part plus. L'image : vide = celle du module de contenu (assets/camera/loup-garou.webp, repli loup-garou.svg).
+  game.settings.register(ID, "cameraRemplacee", {
+    name: "LAKOUR_LOUPS.Reglages.CameraRemplacee.Nom", hint: "LAKOUR_LOUPS.Reglages.CameraRemplacee.Aide",
+    scope: "world", config: true, type: Boolean, default: true, onChange: () => actualiserCameras()
+  });
+  game.settings.register(ID, "imageCamera", {
+    name: "LAKOUR_LOUPS.Reglages.ImageCamera.Nom", hint: "LAKOUR_LOUPS.Reglages.ImageCamera.Aide",
+    scope: "world", config: true, type: String, filePicker: "image", default: "", onChange: () => actualiserCameras()
   });
   // Agir par la carte (bandeau et clics sur les jetons) ; sinon, les fenêtres de choix et de vote s'ouvrent comme avant.
   game.settings.register(ID, "plateauInteractif", {

@@ -14,7 +14,9 @@ La carte (`assets/cartes/`) est dessinée par programme : rendu commun des carte
 
 L'illustration de l'écran d'accueil (`assets/monde/`) et celles des veillées de fête (`assets/fetes/<fête>.jpg` : halloween, noel,
 carnaval, saint-valentin) ont été générées localement avec ComfyStudio (FLUX.2 klein 9B), sans service distant, pour l'usage
-privé de la table.
+privé de la table. De même pour l'image qui remplace la caméra d'un joueur quand le jeu la coupe (`assets/camera/loup-garou.webp` :
+un loup hurlant devant la lune, dans un médaillon de fer forgé) ; son repli `assets/camera/loup-garou.svg` est dessiné à la main,
+sans image extérieure.
 
 ## Icônes des jetons
 

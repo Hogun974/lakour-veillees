@@ -51,7 +51,7 @@ Either way, **no player has to give up their seat** to be the narrator, and **no
 browser**: what they must not know is never sent to them.
 
 **Transparency.** The code and the texts in this repository were written with the help of an AI (Claude, by
-Anthropic) and reviewed by the author. The illustrations (world welcome screen, festive vigils) are AI-generated, locally
+Anthropic) and reviewed by the author. The illustrations (world welcome screen, festive vigils, the picture that replaces a cut camera) are AI-generated, locally
 (FLUX.2 klein 9B in ComfyStudio); the village map and the tokens are not (see [Credits](#credits)).
 
 This repository holds three pieces:
@@ -418,7 +418,7 @@ change:
 - Token silhouettes: icons from **[game-icons.net](https://game-icons.net)** (Caro Asercion, Cathelineau, DarkZaitzev,
   Delapouite, Lorc, Skoll), **CC BY 3.0** licence, recoloured and set in a medallion; the icon-by-icon list is in
   [`modules/lakour-veillees/CREDITS.md`](modules/lakour-veillees/CREDITS.md).
-- Illustrations (world welcome screen, festive vigils): **AI-generated**, locally by the author (FLUX.2 klein 9B in
+- Illustrations (world welcome screen, festive vigils, the cut-camera picture): **AI-generated**, locally by the author (FLUX.2 klein 9B in
   ComfyStudio), without any remote service.
 - Village map: drawn by code, no external image. Ambient sounds: synthesised loops from the shared engine.
 - **An original game of the werewolf family** (social-deduction games born from the traditional game *Mafia*): nothing is

@@ -434,6 +434,14 @@
         "Nom": "Channel of the dead",
         "Aide": "The dead may talk among themselves: the active GM relays their messages to the dead and the GMs only (no chat message, which Foundry would deliver to everyone). Otherwise, they can only write to the GM."
       },
+      "CameraRemplacee": {
+        "Nom": "Cameras replaced by the werewolf",
+        "Aide": "With Foundry built-in video and the AI GM: a player's camera is replaced by a picture for everyone, and their browser stops sending it, at night (every living player, eyes closed), when they are dead or a spectator, away for the day (The Moon Gazette) or silenced during the debate and the vote. It comes back by itself afterwards, if the GM allows cameras (AI GM setting). The microphone follows the voice rooms. The GM is never replaced."
+      },
+      "ImageCamera": {
+        "Nom": "Picture in place of a camera",
+        "Aide": "Empty: the content module's werewolf (assets/camera/loup-garou.webp, with its loup-garou.svg fallback). Otherwise a picture of your choice; if it cannot be found, the fallback then the player's avatar are shown."
+      },
       "SalonsAutomatiques": {
         "Nom": "Automatic voice rooms",
         "Aide": "With Foundry built-in voice (A/V): at night only the wolves talk to each other; the dead speak only to the dead; a silenced player stays quiet during the debate and the vote. Each browser mutes what it must not hear, and its own microphone when it must stay quiet. The GM always hears everything. Unchecked: everyone talks to everyone."

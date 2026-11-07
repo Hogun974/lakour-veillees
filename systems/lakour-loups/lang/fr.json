@@ -434,6 +434,14 @@
         "Nom": "Canal des morts",
         "Aide": "Les morts peuvent parler entre eux : le MJ actif relaie leurs messages aux seuls morts et MJ (aucun message de chat, que Foundry livrerait à tous). Sinon, ils ne peuvent plus qu'écrire au MJ."
       },
+      "CameraRemplacee": {
+        "Nom": "Caméras remplacées par le loup-garou",
+        "Aide": "Avec la vidéo intégrée de Foundry et le MJ IA : la caméra d'un joueur est remplacée par une image chez tous, et son navigateur cesse de l'envoyer, la nuit (tous les vivants, yeux fermés), quand il est mort ou spectateur, absent du jour (La Gazette de la lune) ou réduit au silence pendant le débat et le vote. Elle revient d'elle-même ensuite, si le MJ permet les caméras (réglage du MJ IA). Le micro suit les salons vocaux. Le MJ n'est jamais remplacé."
+      },
+      "ImageCamera": {
+        "Nom": "Image à la place d'une caméra",
+        "Aide": "Vide : le loup-garou du module de contenu (assets/camera/loup-garou.webp, et son repli loup-garou.svg). Une image de votre choix sinon ; introuvable, le repli puis l'avatar du joueur s'affichent."
+      },
       "SalonsAutomatiques": {
         "Nom": "Salons vocaux automatiques",
         "Aide": "Avec la voix intégrée de Foundry (A/V) : la nuit, seuls les loups se parlent ; les morts ne parlent qu'aux morts ; un joueur réduit au silence se tait pendant le débat et le vote. Chaque navigateur coupe ce qu'il ne doit pas entendre, et son micro quand il doit se taire. Le MJ entend toujours tout. Décoché : tout le monde parle à tout le monde."

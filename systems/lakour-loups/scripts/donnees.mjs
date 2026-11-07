@@ -12,6 +12,8 @@ import { aSonSouffle } from "../logique/souffle.mjs";
 import { normaliserFiche } from "../logique/fiches.mjs";
 import { libelleDeRepere, repereDe } from "../logique/reperes.mjs";
 import { remplir } from "../logique/grammaire.mjs";
+import { genreDuPrenom } from "../logique/prenoms.mjs";
+import { libelleDeLaComposition } from "../logique/composition.mjs";
 import { estMJActif } from "./canal.mjs";
 import { secretsMJ } from "./secrets.mjs";
 import { mesSecrets } from "./prive.mjs";
@@ -20,7 +22,43 @@ import { secretsAJour } from "./coffre.mjs";
 // Avec des données, le gabarit est rempli par logique/grammaire.mjs plutôt que par game.i18n.format : élision au point
 // d'insertion (« on raconte qu'une seule maison », « que d'Anne ») et accord en nombre (« 1 tour », « 2 tours »).
 // Les gabarits .hbs passent par le même chemin (assistant {{loupsT}}, enregistré par lakour-loups.mjs).
-export const t = (cle, donnees) => (donnees ? remplir(game.i18n.localize(cle), donnees, { langue: game.i18n.lang ?? "fr" }) : game.i18n.localize(cle));
+// L'accord en genre (« [il|elle] », « exécuté[|e] ») suit le villageois qu'une donnée nomme : genreDuNom.
+// Une donnée « genre » (« femme » / « homme ») accorde ce qui ne nomme personne : « [vieux|vieille] », une cause de mort.
+export const t = (cle, donnees) => (donnees ? remplir(game.i18n.localize(cle), donnees, { langue: game.i18n.lang ?? "fr", genreDe: genreDuNom, genre: donnees.genre })
+  : game.i18n.localize(cle));
+// Le genre d'un villageois : ses traits visibles (publics, tirés à la distribution), sinon le trait posé à la main sur l'acteur (drapeau
+// « traits »), sinon son prénom (logique/prenoms.mjs) ; "" s'il n'en a pas, ou si la valeur ne nomme personne.
+export function genreDeLActeur(acteur) {
+  if (!acteur) return "";
+  let traits = null;
+  try { traits = game.settings.get(ID, "partie")?.traits ?? null; } catch { traits = null; }
+  const g = traits?.[acteur.id]?.genre || acteur.flags?.[ID]?.traits?.genre || "";
+  return g === "femme" || g === "homme" ? g : genreDuPrenom(acteur.name);
+}
+// Le libellé d'une composition (etat.composition : sa clé) pour l'en-tête de la Table : « composition générée », « Le Pacte — 8 joueurs,
+// composition prête » ; jamais la clé brute (logique/composition.mjs, libelleDeLaComposition).
+export function libelleDeComposition(cle) {
+  const l = libelleDeLaComposition(cle);
+  if (!l) return "";
+  const base = `LAKOUR_LOUPS.Table.Composition.${l.cle}`;
+  if (!l.donnees) return t(base);
+  return t(base, { ...l.donnees, ...(l.donnees.niveau ? { niveau: t(`LAKOUR_LOUPS.Table.Composition.Niveaux.${l.donnees.niveau}`) } : {}) });
+}
+// Le titre d'une personnalité du Village (p : sa clé), accordé au genre de qui la porte : « la Cabaretière », « le Fournier » (forme
+// Femme ou Homme du dictionnaire quand elle existe ; sinon le Nom, celui du livre : la Fournière, le Prieur…).
+export function titreDePersonnalite(p, acteur = null) {
+  if (!p) return "";
+  const cle = `LAKOUR_LOUPS.Village.Personnalites.${p}`;
+  const g = genreDeLActeur(acteur);
+  const forme = g === "femme" ? `${cle}.Femme` : g === "homme" ? `${cle}.Homme` : "";
+  return t(forme && game.i18n.has(forme) ? forme : `${cle}.Nom`);
+}
+export function genreDuNom(valeur) {
+  const nom = String(valeur ?? "").trim();
+  if (!nom || typeof valeur === "number") return "";
+  const acteur = game.actors?.find?.(a => a.type === "villageois" && a.name === nom) ?? null;
+  return acteur ? genreDeLActeur(acteur) : genreDuPrenom(nom);
+}
 // Le libellé AFFICHÉ d'une maison ou d'un repère de la carte (« Maison 7 » -> « House 7 » en anglais, logique/reperes.mjs) :
 // pour les fiches, l'infobulle, la Table, le vote, les choix et la carte de rôle. Les clés (system.maison, system.repere) ne
 // changent jamais : le plateau et le MJ IA les lisent par nom.
@@ -152,9 +190,10 @@ export function roleVisible(acteur, user = game.user) {
 // Libellés localisés.
 export const libellePhase = p => t(`LAKOUR_LOUPS.Phases.${p}`);
 export const libelleCamp = c => (c ? t(`LAKOUR_LOUPS.Camps.${c}`) : "");
-export function libelleCause(c) {
+// genre (« femme » / « homme ») : celui du mort, pour l'accord (« emportée avec la sagesse de l'Aïeul »).
+export function libelleCause(c, genre = "") {
   const cle = `LAKOUR_LOUPS.Causes.${c}`;
-  return game.i18n.has(cle) ? t(cle) : (c || t("LAKOUR_LOUPS.Causes.narrateur"));
+  return game.i18n.has(cle) ? t(cle, { genre }) : (c || t("LAKOUR_LOUPS.Causes.narrateur"));
 }
 // etat : l'état de la partie (complet chez le MJ, public ailleurs, où la peste noire n'apparaît qu'à la fin).
 export function libelleVainqueur(v, etat = null) {

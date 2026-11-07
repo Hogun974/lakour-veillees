@@ -61,7 +61,7 @@ import { sceller, coffreDisponible, exigerSecretsAJour, ecritureBloquee, changem
 import { noterMonVote } from "./prive.mjs";
 import {
   t, texteBrut, tousLesVillageois, roleDe, roleRevele, campDe, amoureuxDe, metierDe, aPlat, villageoisAPlat, lireEtat, lirePublic, monVillageois,
-  clesDesBatiments, libellePhase, libelleCamp, libelleCause, libelleRepere, libelleVainqueur, maisonNumerotee
+  clesDesBatiments, libellePhase, libelleCamp, libelleCause, libelleRepere, libelleVainqueur, maisonNumerotee, genreDeLActeur, titreDePersonnalite
 } from "./donnees.mjs";
 import { ouvrirChoix, fermerChoix } from "./apps/choix.mjs";
 import { audibilite, audibiliteActeur, rafraichirSalons } from "./salons.mjs";
@@ -702,15 +702,16 @@ export function ligneDuRegistre(x) {
     case "deuil": return t("LAKOUR_LOUPS.Registre.Deuil", { tour, n: x.compte });
     case "fete": return t(`LAKOUR_LOUPS.Registre.Fete.${["neige", "defile"].includes(x.quoi) ? x.quoi : "ouverture"}`,
       { tour, fete: L.cleDeFete(x.cle) ? nomDeFete(x.cle) : "", role: x.nom || (x.role ? nomDeRole(x.role) : "") });
-    case "mort": return t("LAKOUR_LOUPS.Registre.Mort", { tour, nom: nom(x.acteurId), cause: libelleCause(x.cause) });
+    case "mort": return t("LAKOUR_LOUPS.Registre.Mort", { tour, nom: nom(x.acteurId), cause: libelleCause(x.cause, genreDeLActeur(game.actors.get(x.acteurId))) });
     case "bailli": return t(`LAKOUR_LOUPS.Registre.Bailli.${x.comment}`, { tour, nom: nom(x.acteurId), de: x.de ? nom(x.de) : "" });
     case "declaration": return t("LAKOUR_LOUPS.Registre.Declaration", { tour, nom: nom(x.acteurId), texte: x.texte });
     // Le Pacte (logique/pacte.mjs) : grâce, sagesse perdue, votants du Souffre-douleur, plume, oies, second vote.
     case "pacte": return game.i18n.has(`LAKOUR_LOUPS.Registre.Pacte.${x.quoi}`)
       ? t(`LAKOUR_LOUPS.Registre.Pacte.${x.quoi}`, { tour, nom: x.acteurId ? nom(x.acteurId) : "", noms: (x.ids ?? []).map(nom).join(", ") }) : "";
     // Le Village (logique/personnalites.mjs) : distribution, logements, incendies, pouvoirs des personnalités.
+    // Le Hobereau qui se gracie lui-même : « se gracie lui-même », pas « gracie » son propre nom.
     case "village": return game.i18n.has(`LAKOUR_LOUPS.Registre.Village.${x.quoi}`)
-      ? t(`LAKOUR_LOUPS.Registre.Village.${x.quoi}`, { tour, nom: x.acteurId ? nom(x.acteurId) : "", noms: (x.ids ?? []).map(nom).join(", "),
+      ? t(`LAKOUR_LOUPS.Registre.Village.${x.quoi === "grace" && x.acteurId && (x.ids ?? []).length === 1 && x.ids[0] === x.acteurId ? "graceSoi" : x.quoi}`, { tour, nom: x.acteurId ? nom(x.acteurId) : "", noms: (x.ids ?? []).map(nom).join(", "),
         batiment: x.cle && game.i18n.has(`LAKOUR_LOUPS.Batiments.${x.cle}`) ? t(`LAKOUR_LOUPS.Batiments.${x.cle}`) : x.cle ?? "" }) : "";
     // Les variantes (logique/variantes.mjs) : les chandelles d'une meute en désaccord, le Bailli des Vendanges, la chute des envoûtés.
     case "variante": return game.i18n.has(`LAKOUR_LOUPS.Registre.Variante.${x.quoi}`)
@@ -1373,7 +1374,9 @@ function annoncesDesAmbigus(etat) {
 // ------------------------------------------------------------------ la variante « Le Village » (logique/personnalites.mjs)
 // Tout y est public : chat, Registre (type « village »), hook lakourLoups.village ({ quoi, acteurId?, ids?, cle? }).
 const nomDuBatiment = cle => (game.i18n.has(`LAKOUR_LOUPS.Batiments.${cle}`) ? t(`LAKOUR_LOUPS.Batiments.${cle}`) : cle);
-const nomDePersonnalite = p => (p ? t(`LAKOUR_LOUPS.Village.Personnalites.${p}.Nom`) : "");
+// Le titre d'une personnalité, accordé au genre de qui la porte (acteurId : « la Cabaretière », « le Fournier ») : la forme Femme ou
+// Homme du dictionnaire quand elle existe, sinon le Nom (celui du livre : la Fournière, le Prieur…).
+const nomDePersonnalite = (p, acteurId = "") => titreDePersonnalite(p, acteurId ? game.actors.get(acteurId) : null);
 // Un fait public de la variante : journal, Registre, chat, hook. entree : { quoi, acteurId?, ids?, cle? }.
 async function annoncerAuVillage(texte, entree = null) {
   await modifierEtat(e => {
@@ -1387,7 +1390,7 @@ async function annoncerAuVillage(texte, entree = null) {
 // La distribution des bâtiments, annoncée à tous : qui tient quoi (sa personnalité), et les Chemineaux.
 function texteDuVillage(etat) {
   const lignes = Object.entries(etat.tenures).filter(([cle, id]) => id && L.estDuVillage(cle))
-    .map(([cle, id]) => t("LAKOUR_LOUPS.Village.Ligne", { nom: nomDe(id), batiment: nomDuBatiment(cle), personnalite: nomDePersonnalite(L.personnaliteDuBatiment(cle)) }));
+    .map(([cle, id]) => t("LAKOUR_LOUPS.Village.Ligne", { nom: nomDe(id), batiment: nomDuBatiment(cle), personnalite: nomDePersonnalite(L.personnaliteDuBatiment(cle), id) }));
   const sans = L.chemineaux(etat, villageoisAPlat()).map(nomDe);
   return [t("LAKOUR_LOUPS.Village.Annonce", { lignes: lignes.join(" ; ") || "—" }),
     sans.length ? t("LAKOUR_LOUPS.Village.Chemineaux", { noms: sans.join(", ") }) : ""].filter(Boolean).join(" ");
@@ -1431,7 +1434,8 @@ async function demanderLaGrace({ partie, numero, condamne }) {
     return false;
   }
   await modifierEtat(e => L.gracierParLeHobereau(e, { acteurId: condamne, par: h, numero }));
-  await annoncerAuVillage(t("LAKOUR_LOUPS.Village.Grace", { nom: nomC, hobereau: nomH }), { quoi: "grace", acteurId: h, ids: [condamne] });
+  // Le Hobereau condamné qui se gracie lui-même : « se gracie lui-même (elle-même) », pas « gracie <son propre nom> ».
+  await annoncerAuVillage(t(h === condamne ? "LAKOUR_LOUPS.Village.GraceSoi" : "LAKOUR_LOUPS.Village.Grace", { nom: nomC, hobereau: nomH }), { quoi: "grace", acteurId: h, ids: [condamne] });
   return true;
 }
 // Le condamné a-t-il été gracié par le Hobereau ? (eliminer, cause « vote » : attend la réponse, au plus deux fenêtres)
@@ -1512,7 +1516,7 @@ async function menerVacances() {
     if (prevot && sans.length && !L.occupant(avant, cle)) {
       [choisi = ""] = await demandeLibre({ acteurId: prevot, invite: t("LAKOUR_LOUPS.Village.InvitePrevot", { batiment, personnalite }), candidats: sans, nombre: 1, objet: "prevot" });
       if (choisi) {
-        const [oui] = await demandeLibre({ acteurId: choisi, invite: t("LAKOUR_LOUPS.Village.InviteLogement", { batiment, personnalite, nom: nomDe(prevot) }),
+        const [oui] = await demandeLibre({ acteurId: choisi, invite: t("LAKOUR_LOUPS.Village.InviteLogement", { batiment, personnalite: nomDePersonnalite(L.personnaliteDuBatiment(cle), choisi), nom: nomDe(prevot) }),
           candidats: [choisi], nombre: 1, objet: "logement" });
         accepte = oui === choisi;
       }
@@ -1528,7 +1532,7 @@ async function menerVacances() {
       return e;
     });
     if (fait) {
-      await annoncerAuVillage(t("LAKOUR_LOUPS.Village.Installation", { prevot: nomDe(prevot), nom: nomDe(choisi), batiment, personnalite }),
+      await annoncerAuVillage(t("LAKOUR_LOUPS.Village.Installation", { prevot: nomDe(prevot), nom: nomDe(choisi), batiment, personnalite: nomDePersonnalite(L.personnaliteDuBatiment(cle), choisi) }),
         { quoi: "installation", acteurId: choisi, cle, ids: [prevot] });
     } else if (choisi) {
       await annoncerAuVillage(t("LAKOUR_LOUPS.Village.Refus", { nom: nomDe(choisi), batiment }), { quoi: "refus", acteurId: choisi, cle });
@@ -2133,11 +2137,18 @@ async function annoncerGazette(texte, entree = null) {
 // Les traits d'un personnage, en clair (« femme, jeune (24 ans), lunettes, habite le bourg »).
 function texteDesTraits(tr) {
   const x = L.normaliserTrait(tr);
-  return [t(`LAKOUR_LOUPS.Traits.Genre.${x.genre}`), t(`LAKOUR_LOUPS.Traits.Age.${x.age}`, { ans: x.ans }),
+  return [t(`LAKOUR_LOUPS.Traits.Genre.${x.genre}`), t(`LAKOUR_LOUPS.Traits.Age.${x.age}`, { ans: x.ans, genre: x.genre }),
     ...L.TRAITS_OUI_NON.filter(c => x[c]).map(c => t(`LAKOUR_LOUPS.Traits.${c}`)), t(x.bourg ? "LAKOUR_LOUPS.Traits.Bourg" : "LAKOUR_LOUPS.Traits.Ecart")].join(", ");
 }
-// Un trait posé à la main sur l'acteur (drapeau « traits » du système : un portrait, un genre choisi) est respecté.
-const traitsImposes = acteur => { const x = acteur?.flags?.[ID]?.traits; return x && typeof x === "object" ? x : null; };
+// Un trait posé à la main sur l'acteur (drapeau « traits » du système : un portrait, un genre choisi) est respecté ; sans genre posé, un
+// prénom connu (logique/prenoms.mjs : « Ondine », « Félicien ») donne le sien. L'âge et le reste se tirent.
+const traitsImposes = acteur => {
+  const x = acteur?.flags?.[ID]?.traits;
+  const pose = x && typeof x === "object" ? x : null;
+  if (L.GENRES.includes(pose?.genre)) return pose;
+  const genre = L.genreDuPrenom(acteur?.name);
+  return genre ? { ...(pose ?? {}), genre } : pose;
+};
 
 // Une carte posée (lue au matin par le dernier éliminé, par le Crieur, par le narrateur) : ses événements, son annonce, ses gestes.
 async function poserUneCarte(cle, { lecteur = "", source = "gazette" } = {}) {
@@ -2739,7 +2750,11 @@ export const api = {
       const nomCompagnon = compagnon ? nomsCompagnons[indexCompagnon] : "";
       const reserve = compagnon ? placesIA[indexCompagnon].acteurId : "";
       let acteur = compagnon ? (reserve ? game.actors.get(reserve) : anciensCompagnons.shift()) : tousLesVillageois().find(a => a.system.joueur === att.joueur);
-      if (acteur && compagnon && acteur.name !== nomCompagnon) await acteur.update({ name: nomCompagnon, "prototypeToken.name": nomCompagnon });
+      // Un compagnon renommé : le genre posé pour son ancien nom suit le nouveau prénom (vide s'il est inconnu : le tirage décide).
+      if (acteur && compagnon && acteur.name !== nomCompagnon) {
+        await acteur.update({ name: nomCompagnon, "prototypeToken.name": nomCompagnon,
+          ...(acteur.flags?.[ID]?.traits?.genre ? { [`flags.${ID}.traits.genre`]: L.genreDuPrenom(nomCompagnon) } : {}) });
+      }
       if (acteur) {
         const anciens = acteur.items.filter(i => i.type === "role" || i.type === "metier").map(i => i.id);
         if (anciens.length) await acteur.deleteEmbeddedDocuments("Item", anciens);
@@ -3874,7 +3889,7 @@ export const api = {
     // Le Village : un Métayer qui meurt (le dernier ? la charge de Bailli tombe avec lui).
     const etaitMetayer = L.estMetairie(L.batimentDe(lireEtat(), acteurId));
     await acteur.update({ "system.vivant": false, ...(montrer ? { "system.revele": true } : {}) });
-    await modifierEtat(e => L.journaliser(L.ajouterMort(e, { acteurId, cause }), t("LAKOUR_LOUPS.Journal.Mort", { nom: acteur.name, cause: libelleCause(visible) })));
+    await modifierEtat(e => L.journaliser(L.ajouterMort(e, { acteurId, cause }), t("LAKOUR_LOUPS.Journal.Mort", { nom: acteur.name, cause: libelleCause(visible, genreDeLActeur(acteur)) })));
     await abolirSansMetayer(acteurId, etaitMetayer);
     // Un geste fait par le MJ (Braconnière : il emporte à sa place) : la demande au mourant se ferme (logique/derniers-gestes.mjs).
     fermerGestes(cause);
@@ -3886,8 +3901,8 @@ export const api = {
     const infos = { acteurId, revele: montrer, roleCle: montrer ? (role?.system.cle ?? "") : "" };
     annoncer("lakourLoups.elimination", [{ ...infos, cause }], [{ ...infos, cause: visible }]);
     await annonceChat(montrer && role
-      ? t("LAKOUR_LOUPS.Messages.MortRevele", { nom: echapper(acteur.name), role: echapper(role.name), cause: echapper(libelleCause(visible)) })
-      : t("LAKOUR_LOUPS.Messages.Mort", { nom: echapper(acteur.name), cause: echapper(libelleCause(visible)) }));
+      ? t("LAKOUR_LOUPS.Messages.MortRevele", { nom: echapper(acteur.name), role: echapper(role.name), cause: echapper(libelleCause(visible, genreDeLActeur(acteur))) })
+      : t("LAKOUR_LOUPS.Messages.Mort", { nom: echapper(acteur.name), cause: echapper(libelleCause(visible, genreDeLActeur(acteur))) }));
     // Les variantes : Double visage (grande complication), la seconde carte se retourne aussi ; la Veillée aux chandelles, la sienne
     // s'éteint (adaptation en ligne : la chandelle de sa carte, à la Table de jeu).
     const seconde = L.normaliserFiche(lireEtat().fiches?.[acteurId]).seconde;
@@ -4472,7 +4487,7 @@ export const api = {
       batiments: cles.map(cle => {
         const id = L.occupant(e, cle);
         const p = L.personnaliteDuBatiment(cle);
-        return { cle, nom: nomDuBatiment(cle), personnalite: p, titre: nomDePersonnalite(p), aide: t(`LAKOUR_LOUPS.Village.Personnalites.${p}.Aide`),
+        return { cle, nom: nomDuBatiment(cle), personnalite: p, titre: nomDePersonnalite(p, id), aide: t(`LAKOUR_LOUPS.Village.Personnalites.${p}.Aide`),
           pouvoir: L.BATIMENTS_DU_VILLAGE[cle].pouvoir, acteurId: id, occupant: id ? nomDe(id) : "", disponible: Boolean(id) && L.pouvoirIntact(e, cle, id) };
       }),
       detruits: v.detruits.map(cle => ({ cle, nom: nomDuBatiment(cle) })),
@@ -4485,7 +4500,7 @@ export const api = {
     const e = lirePublic();
     const p = L.personnaliteDe(e, acteurId);
     if (!p) return null;
-    return { cle: L.batimentDe(e, acteurId), personnalite: p, titre: nomDePersonnalite(p), aide: t(`LAKOUR_LOUPS.Village.Personnalites.${p}.Aide`),
+    return { cle: L.batimentDe(e, acteurId), personnalite: p, titre: nomDePersonnalite(p, acteurId), aide: t(`LAKOUR_LOUPS.Village.Personnalites.${p}.Aide`),
       batiment: L.batimentDe(e, acteurId) ? nomDuBatiment(L.batimentDe(e, acteurId)) : "" };
   },
   // Le narrateur confie un bâtiment du village à un vivant (avant la première nuit : changer la proposition ; ensuite : une correction).
@@ -4510,7 +4525,7 @@ export const api = {
       return e;
     });
     const texte = acteurId
-      ? t("LAKOUR_LOUPS.Village.Change", { nom: nomDe(acteurId), batiment: nomDuBatiment(cle), personnalite: nomDePersonnalite(L.personnaliteDuBatiment(cle)) })
+      ? t("LAKOUR_LOUPS.Village.Change", { nom: nomDe(acteurId), batiment: nomDuBatiment(cle), personnalite: nomDePersonnalite(L.personnaliteDuBatiment(cle), acteurId) })
       : t("LAKOUR_LOUPS.Village.Libere", { nom: nomDe(ancien), batiment: nomDuBatiment(cle) });
     await annoncerAuVillage(texte);
     annoncer("lakourLoups.village", [{ quoi: "changement", acteurId: acteurId || ancien, cle }]);

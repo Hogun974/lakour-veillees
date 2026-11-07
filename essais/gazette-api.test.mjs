@@ -525,7 +525,7 @@ const VERIFICATIONS = {
     const m2 = messages.length;
     for (const a of villageois().filter(x => x.system.vivant && x.id !== loup.id && x.id !== vs[1].id).slice(0, 3)) await M.api.eliminer(a.id, { cause: "narrateur" });
     await M.api.verifierVictoire();
-    if (pub().vainqueur === "meute") assert.match(chat(m2), new RegExp(`${vs[1].name}, allié secret de la meute, gagne avec elle`));
+    if (pub().vainqueur === "meute") assert.match(chat(m2), new RegExp(`${vs[1].name}, alliée? secrète? de la meute, gagne avec elle`));
     void k2;
   },
 

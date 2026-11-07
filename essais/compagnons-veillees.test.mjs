@@ -157,7 +157,9 @@ test("un villageois compagnon ne voit pas l'état secret de la nuit : ni qui la 
 test("la vue suit l'état PUBLIC : un mort ou un muet ne parle pas, la nuit personne ne parle ; le prompt ne contient que la vue", async () => {
   const v = compagnons.vue(B);
   assert.deepEqual(Object.keys(v).sort(), ["allies", "autres", "fiche", "id", "jeu", "monde", "nom", "peutParler", "personnalite", "prive", "public", "scene", "suspects", "tour", "vivant", "humains", "petiteTablee", "langue",
-    "roleCle", "effet", "camp"].sort());
+    "roleCle", "effet", "camp", "partie"].sort());
+  // La partie (l'identifiant public de etat.partie) : les répliques sans modèle ne se répètent pas dans une partie (moteur, novembre 2026).
+  assert.equal(v.partie, game.lakourLoups.etat().partie);
   // Le moteur 27e7559 (Le Pacte) : la clé, l'effet et le camp de SA propre carte, pour les politiques de jeu du système quand il décide
   // sans modèle — jamais ceux d'un autre, et rien de cela n'entre dans ce qu'on envoie au modèle (aucune clé brute).
   for (const a of [A, B]) {

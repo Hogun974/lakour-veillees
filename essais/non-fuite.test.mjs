@@ -100,7 +100,7 @@ function crible(etat) {
   const crieur = p.gazette?.crieur?.acteurId ?? "";
   // Le Pacte, étape 4 : la carte que le Prieur a vue, ce qu'a entrevu la Fournière, jamais au chat ; le hook public du village ne
   // porte que ce que la table voit.
-  for (const m of nouveauxMessages) if (/vous a montré sa carte|qui rentre chez lui en rasant les murs/.test(decoder(m.content))) fuite("*", "un secret du Prieur ou de la Fournière au chat");
+  for (const m of nouveauxMessages) if (/vous a montré sa carte|qui rentre chez (lui|elle) en rasant les murs/.test(decoder(m.content))) fuite("*", "un secret du Prieur ou de la Fournière au chat");
   // La Petite tablée : son annonce (chat) ne porte que des nombres, jamais un nom de villageois.
   for (const m of nouveauxMessages) {
     const t = decoder(m.content);
@@ -312,7 +312,7 @@ const PARTIES = [
     "aieul", "liseuse-de-cendres", "herboriste", "garde-du-pont", "villageois", "villageois", "villageois"] },
   // Le Pacte, étape 5 : le mode « Le Pacte » et les variantes du jeu de soirée (chandelles angoissantes, mur, envoûtement ; Double visage,
   // Vendanges, Chaîne des innocents), avec des compagnons IA.
-  { graine: "pacte-variantes-c", joueurs: 8, compagnons: 2, niveau: "le-pacte", variantes: { chandelles: true, angoissante: true, mur: true, envoutement: true } },
+  { graine: "pacte-variantes-d", joueurs: 8, compagnons: 2, niveau: "le-pacte", variantes: { chandelles: true, angoissante: true, mur: true, envoutement: true } },
   { graine: "pacte-visages", joueurs: 8, compagnons: 1, variantes: { doubleVisage: "petite", vendanges: true, chaine: true, mur: true } },
   // Le Pacte, étape 9 : la Gazette de la lune (une carte chaque matin), le Crieur public et ses cartes, la Liseuse d'étoiles et ses séances.
   { graine: "gazette", joueurs: 8, compagnons: 3, gazette: { actif: true, crieur: true, cartesDuCrieur: 3, permanentes: ["executeur", "enfouissement"] },
@@ -470,9 +470,9 @@ const MUTATIONS = [
   // Le Pacte, étape 5 : l'explication de la distribution, à son seul joueur.
   ["scripts/api.mjs", "  return envoyerSecret(acteur.id, { html: parties.join(\"\"),", "  return envoyerSecret(tousLesVillageois().find(x => x.system.joueur && x.id !== acteur.id)?.id ?? acteur.id, { html: parties.join(\"\"),", "explication : à son seul joueur", 0],
   // Le Pacte, étape 5 : les secrets des variantes hors de l'état public ; le mur sans auteur ; l'envoûtement à l'envoûté seul.
-  ["logique/etat.mjs", "  pub.variantesSecret = variantesSecretInitial();", "", "variantes : leurs secrets hors de l'état public", PARTIES.findIndex(p => p.graine === "pacte-variantes-c")],
-  ["scripts/api.mjs", "      if (texte) await modifierEtat(e => L.graverUnMurmure(e, texte));", "      if (texte) await modifierEtat(e => L.graverUnMurmure(e, \`\${nomDe(id)} : \${texte}\`));", "mur : sans auteur", PARTIES.findIndex(p => p.graine === "pacte-variantes-c")],
-  ["scripts/api.mjs", "    if (envoyer) for (const m of messages) await envoyerSecret(m.acteurId, { texte: m.texte });", "    if (envoyer) for (const m of messages) await envoyerSecret(m.texte.includes(\"envoûté\") ? villageoisAPlat().filter(v => v.vivant && v.joueur && v.id !== m.acteurId).at(-1)?.id ?? m.acteurId : m.acteurId, { texte: m.texte });", "envoûtement : à l'envoûté seul", PARTIES.findIndex(p => p.graine === "pacte-variantes-c")]
+  ["logique/etat.mjs", "  pub.variantesSecret = variantesSecretInitial();", "", "variantes : leurs secrets hors de l'état public", PARTIES.findIndex(p => p.graine === "pacte-variantes-d")],
+  ["scripts/api.mjs", "      if (texte) await modifierEtat(e => L.graverUnMurmure(e, texte));", "      if (texte) await modifierEtat(e => L.graverUnMurmure(e, \`\${nomDe(id)} : \${texte}\`));", "mur : sans auteur", PARTIES.findIndex(p => p.graine === "pacte-variantes-d")],
+  ["scripts/api.mjs", "    if (envoyer) for (const m of messages) await envoyerSecret(m.acteurId, { texte: m.texte });", "    if (envoyer) for (const m of messages) await envoyerSecret(m.texte.includes(\"envoûté\") ? villageoisAPlat().filter(v => v.vivant && v.joueur && v.id !== m.acteurId).at(-1)?.id ?? m.acteurId : m.acteurId, { texte: m.texte });", "envoûtement : à l'envoûté seul", PARTIES.findIndex(p => p.graine === "pacte-variantes-d")]
 ];
 
 async function chargerMutant(fichier, avant, apres) {

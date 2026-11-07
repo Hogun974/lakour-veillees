@@ -12,6 +12,9 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { pathToFileURL, fileURLToPath } from "node:url";
 import { installerFoundry, creerObjetMonde, emissions, journalHooks, reglages, envoyerAuMJ, calme, messages, ajouterScene, FR } from "./doublures/foundry-loups.mjs";
+import { remplir } from "../systems/lakour-loups/logique/grammaire.mjs";
+// Un gabarit rempli comme le fait le système (accordé au genre du villageois nommé : ses traits visibles, publics).
+const accorde = (gabarit, donnees, acteur) => remplir(gabarit, donnees, { genre: game.settings.get("lakour-loups", "partie")?.traits?.[acteur?.id]?.genre ?? "" });
 
 installerFoundry();
 const SYSTEME = fileURLToPath(new URL("../systems/lakour-loups/", import.meta.url));
@@ -207,7 +210,7 @@ const VERIFICATIONS = {
     assert.equal(x.system.vivant, false);
     assert.deepEqual(publicBrut().partis.map(p => [p.acteurId, p.comment]), [[x.id, "exil"]]);
     assert.ok(!publicBrut().morts.some(m => m.acteurId === x.id));
-    assert.ok(messages.slice(chat).some(m => m.content.includes(FR.LAKOUR_LOUPS.Passage.Exil.replace("{nom}", x.name))));
+    assert.ok(messages.slice(chat).some(m => m.content.includes(accorde(FR.LAKOUR_LOUPS.Passage.Exil, { nom: x.name }, x))));
     assert.ok(!messages.slice(chat).some(m => m.content.includes(FR.LAKOUR_LOUPS.Camps.meute)), "camp tu");
     ctx = await new M.table.TableDeJeu()._prepareContext();
     assert.equal(ctx.morts.find(f => f.id === x.id).parti, FR.LAKOUR_LOUPS.Passage.Exile.replace("{tour}", String(publicBrut().tour)));
@@ -266,13 +269,13 @@ const VERIFICATIONS = {
     await voter([[a, b], [c, b]]);
     let r = await M.api.cloreVote();
     assert.deepEqual(r.elus, [], "2 sur 6 : acquitté");
-    assert.ok(messages.some(m => m.content.includes(FR.LAKOUR_LOUPS.Banc.Acquitte.replace("{nom}", b.name).replace("{pour}", "2").replace("{total}", "6"))));
+    assert.ok(messages.some(m => m.content.includes(accorde(FR.LAKOUR_LOUPS.Banc.Acquitte, { nom: b.name, pour: 2, total: 6 }, b))));
     v = await M.api.ouvrirVote({ duree: 0 });
     assert.deepEqual(v.candidats, [d.id], "le suivant");
     await voter([[a, d], [b, d], [c, d]]);
     r = await M.api.cloreVote();
     assert.deepEqual(r.elus, [d.id]);
-    assert.ok(messages.some(m => m.content.includes(FR.LAKOUR_LOUPS.Banc.Condamne.replace("{nom}", d.name).replace("{pour}", "3").replace("{total}", "6"))));
+    assert.ok(messages.some(m => m.content.includes(accorde(FR.LAKOUR_LOUPS.Banc.Condamne, { nom: d.name, pour: 3, total: 6 }, d))));
     await M.api.eliminer(d.id, { cause: "vote" });
     await rejeter(M.api.ouvrirVote({ duree: 0 }), FR.LAKOUR_LOUPS.Banc.Refus.personne);
   },

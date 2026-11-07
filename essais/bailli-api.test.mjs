@@ -13,6 +13,9 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { pathToFileURL, fileURLToPath } from "node:url";
 import { installerFoundry, creerObjetMonde, emissions, reglages, envoyerAuMJ, calme, messages, FR } from "./doublures/foundry-loups.mjs";
+import { remplir } from "../systems/lakour-loups/logique/grammaire.mjs";
+// Un gabarit rempli comme le fait le système (accordé au genre du villageois nommé : ses traits visibles, publics).
+const accorde = (gabarit, donnees, acteur) => remplir(gabarit, donnees, { genre: game.settings.get("lakour-loups", "partie")?.traits?.[acteur?.id]?.genre ?? "" });
 
 installerFoundry();
 const SYSTEME = fileURLToPath(new URL("../systems/lakour-loups/", import.meta.url));
@@ -144,7 +147,7 @@ const VERIFICATIONS = {
     assert.equal(M.api.bailli().nom, elu.name);
     const hook = emissions.slice(n).find(e => e.type === "hook" && e.nom === "lakourLoups.bailli");
     assert.deepEqual(hook.args[0], { acteurId: elu.id, comment: "election" });
-    assert.ok(messages.slice(c).some(m => m.content.includes(B.Elu.replace("{nom}", elu.name))));
+    assert.ok(messages.slice(c).some(m => m.content.includes(accorde(B.Elu, { nom: elu.name }, elu))));
     assert.equal(M.api.etapeSuivante().cle, "ouvrirVote", "puis le vote d'exécution");
     await assert.rejects(() => M.api.ouvrirVote({ objet: "bailli" }), e => e.message === B.Refus.bailli);
   },

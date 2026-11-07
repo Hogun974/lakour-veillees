@@ -9,6 +9,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import * as P from "../systems/lakour-loups/logique/politiques.mjs";
+import * as G from "../systems/lakour-loups/logique/grammaire.mjs";
 import { POUVOIRS_JOUR, creerHasard, GESTES } from "../systems/lakour-loups/logique/index.mjs";
 import { ROLES } from "../modules/lakour-veillees/contenu/roles.mjs";
 import { EQUILIBRE } from "../modules/lakour-veillees/contenu/equilibre.mjs";
@@ -16,7 +17,8 @@ import { EQUILIBRE } from "../modules/lakour-veillees/contenu/equilibre.mjs";
 const FR = JSON.parse(readFileSync(new URL("../systems/lakour-loups/lang/fr.json", import.meta.url), "utf8")).LAKOUR_LOUPS;
 const EN = JSON.parse(readFileSync(new URL("../systems/lakour-loups/lang/en.json", import.meta.url), "utf8")).LAKOUR_LOUPS;
 const chemin = (o, p) => p.split(".").reduce((x, k) => x?.[k], o);
-const remplir = (g, d) => g.replace(/\{(\w+)\}/g, (_, k) => d[k]);
+// Les marques de genre (« chez [lui|elle] ») s'accordent ici au féminin : le lecteur des gabarits lit les deux formes.
+const remplir = (g, d) => G.remplir(g, d, { genre: "femme" });
 const NOMS = Object.fromEntries(ROLES.map(r => [r.name, r.system.cle]));
 const CAMPS = o => Object.fromEntries(Object.entries(o.Camps).map(([c, l]) => [l, c]));
 // Huit villageois : a (moi), b … h.

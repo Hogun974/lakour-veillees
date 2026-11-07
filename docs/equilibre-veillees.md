@@ -1,6 +1,7 @@
 # Équilibre des Veillées de Brumecombe
 
-*Le Pacte, étapes 6, 6b et 6c (novembre 2026). Les poids des rôles et la cible du générateur ne sont plus posés à la main : ils sont
+*Le Pacte, étapes 6, 6b et 6c (novembre 2026) ; puis la Liseuse de cendres dans toute composition du niveau Le Pacte (après les
+parties en vrai du 7 novembre, section « Le Pacte : la Liseuse de cendres dans toute composition »). Les poids des rôles et la cible du générateur ne sont plus posés à la main : ils sont
 mesurés par simulation. L'étape 6 les a calibrés avec des joueurs simulés parfaits (adresse 1) ; l'étape 6b les recalibre avec une
 **adresse par niveau**, celle d'une vraie soirée (débutants 0,5 ; classique et Le Pacte 0,75 ; chaos 1), retouche deux solitaires
 (Revenant, Chasseur de primes) et chiffre les variantes du livre que leur règle déséquilibre. L'étape 6c tranche ce que la 6b laissait
@@ -246,6 +247,44 @@ case de 120 parties ; 13 et 15 % dans le second échantillon.)
 Le reste ne bouge pas : chaos **51 %**, Le Pacte **48 %** (graine « 6c-apres », 200 parties par case, ±3 ; 51 et 49 % à l'étape 6b) ;
 de 42 à 56 % par case. Solitaires dans ces parties : Feu follet 10 %, Joueur de vielle 15 %, Illuminé 7 %, Chasseur de primes 16 %,
 Revenant 12 %.
+
+## Le Pacte : la Liseuse de cendres dans toute composition (novembre 2026, après les parties en vrai)
+
+Au jeu de soirée de Jordan, la Voyante est toujours là. Le générateur (`logique/composition.mjs`) met donc la **Liseuse de cendres** dans
+**toute** composition tirée du niveau « Le Pacte », dès 6 joueurs, comme il met déjà « au moins un rôle d'information » : `ROLES_DU_NIVEAU`
+(`{ "le-pacte": ["liseuse-de-cendres"] }`), inclus avant le dosage des pouvoirs du Village (la somme visée reste la cible : le
+générateur arme d'autant moins le reste du village). Les compositions prêtes `le-pacte-06` à `-18`, tirées par le générateur, l'ont
+toutes (avant : 7 sur 13). Une Liseuse exclue à la main reste exclue ; une composition choisie à la main et Double visage (son paquet)
+n'y passent pas ; avec le **Chapardeur**, la carte peut finir au centre (deux cartes de plus au paquet, la règle du livre) : 4 % des parties
+mesurées. Essai : `essais/accords-veillees.test.mjs` (le générateur à toutes les tailles, aux cibles extrêmes, les compositions prêtes ;
+exclue, elle reste exclue ; les autres niveaux ne l'imposent pas).
+
+**Recalibrage** (adresse 0,75 ; échelle 6,73) : deux seconds passages (`--corriger`) d'après deux validations des treize tailles
+(graines « liseuse-val1 » puis « liseuse-val2 », 200 parties par case), bornés à ce que le générateur atteint :
+
+| Le Pacte | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Cible avant (étape 6b) | +1 | +3 | +1 | +2 | +0 | -3 | -5 | -8 | -8 | -10 | -13 | -15 | -15 |
+| Meute, « liseuse-val1 » (Liseuse imposée, cibles d'avant) | 63 % | 58 % | 50 % | 42 % | 44 % | 48 % | 46 % | 53 % | 46 % | 51 % | 53 % | 47 % | 43 % |
+| Cible après le premier passage | +1 | +3 | +1 | +0 | -1 | -3 | -6 | -7 | -9 | -10 | -12 | -16 | -16 |
+| Meute, « liseuse-val2 » | 69 % | 51 % | 49 % | 59 % | 55 % | 50 % | 57 % | 50 % | 47 % | 45 % | 51 % | 56 % | 46 % |
+| **Cible retenue** | **+1** | **+3** | **+1** | **+2** | **+0** | **-3** | **-5** | **-7** | **-10** | **-11** | **-12** | **-15** | **-17** |
+| Ce que le générateur atteint | -5 à 1 | -4 à 3 | -12 à 9 | -19 à 3 | -27 à 3 | -25 à 3 | -26 à 11 | -32 à 5 | -29 à 8 | -30 à 10 | -36 à 4 | -35 à 6 | -31 à 9 |
+
+(6 joueurs : au plafond, comme avant.) **Mesure** (la part de la meute parmi les parties gagnées par la meute ou le village) — avant :
+le générateur sans la contrainte, cibles de l'étape 6b (graine « liseuse », 200 parties par case, ±7 points) ; après : la Liseuse imposée,
+cibles retenues (graine « liseuse », 400 parties par case, ±5 ; les 200 premières ont les mêmes graines que l'avant : 52 %) :
+
+| Le Pacte (adresse 0,75) | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | Toutes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Avant (Liseuse dans 53 % des parties) | 62 % | 52 % | 46 % | 48 % | 43 % | 49 % | 42 % | 50 % | 45 % | 51 % | 50 % | 49 % | 43 % | 48 % ±2 |
+| **Après** (Liseuse dans 96 %) | **63 %** | 51 % | 52 % | 52 % | **43 %** | 52 % | 48 % | 48 % | 49 % | 54 % | 51 % | 53 % | 51 % | **51 %** ±1 |
+
+Compositions prêtes (30 parties chacune, graine « liseuse », ±18 points par composition) : **49 %** (48 % avant ; 390 parties, ±5).
+Solitaires dans ces parties : Feu follet 7 %, Joueur de vielle 19 %, Illuminé 7 %, Loup pâle 0 %. Une partie sur 5 200 sans vainqueur
+en 30 tours. **Dans la fourchette** (50 ± 10) à toutes les tailles sauf **six joueurs (63 %)**, au plafond du générateur comme avant
+(62 %). Le poids de la Liseuse (+4) ne change pas ; mesurée à l'attribution par rôle, elle vaut au village +12 points quand elle est là
+(contre 187 parties sans elle : toutes des compositions avec le Chapardeur, la Liseuse restée au centre).
 
 ## La calibration de l'étape 6b (graine « cal6b », 12 000 parties, adresse du niveau)
 
@@ -691,7 +730,7 @@ prêtes sont contrôlées par `essais/veillees-compositions.test.mjs` (chacune e
   ajuster `ADRESSE_DU_NIVEAU` (l'outil recalibre à n'importe quelle adresse : `--adresse niveau` ou un nombre, deux heures de calcul).
 - **Les débutants** (étape 6c : un loup de moins) : la meute à 52 % à leur adresse (0,5), mais encore à 63 % à 13 et 16 joueurs, au
   plafond du générateur (ses cinq rôles à pouvoir). Les tables de six joueurs du classique et de Le Pacte restent elles aussi au
-  plafond (60-65 %).
+  plafond (60-65 % ; Le Pacte, la Liseuse imposée : 63 %).
 - **Le Joueur de vielle** : la règle du livre est gardée ; ce sont les joueurs simulés qui se méfient de lui (étape 6c : 33 % → 15 %).
   La méfiance suppose qu'on entende le narrateur appeler les charmés la nuit (comme à la table) : un narrateur, ou un MJ IA, qui
   tairait cette étape laisserait le Joueur de vielle plus fort que mesuré.
@@ -797,6 +836,18 @@ niveau à son adresse (`--adresse niveau`) :
     # le Joueur de vielle (l'« avant » : politiques.mjs et essais/doublures/foundry-loups.mjs de l'étape 6b, commit 0b4f7c9) ; chaos et Le Pacte
     node essais/outils/simuler-veillees.mjs --inclure joueur-de-vielle --niveaux chaos,le-pacte --tailles 10,11,12,13,14,15,16,17,18 --parties 60 --adresse niveau --graine vielle6c   (~2,5 min)
     node essais/outils/simuler-veillees.mjs --parties 200 --niveaux chaos,le-pacte --adresse niveau --graine 6c-apres                 (~8 min)
+
+Le Pacte, la Liseuse de cendres dans toute composition (l'« avant » : le générateur sans `ROLES_DU_NIVEAU`) :
+
+    node essais/outils/simuler-veillees.mjs --parties 200 --niveaux le-pacte --tailles 6,7,8,9,10,11,12,13,14,15,16,17,18 --adresse niveau --graine liseuse --json avant.json   (~5 min)
+    node essais/outils/simuler-veillees.mjs --parties 200 --niveaux le-pacte --tailles 6,7,8,9,10,11,12,13,14,15,16,17,18 --adresse niveau --graine liseuse-val1 --json val1.json
+    node essais/outils/calibrer-poids.mjs --corriger val1.json --echelle 6.73 --adresse niveau --ecrire
+    npm run fabriquer-veillees
+    node essais/outils/simuler-veillees.mjs --parties 200 --niveaux le-pacte --tailles 6,7,8,9,10,11,12,13,14,15,16,17,18 --adresse niveau --graine liseuse-val2 --json val2.json
+    node essais/outils/calibrer-poids.mjs --corriger val2.json --echelle 6.73 --adresse niveau --ecrire
+    npm run fabriquer-veillees && npm run fabriquer-veillees-en
+    node essais/outils/simuler-veillees.mjs --parties 400 --niveaux le-pacte --tailles 6,7,8,9,10,11,12,13,14,15,16,17,18 --adresse niveau --graine liseuse --json apres.json   (~10 min)
+    node essais/outils/simuler-veillees.mjs --pretes --parties 30 --niveaux le-pacte --tailles 6,7,8,9,10,11,12,13,14,15,16,17,18 --adresse niveau --graine liseuse
 
 Étape 6 (adresse 1) : les mêmes commandes avec `--adresse 1` (ou `0.5`) et les graines « cal », « avant », « apres », « variantes »,
 au commit `452fb50` ; `--corriger … --echelle 5.68`.

@@ -79,6 +79,9 @@ async function repondreA(acteur, ids, k, message) {
   return d;
 }
 const carnetDe = (acteur, depuis = 0) => emissions.slice(depuis).filter(e => e.type === "secret" && e.recipients?.[0] === acteur.system.joueur).map(e => e.entree.texte ?? "");
+// Le titre accordé au genre du villageois (ses traits visibles, tirés à la distribution) : « le Prieur » ou « la Prieure ».
+const genre = a => game.settings.get("lakour-loups", "partie")?.traits?.[a.id]?.genre;
+const accorde = (a, masculin, feminin) => (genre(a) === "femme" ? feminin : masculin);
 const chat = (depuis = 0) => messages.slice(depuis).map(m => String(m.content).replace(/<[^>]+>/g, " ").replace(/&#0?39;|&#x27;/g, "'")).join("\n");
 async function voter(votes) {
   for (const [a, cible] of votes) envoyerAuMJ(CANAL, { type: "vote", votant: a.id, cible: cible?.id ?? "", userId: a.system.joueur }, { emetteur: a.system.joueur });
@@ -134,7 +137,7 @@ const VERIFICATIONS = {
     await M.api.agirDeJour({ acteurId: p.id, pouvoir: "prieure", cibles: [loup.id] });
     assert.ok(carnetDe(p, k).some(t => t.includes(`${loup.name} vous a montré sa carte : Loup de Brumecombe`)), "au carnet du Prieur");
     assert.deepEqual(carnetDe(x, k), [], "personne d'autre");
-    assert.match(chat(n), /le Prieur, fait venir/);
+    assert.match(chat(n), new RegExp(`${p.name}, ${accorde(p, "le Prieur", "la Prieure")}, fait venir`));
     assert.doesNotMatch(chat(n), /Loup de Brumecombe/, "la carte reste secrète");
     assert.ok(M.api.registre().some(x => x.type === "village" && x.quoi === "prieur"));
     await assert.rejects(M.api.agirDeJour({ acteurId: p.id, pouvoir: "prieure", cibles: [x.id] }), /déjà servi/);
@@ -149,7 +152,7 @@ const VERIFICATIONS = {
     await M.api.changerPhase("jour");
     const n = messages.length;
     await M.api.agirDeJour({ acteurId: r.id, pouvoir: "ecole", cibles: [x.id] });
-    assert.match(chat(n), /le Régent, met au coin/);
+    assert.match(chat(n), new RegExp(`${r.name}, ${accorde(r, "le Régent", "la Régente")}, met au coin`));
     await M.api.ouvrirVote({ duree: 0 });
     await voter(villageois().map(a => [a, loup]));
     const res = await M.api.cloreVote();
@@ -191,11 +194,11 @@ const VERIFICATIONS = {
     assert.ok(!vote.candidats.includes(c.id), "pas candidat");
     const n = messages.length;
     await voter([[c, x]]);
-    assert.match(chat(n), new RegExp(`${c.name}, le Cabaretier, vote à découvert contre ${x.name}`));
+    assert.match(chat(n), new RegExp(`${c.name}, ${accorde(c, "le Cabaretier", "la Cabaretière")}, vote à découvert contre ${x.name}`));
     await voter(villageois().filter(a => a.id !== c.id).map(a => [a, x]));
     const r = await M.api.cloreVote();
     assert.deepEqual(r.elus, [x.id]);
-    assert.match(chat(n), /perd son immunité/);
+    assert.match(chat(n), new RegExp(`que le vote a ${accorde(x, "désigné", "désignée")} : ${accorde(c, "il", "elle")} perd son immunité`));
     assert.equal(M.api.etat().village.epuises.cabaret, c.id);
   },
 
@@ -216,7 +219,7 @@ const VERIFICATIONS = {
     await repondreA(h, [x.id], k, "la grâce demandée au Hobereau");
     assert.deepEqual(await M.api.eliminer(x.id, { cause: "vote" }), [], "gracié");
     assert.ok(x.system.vivant && !x.system.revele, "vivant, carte cachée");
-    assert.match(chat(n), /le Hobereau, gracie/);
+    assert.match(chat(n), new RegExp(`${h.name}, ${accorde(h, "le Hobereau", "la Hobereaute")}, gracie ${x.name} : ${accorde(x, "il n'est pas exécuté", "elle n'est pas exécutée")}`));
     assert.notEqual(M.api.etapeSuivante().cle, "executer");
     // Une fois : le lendemain, plus de supplique.
     await nuitCalme(M);
@@ -228,6 +231,26 @@ const VERIFICATIONS = {
     assert.equal(y.system.vivant, false);
     assert.equal(demandeDe(y, k2), undefined, "son pouvoir a servi");
     void loup;
+  },
+
+  async "Hobereau condamné : il se gracie lui-même — « se gracie elle-même : elle n'est pas exécutée », accordé à son genre"(M) {
+    const U = await monde(M);
+    await partie(M, [U.loup, ...cinq(U)]);
+    const [h, x] = tous("villageois");
+    await loger(M, { manoir: h, prieure: x });
+    // Ses traits visibles (publics) : une femme.
+    const pub = game.settings.get("lakour-loups", "partie");
+    await game.settings.set("lakour-loups", "partie", { ...pub, traits: { ...pub.traits, [h.id]: { ...pub.traits[h.id], genre: "femme" } } });
+    await M.api.changerPhase("jour");
+    await M.api.ouvrirVote({ duree: 0 });
+    await voter(villageois().map(a => [a, h]));
+    const k = emissions.length, n = messages.length;
+    assert.deepEqual((await M.api.cloreVote()).elus, [h.id]);
+    await repondreA(h, [h.id], k, "la grâce de soi-même");
+    assert.deepEqual(await M.api.eliminer(h.id, { cause: "vote" }), [], "graciée");
+    assert.match(chat(n), new RegExp(`${h.name}, la Hobereaute, se gracie elle-même : elle n'est pas exécutée, et sa carte reste cachée`));
+    assert.doesNotMatch(chat(n), new RegExp(`gracie ${h.name}`), "jamais « gracie » son propre nom");
+    assert.ok(M.api.registre().some(e => e.type === "village" && e.quoi === "grace"));
   },
 
   async "Prévôt : un bâtiment libéré, il loge un Chemineau qui accepte (le pouvoir rétabli) ; un refus le laisse vide"(M) {
@@ -246,7 +269,7 @@ const VERIFICATIONS = {
     await M.attendreVacances();
     assert.equal(M.api.personnalite(x.id).personnalite, "prieur");
     assert.equal(M.api.pouvoirsDeJour(x.id).find(q => q.pouvoir === "prieure")?.possible, true, "son pouvoir, entier");
-    assert.match(chat(n), /le Prévôt, loge/);
+    assert.match(chat(n), new RegExp(`${pv.name}, ${accorde(pv, "le Prévôt", "la Prévôte")}, loge ${x.name} à Le Prieuré : ${x.name} rend son baluchon et devient ${accorde(x, "Prieur", "Prieure")}`));
     const k2 = emissions.length, n2 = messages.length;
     await M.api.eliminer(x.id, { cause: "narrateur" });
     await repondreA(pv, [y.id], k2, "la seconde demande au Prévôt");
@@ -297,11 +320,11 @@ const VERIFICATIONS = {
     const hasard = Math.random;
     let k = emissions.length;
     try { Math.random = () => 0; await nuitCalme(M); } finally { Math.random = hasard; }
-    assert.ok(carnetDe(fo, k).some(t => t.includes(`${loup.name} qui rentre chez lui`)), "elle l'a entrevu");
+    assert.ok(carnetDe(fo, k).some(t => new RegExp(`${loup.name} qui rentre chez (lui|elle)`).test(t)), "elle l'a entrevu");
     assert.deepEqual(carnetDe(x, k), []);
     k = emissions.length;
     try { Math.random = () => 0.99; await nuitCalme(M); } finally { Math.random = hasard; }
-    assert.ok(!carnetDe(fo, k).some(t => /qui rentre chez lui/.test(t)), "rien");
+    assert.ok(!carnetDe(fo, k).some(t => /qui rentre chez (lui|elle)/.test(t)), "rien");
   },
 
   async "Incendiaire : la maison de la proie brûle — pas de victime, le loup à droite carbonisé, l'occupant devient Chemineau"(M) {
@@ -347,6 +370,8 @@ const MUTATIONS = [
   ["scripts/api.mjs", "    await perdreLImmunite(resultat);\n", "", "Cabaretier : l'immunité perdue"],
   ["scripts/api.mjs", "    proposerLaGrace(resultat);\n", "", "Hobereau : la supplique"],
   ["scripts/api.mjs", "    if (cause === \"vote\" && await graceDuHobereau(acteurId)) {", "    if (false) {", "Hobereau : la grâce"],
+  ["scripts/api.mjs", "t(h === condamne ? \"LAKOUR_LOUPS.Village.GraceSoi\" : \"LAKOUR_LOUPS.Village.Grace\",", "t(\"LAKOUR_LOUPS.Village.Grace\",", "Hobereau : se gracier soi-même"],
+  ["scripts/donnees.mjs", "genreDe: genreDuNom, genre: donnees.genre })", "genre: donnees.genre })", "accords : le genre du villageois nommé"],
   ["scripts/api.mjs", "    suivreVacances();   // Le Village : ses bâtiments libérés attendent le Prévôt\n", "", "Prévôt : après une mort"],
   ["scripts/api.mjs", "      if (fait) L.installer(e, cle, choisi);", "      if (false) L.installer(e, cle, choisi);", "Prévôt : le logement"],
   ["scripts/api.mjs", "        accepte = oui === choisi;", "        accepte = true;", "Prévôt : le Chemineau peut refuser"],

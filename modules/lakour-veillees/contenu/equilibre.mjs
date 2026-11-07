@@ -102,13 +102,15 @@ export const EQUILIBRE = {
 // joueurs : le village le plus armé que le générateur sache faire n'y suffit pas à 50 %). Étape 6c : les débutants ont un loup de
 // moins (composition.mjs, nombreDeLoups) ; leurs cibles viennent de deux seconds passages (graines « 6c-val1 », « 6c-val2 ») ; le générateur
 // (logique/composition.mjs, cibleDe) vise cette somme au lieu de 0. Écrites dans assets/equilibre.json (champ « cibles »). Sans
-// cible pour un niveau, le générateur vise 0 (la petite tablée : cibleTablee).
-// <cibles> (écrit par essais/outils/calibrer-poids.mjs : la régression, puis des validations, --corriger ; débutants : étape 6c)
+// cible pour un niveau, le générateur vise 0 (la petite tablée : cibleTablee). Le Pacte (novembre 2026) : la Liseuse de cendres est dans
+// toute composition tirée du niveau (composition.mjs, ROLES_DU_NIVEAU) ; ses cibles viennent de deux seconds passages (graines
+// « liseuse-val1 », « liseuse-val2 »).
+// <cibles> (écrit par essais/outils/calibrer-poids.mjs)
 export const CIBLES = {
   "chaos": { 6: 1, 7: 1, 8: -5, 9: -3, 10: -8, 11: -10, 12: -14, 13: -14, 14: -16, 15: -18, 16: -20, 17: -21, 18: -23 },
   "classique": { 6: 1, 7: 3, 8: -2, 9: 1, 10: 0, 11: -2, 12: -6, 13: -6, 14: -8, 15: -9, 16: -12, 17: -14, 18: -15 },
   "debutants": { 6: 4, 7: 3, 8: 3, 9: 5, 10: 5, 11: 5, 12: 7, 13: 2, 14: 3, 15: 4, 16: -2, 17: -1, 18: 0 },
-  "le-pacte": { 6: 1, 7: 3, 8: 1, 9: 2, 10: 0, 11: -3, 12: -5, 13: -8, 14: -8, 15: -10, 16: -13, 17: -15, 18: -15 },
+  "le-pacte": { 6: 1, 7: 3, 8: 1, 9: 2, 10: 0, 11: -3, 12: -5, 13: -7, 14: -10, 15: -11, 16: -12, 17: -15, 18: -17 },
   "petite-tablee": { 4: 5, 5: 5, 6: 2, 7: 4, 8: 4, 9: 1, 10: 0, 11: 2, 12: 4 }
 };
 // </cibles>

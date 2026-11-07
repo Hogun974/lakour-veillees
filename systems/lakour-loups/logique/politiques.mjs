@@ -55,7 +55,10 @@ const echapper = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 // Un gabarit « Les cendres parlent : {nom} est du camp « {camp} ». » -> une expression qui lit nom et camp.
 export function lecteurDeGabarit(gabarit) {
   const vus = new Set();
-  const corps = String(gabarit).split(/(\{\w+\})/).map(m => {
+  // Une marque de genre (grammaire.mjs : « chez [lui|elle] ») se lit sous l'une ou l'autre forme.
+  const corps = String(gabarit).split(/(\{\w+\}|\[(?:\w+:)?[^[\]|{}]*\|[^[\]|{}]*\])/).map(m => {
+    const g = /^\[(?:\w+:)?([^[\]|{}]*)\|([^[\]|{}]*)\]$/.exec(m);
+    if (g) return `(?:${echapper(g[1])}|${echapper(g[2])})`;
     const p = /^\{(\w+)\}$/.exec(m);
     if (!p) return echapper(m);
     if (vus.has(p[1])) return `\\k<${p[1]}>`;

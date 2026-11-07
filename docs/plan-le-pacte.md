@@ -148,6 +148,14 @@ Socle à créer d'abord (servira à plusieurs rôles) :
 
 Chaque étape : essais verts (`npm run essais`), fabrication fr et en, un commit par étape.
 
+**Après les deux parties en vrai du 7 novembre** (Le Pacte, 11 compagnons IA, Le Village, Gazette, Crieur, Mur, chandelles) : le genre des
+traits suit le prénom (`logique/prenoms.mjs` ; le MJ IA pose le trait sur ses compagnons) ; les messages s'accordent (marques
+`[masculin|féminin]` de `logique/grammaire.mjs`, titres des personnalités au féminin : Métayère, Prieure, Remégeuse, Régente, Fournier /
+Fournière, Perruquière, Cabaretière, Prévôte, Hobereaute, Chemineaude ; Crieuse publique, Exécutrice) ; le Hobereau qui se gracie
+lui-même ; l'en-tête de la Table dit la composition en clair ; la préparation de la Table en onglets ; la Liseuse de cendres dans toute
+composition du niveau Le Pacte (cibles recalibrées : `docs/equilibre-veillees.md`) ; au moteur, des réserves de répliques et de murmures
+plus larges, sans répétition, et des allusions pour ce qu'un compagnon sait.
+
 ## Étape 5 : choix tranchés et adaptations
 
 - **Ordre d'appel** : les rôles du livre suivent l'ordre résumé plus haut (première nuit, chaque nuit). Les étapes du livre sans réveil

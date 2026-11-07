@@ -28,7 +28,7 @@ import { LONGUEUR_DECLARATION as LONGUEUR } from "../../logique/registre.mjs";
 import { diagnosticVoix } from "../../logique/salons.mjs";
 import {
   t, lireEtat, tousLesVillageois, monVillageois, roleDe, campDe, amoureuxDe, protectionsDe, metierDe, roleVisible, libellePhase, libelleCamp, libelleCause, libelleRepere,
-  libelleVainqueur, villageoisAPlat
+  libelleVainqueur, villageoisAPlat, titreDePersonnalite, genreDeLActeur, libelleDeComposition
 } from "../donnees.mjs";
 import { envoyerVote, envoyerJour, envoyerCri, envoyerDeclaration, envoyerAccusation, envoyerDepart } from "../api.mjs";
 import { estMJActif } from "../canal.mjs";
@@ -136,7 +136,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
       miseEnScene: () => tenter(() => api().plateau.mettreEnScene({ activer: true })),
       distribuer: TableDeJeu.#distribuer, reveiller: TableDeJeu.#reveiller, reveillerTout: TableDeJeu.#reveillerTout,
       executer: TableDeJeu.#executer, emporter: TableDeJeu.#emporter, emporterPersonne: TableDeJeu.#emporterPersonne,
-      prepCocher: TableDeJeu.#prepCocher, prepIA: TableDeJeu.#prepIA, prepRetirerIA: TableDeJeu.#prepRetirerIA,
+      prepOnglet: TableDeJeu.#prepOnglet, prepCocher: TableDeJeu.#prepCocher, prepIA: TableDeJeu.#prepIA, prepRetirerIA: TableDeJeu.#prepRetirerIA,
       prepMode: TableDeJeu.#prepMode, prepRole: TableDeJeu.#prepRole, prepPeste: TableDeJeu.#prepPeste,
       crier: (event, cible) => crierALaPeste(cible.dataset.id),
       accuser: TableDeJeu.#accuser, quitter: TableDeJeu.#quitter, faireQuitter: TableDeJeu.#faireQuitter,
@@ -178,7 +178,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
     const personnaliteDe = a => {
       if (!villageActif) return "";
       const p = L.personnaliteDe(etat, a.id);
-      return p ? t(`LAKOUR_LOUPS.Village.Personnalites.${p}.Nom`) : "";
+      return p ? titreDePersonnalite(p, a) : "";
     };
     // La Veillée aux chandelles (Pacte, étape 5) : publique.
     const chandelles = Boolean(etat.partie) && L.chandellesActives(etat);
@@ -214,7 +214,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
         somnambule: gm && Boolean(etat.somnambules?.[a.id]) && !etat.somnambules[a.id].devoile,
         souffle: !a.system.vivant && Boolean(etat.souffle?.actif) && !etat.souffle.utilises.includes(a.id),
         joueur: game.users.get(a.system.joueur)?.name ?? "",
-        cause: mort ? libelleCause(mort.cause) : "", tourMort: mort?.tour ?? "",
+        cause: mort ? libelleCause(mort.cause, genreDeLActeur(a)) : "", tourMort: mort?.tour ?? "",
         candidat: v.ouvert && v.candidats.includes(a.id),
         aVote: v.ouvert && v.exprimes.includes(a.id),
         monChoix: v.ouvert && [].concat(monChoix ?? []).includes(a.id),
@@ -362,6 +362,11 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
         })() : null,
         voix: voixDuMonde()
       };
+      // Les onglets (logique/preparation.mjs) : celui qui est ouvert, retenu par navigateur ; le résumé des choix, toujours visible.
+      const o = L.ongletsDeLaPreparation(preparation, ongletRetenu());
+      preparation.onglets = o.onglets.map(x => ({ ...x, libelle: t(`LAKOUR_LOUPS.Preparation.Onglets.${x.cle}`) }));
+      preparation.ouvert = o.ouvert;
+      preparation.resume = L.resumeDeLaPreparation(preparation, t, { niveau: p.niveau });
     }
 
     // Le cri de la peste noire pour mon villageois (vivant, le jour). La composition et la peste noire : au MJ seul (un
@@ -401,7 +406,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
     return {
       presage: presage?.cle ? presage : null, glas: etat.glas, saints, fete,
       gm, phase: etat.phase, phaseLibelle: libellePhase(etat.phase), tour: etat.tour, fini: fin,
-      composition: gm ? etat.composition : "", peste: gm && Boolean(etat.peste?.active), tablee: Boolean(etat.petiteTablee),
+      composition: gm ? libelleDeComposition(etat.composition) : "", peste: gm && Boolean(etat.peste?.active), tablee: Boolean(etat.petiteTablee),
       deuil: etat.deuil?.actif ? { compte: etat.deuil.compte } : null, saintMartin: L.estSaintMartin(etat),
       banc, accusation, passage, quitter: Boolean(moi?.system.vivant && etat.partie && !fin),
       vainqueur: libelleVainqueur(etat.vainqueur, etat), crier: Boolean(cri?.ok), moiId: moi?.id ?? "",
@@ -631,6 +636,7 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
     });
   }
   // ---------------- préparation (MJ humain)
+  static #prepOnglet(event, cible) { retenirOnglet(cible.dataset.onglet); this.render(); }
   static #prepCocher(event, cible) { MJ.cocher(this.preparation, cible.dataset.id); this.render(); }
   static #prepIA() { return tenter(async () => { await MJ.ajouterIA(1); this.render(); }); }
   static #prepRetirerIA() { return tenter(async () => { await MJ.retirerIA(); this.render(); }); }
@@ -745,6 +751,15 @@ export function cloreLeVote() {
 // ---------------- les veillées de fête
 // À la préparation : la liste des veillées, celle que le calendrier propose marquée ; la première fois, elle est pré-sélectionnée
 // (prep.fete null : rien de choisi encore) ; le MJ décide (« Aucune »). Rien pour une Nuit de la Saint-Martin.
+// L'onglet ouvert de la préparation, retenu par navigateur (localStorage : un confort de ce navigateur, rien du monde).
+export const ONGLET_RETENU = `${ID}.ongletDeLaPreparation`;
+function ongletRetenu() {
+  try { return globalThis.localStorage?.getItem(ONGLET_RETENU) ?? ""; } catch { return ""; }
+}
+function retenirOnglet(cle) {
+  try { globalThis.localStorage?.setItem(ONGLET_RETENU, String(cle ?? "")); } catch { /* sans stockage : l'onglet revient au premier */ }
+}
+
 function veilleesAPreparer(p) {
   const v = tenterSync(() => api().veilleesDeFete(), null);
   if (!v) return null;

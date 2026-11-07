@@ -68,6 +68,11 @@ export const ROLES_DU_LIVRE = ["loup-de-brumecombe", "loup-affame", "louve-mere"
   "aieul", "souffre-douleur", "innocent", "lavandiere", "bucheron", "furet", "gardeuse-d-oies", "greffier-begue", "vieux-sergent", "pie",
   "incendiaire", "chapardeur", "bateleur", "matin", "enfant-des-bois", "chambriere", "feu-follet", "joueur-de-vielle", "illumine", "liseuse-d-etoiles"];
 export const estDuLivre = cle => ROLES_DU_LIVRE.includes(cle);
+// Les rôles qu'un niveau met dans TOUTE composition tirée (générée, et donc prête : les compositions prêtes sont tirées par le
+// générateur), comme la contrainte « au moins un rôle d'information » : au jeu de soirée de Jordan, la Voyante est toujours là, donc
+// la Liseuse de cendres au niveau « Le Pacte », dès 6 joueurs (son minimum). Un rôle exclu (exclure) reste exclu ; une composition
+// choisie à la main ou Double visage (son propre paquet) n'y passent pas.
+export const ROLES_DU_NIVEAU = Object.freeze({ [NIVEAU_LE_PACTE]: Object.freeze(["liseuse-de-cendres"]) });
 // Le Pacte, étape 4 : un rôle marqué village (equilibre.roles[cle].village, l'Incendiaire) ne sort que dans la variante « Le Village »
 // (option village du générateur) : sans bâtiments tenus, il n'aurait rien à faire. Jamais à la petite tablée (composer n'y passe pas
 // l'option), que la variante n'a pas.
@@ -88,6 +93,19 @@ function catalogue(equilibre, n, niveau, exclure, peste = false, village = false
     information: famille(([cle, r]) => r.camp === "village" && r.information),
     protection: famille(([, r]) => r.camp === "village" && r.protection)
   };
+}
+
+// Le libellé d'une composition pour la Table de veillée (etat.composition : sa clé) : { cle (du dictionnaire LAKOUR_LOUPS.Table.Composition),
+// donnees } — jamais la clé brute (« generee », « le-pacte-08 ») : « composition générée », « Le Pacte — 8 joueurs ». Une clé inconnue (une
+// composition d'un autre contenu) est lue en clair, sans ses tirets.
+export const COMPOSITIONS_NOMMEES = ["generee", "choisie", "reprise", "double-visage", "saint-martin"];
+export function libelleDeLaComposition(cle) {
+  const c = String(cle ?? "").trim();
+  if (!c) return null;
+  if (COMPOSITIONS_NOMMEES.includes(c)) return { cle: c, donnees: null };
+  const m = /^(.+)-(\d{1,2})$/.exec(c);
+  if (m && NIVEAUX.includes(m[1])) return { cle: m[1] === NIVEAU_PETITE_TABLEE ? "preteTablee" : "prete", donnees: { niveau: m[1], n: Number(m[2]) } };
+  return { cle: "autre", donnees: { nom: c.replace(/[-_]+/g, " ") } };
 }
 
 // Somme des poids d'une liste de rôles.
@@ -141,6 +159,9 @@ function tirer(n, niveau, cat, inclure, hasard, peste = false, loupsEnPlus = 0) 
   // (Le loup de base exclu, ou une peste noire sans meute : pas de loup ajouté, plutôt qu'une boucle sans fin.)
   while (cat.permis.has(BASE_LOUP) && roles.filter(c => cat.permis.get(c)?.camp === "meute").length < Math.max(loups, loupsDeja)) roles.push(BASE_LOUP);
   if (n >= 8) prendre(cat.solitaires, Math.max(0, entre(SOLITAIRES[niveau]) - roles.filter(c => cat.solitaires.includes(c)).length));
+  // Les rôles que le niveau met dans toute composition (Le Pacte : la Liseuse de cendres, comme la Voyante du jeu de soirée), s'ils
+  // sont permis (ni exclus, ni hors de leur minimum de joueurs) et pas déjà là.
+  inclureDans(roles, cat, (ROLES_DU_NIVEAU[niveau] ?? []).filter(c => !roles.includes(c) && roles.length < n));
   // Au moins un rôle d'information pour le village.
   if (!roles.some(c => cat.information.includes(c))) prendre(cat.information, 1);
   // Pouvoirs de village : de 0 à 100 % des places restantes, le reste en simples villageois (Le Pacte, étape 6 : de 15 à 70 %

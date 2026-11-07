@@ -1,7 +1,7 @@
 // L'infobulle d'un jeton de villageois au survol (hook hoverToken, local) : nom, métier (public), état (vivant, mort,
 // réduit au silence, Bailli, a voté) et rôle s'il est révélé. Le MJ voit aussi le rôle caché ; un joueur voit le sien.
 import { ID } from "../logique/constantes.mjs";
-import { t, lireEtat, roleDe, campDe, metierDe, libelleCamp, libelleCause, libelleRepere, monVillageois } from "./donnees.mjs";
+import { t, lireEtat, roleDe, campDe, metierDe, libelleCamp, libelleCause, libelleRepere, monVillageois, genreDeLActeur } from "./donnees.mjs";
 
 const echapper = s => foundry.utils.escapeHTML(String(s ?? ""));
 
@@ -16,7 +16,7 @@ export function contenuInfobulle(acteur) {
   const etats = [];
   if (!acteur.system.vivant) {
     const mort = etat.morts.find(m => m.acteurId === acteur.id);
-    etats.push({ cle: "mort", texte: mort ? `${t("LAKOUR_LOUPS.Table.Mort")} · ${libelleCause(mort.cause)}` : t("LAKOUR_LOUPS.Table.Mort") });
+    etats.push({ cle: "mort", texte: mort ? `${t("LAKOUR_LOUPS.Table.Mort")} · ${libelleCause(mort.cause, genreDeLActeur(acteur))}` : t("LAKOUR_LOUPS.Table.Mort") });
   } else etats.push({ cle: "vivant", texte: t("LAKOUR_LOUPS.Infobulle.Vivant") });
   if (acteur.system.vivant && acteur.system.silence) etats.push({ cle: "silence", texte: t("LAKOUR_LOUPS.Table.Silence") });
   if (acteur.system.vivant && etat.bailli?.actif && etat.bailli.acteurId === acteur.id) etats.push({ cle: "bailli", texte: t("LAKOUR_LOUPS.Bailli.Titre") });

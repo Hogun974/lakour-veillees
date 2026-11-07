@@ -44,95 +44,115 @@
   {{#if preparation}}
   <section class="loups-encart loups-preparation">
     <h3><i class="fa-solid fa-users"></i> {{localize "LAKOUR_LOUPS.Preparation.Titre"}} <span class="loups-compte">{{preparation.total}}</span></h3>
-    <div class="loups-prep-ligne">
-      <span class="loups-etiquette">{{localize "LAKOUR_LOUPS.Preparation.Joueurs"}}</span>
-      {{#each preparation.joueurs}}
-      <label class="loups-prep-joueur"><input type="checkbox" data-action="prepCocher" data-id="{{id}}" {{#if coche}}checked{{/if}}> {{nom}}</label>
-      {{else}}<span class="loups-vide">{{localize "LAKOUR_LOUPS.Preparation.PersonneConnecte"}}</span>{{/each}}
+    {{!-- Les onglets de la préparation (l'onglet ouvert est retenu par navigateur : table.mjs, ONGLET_RETENU) ; la distribution et le
+         résumé des choix restent toujours visibles dessous. --}}
+    <nav class="loups-prep-onglets" role="tablist">
+      {{#each preparation.onglets}}<button type="button" role="tab" class="loups-prep-onglet-bouton{{#if actif}} actif{{/if}}" data-action="prepOnglet" data-onglet="{{cle}}" aria-selected="{{#if actif}}true{{else}}false{{/if}}"><i class="fa-solid {{icone}}"></i> {{libelle}}</button>{{/each}}
+    </nav>
+    <div class="loups-prep-onglet" data-onglet="joueurs" role="tabpanel" {{#unless preparation.ouvert.joueurs}}hidden{{/unless}}>
+      <div class="loups-prep-ligne">
+        <span class="loups-etiquette">{{localize "LAKOUR_LOUPS.Preparation.Joueurs"}}</span>
+        {{#each preparation.joueurs}}
+        <label class="loups-prep-joueur"><input type="checkbox" data-action="prepCocher" data-id="{{id}}" {{#if coche}}checked{{/if}}> {{nom}}</label>
+        {{else}}<span class="loups-vide">{{localize "LAKOUR_LOUPS.Preparation.PersonneConnecte"}}</span>{{/each}}
+      </div>
+      <div class="loups-prep-ligne">
+        <span class="loups-etiquette">{{localize "LAKOUR_LOUPS.Preparation.JoueursIA"}}</span>
+        {{#if preparation.ia.disponible}}
+        <button type="button" class="loups-bouton discret" data-action="prepRetirerIA" {{#unless preparation.ia.n}}disabled{{/unless}} aria-label="{{localize 'LAKOUR_LOUPS.Preparation.RetirerIA'}}">−</button>
+        <strong class="loups-prep-compteur">{{preparation.ia.n}}</strong>
+        <button type="button" class="loups-bouton discret" data-action="prepIA"><i class="fa-solid fa-robot"></i> {{localize "LAKOUR_LOUPS.Preparation.AjouterIA"}}</button>
+        {{#if preparation.ia.noms}}<small>{{preparation.ia.noms}}</small>{{/if}}
+        {{else}}
+        <span class="loups-vide loups-grise">{{localize "LAKOUR_LOUPS.Preparation.IAAbsente"}}</span>
+        {{/if}}
+      </div>
+      {{#unless preparation.voix.pret}}
+      <div class="loups-prep-ligne loups-prep-voix">
+        <span class="loups-etiquette"><i class="fa-solid fa-microphone"></i> {{localize "LAKOUR_LOUPS.Preparation.Voix.Titre"}}</span>
+        {{#if preparation.voix.desactive}}
+        <span>{{localize "LAKOUR_LOUPS.Preparation.Voix.Desactivee"}}</span>
+        <button type="button" class="loups-bouton discret" data-action="voixActiver" data-tooltip="{{localize 'LAKOUR_LOUPS.Preparation.Voix.ActiverAide'}}"><i class="fa-solid fa-microphone"></i> {{localize "LAKOUR_LOUPS.Preparation.Voix.Activer"}}</button>
+        {{/if}}
+        {{#if preparation.voix.muets}}
+        <span>{{loupsT "LAKOUR_LOUPS.Preparation.Voix.Muets" noms=preparation.voix.muets}}</span>
+        <button type="button" class="loups-bouton discret" data-action="voixMicro" data-tooltip="{{localize 'LAKOUR_LOUPS.Preparation.Voix.MicroAide'}}"><i class="fa-solid fa-user-check"></i> {{localize "LAKOUR_LOUPS.Preparation.Voix.Micro"}}</button>
+        {{/if}}
+      </div>
+      {{/unless}}
     </div>
-    <div class="loups-prep-ligne">
-      <span class="loups-etiquette">{{localize "LAKOUR_LOUPS.Preparation.JoueursIA"}}</span>
-      {{#if preparation.ia.disponible}}
-      <button type="button" class="loups-bouton discret" data-action="prepRetirerIA" {{#unless preparation.ia.n}}disabled{{/unless}} aria-label="{{localize 'LAKOUR_LOUPS.Preparation.RetirerIA'}}">−</button>
-      <strong class="loups-prep-compteur">{{preparation.ia.n}}</strong>
-      <button type="button" class="loups-bouton discret" data-action="prepIA"><i class="fa-solid fa-robot"></i> {{localize "LAKOUR_LOUPS.Preparation.AjouterIA"}}</button>
-      {{#if preparation.ia.noms}}<small>{{preparation.ia.noms}}</small>{{/if}}
-      {{else}}
-      <span class="loups-vide loups-grise">{{localize "LAKOUR_LOUPS.Preparation.IAAbsente"}}</span>
+    <div class="loups-prep-onglet" data-onglet="composition" role="tabpanel" {{#unless preparation.ouvert.composition}}hidden{{/unless}}>
+      <div class="loups-prep-ligne">
+        <span class="loups-etiquette">{{localize "LAKOUR_LOUPS.Preparation.Composition"}}</span>
+        <button type="button" class="loups-bouton {{#unless preparation.auto}}discret{{/unless}}" data-action="prepMode" data-mode="auto">{{localize "LAKOUR_LOUPS.Preparation.Auto"}}</button>
+        <button type="button" class="loups-bouton {{#unless preparation.manuel}}discret{{/unless}}" data-action="prepMode" data-mode="manuel">{{localize "LAKOUR_LOUPS.Preparation.Manuel"}}</button>
+        <select name="prepNiveau">{{#each preparation.niveaux}}<option value="{{cle}}" {{#if choisi}}selected{{/if}}>{{libelle}}</option>{{/each}}</select>
+      </div>
+      {{#if preparation.tablee}}
+      <div class="loups-prep-ligne loups-prep-tablee">
+        <small>{{preparation.tablee.aide}}</small>
+        {{#if preparation.tablee.avis}}<p class="loups-alerte">{{preparation.tablee.avis}}</p>{{/if}}
+      </div>
+      {{/if}}
+      {{#if preparation.manuel}}
+      <ul class="loups-prep-roles">
+        {{#each preparation.roles}}
+        <li class="camp-{{camp}}"><span class="loups-nom">{{nom}}</span> <span class="loups-camp">{{campLibelle}}</span>
+          <span class="loups-prep-nombre">
+            <button type="button" data-action="prepRole" data-cle="{{cle}}" data-delta="-1" aria-label="−">−</button><strong>{{n}}</strong><button type="button" data-action="prepRole" data-cle="{{cle}}" data-delta="1" aria-label="+">+</button>
+          </span></li>
+        {{/each}}
+      </ul>
+      {{#if preparation.equilibre}}<p class="loups-prep-equilibre verdict-{{preparation.equilibre.verdict}}"><i class="fa-solid fa-scale-balanced"></i> {{preparation.equilibre.texte}} · {{preparation.equilibre.loupsTexte}}</p>{{/if}}
+      {{#if preparation.trop}}<p class="loups-alerte">{{localize "LAKOUR_LOUPS.Preparation.Trop"}}</p>{{/if}}
       {{/if}}
     </div>
-    <div class="loups-prep-ligne">
-      <span class="loups-etiquette">{{localize "LAKOUR_LOUPS.Preparation.Composition"}}</span>
-      <button type="button" class="loups-bouton {{#unless preparation.auto}}discret{{/unless}}" data-action="prepMode" data-mode="auto">{{localize "LAKOUR_LOUPS.Preparation.Auto"}}</button>
-      <button type="button" class="loups-bouton {{#unless preparation.manuel}}discret{{/unless}}" data-action="prepMode" data-mode="manuel">{{localize "LAKOUR_LOUPS.Preparation.Manuel"}}</button>
-      <select name="prepNiveau">{{#each preparation.niveaux}}<option value="{{cle}}" {{#if choisi}}selected{{/if}}>{{libelle}}</option>{{/each}}</select>
-      <label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.Peste.PreparationAide'}}"><input type="checkbox" data-action="prepPeste" {{#if preparation.peste}}checked{{/if}}> <i class="fa-solid fa-biohazard"></i> {{localize "LAKOUR_LOUPS.Peste.Preparation"}}</label>
-      <label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.SaintMartin.PreparationAide'}}"><input type="checkbox" data-action="prepSaintMartin" {{#if preparation.saintMartin}}checked{{/if}}> <i class="fa-solid fa-church"></i> {{localize "LAKOUR_LOUPS.SaintMartin.Preparation"}}</label>
-      {{#if preparation.villagePossible}}<label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.Village.PreparationAide'}}"><input type="checkbox" data-action="prepVillage" {{#if preparation.village}}checked{{/if}}> <i class="fa-solid fa-house-chimney-window"></i> {{localize "LAKOUR_LOUPS.Village.Preparation"}}</label>{{/if}}
-    </div>
-    {{#if preparation.batiments}}
-    <div class="loups-prep-ligne loups-prep-batiments">
-      <span class="loups-etiquette" data-tooltip="{{localize 'LAKOUR_LOUPS.Preparation.Batiments.Aide'}}">{{localize "LAKOUR_LOUPS.Preparation.Batiments.Titre"}}</span>
-      <select name="prepBatiments">{{#each preparation.batiments.modes}}<option value="{{cle}}" {{#if choisi}}selected{{/if}}>{{nom}}</option>{{/each}}</select>
-      {{#each preparation.batiments.liste}}<label class="loups-prep-joueur"><input type="checkbox" data-action="prepBatiment" data-cle="{{cle}}" {{#if coche}}checked{{/if}}> {{nom}}</label>{{/each}}
-      <label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.Preparation.MetiersAide'}}"><input type="checkbox" data-action="prepMetiers" {{#if preparation.batiments.metiers}}checked{{/if}}> <i class="fa-solid fa-hammer"></i> {{localize "LAKOUR_LOUPS.Preparation.Metiers"}}</label>
-    </div>
-    {{/if}}
-    {{#if preparation.variantes}}
-    <div class="loups-prep-ligne loups-prep-variantes">
-      <span class="loups-etiquette" data-tooltip="{{localize 'LAKOUR_LOUPS.Variantes.PreparationAide'}}">{{localize "LAKOUR_LOUPS.Variantes.Titre"}}</span>
-      {{#each preparation.variantes.cases}}<label class="loups-prep-joueur" data-tooltip="{{aide}}"><input type="checkbox" data-action="prepVariante" data-cle="{{cle}}" {{#if coche}}checked{{/if}}> <i class="fa-solid {{icone}}"></i> {{nom}}</label>{{/each}}
-      {{#if preparation.variantes.doubleVisage}}<label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.Variantes.DoubleVisage.Aide'}}"><i class="fa-solid fa-masks-theater"></i> {{localize "LAKOUR_LOUPS.Variantes.DoubleVisage.Nom"}}
-        <select name="prepDoubleVisage">{{#each preparation.variantes.doubleVisage}}<option value="{{cle}}" {{#if choisi}}selected{{/if}}>{{nom}}</option>{{/each}}</select></label>{{/if}}
-      {{#if preparation.variantes.allegeance}}<label class="loups-prep-joueur" data-tooltip="{{preparation.variantes.allegeance.aide}}"><input type="checkbox" data-action="prepVariante" data-cle="{{preparation.variantes.allegeance.cle}}" {{#if preparation.variantes.allegeance.coche}}checked{{/if}}> <i class="fa-solid fa-paw"></i> {{preparation.variantes.allegeance.nom}}</label>{{/if}}
-    </div>
-    {{/if}}
-    {{#if preparation.gazette}}
-    <div class="loups-prep-ligne loups-prep-gazette">
-      <label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.Preparation.GazetteAide'}}"><input type="checkbox" data-action="prepGazette" data-cle="actif" {{#if preparation.gazette.actif}}checked{{/if}}> <i class="fa-solid fa-newspaper"></i> {{localize "LAKOUR_LOUPS.Preparation.Gazette"}}</label>
-      <label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.Preparation.CrieurAide'}}"><input type="checkbox" data-action="prepGazette" data-cle="crieur" {{#if preparation.gazette.crieur}}checked{{/if}}> <i class="fa-solid fa-bullhorn"></i> {{localize "LAKOUR_LOUPS.Preparation.Crieur"}}</label>
-      {{#if preparation.gazette.permanentes.length}}<span class="loups-etiquette">{{localize "LAKOUR_LOUPS.Preparation.Permanentes"}}</span>
-      {{#each preparation.gazette.permanentes}}<label class="loups-prep-joueur" data-tooltip="{{aide}}"><input type="checkbox" data-action="prepPermanente" data-cle="{{cle}}" {{#if coche}}checked{{/if}}> {{nom}}</label>{{/each}}{{/if}}
-    </div>
-    {{/if}}
-    {{#if preparation.tablee}}
-    <div class="loups-prep-ligne loups-prep-tablee">
-      <small>{{preparation.tablee.aide}}</small>
-      {{#if preparation.tablee.avis}}<p class="loups-alerte">{{preparation.tablee.avis}}</p>{{/if}}
-    </div>
-    {{/if}}
-    {{#if preparation.fetes}}{{#unless preparation.fetes.saintMartin}}
-    <div class="loups-prep-ligne loups-prep-fete">
-      <span class="loups-etiquette"><i class="fa-solid fa-star"></i> {{localize "LAKOUR_LOUPS.Fetes.Preparation"}}</span>
-      <select name="prepFete" data-tooltip="{{preparation.fetes.aide}}">{{#each preparation.fetes.options}}<option value="{{cle}}" {{#if choisie}}selected{{/if}}>{{nom}}</option>{{/each}}</select>
-      <small>{{preparation.fetes.aide}}</small>
-    </div>
-    {{/unless}}{{/if}}
-    {{#if preparation.manuel}}
-    <ul class="loups-prep-roles">
-      {{#each preparation.roles}}
-      <li class="camp-{{camp}}"><span class="loups-nom">{{nom}}</span> <span class="loups-camp">{{campLibelle}}</span>
-        <span class="loups-prep-nombre">
-          <button type="button" data-action="prepRole" data-cle="{{cle}}" data-delta="-1" aria-label="−">−</button><strong>{{n}}</strong><button type="button" data-action="prepRole" data-cle="{{cle}}" data-delta="1" aria-label="+">+</button>
-        </span></li>
-      {{/each}}
-    </ul>
-    {{#if preparation.equilibre}}<p class="loups-prep-equilibre verdict-{{preparation.equilibre.verdict}}"><i class="fa-solid fa-scale-balanced"></i> {{preparation.equilibre.texte}} · {{preparation.equilibre.loupsTexte}}</p>{{/if}}
-    {{#if preparation.trop}}<p class="loups-alerte">{{localize "LAKOUR_LOUPS.Preparation.Trop"}}</p>{{/if}}
-    {{/if}}
-    {{#unless preparation.voix.pret}}
-    <div class="loups-prep-ligne loups-prep-voix">
-      <span class="loups-etiquette"><i class="fa-solid fa-microphone"></i> {{localize "LAKOUR_LOUPS.Preparation.Voix.Titre"}}</span>
-      {{#if preparation.voix.desactive}}
-      <span>{{localize "LAKOUR_LOUPS.Preparation.Voix.Desactivee"}}</span>
-      <button type="button" class="loups-bouton discret" data-action="voixActiver" data-tooltip="{{localize 'LAKOUR_LOUPS.Preparation.Voix.ActiverAide'}}"><i class="fa-solid fa-microphone"></i> {{localize "LAKOUR_LOUPS.Preparation.Voix.Activer"}}</button>
-      {{/if}}
-      {{#if preparation.voix.muets}}
-      <span>{{loupsT "LAKOUR_LOUPS.Preparation.Voix.Muets" noms=preparation.voix.muets}}</span>
-      <button type="button" class="loups-bouton discret" data-action="voixMicro" data-tooltip="{{localize 'LAKOUR_LOUPS.Preparation.Voix.MicroAide'}}"><i class="fa-solid fa-user-check"></i> {{localize "LAKOUR_LOUPS.Preparation.Voix.Micro"}}</button>
+    <div class="loups-prep-onglet" data-onglet="village" role="tabpanel" {{#unless preparation.ouvert.village}}hidden{{/unless}}>
+      <div class="loups-prep-ligne">
+        <span class="loups-etiquette">{{localize "LAKOUR_LOUPS.Preparation.Formats"}}</span>
+        <label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.Peste.PreparationAide'}}"><input type="checkbox" data-action="prepPeste" {{#if preparation.peste}}checked{{/if}}> <i class="fa-solid fa-biohazard"></i> {{localize "LAKOUR_LOUPS.Peste.Preparation"}}</label>
+        <label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.SaintMartin.PreparationAide'}}"><input type="checkbox" data-action="prepSaintMartin" {{#if preparation.saintMartin}}checked{{/if}}> <i class="fa-solid fa-church"></i> {{localize "LAKOUR_LOUPS.SaintMartin.Preparation"}}</label>
+        {{#if preparation.villagePossible}}<label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.Village.PreparationAide'}}"><input type="checkbox" data-action="prepVillage" {{#if preparation.village}}checked{{/if}}> <i class="fa-solid fa-house-chimney-window"></i> {{localize "LAKOUR_LOUPS.Village.Preparation"}}</label>{{/if}}
+      </div>
+      {{#if preparation.batiments}}
+      <div class="loups-prep-ligne loups-prep-batiments">
+        <span class="loups-etiquette" data-tooltip="{{localize 'LAKOUR_LOUPS.Preparation.Batiments.Aide'}}">{{localize "LAKOUR_LOUPS.Preparation.Batiments.Titre"}}</span>
+        <select name="prepBatiments">{{#each preparation.batiments.modes}}<option value="{{cle}}" {{#if choisi}}selected{{/if}}>{{nom}}</option>{{/each}}</select>
+        {{#each preparation.batiments.liste}}<label class="loups-prep-joueur"><input type="checkbox" data-action="prepBatiment" data-cle="{{cle}}" {{#if coche}}checked{{/if}}> {{nom}}</label>{{/each}}
+        <label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.Preparation.MetiersAide'}}"><input type="checkbox" data-action="prepMetiers" {{#if preparation.batiments.metiers}}checked{{/if}}> <i class="fa-solid fa-hammer"></i> {{localize "LAKOUR_LOUPS.Preparation.Metiers"}}</label>
+      </div>
       {{/if}}
     </div>
-    {{/unless}}
+    <div class="loups-prep-onglet" data-onglet="variantes" role="tabpanel" {{#unless preparation.ouvert.variantes}}hidden{{/unless}}>
+      {{#if preparation.variantes}}
+      <div class="loups-prep-ligne loups-prep-variantes">
+        <span class="loups-etiquette" data-tooltip="{{localize 'LAKOUR_LOUPS.Variantes.PreparationAide'}}">{{localize "LAKOUR_LOUPS.Variantes.Titre"}}</span>
+        {{#each preparation.variantes.cases}}<label class="loups-prep-joueur" data-tooltip="{{aide}}"><input type="checkbox" data-action="prepVariante" data-cle="{{cle}}" {{#if coche}}checked{{/if}}> <i class="fa-solid {{icone}}"></i> {{nom}}</label>{{/each}}
+        {{#if preparation.variantes.doubleVisage}}<label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.Variantes.DoubleVisage.Aide'}}"><i class="fa-solid fa-masks-theater"></i> {{localize "LAKOUR_LOUPS.Variantes.DoubleVisage.Nom"}}
+          <select name="prepDoubleVisage">{{#each preparation.variantes.doubleVisage}}<option value="{{cle}}" {{#if choisi}}selected{{/if}}>{{nom}}</option>{{/each}}</select></label>{{/if}}
+        {{#if preparation.variantes.allegeance}}<label class="loups-prep-joueur" data-tooltip="{{preparation.variantes.allegeance.aide}}"><input type="checkbox" data-action="prepVariante" data-cle="{{preparation.variantes.allegeance.cle}}" {{#if preparation.variantes.allegeance.coche}}checked{{/if}}> <i class="fa-solid fa-paw"></i> {{preparation.variantes.allegeance.nom}}</label>{{/if}}
+      </div>
+      {{/if}}
+    </div>
+    <div class="loups-prep-onglet" data-onglet="gazette" role="tabpanel" {{#unless preparation.ouvert.gazette}}hidden{{/unless}}>
+      {{#if preparation.gazette}}
+      <div class="loups-prep-ligne loups-prep-gazette">
+        <label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.Preparation.GazetteAide'}}"><input type="checkbox" data-action="prepGazette" data-cle="actif" {{#if preparation.gazette.actif}}checked{{/if}}> <i class="fa-solid fa-newspaper"></i> {{localize "LAKOUR_LOUPS.Preparation.Gazette"}}</label>
+        <label class="loups-prep-joueur" data-tooltip="{{localize 'LAKOUR_LOUPS.Preparation.CrieurAide'}}"><input type="checkbox" data-action="prepGazette" data-cle="crieur" {{#if preparation.gazette.crieur}}checked{{/if}}> <i class="fa-solid fa-bullhorn"></i> {{localize "LAKOUR_LOUPS.Preparation.Crieur"}}</label>
+        {{#if preparation.gazette.permanentes.length}}<span class="loups-etiquette">{{localize "LAKOUR_LOUPS.Preparation.Permanentes"}}</span>
+        {{#each preparation.gazette.permanentes}}<label class="loups-prep-joueur" data-tooltip="{{aide}}"><input type="checkbox" data-action="prepPermanente" data-cle="{{cle}}" {{#if coche}}checked{{/if}}> {{nom}}</label>{{/each}}{{/if}}
+      </div>
+      {{/if}}
+      {{#if preparation.fetes}}{{#unless preparation.fetes.saintMartin}}
+      <div class="loups-prep-ligne loups-prep-fete">
+        <span class="loups-etiquette"><i class="fa-solid fa-star"></i> {{localize "LAKOUR_LOUPS.Fetes.Preparation"}}</span>
+        <select name="prepFete" data-tooltip="{{preparation.fetes.aide}}">{{#each preparation.fetes.options}}<option value="{{cle}}" {{#if choisie}}selected{{/if}}>{{nom}}</option>{{/each}}</select>
+        <small>{{preparation.fetes.aide}}</small>
+      </div>
+      {{/unless}}{{/if}}
+    </div>
+    {{#if preparation.trop}}{{#unless preparation.ouvert.composition}}<p class="loups-alerte">{{localize "LAKOUR_LOUPS.Preparation.Trop"}}</p>{{/unless}}{{/if}}
+    <p class="loups-prep-resume"><i class="fa-solid fa-list-check"></i> {{preparation.resume}}</p>
     <div class="loups-actions">
       <button type="button" data-action="distribuer" {{#unless preparation.peutDistribuer}}disabled{{/unless}}><i class="fa-solid fa-shuffle"></i> {{localize "LAKOUR_LOUPS.Preparation.Distribuer"}}</button>
     </div>

@@ -2,7 +2,7 @@
 // Mise en page façon carte à jouer : en-tête avec portrait et « pilules » (Rôle · Camp · Métier · Maison), état en
 // insignes, pouvoirs en cartes (« atouts ») avec icône, usages restants et texte en infobulle.
 import { ID, CAMPS, EFFETS, VICTOIRES } from "../../logique/constantes.mjs";
-import { t, roleDe, campDe, amoureuxDe, protectionsDe, metierDe, libelleCamp, libelleRepere, maisonNumerotee, lireEtat, roleVisible } from "../donnees.mjs";
+import { t, roleDe, campDe, amoureuxDe, protectionsDe, metierDe, libelleCamp, libelleRepere, maisonNumerotee, lireEtat, roleVisible, titreDePersonnalite } from "../donnees.mjs";
 import { mesSecrets } from "../prive.mjs";
 import { estMJActif } from "../canal.mjs";
 import { personnaliteDe, batimentDe } from "../../logique/personnalites.mjs";
@@ -94,8 +94,8 @@ export class FicheVillageois extends HandlebarsApplicationMixin(ActorSheetV2) {
     const traits = traitsDe(etat, a.id) ? game.lakourLoups?.traits?.(a.id)?.texte ?? "" : "";
     const batiment = perso ? batimentDe(etat, a.id) : "";
     const etats = [
-      perso && insigne("personnalite", "fa-house-chimney-window", batiment ? `${t(`LAKOUR_LOUPS.Village.Personnalites.${perso}.Nom`)} — ${t(`LAKOUR_LOUPS.Batiments.${batiment}`)}`
-        : t(`LAKOUR_LOUPS.Village.Personnalites.${perso}.Nom`), t(`LAKOUR_LOUPS.Village.Personnalites.${perso}.Aide`)),
+      perso && insigne("personnalite", "fa-house-chimney-window", batiment ? `${titreDePersonnalite(perso, a)} — ${t(`LAKOUR_LOUPS.Batiments.${batiment}`)}`
+        : titreDePersonnalite(perso, a), t(`LAKOUR_LOUPS.Village.Personnalites.${perso}.Aide`)),
       s.vivant ? insigne("vivant", "fa-heart-pulse", t("LAKOUR_LOUPS.Fiche.Vivant")) : insigne("mort", "fa-cross", t("LAKOUR_LOUPS.Table.Mort")),
       s.revele && insigne("revele", "fa-eye", t("LAKOUR_LOUPS.Fiche.Revele")),
       s.silence && insigne("silence", "fa-comment-slash", t("LAKOUR_LOUPS.Table.Silence")),

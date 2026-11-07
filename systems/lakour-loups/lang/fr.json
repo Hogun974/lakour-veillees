@@ -32,18 +32,18 @@
       "chagrin": "victime du chagrin",
       "vote": "condamnation du village",
       "emporte": "entraînement dans la tombe",
-      "epie": "prise sur le fait à épier la meute",
+      "epie": "pris[|e] sur le fait à épier la meute",
       "narrateur": "mort mystérieuse",
       "peste": "victime de la peste noire",
       "panique": "pendaison pour avoir semé la panique",
       "contamine": "victime de la vieille épée",
-      "sagesse": "emporté avec la sagesse de l'Aïeul",
+      "sagesse": "emporté[|e] avec la sagesse de l'Aïeul",
       "rasoir": "victime du rasoir du Perruquier",
       "incendie": "victime de l'incendie",
-      "envoute": "emporté avec une victime envoûtée",
-      "foudre": "foudroyé par le Retour de flamme",
+      "envoute": "emporté[|e] avec une victime envoûtée",
+      "foudre": "foudroyé[|e] par le Retour de flamme",
       "chatiment": "victime du Châtiment",
-      "spectre": "emporté par le Spectre"
+      "spectre": "emporté[|e] par le Spectre"
     },
     "Effets": {
       "aucun": "aucun (arbitré par le narrateur)",
@@ -101,7 +101,7 @@
       "village": "Le village de Brumecombe l'emporte : plus aucun loup ne rôde dans la brume.",
       "meute": "La meute l'emporte : Brumecombe s'endort pour ne plus se réveiller.",
       "amoureux": "Les amoureux {a} et {b} l'emportent, seuls survivants de la vallée.",
-      "solitaire": "{nom} l'emporte, seul contre tous.",
+      "solitaire": "{nom} l'emporte, seul[|e] contre tous.",
       "peste": "Brumecombe s'éteint dans la fièvre : la peste noire l'emporte, sans que personne l'ait reconnue.",
       "villagePeste": "Le village a reconnu la peste noire : Brumecombe chasse la fièvre et l'emporte.",
       "brume": "La brume l'emporte : à la Saint-Martin, Brumecombe a pendu un innocent et nul loup n'était parmi vous."
@@ -127,7 +127,7 @@
       "Chronique": "Chronique",
       "Reveler": "Révéler ou cacher le rôle",
       "Eliminer": "Éliminer",
-      "EliminerQuestion": "Éliminer {nom} ? Son amoureux, s'il en a un, le suivra.",
+      "EliminerQuestion": "Éliminer {nom} ? [Son amoureux, s'il en a un, le suivra.|Son amoureux, si elle en a un, la suivra.]",
       "Executer": "Exécution",
       "ExecuterQuestion": "Le village a désigné {noms}. Procéder à l'exécution ?",
       "AubeMorts": "L'aube se lève sur : {noms}.",
@@ -171,7 +171,24 @@
       "VoteBailli": "Élire le Bailli",
       "NommerBailli": "Nommer le Bailli",
       "TrancherPour": "Trancher à la place du Bailli ({nom}) :",
-      "Migration": "Partie d'avant la version 0.9.0 reprise : {n} rôle(s) rangé(s) dans les secrets du MJ, retiré(s) des fiches des villageois."
+      "Migration": "Partie d'avant la version 0.9.0 reprise : {n} rôle(s) rangé(s) dans les secrets du MJ, retiré(s) des fiches des villageois.",
+      "Composition": {
+        "generee": "composition générée",
+        "choisie": "composition choisie",
+        "reprise": "mêmes rôles, rebattus",
+        "double-visage": "Double visage",
+        "saint-martin": "Nuit de la Saint-Martin",
+        "prete": "{niveau} — {n} joueurs, composition prête",
+        "preteTablee": "{niveau} — {n} places, composition prête",
+        "autre": "composition « {nom} »",
+        "Niveaux": {
+          "debutants": "Débutants",
+          "classique": "Classique",
+          "chaos": "Chaos",
+          "le-pacte": "Le Pacte",
+          "petite-tablee": "Petite tablée"
+        }
+      }
     },
     "Choix": {
       "Titre": "Dans la nuit…",
@@ -280,20 +297,20 @@
     "Nuit": {
       "Amour": "Une flèche de brume vous lie à {nom} : si l'un meurt, l'autre le suit.",
       "ProtectionRefusee": "Vous ne pouvez pas protéger {nom} deux nuits de suite.",
-      "EspionRepere": "{nom} a été surprise en épiant la meute : c'est elle que la meute dévore.",
+      "EspionRepere": "{nom} a été surpris[|e] en épiant la meute : c'est [lui|elle] que la meute dévore.",
       "Epier": "Caché dans la brume, vous entendez la meute désigner sa proie : {nom}.",
       "MorsureEvitee": "La morsure sur {nom} a été repoussée.",
       "Mordu": "Une morsure dans la nuit : vous rejoignez la meute, en secret.",
-      "MorsureMj": "{nom} a été mordu et rejoint la meute.",
+      "MorsureMj": "{nom} a été mordu[|e] et rejoint la meute.",
       "Embrasement": "Les maisons aspergées s'embrasent : {noms}.",
-      "SauveRemede": "{nom} a été sauvé par un remède.",
-      "SauveProtection": "{nom} était protégé cette nuit.",
+      "SauveRemede": "{nom} a été sauvé[|e] par un remède.",
+      "SauveProtection": "{nom} était protégé[|e] cette nuit.",
       "EclairerOui": "Votre lanterne a surpris un loup chez {nom} : {loups}.",
       "EclairerNon": "Aucun loup n'est entré chez {nom} cette nuit.",
       "VoirCamp": "Les cendres parlent : {nom} est du camp « {camp} ».",
       "VoirRoleMort": "{nom} était : {role}.",
-      "PasMort": "{nom} n'est pas mort.",
-      "ActifOui": "{nom} est sorti cette nuit.",
+      "PasMort": "{nom} n'est pas mort[|e].",
+      "ActifOui": "{nom} est sorti[|e] cette nuit.",
       "ActifNon": "{nom} n'a pas bougé cette nuit.",
       "ActifVu": "Vous avez vu {nom} sortir cette nuit.",
       "ActifPersonne": "Personne n'est sorti cette nuit.",
@@ -319,7 +336,7 @@
       "MeuteEmpechee": "Aucun loup n'a pu sortir cette nuit : la meute n'a pas chassé.",
       "Empeche": "Loin de chez vous cette nuit, vous n'avez rien pu faire.",
       "Surveille": "Le garde du guet vous avait à l'œil : vous n'avez pas pu quitter votre maison.",
-      "MeuteBredouille": "La meute n'a trouvé personne chez {nom} : il dormait hors d'atteinte.",
+      "MeuteBredouille": "La meute n'a trouvé personne chez {nom} : [il|elle] dormait hors d'atteinte.",
       "PersonneChez": "Personne ne répond chez {nom} cette nuit.",
       "PontBloque": "La meute n'a pas pu traverser le Pont jusqu'à {nom}.",
       "SauveAsile": "La meute n'a pas pu entrer à la Chapelle, où dormait {nom}.",
@@ -327,33 +344,33 @@
       "SauveVerrou": "Le verrou du Forgeron a tenu chez {nom}.",
       "SangDeBete": "Du sang de bête sur le seuil.",
       "Blesse": "{qui} a blessé {nom} avec la lame de la Forge.",
-      "SilenceBeni": "{nom} a été béni : votre hurlement n'a pas prise sur lui.",
+      "SilenceBeni": "{nom} a été béni[|e] : votre hurlement n'a pas prise sur [lui|elle].",
       "MessagerVide": "{nom} n'a rien écrit : votre besace est restée vide.",
       "MessageRecu": "Le Messager vous remet un mot de {nom} : « {texte} »",
       "MessageRemis": "Vous avez remis le mot de {a} à {b}.",
       "ProiesDeLaMeute": "Cette nuit, la meute a attaqué {noms}.",
       "InviteMessager": "Le Messager frappe à ta porte cette nuit : écris une phrase pour {nom}. Il la lui remettra à l'aube, de ta part.",
-      "PesteBredouille": "La peste n'a trouvé personne chez {nom} : il dormait hors d'atteinte.",
+      "PesteBredouille": "La peste n'a trouvé personne chez {nom} : [il|elle] dormait hors d'atteinte.",
       "PestePont": "La peste n'a pas pu traverser le Pont jusqu'à {nom}.",
       "PesteArretee": "La peste n'a pas pu atteindre {nom} ({par}).",
       "VisionDeuil": "Le glas vous souffle le camp de {nom} : « {camp} ».",
       "PresentOuvert": "Votre présent s'est ouvert cette nuit : un coup mortel vous a manqué. Vous êtes encore en vie.",
-      "PresentMj": "Le présent de {nom} s'est ouvert : il a survécu à un coup mortel.",
+      "PresentMj": "Le présent de {nom} s'est ouvert : [il|elle] a survécu à un coup mortel.",
       "MasqueTombe": "Le masque du Carnaval de {nom} a trompé une vision, puis il est tombé.",
-      "AieulMorsure": "{nom}, l'Aïeul, a résisté à la morsure : il a perdu sa première vie.",
-      "AieulResiste": "{nom}, l'Aïeul, a survécu à l'attaque : il a perdu sa première vie.",
+      "AieulMorsure": "{nom}, l'Aïeul, a résisté à la morsure : [il|elle] a perdu sa première vie.",
+      "AieulResiste": "{nom}, l'Aïeul, a survécu à l'attaque : [il|elle] a perdu sa première vie.",
       "ContamineMort": "{nom} a succombé à la blessure de la vieille épée.",
-      "Contamination": "La vieille épée de {qui} a blessé {nom} : il mourra la nuit prochaine.",
+      "Contamination": "La vieille épée de {qui} a blessé {nom} : [il|elle] mourra la nuit prochaine.",
       "FuretOui": "Votre museau frémit : il y a au moins un loup parmi {noms}.",
       "FuretNon": "Aucun loup parmi {noms} : ils sont innocents. Mais votre flair vous a quitté, pour toujours.",
-      "FuretPerdu": "{nom}, le Furet, n'a flairé aucun loup : il perd son flair.",
-      "Plume": "Une plume noire se posera sur {nom} : deux voix de plus contre lui au vote du jour.",
+      "FuretPerdu": "{nom}, le Furet, n'a flairé aucun loup : [il|elle] perd son flair.",
+      "Plume": "Une plume noire se posera sur {nom} : deux voix de plus contre [lui|elle] au vote du jour.",
       "Incendie": "Le bâtiment de {nom} brûle cette nuit.",
       "IncendieProie": "{nom} était la proie de la nuit : la meute n'a pas de victime.",
-      "Cabaret": "{nom}, le Cabaretier, ne peut pas être dévoré : la meute repart bredouille.",
+      "Cabaret": "{nom}, [le Cabaretier|la Cabaretière], ne peut pas être dévoré[|e] : la meute repart bredouille.",
       "Carbonise": "{nom}, le premier loup à la droite de {proie}, est pris dans les flammes.",
       "AmourDouble": "Une seconde flèche vous lie aussi à {nom}.",
-      "Triangle": "{qui} aime aussi {nom} : {trompe} est trompé.",
+      "Triangle": "{qui} aime aussi {nom} : {trompe} est trompé[|e].",
       "EpierSansHerboriste": "Aucune herboriste ne veille cette nuit.",
       "EpierHerboriste": "Vous voyez {nom} déboucher une fiole, pour {noms}.",
       "EpierHerboristeRien": "Vous voyez {nom} garder ses fioles cette nuit.",
@@ -367,7 +384,7 @@
       "FioleVillageois": "Une fiole inconnue vous a guéri de tout, même de votre pouvoir : vous voilà simple villageois.",
       "FioleLoup": "Une fiole inconnue a réveillé la bête en vous : vous rejoignez la meute, en secret.",
       "Envoute": "Des yeux jaunes vous ont fixé dans la nuit : vous êtes envoûté. Vos pouvoirs vous ont quitté ; vous seul le savez.",
-      "EnvouteMj": "{nom} est envoûté par la meute.",
+      "EnvouteMj": "{nom} est envoûté[|e] par la meute.",
       "VoirRoleVendanges": "Les cendres se brouillent : chez {noms}, on lit {roles}, dans le désordre."
     },
     "Messages": {
@@ -608,17 +625,17 @@
       "Verrou": "{qui} forge un verrou pour la maison de {nom} : la nuit prochaine, la première attaque de loup contre elle échouera.",
       "Meule": "{qui} interroge la meule : {n} loup(s) (vit|vivent) encore à Brumecombe.",
       "Garde": "{qui} garde {nom} à l'œil : la nuit prochaine, {nom} ne pourra viser aucune autre maison que la sienne.",
-      "Benediction": "{qui} bénit {nom} : plus personne ne pourra le réduire au silence, et il parlera le premier au prochain débat.",
+      "Benediction": "{qui} bénit {nom} : plus personne ne pourra [le|la] réduire au silence, et [il|elle] parlera [le premier|la première] au prochain débat.",
       "TracesOui": "{qui} a suivi les traces de {nom} : {nom} a quitté sa maison cette nuit.",
       "TracesNon": "{qui} a suivi les traces de {nom} : {nom} n'a pas quitté sa maison cette nuit.",
       "Gite": "{qui} offre le gîte à {nom} : la nuit prochaine, {nom} dort à la Taverne et sa maison reste vide.",
       "Voix": "{qui} rend la voix à {nom}, qui peut de nouveau parler au débat.",
       "Nouvelle": "{qui} crie la nouvelle du matin : {indice}",
-      "Ruban": "{qui} noue un ruban au poignet de {nom} : s'il est le plus désigné d'un vote, il aura une minute de plus pour se défendre.",
+      "Ruban": "{qui} noue un ruban au poignet de {nom} : [s'il|si elle] est [le|la] plus désigné[|e] d'un vote, [il|elle] aura une minute de plus pour se défendre.",
       "RubanDefense": "{nom} porte le ruban de la Tisserande : une minute de plus pour se défendre, le vote reste ouvert.",
-      "Traversee": "{qui} fait traverser la rivière à {nom} : la nuit prochaine, personne ne pourra le visiter, et il ne pourra pas agir.",
-      "CrocsOui": "{qui} examine le corps de {nom} : il porte des traces de crocs.",
-      "CrocsNon": "{qui} examine le corps de {nom} : il ne porte aucune trace de crocs.",
+      "Traversee": "{qui} fait traverser la rivière à {nom} : la nuit prochaine, personne ne pourra [le|la] visiter, et [il|elle] ne pourra pas agir.",
+      "CrocsOui": "{qui} examine le corps de {nom} : [il|elle] porte des traces de crocs.",
+      "CrocsNon": "{qui} examine le corps de {nom} : [il|elle] ne porte aucune trace de crocs.",
       "SuieOui": "{qui} monte sur le toit de {nom} : la suie garde des traces, sa maison a reçu de la visite cette nuit.",
       "SuieNon": "{qui} monte sur le toit de {nom} : la suie est intacte, personne n'est venu chez {nom} cette nuit.",
       "Ecluse": "{qui} ferme l'écluse : la nuit prochaine, l'eau monte sous le Pont et la meute ne pourra chasser aucune maison de l'autre rive.",
@@ -682,14 +699,14 @@
       "PelerinePrive": "Votre prière s'est fait entendre : {nom} est du camp « {camp} ».",
       "LavoirNeige": "Le lavoir est gelé : on n'y parle que de la neige, qui a tout recouvert.",
       "GreffierSigne": "Votre signe est passé : un second vote suivra, sans débat, dès que le condamné sera tombé.",
-      "Confession": "{qui}, le Prieur, fait venir {nom} au prieuré : {nom} lui montre sa carte, en secret.",
+      "Confession": "{qui}, [le Prieur|la Prieure], fait venir {nom} au prieuré : {nom} lui montre sa carte, en secret.",
       "ConfessionPrive": "{nom} vous a montré sa carte : {role}.",
-      "Remise": "{qui}, le Remégeux, remet {nom} d'aplomb : le pouvoir de son bâtiment lui est rendu, une fois encore.",
-      "Regent": "{qui}, le Régent, met au coin {noms} : ils ne voteront pas aujourd'hui.",
-      "Rasoir": "{qui}, le Perruquier, ouvre son rasoir sur {nom}.",
+      "Remise": "{qui}, [le Remégeux|la Remégeuse], remet {nom} d'aplomb : le pouvoir de son bâtiment lui est rendu, une fois encore.",
+      "Regent": "{qui}, [le Régent|la Régente], met au coin {noms} : ils ne voteront pas aujourd'hui.",
+      "Rasoir": "{qui}, [le Perruquier|la Perruquière], ouvre son rasoir sur {nom}.",
       "RasoirLoup": "{nom} était un loup : le village félicite {qui}.",
       "RasoirInnocent": "{nom} n'était pas un loup : {qui} paie sa méprise de sa vie.",
-      "CrieurRevoque": "{qui}, le Bailli, révoque {ancien} : {nom} devient Crieur public."
+      "CrieurRevoque": "{qui}, le Bailli, révoque {ancien} : {nom} devient [Crieur public|Crieuse publique]."
     },
     "Plateau": {
       "ChoisisSurLaCarte": "À toi : choisis sur la carte (clique sur un jeton allumé), puis « Valider » dans le bandeau."
@@ -794,10 +811,10 @@
       "Detail": {
         "voixManquantes": "({n} voix (manque|manquent) encore)",
         "juge": "Le Juge de paix ({nom}) peut encore annuler ce vote.",
-        "emporter": "{nom} désigne qui il emporte (ou personne).",
+        "emporter": "{nom} désigne qui [il|elle] emporte (ou personne).",
         "sansSecrets": "Ce navigateur n'a pas les secrets de la nuit.",
         "bancVide": "(Personne n'est accusé : attendez les accusations du débat, ou laissez tomber la nuit.)",
-        "emporterDemande": "{nom} choisit en ce moment qui il emporte ; vous pouvez trancher à sa place.",
+        "emporterDemande": "{nom} choisit en ce moment qui [il|elle] emporte ; vous pouvez trancher à sa place.",
         "chaine": "La Chaîne des innocents : à {nom} de désigner un innocent ; la clôture attend le dernier debout.",
         "inondation": "(La Crue : pas de vote aujourd'hui ; laissez tomber la nuit.)"
       },
@@ -806,7 +823,7 @@
       "departage": "En attente : le Bailli ({nom}) tranche l'égalité…",
       "succession": "En attente : {nom}, Bailli défunt, remet le sceau…",
       "LeDeuil": "la meute en deuil",
-      "juger": "Juger l'accusé : {nom}",
+      "juger": "Juger [l'accusé|l'accusée] : {nom}",
       "LesCharmes": "les charmés",
       "LeMur": "le Mur des murmures (tous les vivants)",
       "executeur": "Élire l'Exécuteur"
@@ -862,7 +879,22 @@
       "GazetteAide": "Une carte Événement chaque matin sauf le premier (rythme et choix des cartes : réglages du monde). Sans l'Almanach.",
       "Crieur": "Le Crieur public",
       "CrieurAide": "Une charge nommée par le Bailli, avec des cartes de la Gazette en main.",
-      "Permanentes": "Cartes permanentes posées dès le début :"
+      "Permanentes": "Cartes permanentes posées dès le début :",
+      "Onglets": {
+        "joueurs": "Joueurs",
+        "composition": "Composition",
+        "village": "Village",
+        "variantes": "Variantes",
+        "gazette": "Gazette et fête"
+      },
+      "Formats": "Veillée",
+      "Resume": {
+        "Manuel": "{n} rôle(s) choisi(s) à la main",
+        "SansBatiments": "sans bâtiments",
+        "BatimentsChoisis": "{n} bâtiment(s) choisi(s)",
+        "SansMetiers": "sans métiers",
+        "Titre": "Choix actifs"
+      }
     },
     "Recit": {
       "Titre": "Le récit de la veillée",
@@ -871,7 +903,7 @@
       "Mort": "au tour {tour}, {cause}",
       "IA": "joueur IA",
       "Parti": "a quitté la veillée au tour {tour}",
-      "Exile": "exilé par le village au tour {tour}"
+      "Exile": "exilé[|e] par le village au tour {tour}"
     },
     "Signal": {
       "Choix": "À toi de choisir",
@@ -900,7 +932,7 @@
       "Crier": "C'est la peste noire !",
       "CrierAide": "Si tu es sûr qu'il n'y a pas de loups mais une peste : la partie s'arrête et le village gagne. Si tu te trompes, tu es pendu pour avoir semé la panique.",
       "Confirmer": "Crier « C'est la peste noire ! » ? Si c'est vrai, le village gagne. Si c'est faux, tu seras pendu pour avoir semé la panique.",
-      "ConfirmerPour": "{nom} crie « C'est la peste noire ! » ? Si c'est faux, {nom} sera pendu pour avoir semé la panique.",
+      "ConfirmerPour": "{nom} crie « C'est la peste noire ! » ? Si c'est faux, {nom} sera pendu[|e] pour avoir semé la panique.",
       "CriJuste": "{nom} crie : « C'est la peste noire ! » Le village se tait, puis comprend : il n'y a jamais eu de loups à Brumecombe, seulement la fièvre qui passe de mort en mort. On brûle les draps, on ferme les puits, et la peste recule.",
       "CriFaux": "{nom} crie : « C'est la peste noire ! » Mais les morts portent des traces que la fièvre ne laisse pas. Pour avoir semé la panique, le village pend {nom} sur-le-champ.",
       "InvitePorteur": "La fièvre t'a emporté, mais elle n'a pas fini : en secret, désigne qui elle frappera cette nuit.",
@@ -934,7 +966,7 @@
       "InviteDepartage": "Égalité au vote. Bailli, tranche : qui le village condamne-t-il ? ({n} au plus ; passer : personne)",
       "Succession": "{de}, Bailli défunt, remet le sceau du village à {nom}.",
       "Vacance": "{de} emporte le sceau dans la tombe : la charge de Bailli reste vacante, le village en élira un nouveau.",
-      "Elu": "{nom} est élu Bailli de Brumecombe.",
+      "Elu": "{nom} est élu[|e] Bailli de Brumecombe.",
       "EluSort": "Égalité : le sort désigne {nom}, qui devient Bailli de Brumecombe.",
       "EluCourt": "Bailli élu :",
       "Personne": "Personne n'est élu : la charge de Bailli reste vacante aujourd'hui.",
@@ -992,14 +1024,14 @@
       },
       "Mort": "Tour {tour} — mort de {nom} : {cause}.",
       "Bailli": {
-        "election": "Tour {tour} — {nom} est élu Bailli.",
+        "election": "Tour {tour} — {nom} est élu[|e] Bailli.",
         "sort": "Tour {tour} — {nom} devient Bailli, désigné par le sort.",
         "succession": "Tour {tour} — {de}, Bailli défunt, remet le sceau à {nom}.",
         "nomme": "Tour {tour} — le narrateur nomme {nom} Bailli.",
         "vacance": "Tour {tour} — la charge de Bailli est vacante.",
-        "abolie": "Tour {tour} — {de}, gracié, perd la charge de Bailli : Brumecombe n'aura plus de Bailli.",
+        "abolie": "Tour {tour} — {de}, gracié[|e], perd la charge de Bailli : Brumecombe n'aura plus de Bailli.",
         "metayers": "Tour {tour} — {de}, le dernier Métayer, est mort : Brumecombe n'aura plus de Bailli.",
-        "destitue": "Tour {tour} — le Bailli {de} est destitué (la Saint-Vincent)."
+        "destitue": "Tour {tour} — le Bailli {de} est destitué[|e] (la Saint-Vincent)."
       },
       "Declaration": "Tour {tour} — {nom} déclare : « {texte} »",
       "Refus": {
@@ -1016,7 +1048,7 @@
       "Passage": {
         "arrivee": "Tour {tour} — {nom} arrive à Brumecombe : {role} (gens de passage).",
         "depart": "Tour {tour} — {nom} quitte la veillée.",
-        "exil": "Tour {tour} — {nom} est exilé par le village."
+        "exil": "Tour {tour} — {nom} est exilé[|e] par le village."
       },
       "Accusation": "Tour {tour} — {nom} accuse {contre}.",
       "Deuil": "Tour {tour} — le glas du deuil sonne pour la {n}(re|e) fois.",
@@ -1027,13 +1059,13 @@
         "neige": "Tour {tour} — la neige est tombée : les traces sont effacées.",
         "defile": "Tour {tour} — au défilé du Carnaval, le masque de {role}, que personne ne porte."
       },
-      "Vacance": "Tour {tour} — {nom} est mort : ses bâtiments deviennent vacants ({batiments}).",
+      "Vacance": "Tour {tour} — {nom} est mort[|e] : ses bâtiments deviennent vacants ({batiments}).",
       "VoixPlume": "(la plume noire : deux voix contre {cible})",
       "SouffreDouleur": "(égalité : {nom} la paie)",
       "Pacte": {
-        "grace": "Tour {tour} — {nom}, l'Innocent, est gracié : il ne votera plus.",
-        "sagesse": "Tour {tour} — {nom}, l'Aïeul, est tombé de la main du village : les villageois ont perdu leurs pouvoirs.",
-        "votants": "Tour {tour} — {nom}, tombé pour l'égalité, désigne les votants de demain : {noms}.",
+        "grace": "Tour {tour} — {nom}, l'Innocent, est gracié[|e] : [il|elle] ne votera plus.",
+        "sagesse": "Tour {tour} — {nom}, l'Aïeul, est tombé[|e] de la main du village : les villageois ont perdu leurs pouvoirs.",
+        "votants": "Tour {tour} — {nom}, tombé[|e] pour l'égalité, désigne les votants de demain : {noms}.",
         "plume": "Tour {tour} — une plume noire désigne {nom}.",
         "oies": "Tour {tour} — les oies de {nom} cacardent.",
         "second-vote": "Tour {tour} — un second vote d'exécution, sans débat.",
@@ -1042,29 +1074,30 @@
       "Village": {
         "distribution": "Tour {tour} — les bâtiments du village sont confiés à {noms} ; les autres sont des Chemineaux.",
         "changement": "Tour {tour} — changement au village : {batiment} ({nom}).",
-        "installation": "Tour {tour} — {noms}, le Prévôt, loge {nom} à {batiment}.",
+        "installation": "Tour {tour} — {noms}, [noms:le Prévôt|la Prévôte], loge {nom} à {batiment}.",
         "refus": "Tour {tour} — {nom} refuse {batiment}.",
-        "incendie": "Tour {tour} — {batiment} a brûlé ; {nom} devient Chemineau.",
-        "prieur": "Tour {tour} — {nom}, le Prieur, voit en secret la carte de {noms}.",
-        "remegeux": "Tour {tour} — {nom}, le Remégeux, rend son pouvoir à {noms}.",
-        "regent": "Tour {tour} — {nom}, le Régent, prive de vote {noms}.",
-        "perruquier": "Tour {tour} — {nom}, le Perruquier, frappe {noms}.",
-        "grace": "Tour {tour} — {nom}, le Hobereau, gracie {noms}.",
-        "cabaret": "Tour {tour} — {nom}, le Cabaretier, perd son immunité."
+        "incendie": "Tour {tour} — {batiment} a brûlé ; {nom} devient [Chemineau|Chemineaude].",
+        "prieur": "Tour {tour} — {nom}, [le Prieur|la Prieure], voit en secret la carte de {noms}.",
+        "remegeux": "Tour {tour} — {nom}, [le Remégeux|la Remégeuse], rend son pouvoir à {noms}.",
+        "regent": "Tour {tour} — {nom}, [le Régent|la Régente], prive de vote {noms}.",
+        "perruquier": "Tour {tour} — {nom}, [le Perruquier|la Perruquière], frappe {noms}.",
+        "grace": "Tour {tour} — {nom}, [le Hobereau|la Hobereaute], gracie {noms}.",
+        "cabaret": "Tour {tour} — {nom}, [le Cabaretier|la Cabaretière], perd son immunité.",
+        "graceSoi": "Tour {tour} — {nom}, [le Hobereau|la Hobereaute], se gracie [lui-même|elle-même]."
       },
       "Chaine": "Chaîne des innocents : {chaine} ; resté debout : {nom}.",
       "ChaineSort": "{nom} (le sort)",
       "Variante": {
         "distribution": "Tour {tour} : les variantes de la veillée sont annoncées.",
         "chandelles": "Nuit {tour} : les chandelles de {noms} se sont éteintes ensemble ; la meute n'a pas eu de victime.",
-        "envoutement": "Jour {tour} : {nom}, condamné, était envoûté ; {noms} tombent avec lui.",
+        "envoutement": "Jour {tour} : {nom}, condamné[|e], était envoûté[|e] ; {noms} tombent avec [nom:lui|elle].",
         "bailli": "Jour {tour} : le Bailli {nom} vote le premier, à découvert ({noms})."
       },
       "Gazette": {
         "carte": "Tour {tour} — {nom} lit une carte de la Gazette : {carte}.",
-        "crieur": "Tour {tour} — {nom} devient Crieur public.",
-        "crieur-garde": "Tour {tour} — {nom} reste Crieur public.",
-        "executeur": "Tour {tour} — {nom} devient Exécuteur.",
+        "crieur": "Tour {tour} — {nom} devient [Crieur public|Crieuse publique].",
+        "crieur-garde": "Tour {tour} — {nom} reste [Crieur public|Crieuse publique].",
+        "executeur": "Tour {tour} — {nom} devient [Exécuteur|Exécutrice].",
         "revenante": "Tour {tour} — {nom} revient parmi les vivants, en simple Villageois.",
         "marche": "Tour {tour} — {nom} passe un marché avec le Malin.",
         "prive": "Tour {tour} — {nom} perd son vote pour la journée.",
@@ -1140,7 +1173,7 @@
       "GlasAide": "Au soir de ce jour (après son vote), la partie s'arrête : la meute gagne si un loup vit encore, sinon un tueur solitaire encore en vie, sinon le village.",
       "GlasTitre": "Glas final (jour)",
       "Poser": "Poser",
-      "Etoile": "Bonne étoile : {nom} est protégé en secret la première nuit.",
+      "Etoile": "Bonne étoile : {nom} est protégé[|e] en secret la première nuit.",
       "EtoileAucune": "Bonne étoile : personne.",
       "EtoileTitre": "Bonne étoile",
       "EtoileAide": "Le narrateur protège en secret un joueur débutant la première nuit. Personne n'en est prévenu.",
@@ -1156,7 +1189,7 @@
       "CampSecret": "{nom} (gens de passage) est du camp « {camp} ».",
       "NouveauLoup": "{nom}, gens de passage, est des vôtres : la meute compte un membre de plus.",
       "Depart": "{nom} quitte la veillée et reprend la route.",
-      "Exil": "Le village chasse {nom} : le voyageur reprend la route, son secret avec lui.",
+      "Exil": "Le village chasse {nom} : [le voyageur|la voyageuse] reprend la route, son secret avec [lui|elle].",
       "Parti": "parti au tour {tour}",
       "Exile": "exilé au tour {tour}",
       "Quitter": "Quitter la veillée",
@@ -1195,10 +1228,10 @@
       "Accuse": "{nom} accuse {contre}.",
       "Annonce": "<strong>{nom}</strong> se lève et accuse <strong>{contre}</strong>.",
       "Jugement": "Le village juge {nom}.",
-      "Question": "Faut-il condamner {nom} ? (voter pour l'accusé le condamne ; s'abstenir l'acquitte)",
-      "Invite": "Jugement de {nom} : votez pour l'accusé pour le condamner, ne choisissez personne pour l'acquitter.",
-      "Condamne": "{nom} est condamné ({pour} voix sur {total}).",
-      "Acquitte": "{nom} est acquitté ({pour} voix sur {total}).",
+      "Question": "Faut-il condamner {nom} ? (voter pour [l'accusé le|l'accusée la] condamne ; s'abstenir l'acquitte)",
+      "Invite": "Jugement de {nom} : votez pour [l'accusé pour le|l'accusée pour la] condamner, ne choisissez personne pour l'acquitter.",
+      "Condamne": "{nom} est condamné[|e] ({pour} voix sur {total}).",
+      "Acquitte": "{nom} est acquitté[|e] ({pour} voix sur {total}).",
       "Refus": {
         "inactif": "Le Banc des accusés n'est pas en jeu.",
         "phase": "On n'accuse que pendant le débat.",
@@ -1212,7 +1245,7 @@
       }
     },
     "Deguise": {
-      "MasqueTombe": "{nom} a été le plus désigné d'un vote sans être exécuté : son masque tombe, les visions disent désormais la vérité sur lui.",
+      "MasqueTombe": "{nom} a été [le|la] plus désigné[|e] d'un vote sans être exécuté[|e] : son masque tombe, les visions disent désormais la vérité sur [lui|elle].",
       "Carnet": "Désigné par le village sans être exécuté, vous avez perdu votre masque : désormais, les visions disent la vérité sur vous."
     },
     "Deuil": {
@@ -1331,18 +1364,18 @@
     "Tenures": {
       "Refus": {
         "cle": "Quel bâtiment ? (clé manquante)",
-        "mort": "{nom} est mort : il ne peut plus tenir de bâtiment.",
+        "mort": "{nom} est mort[|e] : [il|elle] ne peut plus tenir de bâtiment.",
         "village": "Ce bâtiment n'appartient pas à la variante « Le Village » en cours.",
         "detruit": "Ce bâtiment a brûlé : il n'existe plus."
       }
     },
     "Pacte": {
-      "Grace": "{nom} est l'Innocent : le village le gracie. Il reste parmi vous, mais ne votera plus jamais.",
-      "BailliAboli": "{nom} était Bailli : gracié, il perd la charge, et personne ne la reprendra. Brumecombe n'aura plus de Bailli.",
-      "Sagesse": "{nom}, l'Aïeul, est tombé de la main du village : Brumecombe a perdu sa sagesse. Jusqu'à la fin de la veillée, plus aucun villageois n'a de pouvoir, ni de son rôle ni de son métier.",
+      "Grace": "{nom} est l'Innocent : le village [le|la] gracie. [Il|Elle] reste parmi vous, mais ne votera plus jamais.",
+      "BailliAboli": "{nom} était Bailli : gracié[|e], [il|elle] perd la charge, et personne ne la reprendra. Brumecombe n'aura plus de Bailli.",
+      "Sagesse": "{nom}, l'Aïeul, est tombé[|e] de la main du village : Brumecombe a perdu sa sagesse. Jusqu'à la fin de la veillée, plus aucun villageois n'a de pouvoir, ni de son rôle ni de son métier.",
       "Egalite": "Égalité : c'est {nom} qui paie pour les ex æquo.",
-      "Votants": "{nom}, tombé pour l'égalité, a désigné ceux qui voteront demain : {noms}. Les autres se tairont au vote.",
-      "PlumeMatin": "Une plume noire désigne {nom} : au vote d'exécution de ce jour, deux voix de plus contre lui.",
+      "Votants": "{nom}, tombé[|e] pour l'égalité, a désigné ceux qui voteront demain : {noms}. Les autres se tairont au vote.",
+      "PlumeMatin": "Une plume noire désigne {nom} : au vote d'exécution de ce jour, deux voix de plus contre [lui|elle].",
       "PlumeVoix": "La plume noire pèse deux voix contre {nom}.",
       "Oies": "Les oies de {nom} cacardent !",
       "SecondVote": "Un second vote d'exécution s'ouvre aussitôt, sans débat.",
@@ -1353,7 +1386,7 @@
       "PriveDeVote": "Vous ne votez pas à ce vote."
     },
     "Ambigus": {
-      "RejointLaMeute": "Cette nuit, {nom} rejoint la meute : il chassera avec vous.",
+      "RejointLaMeute": "Cette nuit, {nom} rejoint la meute : [il|elle] chassera avec vous.",
       "ChapardeurInvite": "Deux cartes dorment au centre de la table. Prends-en une à la place de la tienne, ou passe pour garder ta carte.",
       "ChapardeurOblige": "Les deux cartes du centre sont de la meute : tu dois en prendre une.",
       "ChapardeurPris": "Tu as glissé ta carte au centre et pris celle-ci : tu es désormais « {role} », jusqu'à la fin de la veillée.",
@@ -1367,10 +1400,10 @@
       "MatinVillage": "Tu as choisi le village : tu resteras simple villageois jusqu'à la fin.",
       "MatinMeuteNote": "{nom}, le Mâtin, a choisi la meute.",
       "MatinVillageNote": "{nom}, le Mâtin, reste au village.",
-      "Modele": "Ton modèle est {nom}. Tant qu'il vit, tu es du Village ; s'il tombe, tu rejoindras la meute.",
+      "Modele": "Ton modèle est {nom}. Tant [qu'il|qu'elle] vit, tu es du Village ; [s'il|si elle] tombe, tu rejoindras la meute.",
       "ModeleNote": "{nom}, l'Enfant des bois, a pris {modele} pour modèle.",
-      "Orphelin": "{nom}, ton modèle, est tombé : tu rejoins la meute en secret, et tu chasseras avec elle dès la nuit prochaine. Les loups : {noms}.",
-      "OrphelinNote": "{modele} est tombé : {nom}, l'Enfant des bois, rejoint la meute.",
+      "Orphelin": "{nom}, ton modèle, est tombé[|e] : tu rejoins la meute en secret, et tu chasseras avec elle dès la nuit prochaine. Les loups : {noms}.",
+      "OrphelinNote": "{modele} est tombé[|e] : {nom}, l'Enfant des bois, rejoint la meute.",
       "Charme": "Tu as joué de ta vielle sous les fenêtres de {noms} : les voilà charmés.",
       "CharmeNote": "{nom}, le Joueur de vielle, charme {noms}.",
       "Charmes": "Un air de vielle vous a charmés. Vous ouvrez les yeux avec les autres charmés : {noms}. Ne dites rien.",
@@ -1388,10 +1421,10 @@
         "age": "selon l'âge (les jeunes et les vieux)",
         "lunettes": "selon les lunettes (sans et avec)"
       },
-      "ChambriereInvite": "Le village a condamné {noms}. Avant qu'on retourne sa carte, veux-tu te dévouer ? Désigne-le pour prendre sa carte (et ton secret sera dévoilé), ou passe.",
-      "Devouement": "Avant qu'on retourne la carte de {de}, {nom} se dévoile : c'était la Chambrière. Elle prend la carte du condamné sans la montrer, et en tiendra le rôle jusqu'à la fin.",
+      "ChambriereInvite": "Le village a condamné {noms}. Avant qu'on retourne sa carte, veux-tu te dévouer ? Désigne-[le|la] pour prendre sa carte (et ton secret sera dévoilé), ou passe.",
+      "Devouement": "Avant qu'on retourne la carte de {de}, {nom} se dévoile : c'était la Chambrière. [Il|Elle] prend la carte [de:du condamné|de la condamnée] sans la montrer, et en tiendra le rôle jusqu'à la fin.",
       "DevouementNote": "{nom}, la Chambrière, devient « {role} ».",
-      "BailliPerdu": "{nom} était Bailli : en se dévouant, elle perd la charge. Le village élira un autre Bailli.",
+      "BailliPerdu": "{nom} était Bailli : en se dévouant, [il|elle] perd la charge. Le village élira un autre Bailli.",
       "Refus": {
         "tard": "Les cartes du Bateleur se choisissent avant la première nuit.",
         "cartes": "Choisis une à {n} cartes de rôles à pouvoir de nuit (ni loup, ni solitaire), qui ne sont pas au paquet."
@@ -1402,43 +1435,53 @@
       "Personnalites": {
         "metayer": {
           "Nom": "Métayer",
-          "Aide": "Métayer : à partir du deuxième jour, les Métayers vivants désignent entre eux le Bailli, parmi eux ; le Bailli défunt choisit son successeur parmi eux. Le dernier Métayer mort, Brumecombe n'a plus de Bailli."
+          "Aide": "Métayer : à partir du deuxième jour, les Métayers vivants désignent entre eux le Bailli, parmi eux ; le Bailli défunt choisit son successeur parmi eux. Le dernier Métayer mort, Brumecombe n'a plus de Bailli.",
+          "Femme": "Métayère"
         },
         "prieur": {
           "Nom": "Prieur",
-          "Aide": "Prieur : une fois, pendant le jour (même après la désignation du condamné), il fait venir un joueur au prieuré, qui lui montre sa carte en secret."
+          "Aide": "Prieur : une fois, pendant le jour (même après la désignation du condamné), il fait venir un joueur au prieuré, qui lui montre sa carte en secret.",
+          "Femme": "Prieure"
         },
         "remegeux": {
           "Nom": "Remégeux",
-          "Aide": "Remégeux : une fois, pendant le jour, il rend à un joueur le pouvoir unique de son bâtiment, déjà servi."
+          "Aide": "Remégeux : une fois, pendant le jour, il rend à un joueur le pouvoir unique de son bâtiment, déjà servi.",
+          "Femme": "Remégeuse"
         },
         "regent": {
           "Nom": "Régent",
-          "Aide": "Régent : chaque jour, juste avant le vote, il prive de vote jusqu'à deux joueurs (jamais un Chemineau). Lui-même ne vote jamais."
+          "Aide": "Régent : chaque jour, juste avant le vote, il prive de vote jusqu'à deux joueurs (jamais un Chemineau). Lui-même ne vote jamais.",
+          "Femme": "Régente"
         },
         "fourniere": {
           "Nom": "Fournière",
-          "Aide": "Fournière : chaque nuit, quand la meute rentre se coucher, elle a une chance d'entrevoir l'un des loups."
+          "Aide": "Fournière : chaque nuit, quand la meute rentre se coucher, elle a une chance d'entrevoir l'un des loups.",
+          "Homme": "Fournier"
         },
         "perruquier": {
           "Nom": "Perruquier",
-          "Aide": "Perruquier : une fois, pendant le jour, il ouvre son rasoir sur un joueur (jamais un Chemineau). Un loup : le village le félicite ; sinon, il paie sa méprise de sa vie."
+          "Aide": "Perruquier : une fois, pendant le jour, il ouvre son rasoir sur un joueur (jamais un Chemineau). Un loup : le village le félicite ; sinon, il paie sa méprise de sa vie.",
+          "Femme": "Perruquière"
         },
         "cabaretier": {
           "Nom": "Cabaretier",
-          "Aide": "Cabaretier : la meute ne peut pas le dévorer, le village ne peut pas voter contre lui ; il vote à découvert. S'il vote contre un joueur que le vote désigne, il perd cette immunité."
+          "Aide": "Cabaretier : la meute ne peut pas le dévorer, le village ne peut pas voter contre lui ; il vote à découvert. S'il vote contre un joueur que le vote désigne, il perd cette immunité.",
+          "Femme": "Cabaretière"
         },
         "prevot": {
           "Nom": "Prévôt",
-          "Aide": "Prévôt : quand un bâtiment se libère, il peut y loger le Chemineau de son choix, qui en reçoit le pouvoir."
+          "Aide": "Prévôt : quand un bâtiment se libère, il peut y loger le Chemineau de son choix, qui en reçoit le pouvoir.",
+          "Femme": "Prévôte"
         },
         "hobereau": {
           "Nom": "Hobereau",
-          "Aide": "Hobereau : une fois, un condamné du vote peut le supplier ; il le gracie (lui-même aussi) : pas d'exécution, et sa carte reste cachée."
+          "Aide": "Hobereau : une fois, un condamné du vote peut le supplier ; il le gracie (lui-même aussi) : pas d'exécution, et sa carte reste cachée.",
+          "Femme": "Hobereaute"
         },
         "chemineau": {
           "Nom": "Chemineau",
-          "Aide": "Chemineau : sans toit ni pouvoir de bâtiment. Le Régent, le Perruquier, la Pie et l'Incendiaire n'ont pas prise sur lui ; le Prévôt peut le loger."
+          "Aide": "Chemineau : sans toit ni pouvoir de bâtiment. Le Régent, le Perruquier, la Pie et l'Incendiaire n'ont pas prise sur lui ; le Prévôt peut le loger.",
+          "Femme": "Chemineaude"
         }
       },
       "Pouvoirs": {
@@ -1452,23 +1495,23 @@
       "Chemineaux": "Chemineaux : {noms}.",
       "Change": "Changement au village : {nom} tient désormais {batiment} ({personnalite}).",
       "Libere": "{batiment} est vide : {nom} n'y loge plus.",
-      "Incendie": "Cette nuit, {batiment} a brûlé : {nom} n'a plus de toit et devient Chemineau.",
+      "Incendie": "Cette nuit, {batiment} a brûlé : {nom} n'a plus de toit et devient [Chemineau|Chemineaude].",
       "IncendieProie": "Les flammes ont surpris la meute chez {nom}, qui en réchappe : {loup} y a péri.",
-      "Fourniere": "Au petit jour, en ouvrant le fournil, vous apercevez {nom} qui rentre chez lui en rasant les murs : c'est un loup.",
+      "Fourniere": "Au petit jour, en ouvrant le fournil, vous apercevez {nom} qui rentre chez [lui|elle] en rasant les murs : c'est un loup.",
       "InvitePrevot": "{batiment} est libre : quel Chemineau y loges-tu (il deviendra {personnalite}) ? Passe pour le laisser vide.",
-      "InviteLogement": "{nom}, le Prévôt, t'offre {batiment} : désigne-toi pour l'accepter (tu deviens {personnalite}), ou passe pour refuser.",
-      "Installation": "{prevot}, le Prévôt, loge {nom} à {batiment} : {nom} rend son baluchon et devient {personnalite}.",
+      "InviteLogement": "{nom}, [le Prévôt|la Prévôte], t'offre {batiment} : désigne-toi pour l'accepter (tu deviens {personnalite}), ou passe pour refuser.",
+      "Installation": "{prevot}, [le Prévôt|la Prévôte], loge {nom} à {batiment} : {nom} rend son baluchon et devient {personnalite}.",
       "Refus": "{nom} refuse {batiment} : le logement reste vide.",
-      "Vide": "{prevot}, le Prévôt, laisse {batiment} vide.",
-      "InviteSupplique": "Le village t'a condamné. Supplies-tu {nom}, le Hobereau, de te faire grâce ? Désigne-le pour le supplier, ou passe.",
-      "Supplique": "{nom} supplie {hobereau}, le Hobereau, de lui faire grâce.",
-      "InviteGrace": "{nom} te supplie de lui faire grâce : désigne-le pour le gracier (une fois par partie), ou passe.",
+      "Vide": "{prevot}, [le Prévôt|la Prévôte], laisse {batiment} vide.",
+      "InviteSupplique": "Le village t'a condamné. Supplies-tu {nom}, [le Hobereau|la Hobereaute], de te faire grâce ? Désigne-[le|la] pour [le|la] supplier, ou passe.",
+      "Supplique": "{nom} supplie {hobereau}, [le Hobereau|la Hobereaute], de lui faire grâce.",
+      "InviteGrace": "{nom} te supplie de lui faire grâce : désigne-[le|la] pour [le|la] gracier (une fois par partie), ou passe.",
       "InviteGraceSoi": "Le village t'a condamné : désigne-toi pour te gracier toi-même (une fois par partie), ou passe.",
-      "Grace": "{hobereau}, le Hobereau, gracie {nom} : il n'est pas exécuté, et sa carte reste cachée.",
-      "GraceRefusee": "{hobereau}, le Hobereau, refuse sa grâce à {nom}.",
-      "VoteCabaret": "{nom}, le Cabaretier, vote à découvert contre {cible}.",
-      "ImmunitePerdue": "{nom}, le Cabaretier, a voté contre {cible}, que le vote a désigné : il perd son immunité.",
-      "BailliAboli": "{nom} était le dernier Métayer : Brumecombe n'aura plus de Bailli.",
+      "Grace": "{hobereau}, [le Hobereau|la Hobereaute], gracie {nom} : [il|elle] n'est pas exécuté[|e], et sa carte reste cachée.",
+      "GraceRefusee": "{hobereau}, [le Hobereau|la Hobereaute], refuse sa grâce à {nom}.",
+      "VoteCabaret": "{nom}, [le Cabaretier|la Cabaretière], vote à découvert contre {cible}.",
+      "ImmunitePerdue": "{nom}, [le Cabaretier|la Cabaretière], a voté contre {cible}, que le vote a désigné[|e] : [nom:il|elle] perd son immunité.",
+      "BailliAboli": "{nom} était [le dernier Métayer|la dernière Métayère] : Brumecombe n'aura plus de Bailli.",
       "Preparation": "Le Village",
       "PreparationAide": "Des personnalités tiennent les bâtiments du village (un pouvoir public en plus de leur rôle secret) ; les autres joueurs sont des Chemineaux. Proposé à la distribution, modifiable avant la première nuit.",
       "Titre": "Le Village",
@@ -1476,7 +1519,8 @@
       "Vacant": "— vide —",
       "Detruits": "Brûlés : {noms}",
       "Epuise": "pouvoir servi",
-      "Prives": "Privés de vote aujourd'hui : {noms}"
+      "Prives": "Privés de vote aujourd'hui : {noms}",
+      "GraceSoi": "{hobereau}, [le Hobereau|la Hobereaute], se gracie [lui-même|elle-même] : [il|elle] n'est pas exécuté[|e], et sa carte reste cachée."
     },
     "Variantes": {
       "Titre": "Variantes",
@@ -1500,7 +1544,7 @@
         "Ouverture": "La Chaîne des innocents : tout le village se lève. {nom}, à la gauche du dernier éliminé, désigne le premier innocent.",
         "Assis": "{qui} garantit l'innocence de {nom}, qui s'assied.",
         "Sort": "{qui} n'a désigné personne : le sort assied {nom}.",
-        "Debout": "{nom} reste seul debout : le village le condamne.",
+        "Debout": "{nom} reste seul[|e] debout : le village [le|la] condamne.",
         "PasDeVote": "La Chaîne des innocents : pas de vote aujourd'hui, la chaîne désigne le condamné.",
         "Debouts": "Debout : {noms}",
         "Designateur": "À {nom} de désigner un innocent."
@@ -1535,14 +1579,14 @@
         "BailliPasse": "Le Bailli {nom} n'a voté contre personne.",
         "AttendreLeBailli": "Les Vendanges : le Bailli vote d'abord ; attendez son vote.",
         "Amour": "Les Vendanges : votre amour vous interdit de voter contre ce joueur.",
-        "Bouc": "{nom}, le Souffre-douleur, meurt à la place de son voisin {voisin}.",
-        "Triangle": "Les Vendanges : {qui} aime aussi {nom} ; {trompe} est trompé."
+        "Bouc": "{nom}, le Souffre-douleur, meurt à la place de [voisin:son voisin|sa voisine] {voisin}.",
+        "Triangle": "Les Vendanges : {qui} aime aussi {nom} ; {trompe} est trompé[|e]."
       },
       "Envoutement": {
         "Nom": "L'Envoûtement",
         "Aide": "Les victimes de la meute sont envoûtées, en secret, au lieu de mourir.",
         "Journal": "Envoûtés cette nuit : {noms}.",
-        "Chute": "{nom} était envoûté : {noms} tombent avec lui.",
+        "Chute": "{nom} était envoûté[|e] : {noms} tombent avec [nom:lui|elle].",
         "Refus": "Vous êtes envoûté : vos pouvoirs vous ont quitté."
       }
     },
@@ -1730,7 +1774,7 @@
       "Oui": "oui",
       "Non": "non",
       "Lue": "La Gazette de la lune, lue par {lecteur} — {nom} : {effet}",
-      "LueParLeCrieur": "Le Crieur public {lecteur} fait une annonce — {nom} : {effet}",
+      "LueParLeCrieur": "[Le Crieur public|La Crieuse publique] {lecteur} fait une annonce — {nom} : {effet}",
       "PoseeDesLeDebut": "La Gazette de la lune, posée dès le début par {lecteur} — {nom} : {effet}",
       "Annonce": "La Gazette de la lune est de la veillée : chaque matin sauf le premier (un matin sur {n}), le dernier éliminé en lit une carte, qui s'applique aussitôt.",
       "AnnonceChoix": "La Gazette de la lune est de la veillée : le narrateur choisit ses cartes et les fait lire quand il le veut.",
@@ -1742,7 +1786,7 @@
         "Retour": "{nom} revient du village voisin : sa voix compte {n} fois au vote d'aujourd'hui."
       },
       "SansBailli": "Brumecombe n'a pas de Bailli dans cette veillée : la fête passe sans changer personne.",
-      "Destitue": "Le Bailli {nom} est destitué : le village élira aujourd'hui un nouveau Bailli.",
+      "Destitue": "Le Bailli {nom} est destitué[|e] : le village élira aujourd'hui un nouveau Bailli.",
       "PersonneARevenir": "La meute n'a fait aucune victime : personne ne revient.",
       "PersonnePourChatier": "Personne n'est encore tombé : la carte reste sans effet.",
       "SotsPouvoir": "Le Jour des sots : jusqu'au matin, vous avez le pouvoir de la carte « {role} » (votre carte reste la vôtre).",
@@ -1750,7 +1794,7 @@
         "remede": "La cueillette vous rapporte de quoi remplir votre fiole de remède.",
         "poison": "La cueillette vous rapporte de quoi remplir votre fiole de poison."
       },
-      "Revenante": "{nom} n'était qu'évanouie : elle revient parmi les vivants, en simple Villageois.",
+      "Revenante": "{nom} n'était qu'évanoui[|e] : [il|elle] revient parmi les vivants, en simple Villageois.",
       "Nuit": {
         "PasTouchee": "Aucun loup n'a marqué {nom} : la proie est épargnée.",
         "Desaccord": "La meute ne s'est pas accordée : aucune victime cette nuit."
@@ -1774,14 +1818,14 @@
       },
       "Chatiment": {
         "Invite": "Le Châtiment : désignez le joueur que le village doit punir.",
-        "Designe": "Le Châtiment : {qui} désigne {nom}. Qu'au moins deux joueurs témoignent pour lui, ou il sera éliminé.",
-        "Sort": "Le Châtiment : {qui} n'a désigné personne ; le sort désigne {nom}. Qu'au moins deux joueurs témoignent pour lui, ou il sera éliminé.",
+        "Designe": "Le Châtiment : {qui} désigne {nom}. Qu'au moins deux joueurs témoignent pour [lui|elle], ou [il|elle] sera éliminé[|e].",
+        "Sort": "Le Châtiment : {qui} n'a désigné personne ; le sort désigne {nom}. Qu'au moins deux joueurs témoignent pour [lui|elle], ou [il|elle] sera éliminé[|e].",
         "InviteAppel": "Le Châtiment : lancer un appel au village ? (vous désigner, c'est appeler)",
         "Appel": "{nom} lance un appel : qui témoignera pour moi ?",
-        "InviteVote": "Le Châtiment : témoignez pour {nom} (désignez-le) ; ne rien choisir, c'est se taire.",
+        "InviteVote": "Le Châtiment : témoignez pour {nom} (désignez-[le|la]) ; ne rien choisir, c'est se taire.",
         "Journal": "Le Châtiment : le village témoigne.",
-        "Condamne": "Le Châtiment : {n} témoignage(s) pour {nom}, ce n'est pas assez ; {nom} est éliminé.",
-        "Epargne": "Le Châtiment : {n} joueurs témoignent pour {nom}, qui est épargné."
+        "Condamne": "Le Châtiment : {n} témoignage(s) pour {nom}, ce n'est pas assez ; {nom} est éliminé[|e].",
+        "Epargne": "Le Châtiment : {n} joueurs témoignent pour {nom}, qui est épargné[|e]."
       },
       "Suite": {
         "PasTonTour": "Ce vote se fait à tour de rôle : c'est à {nom}.",
@@ -1813,17 +1857,17 @@
         "Invite": {
           "nommer": "Nommez le Crieur public (jamais vous-même).",
           "transmettre": "Vous êtes Bailli : transmettez votre charge de Crieur public à un autre.",
-          "garder": "Gardez-vous {nom} comme Crieur public ? (le désigner, c'est le garder ; un autre, c'est le remplacer)"
+          "garder": "Gardez-vous {nom} comme [Crieur public|Crieuse publique] ? ([le|la] désigner, c'est [le|la] garder ; un autre, c'est [le|la] remplacer)"
         },
-        "Nomme": "Le Bailli {qui} nomme {nom} Crieur public.",
-        "Transmis": "{qui}, devenu Bailli, transmet sa charge de Crieur public à {nom}.",
-        "Garde": "Le Bailli {qui} garde {nom} comme Crieur public.",
-        "Sort": "Le Bailli {qui} n'a désigné personne : le sort fait de {nom} le Crieur public.",
-        "NommeParLeNarrateur": "Le narrateur nomme {nom} Crieur public.",
+        "Nomme": "Le Bailli {qui} nomme {nom} [Crieur public|Crieuse publique].",
+        "Transmis": "{qui}, devenu[|e] Bailli, transmet sa charge de Crieur public à {nom}.",
+        "Garde": "Le Bailli {qui} garde {nom} comme [Crieur public|Crieuse publique].",
+        "Sort": "Le Bailli {qui} n'a désigné personne : le sort fait de {nom} [le Crieur public|la Crieuse publique].",
+        "NommeParLeNarrateur": "Le narrateur nomme {nom} [Crieur public|Crieuse publique].",
         "Main": "Les cartes de votre charge (secrètes) : {cartes}. Chaque matin, on vous demandera si vous avez une annonce.",
         "MainVide": "Votre charge de Crieur public n'a plus de carte à annoncer.",
         "InviteAnnonce": "Crieur public : avez-vous une annonce ce matin ? Choisissez une carte, ou passez.",
-        "Rien": "Le Crieur public {nom} n'a rien à annoncer ce matin.",
+        "Rien": "[Le Crieur public|La Crieuse publique] {nom} n'a rien à annoncer ce matin.",
         "Annonce": "Le Crieur public est de la veillée : le Bailli le nommera ; le narrateur lui a confié {n} carte(s) de la Gazette.",
         "NoteMain": "Les cartes confiées au Crieur public : {cartes}."
       },
@@ -1850,7 +1894,7 @@
         "Rien": "La Somnambule a dormi d'un sommeil sans rêve : la Liseuse de cendres n'a rien lu cette nuit."
       },
       "PileOuFace": {
-        "Pile": "Pile ou face pour {nom} : pile ! {nom} est gracié.",
+        "Pile": "Pile ou face pour {nom} : pile ! {nom} est gracié[|e].",
         "Face": "Pile ou face pour {nom} : face. La sentence tombe."
       },
       "Marche": {
@@ -1863,13 +1907,13 @@
         "Titre": "Exécuteur",
         "Carnet": "Vous seul le savez : {nom} était {role}.",
         "InviteSuccession": "Vous étiez l'Exécuteur : désignez votre successeur.",
-        "Successeur": "{de}, l'Exécuteur, désigne {nom} pour lui succéder.",
-        "SuccesseurSort": "{de}, l'Exécuteur, n'a désigné personne : le sort fait de {nom} l'Exécuteur.",
+        "Successeur": "{de}, [l'Exécuteur|l'Exécutrice], désigne {nom} pour lui succéder.",
+        "SuccesseurSort": "{de}, [l'Exécuteur|l'Exécutrice], n'a désigné personne : le sort fait de {nom} [l'Exécuteur|l'Exécutrice].",
         "InviteVote": "Qui sera l'Exécuteur ?",
         "Journal": "Le village élit son Exécuteur.",
         "Ouverture": "Le village élit son Exécuteur : une voix chacun.",
-        "Elu": "{nom} est élu Exécuteur : désormais, lui seul apprend le rôle des condamnés.",
-        "EluSort": "Égalité : le sort fait de {nom} l'Exécuteur.",
+        "Elu": "{nom} est élu[|e] [Exécuteur|Exécutrice] : désormais, [lui seul|elle seule] apprend le rôle des condamnés.",
+        "EluSort": "Égalité : le sort fait de {nom} [l'Exécuteur|l'Exécutrice].",
         "Personne": "Personne n'est élu Exécuteur aujourd'hui."
       },
       "Revote": {
@@ -1877,10 +1921,10 @@
         "enthousiasme": "L'Enthousiasme : {nom} était un loup ! Le village revote aussitôt, sans débat."
       },
       "Benet": {
-        "Note": "Le Méchant Benêt : {qui} désigne {nom}, désormais allié secret de la meute.",
+        "Note": "Le Méchant Benêt : {qui} désigne {nom}, désormais [allié secret|alliée secrète] de la meute.",
         "Carnet": "Vous ouvrez les yeux : les loups sont {noms}. Vous voilà leur allié secret ; vous restez du Village, et vous gagnez s'ils gagnent.",
-        "Gagne": "Le Méchant Benêt : {noms}, allié secret de la meute, gagne avec elle.",
-        "Perd": "Le Méchant Benêt : {noms} était l'allié secret de la meute."
+        "Gagne": "Le Méchant Benêt : {noms}, [allié secret|alliée secrète] de la meute, gagne avec elle.",
+        "Perd": "Le Méchant Benêt : {noms} était [l'allié secret|l'alliée secrète] de la meute."
       },
       "Retour": {
         "Loup": "Retour de flamme : la meute vous a choisi, mais vous ne mourez pas. Vous devenez loup : votre carte est désormais celle d'un Loup de Brumecombe.",
@@ -1911,7 +1955,7 @@
         "variante": "Aucune variante à appliquer pour ce tour.",
         "crieur": "Pas de Crieur public dans cette veillée.",
         "avant": "Les cartes du Crieur se confient avant la première nuit.",
-        "nommer": "{nom} ne peut pas être nommé Crieur public."
+        "nommer": "{nom} ne peut pas être nommé[|e] [Crieur public|Crieuse publique]."
       },
       "Table": {
         "EnJeu": "Cartes en jeu : {noms}",
@@ -1945,7 +1989,7 @@
       },
       "Age": {
         "jeune": "jeune ({ans} ans)",
-        "vieux": "vieux ({ans} ans)"
+        "vieux": "[vieux|vieille] ({ans} ans)"
       },
       "lunettes": "lunettes",
       "bijou": "bijou visible",

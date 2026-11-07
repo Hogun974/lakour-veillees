@@ -117,7 +117,7 @@ const VERIFICATIONS = {
     const n = messages.length;
     await nuitCalme(M, [{ acteurId: herbo.id, roleCle: "herboriste", cibles: [aieul.id] }]);
     assert.equal(aieul.system.vivant, false);
-    assert.match(chat(n), new RegExp(`${aieul.name}, l'Aïeul, est tombé de la main du village`));
+    assert.match(chat(n), new RegExp(`${aieul.name}, l'Aïeul, est tombée? de la main du village`));
     assert.ok(M.api.pacte().sagessePerdue > 0);
     assert.equal(M.api.pouvoirsDeJour(sonneur.id).find(p => p.pouvoir === "sonneur")?.raison, "sagesse");
     await M.api.changerPhase("nuit");

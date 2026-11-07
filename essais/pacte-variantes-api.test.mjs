@@ -214,7 +214,7 @@ const VERIFICATIONS = {
     assert.deepEqual(d.candidats.map(c => c.id).sort(), [a1.id, a3.id].sort(), "parmi les debout, lui assis");
     const r = await M.api.cloreVote();
     assert.deepEqual([r.elu, r.elus], [a1.id, [a1.id]]);
-    assert.match(chat(m), new RegExp(`${a1.name} reste seul debout`));
+    assert.match(chat(m), new RegExp(`${a1.name} reste seule? debout`));
     assert.match(chat(m), new RegExp(`${a1.name} garantit l'innocence de ${a0.name}`));
     const ligne = M.api.registre().filter(x => x.type === "vote").at(-1)?.ligne ?? "";
     assert.match(ligne, /Chaîne des innocents/);
@@ -325,7 +325,7 @@ const VERIFICATIONS = {
     await voter([[l1, v2], [l2, v2], [herbo, v2], [chap, v2]]);
     const r = await M.api.cloreVote();
     assert.deepEqual([r.elus, r.souffreDouleur, r.remplace], [[bouc.id], bouc.id, v2.id], "le Souffre-douleur à la place de son voisin");
-    assert.match(chat(m), new RegExp(`${bouc.name}, le Souffre-douleur, meurt à la place de son voisin ${v2.name}`));
+    assert.match(chat(m), new RegExp(`${bouc.name}, le Souffre-douleur, meurt à la place de (son voisin|sa voisine) ${v2.name}`));
   },
 
   async "Vendanges : le triangle de l'Entremetteuse — le trompé n'entraîne personne, l'amant entraîne les deux autres"(M) {
@@ -372,7 +372,7 @@ const VERIFICATIONS = {
     const m = messages.length;
     const morts = await M.api.eliminer(a.id, { cause: "vote" });
     assert.deepEqual(morts.sort(), [a.id, herbo.id].sort(), "l'envoûtée d'avant tombe avec elle");
-    assert.match(chat(m), new RegExp(`${a.name} était envoûté : ${herbo.name} tombent avec lui`));
+    assert.match(chat(m), new RegExp(`${a.name} était (envoûté : ${herbo.name} tombent avec lui|envoûtée : ${herbo.name} tombent avec elle)`));
     await M.api.changerPhase("nuit");
     await M.api.noterAction({ acteurId: loup.id, roleCle: "meute", cibles: [b.id] });
     await aube(M);

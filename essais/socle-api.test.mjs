@@ -14,6 +14,7 @@ import { tmpdir } from "node:os";
 import { pathToFileURL, fileURLToPath } from "node:url";
 import { installerFoundry, creerObjetMonde, emissions, reglages, envoyerAuMJ, calme, messages, ajouterScene, FR } from "./doublures/foundry-loups.mjs";
 import { PLAN_VILLAGE } from "../modules/lakour-veillees/contenu/village.mjs";
+import * as grammaire from "../systems/lakour-loups/logique/grammaire.mjs";
 
 installerFoundry({ contenu: true });
 const SYSTEME = fileURLToPath(new URL("../systems/lakour-loups/", import.meta.url));
@@ -71,6 +72,8 @@ function repondre(demande, cibles, qui = demande.destinataire) {
   envoyerAuMJ(CANAL, { type: "reponse", id: demande.id, cibles: cibles.map(a => a.id), userId: qui }, { emetteur: qui });
 }
 const notesDuMJ = M => M.api.etat().journalSecret.map(x => x.texte);
+// Un gabarit accordé (marques [masculin|féminin]) au genre du villageois, comme le système le remplit (logique/grammaire.mjs).
+const accorder = (modele, d, acteur) => grammaire.remplir(modele, d, { genre: game.settings.get("lakour-loups", "partie")?.traits?.[acteur.id]?.genre ?? "" });
 const remplir = (modele, d) => modele.replace(/\{(\w+)\}/g, (_, k) => d[k] ?? "");
 
 const VERIFICATIONS = {
@@ -253,7 +256,7 @@ const VERIFICATIONS = {
     assert.deepEqual(publicBrut().tenures, { prieure: null, fournil: b.id });
     const x = M.api.registre().find(y => y.type === "vacance");
     assert.deepEqual([x.acteurId, x.batiments], [a.id, ["prieure"]]);
-    assert.ok(M.api.registreTexte().some(l => l === remplir(FR.LAKOUR_LOUPS.Registre.Vacance, { tour: 0, nom: a.name, batiments: FR.LAKOUR_LOUPS.Batiments.prieure })));
+    assert.ok(M.api.registreTexte().some(l => l === accorder(FR.LAKOUR_LOUPS.Registre.Vacance, { tour: 0, nom: a.name, batiments: FR.LAKOUR_LOUPS.Batiments.prieure }, a)));
     await assert.rejects(() => M.api.tenir("prieure", a.id), /mort/);
     await assert.rejects(() => M.api.tenir("", b.id));
     await M.api.tenir("fournil", "");

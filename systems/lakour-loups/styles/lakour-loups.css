@@ -809,3 +809,10 @@ body.theme-light .application.lakour-loups.loups-fiche:not(.theme-dark),
 .lakour-loups .loups-fete .loups-mj-seul { color: var(--loups-brume); font-style: italic; }
 .lakour-loups .loups-prep-fete select { flex: 0 1 auto; }
 .lakour-loups .loups-prep-fete small { flex: 1 1 100%; opacity: 0.8; }
+/* La préparation en onglets (templates/table.hbs) : la barre d'onglets, un panneau à la fois ; le résumé et « Distribuer » dessous. */
+.lakour-loups .loups-prep-onglets { display: flex; flex-wrap: wrap; gap: 4px; margin: 0.4em 0; border-bottom: 1px solid var(--loups-bord); }
+.lakour-loups .loups-prep-onglet-bouton { flex: 0 1 auto; width: auto; margin: 0 0 -1px; padding: 0.2em 0.8em; border: 1px solid var(--loups-bord); border-radius: 6px 6px 0 0; background: transparent; opacity: 0.75; }
+.lakour-loups .loups-prep-onglet-bouton.actif { opacity: 1; border-bottom-color: transparent; color: var(--loups-lanterne); font-weight: bold; }
+.lakour-loups .loups-prep-onglet[hidden] { display: none; }
+.lakour-loups .loups-prep-onglet .loups-prep-roles { max-height: 180px; }
+.lakour-loups .loups-prep-resume { margin: 0.4em 0 0.2em; font-size: 0.9em; opacity: 0.85; }

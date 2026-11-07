@@ -42,3 +42,5 @@ export * from "./personnalites.mjs";
 export * from "./variantes.mjs";
 export * from "./gazette.mjs";
 export * from "./politiques.mjs";
+export * from "./prenoms.mjs";
+export * from "./preparation.mjs";

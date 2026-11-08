@@ -234,19 +234,31 @@ const VERIFICATIONS = {
     assert.deepEqual(M.api.candidatsDeNuit({ acteurId: furet.id, roleCle: "furet" }), [], "plus rien à désigner");
   },
 
-  async "Gardeuse d'oies : un loup voisin, ses oies cacardent au matin, devant tous"(M) {
+  async "Gardeuse d'oies : un loup voisin, des oies cacardent au matin, devant tous, sans dire chez qui ; elle seule sait que ce sont les siennes"(M) {
     const U = await monde(M);
     await partie(M, [U.loup, U.oies, U.villageois, U.villageois, U.villageois, U.villageois]);
     const [loup, oies] = ["loup-de-brumecombe", "gardeuse-d-oies"].map(de);
     const [a, b, c, d] = tous("villageois");
     await asseoir([a, oies, loup, b, c, d]);
     let n = messages.length;
+    let k = emissions.length;
     await nuitCalme(M);
-    assert.match(chat(n), new RegExp(`Les oies de ${oies.name} cacardent`));
+    assert.match(chat(n), /Quelque part dans le village, des oies cacardent/);
+    assert.ok(!chat(n).includes(oies.name), "la Gardeuse n'est pas nommée");
+    assert.ok(carnetDe(oies, k).some(t => /Ce sont vos oies qui cacardent/.test(t)), "elle l'apprend en secret");
+    assert.ok([a, b, c, d, loup].every(x => !carnetDe(x, k).some(t => /vos oies/.test(t))), "elle seule");
+    assert.ok(!M.api.registre().some(e => e.type === "pacte" && e.quoi === "oies" && e.acteurId), "le Registre ne la nomme pas");
     await asseoir([a, oies, b, loup, c, d]);
     n = messages.length;
     await nuitCalme(M);
     assert.doesNotMatch(chat(n), /cacardent/, "loin des loups, rien");
+    // Mordue (devenue loup) : ses oies cacardent comme d'habitude, la même annonce, sans nom.
+    await M.api.changerCamp(oies.id, "meute");
+    n = messages.length;
+    k = emissions.length;
+    await nuitCalme(M);
+    assert.match(chat(n), /Quelque part dans le village, des oies cacardent/, "la même annonce");
+    assert.ok(!chat(n).includes(oies.name));
   },
 
   async "Vieux Sergent : dévoré, sa vieille épée tue le premier loup à sa gauche la nuit suivante"(M) {
@@ -310,7 +322,9 @@ const VERIFICATIONS = {
 const MUTATIONS = [
   ["scripts/api.mjs", "    if (L.graceDue(lireEtat(), { acteurId, role: roleDe(acteur)?.system, cause })) return gracierLInnocent(acteur);\n", "", "Innocent : la grâce"],
   ["scripts/api.mjs", "  await revelerPubliquement(acteur.id);\n  await annonceChat(echapper(texte));\n  if (abolie) {", "  await annonceChat(echapper(texte));\n  if (abolie) {", "Innocent : la carte retournée"],
-  ["scripts/api.mjs", "    if (sagesse.perdue) await perdreLaSagesse(acteur, sagesse.innocents);\n", "", "Aïeul : la sagesse perdue"],
+  ["scripts/api.mjs", "    if (sagesse.perdue) await perdreLaSagesse(acteur, sagesse.innocents, { cache: Boolean(cacheParLaGazette) && !montrer });\n", "", "Aïeul : la sagesse perdue"],
+  ["scripts/api.mjs", "    if (oies.length) await modifierEtat(e => { L.inscrire(e, { type: \"pacte\", quoi: \"oies\" }); return e; });", "    if (oies.length) await modifierEtat(e => { for (const id of oies) L.inscrire(e, { type: \"pacte\", quoi: \"oies\", acteurId: id }); return e; });", "oies : le Registre ne nomme pas"],
+  ["scripts/api.mjs", "    for (const id of oies) messages.push({ acteurId: id, texte: t(\"LAKOUR_LOUPS.Pacte.OiesCarnet\") });\n", "", "oies : la Gardeuse l'apprend en secret"],
   ["scripts/api.mjs", "      e.pacte = L.pacteInitial({ innocentSuit: lireReglage(\"innocentSuitAieul\", false) });\n", "", "Innocent : le réglage pris à la distribution"],
   ["scripts/api.mjs", "aieux: [...r.aieux], ", "aieux: [], ", "Aïeul : sa vie gardée en secret"],
   ["scripts/api.mjs", "        souffreDouleur: vendanges ? \"\" : bouc,", "        souffreDouleur: \"\",", "Souffre-douleur : à la clôture"],

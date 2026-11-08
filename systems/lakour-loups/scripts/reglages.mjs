@@ -170,6 +170,9 @@ export function enregistrerReglages(quandEtatChange) {
   // La chance qu'a la Fournière d'entrevoir un loup chaque nuit (adaptation en ligne ; réglage caché, comme « chancePeste » : mesurée
   // à l'étape 6 du Pacte, gardée à 1/3 ; les essais et le simulateur la règlent).
   game.settings.register(ID, "chanceFourniere", { scope: "world", config: false, type: Number, default: CHANCE_FOURNIERE });
+  // La pause avant la révélation d'un condamné (secondes, au plus le délai des choix et 30 s ; logique/ambigus.mjs, pauseDuVerdict) :
+  // la même après chaque vote d'exécution, Chambrière en jeu ou non. Réglage caché : les essais et le simulateur la règlent (0 : aucune).
+  game.settings.register(ID, "pauseDuVerdict", { scope: "world", config: false, type: Number, default: 30 });
   game.settings.register(ID, "leVillage", {
     name: "LAKOUR_LOUPS.Reglages.LeVillage.Nom", hint: "LAKOUR_LOUPS.Reglages.LeVillage.Aide",
     scope: "world", config: true, type: Boolean, default: false

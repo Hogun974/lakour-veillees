@@ -1,5 +1,6 @@
 // L'activité que Foundry diffuse à tous (User#broadcastActivity : curseur, ping, règle, cibles, voyant « parle ») est masquée
-// la nuit et pendant un choix secret (logique/activite.mjs, scripts/activite.mjs). Le navigateur d'un joueur est simulé sur
+// la nuit, chez tous ; le jour, chez personne, même pendant un choix secret (relecture adverse : masquer le seul joueur qui choisit
+// le désignerait) (logique/activite.mjs, scripts/activite.mjs). Le navigateur d'un joueur est simulé sur
 // la doublure (essais/doublures/foundry-loups.mjs), avec un AVMaster qui fait comme celui de Foundry v14
 // (client/av/master.mjs, broadcast : {av: {speaking}} à chaque changement) et les salons vocaux (scripts/salons.mjs). La règle
 // éprouvée : un villageois et un loup envoient EXACTEMENT les mêmes messages, de la tombée de la nuit au matin, dans les deux
@@ -140,7 +141,7 @@ test("activité la nuit : rien ne part ; villageois et loup envoient les mêmes 
   }
 });
 
-test("activité : un choix secret de jour la masque ; le MJ n'est jamais masqué ; tout est rendu", async () => {
+test("activité : un choix secret de jour ne la masque pas (il désignerait le joueur) ; le MJ n'est jamais masqué ; tout est rendu", async () => {
   // La doublure d'ApplicationV2 ne ferme rien : on lui donne un _onClose, appelé à la main comme le ferait Foundry.
   const Base = Object.getPrototypeOf(choix.FenetreChoix.prototype);
   Base._onClose = function () {};
@@ -150,14 +151,14 @@ test("activité : un choix secret de jour la masque ; le MJ n'est jamais masqué
     let rendu = null;
     const f = choix.ouvrirChoixLocal({ acteurNom: "Juge", invite: "Qui ?", candidats: [{ id: "a3", nom: "Mathurin" }] }, c => { rendu = c; });
     assert.equal(choix.choixEnCours(), true);
-    assert.equal(activite.activiteMasqueeIci(), true, "un choix secret en cours");
+    assert.equal(activite.activiteMasqueeIci(), false, "le jour, un choix secret ne masque rien : il désignerait celui qui choisit");
     game.user.broadcastActivity({ cursor: { x: 3, y: 3 } });
     game.webrtc.broadcast(false);
     await f._onClose({});
     await repos();
     assert.deepEqual(rendu, [], "fermer, c'est passer");
     assert.equal(choix.choixEnCours(), false);
-    assert.deepEqual(journal.slice(debut), [EFFACEE, { av: { muted: false, hidden: false, speaking: false } }]);
+    assert.deepEqual(journal.slice(debut), [{ cursor: { x: 3, y: 3 } }, { av: { speaking: false } }], "son curseur et sa voix partent comme ceux des autres");
     // Le MJ : jamais enveloppé.
     game.user = game.users.get("mj");
     activite.debrancherActivite();
@@ -195,11 +196,12 @@ const VERIFICATIONS = {
     assert.equal(L.filtrerActivite({ cursor: { x: 1, y: 1 } }), null);
     assert.equal(L.filtrerActivite({ av: { speaking: false } }), null);
   },
-  "masquée : la nuit (phase publique ou ligne), un choix secret ; jamais un MJ": L => {
+  "masquée : la nuit (phase publique ou ligne), chez tous ; le jour, jamais, même pendant un choix secret ; jamais un MJ": L => {
     assert.equal(L.activiteMasquee({ phases: ["nuit", ""] }), true);
     assert.equal(L.activiteMasquee({ phases: ["jour", "nuit"] }), true, "la ligne de nuit arrivée avant la phase");
     assert.equal(L.activiteMasquee({ phases: ["aube", "aube"] }), false);
-    assert.equal(L.activiteMasquee({ phases: ["jour", "jour"], choixSecret: true }), true);
+    assert.equal(L.activiteMasquee({ phases: ["jour", "jour"], choixSecret: true }), false, "le jour, personne");
+    assert.equal(L.activiteMasquee({ phases: ["vote", "aube"], choixSecret: true }), false);
     assert.equal(L.activiteMasquee({ mj: true, phases: ["nuit"], choixSecret: true }), false);
   },
   "effacée : curseur, règle, déplacements, voyant éteint ; l'état A/V gardé": L => {
@@ -220,8 +222,8 @@ const MUTATIONS = [
   ["export const CLES_ACTIVITE_MASQUEES = [\"cursor\", \"ping\", \"ruler\", \"targets\", \"plannedMovements\", \"av\"];", "export const CLES_ACTIVITE_MASQUEES = [\"cursor\", \"ping\", \"ruler\", \"targets\", \"plannedMovements\"];", "la voix masquée"],
   ["export const CLES_ACTIVITE_MASQUEES = [\"cursor\", \"ping\", \"ruler\", \"targets\", \"plannedMovements\", \"av\"];", "export const CLES_ACTIVITE_MASQUEES = [\"ping\", \"ruler\", \"targets\", \"plannedMovements\", \"av\"];", "le curseur masqué"],
   ["return Object.keys(reste).length ? reste : null;", "return reste;", "un message vide ne part pas"],
-  ["return phases.some(p => PHASES_DE_NUIT.includes(p)) || Boolean(choixSecret);", "return PHASES_DE_NUIT.includes(phases[0]) || Boolean(choixSecret);", "la ligne de nuit compte"],
-  ["return phases.some(p => PHASES_DE_NUIT.includes(p)) || Boolean(choixSecret);", "return phases.some(p => PHASES_DE_NUIT.includes(p));", "un choix secret masque"],
+  ["return phases.some(p => PHASES_DE_NUIT.includes(p));", "return PHASES_DE_NUIT.includes(phases[0]);", "la ligne de nuit compte"],
+  ["export function activiteMasquee({ mj = false, phases = [] } = {}) {", "export function activiteMasquee({ mj = false, phases = [], choixSecret = false } = {}) {\n  if (!mj && choixSecret) return true;", "le jour, un choix secret ne masque personne"],
   ["  if (mj) return false;\n", "", "le MJ jamais masqué"],
   ["av: { ...av, speaking: false }", "av: { ...av }", "le voyant éteint"]
 ];

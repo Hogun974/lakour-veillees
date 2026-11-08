@@ -325,6 +325,8 @@ const VERIFICATIONS = {
   async "Revenue d'entre les vivants ; la Saint-Vincent ; le Retour de flamme (loup ou foudre) ; le Spectre (cartes échangées)"(M) {
     const U = await monde(M);
     await game.settings.set("lakour-loups", "bailli", true);
+    // (Les morts ne voient pas tout : un mort qui a tout vu ne revient jamais, essais/fuites-par-deduction.test.mjs.)
+    await game.settings.set("lakour-loups", "mortsVoientTout", false);
     await partie(M, [U.loup, U.loup, U.herbo, U.garde, ...n(U, 4)]);
     const ordre = villageois();
     await asseoir(ordre);

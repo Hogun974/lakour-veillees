@@ -14,12 +14,15 @@ export function filtrerActivite(activite = {}) {
   return Object.keys(reste).length ? reste : null;
 }
 
-// L'activité de ce navigateur est-elle masquée ? Jamais celle d'un MJ ; celle d'un joueur la nuit (phases : celle de l'état
-// public et celle de sa ligne des salons, l'une peut arriver avant l'autre), et tant qu'il a un choix secret en cours
-// (demande de nuit, pouvoir de jour en préparation, fenêtre de choix ouverte).
-export function activiteMasquee({ mj = false, phases = [], choixSecret = false } = {}) {
+// L'activité de ce navigateur est-elle masquée ? Jamais celle d'un MJ ; celle de chaque joueur la nuit (phases : celle de l'état
+// public et celle de sa ligne des salons, l'une peut arriver avant l'autre).
+// Relecture adverse : un choix secret ne masque RIEN de plus. La nuit, l'activité de tous est déjà masquée ; le jour (la Chambrière
+// après le vote, la voix du deuil des loups pendant le vote, le signe du Greffier bègue, la Conteuse, la séance de Spiritisme…),
+// masquer le seul joueur qui choisit le désignerait à tous (son curseur qui s'efface, son voyant « parle » qui s'éteint) : le jour, on
+// masque tout le monde ou personne — personne. (choixSecret reste accepté, sans effet.)
+export function activiteMasquee({ mj = false, phases = [] } = {}) {
   if (mj) return false;
-  return phases.some(p => PHASES_DE_NUIT.includes(p)) || Boolean(choixSecret);
+  return phases.some(p => PHASES_DE_NUIT.includes(p));
 }
 
 // Au début du masquage : efface chez les autres ce qu'ils voyaient encore (curseur, règle, déplacements prévus, voyant « parle »).

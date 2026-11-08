@@ -33,6 +33,11 @@ import { recevoirDemande, oublierDemande } from "./plateau-local.mjs";
 import { ouvrirCarnet } from "./apps/carnet.mjs";
 import { recevoirLigne, envoyerLigne } from "./salons.mjs";
 import { signaler } from "./signal.mjs";
+import { lirePublic } from "./donnees.mjs";
+import { PHASES_DE_NUIT } from "../logique/salons.mjs";
+
+// La nuit publique ? (le tintement d'un choix secret ne sonne que la nuit : signal.mjs)
+const deNuit = () => { try { return PHASES_DE_NUIT.includes(String(lirePublic().phase ?? "")); } catch { return false; } };
 
 // Traite un message reçu. emetteur : l'identifiant de l'auteur donné par le serveur (second argument du socket).
 export function traiterMessage(message, emetteur) {
@@ -63,7 +68,8 @@ export function traiterMessage(message, emetteur) {
       // Sur la carte (jetons candidats allumés chez ce joueur seul), sinon dans la fenêtre de choix.
       if (message.destinataire !== game.user.id) return true;
       recevoirDemande(message);
-      signaler(game.i18n.localize("LAKOUR_LOUPS.Signal.Choix"));
+      // Le jour, sans tintement : un choix secret n'arrive qu'à un joueur, et son micro ouvert le ferait entendre à tous.
+      signaler(game.i18n.localize("LAKOUR_LOUPS.Signal.Choix"), { son: deNuit() });
       return true;
     case "annuler": fermerChoix(message.id); oublierDemande(message.id); return true;
     case "secret":

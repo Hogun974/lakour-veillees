@@ -139,8 +139,9 @@ n'existe que chez le MJ actif ; il se range en deux morceaux (`logique/etat.mjs`
   gazette: { actif, rythme, choix, tirees, restantes, marques, prives, marches, commis, variante, crieur, executeur, spiritisme },
                                    // public (Pacte, étape 9) : la Gazette de la lune (cartes lues, absents, privés de vote, marchés du Malin),
                                    //   le Crieur public, l'Exécuteur, les cartes Spiritisme du narrateur et la dernière séance
-  gazetteSecret: { paquet, main, sots, allies, vuUnLoup, seance }   // SECRET (Pacte, étape 9) : l'ordre du paquet, la main du Crieur, les
-                                   //   pouvoirs échangés du Jour des sots, les alliés de la meute, la Liseuse de cendres a lu un loup, la séance due
+  gazetteSecret: { paquet, main, sots, allies, vuUnLoup, seance, aVuTout }   // SECRET (Pacte, étape 9) : l'ordre du paquet, la main du Crieur,
+                                   //   les pouvoirs échangés du Jour des sots, les alliés de la meute, la Liseuse de cendres a lu un loup, la séance
+                                   //   due, les morts qui ont tout vu (la Revenue ne les ramène pas)
 }
 ```
 `etat()` rend l'état complet chez le MJ actif, l'état public partout ailleurs.
@@ -633,7 +634,7 @@ distribuer({ gazette }) / nouvellePartie({ gazette })
                                        (etat.traits, au chat) ; l'Illuminé partage selon « partageIllumine » ; résumé : + gazette { actif, crieur }
 gazette()                           -> le public : { actif, rythme, choix, restantes, tirees: [{ cle, tour, lecteur, source, nom, effet }], enCours,
                                        conduite, absents, proteges, prives, crieur, executeur, spiritisme, variante, commis, marches }
-gazetteSecrets()                    -> (MJ actif) { paquet, main, sots, allies, vuUnLoup, seance }
+gazetteSecrets()                    -> (MJ actif) { paquet, main, sots, allies, vuUnLoup, seance, aVuTout }
 traits(acteurId?)                   -> les traits (publics) d'un villageois, ou de tous, avec leur texte
 lireUneCarte(cle, { lecteur })      -> le narrateur lit une carte (aube, jour) ; priverDeVote(acteurId) -> sous une carte de conduite ;
 releverLaParole(acteurId, texte)    -> Ni loup ni moi : le mot défendu, ou "" (le chat est relevé de lui-même, lakour-loups.mjs)

@@ -240,12 +240,26 @@ test("un humain vit encore : pas de pilote ; en mode Validation, pas de pilote n
     if (villageois().some(a => a.system.joueur && a.system.vivant)) assert.equal(moteur.pilote.enMarche, false, "un humain vivant : le pilote attend");
     // Mode Validation : le dernier humain meurt, pas de pilote, un avis.
     await game.settings.set(ID, "autonomie", "validation");
-    for (const h of villageois().filter(a => a.system.joueur && a.system.vivant)) await api.eliminer(h.id, { cause: "narrateur" });
-    moteur.pilote.verifier(); moteur.pilote.verifier();
+    // L'avis au MJ : une notification chez lui (et aux autres MJ par le canal du module), jamais un message de chat (un chuchotement
+    // est livré à tous les navigateurs).
+    const notes = [];
+    const info = ui.notifications.info;
+    ui.notifications.info = t => { notes.push(String(t)); };
+    try {
+      for (const h of villageois().filter(a => a.system.joueur && a.system.vivant)) await api.eliminer(h.id, { cause: "narrateur" });
+      moteur.pilote.verifier(); moteur.pilote.verifier();
+    } finally { ui.notifications.info = info; }
     assert.equal(moteur.pilote.enMarche, false);
-    const avis = messages.filter(m => /LAKOUR_MJIA\.Pilote\.Validation/.test(m.content ?? ""));
-    assert.equal(avis.length, 1, "un avis au MJ humain");
-    assert.deepEqual(avis[0].whisper, ["mj"], "chuchoté au MJ");
+    assert.equal(notes.filter(n => /LAKOUR_MJIA\.Pilote\.Validation/.test(n)).length, 1, "un avis au MJ humain");
+    assert.equal(messages.filter(m => /LAKOUR_MJIA\.Pilote\.Validation/.test(m.content ?? "")).length, 0, "jamais au chat, même chuchoté");
+    // Une erreur d'outil au MJ (son texte peut citer un rôle) : une notification, jamais un message de chat.
+    const erreurs = [];
+    const error = ui.notifications.error;
+    ui.notifications.error = t => { erreurs.push(String(t)); };
+    const k = messages.length;
+    try { await moteur.prevenirMJ("Refusé : Joueur 3 est Loup de Brumecombe."); } finally { ui.notifications.error = error; }
+    assert.equal(messages.length, k, "l'erreur d'outil ne passe pas par le chat");
+    assert.ok(erreurs.some(e => /Loup de Brumecombe/.test(e)), "le MJ la lit en notification");
     // Passé en autonome : il démarre ; un humain revient (le Puits, un joueur rattaché…) : il rend la main.
     await game.settings.set(ID, "autonomie", "autonome");
     moteur.pilote.verifier();

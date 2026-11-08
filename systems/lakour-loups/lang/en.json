@@ -870,7 +870,7 @@
         "Titre": "Voice",
         "Desactivee": "Foundry voice chat is disabled in this world: nobody can hear each other.",
         "Activer": "Enable audio",
-        "ActiverAide": "Switch the world to \"Audio only\" (no video at the Vigils). Voice rooms then follow the game. Each player picks a microphone in Configure Audio/Video › Client.",
+        "ActiverAide": "Turns Foundry's voice on: \"Audio only\" if it was off; a world already using video keeps it. Video is allowed at the Vigils: a player's camera is replaced by the werewolf whenever the rule asks (at night, dead, away, silenced). Voice rooms then follow the game. Each player picks a microphone and a camera in Configure Audio/Video › Client.",
         "Activee": "Audio enabled: everyone can pick a microphone in Configure Audio/Video.",
         "Muets": "No microphone permission: {noms}.",
         "Micro": "Give players the microphone",
@@ -1076,9 +1076,10 @@
       "Pacte": {
         "grace": "Round {tour} — {nom}, the Village Innocent, is pardoned: [he|she] will no longer vote.",
         "sagesse": "Round {tour} — {nom}, the Greybeard, fell at the village's hand: the villagers have lost their powers.",
+        "sagesseAnonyme": "Round {tour} — the Greybeard fell at the village's hand: the villagers have lost their powers.",
         "votants": "Round {tour} — {nom}, fallen for the tie, chooses tomorrow's voters: {noms}.",
         "plume": "Round {tour} — a black feather points at {nom}.",
-        "oies": "Round {tour} — {nom}'s geese are honking.",
+        "oies": "Round {tour} — geese are honking somewhere in the village.",
         "second-vote": "Round {tour} — a second execution vote, without debate.",
         "devouement": "Round {tour} — {nom} steps forward: the Chambermaid takes {noms}'s card without showing it."
       },
@@ -1336,7 +1337,7 @@
       },
       "veillee-d-hiver": {
         "Nom": "The Winter Vigil",
-        "Aide": "A random player secretly received a gift: the first blow that should kill them at night fails. At each dawn, snow may fall (one chance in three, never two dawns in a row): that day it covers the tracks (Huntress, Chimney Sweep, Tanner, News Peddler and Wash-house learn nothing).",
+        "Aide": "A random player secretly received a gift: the first blow that should kill them at night fails. At each dawn, snow may fall (one chance in three, never two dawns in a row): that day it covers the tracks (Huntress, Chimney Sweep, Tanner, Newsmonger and Wash-house learn nothing).",
         "Annonce": "It is the Winter Vigil: the Lady of Bells left a gift on a doorstep of Brumecombe. Once, it will save someone from a deadly blow. And when snow falls, it erases the tracks.",
         "Carnet": "The Lady of Bells left a gift on your doorstep: the first time a deadly blow aims at you at night, it will fail. Only once. It is up to you whether to say so.",
         "Neige": "Snow fell on Brumecombe tonight: it covered every track."
@@ -1384,11 +1385,13 @@
       "Grace": "{nom} is the Village Innocent: the village pardons [him|her]. [He|She] stays among you, but will never vote again.",
       "BailliAboli": "{nom} was Bailiff: pardoned, [he|she] loses the office, and no one will take it up. Brumecombe will have no Bailiff any more.",
       "Sagesse": "{nom}, the Greybeard, fell at the village's hand: Brumecombe has lost its wisdom. Until the end of the evening, no villager has any power left, neither from their role nor from their trade.",
+      "SagesseAnonyme": "The Greybeard fell at the village's hand: Brumecombe has lost its wisdom. Until the end of the evening, no villager has any power left, neither from their role nor from their trade.",
       "Egalite": "Tie: {nom} is the one who pays for those tied.",
       "Votants": "{nom}, fallen for the tie, has chosen who will vote tomorrow: {noms}. The others will stay silent at the vote.",
       "PlumeMatin": "A black feather points at {nom}: at today's execution vote, two more votes against them.",
       "PlumeVoix": "The black feather weighs two votes against {nom}.",
-      "Oies": "{nom}'s geese are honking!",
+      "Oies": "Somewhere in the village, geese are honking!",
+      "OiesCarnet": "Those are your geese honking: a wolf is right beside you.",
       "SecondVote": "A second execution vote opens at once, without debate.",
       "GreffierNote": "{nom}, the Stammering Clerk, gave his sign: a second vote will follow the execution.",
       "FratrieReconnue": "Tonight you open your eyes at the same time as your own: {noms}. Same blood, same side; no one else knows.",
@@ -1419,6 +1422,7 @@
       "CharmeNote": "{nom}, the Hurdy-Gurdy Player, charms {noms}.",
       "Charmes": "A hurdy-gurdy tune has charmed you. You open your eyes with the other charmed: {noms}. Say nothing.",
       "CharmeSeul": "A hurdy-gurdy tune has charmed you. You alone hear it, for now.",
+      "AppelDesCharmes": "The charmed ones, open your eyes… look at one another, and know each other. Now close your eyes.",
       "DejaCharmes": "Those the hurdy-gurdy has already charmed: {noms}.",
       "PersonneCharme": "The hurdy-gurdy has charmed no one yet.",
       "FeuFolletEteint": "The first night is over and you still live: your flame goes out. You are now a plain villager, and you win with the Village.",
@@ -1798,7 +1802,7 @@
       },
       "SansBailli": "Brumecombe has no Bailiff in this vigil: the feast changes nobody.",
       "Destitue": "Bailiff {nom} is removed from office: the village will elect a new Bailiff today.",
-      "PersonneARevenir": "The pack has claimed no victim: nobody comes back.",
+      "PersonneARevenir": "Nobody comes back from the dead.",
       "PersonnePourChatier": "Nobody has fallen yet: the card has no effect.",
       "SotsPouvoir": "Fools' Day: until morning, you hold the power of the “{role}” card (your card remains your own).",
       "Fiole": {
@@ -1823,7 +1827,7 @@
           "toucher": "The Deadly Touch: a wolf must mark the prey ({nom}) to devour them. Name them again, or they are spared.",
           "crue": "The Flood: a second prey in the same shelter as {nom}?",
           "spectre": "The Wraith: you open your eyes and become a wolf. Name the former wolf who will die in your place.",
-          "benet": "The Wicked Simpleton: name a player who is not a wolf; they will become the pack's secret ally.",
+          "benet": "The Wicked Simpleton: name a player; if they are not a wolf, they will become the pack's secret ally.",
           "sots-voyance": "Fools' Night: you are a reader tonight. Whose role do you read?"
         }
       },
@@ -1933,6 +1937,7 @@
       },
       "Benet": {
         "Note": "The Wicked Simpleton: {qui} names {nom}, now the pack's secret ally.",
+        "NoteLoup": "The Wicked Simpleton: {qui} names {nom}, a wolf: the card has no effect (nobody learns it).",
         "Carnet": "You open your eyes: the wolves are {noms}. You are now their secret ally; you stay with the Village, and you win if they win.",
         "Gagne": "The Wicked Simpleton: {noms}, the pack's secret ally, wins with it.",
         "Perd": "The Wicked Simpleton: {noms} was the pack's secret ally."

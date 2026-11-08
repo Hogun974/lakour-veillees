@@ -48,7 +48,7 @@ Colonne « livre » : la fonction du personnage, pour s'y retrouver ; jamais aff
 | deux sœurs | Lavandières (2) | Washerwomen | `lavandiere` | fait (étape 3a : nuits 1, 3, 5… ; noms au carnet, salon vocal « fratrie » ; tirées par deux) |
 | trois frères | Bûcherons (3) | Woodcutters | `bucheron` | fait (étape 3a : comme les Lavandières, tirés par trois, niveau chaos) |
 | renard | Furet | Ferret | `furet` | fait (étape 3a : trio autour du joueur désigné ; « non » : flair perdu, réveillé sans candidats) |
-| montreur d'ours | Gardeuse d'oies | Goose Girl | `gardeuse-d-oies` | fait (étape 3a : annonce au matin après les morts ; mordue, chaque matin) |
+| montreur d'ours | Gardeuse d'oies | Goose Girl | `gardeuse-d-oies` | fait (étape 3a : annonce au matin après les morts, anonyme — « des oies cacardent quelque part dans le village », comme le meneur qui grogne sans nommer le Montreur ; elle seule apprend, au carnet, que ce sont les siennes ; mordue, chaque matin, la même annonce) |
 | juge bègue | Greffier bègue | Stammering Clerk | `greffier-begue` | fait (étape 3a : pouvoir de jour secret ; second vote ouvert dès que les condamnés sont tombés) |
 | chevalier à l'épée rouillée | Vieux Sergent | Old Sergeant | `vieux-sergent` | fait (étape 3a : premier loup vivant à gauche, mort la nuit suivante, cause publique « contamine ») |
 | corbeau | Pie | Magpie | `pie` | fait (étape 3a : ordre 46, annonce anonyme au matin, deux voix au premier vote d'exécution du jour ; filtre `EXCLUS_DE_LA_PLUME` prêt pour le Chemineau) |

@@ -7,8 +7,8 @@
 //
 // 1. Le savoir d'un joueur : savoirDuJoueur({ moi, camp, allies, textes, publics, villageois, gabarits, nomsDesRoles, nomsDesCamps,
 //    annonces, roles, voisins, registre, role, groupes, charmesAppeles }) — son carnet (textes : visions de la Liseuse et des autres, lanterne, flair
-//    du Furet, Enfant de la brume, Fournière, Prieur, Pèlerine, prime du Chasseur, charmes ; le Spiritisme ne dit que oui ou non : non
-//    lu), le chat public (publics : tombes, rasoir, oies), les rôles révélés (villageois), le Registre (qui a voté contre un loup
+//    du Furet, Enfant de la brume, Fournière, Prieur, Pèlerine, prime du Chasseur, charmes, oies de la Gardeuse ; le Spiritisme ne dit que oui ou non : non
+//    lu), le chat public (publics : tombes, rasoir), les rôles révélés (villageois), le Registre (qui a voté contre un loup
 //    démasqué) et les annonces du débat (annonces : « X est un loup », dit par Y ; démenties, elles trahissent leur auteur ; vérifiées,
 //    elles le rendent fiable). Les textes sont lus d'après les gabarits du dictionnaire du système (LAKOUR_LOUPS, français ou anglais).
 //    -> { moi, camp, allies: [id], loups: [id], innocents: [id], roles: { id: cle }, soupcons: { id: n }, utiles: [id], amoureux: [id],
@@ -46,7 +46,7 @@ export const GABARITS_DU_SAVOIR = [
   ["Nuit.MemeCamp", "meme"], ["Nuit.PasMemeCamp", "autre"], ["Nuit.ActifOui", "sorti"], ["Nuit.ActifVu", "sorti"],
   ["Nuit.Amour", "amour"], ["Nuit.AmourDouble", "amour"],
   ["Jour.Cimetiere", "camp"], ["Jour.PelerinePrive", "camp"], ["Jour.ConfessionPrive", "role"], ["Jour.RasoirLoup", "loup"],
-  ["Jour.RasoirInnocent", "innocent"], ["Village.Fourniere", "loup"], ["Pacte.Oies", "oies"], ["Pacte.FratrieReconnue", "fratrie"],
+  ["Jour.RasoirInnocent", "innocent"], ["Village.Fourniere", "loup"], ["Pacte.OiesCarnet", "oies"], ["Pacte.FratrieReconnue", "fratrie"],
   ["Passage.CampSecret", "camp"], ["Fetes.Ames.MurmureMeme", "meme"], ["Fetes.Ames.MurmureAutre", "autre"], ["Nuit.Prime", "prime"],
   ["Ambigus.Charmes", "charmes"], ["Ambigus.CharmeSeul", "charme"]
 ];
@@ -126,7 +126,8 @@ export function savoirDuJoueur({ moi = "", camp = "village", allies = [], textes
       else if (sens === "charmes" && prive) charmes = new Set([moi, ...listeDeNoms(g.noms).map(idDe).filter(Boolean)]);
       else if (sens === "charme" && prive) charmes = new Set([moi]);
       else if (sens === "meme" || sens === "autre") relations.push({ a: idDe(g.a), b: idDe(g.b), meme: sens === "meme" });
-      else if (sens === "oies" && typeof voisins === "function") for (const id of voisins(idDe(g.nom)) ?? []) soupconner(id, 1);
+      // Les oies cacardent sans nom au village ; la Gardeuse seule apprend (son carnet) que ce sont les siennes : elle soupçonne ses voisins.
+      else if (sens === "oies" && prive && typeof voisins === "function") for (const id of voisins(moi) ?? []) soupconner(id, 1);
     }
   };
   for (const x of textes) lire(x, true);

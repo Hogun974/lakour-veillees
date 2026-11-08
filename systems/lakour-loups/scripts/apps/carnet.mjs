@@ -24,7 +24,7 @@ export class CarnetSecret extends HandlebarsApplicationMixin(ApplicationV2) {
     position: { width: 460, height: 560 }
   };
 
-  static PARTS = { corps: { template: `systems/${ID}/templates/carnet.hbs`, scrollable: [".loups-carnet-liste"] } };
+  static PARTS = { corps: { template: `systems/${ID}/templates/carnet.hbs`, scrollable: [""] } };
 
   async _prepareContext() {
     const echapper = s => foundry.utils.escapeHTML(String(s ?? ""));

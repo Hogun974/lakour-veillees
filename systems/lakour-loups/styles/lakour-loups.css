@@ -621,6 +621,9 @@ body.theme-light .application.lakour-loups.loups-fiche:not(.theme-dark),
 .lakour-loups .loups-alerte { margin: 4px 0; padding: 4px 8px; border-left: 3px solid #b8860b; background: rgba(184, 134, 11, 0.12); }
 .lakour-loups .loups-journal li.secret { opacity: 0.85; font-style: italic; }
 .lakour-loups .loups-texte { width: 100%; min-height: 4em; margin: 6px 0; }
+/* Le carnet a une hauteur fixe (redimensionnable) : son corps défile, la fenêtre non (sinon plus moyen de descendre). */
+.lakour-loups.loups-carnet .window-content { overflow: hidden; }
+.lakour-loups .loups-carnet-corps { flex: 1; min-height: 0; overflow-y: auto; padding-right: 0.2em; }
 .lakour-loups .loups-carnet-liste { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .lakour-loups .loups-carnet-entree { padding: 6px 8px; border: 1px solid rgba(0, 0, 0, 0.2); border-radius: 4px; }
 .lakour-loups .loups-carnet-prime { margin: 4px 0 8px; }

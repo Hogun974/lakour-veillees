@@ -4,10 +4,9 @@ Deux numéros de version avancent ensemble : celui du **système** `lakour-loups
 `lakour-veillees`. Chaque publication GitHub (étiquette `v<version du système>`) emporte les deux, plus le monde vierge.
 Le moteur commun `lakour-mj-ia` a son propre journal dans [son dépôt](https://github.com/Hogun974/lakour-mj-ia).
 
-## Système 0.13.1 · Contenu 0.16.0 — 7 novembre 2026
+## Système 0.14.0 · Contenu 0.17.0 — 8 novembre 2026
 
-Le chantier **« Le Pacte »** (6 et 7 novembre). Cette section regroupe aussi les numéros intermédiaires système 0.12.0, 0.12.1
-et 0.13.0, contenu 0.15.0 et 0.15.1. Moteur MJ IA 0.43.0 à 0.44.1.
+Moteur MJ IA 0.45.0 au minimum.
 
 - **Fuites par déduction** (relecture adverse, 8 novembre) : l'Enfouissement cache toute mort « de la nuit » ; le Méchant Benêt
   choisit parmi tous les vivants (un loup désigné : rien) ; le Spectre attend le geste du Toucher mortel ; la Somnambule parle
@@ -16,6 +15,18 @@ et 0.13.0, contenu 0.15.0 et 0.15.1. Moteur MJ IA 0.43.0 à 0.44.1.
   défaut tiré au sort ; l'appel des charmés au chat quand la Table mène la nuit ; les oies cacardent sans nom (la Gardeuse le sait
   à son carnet) ; sous l'Exécuteur, le Glas du deuil se tait et l'Aïeul exécuté ne retourne pas sa carte. Le métier « Colporteur
   de nouvelles » devient « Newsmonger » en anglais ; le bouton « Activer l'audio » garde la vidéo d'un monde qui l'a.
+- **Équilibre** : aux Débutants, le **Vieux Sergent** entre dans la réserve dès 9 joueurs (13 joueurs : meute 63 → 55 % ;
+  16 joueurs : 62 → 53 %) ; **Le Pacte est conseillé à partir de 7 joueurs** (à six, aucune composition n'entre dans la
+  fourchette) : la préparation de la Table le signale (fr et en). Détail dans `docs/equilibre-veillees.md`.
+- **Carnet secret** : son contenu défile quand il dépasse la fenêtre (on ne pouvait plus descendre).
+- **Moteur MJ IA 0.45.0** : coût du narrateur aux Veillées divisé par deux environ (outils et consignes propres aux Veillées,
+  cache d'une heure sur le préfixe) ; les avis au MJ ne passent plus par le chat.
+
+## Système 0.13.1 · Contenu 0.16.0 — 7 novembre 2026
+
+Le chantier **« Le Pacte »** (6 et 7 novembre). Cette section regroupe aussi les numéros intermédiaires système 0.12.0, 0.12.1
+et 0.13.0, contenu 0.15.0 et 0.15.1. Moteur MJ IA 0.43.0 à 0.44.1.
+
 - **Le Pacte** : un niveau qui rejoue, règle pour règle, le jeu de loups-garous de soirée avec ses extensions, sous nos noms et
   avec nos textes (aucun texte ni nom d'un jeu édité). Ses seuls personnages, sans bâtiments communaux ni métiers, de 6 à 18
   joueurs ; proposé d'abord à la préparation ; treize compositions prêtes (`le-pacte-06` à `-18`) ; la **Liseuse de cendres**

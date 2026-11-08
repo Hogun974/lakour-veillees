@@ -247,6 +247,12 @@ d'un joueur (sa fiche secrète chiffrée d'un coffre à l'autre, l'accord du men
 LaKour, deux API (`exporterLeJoueur`, `importerLeJoueur`), la victoire par désertion annoncée d'un monde à l'autre. Coût : 2 000 à 3 000 lignes
 (service, API, Table), mais une infrastructure de plus à tenir, et les joueurs changent de monde (reconnexion) à chaque passage.
 
+**Licences (relevé du 8 nov., à trancher avec Jordan avant de commencer B)** : un serveur Foundry ne sert qu'UN monde à la fois, et une
+licence ne fait tourner qu'UN serveur à la fois. Trois hameaux en même temps, c'est donc trois serveurs (trois instances AMP) et **trois
+licences** ; l'instance actuelle (FoundryVirtualTabletopLaKour01) n'en porte qu'une. Avant de coder B, vérifier combien de licences Jordan
+possède (ou peut acheter) et combien de hameaux il veut faire jouer en même temps ; avec une seule licence, seule l'option A est possible
+(plusieurs hameaux dans le même monde). Le relais, lui, ne demande aucune licence de plus (petit service sur le serveur LaKour).
+
 **Sans rien coder** (pis-aller) : plusieurs mondes LaKour ouverts en même temps, chacun sa veillée ; un joueur qui « change de village »
 quitte sa veillée (« Quitter la veillée ») et entre dans l'autre comme gens de passage — sans garder sa carte (ce n'est pas la règle du livre).
 

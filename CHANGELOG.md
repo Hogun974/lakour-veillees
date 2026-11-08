@@ -4,6 +4,11 @@ Deux numéros de version avancent ensemble : celui du **système** `lakour-loups
 `lakour-veillees`. Chaque publication GitHub (étiquette `v<version du système>`) emporte les deux, plus le monde vierge.
 Le moteur commun `lakour-mj-ia` a son propre journal dans [son dépôt](https://github.com/Hogun974/lakour-mj-ia).
 
+## Système 0.14.1 · Contenu 0.17.1 — 8 novembre 2026
+
+- **Caméra remplacée** : le loup-garou qui remplace la caméra d'un joueur (la nuit, mort, absent, micro coupé) est maintenant un
+  jeton carré aux coins arrondis (tête de loup devant la pleine lune), au lieu du médaillon à accroche.
+
 ## Système 0.14.0 · Contenu 0.17.0 — 8 novembre 2026
 
 Moteur MJ IA 0.45.0 au minimum.

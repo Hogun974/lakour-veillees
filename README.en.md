@@ -317,8 +317,9 @@ Role weights and the generator's target are no longer set by hand: they are **me
 complete games with the real system and the real content; simulated players follow a policy per role (what a player would do
 from what they know), with the skill of a real table: one piece of information in two for beginners, three in four for Classic
 and The Pact, all of it for Chaos. Measured at those skill levels, the pack wins about **one game in two** among those won by
-the pack or the village: **51% at The Pact level** (43 to 54% depending on size, except 63% at six players, where the generator
-is at its ceiling), 54% at Classic, 51% at Chaos, 52% for Beginners (who have **one wolf fewer** than the usual count for that).
+the pack or the village: **51% at The Pact level** (43 to 54% depending on size, the mode being
+recommended from seven players: at six, no composition falls within the range), 54% at Classic, 51% at Chaos, 49% for Beginners
+(who have **one wolf fewer** than the usual count for that, and the Old Sergeant from nine players).
 Three loners were adjusted: the **Revenant** only wins if executed from the third day on, the **Bounty Hunter**'s target must
 fall by the second day at the latest, and the simulated players keep an eye on the **Hurdy-Gurdy Player** (his rule is
 unchanged; he wins 15% of the games he is in, against 33% before). The Village (+6 points) and the Gazette (+7) stay within the

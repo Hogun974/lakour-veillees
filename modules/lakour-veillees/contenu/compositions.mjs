@@ -6,8 +6,9 @@
 // Le Pacte, étape 6 : TOUTES sont tirées par le générateur du système (logique/composition.mjs, composer), à graine fixe
 // (« <niveau>-<n> »), sur l'équilibre calibré par simulation (equilibre.mjs : poids et cibles, docs/equilibre-veillees.md) : une
 // composition prête vaut une composition générée. Les règles de dosage sont celles du générateur (loups : 2 jusqu'à 8 joueurs, 3
-// jusqu'à 12, 4 jusqu'à 15, 5 au-delà ; débutants : un loup de moins — étape 6c —, loups simples, aucun solitaire ; classique : un loup
-// à pouvoir et un solitaire au plus ; chaos : un ou deux de chaque ; Le Pacte : les rôles du jeu de soirée, au dosage classique). Les choix de chaque niveau sont
+// jusqu'à 12, 4 jusqu'à 15, 5 au-delà ; débutants : un loup de moins — étape 6c —, loups simples, aucun solitaire, six rôles du Village
+// dont le Vieux Sergent dès 9 joueurs — novembre 2026 — ; classique : un loup à pouvoir et un solitaire au plus ; chaos : un ou deux de
+// chaque ; Le Pacte : les rôles du jeu de soirée, au dosage classique, la Liseuse toujours, 7 joueurs conseillés). Les choix de chaque niveau sont
 // gardés : ses bâtiments (NIVEAUX[niveau].batiments, ci-dessous ; Le Pacte et la petite tablée : ceux du générateur, aucun pour Le Pacte),
 // et les métiers (distribués à tous par la Table de jeu, sauf au Pacte).
 

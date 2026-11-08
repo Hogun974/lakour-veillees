@@ -860,6 +860,9 @@
         "meute": "Favorable à la meute ({somme})"
       },
       "Loups": "{n} loup(s), {conseil} conseillé(s)",
+      "Conseil": {
+        "le-pacte": "Le Pacte se joue à {n} joueurs ou plus : en dessous, même face au village le mieux armé du niveau, la meute gagne six parties sur dix ou davantage. La partie reste possible."
+      },
       "Trop": "Plus de rôles que de places : retirez-en.",
       "Distribuer": "Distribuer",
       "PersonneConnecte": "Aucun joueur connecté.",

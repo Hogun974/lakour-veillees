@@ -359,10 +359,10 @@ Tu es la voix de Brumecombe. Tu ne joues pour aucun camp : tu fais **vivre le vi
       texte: `# La composition
 
 Les compositions toutes prêtes vont de 6 à 18 joueurs, en quatre niveaux :
-- **Débutants** : loups simples, pouvoirs faciles à expliquer, aucun solitaire, et **un loup de moins** que les autres niveaux (1 loup jusqu'à 8 joueurs, 2 jusqu'à 12, 3 jusqu'à 15, 4 au-delà). Pour une première partie ou un groupe qui découvre : une table qui apprend se sert mal de ce qu'elle sait, et avec le compte habituel la meute y gagnait sept parties sur dix, même face au village le mieux armé ; avec un loup de moins, à peu près une sur deux.
+- **Débutants** : loups simples, pouvoirs faciles à expliquer, aucun solitaire, et **un loup de moins** que les autres niveaux (1 loup jusqu'à 8 joueurs, 2 jusqu'à 12, 3 jusqu'à 15, 4 au-delà). Pour une première partie ou un groupe qui découvre : une table qui apprend se sert mal de ce qu'elle sait, et avec le compte habituel la meute y gagnait sept parties sur dix, même face au village le mieux armé ; avec un loup de moins, à peu près une sur deux. Dès 9 joueurs, le **Vieux Sergent** peut s'y joindre : il ne se réveille pas, et le système résout seul son épée (sans lui, à 13 et 16 joueurs, la meute gardait encore six parties sur dix).
 - **Classique** : un loup spécial et un solitaire au plus. La partie de tous les jours.
 - **Chaos** : un ou deux loups spéciaux, un ou deux solitaires, des pouvoirs qui se croisent. Pour un groupe qui connaît bien le jeu, et un narrateur sûr de lui.
-- **Le Pacte** : les seuls rôles du jeu de soirée, sans nos bâtiments ni nos métiers (page « Le Pacte »).
+- **Le Pacte** : les seuls rôles du jeu de soirée, sans nos bâtiments ni nos métiers (page « Le Pacte »). **7 joueurs au moins** : à six, même face au village le mieux armé du niveau, la meute gagne six parties sur dix (la préparation de la Table de jeu le rappelle ; la partie reste possible).
 
 Toutes sortent du générateur de la Table de jeu, tirées une fois pour toutes : elles sont équilibrées comme une composition générée, d'après des poids et des cibles mesurés sur des milliers de parties simulées (une chance sur deux pour le village et pour la meute, à chaque taille et à chaque niveau).
 
@@ -915,6 +915,8 @@ Si l'Aïeul tombe de la main du village, les personnalités perdent leur pouvoir
       texte: `# Les veillées d'autrefois, telles quelles
 
 Le niveau **Le Pacte** (proposé d'abord à la préparation) compose la veillée avec les seuls personnages des veillées d'autrefois : les loups (Loup de Brumecombe, Loup affamé, Louve mère, Loup pâle), les gens du village (Villageois, Franc-Villageois, Liseuse de cendres, Entremetteuse, Herboriste, Braconnière, Enfant de la brume, Garde du pont, Aïeul, Souffre-douleur, Innocent, Lavandières, Bûcherons, Furet, Gardeuse d'oies, Greffier bègue, Vieux Sergent, Pie), les visages changeants (Chapardeur, Bateleur, Mâtin, Enfant des bois, Chambrière) et les solitaires (Feu follet, Joueur de vielle, Illuminé). Avec **Le Village**, l'Incendiaire et les personnalités s'y ajoutent.
+
+Il se joue à **7 joueurs ou plus** : à six, deux loups contre quatre gagnent six parties sur dix, même face à la Liseuse de cendres, l'Herboriste et le Garde du pont (la préparation de la Table de jeu le rappelle ; la partie reste possible).
 
 Ni nos bâtiments communaux (Chapelle, Gibet, Pont…), ni nos métiers : la veillée se joue comme autour d'une vraie table. Les autres niveaux (débutants, classique, chaos) gardent tous les rôles des Veillées. Les variantes ci-après se combinent avec n'importe quel niveau.
 

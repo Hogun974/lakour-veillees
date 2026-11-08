@@ -313,9 +313,9 @@ Les poids des rôles et la cible du générateur ne sont plus posés à la main 
 milliers de parties complètes avec le vrai système et le vrai contenu ; les joueurs simulés suivent une politique par rôle (ce
 que ferait un joueur d'après ce qu'il sait), avec l'adresse d'une vraie table : une information sur deux aux débutants, trois
 sur quatre au classique et au Pacte, toutes au chaos. Mesuré à ces adresses, la meute gagne environ **une partie sur deux**
-parmi celles que gagnent la meute ou le village : **51 % au niveau Le Pacte** (de 43 à 54 % selon la taille, sauf 63 % à six
-joueurs, où le générateur est à son plafond), 54 % au classique, 51 % au chaos, 52 % aux débutants (qui ont pour cela **un loup
-de moins** que le barème). Trois solitaires ont été retouchés : le **Revenant** ne gagne qu'exécuté à partir du troisième jour,
+parmi celles que gagnent la meute ou le village : **51 % au niveau Le Pacte** (de 43 à 54 % selon la taille, le mode étant
+conseillé à partir de sept joueurs : à six, aucune composition n'entre dans la fourchette), 54 % au classique, 51 % au chaos,
+49 % aux débutants (qui ont pour cela **un loup de moins** que le barème, et le Vieux Sergent dès neuf joueurs). Trois solitaires ont été retouchés : le **Revenant** ne gagne qu'exécuté à partir du troisième jour,
 la cible du **Chasseur de primes** doit tomber au plus tard le deuxième jour, et les joueurs simulés surveillent le **Joueur de
 vielle** (sa règle ne change pas ; il gagne 15 % des parties où il est, contre 33 % avant). Le Village (+6 points) et la Gazette
 (+7) restent dans la marge. Méthode, graines, tableaux et façon de remesurer :

@@ -88,6 +88,7 @@
         <button type="button" class="loups-bouton {{#unless preparation.manuel}}discret{{/unless}}" data-action="prepMode" data-mode="manuel">{{localize "LAKOUR_LOUPS.Preparation.Manuel"}}</button>
         <select name="prepNiveau">{{#each preparation.niveaux}}<option value="{{cle}}" {{#if choisi}}selected{{/if}}>{{libelle}}</option>{{/each}}</select>
       </div>
+      {{#if preparation.conseil}}<p class="loups-alerte">{{preparation.conseil}}</p>{{/if}}
       {{#if preparation.tablee}}
       <div class="loups-prep-ligne loups-prep-tablee">
         <small>{{preparation.tablee.aide}}</small>

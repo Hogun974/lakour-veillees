@@ -30,7 +30,7 @@ test("gabarit : cinq panneaux, chacun ouvert ou caché selon preparation.ouvert 
   // Ce que chaque onglet range (mêmes actions, mêmes champs qu'avant les onglets).
   const attendu = {
     joueurs: ["prepCocher", "prepRetirerIA", "prepIA", "voixActiver", "voixMicro"],
-    composition: ["prepMode", 'name="prepNiveau"', "prepRole", "preparation.tablee", "preparation.equilibre"],
+    composition: ["prepMode", 'name="prepNiveau"', "prepRole", "preparation.tablee", "preparation.equilibre", "preparation.conseil"],
     village: ["prepPeste", "prepSaintMartin", "prepVillage", 'name="prepBatiments"', "prepBatiment\"", "prepMetiers"],
     variantes: ["prepVariante", 'name="prepDoubleVisage"', "preparation.variantes.allegeance"],
     gazette: ['data-cle="actif"', 'data-cle="crieur"', "prepPermanente", 'name="prepFete"']
@@ -52,7 +52,10 @@ test("table.mjs : l'action prepOnglet, l'onglet retenu par navigateur, les ongle
   assert.match(SCRIPT, /localStorage\?\.setItem\(ONGLET_RETENU/);
   assert.match(SCRIPT, /L\.ongletsDeLaPreparation\(preparation, ongletRetenu\(\)\)/);
   assert.match(SCRIPT, /preparation\.resume = L\.resumeDeLaPreparation\(preparation, t, \{ niveau: p\.niveau \}\)/);
+  // Le nombre de joueurs conseillé au niveau (novembre 2026 : Le Pacte, 7 au moins ; logique/composition.mjs, JOUEURS_CONSEILLES) : un avis.
+  assert.match(SCRIPT, /conseil: total > 0 && total < \(L\.JOUEURS_CONSEILLES\[p\.niveau\] \?\? 0\)/);
   for (const dico of [FR, EN]) {
+    for (const niveau of Object.keys(L.JOUEURS_CONSEILLES)) assert.match(dico.Preparation.Conseil[niveau], /\{n\}/, niveau);
     for (const { cle } of L.ONGLETS_DE_LA_PREPARATION) assert.equal(typeof dico.Preparation.Onglets[cle], "string", cle);
     for (const c of ["Manuel", "SansBatiments", "BatimentsChoisis", "SansMetiers"]) assert.equal(typeof dico.Preparation.Resume[c], "string", c);
     assert.equal(typeof dico.Preparation.Formats, "string");

@@ -6,7 +6,8 @@
 // à part), par niveau (toutes tailles, 64 parties : à 20 points de la référence) et par taille (tous niveaux, 64 parties : de 30 à
 // 80 %). Ces bornes détectent une dérive franche (un rôle, une règle, une politique qui fait basculer la partie) sans casser au moindre
 // souffle du hasard ; les valeurs mesurées à l'écriture sont rappelées en commentaire. La mesure longue est hors de la suite :
-//   node essais/outils/simuler-veillees.mjs --parties 400 --adresse niveau --graine 6b-apres   (débutants, étape 6c : --graine 6c-apres)
+//   node essais/outils/simuler-veillees.mjs --parties 400 --adresse niveau --graine 6b-apres   (débutants, étape 6c : --graine 6c-apres ;
+//   le Vieux Sergent, novembre 2026 : --parties 300 --graine sergent)
 // Lancer : npm run essais
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -32,7 +33,8 @@ test("équilibre rapide : aucune partie en erreur, toutes jouées jusqu'à la vi
 test("équilibre rapide : à chaque niveau (toutes tailles, à son adresse), la meute reste à 20 points de la mesure longue", () => {
   // mesuré à l'écriture (étape 6c) : débutants 53 %, classique 47 %, chaos 47 %, Le Pacte 44 % (la mesure longue, 2 800 parties
   // par niveau : 52 % aux débutants, étape 6c ; 54 % au classique, étape 6b ; 51 et 48 % au chaos et à Le Pacte, étape 6c ;
-  // docs/equilibre-veillees.md)
+  // docs/equilibre-veillees.md). Remesuré en novembre 2026 (la Liseuse imposée à Le Pacte, le Vieux Sergent aux débutants) : débutants
+  // 45 %, classique 47 %, chaos 47 %, Le Pacte 58 %.
   for (const niveau of NIVEAUX) {
     const l = resultats.filter(r => r.niveau === niveau);
     assert.ok(l.every(r => r.adresse === ADRESSE_DU_NIVEAU[niveau]), `${niveau} : à l'adresse ${ADRESSE_DU_NIVEAU[niveau]}`);
@@ -42,7 +44,7 @@ test("équilibre rapide : à chaque niveau (toutes tailles, à son adresse), la 
 
 test("équilibre rapide : la meute gagne entre 30 et 80 % des parties à chaque taille (tous niveaux, chacun à son adresse)", () => {
   // mesuré à l'écriture (étape 6c) : 6 joueurs 53 %, 10 : 44 %, 14 : 47 %, 18 : 47 % (la mesure longue de l'étape 6b, avant le loup
-  // de moins des débutants : 61, 54, 54, 55 %)
+  // de moins des débutants : 61, 54, 54, 55 %). Novembre 2026 : 53, 44, 45, 55 %.
   for (const n of TAILLES) {
     const l = resultats.filter(r => r.n === n);
     assert.ok(part(l) >= 0.3 && part(l) <= 0.8, `${n} joueurs : meute ${Math.round(100 * part(l))} % sur ${l.length} parties`);
@@ -53,7 +55,7 @@ test("équilibre rapide : les solitaires ne raflent pas la mise (au plus une par
   // Chacun, sur trop peu de parties pour une borne serrée (le Joueur de vielle gagne 15 % des parties où il est depuis l'étape 6c, 32 % avant :
   // docs/equilibre-veillees.md) : tous ensemble, puis chacun à au plus une sur deux quand il a joué au moins 20 parties. Mesuré à
   // l'écriture (étape 6c) : 8 victoires sur 87 parties ; le Revenant 3 sur 27, le Chasseur de primes 3 sur 13, le Joueur de vielle 0
-  // sur 11.
+  // sur 11 (novembre 2026 : 8 sur 83).
   const avecUn = resultats.filter(r => !r.erreur && r.roles.some(c => c in solitairesDe([r])));
   const gagnees = avecUn.filter(r => r.camp !== "meute" && r.camp !== "village");
   assert.ok(gagnees.length <= avecUn.length / 3, `solitaires : ${gagnees.length} victoires sur ${avecUn.length} parties`);

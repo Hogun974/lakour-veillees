@@ -73,6 +73,11 @@ export const estDuLivre = cle => ROLES_DU_LIVRE.includes(cle);
 // la Liseuse de cendres au niveau « Le Pacte », dès 6 joueurs (son minimum). Un rôle exclu (exclure) reste exclu ; une composition
 // choisie à la main ou Double visage (son propre paquet) n'y passent pas.
 export const ROLES_DU_NIVEAU = Object.freeze({ [NIVEAU_LE_PACTE]: Object.freeze(["liseuse-de-cendres"]) });
+// Le nombre de joueurs CONSEILLÉ, au moins, à un niveau (novembre 2026) : Le Pacte se joue à 7 ou plus. À six, deux loups contre le
+// village le plus armé du niveau (la Liseuse, l'Herboriste, le Garde du pont et un villageois) gagnent six parties sur dix, et un seul
+// loup quatre sur dix (docs/equilibre-veillees.md) ; le jeu de soirée se joue d'ailleurs rarement à six. Un conseil, pas une règle : la
+// composition à six reste possible, la préparation de la Table de jeu le dit (avis).
+export const JOUEURS_CONSEILLES = Object.freeze({ [NIVEAU_LE_PACTE]: 7 });
 // Le Pacte, étape 4 : un rôle marqué village (equilibre.roles[cle].village, l'Incendiaire) ne sort que dans la variante « Le Village »
 // (option village du générateur) : sans bâtiments tenus, il n'aurait rien à faire. Jamais à la petite tablée (composer n'y passe pas
 // l'option), que la variante n'a pas.

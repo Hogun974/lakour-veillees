@@ -360,6 +360,9 @@ export class TableDeJeu extends HandlebarsApplicationMixin(ApplicationV2) {
           const v = L.verifierTablee({ humains: coches.size, compagnons: ia.length });
           return { aide: t("LAKOUR_LOUPS.Tablee.PreparationAide", { n: L.glasTablee(total) }), avis: v.ok ? "" : t(`LAKOUR_LOUPS.Tablee.Avis.${v.raison}`) };
         })() : null,
+        // Le nombre de joueurs conseillé au niveau (Le Pacte : 7 au moins, logique/composition.mjs) : un avis, la partie reste possible.
+        conseil: total > 0 && total < (L.JOUEURS_CONSEILLES[p.niveau] ?? 0)
+          ? t(`LAKOUR_LOUPS.Preparation.Conseil.${p.niveau}`, { n: L.JOUEURS_CONSEILLES[p.niveau], total }) : "",
         voix: voixDuMonde()
       };
       // Les onglets (logique/preparation.mjs) : celui qui est ouvert, retenu par navigateur ; le résumé des choix, toujours visible.

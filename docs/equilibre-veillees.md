@@ -1,7 +1,8 @@
 # Équilibre des Veillées de Brumecombe
 
 *Le Pacte, étapes 6, 6b et 6c (novembre 2026) ; puis la Liseuse de cendres dans toute composition du niveau Le Pacte (après les
-parties en vrai du 7 novembre, section « Le Pacte : la Liseuse de cendres dans toute composition »). Les poids des rôles et la cible du générateur ne sont plus posés à la main : ils sont
+parties en vrai du 7 novembre, section « Le Pacte : la Liseuse de cendres dans toute composition ») ; puis le Vieux Sergent dans la
+réserve des débutants et 7 joueurs conseillés à Le Pacte (section « Débutants : le Vieux Sergent ; Le Pacte : 7 joueurs conseillés »). Les poids des rôles et la cible du générateur ne sont plus posés à la main : ils sont
 mesurés par simulation. L'étape 6 les a calibrés avec des joueurs simulés parfaits (adresse 1) ; l'étape 6b les recalibre avec une
 **adresse par niveau**, celle d'une vraie soirée (débutants 0,5 ; classique et Le Pacte 0,75 ; chaos 1), retouche deux solitaires
 (Revenant, Chasseur de primes) et chiffre les variantes du livre que leur règle déséquilibre. L'étape 6c tranche ce que la 6b laissait
@@ -163,7 +164,8 @@ partie en erreur.
 y est de justesse. Ces trois tailles sont au plafond du générateur (quatre loups contre douze joueurs du village, dont les cinq rôles à pouvoir
 du niveau à 16 ; trois loups et dix places à 13) : un second loup de moins, ou un rôle de plus au niveau débutants, serait le seul levier
 restant. Le guide du narrateur le dit (« Préparer la partie », « Réglages de la partie ») : au niveau Débutants, un loup de moins, et ne
-pas en retirer un autre soi-même.
+pas en retirer un autre soi-même. (Novembre 2026 : le rôle de plus, le Vieux Sergent dès 9 joueurs, section « Débutants : le Vieux
+Sergent ; Le Pacte : 7 joueurs conseillés ».)
 
 ### 2. Double visage : une allégeance loup de plus
 
@@ -285,6 +287,98 @@ Solitaires dans ces parties : Feu follet 7 %, Joueur de vielle 19 %, Illuminé 7
 en 30 tours. **Dans la fourchette** (50 ± 10) à toutes les tailles sauf **six joueurs (63 %)**, au plafond du générateur comme avant
 (62 %). Le poids de la Liseuse (+4) ne change pas ; mesurée à l'attribution par rôle, elle vaut au village +12 points quand elle est là
 (contre 187 parties sans elle : toutes des compositions avec le Chapardeur, la Liseuse restée au centre).
+
+## Débutants : le Vieux Sergent ; Le Pacte : 7 joueurs conseillés (novembre 2026)
+
+Après l'étape 6c et la Liseuse imposée à Le Pacte, trois cases restaient hors de la fourchette (meute 50 ± 10 %, chaque niveau à son
+adresse), toutes au **plafond du générateur** (le village le plus armé qu'il sache faire) : les **débutants à 13 et 16 joueurs** (63 %),
+15 joueurs en limite (60 %), et **Le Pacte à 6 joueurs** (63 %). Les règles des rôles ne changent pas.
+
+### Débutants : un sixième rôle du Village, le Vieux Sergent (dès 9 joueurs)
+
+Le niveau n'avait que cinq rôles à pouvoir (Liseuse de cendres, Fossoyeur, Garde du pont, Herboriste, Braconnière) : à 13 joueurs (trois
+loups), le plus armé est ces cinq rôles et cinq Villageois (somme +2) ; à 16 (quatre loups), les cinq et sept Villageois (-2). La
+Liseuse « toujours présente » n'y change rien (au plafond, elle y est déjà) ; un second loup de moins réglerait 16 mais pas 13 (deux loups
+à 13, trois à 16 : un barème en dents de scie). Le levier est un rôle de plus dans la réserve. **Essai** (`--cible 60`, le village le plus
+armé, chaque rôle candidat passé au niveau débutants ; mêmes graines « plaf », 200 parties par case, ±7) — la part de la meute :
+
+| Réserve des débutants | 13 joueurs | 16 joueurs |
+|---|---|---|
+| les cinq rôles (avant) | 68 % | 62 % |
+| + Gardeuse d'oies | 54 % | 63 % |
+| + Juge de paix | 61 % | 57 % |
+| + Veilleuse de lanterne | 46 % | 53 % |
+| **+ Vieux Sergent** | **52 %** | **59 %** |
+| + Vieux Sergent (graine « plaf2 », 300 parties, ±6 ; 15 joueurs : 48 %) | 55 % | 55 % |
+| + Vieux Sergent et Gardeuse d'oies (« plaf2 » ; 15 joueurs : 43 %) | 52 % | 53 % |
+
+**Retenu : le Vieux Sergent** (`equilibre.mjs` : niveau `debutants` au lieu de `classique`). C'est le rôle le plus simple qui soit : il ne
+se réveille pas, ne décide rien, et le système résout son épée (dévoré par la meute, il blesse le premier loup vivant à sa gauche, qui
+meurt la nuit suivante) ; c'est un rôle du livre (le jeu de soirée), et il suffit seul (la Gardeuse d'oies en plus n'apporte que deux ou
+trois points). La Veilleuse ramène plus bas, mais c'est un rôle de nuit de plus à expliquer, à côté de la Liseuse.
+
+**Dès 9 joueurs, et non 8** (`joueursMin` 9 ; avant : 8) : la première validation (graine « sergent-val1 ») a montré qu'à **8 joueurs**,
+face au **loup seul** des débutants (jusqu'à 8 joueurs), son épée finit la partie d'un coup : à la cible de 8 (+3), le générateur tirait
+toujours Loup, Fossoyeur, Vieux Sergent et cinq Villageois, et la meute n'y gagnait plus que **30 %** (39 à 45 % avant). Son poids (+3,
+mesuré surtout face à plusieurs loups) ne le dit pas. Dès 9 joueurs, les débutants ont deux loups. Aux autres niveaux, les tables de 8
+joueurs le perdent (parties appariées, graine « huit », 400 parties, ±5 ; dès 8 → dès 9) : classique 53 → 54 %, chaos 44 → 43 %, Le Pacte
+51 → 48 % ; rien ne bouge.
+
+**Les cibles des débutants** : deux seconds passages (`--corriger`, échelle 6,73, `--sans-interpoler`) d'après deux validations des
+tailles 9 à 18 (graines « sergent-val1 » puis « sergent-val2 », 200 parties par case), les seules dont la réserve change ; 6 à 8 joueurs
+gardent les leurs :
+
+| Débutants | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Cible 6c | +5 | +5 | +5 | +7 | +2 | +3 | +4 | -2 | -1 | +0 |
+| Meute, « sergent-val1 » (Vieux Sergent, cibles 6c) | 59 % | 44 % | 43 % | 40 % | 58 % | 63 % | 54 % | 64 % | 56 % | 56 % |
+| Cible après le premier passage | +7 | +4 | +3 | +5 | +4 | +5 | +5 | +0 | +0 | +1 |
+| Meute, « sergent-val2 » | 52 % | 50 % | 56 % | 53 % | 52 % | 48 % | 54 % | 53 % | 59 % | 53 % |
+| **Cible retenue** | **+7** | **+4** | **+4** | **+6** | **+4** | **+4** | **+6** | **+0** | **+1** | **+2** |
+| Ce que le générateur atteint (6c : plafond) | -5 à 7 (5) | -4 à 8 (6) | -3 à 9 (7) | -2 à 10 (8) | -8 à 4 (2) | -7 à 5 (3) | -6 à 6 (4) | -12 à 0 (-2) | -11 à 1 (-1) | -10 à 2 (0) |
+
+(Entre parenthèses, l'ancien plafond. Au nouveau plafond, le village le plus armé : 9, 13, 15, 16, 17 et 18 joueurs — le Vieux Sergent
+y suffit. Bornées par le second passage : 14 et 16 joueurs au premier, 16 et 17 au second.)
+
+**Mesure** (adresse 0,5 ; la part de la meute parmi les parties gagnées par la meute ou le village ; graine « sergent », 300 parties par
+taille, ±6 ; l'« avant » : le dépôt avant la retouche, mêmes graines) :
+
+| Débutants (adresse 0,5) | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | Toutes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Avant | 45 % | 48 % | 39 % | 54 % | 51 % | 53 % | 52 % | 59 % | **60 %** | 50 % | **62 %** | 57 % | 56 % | 53 % ±2 |
+| **Après** | 45 % | 48 % | 39 % | 52 % | 48 % | 50 % | 46 % | **59 %** | 51 % | 49 % | **53 %** | 53 % | 49 % | **49 %** ±2 |
+
+(6 à 8 joueurs : ni la réserve ni la cible ne changent, les mêmes parties. En gras : avant, les cases à 60 % et plus ; après, les deux tailles visées.) Avec cette graine,
+l'« avant » de 13 joueurs tombe bas (59 % ; 63 et 68 % aux validations de l'étape 6c, 68 % à l'essai « plaf ») et l'« après » haut :
+toutes les mesures de 13 joueurs mises ensemble, **avant 63 %** (« plaf » et « sergent » : 313 parties sur 500, ±4) et **après 55 %**
+(« plaf », « plaf2 », « sergent-val2 », « sergent » : 546 sur 1 000, ±3). À 16 joueurs, 62 → **53 %** ; à 14, 60 → 51 % ; à 15, 50 →
+49 %. Aucune partie en erreur.
+
+**Dans la fourchette** (50 ± 10) : **toutes les tailles des débutants**, de 39 % (8 joueurs, inchangé) à 59 % (13 joueurs : 55 % toutes
+mesures ensemble) ; le niveau entier à 49 % (53 % avant). Compositions prêtes des débutants (30 parties chacune, graine « sergent »,
+±18 par composition) : **49 %** (50 % avant ; 390 parties, ±5) ; `debutants-09` à `-18` ont changé (le Vieux Sergent dans toutes sauf
+`-11`). Le Vieux Sergent sorti des tables de 8, le générateur tire aussi autrement `classique-08`, `chaos-08` et `le-pacte-08` (mêmes
+graines, mêmes cibles) : la meute y gagne 56, 44 et 42 % (100 parties chacune, graine « sergent », ±10).
+
+### Le Pacte à 6 joueurs : 7 joueurs conseillés
+
+À six, Le Pacte met deux loups contre la Liseuse (imposée), l'Herboriste, le Garde du pont et un Villageois (+1, le plafond) ; les autres
+rôles du livre demandent 7 ou 8 joueurs. Essais (400 parties par case, ±5) :
+
+| Le Pacte, 6 joueurs | Meute |
+|---|---|
+| deux loups, le village le plus armé (graine « six ») | 60 % (63 % à la mesure « liseuse ») |
+| la Braconnière permise dès 6 joueurs (deux loups, Liseuse, Herboriste, Garde du pont, Braconnière : +2) | 61 % |
+| un seul loup, la Liseuse et quatre Villageois (le village le moins armé ; graine « un-loup », 300 parties) | 38 % |
+
+Ni la Braconnière (+1 seulement : la place de Villageois qui restait) ni un loup de moins ne ramènent la case dans la fourchette : deux loups,
+c'est 60 % et plus ; un seul, moins de 40 % même face au village le plus nu. Le livre se joue d'ailleurs rarement à six. **Retenu : 7
+joueurs conseillés** au niveau Le Pacte (`JOUEURS_CONSEILLES`, `logique/composition.mjs` ; à 7 joueurs, la meute à 51 %). Un conseil, pas
+une règle : la composition prête `le-pacte-06` et le générateur à six restent (le village le plus armé possible) ; la préparation de la
+Table de jeu affiche un avis sous le niveau quand la table compte moins de 7 joueurs (`LAKOUR_LOUPS.Preparation.Conseil.le-pacte`, fr et
+en) ; les guides le disent (guide du narrateur, « Préparer la partie » ; page « Le Pacte » des variantes ; fr et en). La table de six du
+**classique** (63 %, graine « six » : même plafond, mêmes rôles) reste elle aussi hors de la fourchette ; la Braconnière dès 6 joueurs l'y
+ramenait de justesse (57 %), sans effet à Le Pacte : un écart dans le bruit, pas un levier retenu.
 
 ## La calibration de l'étape 6b (graine « cal6b », 12 000 parties, adresse du niveau)
 
@@ -713,7 +807,9 @@ s'écarte de plus de **20 points** de la mesure longue à un niveau (référence
 **30-80 %** à une taille, si une partie finit en erreur, si les solitaires gagnent plus d'une partie sur trois de celles où ils sont
 (ou l'un d'eux plus d'une sur deux, sur 20 parties au moins), et vérifie que le simulateur est déterministe. Mesuré à l'écriture
 (étape 6c) : débutants 53 %, classique 47 %, chaos 47 %, Le Pacte 44 % ; 6 joueurs 53 %, 10 : 44 %, 14 : 47 %, 18 : 47 % ; solitaires
-8 victoires sur 87 parties (étape 6b : débutants 72 %, chaos 41 %, Le Pacte 39 %, 6 joueurs 58 % ; 12 victoires). Deux autres essais : `essais/politiques-veillees.test.mjs` (le contrat : chaque effet de rôle,
+8 victoires sur 87 parties (étape 6b : débutants 72 %, chaos 41 %, Le Pacte 39 %, 6 joueurs 58 % ; 12 victoires). Remesuré en novembre
+2026 (la Liseuse imposée à Le Pacte, le Vieux Sergent aux débutants) : débutants 45 %, classique 47 %, chaos 47 %, Le Pacte 58 % ; 6
+joueurs 53 %, 10 : 44 %, 14 : 45 %, 18 : 55 % ; solitaires 8 victoires sur 83 parties. Deux autres essais : `essais/politiques-veillees.test.mjs` (le contrat : chaque effet de rôle,
 pouvoir de jour et geste a sa politique ; le savoir lu en français et en anglais ; les choix de l'adresse 1 et de l'adresse 0) et
 `essais/calibration-veillees.test.mjs` (la régression retrouve des effets connus ; l'échelle, la cible, l'échantillon). Les compositions
 prêtes sont contrôlées par `essais/veillees-compositions.test.mjs` (chacune est celle du générateur, à ±2 de sa cible).
@@ -728,9 +824,11 @@ prêtes sont contrôlées par `essais/veillees-compositions.test.mjs` (chacune e
   cible, une table plus adroite le village (tableau « Aux autres adresses »). L'adresse de chaque niveau (étape 6b) est une
   supposition sur de vraies soirées, pas une mesure : quand on aura des parties en vrai (la Chronique), les comparer aux tableaux et
   ajuster `ADRESSE_DU_NIVEAU` (l'outil recalibre à n'importe quelle adresse : `--adresse niveau` ou un nombre, deux heures de calcul).
-- **Les débutants** (étape 6c : un loup de moins) : la meute à 52 % à leur adresse (0,5), mais encore à 63 % à 13 et 16 joueurs, au
-  plafond du générateur (ses cinq rôles à pouvoir). Les tables de six joueurs du classique et de Le Pacte restent elles aussi au
-  plafond (60-65 % ; Le Pacte, la Liseuse imposée : 63 %).
+- **Les débutants** (étape 6c : un loup de moins ; novembre 2026 : le Vieux Sergent dès 9 joueurs) : la meute à 49 % à leur
+  adresse (0,5), de 39 à 59 % par taille ; plusieurs tailles restent au plafond du générateur (9, 13, 15 à 18 joueurs), qui y suffit
+  désormais. Une table de débutants plus maladroite que 0,5 y trouvera la meute plus forte. Les tables de six joueurs du classique et de
+  Le Pacte restent au plafond (60-65 %) : Le Pacte se conseille dès 7 joueurs (la Table de jeu le dit) ; le classique à six, rien
+  n'est décidé.
 - **Le Joueur de vielle** : la règle du livre est gardée ; ce sont les joueurs simulés qui se méfient de lui (étape 6c : 33 % → 15 %).
   La méfiance suppose qu'on entende le narrateur appeler les charmés la nuit (comme à la table) : un narrateur, ou un MJ IA, qui
   tairait cette étape laisserait le Joueur de vielle plus fort que mesuré.
@@ -787,6 +885,8 @@ sans modèle (repli) jouent comme les joueurs simulés :
    (la case « une allégeance loup de plus », et son conseil de taille) ; le narrateur IA doit appeler les charmés à voix haute, la
    nuit, comme les autres rôles (la méfiance mesurée envers le Joueur de vielle le suppose) ; un compagnon branché sur les politiques
    passe `charmesAppeles` (les nuits où les charmés ont été appelés) à `savoirDuJoueur`.
+7. Novembre 2026 : `api.logique.JOUEURS_CONSEILLES` (Le Pacte : 7 joueurs au moins) ; le MJ IA qui compose une veillée Le Pacte de
+   moins de 7 joueurs (`loups_distribuer`) pourrait le dire au narrateur, comme la préparation de la Table de jeu.
 
 ## Remesurer
 
@@ -848,6 +948,23 @@ Le Pacte, la Liseuse de cendres dans toute composition (l'« avant » : le gén�
     npm run fabriquer-veillees && npm run fabriquer-veillees-en
     node essais/outils/simuler-veillees.mjs --parties 400 --niveaux le-pacte --tailles 6,7,8,9,10,11,12,13,14,15,16,17,18 --adresse niveau --graine liseuse --json apres.json   (~10 min)
     node essais/outils/simuler-veillees.mjs --pretes --parties 30 --niveaux le-pacte --tailles 6,7,8,9,10,11,12,13,14,15,16,17,18 --adresse niveau --graine liseuse
+
+Débutants, le Vieux Sergent ; Le Pacte à 6 joueurs (l'« avant » : le dépôt avant la retouche ; les essais de réserve et de Le Pacte à
+six : un petit script hors dépôt, `composer(n, …, { cible: 60 })` sur un `equilibre.json` retouché — `niveau` ou `joueursMin` d'un rôle —,
+puis `jouerTaches` du simulateur avec ces rôles ; ne jamais lancer `npm run fabriquer-veillees` pendant une course : la doublure relit
+`assets/equilibre.json` à chaque partie) :
+
+    # deux seconds passages des tailles 9 à 18 (celles dont la réserve change), en deux courses chacun
+    node essais/outils/simuler-veillees.mjs --parties 200 --niveaux debutants --tailles 9,10,11,12 --adresse niveau --graine sergent-val1 --json val1-a.json
+    node essais/outils/simuler-veillees.mjs --parties 200 --niveaux debutants --tailles 13,14,15,16,17,18 --adresse niveau --graine sergent-val1 --json val1-b.json
+    node essais/outils/calibrer-poids.mjs --corriger val1-a.json,val1-b.json --echelle 6.73 --adresse niveau --sans-interpoler --ecrire
+    npm run fabriquer-veillees
+    # (de même avec --graine sergent-val2, puis --corriger val2-a.json,val2-b.json)
+    npm run fabriquer-veillees && npm run fabriquer-veillees-en
+    # avant (le dépôt d'avant) / après : 300 parties par taille, en deux courses
+    node essais/outils/simuler-veillees.mjs --parties 300 --niveaux debutants --tailles 6,7,8,9,10,11,12 --adresse niveau --graine sergent --json a.json
+    node essais/outils/simuler-veillees.mjs --parties 300 --niveaux debutants --tailles 13,14,15,16,17,18 --adresse niveau --graine sergent --json b.json
+    node essais/outils/simuler-veillees.mjs --pretes --parties 30 --niveaux debutants --tailles 6,7,8,9,10,11,12,13,14,15,16,17,18 --adresse niveau --graine sergent
 
 Étape 6 (adresse 1) : les mêmes commandes avec `--adresse 1` (ou `0.5`) et les graines « cal », « avant », « apres », « variantes »,
 au commit `452fb50` ; `--corriger … --echelle 5.68`.

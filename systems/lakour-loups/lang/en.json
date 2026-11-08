@@ -860,6 +860,9 @@
         "meute": "Favours the pack ({somme})"
       },
       "Loups": "{n} (wolf|wolves), {conseil} advised",
+      "Conseil": {
+        "le-pacte": "The Pact is best played with {n} players or more: with fewer, even against the best-armed village of the level, the pack wins six games in ten or more. You can still play."
+      },
       "Trop": "More roles than seats: remove some.",
       "Distribuer": "Deal",
       "PersonneConnecte": "No player connected.",

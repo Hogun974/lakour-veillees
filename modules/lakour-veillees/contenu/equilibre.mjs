@@ -67,7 +67,11 @@ export const EQUILIBRE = {
   "furet": { camp: "village", poids: 2, niveau: "classique", joueursMin: 8, unique: true, information: true },
   "gardeuse-d-oies": { camp: "village", poids: 3, niveau: "classique", joueursMin: 8, unique: true, information: true },
   "greffier-begue": { camp: "village", poids: 2, niveau: "chaos", joueursMin: 9, unique: true },
-  "vieux-sergent": { camp: "village", poids: 3, niveau: "classique", joueursMin: 8, unique: true },
+  // (Novembre 2026 : dès le niveau Débutants, et non classique — un rôle sans réveil ni décision, que le système résout seul ; avec
+  // lui, le village le plus armé du niveau ramène la meute de débutants dans la fourchette à 13 et 16 joueurs, où les cinq rôles d'avant n'y
+  // suffisaient pas. Dès 9 joueurs, et non 8 : face à un loup seul — les débutants jusqu'à 8 joueurs —, son épée finit la partie
+  // d'un coup, la meute n'y gagnait plus que trois parties sur dix. docs/equilibre-veillees.md.)
+  "vieux-sergent": { camp: "village", poids: 3, niveau: "debutants", joueursMin: 9, unique: true },
   "pie": { camp: "village", poids: 0, niveau: "chaos", joueursMin: 9, unique: true },
   // --- Ambigus (Le Pacte, étape 3b). Le Chapardeur ajoute deux cartes Villageois au paquet (le centre) : elles ne comptent pas dans
   // l'équilibre (logique/composition.mjs ; la calibration compte les rôles distribués). Le Mâtin et l'Enfant des bois peuvent passer
@@ -98,18 +102,20 @@ export const EQUILIBRE = {
 
 // Les CIBLES d'équilibre (Le Pacte, étapes 6, 6b et 6c) : pour chaque niveau et chaque taille, la somme des poids qui donne au village une
 // chance sur deux contre la meute, à l'adresse de référence du niveau, mesurée par simulation (essais/outils/calibrer-poids.mjs,
-// docs/equilibre-veillees.md) ; bornée à ce que le générateur atteint (le classique et Le Pacte à six joueurs, les débutants de 13 à 18
-// joueurs : le village le plus armé que le générateur sache faire n'y suffit pas à 50 %). Étape 6c : les débutants ont un loup de
+// docs/equilibre-veillees.md) ; bornée à ce que le générateur atteint (le classique et Le Pacte à six joueurs : le village le plus armé
+// que le générateur sache faire n'y suffit pas à 50 % — Le Pacte se conseille dès 7 joueurs, composition.mjs, JOUEURS_CONSEILLES — ;
+// les débutants à 9, 13 et 15 à 18 joueurs : au plafond, qui y suffit depuis le Vieux Sergent). Étape 6c : les débutants ont un loup de
 // moins (composition.mjs, nombreDeLoups) ; leurs cibles viennent de deux seconds passages (graines « 6c-val1 », « 6c-val2 ») ; le générateur
 // (logique/composition.mjs, cibleDe) vise cette somme au lieu de 0. Écrites dans assets/equilibre.json (champ « cibles »). Sans
 // cible pour un niveau, le générateur vise 0 (la petite tablée : cibleTablee). Le Pacte (novembre 2026) : la Liseuse de cendres est dans
 // toute composition tirée du niveau (composition.mjs, ROLES_DU_NIVEAU) ; ses cibles viennent de deux seconds passages (graines
-// « liseuse-val1 », « liseuse-val2 »).
+// « liseuse-val1 », « liseuse-val2 »). Débutants (novembre 2026) : le Vieux Sergent entre dans leur réserve dès 9 joueurs ; les cibles
+// de 9 à 18 joueurs viennent de deux seconds passages (graines « sergent-val1 », « sergent-val2 »), celles de 6 à 8 ne changent pas.
 // <cibles> (écrit par essais/outils/calibrer-poids.mjs)
 export const CIBLES = {
   "chaos": { 6: 1, 7: 1, 8: -5, 9: -3, 10: -8, 11: -10, 12: -14, 13: -14, 14: -16, 15: -18, 16: -20, 17: -21, 18: -23 },
   "classique": { 6: 1, 7: 3, 8: -2, 9: 1, 10: 0, 11: -2, 12: -6, 13: -6, 14: -8, 15: -9, 16: -12, 17: -14, 18: -15 },
-  "debutants": { 6: 4, 7: 3, 8: 3, 9: 5, 10: 5, 11: 5, 12: 7, 13: 2, 14: 3, 15: 4, 16: -2, 17: -1, 18: 0 },
+  "debutants": { 6: 4, 7: 3, 8: 3, 9: 7, 10: 4, 11: 4, 12: 6, 13: 4, 14: 4, 15: 6, 16: 0, 17: 1, 18: 2 },
   "le-pacte": { 6: 1, 7: 3, 8: 1, 9: 2, 10: 0, 11: -3, 12: -5, 13: -7, 14: -10, 15: -11, 16: -12, 17: -15, 18: -17 },
   "petite-tablee": { 4: 5, 5: 5, 6: 2, 7: 4, 8: 4, 9: 1, 10: 0, 11: 2, 12: 4 }
 };

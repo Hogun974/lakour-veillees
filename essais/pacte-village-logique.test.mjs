@@ -312,7 +312,9 @@ const VERIFICATIONS = {
       assert.ok(r, cle);
       assert.deepEqual([r.system.camp, r.system.effet], ["village", effet], cle);
       assert.equal(EQUILIBRE[cle]?.camp, "village", `${cle} : équilibre`);
-      assert.ok(["classique", "chaos"].includes(EQUILIBRE[cle].niveau), `${cle} : classique ou chaos`);
+      // (Novembre 2026 : le Vieux Sergent dès le niveau Débutants, dès 9 joueurs — docs/equilibre-veillees.md ; les autres, classique ou chaos.)
+      if (cle === "vieux-sergent") assert.deepEqual([EQUILIBRE[cle].niveau, EQUILIBRE[cle].joueursMin], ["debutants", 9], cle);
+      else assert.ok(["classique", "chaos"].includes(EQUILIBRE[cle].niveau), `${cle} : classique ou chaos`);
       assert.ok(JETONS_ROLES[cle], `${cle} : jeton`);
     }
     assert.equal(parCle["franc-villageois"].system.public, true);

@@ -3,7 +3,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { composer, equilibreDe, nombreDeLoups, NIVEAUX, HORS_TABLEE, HORS_TABLEE_BATIMENTS, SOLITAIRES_TABLEE, villageoisTablee, cibleDe } from "../systems/lakour-loups/logique/composition.mjs";
+import { composer, equilibreDe, nombreDeLoups, NIVEAUX, HORS_TABLEE, HORS_TABLEE_BATIMENTS, SOLITAIRES_TABLEE, villageoisTablee, cibleDe, JOUEURS_CONSEILLES } from "../systems/lakour-loups/logique/composition.mjs";
 import { NIVEAU_PETITE_TABLEE, nombreDeLoupsTablee, ombresTablee } from "../systems/lakour-loups/logique/tablee.mjs";
 const CLASSIQUES = NIVEAUX.filter(n => n !== NIVEAU_PETITE_TABLEE);
 
@@ -71,6 +71,25 @@ test("niveaux : débutants sans loup spécial ni solitaire ; chaos avec au moins
       assert.ok(speciaux(c.roles).length >= 1, `chaos ${n} : loup spécial`);
       assert.ok(solitaires(c.roles).length >= 1, `chaos ${n} : solitaire`);
     }
+  }
+});
+
+// Novembre 2026 (docs/equilibre-veillees.md, « Débutants : le Vieux Sergent ; Le Pacte : 7 joueurs conseillés ») : le Vieux Sergent
+// entre dans la réserve des débutants dès 9 joueurs (le village le plus armé du niveau ramène la meute dans la fourchette à 13 et 16 ;
+// jamais face à un loup seul, que son épée abattrait d'un coup) ; Le Pacte se conseille à 7 joueurs au moins, et la préparation de la
+// Table de jeu le dit, en français et en anglais.
+test("niveaux : la réserve du Village des débutants, Vieux Sergent compris dès 9 joueurs ; Le Pacte conseillé dès 7 joueurs", () => {
+  const reserve = Object.entries(EQ.roles).filter(([c, r]) => r.camp === "village" && r.niveau === "debutants" && c !== "villageois" && !r.surDemande).map(([c]) => c).sort();
+  assert.deepEqual(reserve, ["braconniere", "fossoyeur", "garde-du-pont", "herboriste", "liseuse-de-cendres", "vieux-sergent"]);
+  // Le village le plus armé (cible +60) : tous ces rôles dès 9 joueurs ; le Vieux Sergent jamais avant (8 joueurs : un loup seul).
+  for (const n of [7, 8, 9, 13, 16]) {
+    const c = composer(n, EQ, { niveau: "debutants", cible: 60, graine: `plafond-${n}` });
+    assert.equal(c.roles.includes("vieux-sergent"), n >= 9, `${n} joueurs : ${c.roles.join(", ")}`);
+  }
+  assert.deepEqual({ ...JOUEURS_CONSEILLES }, { "le-pacte": 7 });
+  for (const langue of ["fr", "en"]) {
+    const lang = JSON.parse(readFileSync(new URL(`../systems/lakour-loups/lang/${langue}.json`, import.meta.url), "utf8"));
+    for (const niveau of Object.keys(JOUEURS_CONSEILLES)) assert.match(lang.LAKOUR_LOUPS.Preparation.Conseil[niveau] ?? "", /\{n\}/, `${langue} : ${niveau}`);
   }
 });
 

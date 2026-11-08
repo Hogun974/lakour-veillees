@@ -272,7 +272,10 @@ export const livreA = (emission, userId) => !emission.recipients || emission.rec
 // rapide (le simulateur, essais/outils/partie-loups.mjs sans vérification) : un réglage lu est recopié de son JSON (gardé jusqu'à
 // l'écriture suivante), comme Foundry qui les range en JSON, au lieu d'un clone structuré à chaque lecture (le quart du temps d'une
 // partie) ; les valeurs des réglages du système sont du JSON pur : mêmes parties.
-export function installerFoundry({ joueurs = 6, contenu = false, chancePeste = 0, dernierSouffle = false, moteur = true, rapide = false } = {}) {
+// pauseDuVerdict : le réglage caché « lakour-loups.pauseDuVerdict » (30 s dans Foundry : la même pause avant chaque révélation d'un
+// condamné, Chambrière en jeu ou non) ; 0 par défaut ici, pour que les parties simulées ne patientent pas à chaque vote (son essai
+// la règle : essais/fuites-par-deduction.test.mjs).
+export function installerFoundry({ joueurs = 6, contenu = false, chancePeste = 0, dernierSouffle = false, moteur = true, rapide = false, pauseDuVerdict = 0 } = {}) {
   compteur = 0;
   journalHooks = []; emissions = []; messages = []; reglages = new Map();
   ecouteursMJ = []; clients = []; enVol = new Set(); erreursSocket = [];
@@ -292,7 +295,8 @@ export function installerFoundry({ joueurs = 6, contenu = false, chancePeste = 0
     settings: {
       register(id, cle, conf) {
         const valeur = id === "lakour-loups" && cle === "chancePeste" ? chancePeste
-          : id === "lakour-loups" && cle === "dernierSouffle" ? dernierSouffle : structuredClone(conf.default);
+          : id === "lakour-loups" && cle === "dernierSouffle" ? dernierSouffle
+            : id === "lakour-loups" && cle === "pauseDuVerdict" ? pauseDuVerdict : structuredClone(conf.default);
         reglages.set(`${id}.${cle}`, { valeur, conf });
       },
       get(id, cle) {

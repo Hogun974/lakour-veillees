@@ -206,7 +206,8 @@ const VERIFICATIONS = {
     L.poserLaCarte(mb, "mechant-benet", { villageois: village() });
     const morts = village().map(x => (["g", "h"].includes(x.id) ? { ...x, vivant: false } : x));
     assert.deepEqual(L.nuitDeLaGazette({ ...mb, phase: "nuit", tour: 3 }, 3, morts, []).etapes.find(x => x.roleCle === "benet").acteurIds, ["g"]);
-    assert.deepEqual(L.candidatsDeLEtape(mb, { roleCle: "benet", villageois: morts }).sort(), ["a", "c", "d", "f"], "un joueur qui n'est pas loup");
+    assert.deepEqual(L.candidatsDeLEtape(mb, { roleCle: "benet", villageois: morts }).sort(), ["a", "b", "c", "d", "e", "f"],
+      "tous les vivants, loups compris (ne proposer que les autres lui montrerait la meute en creux)");
   },
 
   "les votes : Grande Défiance (deux amis, jamais soi ; sans voix, éliminés) ; à tour de rôle vers la gauche ; Cauchemar (les plus cités) ; Châtiment"(L) {
@@ -264,6 +265,9 @@ const VERIFICATIONS = {
     assert.equal(L.roleCacheParLaGazette(ex, { cause: "meute", villageois: vs }), "");
     L.poserLaCarte(ex, "enfouissement", { villageois: vs });
     assert.equal(L.roleCacheParLaGazette(ex, { cause: "meute", villageois: vs }), "enfouissement");
+    // Toute mort que le village apprend « dans la nuit » : en révéler une trahirait que ce n'était pas la meute.
+    for (const cause of ["poison", "feu", "peste", "spectre", "epie", "nuit"]) assert.equal(L.roleCacheParLaGazette(ex, { cause, villageois: vs }), "enfouissement", cause);
+    for (const cause of ["chagrin", "emporte", "narrateur"]) assert.equal(L.roleCacheParLaGazette(ex, { cause, villageois: vs }), "", cause);
     // Le Jour des sots : l'Herboriste et la Liseuse échangent effet, réveil, usages ; les fioles suivent ; au matin, tout revient.
     const fiche = (cle, effet, nuit, usages) => ({ camp: "village", role: { name: cle, system: { cle, effet, nuit, usages } } });
     const s = etat(L, { tour: 2, fioles: { c: { remede: true } }, fiches: { c: fiche("herboriste", "remede", { actif: true, ordre: 50 }, { max: 2, restant: 1 }),
@@ -402,7 +406,7 @@ const MUTATIONS = [
   ["gazette.mjs", "    sortie.villageois = villageois.map(v => (v.camp === \"meute\" && vivant(v) ? { ...v, camp: \"village\" } : tueurs.has(v.id) ? { ...v, camp: \"meute\" } : v));",
     "    sortie.villageois = villageois;", "Nuit des sots : les camps d'une nuit"],
   ["gazette.mjs", "    sortie.sansReveil = [...loups, ...tueurs];", "    sortie.sansReveil = [];", "Nuit des sots : leurs rôles dorment"],
-  ["gazette.mjs", "    case CLE_BENET: return vivants.filter(v => v.camp !== \"meute\").map(v => v.id);", "    case CLE_BENET: return vivants.map(v => v.id);", "Méchant Benêt : pas un loup"],
+  ["gazette.mjs", "    case CLE_BENET: return vivants.map(v => v.id);", "    case CLE_BENET: return vivants.filter(v => v.camp !== \"meute\").map(v => v.id);", "Méchant Benêt : tous les vivants, loups compris"],
   ["gazette.mjs", "export const premierMort = etat => String((etat?.morts ?? [])[0]?.acteurId ?? \"\");", "export const premierMort = etat => String((etat?.morts ?? []).at(-1)?.acteurId ?? \"\");", "le premier mort"],
   ["gazette.mjs", "    const amis = [...new Set([].concat(choix ?? []).filter(id => id && id !== votant && id in decompte))].slice(0, VOIX_DE_LA_DEFIANCE);",
     "    const amis = [...new Set([].concat(choix ?? []).filter(id => id && id in decompte))];", "Défiance : deux amis, pas soi"],

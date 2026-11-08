@@ -820,11 +820,15 @@ function voixDuMonde() {
   });
   return { ...d, muets: d.muets.join(", ") };
 }
-// Mode « Audio seulement » (pas de vidéo aux Veillées) ; Foundry reconnecte la voix chez chacun.
+// La voix allumée : « Audio seulement » si elle était coupée ; un monde déjà en vidéo la garde, avec l'audio (la vidéo est permise
+// aux Veillées : la caméra d'un joueur est remplacée par le loup-garou quand la règle le veut, logique/cameras.mjs). Foundry
+// reconnecte la voix chez chacun. (Modes de Foundry : 0 coupé, 1 audio, 2 vidéo, 3 audio et vidéo.)
+const AUDIO_ET_VIDEO = 3;
 export function activerVoix() {
   return tenter(async () => {
     const monde = foundry.utils.deepClone(game.settings.get("core", "rtcWorldSettings") ?? {});
-    await game.settings.set("core", "rtcWorldSettings", { ...monde, mode: AUDIO_SEUL });
+    const avant = Number(monde.mode) || 0;
+    await game.settings.set("core", "rtcWorldSettings", { ...monde, mode: avant >= 2 ? AUDIO_ET_VIDEO : AUDIO_SEUL });
     ui.notifications.info(t("LAKOUR_LOUPS.Preparation.Voix.Activee"));
   });
 }

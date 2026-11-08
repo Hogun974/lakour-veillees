@@ -29,7 +29,7 @@
         "id": "lakour-mj-ia",
         "type": "module",
         "manifest": "https://github.com/Hogun974/lakour-mj-ia/releases/latest/download/module.json",
-        "compatibility": { "minimum": "0.39.0" },
+        "compatibility": { "minimum": "0.44.1" },
         "reason": "Le coffre chiffré des secrets de la partie est celui de ce module ; sans lui, aucune partie ne se distribue (clé d'IA facultative)."
       }
     ],

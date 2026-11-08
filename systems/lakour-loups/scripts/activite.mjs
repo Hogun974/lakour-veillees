@@ -1,5 +1,5 @@
-// L'activité d'un joueur que Foundry diffuse à tous (curseur, ping, règle, cibles, voyant « parle ») : masquée la nuit, et
-// tant qu'un choix secret est en cours (logique/activite.mjs).
+// L'activité d'un joueur que Foundry diffuse à tous (curseur, ping, règle, cibles, voyant « parle ») : masquée la nuit, chez tous ;
+// jamais le jour, même pendant un choix secret (masquer le seul qui choisit le désignerait : logique/activite.mjs).
 //
 // Lu dans Foundry v14 (14.370) :
 // - client/documents/user.mjs : User#broadcastActivity(data) émet `userActivity` par le socket (seulement pour soi-même).
@@ -29,8 +29,7 @@ import { ID } from "../logique/constantes.mjs";
 import * as L from "../logique/index.mjs";
 import { lirePublic } from "./donnees.mjs";
 import { ligneCourante } from "./salons.mjs";
-import { modeActif } from "./plateau-local.mjs";
-import { choixEnCours, surChoixEnCours } from "./apps/choix.mjs";
+import { surChoixEnCours } from "./apps/choix.mjs";
 
 // Au plus ce délai pour la ligne des salons de la nouvelle phase (sans MJ actif, elle ne vient pas).
 export const DELAI_RESYNCHRO = 5000;
@@ -51,16 +50,12 @@ function envelopper(objet, nom, fabrique) {
 
 const phasePublique = () => { try { return String(lirePublic().phase ?? ""); } catch { return ""; } };
 
-function choixSecret() {
-  if (choixEnCours()) return true;
-  try { return ["nuit", "jour"].includes(modeActif()); } catch { return false; }
-}
-
-// L'activité de ce navigateur doit-elle être masquée, maintenant ?
+// L'activité de ce navigateur doit-elle être masquée, maintenant ? La nuit, celle de tous ; le jour, celle de personne, même pendant
+// un choix secret (relecture adverse : masquer le seul joueur qui choisit le désignerait ; logique/activite.mjs).
 export function activiteMasqueeIci() {
   const u = game.user;
   if (!u || u.isGM) return false;
-  return L.activiteMasquee({ mj: false, phases: [phasePublique(), String(ligneCourante()?.phase ?? "")], choixSecret: choixSecret() });
+  return L.activiteMasquee({ mj: false, phases: [phasePublique(), String(ligneCourante()?.phase ?? "")] });
 }
 
 // L'état A/V public de ce joueur (micro coupé, caméra cachée), tel que Foundry le diffuse.

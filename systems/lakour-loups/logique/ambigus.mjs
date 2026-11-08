@@ -73,6 +73,11 @@ export const CARTES_DU_BATELEUR = 3;
 // La Chambrière : la fenêtre de sa demande, juste après le décompte du vote (adaptation en ligne : sur table, elle lève la main
 // avant qu'on retourne la carte du condamné ; ici, une demande courte, et la révélation du condamné l'attend).
 export const DELAI_CHAMBRIERE = 30000;
+// La pause avant la révélation d'un condamné (relecture adverse) : la même après CHAQUE vote d'exécution, qu'une Chambrière libre soit en
+// jeu ou non — une attente qui n'existerait qu'avec elle la trahirait. Elle dure toute la fenêtre (une Chambrière qui refuse vite ne
+// l'abrège pas) ; seul un dévouement l'interrompt (sa carte se retourne alors devant tous). Dans tout mode où elle peut exister : pas à
+// la petite tablée (elle n'y sort jamais : composition.mjs, PACTE_HORS_TABLEE). ms : la durée voulue (réglage ; 0 : pas de pause).
+export const pauseDuVerdict = (etat, ms = DELAI_CHAMBRIERE) => (etat?.petiteTablee ? 0 : Math.max(0, Math.min(DELAI_CHAMBRIERE, Number(ms) || 0)));
 
 const liste = x => (Array.isArray(x) ? [...new Set(x.map(String).filter(Boolean))] : []);
 const vivant = v => Boolean(v) && v.vivant !== false;

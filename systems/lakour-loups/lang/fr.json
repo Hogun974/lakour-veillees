@@ -867,7 +867,7 @@
         "Titre": "Voix",
         "Desactivee": "La voix de Foundry est désactivée dans ce monde : personne ne s'entend.",
         "Activer": "Activer l'audio",
-        "ActiverAide": "Passe le monde en « Audio seulement » (pas de vidéo aux Veillées). Les salons vocaux suivent ensuite la partie. Chacun choisit son micro dans Configurer l'audio et la vidéo › Client.",
+        "ActiverAide": "Allume la voix de Foundry : « Audio seulement » si elle était coupée ; un monde déjà en vidéo la garde. La vidéo est permise aux Veillées : la caméra d'un joueur est remplacée par le loup-garou quand la règle le veut (la nuit, mort, absent, réduit au silence). Les salons vocaux suivent ensuite la partie. Chacun choisit son micro et sa caméra dans Configurer l'audio et la vidéo › Client.",
         "Activee": "Audio activé : chacun peut choisir son micro dans Configurer l'audio et la vidéo.",
         "Muets": "Sans droit de micro : {noms}.",
         "Micro": "Donner le micro aux joueurs",
@@ -1073,9 +1073,10 @@
       "Pacte": {
         "grace": "Tour {tour} — {nom}, l'Innocent, est gracié[|e] : [il|elle] ne votera plus.",
         "sagesse": "Tour {tour} — {nom}, l'Aïeul, est tombé[|e] de la main du village : les villageois ont perdu leurs pouvoirs.",
+        "sagesseAnonyme": "Tour {tour} — l'Aïeul est tombé de la main du village : les villageois ont perdu leurs pouvoirs.",
         "votants": "Tour {tour} — {nom}, tombé[|e] pour l'égalité, désigne les votants de demain : {noms}.",
         "plume": "Tour {tour} — une plume noire désigne {nom}.",
-        "oies": "Tour {tour} — les oies de {nom} cacardent.",
+        "oies": "Tour {tour} — des oies cacardent quelque part dans le village.",
         "second-vote": "Tour {tour} — un second vote d'exécution, sans débat.",
         "devouement": "Tour {tour} — {nom} se dévoue : la Chambrière prend la carte de {noms}, sans la montrer."
       },
@@ -1381,11 +1382,13 @@
       "Grace": "{nom} est l'Innocent : le village [le|la] gracie. [Il|Elle] reste parmi vous, mais ne votera plus jamais.",
       "BailliAboli": "{nom} était Bailli : gracié[|e], [il|elle] perd la charge, et personne ne la reprendra. Brumecombe n'aura plus de Bailli.",
       "Sagesse": "{nom}, l'Aïeul, est tombé[|e] de la main du village : Brumecombe a perdu sa sagesse. Jusqu'à la fin de la veillée, plus aucun villageois n'a de pouvoir, ni de son rôle ni de son métier.",
+      "SagesseAnonyme": "L'Aïeul est tombé de la main du village : Brumecombe a perdu sa sagesse. Jusqu'à la fin de la veillée, plus aucun villageois n'a de pouvoir, ni de son rôle ni de son métier.",
       "Egalite": "Égalité : c'est {nom} qui paie pour les ex æquo.",
       "Votants": "{nom}, tombé[|e] pour l'égalité, a désigné ceux qui voteront demain : {noms}. Les autres se tairont au vote.",
       "PlumeMatin": "Une plume noire désigne {nom} : au vote d'exécution de ce jour, deux voix de plus contre [lui|elle].",
       "PlumeVoix": "La plume noire pèse deux voix contre {nom}.",
-      "Oies": "Les oies de {nom} cacardent !",
+      "Oies": "Quelque part dans le village, des oies cacardent !",
+      "OiesCarnet": "Ce sont vos oies qui cacardent : un loup est tout près de vous.",
       "SecondVote": "Un second vote d'exécution s'ouvre aussitôt, sans débat.",
       "GreffierNote": "{nom}, le Greffier bègue, a fait son signe : un second vote suivra l'exécution.",
       "FratrieReconnue": "Cette nuit, vous ouvrez les yeux en même temps que les vôtres : {noms}. Même sang, même camp ; personne d'autre ne le sait.",
@@ -1416,6 +1419,7 @@
       "CharmeNote": "{nom}, le Joueur de vielle, charme {noms}.",
       "Charmes": "Un air de vielle vous a charmés. Vous ouvrez les yeux avec les autres charmés : {noms}. Ne dites rien.",
       "CharmeSeul": "Un air de vielle t'a charmé. Tu es seul à l'entendre, pour l'instant.",
+      "AppelDesCharmes": "Les charmés, ouvrez les yeux… regardez-vous, reconnaissez-vous. Refermez les yeux.",
       "DejaCharmes": "Ceux que la vielle a déjà charmés : {noms}.",
       "PersonneCharme": "La vielle n'a encore charmé personne.",
       "FeuFolletEteint": "La première nuit est passée et tu vis encore : ta flamme s'éteint. Tu n'es plus qu'un simple villageois, et tu gagnes avec le Village.",
@@ -1795,7 +1799,7 @@
       },
       "SansBailli": "Brumecombe n'a pas de Bailli dans cette veillée : la fête passe sans changer personne.",
       "Destitue": "Le Bailli {nom} est destitué[|e] : le village élira aujourd'hui un nouveau Bailli.",
-      "PersonneARevenir": "La meute n'a fait aucune victime : personne ne revient.",
+      "PersonneARevenir": "Personne ne revient d'entre les morts.",
       "PersonnePourChatier": "Personne n'est encore tombé : la carte reste sans effet.",
       "SotsPouvoir": "Le Jour des sots : jusqu'au matin, vous avez le pouvoir de la carte « {role} » (votre carte reste la vôtre).",
       "Fiole": {
@@ -1820,7 +1824,7 @@
           "toucher": "Le Toucher mortel : un loup doit marquer la proie ({nom}) pour la dévorer. Désignez-la de nouveau, ou elle est épargnée.",
           "crue": "La Crue : une seconde proie dans le même refuge que {nom} ?",
           "spectre": "Le Spectre : vous ouvrez les yeux, vous devenez loup. Désignez l'ancien loup qui mourra à votre place.",
-          "benet": "Le Méchant Benêt : désignez un joueur qui n'est pas loup ; il deviendra l'allié secret de la meute.",
+          "benet": "Le Méchant Benêt : désignez un joueur ; s'il n'est pas loup, il deviendra l'allié secret de la meute.",
           "sots-voyance": "La Nuit des sots : vous êtes liseuse cette nuit. De quel joueur lisez-vous le rôle ?"
         }
       },
@@ -1930,6 +1934,7 @@
       },
       "Benet": {
         "Note": "Le Méchant Benêt : {qui} désigne {nom}, désormais [allié secret|alliée secrète] de la meute.",
+        "NoteLoup": "Le Méchant Benêt : {qui} désigne {nom}, un loup : la carte reste sans effet (personne ne l'apprend).",
         "Carnet": "Vous ouvrez les yeux : les loups sont {noms}. Vous voilà leur allié secret ; vous restez du Village, et vous gagnez s'ils gagnent.",
         "Gagne": "Le Méchant Benêt : {noms}, [allié secret|alliée secrète] de la meute, gagne avec elle.",
         "Perd": "Le Méchant Benêt : {noms} était [l'allié secret|l'alliée secrète] de la meute."

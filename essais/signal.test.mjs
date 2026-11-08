@@ -1,5 +1,6 @@
 // Le signal « à toi » : un tintement chez le seul joueur attendu (choix secret de la nuit, vote qui s'ouvre), jamais
-// diffusé, jamais chez le MJ, coupé par son réglage client ; le titre de l'onglet clignote s'il regarde ailleurs.
+// diffusé, jamais chez le MJ, coupé par son réglage client ; le titre de l'onglet clignote s'il regarde ailleurs. Le jour, un choix
+// secret ne tinte pas (relecture adverse : son micro ouvert le ferait entendre à tous) : le titre seul.
 // Chaque vérification est rejouée sur des copies mutées du système (une règle cassée à la fois) : elle doit alors échouer.
 // Lancer : npm run essais
 import { test, mock } from "node:test";
@@ -19,11 +20,12 @@ async function charger(racine) {
   return { socket, reglages, signal, entree: readFileSync(join(racine, "lakour-loups.mjs"), "utf8") };
 }
 
-// Un joueur (u1) dans son navigateur ; les sons joués sont notés.
-function chezUnJoueur(M, { reglage = true } = {}) {
+// Un joueur (u1) dans son navigateur, la nuit (ou le jour : phase) ; les sons joués sont notés.
+function chezUnJoueur(M, { reglage = true, phase = "nuit" } = {}) {
   installerFoundry({ joueurs: 3 });
   M.reglages.enregistrerReglages(() => {});
   game.settings.set("lakour-loups", "signalTour", reglage);
+  game.settings.set("lakour-loups", "partie", { ...game.settings.get("lakour-loups", "partie"), partie: "essai", phase });
   game.user = game.users.get("u1");
   const sons = [];
   foundry.audio = { AudioHelper: { play: (donnees, diffuser) => { sons.push({ donnees, diffuser }); } } };
@@ -44,6 +46,19 @@ const VERIFICATIONS = {
     assert.equal(sons[0].diffuser, false, "joué chez moi seul");
     assert.equal(sons[0].donnees.channel, "interface");
     assert.equal(sons[0].donnees.loop, false);
+  },
+
+  "le jour, un choix secret ne tinte pas (le micro ouvert le ferait entendre à tous) : le titre seul"(M) {
+    const sons = chezUnJoueur(M, { phase: "jour" });
+    const ecouteurs = new Map();
+    globalThis.document = { hidden: true, title: "Brumecombe", addEventListener: (n, f) => ecouteurs.set(n, f), removeEventListener: n => ecouteurs.delete(n) };
+    mock.timers.enable({ apis: ["setInterval"] });
+    try {
+      M.socket.traiterMessage(demande("u1"), "mj");
+      assert.equal(sons.length, 0, "pas de tintement le jour");
+      mock.timers.tick(1000);
+      assert.equal(document.title, `🔔 ${game.i18n.localize("LAKOUR_LOUPS.Signal.Choix")}`, "le titre clignote");
+    } finally { mock.timers.reset(); M.signal.arreterClignotement(); delete globalThis.document; }
   },
 
   "ni chez le MJ, ni réglage coupé"(M) {
@@ -89,7 +104,9 @@ const VERIFICATIONS = {
 };
 
 const MUTATIONS = [
-  ["scripts/socket.mjs", "      signaler(game.i18n.localize(\"LAKOUR_LOUPS.Signal.Choix\"));\n", "", "choix secret signalé"],
+  ["scripts/socket.mjs", "      signaler(game.i18n.localize(\"LAKOUR_LOUPS.Signal.Choix\"), { son: deNuit() });\n", "", "choix secret signalé"],
+  ["scripts/socket.mjs", "{ son: deNuit() }", "{ son: true }", "le jour, pas de tintement"],
+  ["scripts/signal.mjs", "  if (son) try {", "  try {", "sans son, rien ne sonne"],
   ["scripts/socket.mjs", "      if (message.destinataire !== game.user.id) return true;\n", "", "au seul destinataire"],
   ["scripts/signal.mjs", "channel: \"interface\" }, false)", "channel: \"interface\" }, true)", "jamais diffusé"],
   ["scripts/signal.mjs", "if (game.user?.isGM || !game.settings.get(ID, \"signalTour\")) return false;", "", "ni MJ ni réglage coupé"],

@@ -418,7 +418,7 @@ const MUTATIONS = [
   ["scripts/api.mjs", "c.resultat.elus.length ? \"LAKOUR_LOUPS.Banc.Condamne\" : \"LAKOUR_LOUPS.Banc.Acquitte\"", "\"LAKOUR_LOUPS.Banc.Condamne\"", "banc : le verdict annoncé"],
   ["scripts/apps/table.mjs", "      accusation = p ? { ok: p.ok,", "      accusation = p ? { ok: true,", "Table : ma permission d'accuser"],
   // le Glas du deuil
-  ["scripts/api.mjs", "    if (cause === \"vote\") await sonnerLeDeuil(acteur);\n", "", "deuil : sonné à l'exécution"],
+  ["scripts/api.mjs", "    if (cause === \"vote\" && cacheParLaGazette !== \"executeur\") await sonnerLeDeuil(acteur);\n", "", "deuil : sonné à l'exécution"],
   ["scripts/api.mjs", "  annoncer(\"lakourLoups.deuil\", [{ compte: r.compte }]);", "  annoncer(\"lakourLoups.deuil\", [{ compte: r.compte, pouvoirs: r.etat.pouvoirsDeuil }]);", "deuil : hook vague"],
   ["scripts/api.mjs", "  for (const loup of tousLesVillageois().filter(a => a.system.vivant && campDe(a) === \"meute\")) {\n    await envoyerSecret(loup.id, { texte: t([", "  for (const loup of tousLesVillageois().filter(a => a.system.vivant)) {\n    await envoyerSecret(loup.id, { texte: t([", "deuil : aux loups seuls"],
   ["scripts/api.mjs", "  await annonceChat(echapper(t(\"LAKOUR_LOUPS.Deuil.Sonne\", { n: r.compte })));\n", "", "deuil : annoncé"],

@@ -31,7 +31,8 @@
 //   succession }, spiritisme: { restantes: [cle], derniere: null | { tour, carte, question, spirite, designes, reponse, mort } } }
 // etat.gazetteSecret (SECRET) : { paquet: [cle] (le dessus en tête), main: [cle] (les cartes du Crieur), sots: null | { tour, roles,
 //   fioles }, allies: [acteurId] (le Méchant Benêt), vuUnLoup: Boolean (la Liseuse de cendres a lu une carte de loup), seance: null | { tour, par } (la
-//   nuit où la Liseuse d'étoiles a dit oui, et elle) }
+//   nuit où la Liseuse d'étoiles a dit oui, et elle), aVuTout: [acteurId] (les morts qui ont reçu les cartes des autres ou entendu la
+//   tanière : la Revenue ne les ramène pas) }
 // etat.traits (PUBLIC) : { acteurId: { genre, ans, age, lunettes, bijou, sabots, coiffe, pipe, bourg } }
 
 import { melanger, choisir } from "./hasard.mjs";
@@ -39,6 +40,7 @@ import { surLAutreRive } from "./distribution.mjs";
 import { voisins, cercleDe, premierAGauche } from "./cercle.mjs";
 import { tirerEvenement, retirerEvenement, normaliserEvenements, evenementVaut } from "./evenements.mjs";
 import { inscrire } from "./registre.mjs";
+import { causePublique } from "./constantes.mjs";
 
 const vivant = v => Boolean(v) && v.vivant !== false;
 const liste = x => (Array.isArray(x) ? [...new Set(x.map(y => String(y ?? "")).filter(Boolean))] : []);
@@ -267,7 +269,7 @@ export const gazetteInitiale = ({ actif = false, rythme = 1, choix = false, crie
   tirees: [], restantes: 0, marques: [], prives: [], marches: [], commis: null, variante: null,
   crieur: crieurInitial(crieur), executeur: executeurInitial(), spiritisme: spiritismeInitial()
 });
-export const gazetteSecretInitial = () => ({ paquet: [], main: [], sots: null, allies: [], vuUnLoup: false, seance: null });
+export const gazetteSecretInitial = () => ({ paquet: [], main: [], sots: null, allies: [], vuUnLoup: false, seance: null, aVuTout: [] });
 
 export function normaliserGazette(g) {
   const x = objet(g);
@@ -299,8 +301,19 @@ export function normaliserGazetteSecret(s) {
     sots: x.sots && typeof x.sots === "object" && Array.isArray(x.sots.paires)
       ? { tour: entier(x.sots.tour), paires: x.sots.paires.filter(p => Array.isArray(p) && p.length === 2).map(p => p.map(String)), fioles: objet(copie(x.sots.fioles)) } : null,
     allies: liste(x.allies), vuUnLoup: Boolean(x.vuUnLoup),
-    seance: x.seance?.par ? { tour: entier(x.seance.tour), par: String(x.seance.par) } : null
+    seance: x.seance?.par ? { tour: entier(x.seance.tour), par: String(x.seance.par) } : null,
+    aVuTout: liste(x.aVuTout)
   };
+}
+// Les morts qui ont tout vu (réglage « mortsVoientTout » : les cartes des autres, la tanière) : la Revenue ne les ramène jamais.
+export const aToutVu = (etat, acteurId) => normaliserGazetteSecret(etat?.gazetteSecret).aVuTout.includes(String(acteurId ?? ""));
+// Il a tout vu (état modifié sur place). -> true si c'est nouveau
+export function noterQuIlAToutVu(etat, acteurId) {
+  const s = normaliserGazetteSecret(etat.gazetteSecret);
+  if (!acteurId || s.aVuTout.includes(String(acteurId))) return false;
+  s.aVuTout.push(String(acteurId));
+  etat.gazetteSecret = s;
+  return true;
 }
 const gaz = etat => normaliserGazette(etat?.gazette);
 const sec = etat => normaliserGazetteSecret(etat?.gazetteSecret);
@@ -495,11 +508,13 @@ export function poserLaCarte(etat, cle, { villageois = [], hasard = Math.random,
       break;
     }
     case "revenante": {
+      // La dernière victime de la meute ; mais un mort qui a tout vu (les cartes des autres, la tanière : aVuTout, secret) ne revient
+      // jamais parmi les vivants : la carte est alors sans effet, dite comme quand il n'y a personne (rien ne distingue les deux).
       const causes = ["meute", "epie"];
       const m = [...(etat.morts ?? [])].reverse().find(x => causes.includes(etat.causes?.[x.acteurId] ?? x.cause) && !vivant(villageois.find(v => v.id === x.acteurId))
         && !(etat.partis ?? []).some(p => p.acteurId === x.acteurId));
-      if (m) sortie.gestes.push({ type: "revenir", acteurId: m.acteurId });
-      else sortie.annonces.push(msg("PersonneARevenir", "La meute n'a encore fait aucune victime : personne ne revient."));
+      if (m && !aToutVu(etat, m.acteurId)) sortie.gestes.push({ type: "revenir", acteurId: m.acteurId });
+      else sortie.annonces.push(msg("PersonneARevenir", "Personne ne revient d'entre les morts."));
       break;
     }
     case "executeur":
@@ -614,9 +629,12 @@ export function nuitDeLaGazette(etat, nuit, villageois = [], actions = etat?.nui
   if (proie && chasseurs.length) {
     // Le Toucher mortel : un loup marque sa proie d'un second geste ; la Crue : une seconde proie dans le même refuge ; le Spectre : la
     // proie ouvre les yeux et désigne un ancien loup.
+    // Avec le Toucher mortel, le Spectre attend le geste sur cette proie : réveillée avant, elle apprendrait la meute (ses candidats) et
+    // serait peut-être épargnée faute de toucher, villageoise qui connaît les loups.
+    const touchee = !cartePosee(etat, "toucher-mortel") || actions.some(a => a.roleCle === CLE_TOUCHER && a.cibles?.[0] === proie);
     if (cartePosee(etat, "toucher-mortel")) sortie.etapes.push(etape(CLE_TOUCHER, [...chasseurs], 40));
     if (carteDeLaNuit(etat, "inondation", nuit) && !sots) sortie.etapes.push(etape(CLE_CRUE, [...chasseurs], 40));
-    if (cartePosee(etat, "spectre") && !sots && !carteDeLaNuit(etat, "retour-de-flamme", nuit)) sortie.etapes.push(etape(CLE_SPECTRE, [proie], 40));
+    if (cartePosee(etat, "spectre") && touchee && !sots && !carteDeLaNuit(etat, "retour-de-flamme", nuit)) sortie.etapes.push(etape(CLE_SPECTRE, [proie], 40));
   }
   return sortie.etapes.length || sortie.meute || sortie.sansReveil.length ? sortie : null;
 }
@@ -632,7 +650,8 @@ export function candidatsDeLEtape(etat, { roleCle, villageois = [], actions = et
       return candidatsMeute.filter(id => id !== proie && traitsDe(etat, id)?.genre === genre);
     }
     case CLE_SPECTRE: return vivants.filter(v => v.camp === "meute" && v.id !== proie).map(v => v.id);
-    case CLE_BENET: return vivants.filter(v => v.camp !== "meute").map(v => v.id);
+    // Tous les vivants (lui est mort) : ne proposer que les non-loups lui montrerait la meute en creux ; un loup désigné, rien (benetDesigne).
+    case CLE_BENET: return vivants.map(v => v.id);
     case CLE_SOTS_VOYANCE: return vivants.map(v => v.id);
     default: return [];
   }
@@ -698,10 +717,14 @@ export function chasseursDeLaGazette(etat, nuit, villageois = []) {
 }
 
 // Le Somnambule (carte 1) : les rôles que la Liseuse de cendres a lus cette nuit, sans dire sur qui. actions : celles de la nuit ;
-// villageois : à plat. -> [nom de rôle]
+// villageois : à plat. Une lecture de la Liseuse : l'étape « liseuse-de-cendres » (sa carte, sa seconde carte de Double visage, ou la
+// carte jouée par un Bateleur : noterAction donne alors à l'action l'effet de la carte), ou une action sans étape notée par qui tient la
+// carte. -> [nom de rôle]
+export const CLE_LISEUSE_DE_CENDRES = "liseuse-de-cendres";
 export function rolesLusParLaLiseuse(actions = [], villageois = [], lire = v => v?.role?.nom ?? "") {
   const parId = new Map(villageois.map(v => [v.id, v]));
-  return actions.filter(a => (a.effet ?? parId.get(a.acteurId)?.role?.effet) === "voir-role" && a.roleCle !== CLE_SOTS_VOYANCE && parId.get(a.acteurId)?.role?.cle === "liseuse-de-cendres")
+  const deLaLiseuse = a => a.roleCle === CLE_LISEUSE_DE_CENDRES || (!a.roleCle && parId.get(a.acteurId)?.role?.cle === CLE_LISEUSE_DE_CENDRES);
+  return actions.filter(a => (a.effet ?? parId.get(a.acteurId)?.role?.effet) === "voir-role" && a.roleCle !== CLE_SOTS_VOYANCE && deLaLiseuse(a))
     .flatMap(a => a.cibles ?? []).map(id => lire(parId.get(id))).filter(Boolean);
 }
 // La Liseuse de cendres a-t-elle lu une carte de loup cette nuit ? (Spiritisme, Séance IV)
@@ -874,10 +897,11 @@ export function premierDuCauchemar(etat, villageois = []) {
 }
 
 // ======================================================================= la fin : alliés et marchés
-// Le rôle d'un mort que la Gazette cache : "enfouissement" (une victime de la meute, la carte 26), "executeur" (un condamné du vote,
-// la carte 20 : seul l'Exécuteur l'apprend), "" sinon. (Appelé avant la mort : l'Exécuteur condamné est encore vivant.)
+// Le rôle d'un mort que la Gazette cache : "enfouissement" (la carte 26 : une victime de la meute, et avec elle toute mort que le village
+// apprend comme « mort dans la nuit » — poison, feu, peste, Spectre : en révéler une trahirait que ce n'était pas la meute), "executeur"
+// (un condamné du vote, la carte 20 : seul l'Exécuteur l'apprend), "" sinon. (Appelé avant la mort : l'Exécuteur condamné est encore vivant.)
 export function roleCacheParLaGazette(etat, { cause = "", villageois = [] } = {}) {
-  if (["meute", "epie"].includes(cause) && cartePosee(etat, "enfouissement")) return "enfouissement";
+  if (cause && causePublique(cause) === "nuit" && cartePosee(etat, "enfouissement")) return "enfouissement";
   if (cause === "vote" && executeurEnCharge(etat, villageois)) return "executeur";
   return "";
 }

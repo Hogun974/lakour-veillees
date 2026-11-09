@@ -4,6 +4,12 @@ Deux numéros de version avancent ensemble : celui du **système** `lakour-loups
 `lakour-veillees`. Chaque publication GitHub (étiquette `v<version du système>`) emporte les deux, plus le monde vierge.
 Le moteur commun `lakour-mj-ia` a son propre journal dans [son dépôt](https://github.com/Hogun974/lakour-mj-ia).
 
+## Système 0.14.3 · Contenu 0.17.3 — 9 novembre 2026
+
+- **Jetons peints retouchés** : Messager (rouleau cacheté, sans écriture), Lavandière (teint naturel), Chasseur de primes
+  (manteau de cuir et chapeau de feutre médiévaux), Joueur de vielle (vielle à roue avec sa manivelle), Maîtresse d'école
+  (ardoise noire vierge), Éclusière (vanne à crémaillère et manivelle) et Cimetière (son if).
+
 ## Système 0.14.2 · Contenu 0.17.2 — 9 novembre 2026
 
 Moteur MJ IA 0.46.0 au minimum.

@@ -3,7 +3,7 @@
   "_key": "!items!mJhYVgFyhtzv9kXX",
   "name": "Garde du pont",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/garde-du-pont.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/garde-du-pont.webp",
   "system": {
     "cle": "garde-du-pont",
     "camp": "village",

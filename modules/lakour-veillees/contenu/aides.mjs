@@ -2,6 +2,9 @@
 // texte -> HTML, objets « role », « metier », « batiment », acteurs « villageois », journaux et tables.
 // Formes des données : docs/loups-contrat.md (§1 et §2). Utilisés par outils/fabriquer-veillees.mjs.
 import { createHash } from "node:crypto";
+import { existsSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 export const MODULE = "lakour-veillees";
 export const SYSTEME = "lakour-loups";
@@ -41,10 +44,16 @@ export function identifiant(cle) {
   return Array.from(octets.subarray(0, 16), o => ALPHABET[o % ALPHABET.length]).join("");
 }
 
-// Chemins des jetons (écrits par outils/fabriquer-jetons-veillees.mjs).
+// Chemins des jetons (SVG écrits par outils/fabriquer-jetons-veillees.mjs ; illustrations IA dans assets/jetons/ia/).
 export const DOSSIER_JETONS = `modules/${MODULE}/assets/jetons`;
-export const cheminJeton = cle => `${DOSSIER_JETONS}/${cle}.svg`;
+export const cheminJetonSvg = cle => `${DOSSIER_JETONS}/${cle}.svg`;
 export const cheminJeton3d = cle => `${DOSSIER_JETONS}/3d/${cle}.svg`;
+// Illustration peinte du jeton (WebP 512×512, générée localement : FLUX.2 klein 9B sous ComfyStudio), si elle existe.
+export const cheminJetonIA = cle => `${DOSSIER_JETONS}/ia/${cle}.webp`;
+// Image d'un document (rôle, métier, bâtiment, villageois) : l'illustration IA quand elle existe, sinon le SVG plat (repli).
+// Les chemins sont relatifs à la racine du dépôt (comme les chemins Foundry « modules/… »).
+const RACINE_DEPOT = join(dirname(fileURLToPath(import.meta.url)), "../../..");
+export const cheminJeton = cle => (existsSync(join(RACINE_DEPOT, cheminJetonIA(cle))) ? cheminJetonIA(cle) : cheminJetonSvg(cle));
 export const cleJetonMetier = cle => `metier-${cle}`;
 export const cleJetonBatiment = cle => `batiment-${cle}`;
 

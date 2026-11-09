@@ -3,7 +3,7 @@
   "_key": "!items!YdI25qY9jqzCUtcU",
   "name": "Loup hurleur",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/loup-hurleur.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/loup-hurleur.webp",
   "system": {
     "cle": "loup-hurleur",
     "camp": "meute",

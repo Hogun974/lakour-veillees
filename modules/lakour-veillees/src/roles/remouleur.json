@@ -3,7 +3,7 @@
   "_key": "!items!qWN6uykkISufRaUz",
   "name": "Rémouleur",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/remouleur.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/remouleur.webp",
   "system": {
     "cle": "remouleur",
     "camp": "village",

@@ -3,7 +3,7 @@
   "_key": "!actors!vl2VTAcsyf0BVVqz",
   "name": "Gaspard Lerouge, l'aubergiste",
   "type": "villageois",
-  "img": "modules/lakour-veillees/assets/jetons/metier-aubergiste.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/metier-aubergiste.webp",
   "system": {
     "joueur": "",
     "vivant": true,
@@ -26,7 +26,7 @@
     "width": 1,
     "height": 1,
     "texture": {
-      "src": "modules/lakour-veillees/assets/jetons/metier-aubergiste.svg",
+      "src": "modules/lakour-veillees/assets/jetons/ia/metier-aubergiste.webp",
       "fit": "contain",
       "scaleX": 1,
       "scaleY": 1

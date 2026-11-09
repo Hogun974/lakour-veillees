@@ -4,6 +4,21 @@ Deux numéros de version avancent ensemble : celui du **système** `lakour-loups
 `lakour-veillees`. Chaque publication GitHub (étiquette `v<version du système>`) emporte les deux, plus le monde vierge.
 Le moteur commun `lakour-mj-ia` a son propre journal dans [son dépôt](https://github.com/Hogun974/lakour-mj-ia).
 
+## Système 0.14.2 · Contenu 0.17.2 — 9 novembre 2026
+
+Moteur MJ IA 0.46.0 au minimum.
+
+- **Jetons peints** : les 89 jetons du monde (57 rôles, 14 métiers, 10 bâtiments, 8 figurants) sont maintenant des
+  illustrations peintes (FLUX.2 klein 9B, sur la machine de la maison), en WebP 512 dans `assets/jetons/ia/`. Nuit brumeuse,
+  bleu nuit et ambre ; chaque villageois a son visage, son âge et son teint ; le jeton « Villageois » reste une silhouette
+  encapuchonnée qui ne trahit aucun rôle ; les loups inquiètent sans gore.
+- **Un seul anneau** : tous les jetons portent exactement le même anneau de bronze patiné gravé de petites feuilles, posé par
+  montage sur chaque portrait.
+- **Où ils servent** : fiches des rôles, métiers et bâtiments, villageois du monde, jeton neutre des joueurs et images des
+  figurants du MJ IA (`figurants.json`, champ `image`). Les SVG restent le repli quand une image manque, et la version en
+  relief garde ses SVG.
+- **Moteur MJ IA 0.46.0** : `index.json` et `figurants.json` acceptent les images peintes.
+
 ## Système 0.14.1 · Contenu 0.17.1 — 8 novembre 2026
 
 - **Caméra remplacée** : le loup-garou qui remplace la caméra d'un joueur (la nuit, mort, absent, micro coupé) est maintenant un

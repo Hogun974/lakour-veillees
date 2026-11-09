@@ -3,7 +3,7 @@
   "_key": "!items!R0peqJDFG29jmkOn",
   "name": "Le Cimetière",
   "type": "batiment",
-  "img": "modules/lakour-veillees/assets/jetons/batiment-cimetiere.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/batiment-cimetiere.webp",
   "system": {
     "cle": "cimetiere",
     "description": "<p>Le cimetière derrière la chapelle, ses croix penchées et son if qui ne perd jamais ses aiguilles.</p>",

@@ -3,7 +3,7 @@
   "_key": "!items!KdWGbntuYKcXeKhQ",
   "name": "Passeur",
   "type": "metier",
-  "img": "modules/lakour-veillees/assets/jetons/metier-passeur.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/metier-passeur.webp",
   "system": {
     "cle": "passeur",
     "description": "<p>Ta barque connaît la rivière par cœur, même sous la brume.</p><p><strong>Une fois par partie</strong>, pendant le jour, tu fais <strong>traverser la rivière</strong> à un joueur (toi compris) : la nuit suivante, il dort de l'autre côté du <strong>Pont</strong>, hors d'atteinte. Personne ne peut le visiter, mais il ne peut pas agir non plus.</p>",

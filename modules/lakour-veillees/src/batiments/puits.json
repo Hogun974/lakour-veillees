@@ -3,7 +3,7 @@
   "_key": "!items!ADpPNKk8GepkynTw",
   "name": "Le Puits",
   "type": "batiment",
-  "img": "modules/lakour-veillees/assets/jetons/batiment-puits.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/batiment-puits.webp",
   "system": {
     "cle": "puits",
     "description": "<p>Le vieux puits au milieu de la place. Ceux qui se penchent dessus entendent parfois leur nom.</p>",

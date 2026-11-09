@@ -3,7 +3,7 @@
   "_key": "!items!ljJRT9ai0CsCvXFR",
   "name": "Gardienne des clés",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/gardienne-des-cles.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/gardienne-des-cles.webp",
   "system": {
     "cle": "gardienne-des-cles",
     "camp": "village",

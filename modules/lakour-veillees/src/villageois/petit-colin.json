@@ -3,7 +3,7 @@
   "_key": "!actors!NCfQ5TgTFDlXtxgD",
   "name": "Le petit Colin",
   "type": "villageois",
-  "img": "modules/lakour-veillees/assets/jetons/figurant-enfant.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/figurant-enfant.webp",
   "system": {
     "joueur": "",
     "vivant": true,
@@ -26,7 +26,7 @@
     "width": 1,
     "height": 1,
     "texture": {
-      "src": "modules/lakour-veillees/assets/jetons/figurant-enfant.svg",
+      "src": "modules/lakour-veillees/assets/jetons/ia/figurant-enfant.webp",
       "fit": "contain",
       "scaleX": 1,
       "scaleY": 1

@@ -3,7 +3,7 @@
   "_key": "!items!DbHGXiBw2d5RPPc6",
   "name": "Herboriste",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/herboriste.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/herboriste.webp",
   "system": {
     "cle": "herboriste",
     "camp": "village",

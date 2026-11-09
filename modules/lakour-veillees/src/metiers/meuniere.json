@@ -3,7 +3,7 @@
   "_key": "!items!t9pV5FbvywnKJMXb",
   "name": "Meunière",
   "type": "metier",
-  "img": "modules/lakour-veillees/assets/jetons/metier-meuniere.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/metier-meuniere.webp",
   "system": {
     "cle": "meuniere",
     "description": "<p>La meule tourne plus lentement quand la meute rôde, tu le sens dans tes bras.</p><p><strong>Une fois par partie</strong>, au début d'un jour, tu demandes au narrateur combien de <strong>loups vivent encore</strong> : il le dit à voix haute, pour tout le village.</p>",

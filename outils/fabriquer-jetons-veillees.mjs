@@ -6,15 +6,19 @@
 // Le dessin et la lecture des tracés sont les aides communes du moteur (modules/lakour-mj-ia/outils/jetons-commun.mjs,
 // sous-module) ; icônes dans modules/lakour-mj-ia/outils/game-icons/.
 // Correspondances : modules/lakour-veillees/contenu/jetons.mjs.
+// Les illustrations peintes (assets/jetons/ia/<cle>.webp, générées localement avec FLUX.2 klein 9B sous ComfyStudio) ne
+// sont pas fabriquées ici : elles sont gardées telles quelles, et les documents les prennent quand elles existent
+// (cheminJeton de contenu/aides.mjs), comme index.json (à plat) et figurants.json (« image ») ; index-3d.json et le relief
+// restent en SVG (contrat du moteur 0.46.0 : contrat-contenu.mjs). Sans jeton peint, le SVG sert de repli.
 // Usage : npm run fabriquer-jetons-veillees                (puis npm run fabriquer-veillees)
 //         npm run fabriquer-jetons-veillees -- --source <dossier icons-master de l'archive game-icons>
-import { rmSync } from "node:fs";
+import { existsSync, readdirSync, rmSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   argumentSource, controleurJetons, dessinerJetons, ecrivainDisque, lanceDirectement, lecteurDisque, lireIcone as lireIconeCommune, tableauCredits
 } from "../modules/lakour-mj-ia/outils/jetons-commun.mjs";
-import { cheminJeton, cheminJeton3d, cleJetonBatiment, cleJetonMetier } from "../modules/lakour-veillees/contenu/aides.mjs";
+import { cheminJetonIA, cheminJetonSvg, cheminJeton3d, cleJetonBatiment, cleJetonMetier } from "../modules/lakour-veillees/contenu/aides.mjs";
 import { ROLES } from "../modules/lakour-veillees/contenu/roles.mjs";
 import { METIERS } from "../modules/lakour-veillees/contenu/metiers.mjs";
 import { BATIMENTS } from "../modules/lakour-veillees/contenu/batiments.mjs";
@@ -34,7 +38,7 @@ export const lireIcone = (nom, source) => lireIconeCommune(nom, { auteurs: AUTEU
 const anneauDuRole = r => (r.system.cle === JETON_NEUTRE ? COULEURS_ANNEAU.neutre : COULEURS_ANNEAU[r.system.camp]);
 
 export function listeJetons(roles = ROLES, metiers = METIERS, batiments = BATIMENTS) {
-  const jeton = (cle, titre, icone, anneau, extra = {}) => ({ cle, titre, icone, anneau, plat: cheminJeton(cle), relief: cheminJeton3d(cle), ...extra });
+  const jeton = (cle, titre, icone, anneau, extra = {}) => ({ cle, titre, icone, anneau, plat: cheminJetonSvg(cle), relief: cheminJeton3d(cle), ia: cheminJetonIA(cle), ...extra });
   const listeRoles = roles.map(r => jeton(r.system.cle, r.system.cle === JETON_NEUTRE ? "Villageois (rôle caché)" : `Rôle — ${r.name}`,
     JETONS_ROLES[r.system.cle], anneauDuRole(r), { role: true }));
   const listeMetiers = metiers.map(m => jeton(cleJetonMetier(m.system.cle), `Métier — ${m.name}`, JETONS_METIERS[m.system.cle], COULEURS_ANNEAU.metier));
@@ -59,8 +63,18 @@ export function listeJetons(roles = ROLES, metiers = METIERS, batiments = BATIME
   return { roles: listeRoles, metiers: listeMetiers, batiments: listeBatiments, figurants };
 }
 
-// Index des jetons de joueur (clé du rôle -> chemin du jeton), plat ("2d") ou relief ("3d").
-export const indexJoueurs = (roles, style) => Object.fromEntries(roles.map(r => [r.cle, style === "3d" ? r.relief : r.plat]));
+// Index des jetons de joueur (clé du rôle -> chemin du jeton), plat ("2d") ou relief ("3d"). À plat, le jeton peint
+// (assets/jetons/ia/<clé>.webp) quand il existe, sinon le SVG ; en relief, toujours le SVG (contrat du moteur 0.46.0).
+const peintExiste = chemin => existsSync(join(RACINE, chemin));
+export const indexJoueurs = (roles, style) =>
+  Object.fromEntries(roles.map(r => [r.cle, style === "3d" ? r.relief : (r.ia && peintExiste(r.ia) ? r.ia : r.plat)]));
+
+// figurants.json : chaque type garde son jeton SVG (« jeton », obligatoire) et gagne « image » (ia/<jeton>.webp, relatif à
+// assets/jetons/) quand le jeton peint existe : le placement du MJ IA le préfère à plat.
+export const typesFigurants = (types = TYPES_FIGURANTS) => Object.fromEntries(Object.entries(types).map(([type, f]) => {
+  const image = `ia/${f.jeton}.webp`;
+  return [type, peintExiste(`${DOSSIER_JETONS}/${image}`) ? { ...f, image } : { ...f }];
+}));
 
 // ---------------------------------------------------------------- Vérification (utilisée aussi par les essais)
 
@@ -92,7 +106,9 @@ export function verifierJetons(lire = lireDisque, liste = listeJetons()) {
     if (Object.keys(types).length < 10) erreurs.push(`figurants.json : ${Object.keys(types).length} types seulement`);
     for (const [type, f] of Object.entries(types)) {
       if (!f.libelle || !f.jeton) { erreurs.push(`figurants.json : ${type} incomplet`); continue; }
-      for (const chemin of [cheminJeton(f.jeton), cheminJeton3d(f.jeton)]) if (lire(chemin) === null) erreurs.push(`figurants.json : ${type} -> ${chemin} absent`);
+      for (const chemin of [cheminJetonSvg(f.jeton), cheminJeton3d(f.jeton)]) if (lire(chemin) === null) erreurs.push(`figurants.json : ${type} -> ${chemin} absent`);
+      const peint = typesFigurants({ [type]: f })[type].image;
+      if (f.image !== peint) erreurs.push(`figurants.json : ${type} : image ${f.image ?? "absente"} au lieu de ${peint ?? "aucune"}`);
     }
   }
   const credits = lire(`modules/${MODULE}/CREDITS.md`);
@@ -128,9 +144,14 @@ L'illustration de l'écran d'accueil (\`assets/monde/\`) et celles des veillées
 carnaval, saint-valentin) ont été générées localement avec ComfyStudio (FLUX.2 klein 9B), sans service distant, pour l'usage
 privé de la table.
 
+Les jetons peints (\`assets/jetons/ia/<clé>.webp\` : rôles, métiers, bâtiments et figurants) ont été générés localement avec
+FLUX.2 klein 9B (ComfyStudio), sans service distant ; ils n'utilisent aucune icône de game-icons.net. Ce sont eux que portent
+les rôles, métiers, bâtiments, villageois et figurants du module (index des jetons de joueur et figurants.json du MJ IA
+compris) ; les jetons SVG ci-dessous restent le repli et la version en relief.
+
 ## Icônes des jetons
 
-Les silhouettes des jetons (\`assets/jetons/\`) sont des icônes de **[game-icons.net](https://game-icons.net)**,
+Les silhouettes des jetons SVG (\`assets/jetons/*.svg\` et \`assets/jetons/3d/\`) sont des icônes de **[game-icons.net](https://game-icons.net)**,
 publiées sous licence **Creative Commons Attribution 3.0 (CC BY 3.0)** :
 <https://creativecommons.org/licenses/by/3.0/>. Source : <https://github.com/game-icons/icons>.
 
@@ -161,10 +182,12 @@ Foundry VTT est une marque de Foundry Gaming, LLC ; ce module n'y est pas affili
 export function fabriquerJetons({ source } = {}) {
   const liste = listeJetons();
   const ecrire = ecrivainDisque(RACINE);
-  rmSync(join(RACINE, DOSSIER_JETONS), { recursive: true, force: true });
+  // Tout est refait, sauf les illustrations IA (assets/jetons/ia/), qui ne se regénèrent pas ici.
+  const dossier = join(RACINE, DOSSIER_JETONS);
+  if (existsSync(dossier)) for (const f of readdirSync(dossier)) if (f !== "ia") rmSync(join(dossier, f), { recursive: true, force: true });
   dessinerJetons([...liste.roles, ...liste.metiers, ...liste.batiments, ...liste.figurants], { ecrire, auteurs: AUTEURS, source });
   for (const style of ["2d", "3d"]) ecrire(INDEX_JOUEURS[style], `${JSON.stringify(indexJoueurs(liste.roles, style), null, 2)}\n`);
-  ecrire(FICHIER_FIGURANTS, `${JSON.stringify(TYPES_FIGURANTS, null, 2)}\n`);
+  ecrire(FICHIER_FIGURANTS, `${JSON.stringify(typesFigurants(), null, 2)}\n`);
   ecrire(`modules/${MODULE}/CREDITS.md`, credits(liste));
   return liste;
 }

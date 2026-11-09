@@ -3,7 +3,7 @@
   "_key": "!items!bVJKwASGyN0fAEa7",
   "name": "Le Pont",
   "type": "batiment",
-  "img": "modules/lakour-veillees/assets/jetons/batiment-pont.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/batiment-pont.webp",
   "system": {
     "cle": "pont",
     "description": "<p>Le pont de pierre sur la Brume, la rivière qui coupe le village. Les maisons 13 à 18 sont sur l'autre rive.</p>",

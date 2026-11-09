@@ -3,7 +3,7 @@
   "_key": "!items!cGm34UkueggYhPa3",
   "name": "Enfant de la brume",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/enfant-de-la-brume.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/enfant-de-la-brume.webp",
   "system": {
     "cle": "enfant-de-la-brume",
     "camp": "village",

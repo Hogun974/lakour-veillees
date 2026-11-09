@@ -3,7 +3,7 @@
   "_key": "!items!z9pfMH2eLEdLqSIP",
   "name": "Bûcheron",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/bucheron.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/bucheron.webp",
   "system": {
     "cle": "bucheron",
     "camp": "village",

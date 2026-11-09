@@ -3,7 +3,7 @@
   "_key": "!items!4L9UPlyCraus1CXS",
   "name": "Curé",
   "type": "metier",
-  "img": "modules/lakour-veillees/assets/jetons/metier-cure.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/metier-cure.webp",
   "system": {
     "cle": "cure",
     "description": "<p>Ta chapelle est froide mais tes mots réchauffent.</p><p><strong>Une fois par partie</strong>, pendant le jour, tu <strong>bénis</strong> un joueur (toi compris) : jusqu'à la fin de la partie, il <strong>ne peut plus être réduit au silence</strong>, et il parle le premier au débat suivant.</p>",

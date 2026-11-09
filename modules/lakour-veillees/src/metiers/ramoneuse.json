@@ -3,7 +3,7 @@
   "_key": "!items!bannRn0UAGWzBH0O",
   "name": "Ramoneuse",
   "type": "metier",
-  "img": "modules/lakour-veillees/assets/jetons/metier-ramoneuse.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/metier-ramoneuse.webp",
   "system": {
     "cle": "ramoneuse",
     "description": "<p>Du haut des toits, tu vois tous les seuils de Brumecombe, et la suie garde la trace des pas.</p><p><strong>Une fois par partie</strong>, au matin, tu désignes la maison d'un joueur vivant (la tienne comprise) : le narrateur dit à tout le village si elle a <strong>reçu de la visite</strong> la nuit passée (un loup, ou un pouvoir qui la visait), sans dire qui est venu ni pourquoi.</p>",

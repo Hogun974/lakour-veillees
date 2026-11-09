@@ -3,7 +3,7 @@
   "_key": "!items!WfyOiwGOC4X8AjQV",
   "name": "Colporteur",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/colporteur.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/colporteur.webp",
   "system": {
     "cle": "colporteur",
     "camp": "solitaire",

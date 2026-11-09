@@ -3,7 +3,7 @@
   "_key": "!items!DuiM5DsHwb7Ym563",
   "name": "La Taverne",
   "type": "batiment",
-  "img": "modules/lakour-veillees/assets/jetons/batiment-taverne.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/batiment-taverne.webp",
   "system": {
     "cle": "taverne",
     "description": "<p>La Taverne du Chaudron Fêlé, au bord de la place : trois lits à l'étage, un feu qui ne s'éteint jamais.</p>",

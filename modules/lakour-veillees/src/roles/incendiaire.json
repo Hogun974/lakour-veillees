@@ -3,7 +3,7 @@
   "_key": "!items!NKm6lJHfzWujugDr",
   "name": "Incendiaire",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/incendiaire.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/incendiaire.webp",
   "system": {
     "cle": "incendiaire",
     "camp": "village",

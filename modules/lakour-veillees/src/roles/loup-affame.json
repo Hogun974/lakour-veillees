@@ -3,7 +3,7 @@
   "_key": "!items!Uz9e9vNGNh8w7jNm",
   "name": "Loup affamé",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/loup-affame.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/loup-affame.webp",
   "system": {
     "cle": "loup-affame",
     "camp": "meute",

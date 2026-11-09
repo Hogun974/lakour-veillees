@@ -3,7 +3,7 @@
   "_key": "!items!uqYmRSoXtTd3SuTQ",
   "name": "Tanneur",
   "type": "metier",
-  "img": "modules/lakour-veillees/assets/jetons/metier-tanneur.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/metier-tanneur.webp",
   "system": {
     "cle": "tanneur",
     "description": "<p>Les peaux n'ont plus de secret pour toi, ni celles des bêtes ni celles des gens.</p><p><strong>Une fois par partie</strong>, au matin, tu examines un <strong>mort de la nuit</strong> : le narrateur dit à tout le village s'il porte des <strong>traces de crocs</strong> (la meute) ou non (poison, feu, chagrin, collet).</p>",

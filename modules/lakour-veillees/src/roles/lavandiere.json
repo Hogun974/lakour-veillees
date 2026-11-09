@@ -3,7 +3,7 @@
   "_key": "!items!RAnGqgLIYMNRRnim",
   "name": "Lavandière",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/lavandiere.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/lavandiere.webp",
   "system": {
     "cle": "lavandiere",
     "camp": "village",

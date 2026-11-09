@@ -3,7 +3,7 @@
   "_key": "!items!o3qDqkYhaiWnGFuF",
   "name": "Montreur de marmotte",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/montreur-d-ours.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/montreur-d-ours.webp",
   "system": {
     "cle": "montreur-d-ours",
     "camp": "village",

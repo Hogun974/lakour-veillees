@@ -3,7 +3,7 @@
   "_key": "!items!WEFt1DsF9Kz3ohnc",
   "name": "Loup flaireur",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/loup-flaireur.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/loup-flaireur.webp",
   "system": {
     "cle": "loup-flaireur",
     "camp": "meute",

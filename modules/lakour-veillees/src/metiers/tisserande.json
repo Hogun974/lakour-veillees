@@ -3,7 +3,7 @@
   "_key": "!items!wm5iXtpVF5J13VXG",
   "name": "Tisserande",
   "type": "metier",
-  "img": "modules/lakour-veillees/assets/jetons/metier-tisserande.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/metier-tisserande.webp",
   "system": {
     "cle": "tisserande",
     "description": "<p>Ton métier claque du matin au soir, et tu connais tous les fils.</p><p><strong>Une fois par partie</strong>, pendant le jour, tu noues un <strong>ruban</strong> au poignet d'un joueur : s'il est le plus désigné d'un vote, le dépouillement attend : il gagne <strong>une minute de défense</strong> de plus, pendant laquelle le vote reste ouvert. Le ruban ne sert qu'une fois.</p>",

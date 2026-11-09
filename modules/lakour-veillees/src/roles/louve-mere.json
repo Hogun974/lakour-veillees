@@ -3,7 +3,7 @@
   "_key": "!items!BzLf5oSqNiV9ingT",
   "name": "Louve mère",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/louve-mere.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/louve-mere.webp",
   "system": {
     "cle": "louve-mere",
     "camp": "meute",

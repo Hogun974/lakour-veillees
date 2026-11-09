@@ -3,7 +3,7 @@
   "_key": "!items!E3HcICLsexn0uSqA",
   "name": "Veilleuse de lanterne",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/veilleuse-de-lanterne.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/veilleuse-de-lanterne.webp",
   "system": {
     "cle": "veilleuse-de-lanterne",
     "camp": "village",

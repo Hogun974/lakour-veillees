@@ -3,7 +3,7 @@
   "_key": "!actors!kveB1UsXhHo4k4qa",
   "name": "Mère Ysaline, la doyenne",
   "type": "villageois",
-  "img": "modules/lakour-veillees/assets/jetons/villageois.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/villageois.webp",
   "system": {
     "joueur": "",
     "vivant": true,
@@ -26,7 +26,7 @@
     "width": 1,
     "height": 1,
     "texture": {
-      "src": "modules/lakour-veillees/assets/jetons/villageois.svg",
+      "src": "modules/lakour-veillees/assets/jetons/ia/villageois.webp",
       "fit": "contain",
       "scaleX": 1,
       "scaleY": 1

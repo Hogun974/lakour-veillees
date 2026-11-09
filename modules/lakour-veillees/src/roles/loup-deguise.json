@@ -3,7 +3,7 @@
   "_key": "!items!MjNo9cYF7dLJNcua",
   "name": "Loup déguisé",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/loup-deguise.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/loup-deguise.webp",
   "system": {
     "cle": "loup-deguise",
     "camp": "meute",

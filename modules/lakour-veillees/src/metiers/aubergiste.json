@@ -3,7 +3,7 @@
   "_key": "!items!W8qJeQ1Pxc8fal57",
   "name": "Aubergiste",
   "type": "metier",
-  "img": "modules/lakour-veillees/assets/jetons/metier-aubergiste.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/metier-aubergiste.webp",
   "system": {
     "cle": "aubergiste",
     "description": "<p>Ta salle est la seule du village où l'on parle à voix haute après la nuit tombée.</p><p><strong>Une fois par partie</strong>, pendant le jour, tu offres le <strong>gîte</strong> à un joueur (toi compris) : la nuit suivante, il dort à la <strong>Taverne</strong> et non chez lui. La meute qui entre dans sa maison la trouve vide (le poison et le feu, eux, l'atteignent). Si la Taverne est en jeu, il y prend l'un des trois lits et sa règle s'applique.</p>",

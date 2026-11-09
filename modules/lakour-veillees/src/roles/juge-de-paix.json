@@ -3,7 +3,7 @@
   "_key": "!items!bI0Iczu8Z58vbIy3",
   "name": "Juge de paix",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/juge-de-paix.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/juge-de-paix.webp",
   "system": {
     "cle": "juge-de-paix",
     "camp": "village",

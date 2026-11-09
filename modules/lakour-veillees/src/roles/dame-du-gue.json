@@ -3,7 +3,7 @@
   "_key": "!items!AI6OVZG5008lzsqa",
   "name": "Dame du gué",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/dame-du-gue.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/dame-du-gue.webp",
   "system": {
     "cle": "dame-du-gue",
     "camp": "solitaire",

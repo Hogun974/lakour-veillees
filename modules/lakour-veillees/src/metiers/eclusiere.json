@@ -3,7 +3,7 @@
   "_key": "!items!2UZyZNIS7ipRfZbO",
   "name": "Éclusière",
   "type": "metier",
-  "img": "modules/lakour-veillees/assets/jetons/metier-eclusiere.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/metier-eclusiere.webp",
   "system": {
     "cle": "eclusiere",
     "description": "<p>Tes vannes règlent le cours de la Brume : quand tu les fermes, l'eau monte sous le Pont et le gué disparaît.</p><p><strong>Une fois par partie</strong>, pendant le jour, tu <strong>fermes l'écluse</strong> : la nuit suivante, <strong>la meute ne peut chasser aucune maison de l'autre rive</strong> (maisons 13 à 18), comme quand le Pont est bloqué. Tout le monde le sait, les loups aussi. Les autres pouvoirs de nuit passent.</p>",

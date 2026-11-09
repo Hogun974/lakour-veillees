@@ -3,7 +3,7 @@
   "_key": "!items!excyVOJas5SeEGke",
   "name": "Greffier bègue",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/greffier-begue.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/greffier-begue.webp",
   "system": {
     "cle": "greffier-begue",
     "camp": "village",

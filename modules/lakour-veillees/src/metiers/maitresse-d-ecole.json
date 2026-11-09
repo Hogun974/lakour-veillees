@@ -3,7 +3,7 @@
   "_key": "!items!RBXUxuX7YwiZZAK7",
   "name": "Maîtresse d'école",
   "type": "metier",
-  "img": "modules/lakour-veillees/assets/jetons/metier-maitresse-d-ecole.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/metier-maitresse-d-ecole.webp",
   "system": {
     "cle": "maitresse-d-ecole",
     "description": "<p>Tu as appris à lire à la moitié du village, et l'autre moitié te craint encore.</p><p><strong>Une fois par partie</strong>, au début d'un débat, tu <strong>fais l'appel</strong> : tu désignes qui parle en premier, puis chaque joueur vivant parle <strong>trente secondes</strong>, à tour de rôle, dans l'ordre des maisons, avant le débat libre.</p>",

@@ -3,7 +3,7 @@
   "_key": "!items!7W5BQWZLxlmXhK4E",
   "name": "Mâtin",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/matin.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/matin.webp",
   "system": {
     "cle": "matin",
     "camp": "village",

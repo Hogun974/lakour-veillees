@@ -3,7 +3,7 @@
   "_key": "!items!eWdDN0tCrkTMBQUR",
   "name": "Chambrière",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/chambriere.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/chambriere.webp",
   "system": {
     "cle": "chambriere",
     "camp": "village",

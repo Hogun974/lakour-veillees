@@ -3,7 +3,7 @@
   "_key": "!items!xF0rpQdfm1I5aCuj",
   "name": "La Forge",
   "type": "batiment",
-  "img": "modules/lakour-veillees/assets/jetons/batiment-forge.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/batiment-forge.webp",
   "system": {
     "cle": "forge",
     "description": "<p>La forge à l'ouest de la place, toujours rouge, toujours chaude. Le forgeron dort à côté de l'enclume.</p>",

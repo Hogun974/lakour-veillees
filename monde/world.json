@@ -2,7 +2,7 @@
   "id": "la-kour-veillees",
   "title": "La Kour — Les Veillées de Brumecombe",
   "description": "<p>Chaque automne, la brume coupe Brumecombe du reste du monde. Et chaque matin, quelqu'un manque à l'appel.</p><p>Une meute se cache parmi les villageois : démasquez-la avant qu'elle ne vous dévore. Jeu de déduction sociale original, de 6 à 18 joueurs, narré par le MJ IA.</p>",
-  "version": "0.17.1",
+  "version": "0.17.2",
   "system": "lakour-loups",
   "systemVersion": "0.10.2",
   "coreVersion": "14.370",
@@ -46,7 +46,7 @@
         "type": "module",
         "manifest": "https://github.com/Hogun974/lakour-mj-ia/releases/latest/download/module.json",
         "compatibility": {
-          "minimum": "0.45.0"
+          "minimum": "0.46.0"
         }
       }
     ]

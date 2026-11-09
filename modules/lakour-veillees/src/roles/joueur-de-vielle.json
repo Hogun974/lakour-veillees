@@ -3,7 +3,7 @@
   "_key": "!items!SZjmRH9PYOLeYNL3",
   "name": "Joueur de vielle",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/joueur-de-vielle.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/joueur-de-vielle.webp",
   "system": {
     "cle": "joueur-de-vielle",
     "camp": "solitaire",

@@ -3,7 +3,7 @@
   "_key": "!items!QL9bHTV6yZrgAvVR",
   "name": "Pêcheur de nuit",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/pecheur-de-nuit.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/pecheur-de-nuit.webp",
   "system": {
     "cle": "pecheur-de-nuit",
     "camp": "village",

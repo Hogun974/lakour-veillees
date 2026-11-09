@@ -3,7 +3,7 @@
   "_key": "!items!EiwiuY8leDaDWabk",
   "name": "Forgeron",
   "type": "metier",
-  "img": "modules/lakour-veillees/assets/jetons/metier-forgeron.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/metier-forgeron.webp",
   "system": {
     "cle": "forgeron",
     "description": "<p>Ton marteau s'entend de la place, et ta porte ne ferme jamais tout à fait.</p><p><strong>Une fois par partie</strong>, pendant le jour, tu forges un <strong>verrou</strong> pour la maison d'un joueur (la tienne comprise) : la nuit suivante, la <strong>première attaque de loup</strong> contre cette maison échoue (le poison et le feu passent). Tout le monde sait à qui tu l'as donné.</p>",

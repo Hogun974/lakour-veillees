@@ -3,7 +3,7 @@
   "_key": "!items!VHebA5lEwFzWJmAC",
   "name": "Vieux Sergent",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/vieux-sergent.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/vieux-sergent.webp",
   "system": {
     "cle": "vieux-sergent",
     "camp": "village",

@@ -3,7 +3,7 @@
   "_key": "!items!PPw5SB5fZn8NZoC6",
   "name": "Loup des roseaux",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/loup-des-roseaux.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/loup-des-roseaux.webp",
   "system": {
     "cle": "loup-des-roseaux",
     "camp": "meute",

@@ -3,7 +3,7 @@
   "_key": "!items!UchZugIE6gnV4JDz",
   "name": "Le Lavoir",
   "type": "batiment",
-  "img": "modules/lakour-veillees/assets/jetons/batiment-lavoir.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/batiment-lavoir.webp",
   "system": {
     "cle": "lavoir",
     "description": "<p>Le lavoir couvert au bord de la rivière : on y lave le linge, et surtout les réputations.</p>",

@@ -1,62 +1,77 @@
 {
   "villageois": {
     "libelle": "Villageois anonyme",
-    "jeton": "villageois"
+    "jeton": "villageois",
+    "image": "ia/villageois.webp"
   },
   "garde": {
     "libelle": "Garde du guet",
-    "jeton": "metier-garde"
+    "jeton": "metier-garde",
+    "image": "ia/metier-garde.webp"
   },
   "cure": {
     "libelle": "Curé",
-    "jeton": "metier-cure"
+    "jeton": "metier-cure",
+    "image": "ia/metier-cure.webp"
   },
   "forgeron": {
     "libelle": "Forgeron",
-    "jeton": "metier-forgeron"
+    "jeton": "metier-forgeron",
+    "image": "ia/metier-forgeron.webp"
   },
   "meuniere": {
     "libelle": "Meunière",
-    "jeton": "metier-meuniere"
+    "jeton": "metier-meuniere",
+    "image": "ia/metier-meuniere.webp"
   },
   "aubergiste": {
     "libelle": "Aubergiste",
-    "jeton": "metier-aubergiste"
+    "jeton": "metier-aubergiste",
+    "image": "ia/metier-aubergiste.webp"
   },
   "passeur": {
     "libelle": "Passeur",
-    "jeton": "metier-passeur"
+    "jeton": "metier-passeur",
+    "image": "ia/metier-passeur.webp"
   },
   "enfant": {
     "libelle": "Enfant",
-    "jeton": "figurant-enfant"
+    "jeton": "figurant-enfant",
+    "image": "ia/figurant-enfant.webp"
   },
   "paysan": {
     "libelle": "Paysan",
-    "jeton": "figurant-paysan"
+    "jeton": "figurant-paysan",
+    "image": "ia/figurant-paysan.webp"
   },
   "religieuse": {
     "libelle": "Religieuse",
-    "jeton": "figurant-religieuse"
+    "jeton": "figurant-religieuse",
+    "image": "ia/figurant-religieuse.webp"
   },
   "lavandiere": {
     "libelle": "Lavandière",
-    "jeton": "figurant-lavandiere"
+    "jeton": "figurant-lavandiere",
+    "image": "ia/figurant-lavandiere.webp"
   },
   "chien": {
     "libelle": "Chien de ferme",
-    "jeton": "figurant-chien"
+    "jeton": "figurant-chien",
+    "image": "ia/figurant-chien.webp"
   },
   "corbeau": {
     "libelle": "Corbeau",
-    "jeton": "figurant-corbeau"
+    "jeton": "figurant-corbeau",
+    "image": "ia/figurant-corbeau.webp"
   },
   "chat": {
     "libelle": "Chat",
-    "jeton": "figurant-chat"
+    "jeton": "figurant-chat",
+    "image": "ia/figurant-chat.webp"
   },
   "ombre": {
     "libelle": "Silhouette dans la brume",
-    "jeton": "figurant-ombre"
+    "jeton": "figurant-ombre",
+    "image": "ia/figurant-ombre.webp"
   }
 }

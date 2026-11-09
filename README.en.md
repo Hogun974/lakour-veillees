@@ -616,9 +616,11 @@ change:
 
 - Game, texts, rules, map and code: **Jordan (La Kour)**, written with the help of an AI (**Claude**, by Anthropic) and
   reviewed by the author.
-- Token silhouettes: icons from **[game-icons.net](https://game-icons.net)** (Caro Asercion, Cathelineau, DarkZaitzev,
-  Delapouite, Lorc, Skoll), **CC BY 3.0** licence, recoloured and set in a medallion; the icon-by-icon list is in
-  [`modules/lakour-veillees/CREDITS.md`](modules/lakour-veillees/CREDITS.md).
+- Painted tokens (`assets/jetons/ia/`: roles, trades, buildings, extras): **AI-generated**, locally by the author (FLUX.2
+  klein 9B in ComfyStudio), without any remote service or game-icons.net icon. These are the game's tokens.
+- Fallback SVG tokens (and the relief version): icons from **[game-icons.net](https://game-icons.net)** (Caro Asercion,
+  Cathelineau, DarkZaitzev, Delapouite, Lorc, Skoll), **CC BY 3.0** licence, recoloured and set in a medallion; the
+  icon-by-icon list is in [`modules/lakour-veillees/CREDITS.md`](modules/lakour-veillees/CREDITS.md).
 - Illustrations (world welcome screen, festive vigils, and the werewolf logo that replaces a camera,
   `assets/camera/loup-garou.webp`): **AI-generated**, locally by the author (FLUX.2 klein 9B in ComfyStudio), without any
   remote service. The logo's fallback (`loup-garou.svg`) is drawn by hand.

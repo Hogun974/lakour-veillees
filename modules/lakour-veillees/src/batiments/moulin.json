@@ -3,7 +3,7 @@
   "_key": "!items!Rg4NsKM5nw6jNIg8",
   "name": "Le Moulin",
   "type": "batiment",
-  "img": "modules/lakour-veillees/assets/jetons/batiment-moulin.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/batiment-moulin.webp",
   "system": {
     "cle": "moulin",
     "description": "<p>Le moulin à vent sur la butte de l'ouest. Ses ailes tournent même quand il n'y a pas de vent, disent les enfants.</p>",

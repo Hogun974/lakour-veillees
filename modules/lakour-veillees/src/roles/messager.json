@@ -3,7 +3,7 @@
   "_key": "!items!EaTu22EmiOPFBLjc",
   "name": "Messager",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/messager.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/messager.webp",
   "system": {
     "cle": "messager",
     "camp": "village",

@@ -3,7 +3,7 @@
   "_key": "!actors!dYlQQ6HWc9euGm5L",
   "name": "Odile Basquin, lavandière",
   "type": "villageois",
-  "img": "modules/lakour-veillees/assets/jetons/figurant-lavandiere.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/figurant-lavandiere.webp",
   "system": {
     "joueur": "",
     "vivant": true,
@@ -26,7 +26,7 @@
     "width": 1,
     "height": 1,
     "texture": {
-      "src": "modules/lakour-veillees/assets/jetons/figurant-lavandiere.svg",
+      "src": "modules/lakour-veillees/assets/jetons/ia/figurant-lavandiere.webp",
       "fit": "contain",
       "scaleX": 1,
       "scaleY": 1

@@ -3,7 +3,7 @@
   "_key": "!items!Xms3unABnsOov4TS",
   "name": "Garde du guet",
   "type": "metier",
-  "img": "modules/lakour-veillees/assets/jetons/metier-garde.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/metier-garde.webp",
   "system": {
     "cle": "garde",
     "description": "<p>Tu fais la ronde avec ta pique et ton sifflet.</p><p><strong>Une fois par partie</strong>, pendant le jour, tu annonces que tu <strong>gardes un joueur à l'œil</strong> : la nuit suivante, il ne peut utiliser <strong>aucun pouvoir qui vise une autre maison</strong> que la sienne (s'il est loup, la meute chasse sans lui).</p>",

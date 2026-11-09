@@ -3,7 +3,7 @@
   "_key": "!items!BLWUq0c4PAVKz0Nc",
   "name": "Colporteur de nouvelles",
   "type": "metier",
-  "img": "modules/lakour-veillees/assets/jetons/metier-colporteur-de-nouvelles.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/metier-colporteur-de-nouvelles.webp",
   "system": {
     "cle": "colporteur-de-nouvelles",
     "description": "<p>Tu sais tout avant tout le monde, et tu le dis plus fort.</p><p><strong>Une fois par partie</strong>, au matin, tu demandes au narrateur une <strong>nouvelle</strong> de la nuit : un indice <strong>vrai mais flou</strong>, qu'il annonce à tout le village (« deux maisons voisines ont eu de la visite », « la victime connaissait celui qui l'a trouvée »).</p>",

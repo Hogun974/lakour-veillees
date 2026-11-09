@@ -3,7 +3,7 @@
   "_key": "!items!W6cBRI1JdaB6I6nb",
   "name": "Chasseur de primes",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/chasseur-de-primes.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/chasseur-de-primes.webp",
   "system": {
     "cle": "chasseur-de-primes",
     "camp": "solitaire",

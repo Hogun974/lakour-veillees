@@ -3,7 +3,7 @@
   "_key": "!items!2rgmMfujSeFsz7nW",
   "name": "La Chapelle",
   "type": "batiment",
-  "img": "modules/lakour-veillees/assets/jetons/batiment-chapelle.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/batiment-chapelle.webp",
   "system": {
     "cle": "chapelle",
     "description": "<p>Une chapelle de pierre grise au nord de la place, avec un clocher trop haut pour elle. La porte n'a jamais eu de serrure.</p>",

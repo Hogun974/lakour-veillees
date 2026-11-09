@@ -3,7 +3,7 @@
   "_key": "!items!cb8c2tsn2D1wDBFO",
   "name": "Loup pâle",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/loup-pale.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/loup-pale.webp",
   "system": {
     "cle": "loup-pale",
     "camp": "meute",

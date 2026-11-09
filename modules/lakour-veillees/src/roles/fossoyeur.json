@@ -3,7 +3,7 @@
   "_key": "!items!bdJKFOUO9Ps29Yk6",
   "name": "Fossoyeur",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/fossoyeur.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/fossoyeur.webp",
   "system": {
     "cle": "fossoyeur",
     "camp": "village",

@@ -3,7 +3,7 @@
   "_key": "!items!Q0BRLSmf34mpvMPU",
   "name": "Sonneur",
   "type": "role",
-  "img": "modules/lakour-veillees/assets/jetons/sonneur.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/sonneur.webp",
   "system": {
     "cle": "sonneur",
     "camp": "village",

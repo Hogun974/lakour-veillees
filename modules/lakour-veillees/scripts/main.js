@@ -16,7 +16,7 @@ const SYSTEME = "lakour-loups";
 // d'ours, Pèlerine), Banc des accusés, Glas du deuil, Nuit de la Saint-Martin (système 0.8.0) ; 0.11.0 : secrets hors des
 // documents (système 0.9.0) ; 0.12.0 : les Veillées de fête (système 0.10.0), un journal illustré par veillée, déclinées auprès du
 // socle des fêtes du moteur (lakour-mj-ia, api.fetes) ; 0.14.0 : le livre de Brumecombe (journal d'univers, lisible des joueurs).
-const VERSION_CONTENU = "0.17.1";
+const VERSION_CONTENU = "0.17.2";
 
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 
@@ -44,12 +44,13 @@ export function enregistrerFetes(api) {
 Hooks.once("lakour-mj-ia.pret", api => enregistrerFetes(api));
 
 // ---------- Style visuel (plat / relief) : réglage du module MJ IA s'il est actif, sinon plat.
-// Chaque image du module existe en deux versions : assets/<x>/<f>.svg (plat) et assets/<x>/3d/<f>.svg (relief).
+// Chaque image SVG du module existe en deux versions : assets/<x>/<f>.svg (plat) et assets/<x>/3d/<f>.svg (relief).
+// Les jetons peints (assets/jetons/ia/<f>.webp) n'ont qu'une version : ils restent les mêmes dans les deux styles.
 // Si le moteur n'a pas pu enregistrer son réglage (module inactif, ou erreur au chargement), style plat : rien ne bloque.
 const styleVisuel = () => (game.settings.settings?.has?.("lakour-mj-ia.styleVisuel") ? game.settings.get("lakour-mj-ia", "styleVisuel") : "2d");
 
 export function cheminSelonStyle(src, style) {
-  if (!src?.startsWith(`modules/${ID}/assets/`)) return src;
+  if (!src?.startsWith(`modules/${ID}/assets/`) || !src.endsWith(".svg")) return src;
   const plat = src.replace("/3d/", "/");
   if (style !== "3d") return plat;
   const i = plat.lastIndexOf("/");
@@ -259,7 +260,7 @@ Hooks.on("createScene", scene => {
 });
 
 // Le plateau du système lakour-loups : l'image neutre des jetons (jamais celle d'un rôle caché) et le style visuel.
-const JETON_NEUTRE = `modules/${ID}/assets/jetons/villageois.svg`;
+const JETON_NEUTRE = `modules/${ID}/assets/jetons/ia/villageois.webp`;   // peint (fabriqué en SVG : jetons/villageois.svg)
 function configurerPlateau(api = game.lakourLoups) {
   api?.plateau?.configurer?.({ jetonNeutre: JETON_NEUTRE, styliser: src => cheminSelonStyle(src, styleVisuel()) });
 }

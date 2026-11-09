@@ -650,9 +650,11 @@ Pour proposer un changement :
 
 - Jeu, textes, règles, carte et code : **Jordan (La Kour)**, écrits avec l'aide d'une IA (**Claude**, d'Anthropic) et relus
   par l'auteur.
-- Silhouettes des jetons : icônes de **[game-icons.net](https://game-icons.net)** (Caro Asercion, Cathelineau, DarkZaitzev,
-  Delapouite, Lorc, Skoll), licence **CC BY 3.0**, recolorées et composées dans un médaillon ; la liste icône par icône est
-  dans [`modules/lakour-veillees/CREDITS.md`](modules/lakour-veillees/CREDITS.md).
+- Jetons peints (`assets/jetons/ia/` : rôles, métiers, bâtiments, figurants) : **générés par IA**, localement par l'auteur
+  (FLUX.2 klein 9B dans ComfyStudio), sans service distant ni icône de game-icons.net. Ce sont les jetons du jeu.
+- Jetons SVG de repli (et version en relief) : icônes de **[game-icons.net](https://game-icons.net)** (Caro Asercion, Cathelineau,
+  DarkZaitzev, Delapouite, Lorc, Skoll), licence **CC BY 3.0**, recolorées et composées dans un médaillon ; la liste icône
+  par icône est dans [`modules/lakour-veillees/CREDITS.md`](modules/lakour-veillees/CREDITS.md).
 - Illustrations (écran d'accueil du monde, veillées de fête, et le logo de loup-garou qui remplace une caméra,
   `assets/camera/loup-garou.webp`) : **générées par IA**, localement par l'auteur (FLUX.2 klein 9B dans ComfyStudio), sans
   service distant. Le repli de ce logo (`loup-garou.svg`) est dessiné à la main.

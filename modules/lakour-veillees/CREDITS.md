@@ -14,13 +14,16 @@ La carte (`assets/cartes/`) est dessinée par programme : rendu commun des carte
 
 L'illustration de l'écran d'accueil (`assets/monde/`) et celles des veillées de fête (`assets/fetes/<fête>.jpg` : halloween, noel,
 carnaval, saint-valentin) ont été générées localement avec ComfyStudio (FLUX.2 klein 9B), sans service distant, pour l'usage
-privé de la table. De même pour l'image qui remplace la caméra d'un joueur quand le jeu la coupe (`assets/camera/loup-garou.webp` :
-un loup hurlant devant la lune, dans un médaillon de fer forgé) ; son repli `assets/camera/loup-garou.svg` est dessiné à la main,
-sans image extérieure.
+privé de la table.
+
+Les jetons peints (`assets/jetons/ia/<clé>.webp` : rôles, métiers, bâtiments et figurants) ont été générés localement avec
+FLUX.2 klein 9B (ComfyStudio), sans service distant ; ils n'utilisent aucune icône de game-icons.net. Ce sont eux que portent
+les rôles, métiers, bâtiments, villageois et figurants du module (index des jetons de joueur et figurants.json du MJ IA
+compris) ; les jetons SVG ci-dessous restent le repli et la version en relief.
 
 ## Icônes des jetons
 
-Les silhouettes des jetons (`assets/jetons/`) sont des icônes de **[game-icons.net](https://game-icons.net)**,
+Les silhouettes des jetons SVG (`assets/jetons/*.svg` et `assets/jetons/3d/`) sont des icônes de **[game-icons.net](https://game-icons.net)**,
 publiées sous licence **Creative Commons Attribution 3.0 (CC BY 3.0)** :
 <https://creativecommons.org/licenses/by/3.0/>. Source : <https://github.com/game-icons/icons>.
 

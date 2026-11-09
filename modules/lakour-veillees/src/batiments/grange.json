@@ -3,7 +3,7 @@
   "_key": "!items!B1YZZ2QtFYykpNB1",
   "name": "La Grange",
   "type": "batiment",
-  "img": "modules/lakour-veillees/assets/jetons/batiment-grange.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/batiment-grange.webp",
   "system": {
     "cle": "grange",
     "description": "<p>La grange des Vaudrey sur l'autre rive, pleine de foin et de courants d'air.</p>",

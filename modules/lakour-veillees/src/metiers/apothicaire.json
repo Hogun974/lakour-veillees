@@ -3,7 +3,7 @@
   "_key": "!items!9yr7s89OUikqYkOK",
   "name": "Apothicaire",
   "type": "metier",
-  "img": "modules/lakour-veillees/assets/jetons/metier-apothicaire.svg",
+  "img": "modules/lakour-veillees/assets/jetons/ia/metier-apothicaire.webp",
   "system": {
     "cle": "apothicaire",
     "description": "<p>Sirop de coquelicot, miel et sauge : rien ne résiste à tes pastilles.</p><p><strong>Une fois par partie</strong>, au début d'un débat, tu <strong>rends la parole</strong> à un joueur réduit au silence.</p>",
